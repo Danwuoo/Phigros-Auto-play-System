@@ -71,6 +71,7 @@ python -m pas.cli capture-bench --serial emulator-5554 --samples 30 --warmup 3 -
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)：模組邊界、時間戳與資料契約。
 - [docs/ROADMAP.md](docs/ROADMAP.md)：第一版里程碑與驗收方式。
 - [docs/MEASUREMENTS.md](docs/MEASUREMENTS.md)：本機環境盤點、合成與主機時序基線。
+- [docs/CAPTURE_AND_VISION_RESEARCH.md](docs/CAPTURE_AND_VISION_RESEARCH.md)：擷取候選、量測方法與混合式視覺決策方案。
 
 ## 目前狀態
 
