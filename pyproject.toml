@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phigros-autoplay-system"
+version = "0.1.0"
+description = "Screen-only capture and timing research harness"
+requires-python = ">=3.10"
+
+[project.scripts]
+pas = "pas.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
