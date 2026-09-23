@@ -161,7 +161,8 @@ class AdbPngCapture:
         png = adb_call(self.adb, ["-s", self.serial, "exec-out", "screencap", "-p"], 15)
         complete_ns = self.clock.now_ns()
         width, height, rgb = decode_png_rgb(png)
-        frame = Frame(self.sequence, width, height, rgb, complete_ns)
+        frame = Frame(self.sequence, width, height, rgb, complete_ns,
+                      pixels_ready_ns=self.clock.now_ns())
         self.sequence += 1
         return frame, start_ns
 

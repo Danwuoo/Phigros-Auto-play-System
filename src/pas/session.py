@@ -16,6 +16,7 @@ class SessionController:
                  clock: Clock, telemetry: Telemetry):
         self.worker, self.launcher, self.clock, self.telemetry = worker, launcher, clock, telemetry
         self.state = "DISCONNECTED"
+        self._inactive_at_launch = 0
 
     def _transition(self, state: str, reason: str, frame_sequence: int | None = None) -> None:
         self.telemetry.record("session_transition", from_state=self.state, to_state=state,
@@ -31,6 +32,7 @@ class SessionController:
         self.worker.start()
         try:
             sequence = self.worker.wait_for_valid_frames(readiness_frames, readiness_timeout_s)
+            self._inactive_at_launch = getattr(self.worker.source, "inactive_frames", 0)
             self._transition("LAUNCHING", "capture_ready", sequence)
             start_ns, return_ns = self.launcher.launch(package)
             self.telemetry.record("app_launch", package=package,
@@ -53,8 +55,12 @@ class SessionController:
         deadline_ns = self.clock.now_ns() + round(duration_s * 1e9)
         while self.clock.now_ns() < deadline_ns:
             frame = self.worker.latest.peek()
-            if self.worker.error is not None or frame is None or self.clock.now_ns() - frame.capture_complete_ns > round(max_frame_age_s * 1e9):
-                self._transition("ERROR", "capture_disconnected_or_stale",
+            stale = (frame is not None and self.clock.now_ns() - frame.capture_complete_ns > round(max_frame_age_s * 1e9))
+            inactive = (getattr(self.worker.source, "inactive", False) or
+                        getattr(self.worker.source, "inactive_frames", 0) > self._inactive_at_launch)
+            if self.worker.error is not None or frame is None or inactive or (stale and not getattr(self.worker.source, "event_driven", False)):
+                reason = ("capture_inactive" if inactive else "capture_disconnected_or_stale")
+                self._transition("ERROR", reason,
                                  frame.sequence if frame else None)
                 raise RuntimeError("capture disconnected or stale")
             self.clock.sleep_until_ns(min(deadline_ns, self.clock.now_ns() + 100_000_000))

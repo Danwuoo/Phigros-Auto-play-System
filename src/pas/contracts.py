@@ -16,6 +16,12 @@ class Frame:
     # This is never inferred from capture_complete_ns.
     produced_ns: int | None = None
     pixel_format: Literal["RGB24"] = "RGB24"
+    pixels_ready_ns: int | None = None
+    published_ns: int | None = None
+    source_sequence: int | None = None
+    stream_generation: int = 0
+    source_timestamp_us: int | None = None
+    source_rotation: int | None = None
 
     def __post_init__(self) -> None:
         if self.width <= 0 or self.height <= 0 or len(self.rgb) != self.width * self.height * 3:

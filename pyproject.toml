@@ -8,6 +8,9 @@ version = "0.1.0"
 description = "Screen-only capture and timing research harness"
 requires-python = ">=3.10"
 
+[project.optional-dependencies]
+emulator-grpc = ["grpcio>=1.60", "protobuf>=7.35.1", "Pillow>=11"]
+
 [project.scripts]
 pas = "pas.cli:main"
 
