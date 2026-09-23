@@ -2,10 +2,13 @@
 
 import argparse
 import binascii
+from collections import deque
+from itertools import pairwise
 import ctypes
 import json
 import platform
 import struct
+import subprocess
 import sys
 import threading
 import time
@@ -29,6 +32,17 @@ from .telemetry import Telemetry, distribution
 def _host() -> dict:
     return {"platform": platform.platform(), "python": platform.python_version(),
             "machine": platform.machine(), "clock": "time.monotonic_ns"}
+
+
+def _source_revision() -> dict:
+    try:
+        head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
+                              text=True, check=True, timeout=2).stdout.strip()
+        dirty = bool(subprocess.run(["git", "status", "--porcelain"], capture_output=True,
+                                    text=True, check=True, timeout=2).stdout.strip())
+        return {"git_head": head, "git_dirty": dirty}
+    except (OSError, subprocess.SubprocessError):
+        return {"git_head": None, "git_dirty": None}
 
 
 def _write_rgb_png(path: str, frame: Frame) -> None:
@@ -68,6 +82,35 @@ def _rss_bytes() -> int | None:
         return usage * (1024 if sys.platform != "darwin" else 1)
     except ImportError:
         return None
+
+
+def _window_event_counts(path: str, start_ns: int, end_ns: int) -> dict[str, int]:
+    """Recount exactly by event timestamp in the half-open measurement window."""
+    counts = {key: 0 for key in ("inactive_frames", "invalid_frames", "source_gaps",
+                                  "relative_stale_drops", "latest_published",
+                                  "latest_overwritten", "consumer_reads", "consumer_skips")}
+    events = {
+        "capture_inactive": ("inactive_frames", "monotonic_ns", None),
+        "capture_invalid": ("invalid_frames", "monotonic_ns", None),
+        "capture_source_gap": ("source_gaps", "monotonic_ns", "gap"),
+        "capture_relative_stale_drop": ("relative_stale_drops", "monotonic_ns", None),
+        "capture": ("latest_published", "published_ns", None),
+        "capture_overwrite": ("latest_overwritten", "monotonic_ns", None),
+        "frame_consumed": ("consumer_reads", "consume_ns", None),
+    }
+    with Path(path).open(encoding="utf-8") as stream:
+        for line in stream:
+            item = json.loads(line)
+            spec = events.get(item["event"])
+            if spec is None:
+                continue
+            key, timestamp_key, value_key = spec
+            timestamp = item.get(timestamp_key)
+            if timestamp is not None and start_ns <= timestamp < end_ns:
+                counts[key] += item[value_key] if value_key else 1
+                if item["event"] == "frame_consumed":
+                    counts["consumer_skips"] += item.get("sequence_skip", 0)
+    return counts
 
 
 def schedule_bench(samples: int, interval_ms: float, warmup: int,
@@ -146,8 +189,10 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                        fixture_scale: float = 1.0,
                        fixture_scale_y: float | None = None,
                        consumer_recover_after_s: float | None = None,
-                       max_relative_lag_ms: float | None = None) -> dict:
-    if duration_s <= 0 or warmup_s < 0 or consumer_delay_ms < 0 or receiver_pause_ms < 0:
+                       max_relative_lag_ms: float | None = None,
+                       ready_timeout_s: float = 10) -> dict:
+    if (duration_s <= 0 or warmup_s < 0 or consumer_delay_ms < 0 or
+            receiver_pause_ms < 0 or ready_timeout_s <= 0):
         raise ValueError("invalid duration, warmup or consumer delay")
     if consumer_recover_after_s is not None and not 0 < consumer_recover_after_s < duration_s:
         raise ValueError("consumer recovery time must fall within measurement duration")
@@ -159,22 +204,42 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
     if Path(log).exists():
         raise FileExistsError(f"log already exists: {log}")
     clock = HostClock()
-    arrival_times: list[int] = []
-    ready_times: list[int] = []
-    conversion_ms: list[float] = []
-    source_sequences: list[int] = []
-    source_times_us: list[int] = []
-    fixture_samples: list[tuple[int, int]] = []
+    # Keep a bounded suffix for in-process percentiles; JSONL retains all events.
+    arrival_times = deque(maxlen=100_000)
+    ready_times = deque(maxlen=100_000)
+    conversion_ms = deque(maxlen=100_000)
+    source_sequences = deque(maxlen=100_000)
+    source_times_us = deque(maxlen=100_000)
+    fixture_samples = deque(maxlen=100_000)
+    frames_received_total = fixture_samples_total = counter_changes = 0
+    last_fixture_counter = None
+    first_arrival_ns = last_arrival_ns = None
+    longest_interarrival_ns = 0
     shapes: set[tuple[int, int, int | None]] = set()
     first_frame: Frame | None = None
     receiver_paused = False
-    measurement_start = clock.now_ns() + round(warmup_s * 1e9)
-    measurement_end = measurement_start + round(duration_s * 1e9)
+    measurement_start: int | None = None
+    measurement_end: int | None = None
+    collection_lock = threading.Lock()
 
     def collect(frame: Frame) -> None:
-        nonlocal first_frame, receiver_paused
-        if measurement_start <= frame.capture_complete_ns < measurement_end:
+        nonlocal first_frame, receiver_paused, frames_received_total
+        nonlocal fixture_samples_total, counter_changes, last_fixture_counter
+        nonlocal first_arrival_ns, last_arrival_ns, longest_interarrival_ns
+        with collection_lock:
+            if measurement_start is None or (measurement_end is not None and
+                                             frame.capture_complete_ns >= measurement_end):
+                return
+            if frame.capture_complete_ns < measurement_start:
+                return
             arrival_times.append(frame.capture_complete_ns)
+            if first_arrival_ns is None:
+                first_arrival_ns = frame.capture_complete_ns
+            if last_arrival_ns is not None:
+                longest_interarrival_ns = max(longest_interarrival_ns,
+                                              frame.capture_complete_ns - last_arrival_ns)
+            last_arrival_ns = frame.capture_complete_ns
+            frames_received_total += 1
             ready_times.append(frame.pixels_ready_ns or frame.capture_complete_ns)
             conversion_ms.append(((frame.pixels_ready_ns or frame.capture_complete_ns) - frame.capture_complete_ns) / 1e6)
             if frame.source_sequence is not None:
@@ -184,6 +249,10 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
             fixture_counter = read_fixture_counter(frame, fixture_x, fixture_y,
                                                    fixture_scale, fixture_scale_y)
             if fixture_counter is not None:
+                fixture_samples_total += 1
+                if last_fixture_counter is not None and fixture_counter != last_fixture_counter:
+                    counter_changes += 1
+                last_fixture_counter = fixture_counter
                 fixture_samples.append((frame.capture_complete_ns, fixture_counter))
                 telemetry.record("fixture_counter", frame_sequence=frame.sequence,
                                  source_sequence=frame.source_sequence,
@@ -208,17 +277,30 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
 
     load_thread = threading.Thread(target=spin) if load else None
     with Telemetry(log) as telemetry:
-        source = _grpc_source(serial, clock, telemetry, endpoint, token_file,
-                              image_format, width, height, row_order,
-                              max_relative_lag_ms)
+        connecting_start_ns = clock.now_ns()
+        ready_deadline_ns = connecting_start_ns + round(ready_timeout_s * 1e9)
+        telemetry.record("bench_phase", phase="CONNECTING", monotonic_ns=connecting_start_ns)
+        try:
+            source = _grpc_source(serial, clock, telemetry, endpoint, token_file,
+                                  image_format, width, height, row_order,
+                                  max_relative_lag_ms)
+            source_initialized_ns = clock.now_ns()
+            if source_initialized_ns >= ready_deadline_ns:
+                raise TimeoutError("capture readiness timed out during initialization")
+        except Exception as error:
+            telemetry.record("bench_failed", phase="CONNECTING", reason=str(error),
+                             monotonic_ns=clock.now_ns(), frames_received=0)
+            raise
         telemetry.record("run_config", mode="emulator_grpc_stream", run_id=run_id,
-                         host=_host(), serial=serial, endpoint=source.endpoint.target,
+                         host=_host(), source_revision=_source_revision(),
+                         command_argv=sys.argv, serial=serial, endpoint=source.endpoint.target,
                          emulator_instance=source.endpoint.instance,
                          image_format=image_format, requested_width=width,
                          requested_height=height, row_order=row_order,
                          max_relative_lag_ms=max_relative_lag_ms,
                          duration_s=duration_s,
-                         warmup_s=warmup_s, consumer_delay_ms=consumer_delay_ms,
+                         warmup_s=warmup_s, ready_timeout_s=ready_timeout_s,
+                         consumer_delay_ms=consumer_delay_ms,
                          consumer_recover_after_s=consumer_recover_after_s,
                          receiver_pause_ms=receiver_pause_ms,
                          fixture_offset=[fixture_x, fixture_y], fixture_scale=fixture_scale,
@@ -227,23 +309,49 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                          source_timestamp_clock="unix_us_unmapped")
         worker = CaptureWorker(source, clock, telemetry, on_frame=collect)
         worker.start()
-        if load_thread:
-            load_thread.start()
         last = -1
         read_count = skipped = 0
         recovery_residency_ms = None
         recovery_sequence_skip = None
-        host_residency_ms: list[float] = []
-        rss_samples: list[int] = []
-        cpu_start = time.process_time()
+        host_residency_ms = deque(maxlen=100_000)
+        rss_samples = deque(maxlen=100_000)
+        cpu_start_ns = cpu_end_ns = None
+        start_counts = end_counts = None
+        ready_ns = warmup_start_ns = warmup_end_ns = None
+        actual_end_ns = None
         try:
-            while clock.now_ns() < measurement_end:
-                frame = worker.latest.read_after(last, 0.1)
+            remaining_ready_s = (ready_deadline_ns - clock.now_ns()) / 1e9
+            if remaining_ready_s <= 0:
+                raise TimeoutError("capture readiness timed out before first frame")
+            last = worker.wait_for_valid_frames(1, remaining_ready_s)
+            ready_ns = clock.now_ns()
+            telemetry.record("bench_phase", phase="WARMUP", monotonic_ns=ready_ns,
+                             first_frame_sequence=last)
+            if load_thread:
+                load_thread.start()
+                telemetry.record("load_started", monotonic_ns=clock.now_ns())
+            warmup_start_ns = clock.now_ns()
+            warmup_deadline_ns = warmup_start_ns + round(warmup_s * 1e9)
+            while clock.now_ns() < warmup_deadline_ns:
+                if worker.error:
+                    raise RuntimeError(f"capture failed during warmup: {worker.error}")
+                clock.sleep_until_ns(min(warmup_deadline_ns, clock.now_ns() + 50_000_000))
+            warmup_end_ns = clock.now_ns()
+            start_counts = {**source.counters(), **{f"latest_{k}": v for k, v in worker.latest.counters().items()},
+                            "consumer_reads": read_count, "consumer_skips": skipped}
+            cpu_start_ns = time.process_time_ns()
+            with collection_lock:
+                measurement_start = clock.now_ns()
+            planned_end_ns = measurement_start + round(duration_s * 1e9)
+            telemetry.record("bench_phase", phase="MEASURING", monotonic_ns=measurement_start,
+                             cpu_process_ns=cpu_start_ns, counters=start_counts)
+            while clock.now_ns() < planned_end_ns:
+                frame = worker.latest.read_after(last, min(0.05, max(0, (planned_end_ns - clock.now_ns()) / 1e9)))
                 if worker.error:
                     raise RuntimeError(f"capture failed: {worker.error}")
                 if frame is None:
                     continue
-                if clock.now_ns() < measurement_start:
+                if frame.capture_complete_ns < measurement_start:
                     last = frame.sequence
                     continue
                 recovering = (consumer_recover_after_s is not None and
@@ -255,7 +363,8 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                                      source_sequence=frame.source_sequence,
                                      host_residency_ms=recovery_residency_ms,
                                      sequence_skip=recovery_sequence_skip)
-                skipped += max(0, frame.sequence - last - 1)
+                sequence_skip = max(0, frame.sequence - last - 1)
+                skipped += sequence_skip
                 last = frame.sequence
                 read_count += 1
                 now_ns = clock.now_ns()
@@ -265,31 +374,74 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                     rss_samples.append(rss)
                 telemetry.record("frame_consumed", frame_sequence=frame.sequence,
                                  source_sequence=frame.source_sequence,
-                                 consume_ns=now_ns)
+                                 consume_ns=now_ns, sequence_skip=sequence_skip)
                 if consumer_delay_ms and not recovering:
                     clock.sleep_until_ns(now_ns + round(consumer_delay_ms * 1e6))
+            with collection_lock:
+                actual_end_ns = clock.now_ns()
+                measurement_end = actual_end_ns
+            cpu_end_ns = time.process_time_ns()
+            end_counts = {**source.counters(), **{f"latest_{k}": v for k, v in worker.latest.counters().items()},
+                          "consumer_reads": read_count, "consumer_skips": skipped}
+            telemetry.record("bench_phase", phase="STOPPING", monotonic_ns=actual_end_ns,
+                             cpu_process_ns=cpu_end_ns, counters=end_counts)
+        except Exception as error:
+            telemetry.record("bench_failed", phase=("CONNECTING" if ready_ns is None else
+                                                     "WARMUP" if measurement_start is None else "MEASURING"),
+                             reason=str(error), monotonic_ns=clock.now_ns(),
+                             frames_received=frames_received_total)
+            raise
         finally:
             stop_load.set()
-            if load_thread:
+            if load_thread and load_thread.ident is not None:
                 load_thread.join(2)
             worker.stop(join_timeout_s=2)
-        cpu_s = time.process_time() - cpu_start
+        cpu_s = (cpu_end_ns - cpu_start_ns) / 1e9
+        telemetry.flush()
         image_path = str(Path(log).with_suffix(".png"))
         if first_frame:
             _write_rgb_png(image_path, first_frame)
+        window_s = (actual_end_ns - measurement_start) / 1e9
+        snapshot_delta = {key: end_counts[key] - start_counts[key] for key in start_counts}
+        window_counts = _window_event_counts(log, measurement_start, actual_end_ns)
+        frame_span_s = ((last_arrival_ns - first_arrival_ns) / 1e9
+                        if frames_received_total >= 2 else None)
+        no_frame_gap_ms = distribution([(b - a) / 1e6 for a, b in zip(
+            [measurement_start if frames_received_total <= 100_000 else arrival_times[0],
+             *arrival_times], [*arrival_times, actual_end_ns])])
+        dynamic_verified = counter_changes > 0
+        failure_reason = None if dynamic_verified else "dynamic fixture not verified in measurement window"
         summary = {"mode": "emulator_grpc_stream", "run_id": run_id,
+                   "status": "complete" if dynamic_verified else "incomplete_dynamic_unverified",
                    "serial": serial, "endpoint": source.endpoint.target,
                    "emulator_instance": source.endpoint.instance,
                    "image_format": image_format, "duration_s": duration_s,
+                   "ready_timeout_s": ready_timeout_s,
+                   "connecting_start_ns": connecting_start_ns,
+                   "source_initialized_ns": source_initialized_ns,
+                   "ready_ns": ready_ns, "warmup_start_ns": warmup_start_ns,
+                   "warmup_end_ns": warmup_end_ns,
+                   "measurement_start_ns": measurement_start,
+                   "measurement_end_ns": actual_end_ns,
+                   "measurement_actual_duration_s": window_s,
+                   "first_last_frame_span_s": frame_span_s,
+                   "no_frame_gap_ms": no_frame_gap_ms,
+                   "longest_interarrival_ms": longest_interarrival_ns / 1e6,
+                   "window_counters_start": start_counts,
+                   "window_counters_end": end_counts,
+                   "window_snapshot_delta": snapshot_delta,
+                   "window_counters_delta": window_counts,
+                   "window_counter_method": "JSONL event timestamps in [measurement_start_ns, measurement_end_ns)",
                    "row_order": row_order,
                    "warmup_s": warmup_s, "consumer_delay_ms": consumer_delay_ms,
-                   "load": load, "frames_received": len(arrival_times),
+                   "load": load, "frames_received": frames_received_total,
+                   "distribution_scope": "bounded latest 100000 samples; raw JSONL has full window",
                    "receiver_pause_ms": receiver_pause_ms,
                    "consumer_recover_after_s": consumer_recover_after_s,
                    "recovery_first_host_residency_ms": recovery_residency_ms,
                    "recovery_first_sequence_skip": recovery_sequence_skip,
-                   "distinct_source_sequences": len(set(source_sequences)),
-                   "fixture_samples": len(fixture_samples),
+                   "distinct_source_sequences": frames_received_total,
+                   "fixture_samples": fixture_samples_total,
                    "fixture_distinct_counters": len({value for _, value in fixture_samples}),
                    "fixture_counter_span": (fixture_samples[-1][1] - fixture_samples[0][1]
                                             if len(fixture_samples) > 1 else None),
@@ -299,23 +451,31 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                        if len(fixture_samples) > 1 and fixture_samples[-1][0] > fixture_samples[0][0]
                        else None),
                    "dimensions_rotation": sorted([list(s) for s in shapes]),
-                   "arrival_interval_ms": distribution([(b - a) / 1e6 for a, b in zip(arrival_times, arrival_times[1:])]),
-                   "source_timestamp_interval_ms": distribution([(b - a) / 1e3 for a, b in zip(source_times_us, source_times_us[1:])]),
-                   "pixels_ready_interval_ms": distribution([(b - a) / 1e6 for a, b in zip(ready_times, ready_times[1:])]),
+                   "arrival_interval_ms": distribution([(b - a) / 1e6 for a, b in pairwise(arrival_times)]),
+                   "source_timestamp_interval_ms": distribution([(b - a) / 1e3 for a, b in pairwise(source_times_us)]),
+                   "pixels_ready_interval_ms": distribution([(b - a) / 1e6 for a, b in pairwise(ready_times)]),
                    "conversion_ms": distribution(conversion_ms),
                    "host_residency_ms": distribution(host_residency_ms),
-                   "source_sequence_gaps": source.source_gaps,
-                   "relative_stale_drops": source.relative_stale_drops,
+                   "source_sequence_gaps": window_counts["source_gaps"],
+                   "relative_stale_drops": window_counts["relative_stale_drops"],
                    "max_relative_lag_ms": max_relative_lag_ms,
-                   "inactive_frames": source.inactive_frames,
-                   "frames_overwritten_unconsumed": worker.latest.overwritten,
+                   "inactive_frames": window_counts["inactive_frames"],
+                   "invalid_frames": window_counts["invalid_frames"],
+                   "frames_overwritten_unconsumed": window_counts["latest_overwritten"],
                    "frames_read": read_count, "consumer_sequence_skips": skipped,
-                   "process_cpu_seconds": cpu_s, "capture_error": str(worker.error) if worker.error else None,
-                   "process_cpu_one_core_percent": cpu_s / duration_s * 100,
+                   "process_cpu_seconds": cpu_s,
+                   "capture_error": str(worker.error) if worker.error else failure_reason,
+                   "process_cpu_start_ns": cpu_start_ns,
+                   "process_cpu_end_ns": cpu_end_ns,
+                   "process_cpu_one_core_percent": cpu_s / window_s * 100,
                    "process_rss_mib": distribution([size / (1024 * 1024) for size in rss_samples]),
                    "source_frame_age": "unknown; Unix source timestamp not mapped to host monotonic",
                    "log_path": log, "sample_png_path": image_path if first_frame else None}
         telemetry.record("summary", **summary)
+        if not dynamic_verified:
+            telemetry.record("bench_failed", phase="MEASURING", reason=failure_reason,
+                             monotonic_ns=clock.now_ns(), frames_received=frames_received_total)
+            raise RuntimeError(f"benchmark incomplete: {failure_reason}")
     return summary
 
 
@@ -395,12 +555,18 @@ def start_session(serial: str, package: str, duration_s: float, log: str | None,
                                     max_relative_lag_ms))
         worker = CaptureWorker(source, clock, telemetry)
         session = SessionController(worker, AdbLauncher(adb, serial, clock), clock, telemetry)
+        monitor_state = None
+        frame_fresh_at_monitor_end = False
         try:
             session.start(package, readiness_frames=1 if backend == "emulator-grpc" else 3)
             session.monitor_for(duration_s)
+            monitor_state = session.state
+            frame_fresh_at_monitor_end = session.frame_fresh
         finally:
             session.stop()
         result = {"mode": "capture_first_session", "state": session.state,
+                  "monitor_state": monitor_state,
+                  "frame_fresh_at_monitor_end": frame_fresh_at_monitor_end,
                   "frames_published": worker.latest.published,
                   "frames_overwritten": worker.latest.overwritten,
                   "capture_error": str(worker.error) if worker.error else None,
@@ -491,6 +657,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--warmup", type=int, default=10)
     p.add_argument("--duration-s", type=float, default=60)
     p.add_argument("--warmup-s", type=float, default=10)
+    p.add_argument("--ready-timeout-s", type=float, default=10)
     p.add_argument("--consumer-delay-ms", type=float, default=0)
     p.add_argument("--consumer-recover-after-s", type=float)
     p.add_argument("--load", action="store_true")
@@ -550,7 +717,8 @@ def main(argv: list[str] | None = None) -> int:
                                             args.fixture_scale,
                                             args.fixture_scale_y,
                                             args.consumer_recover_after_s,
-                                            args.max_relative_lag_ms)
+                                            args.max_relative_lag_ms,
+                                            args.ready_timeout_s)
             else:
                 result = capture_bench(args.serial, args.samples, args.warmup, args.log)
         elif args.command == "buffer-bench":

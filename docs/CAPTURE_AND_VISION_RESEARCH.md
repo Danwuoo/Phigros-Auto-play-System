@@ -12,12 +12,14 @@
 
 | 優先順序 | 候選 | 研究理由 | 主要驗證風險 |
 | --- | --- | --- | --- |
-| 1 | Android Emulator gRPC `streamScreenshot`，先試 `RGB888`／`RGBA8888` | 模擬器直接推送新影格，協定支援原始像素與序號；本機 SDK proto 與權杖 discovery 已確認可用。 | 原生 1280×720 動態 fixture 三批約 34–35 個不同畫面／秒、到達 p95 約 48–51 ms；500 ms 接收停頓會暫交付舊圖。絕對來源年齡及約 60 FPS 來源條件仍未證實。 |
+| 1 | Android Emulator gRPC `streamScreenshot`，先試 `RGB888`／`RGBA8888` | 模擬器直接推送新影格，協定支援原始像素與序號；本機 SDK proto 與權杖 discovery 已確認可用。 | 第二輪修正窗口後，原生 1280×720 動態 fixture 三批 35.7–37.1 個不同畫面／秒、到達 p95 47.3–52.0 ms；500 ms 接收停頓會暫交付舊圖，保護在受控測試中可丟棄。未達研究目標，絕對來源年齡及約 60 FPS 來源條件仍未證實。 |
 | 2 | Windows Graphics Capture 擷取獨立模擬器視窗 | Windows 可對單一視窗以 Direct3D frame pool 收取畫面；影格附 QPC 時間，適合與主機計時整合。 | 目前模擬器嵌在 Android Studio 且以 `-qt-hide-window` 啟動；需改為獨立視窗並校正視窗客戶區、縮放、黑邊及觸控座標。 |
 | 3 | scrcpy H.264 持續串流，停用控制 | 已有成熟的 Android 畫面串流路徑；可控制畫質與最大幀率，並可取得其伺服器串流協定。 | 編碼、傳輸、解碼與可能的緩衝都會增加延遲；此 AVD 上的性能尚未量測。 |
 | 基線 | 每張 `adb screencap` | 已有可重現的正確性與計時基線。 | 本機量測遠慢於 60 Hz，保留作診斷，不進入遊玩路徑。 |
 
 模擬器協定列明串流在新影格產生時推送，`ImageFormat` 支援 PNG、RGBA8888、RGB888；`MMAP` 是 `ImageTransport` 的傳輸通道，不是像素格式，且 proto 警告共享區域可能撕裂。只有一般 gRPC payload／複製成本被證明是主要瓶頸，且有一致性驗證方法時才考慮 MMAP。`Image.seq` 可用於辨識跳號。`Image.timestampUs` 是模擬器估計的 Unix 時間，不能直接與主機 `time.monotonic_ns()` 相減。若要量測來源影格年齡，須另建立可靠的時鐘對齊或受控可見事件測試。本機 proto 的像素行方向註解與實際 Emulator 37.1.11 的 RGB888／RGBA8888 輸出相反；已用 ADB 同場景截圖對照確認 top-down。實作以安裝版 proto 為準，雜湊見 [量測紀錄](MEASUREMENTS.md)。[Google 模擬器協定](https://github.com/google/android-emulator-webrtc/blob/master/proto/emulator_controller.proto)、[gRPC 安全與設定](https://android.googlesource.com/platform/external/qemu/+/686efa16baf59d776cadc3f975d12570fe44bbb9/android/android-grpc/docs/README.md)
+
+第二輪修正把連線、暖機、正式量測分開；歷史 CPU 與負載窗口有偏差，不能用舊數據選型。事件式串流沒有新影格時，獨立畫面探測只能確認同一靜態 pixels 與傳輸可回應，不能證明串流一定會在未來送出新圖，因此新鮮度資格必須撤銷。相對來源時戳差值保護遇到時鐘不連續會停止而不重設錨點；它仍不提供可信的絕對影格年齡。重測與診斷結果見 [量測紀錄](MEASUREMENTS.md)。
 
 Windows Graphics Capture 的 `FrameArrived` 提供持續影格，`SystemRelativeTime` 是合成器產生影格時的 QPC 時間；應在同一主機 QPC 時域內計時，並驗證視窗擷取的內容與觸控座標一致。[Microsoft 畫面擷取文件](https://learn.microsoft.com/en-us/windows/uwp/audio-video-camera/screen-capture)、[單視窗擷取介面](https://learn.microsoft.com/en-us/windows/win32/api/windows.graphics.capture.interop/nf-windows-graphics-capture-interop-igraphicscaptureiteminterop-createforwindow)
 

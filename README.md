@@ -59,7 +59,7 @@ python -m pas.cli schedule-bench --samples 100 --warmup 10 --interval-ms 10 --lo
 ```powershell
 python -m pip install -e '.[emulator-grpc]'
 $env:PYTHONPATH='src'
-python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --duration-s 60 --warmup-s 10
+python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --duration-s 60 --warmup-s 10 --ready-timeout-s 15 --fixture-scale 1
 python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --duration-s 60 --warmup-s 10 --consumer-delay-ms 50
 python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --duration-s 30 --warmup-s 5 --consumer-delay-ms 100 --consumer-recover-after-s 15
 python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --duration-s 30 --warmup-s 5 --receiver-pause-ms 500
@@ -68,13 +68,19 @@ python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulato
 
 每次量測自動建立獨立的 `measurements/<run-id>/capture.jsonl` 和一張診斷 PNG。CLI 從模擬器的本機 discovery 檔以選定 ADB 序號找出唯一執行個體、端點與權杖；不會在日誌輸出權杖。若 discovery 無法使用，可同時提供 `--grpc-endpoint 127.0.0.1:<port>` 和 `--grpc-token-file <本機私有檔案>`。格式可選 `--image-format rgb888|rgba8888`，寬高 0 表示使用原尺寸。`--row-order` 預設 `top-down`，在本機 Emulator 37.1.11 與 ADB 畫面對照正確；其他版本須用非對稱畫面確認。gRPC 中斷會報錯，不會靜默退回 ADB。
 
-`--max-relative-lag-ms` 是可選的上游暫存保護：只比較同一串流內「主機到達時間差」與「來源 Unix 時戳差」，超過指定差值時丟棄該影格。它不測量絕對來源年齡；來源時戳若失準，也可能誤丟影格。基準測試預設停用，啟用時會分開計數與記錄 `relative_stale_drops`。
+量測先進入 `CONNECTING`，首張有效圖到達後才開始 `WARMUP`，暖機完成後才進入完整 `MEASURING` 窗口。`--ready-timeout-s` 控制就緒期限；未就緒、正式窗口無法證明動態 Fixture 計數、或擷取失敗均以非零退出碼回報。摘要分開列出正式 monotonic 牆鐘時長、首末有效影格跨度、無影格停頓與同窗口 CPU／丟棄計數。正常靜態畫面可用於 Session，不能當成動態性能基準。
 
-`start-session` 也支援 `--capture-backend emulator-grpc`。事件式串流的就緒條件是一張有效圖像；靜態畫面不會偽造新影格。此命令仍只啟動應用並停在 `NAVIGATING`，不判斷遊玩狀態或注入觸控。
+`--max-relative-lag-ms` 是可選的上游暫存保護：只比較同一串流內「主機到達時間差」與「來源 Unix 時戳差」，超過指定差值時丟棄該影格。它不測量絕對來源年齡；來源時戳若失準，也可能誤丟影格。基準測試預設停用，啟用時會分開計數與記錄 `relative_stale_drops`。
+來源時間缺失、倒退、明顯前跳、停止前進或持續丟棄超過 1 秒時，保護會明確停止串流並要求重建來源；不重新設錨後接收積壓圖。來源 Unix metadata 不能用於絕對影格年齡或觸控排程。
+
+`start-session` 也支援 `--capture-backend emulator-grpc`。事件式串流的就緒條件是一張有效圖像；靜態畫面不會偽造新影格。此命令只啟動應用並監控 `NAVIGATING`／`DEGRADED` 等擷取狀態，不判斷遊玩狀態或注入觸控。
+事件式串流逾期時，Session 以獨立的 `getScreenshot` 探測傳輸及可見 pixels。相同靜態 pixels 只標為 `DEGRADED`，`frame_fresh=False`；探測失敗或探測到變化但串流未送達時轉為 `ERROR`。未確認的新鮮度不供未來遊玩門控使用。
 
 `fixtures/capture/index.html` 是可重現的動態像素測試頁，含非對稱角落色塊、可見計數與位元編碼。其計數只供測試統計，不接入遊戲決策。可在倉庫根目錄執行 `python -m http.server 8765 --bind 127.0.0.1 --directory fixtures/capture`，由使用者在 AVD 瀏覽器開啟 `http://10.0.2.2:8765/`。先看輸出的診斷 PNG，依瀏覽器工具列位置與像素縮放設定 `--fixture-x`、`--fixture-y`、`--fixture-scale`、`--fixture-scale-y`，再跑長批次；本機 Chrome 直向 720×1280 的校準值為 `--fixture-y 162 --fixture-scale 2 --fixture-scale-y 2.25`。實際 callback 更新率由可見計數的首末值估計，不能由 AVD 60 Hz 設定推定。
 
 另有不需網路的原生橫向測試畫面原始碼 `fixtures/capture_android/`。可在已安裝 Android SDK build-tools 36.0.0、platforms android-37.0 與 Android Studio JBR 的環境執行 `python scripts/build_capture_fixture.py`，產生 `measurements/fixture_android/pas-capture-fixture.apk`。以 `adb -s emulator-5554 install -r measurements/fixture_android/pas-capture-fixture.apk` 安裝後，從 AVD 主畫面開啟「PAS Capture Fixture」。此 APK 僅繪圖，沒有讀取遊戲或注入觸控；開啟後仍須用診斷 PNG 驗證實際畫面與計數座標。本機橫向 1280×720 使用 `--fixture-scale 1`。
+
+分段性能診斷可執行 `python scripts/profile_grpc_stages.py --serial emulator-5554 --mode payload --duration-s 10 --warmup-s 2 --log measurements/<新 run id>/summary.json`，`--mode` 依序可改為 `protobuf`、`rgb`、`fixture`。四種模式會分別量測只收 payload、protobuf 解析、RGB 正規化及可見計數解碼，僅作受控成本比較，不發布給遊戲決策。原生 Fixture 方向須用診斷 PNG 確認；Android Activity 橫向不保證 Emulator gRPC 輸出本身已是正向 1280×720。
 
 `proto/emulator_controller.proto` 複製自本機 Android Emulator 37.1.11.0（build 15917651）的 `emulator/lib`，SHA-256 `1D62C6BCAD5F06621F90EC2BF26C661BA769CCD0F1416B5314D25A68E04EEE5F`，原始檔附 Apache 2.0 授權標頭。更新 SDK 後可用 `python -m pip install grpcio-tools` 與 `python -m grpc_tools.protoc -I proto --python_out=src/pas/emulator_proto proto/emulator_controller.proto` 重建 bindings，並重新驗證端點、像素行方向與色彩。
 
@@ -102,4 +108,4 @@ python -m pas.cli capture-bench --serial emulator-5554 --samples 30 --warmup 3 -
 
 ## 目前狀態
 
-合成閉環和主機排程基線可重現。ADB PNG 的歷史基線約每 3 秒取得一張解碼畫面；原始 JSONL 目前缺失，不能重算。gRPC 原始畫面串流已能在本機 AVD 正確認證與取圖；原生 1280×720 動態畫面三批各 60 秒約每秒取得 34–35 個不同畫面，且接收端停頓後會短暫交付較舊畫面，詳見[量測紀錄](docs/MEASUREMENTS.md)。這尚未達每秒 55 張不同畫面的研究目標，遊戲用擷取後端與觸控後端均未選定；須先完成能力及時序驗證，再做遊戲專用辨識。
+合成閉環和主機排程基線可重現。ADB PNG 的歷史基線約每 3 秒取得一張解碼畫面；原始 JSONL 目前缺失，不能重算。gRPC 原始畫面串流已能在本機 AVD 正確認證與取圖；修正窗口後原生 1280×720 動態 Fixture 三批各 60 秒約每秒取得 35.7–37.1 個不同畫面，接收端停頓後會短暫交付較舊畫面，可選保護在受控測試中丟棄舊圖，詳見[量測紀錄](docs/MEASUREMENTS.md)。這尚未達每秒 55 張不同畫面及尾端間隔的研究目標，來源也未證明穩定 60 FPS；遊戲用擷取後端與觸控後端均未選定。可靠性修正與部分實機功能已驗證，來源絕對年齡、真實 inactive／斷線及性能仍待驗證；須先完成擷取能力及時序，再做遊戲專用辨識。

@@ -37,3 +37,7 @@ class LatestFrame:
     def peek(self) -> Frame | None:
         with self._condition:
             return self._frame
+
+    def counters(self) -> dict[str, int]:
+        with self._condition:
+            return {"published": self.published, "overwritten": self.overwritten}

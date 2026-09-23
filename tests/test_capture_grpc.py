@@ -1,6 +1,7 @@
 """Protocol conversion and cancellation tests with no AVD dependency."""
 
 from pathlib import Path
+from queue import Queue
 from tempfile import TemporaryDirectory
 import threading
 import time
@@ -48,6 +49,9 @@ class CaptureGrpcTests(unittest.TestCase):
             def close(self):
                 self.stopped.set()
 
+            def probe_health(self, last_frame):
+                return "static"
+
         class Launcher:
             def launch(self, package):
                 now = time.monotonic_ns()
@@ -59,6 +63,86 @@ class CaptureGrpcTests(unittest.TestCase):
         session.start("example.game", readiness_frames=1)
         session.monitor_for(0.06, max_frame_age_s=0.005)
         self.assertEqual(worker.latest.published, 1)
+        self.assertEqual(session.state, "DEGRADED")
+        self.assertFalse(session.frame_fresh)
+        session.stop()
+
+    def test_unverifiable_one_frame_stream_loses_health(self):
+        class Source:
+            event_driven = True
+
+            def __init__(self):
+                self.closed = threading.Event()
+                self.sent = False
+
+            def capture(self):
+                if not self.sent:
+                    self.sent = True
+                    now = time.monotonic_ns()
+                    return Frame(0, 1, 1, b"\0\0\0", now), now
+                self.closed.wait(2)
+                raise RuntimeError("closed")
+
+            def close(self):
+                self.closed.set()
+
+        class Launcher:
+            def launch(self, package):
+                now = time.monotonic_ns()
+                return now, now
+
+        clock = HostClock()
+        session = SessionController(CaptureWorker(Source(), clock, Telemetry()),
+                                    Launcher(), clock, Telemetry())
+        session.start("example.game", readiness_frames=1)
+        with self.assertRaisesRegex(RuntimeError, "stale"):
+            session.monitor_for(0.05, max_frame_age_s=0.005)
+        self.assertEqual(session.state, "ERROR")
+        self.assertFalse(session.frame_fresh)
+        session.stop()
+
+    def test_inactive_then_active_recovers_only_on_new_frame(self):
+        class Source:
+            event_driven = True
+            inactive = False
+
+            def __init__(self):
+                self.frames = Queue()
+                self.frames.put(0)
+
+            def capture(self):
+                sequence = self.frames.get(timeout=2)
+                if sequence is None:
+                    raise RuntimeError("closed")
+                now = time.monotonic_ns()
+                return Frame(sequence, 1, 1, b"\0\0\0", now), now
+
+            def close(self):
+                self.frames.put(None)
+
+        class Launcher:
+            def launch(self, package):
+                now = time.monotonic_ns()
+                return now, now
+
+        clock = HostClock()
+        source = Source()
+        session = SessionController(CaptureWorker(source, clock, Telemetry()),
+                                    Launcher(), clock, Telemetry())
+        session.start("example.game", readiness_frames=1)
+        source.inactive = True
+        session.monitor_for(0.02, max_frame_age_s=0.1)
+        self.assertEqual(session.state, "DEGRADED")
+        self.assertFalse(session.frame_fresh)
+        source.inactive = False
+        session.monitor_for(0.02, max_frame_age_s=0.1)
+        self.assertEqual(session.state, "DEGRADED")
+        self.assertFalse(session.frame_fresh)
+        source.frames.put(1)
+        self.assertIsNotNone(session.worker.latest.read_after(0, 1))
+        session.monitor_for(0.02, max_frame_age_s=0.1)
+        self.assertEqual(session.state, "NAVIGATING")
+        self.assertTrue(session.frame_fresh)
         session.stop()
 
     def test_fixture_counter_decoding(self):
@@ -251,6 +335,159 @@ class CaptureGrpcTests(unittest.TestCase):
         self.assertEqual(source.relative_stale_drops, 1)
         self.assertEqual(source.source_gaps, 0)
         source.close()
+
+    @unittest.skipUnless(__import__("importlib").util.find_spec("grpc"), "grpcio extra not installed")
+    def test_relative_guard_rejects_timestamp_discontinuities(self):
+        class Clock:
+            value = 0
+
+            def now_ns(self):
+                self.value += 10_000_000
+                return self.value
+
+        for timestamps, message in (([1_000_000, 999_000], "backwards"),
+                                    ([1_000_000, 3_000_000], "forward"),
+                                    ([1_000_000, 0], "missing"),
+                                    ([1_000_000] * 4, "stopped")):
+            with self.subTest(message=message):
+                class Call:
+                    def __init__(self):
+                        images = [Image(bytes(12), sequence=i) for i in range(len(timestamps))]
+                        for image, timestamp in zip(images, timestamps):
+                            image.timestampUs = timestamp
+                        self.images = iter(images)
+
+                    def __next__(self):
+                        return next(self.images)
+
+                    def cancel(self):
+                        pass
+
+                class FakeSource(EmulatorGrpcCapture):
+                    def _open(self):
+                        self._call = Call()
+                        return self._call
+
+                source = FakeSource("emulator-5554", endpoint=GrpcEndpoint("127.0.0.1:8554", "x", "fake"),
+                                    clock=Clock(), max_relative_lag_ms=5)
+                source.capture()
+                with self.assertRaisesRegex(RuntimeError, message):
+                    source.capture()
+                self.assertEqual(source._sequence, 1)
+                source.close()
+
+    @unittest.skipUnless(__import__("importlib").util.find_spec("grpc"), "grpcio extra not installed")
+    def test_relative_guard_does_not_reanchor_long_backlog(self):
+        class Clock:
+            value = 0
+
+            def now_ns(self):
+                self.value += 10_000_000
+                return self.value
+
+        class Call:
+            def __init__(self):
+                images = [Image(bytes(12), sequence=i) for i in range(100)]
+                for i, image in enumerate(images):
+                    image.timestampUs = 1_000_000 + i * 1_000
+                self.images = iter(images)
+
+            def __next__(self):
+                return next(self.images)
+
+            def cancel(self):
+                pass
+
+        class FakeSource(EmulatorGrpcCapture):
+            def _open(self):
+                self._call = Call()
+                return self._call
+
+        source = FakeSource("emulator-5554", endpoint=GrpcEndpoint("127.0.0.1:8554", "x", "fake"),
+                            clock=Clock(), max_relative_lag_ms=5)
+        source.capture()
+        with self.assertRaisesRegex(RuntimeError, "no progress"):
+            source.capture()
+        self.assertEqual(source._sequence, 1)
+        self.assertGreater(source.relative_stale_drops, 1)
+        source.close()
+
+    @unittest.skipUnless(__import__("importlib").util.find_spec("grpc"), "grpcio extra not installed")
+    def test_relative_guard_marks_accumulated_clock_drift_untrusted(self):
+        class Clock:
+            value = 0
+
+            def now_ns(self):
+                self.value += 10_000_000
+                return self.value
+
+        class Call:
+            def __init__(self):
+                images = [Image(bytes(12), sequence=i) for i in range(100)]
+                for i, image in enumerate(images):
+                    image.timestampUs = 1_000_000 + i * 19_000
+                self.images = iter(images)
+
+            def __next__(self):
+                return next(self.images)
+
+            def cancel(self):
+                pass
+
+        class FakeSource(EmulatorGrpcCapture):
+            def _open(self):
+                self._call = Call()
+                return self._call
+
+        source = FakeSource("emulator-5554", endpoint=GrpcEndpoint("127.0.0.1:8554", "x", "fake"),
+                            clock=Clock(), max_relative_lag_ms=5)
+        source.capture()
+        with self.assertRaisesRegex(RuntimeError, "no progress"):
+            source.capture()
+        self.assertGreater(source.relative_stale_drops, 1)
+        source.close()
+
+    @unittest.skipUnless(__import__("importlib").util.find_spec("grpc"), "grpcio extra not installed")
+    def test_relative_guard_cancels_blocked_stream_after_drop(self):
+        class Call:
+            def __init__(self):
+                self.count = 0
+                self.cancelled = threading.Event()
+
+            def __next__(self):
+                if self.count < 2:
+                    if self.count:
+                        time.sleep(0.03)
+                    image = Image(bytes(12), sequence=self.count)
+                    image.timestampUs = 1_000_000 + self.count * 1_000
+                    self.count += 1
+                    return image
+                self.cancelled.wait(3)
+                raise StopIteration
+
+            def cancel(self):
+                self.cancelled.set()
+
+        call = Call()
+
+        class FakeSource(EmulatorGrpcCapture):
+            def _open(self):
+                with self._lock:
+                    self._call = call
+                return call
+
+        source = FakeSource("emulator-5554", endpoint=GrpcEndpoint("127.0.0.1:8554", "x", "fake"),
+                            max_relative_lag_ms=5)
+        worker = CaptureWorker(source, HostClock(), Telemetry())
+        worker.start()
+        self.assertIsNotNone(worker.latest.read_after(-1, 1))
+        self.assertTrue(call.cancelled.wait(2))
+        deadline = time.monotonic() + 1
+        while worker.error is None and time.monotonic() < deadline:
+            time.sleep(0.005)
+        worker.stop(join_timeout_s=2)
+        self.assertIsNotNone(worker.error)
+        self.assertEqual(source.relative_stale_drops, 1)
 
 
 if __name__ == "__main__":
