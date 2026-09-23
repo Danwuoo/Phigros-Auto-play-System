@@ -174,7 +174,15 @@ MMAP 傳輸目前沒有證據是必要且有撕裂風險，WGC／scrcpy 也尚�
 | 640×360 尺寸診斷 | 30.007 | 1,271 / 1,271 | 42.38 | 1,270；23.66 / 39.23 / 45.58 / 53.45 | 0 / 0 / 0 | 15.9% | 47.5 / 49.8 |
 | 1280×720 RGBA8888 診斷 | 10.009 | 360 / 359 | 36.08 | 359；26.94 / 45.76 / 54.13 / 61.62 | 1 / 0 / 0 | 98.0% | 60.4 / 63.8 |
 
-三批正常收到 35.70、37.06、36.37 張／正式秒，皆未達 55 個不同畫面／秒，也未達 p95 ≤33.4 ms、p99 ≤50 ms。收到影格幾乎都帶不同可見計數；在此擷取條件下，Fixture 自身可見更新率亦僅約 36–37 Hz，不存在已證實的 60 FPS 來源。未擷取時用受控 Fixture 的 `dumpsys gfxinfo org.pas.capturefixture` 累積 `Total frames rendered` 差值作三個 10 秒離線觀察，得到 517 / 10.200 s（50.69 Hz）、444 / 10.229 s（43.41 Hz）、427 / 10.297 s（41.47 Hz）；測量工具與主機／AVD 負載未固定，因此只能證明未擷取時也沒有穩定 60 Hz，不能把差值全部歸因於 gRPC。此 gfxinfo 僅量測專用 Fixture，不作遊戲決策。
+上表前三批是修正過程中的工作樹量測；完整正式窗口與 CPU 計法已修正，然而當時尚無乾淨提交版本。完成可靠性程式後，以**乾淨提交 `e2444f3fd1d3c77f925da7a76274346081c1e9d4`** 再跑三批相同的就緒後暖機 10 秒、正式 60 秒。每批 `run_config` 均記錄完整 `command_argv`、該提交與 `git_dirty=false`，原始 JSONL 可按事件時間重算：
+
+| 乾淨提交正常批次 | 正式秒數 | 收到／不同計數；計數率 Hz | 到達間隔 n；p50 / p95 / p99 / 最大 ms | 來源跳號 | CPU 單核心 | RSS p50 / 最大 MiB |
+| --- | ---: | --- | --- | ---: | ---: | ---: |
+| final 1 | 60.001 | 2,154 / 2,153；35.93 | 2,153；27.33 / 49.01 / 63.11 / 91.55 | 2 | 58.3% | 58.3 / 60.7 |
+| final 2 | 60.005 | 2,150 / 2,147；35.86 | 2,149；27.41 / 50.76 / 64.85 / 82.76 | 1 | 57.2% | 57.9 / 60.2 |
+| final 3 | 60.009 | 2,126 / 2,124；35.40 | 2,125；27.75 / 51.23 / 64.77 / 81.61 | 1 | 58.1% | 58.0 / 59.9 |
+
+乾淨提交三批收到約 35.4–35.9 張／正式秒，皆未達 55 個不同畫面／秒，也未達 p95 ≤33.4 ms、p99 ≤50 ms。收到影格幾乎都帶不同可見計數；在此擷取條件下，Fixture 自身可見更新率亦僅約 35–36 Hz，不存在已證實的 60 FPS 來源。未擷取時用受控 Fixture 的 `dumpsys gfxinfo org.pas.capturefixture` 累積 `Total frames rendered` 差值作三個 10 秒離線觀察，得到 517 / 10.200 s（50.69 Hz）、444 / 10.229 s（43.41 Hz）、427 / 10.297 s（41.47 Hz）；測量工具與主機／AVD 負載未固定，因此只能證明未擷取時也沒有穩定 60 Hz，不能把差值全部歸因於 gRPC。此 gfxinfo 僅量測專用 Fixture，不作遊戲決策。
 
 慢 consumer 的 `frames_read` 分別 584／298，跳過 297／547 個本機序號；恢復批次的第一次恢復讀取主機駐留 30.85 ms。覆蓋、跳過與收到數是不同事件，不能相加。接收端暫停無保護時，暫停結束後 4.57–47.85 ms 先交付來源序號 599–607 的相對舊圖，55.58 ms 才跳到 621；來源與主機相鄰差值之差由約 +467 ms 回到約 −12 ms。啟用保護的獨立批次丟棄 3 張，暫停結束後 31.04 ms 首張交付序號 654，來源與主機差值之差約 −0.86 ms；沒有觀察到持續回放。這只驗證受控停頓下的相對新鮮度，不是絕對 source frame age。額外的 10 秒最終 watchdog 驗證批次見原始日誌。
 
@@ -191,6 +199,9 @@ MMAP 傳輸目前沒有證據是必要且有撕裂風險，WGC／scrcpy 也尚�
 | `round2_native_normal_2/capture.jsonl` | `02B5C55356C9B5E560B1C3EAF02A58B1F791EA7388CC9A8A9049259A4DF96AAE` |
 | `round2_native_normal_3/capture.jsonl` | `3014A1F31DA25F6987D3F1EF7D5357B364A30DAB63CD3C851003B96E235E96B5` |
 | `round2_native_normal_4/capture.jsonl` | `4858C3645F6504A25BAF3C6AA124A52DC7B69E1C35698628875E2A873B811068` |
+| `round2_final_normal_1/capture.jsonl` | `00DF6AB7CA194177047E2D217B2F337E167543C22251CAD3AA8B04159ED438A3` |
+| `round2_final_normal_2/capture.jsonl` | `5EEB38A3198755CAFECD46DB5856B8DFEE2E3E43FF4A27A74A6BCF9F9428B738` |
+| `round2_final_normal_3/capture.jsonl` | `88915CC59600189BDE06193DC8F16948BD7545FE8689ADF42563690A898DA740` |
 | `round2_native_consumer50/capture.jsonl` | `2C0612E15C55BAEC3F29F360635D3789F30949919F960BCB69DF75D6C427B2B0` |
 | `round2_native_consumer100/capture.jsonl` | `209E0323295FEA3A1F044C95585FBD6B7A4CE46AE4F6D4B49B05E1A3B6A07EBF` |
 | `round2_native_recover/capture.jsonl` | `61B21EE4BA416284F4266F5969B3304C4202AD0C899903780BB7A978CB10E4B7` |
