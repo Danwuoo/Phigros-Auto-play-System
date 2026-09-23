@@ -118,6 +118,32 @@ class BenchTests(unittest.TestCase):
             events = [json.loads(line) for line in path.read_text().splitlines()]
             self.assertEqual(events[-1]["event"], "bench_failed")
 
+    def test_connection_failure_is_logged_and_fails(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "capture.jsonl"
+
+            def failed_source(*args):
+                raise RuntimeError("authentication failed")
+
+            with self.assertRaisesRegex(RuntimeError, "authentication failed"):
+                self.run_bench(failed_source, path)
+            events = [json.loads(line) for line in path.read_text().splitlines()]
+            self.assertEqual(events[-1]["event"], "bench_failed")
+            self.assertEqual(events[-1]["phase"], "CONNECTING")
+
+    def test_all_invalid_frames_fail_before_warmup(self):
+        class InvalidSource(Source):
+            def capture(self):
+                raise ValueError("invalid screenshot payload length")
+
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "capture.jsonl"
+            with self.assertRaisesRegex(RuntimeError, "invalid screenshot"):
+                self.run_bench(InvalidSource(), path)
+            events = [json.loads(line) for line in path.read_text().splitlines()]
+            self.assertEqual(events[-1]["event"], "bench_failed")
+            self.assertEqual(events[-1]["phase"], "CONNECTING")
+
     def test_one_frame_is_not_dynamic_success(self):
         with TemporaryDirectory() as directory:
             path = Path(directory) / "capture.jsonl"
