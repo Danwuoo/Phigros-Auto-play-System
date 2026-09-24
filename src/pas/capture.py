@@ -36,7 +36,11 @@ class CaptureWorker:
                 frame, start_ns = self.source.capture()
                 frame = replace(frame, pixels_ready_ns=frame.pixels_ready_ns or self.clock.now_ns(),
                                 published_ns=self.clock.now_ns())
+                overwritten_before = self.latest.counters()["overwritten"]
                 self.latest.publish(frame)
+                if self.latest.counters()["overwritten"] > overwritten_before:
+                    self.telemetry.record("capture_overwrite", frame_sequence=frame.sequence,
+                                          monotonic_ns=frame.published_ns)
                 if self.on_frame:
                     self.on_frame(frame)
                 self.telemetry.record("capture", frame_sequence=frame.sequence,

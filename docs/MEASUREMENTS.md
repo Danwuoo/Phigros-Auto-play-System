@@ -4,7 +4,7 @@
 
 - 主機：Windows 11 build 26200、AMD64、Python 3.14.7；時間來源為同一程序的 `time.monotonic_ns()`。CPU 型號、主機背景負載與使用率未控制或記錄，故主機排程數值僅是這台機器的初步基線。
 - 此行原為 AVD 尚未建立時的歷史盤點；其後使用者已建立並啟動 `phigros` AVD。2026-09-23 本次重新查驗：`emulator-5554` 已連線，Emulator 37.1.11.0，遊戲選單畫面 1280×720。觸控能力與遊戲判定效果仍未驗證。
-- 指令見 [README](../README.md#執行與重現)。暖機：主機排程每批先執行 10 次，不納入 100 次統計；合成與緩衝區測試沒有暖機。原始 JSONL 位於本工作樹的 `measurements/`（不納入 Git）；新 gRPC 基準每次使用獨立檔名，舊檔同名重跑可能覆寫。統計採線性插值百分位數；此處排程 jitter 為預定觸控與實際注入開始之誤差的 p95−p5，並另記 p95 絕對中位偏差。擷取間隔 p95−p5 不等於觸控排程 jitter。呼叫返回不代表畫面已反映觸控。
+- 指令見 [README](../README.md#執行與重現)。暖機：主機排程每批先執行 10 次，不納入 100 次統計；合成與緩衝區測試沒有暖機。第二輪原始 JSONL 位於此工作樹的 `measurements/`（不納入 Git）；初版歷史原始資料位於下文列出的舊工作樹。gRPC 基準每次使用獨立檔名且拒絕覆寫。統計採線性插值百分位數；此處排程 jitter 為預定觸控與實際注入開始之誤差的 p95−p5，並另記 p95 絕對中位偏差。擷取間隔 p95−p5 不等於觸控排程 jitter。呼叫返回不代表畫面已反映觸控。
 
 ## 容量 1 的最新 frame 緩衝區
 
@@ -51,9 +51,11 @@
 
 ## 2026-09-23 Emulator gRPC 串流實測
 
+**歷史數據更正（2026-09-24）：** 本節至「原生橫向像素 fixture」的舊 gRPC CPU 欄位把暖機與停止成本納入 process time，卻以宣告的正式 duration 為分母，因此不代表正式窗口 CPU 使用率；沒有保存兩端 CPU 快照，不能從舊 JSONL 補算可靠修正值。舊批次的來源跳號、inactive、相對舊圖丟棄與覆蓋也是生命週期累積值，不應解讀為正式窗口計數。部分負載批次正式影格跨度明顯短於宣告時長；例如 `grpc_fixture_load` 的正式樣本只跨 11.5515509 秒，且第一張就是正式樣本。下列舊 FPS／到達分布只描述實際已收樣本；對長時間穩態與 CPU／負載的結論應以第二輪重測取代。舊原始日誌在 `C:/Users/wurre/.codex/worktrees/f1a5/Phigros-Auto-play-System/measurements/`，此工作樹僅唯讀引用，原始 SHA-256 不更動。
+
 此節是本次**新量測**，與上面的歷史 ADB 摘要分開。主機 Windows 11 build 26200，Intel Core Ultra 5 125H（18 邏輯處理器）、Intel Arc／NVIDIA RTX 3050 Laptop GPU；Python 3.14.7，grpcio 1.84.0、protobuf 7.36.2、Pillow 12.3.0。ADB 37.0.1、Emulator 37.1.11.0 build 15917651。`phigros` AVD：Android 16／SDK 36、x86_64、4 vCPU、6144 MB、host GPU、物理顯示 720×1280／320 dpi、目前遊戲選單橫向輸出 1280×720，顯示模式 60 Hz。裝置序號本次為 `emulator-5554`，gRPC 在 127.0.0.1:8554，以本機 discovery 權杖認證。遊戲版本與背景 GPU 使用率未可靠取得；主機其他負載未固定。安裝版 `proto/emulator_controller.proto` SHA-256 為 `1D62C6BCAD5F06621F90EC2BF26C661BA769CCD0F1416B5314D25A68E04EEE5F`。
 
-使用一般 gRPC transport 的 RGB888，請求原尺寸。每批暖機 10 秒、正式收集 60 秒，畫面為已有的遊戲選單，含部分動畫但沒有可驗證的每幀真值；60 Hz 是顯示設定，**不是已確認的來源更新率**。到達間隔按相鄰 `capture_complete_ns` 計，像素就緒間隔另按 `pixels_ready_ns` 計；來源 Unix 微秒原值不與主機 monotonic 直接相減。百分位數採線性插值，CPU 是本程序 process time 除正式量測時間，以單一核心百分比表示；RSS 是本程序 Working Set。原始 JSONL 與診斷 PNG 在下表所列的本工作樹 `measurements/`，被 Git 忽略。
+使用一般 gRPC transport 的 RGB888，請求原尺寸。舊命令宣告暖機 10 秒、正式收集 60 秒，畫面為已有的遊戲選單，含部分動畫但沒有可驗證的每幀真值；60 Hz 是顯示設定，**不是已確認的來源更新率**。到達間隔按相鄰 `capture_complete_ns` 計，像素就緒間隔另按 `pixels_ready_ns` 計；來源 Unix 微秒原值不與主機 monotonic 直接相減。百分位數採線性插值。下表舊 CPU 欄位是混合窗口的 process time 除宣告的正式秒數，**不可作正式窗口 CPU 結論**；RSS 是本程序 Working Set。原始 JSONL 與診斷 PNG 被 Git 忽略，存放位置見上段更正。
 
 | 條件 | 收到影格／60 s | 到達間隔 p50 / p95 / p99 / 最大 (ms) | 像素就緒 p95 (ms) | 來源跳號 | CPU 單核心 | RSS p50 / 最大 (MiB) |
 | --- | ---: | --- | ---: | ---: | ---: | ---: |
@@ -137,7 +139,7 @@ Chrome 轉成直向 720×1280；診斷圖中的兩排位元標記已校準為水
 | 1280×720，500 ms 接收暫停 | 1,076 / 1,075 | 36.63 | 27.12 / 47.87 / 56.54 / 505.23 | 23 | 65.2% | 57.36 / 60.56 |
 | 1280×720，500 ms 暫停且相對落後上限 100 ms | 1,011 / 1,011 | 34.41 | 28.39 / 52.42 / 64.32 / 548.88 | 18 | 67.6% | 57.09 / 59.06 |
 
-正常第 1 批的 2,026 個相鄰計數差全為 `+1`；第 2 批僅有 1 次 `+2`；第 3 批有 2 次重複、2 次 `+2`、1 次 `+3`。這表示實際收到的來源畫面大多連續，但**原生畫面在擷取期間的繪製率也只約 34–35 Hz**；不能從此判定 gRPC 穩定漏掉 60 FPS 來源。縮小請求解析度後收到率約 41.3 Hz、CPU 明顯下降，顯示像素量／主機處理成本有貢獻；這是不同尺寸的單批診斷，不是 1280×720 合格結果。1280×720 三批均未達每秒 55 張不同畫面、到達間隔 p95 ≤33.4 ms、p99 ≤50 ms 的研究目標。沒有可靠的來源產生時間與主機時鐘對齊，絕對 source frame age 仍未知。
+正常第 1 批的 2,026 個相鄰計數差全為 `+1`；第 2 批僅有 1 次 `+2`；第 3 批有 2 次重複、2 次 `+2`、1 次 `+3`。這表示實際收到的來源畫面大多連續，但**原生畫面在擷取期間的繪製率也只約 34–35 Hz**；不能從此判定 gRPC 穩定漏掉 60 FPS 來源。縮小請求解析度後收到率約 41.3 Hz；舊 CPU 數值窗口不一致，只能把這批視為尺寸成本線索，需重測才能定量比較。這是不同尺寸的單批診斷，不是 1280×720 合格結果。1280×720 三批均未達每秒 55 張不同畫面、到達間隔 p95 ≤33.4 ms、p99 ≤50 ms 的研究目標。沒有可靠的來源產生時間與主機時鐘對齊，絕對 source frame age 仍未知。
 
 原生畫面的暫停測試也證實短暫上游積壓。無保護時，暫停前計數 17,062；恢復後於 3.82／8.93／14.65 ms 先收到 17,063–17,065，直到 36.40 ms 才跳到 17,089。前三張的來源與主機時戳**差值之差**約 481／455／445 ms，追上的一張約 1 ms。啟用相對落後上限 100 ms 的另一批丟棄 4 張，暫停前計數 18,615，恢復後首張 18,637 於 47.84 ms 交付。這滿足本次受控暫停後 100 ms 內恢復較新畫面的觀察，但不代表所有場景的絕對當前畫面都可判定。
 
@@ -153,3 +155,106 @@ Chrome 轉成直向 720×1280；診斷圖中的兩排位元標記已校準為水
 | `measurements/grpc_native_receiver_guard/capture.jsonl` | `9B39A794DFED3A3E1D43BB0AE1D78F01D2D51117BE40D5CDC9D577EC10B2E08B` |
 
 MMAP 傳輸目前沒有證據是必要且有撕裂風險，WGC／scrcpy 也尚未進入同條件比較。此階段僅確認 gRPC 可用與已列出的性質，未選定遊戲用擷取後端。
+
+## 2026-09-24 第二輪窗口修正與 AVD 重測
+
+本輪在 `c38fe00` 後的獨立工作樹修正 R1–R4，執行時工作樹尚未提交。環境延續同一 Windows 11 build 26200、Emulator 37.1.11、Python 3.14.7、grpcio 1.84.0、protobuf 7.36.2、Pillow 12.3.0、`phigros` AVD 與原生 `PAS Capture Fixture`。序號 `emulator-5554`、RGB888 原尺寸 1280×720、`source_rotation=1`、top-down；實體模擬器以 `adb emu rotate` 校正，診斷 PNG 的四色角落與可見計數均正向。除表列差異外，首張有效影格後暖機 10 秒、正式 monotonic 窗口 60 秒；對照批次暖機 5 秒、正式 30 秒。每批 `--ready-timeout-s 15 --fixture-scale 1`，來源 Unix metadata 僅保留診斷，不計算絕對影格年齡。主機其他背景負載未固定；CPU 是正式窗口 process time／實際 monotonic 牆鐘，單核心百分比。RSS 是進程 Working Set。JSONL 事件在半開區間 `[measurement_start_ns, measurement_end_ns)` 重算正式來源跳號、丟棄、發布、覆蓋與消費；兩端快照另存。百分位數採線性插值，本表樣本均少於 100,000 筆上限，因而使用完整正式樣本。初始化、暖機、停止、PNG 輸出均不在正式 CPU 窗口。
+
+| 條件 | 正式秒數 | 收到／不同可見計數 | 可見計數率 Hz | 到達間隔 n；p50 / p95 / p99 / 最大 ms | 來源跳號／相對舊圖丟棄／未讀覆蓋 | CPU 單核心 | RSS p50 / 最大 MiB |
+| --- | ---: | ---: | ---: | --- | ---: | ---: | ---: |
+| 原生正常 2 | 60.007 | 2,142 / 2,142 | 35.71 | 2,141；26.85 / 51.98 / 65.37 / 96.85 | 0 / 0 / 0 | 58.6% | 58.6 / 60.3 |
+| 原生正常 3 | 60.003 | 2,224 / 2,222 | 37.10 | 2,223；26.31 / 47.31 / 61.07 / 83.14 | 0 / 0 / 0 | 57.7% | 58.2 / 61.9 |
+| 原生正常 4 | 60.001 | 2,182 / 2,181 | 36.39 | 2,181；27.00 / 47.32 / 60.37 / 75.29 | 2 / 0 / 0 | 55.0% | 58.4 / 60.5 |
+| consumer 延遲 50 ms | 30.041 | 883 / 882 | 29.40 | 882；33.43 / 60.51 / 73.29 / 81.26 | 0 / 0 / 298 | 64.2% | 54.2 / 60.9 |
+| consumer 延遲 100 ms | 30.097 | 849 / 849 | 28.24 | 848；35.04 / 64.56 / 75.43 / 83.70 | 0 / 0 / 550 | 56.8% | 53.9 / 61.2 |
+| 100 ms consumer，15 秒恢復 | 30.005 | 1,076 / 1,076 | 35.87 | 1,075；26.64 / 50.58 / 64.12 / 79.93 | 0 / 0 / 369 | 59.8% | 57.8 / 59.7 |
+| 接收暫停 500 ms | 30.008 | 1,119 / 1,116 | 37.74 | 1,118；25.41 / 48.53 / 60.44 / 505.62 | 13 / 0 / 0 | 62.5% | 57.2 / 76.7 |
+| 接收暫停，落後上限 100 ms | 30.003 | 1,074 / 1,072 | 36.54 | 1,073；27.17 / 49.04 / 64.04 / 531.97 | 20 / 3 / 0 | 56.6% | 57.2 / 59.2 |
+| 同程序 Python CPU 忙碌 thread | 30.027 | 461 / 454 | 37.97 | 460；62.47 / 94.23 / 109.29 / 140.92 | 678 / 0 / 5 | 113.3% | 61.6 / 65.8 |
+| 640×360 尺寸診斷 | 30.007 | 1,271 / 1,271 | 42.38 | 1,270；23.66 / 39.23 / 45.58 / 53.45 | 0 / 0 / 0 | 15.9% | 47.5 / 49.8 |
+| 1280×720 RGBA8888 診斷 | 10.009 | 360 / 359 | 36.08 | 359；26.94 / 45.76 / 54.13 / 61.62 | 1 / 0 / 0 | 98.0% | 60.4 / 63.8 |
+
+上表前三批是修正過程中的工作樹量測；完整正式窗口與 CPU 計法已修正，然而當時尚無乾淨提交版本。完成可靠性程式後，以**乾淨提交 `e2444f3fd1d3c77f925da7a76274346081c1e9d4`** 再跑三批相同的就緒後暖機 10 秒、正式 60 秒。每批 `run_config` 均記錄完整 `command_argv`、該提交與 `git_dirty=false`，原始 JSONL 可按事件時間重算：
+
+| 乾淨提交正常批次 | 正式秒數 | 收到／不同計數；計數率 Hz | 到達間隔 n；p50 / p95 / p99 / 最大 ms | 來源跳號 | CPU 單核心 | RSS p50 / 最大 MiB |
+| --- | ---: | --- | --- | ---: | ---: | ---: |
+| final 1 | 60.001 | 2,154 / 2,153；35.93 | 2,153；27.33 / 49.01 / 63.11 / 91.55 | 2 | 58.3% | 58.3 / 60.7 |
+| final 2 | 60.005 | 2,150 / 2,147；35.86 | 2,149；27.41 / 50.76 / 64.85 / 82.76 | 1 | 57.2% | 57.9 / 60.2 |
+| final 3 | 60.009 | 2,126 / 2,124；35.40 | 2,125；27.75 / 51.23 / 64.77 / 81.61 | 1 | 58.1% | 58.0 / 59.9 |
+
+乾淨提交三批收到約 35.4–35.9 張／正式秒，皆未達 55 個不同畫面／秒，也未達 p95 ≤33.4 ms、p99 ≤50 ms。收到影格幾乎都帶不同可見計數；在此擷取條件下，Fixture 自身可見更新率亦僅約 35–36 Hz，不存在已證實的 60 FPS 來源。未擷取時用受控 Fixture 的 `dumpsys gfxinfo org.pas.capturefixture` 累積 `Total frames rendered` 差值作三個 10 秒離線觀察，得到 517 / 10.200 s（50.69 Hz）、444 / 10.229 s（43.41 Hz）、427 / 10.297 s（41.47 Hz）；測量工具與主機／AVD 負載未固定，因此只能證明未擷取時也沒有穩定 60 Hz，不能把差值全部歸因於 gRPC。此 gfxinfo 僅量測專用 Fixture，不作遊戲決策。
+
+慢 consumer 的 `frames_read` 分別 584／298，跳過 297／547 個本機序號；恢復批次的第一次恢復讀取主機駐留 30.85 ms。覆蓋、跳過與收到數是不同事件，不能相加。接收端暫停無保護時，暫停結束後 4.57–47.85 ms 先交付來源序號 599–607 的相對舊圖，55.58 ms 才跳到 621；來源與主機相鄰差值之差由約 +467 ms 回到約 −12 ms。啟用保護的獨立批次丟棄 3 張，暫停結束後 31.04 ms 首張交付序號 654，來源與主機差值之差約 −0.86 ms；沒有觀察到持續回放。這只驗證受控停頓下的相對新鮮度，不是絕對 source frame age。額外的 10 秒最終 watchdog 驗證批次見原始日誌。
+
+同程序負載將收到數降到 461／30 秒並出現 678 個來源跳號，但可見計數跨度約 38 Hz，顯示 Python/GIL 競爭確實阻礙接收，與 AVD 自身繪製率必須分開解讀。640×360 在更低 CPU 下收到約 42.4 張／秒，證明像素量／讀回成本有影響，卻不能代替 1280×720 驗收。RGBA8888 的像素轉換 p95 為 16.20 ms、正式 CPU 約 98.0%，RGB888 仍是較合理配置。主機／AVD 外部負載未單獨施加或控制，不從同程序負載推論其效果。
+
+為拆解 Python 成本，另以 `scripts/profile_grpc_stages.py` 在同一 Fixture 跑四個 10 秒診斷窗口（各暖機 2 秒）：只收原始 gRPC payload 343 張／34.19 Hz、p95 50.24 ms、CPU 46.4%；protobuf 解析 378 張／37.69 Hz、p95 47.38 ms、CPU 60.0%；再加 RGB 正規化 364 張／36.31 Hz、p95 48.14 ms、CPU 62.3%；再加可見計數解碼 359 張／35.90 Hz、p95 51.27 ms、CPU 65.5%。這些是連續不同時間的短批，受來源變動影響；沒有證據顯示 Python 轉換／計數是約 35 FPS 的主要限制。一般 RGB888 gRPC payload／模擬器繪製與讀回鏈仍是優先瓶頸，MMAP 只會改傳輸共享區，且有撕裂風險，暫無理由實作。下一個具體候選是 Windows Graphics Capture：它可繞開 Emulator gRPC readback，使用主機 QPC 時戳；目前 AVD 嵌在 Android Studio，需獨立模擬器視窗才能驗證視窗內容、縮放與遮擋，尚未比較，也沒有選定遊戲用後端。
+
+實機功能方面，已驗證同一 AVD 的認證、原生像素方向與可見計數、500 ms 暫停與保護、橫直方向切換（gRPC 影格 1280×720／rotation 1 轉 720×1280／rotation 0，無 worker error），阻塞來源停止 4.68 ms，並還原至 1280×720／rotation 1。另在 Fixture 已非前景時短暫切到 Android Home 作靜態測試：1.2 秒監控、`max_frame_age_s=0.25`，6 張過渡影格後狀態為 `DEGRADED`、`frame_fresh=false`、無錯誤；其後已恢復 Fixture 前景。inactive→active、來源時戳不連續、序號重置與逾期串流以假來源驗證。真實 AVD 的 inactive／斷線未以中斷裝置或清除資料方式製造，故這兩項實機功能仍待驗證。可靠性測試全綠不代表實機功能與性能目標全完成。
+
+重現範例：`$env:PYTHONPATH='src'; python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --duration-s 60 --warmup-s 10 --ready-timeout-s 15 --fixture-scale 1 --log measurements/<新 run id>/capture.jsonl`。慢 consumer 加 `--consumer-delay-ms 50|100`，恢復加 `--consumer-recover-after-s 15`，接收暫停加 `--receiver-pause-ms 500`，保護加 `--max-relative-lag-ms 100`，負載加 `--load`。各批獨立資料夾，未覆寫歷史日誌；所有 `summary` 均含窗口、分布與缺測來源年齡標記。原始 JSONL SHA-256：
+
+| 本工作樹 `measurements/` 下路徑 | SHA-256 |
+| --- | --- |
+| `round2_native_normal_2/capture.jsonl` | `02B5C55356C9B5E560B1C3EAF02A58B1F791EA7388CC9A8A9049259A4DF96AAE` |
+| `round2_native_normal_3/capture.jsonl` | `3014A1F31DA25F6987D3F1EF7D5357B364A30DAB63CD3C851003B96E235E96B5` |
+| `round2_native_normal_4/capture.jsonl` | `4858C3645F6504A25BAF3C6AA124A52DC7B69E1C35698628875E2A873B811068` |
+| `round2_final_normal_1/capture.jsonl` | `00DF6AB7CA194177047E2D217B2F337E167543C22251CAD3AA8B04159ED438A3` |
+| `round2_final_normal_2/capture.jsonl` | `5EEB38A3198755CAFECD46DB5856B8DFEE2E3E43FF4A27A74A6BCF9F9428B738` |
+| `round2_final_normal_3/capture.jsonl` | `88915CC59600189BDE06193DC8F16948BD7545FE8689ADF42563690A898DA740` |
+| `round2_native_consumer50/capture.jsonl` | `2C0612E15C55BAEC3F29F360635D3789F30949919F960BCB69DF75D6C427B2B0` |
+| `round2_native_consumer100/capture.jsonl` | `209E0323295FEA3A1F044C95585FBD6B7A4CE46AE4F6D4B49B05E1A3B6A07EBF` |
+| `round2_native_recover/capture.jsonl` | `61B21EE4BA416284F4266F5969B3304C4202AD0C899903780BB7A978CB10E4B7` |
+| `round2_native_pause/capture.jsonl` | `43C4BBDE4719099BA5E2F3B2FAD10F63A4348825D71A0CB7B4496F83818296B7` |
+| `round2_native_guard/capture.jsonl` | `E3898FE150A941906F1A5FC02C144297B4DD51589A6D5FCABEC36E95504374B4` |
+| `round2_native_load/capture.jsonl` | `4A8FF3BD876B4D13223CE3049A0CCE05B5244717AA09556358F3FFE6C5E1279D` |
+| `round2_native_half/capture.jsonl` | `9771218A188C2D7B03614C834775DF92B98F1F9BD1A588E6EE3902412DCF0FE9` |
+| `round2_native_rgba/capture.jsonl` | `3C8763BA652647CC6F45CB379C19E70FAF5F871E9A36E71BC99BC8D818BFEBB3` |
+| `round2_guard_final/capture.jsonl` | `0930B1F1F05C7DFA28BBFDB0F3B28566A6654A5186C3665FC1E8167385540E03` |
+| `round2_geometry/events.jsonl` | `1BFE5F927DDB83B62E9512227D8BAFB69E7DC1C0E0EFD37506E66D8BBA967B3B` |
+| `round2_static/events.jsonl` | `AEBD26CDE46BB773065441C54D48EE7246942B5A93248472C3F21834F1D297C4` |
+| `round2_profile_payload/summary.json` | `93200B602922E35E6980F7E43968CC5F25DA196A58B6C0558A94125BF972DF0E` |
+| `round2_profile_protobuf/summary.json` | `2F94CEBCB8E03409E58D68F1FFAB9A7D0195C7E4FE9F1512A08C1CF3FA8CE0A4` |
+| `round2_profile_rgb/summary.json` | `807197BD9BB32D3920E786B45D84E32930D883BF343C61D0306CAC3F2E7880BE` |
+| `round2_profile_fixture/summary.json` | `660391CDEA4C10D9CB84AC18DBA2DE6271457FF35A9AC258C807001AB951790E` |
+
+## 2026-09-24 後續 R2／R3 回歸與原生 Fixture 條件變化
+
+此節是上一節後續；保留所有約 35 Hz 的原始結果與解讀。程式提交 `e92d03e671db0a6d71530ac62d71a50a2d9a9798` 修正兩個可重現缺陷：事件式健康探測進行期間收到新有效串流影格時，不再依探測開始時的舊影格誤轉 `ERROR`；首次正式 consumer skip 以最後一個暖機影格序號為基準，包含窗口邊界後才完成的暖機 callback。假來源回歸涵蓋新影格、真正卡住、inactive、取消及故意延遲第一筆正式消費。安裝 gRPC extras 時以 `python -m unittest discover -s tests -q` 執行，36 項單元測試通過；設定 `PYTHONPATH=src` 的 `python -S` 模式 28 項通過、8 項依賴 gRPC 的測試跳過。真實 AVD 搭配受控探測回傳值時，等候新 gRPC 串流影格後再回傳 `changed`，觀察 `new_valid_frame_during_probe`、`NAVIGATING`、沒有 monitor 錯誤；此探測回傳值由測試控制，不能稱為真實 `getScreenshot` RPC 競態的直接重現。
+
+環境延續上一節 Windows 11、Emulator 37.1.11、Python 3.14.7、`phigros` AVD、`emulator-5554`，原生 `PAS Capture Fixture` 前景、gRPC RGB888、top-down、1280×720／`source_rotation=1`。後續量測時 Fixture 可見繪製率約 59 Hz，明顯高於前一約 35–36 Hz 條件。停止擷取程序後，用只讀 `dumpsys gfxinfo org.pas.capturefixture` 的累積 `Total frames rendered` 差值獨立觀察 606 張／10.2723452 秒（58.99 Hz），且確認 Fixture 前景。這支持來源此時確有接近 60 Hz 的畫面更新，卻**不能證明**為何與前一條件不同：螢幕／視窗狀態、模擬器排程及主機負載未受控，不把提升歸因於 R2／R3 修正。
+
+以下正式基準在乾淨提交 `e92d03e` 執行，`run_config.source_revision.git_dirty=false`。正常批次各就緒後暖機 10 秒、正式 60 秒；停頓及負載批次暖機 5 秒、正式 30 秒。均加 `--ready-timeout-s 15 --fixture-scale 1`，每批獨立 JSONL。百分位數是正式窗口全部相鄰 `capture_complete_ns` 間隔的線性插值；正式秒數含停頓，CPU 是同一正式窗口 process time／monotonic 時長，RSS 是程序 Working Set。`收到／不同計數` 的每秒值用不同計數除正式牆鐘，來源可見計數跨度率另由首末計數和影格跨度估計。主機其他負載未固定；來源 Unix 時戳不與主機 monotonic 直接相減。
+
+| 條件 | 正式秒數 | 收到／不同計數；不同計數／秒 | 可見計數跨度率 Hz | 到達間隔 n；p50 / p95 / p99 / 最大 ms | 來源跳號／相對丟棄／未讀覆蓋／consumer skip | CPU 單核心 | RSS p50 / 最大 MiB |
+| --- | ---: | --- | ---: | --- | ---: | ---: | ---: |
+| 正常 1 | 60.002 | 3,557 / 3,557；59.28 | 59.32 | 3,556；16.25 / 32.48 / 40.67 / 54.48 | 3 / 0 / 1 / 0 | 74.2% | 59.68 / 63.29 |
+| 正常 2 | 60.006 | 3,559 / 3,559；59.31 | 59.45 | 3,558；16.08 / 29.80 / 38.71 / 59.39 | 7 / 0 / 1 / 0 | 79.2% | 58.93 / 62.68 |
+| 正常 3 | 60.010 | 3,509 / 3,509；58.47 | 58.48 | 3,508；16.39 / 29.58 / 39.59 / 61.82 | 1 / 0 / 1 / 0 | 84.9% | 58.95 / 63.28 |
+| 接收暫停 500 ms，無保護 | 30.006 | 1,762 / 1,761；58.69 | 59.73 | 1,761；16.43 / 28.65 / 36.58 / 509.27 | 29 / 0 / 1 / 0 | 76.5% | 58.04 / 61.55 |
+| 接收暫停 500 ms，相對落後上限 100 ms | 30.012 | 1,754 / 1,754；58.44 | 59.55 | 1,753；16.32 / 29.29 / 36.76 / 546.49 | 28 / 4 / 1 / 0 | 72.2% | 58.21 / 63.37 |
+| 同程序 Python GIL 忙碌 thread | 30.004 | 510 / 510；17.00 | 59.93 | 509；61.78 / 92.99 / 96.33 / 140.60 | 1,289 / 0 / 8 / 7 | 109.2% | 62.22 / 66.50 |
+
+三批正常結果在此約 59 Hz 來源條件下，皆通過研究門檻：1280×720 至少 55 個不同畫面／秒、到達間隔 p95 ≤33.4 ms、p99 ≤50 ms。這只是**條件性的擷取到達驗收**；前一約 35 Hz 條件並未通過，絕對 source frame age、端到端觸控時序與遊戲判定窗仍未知。受控同程序 GIL 忙碌 thread 讓收到率降至約 17.00 張／秒，來源序號跳 1,289，儘管 Fixture 可見計數跨度仍約 59.93 Hz；這只描述同程序爭用，不代表主機或 AVD 外部負載性能。
+
+接收暫停無保護時，停頓前錨點來源序號 1016；停頓結束後 7.38／13.60／21.60 ms 先收到 1018–1020，兩個時域各自差值再相減顯示額外相對落後約 499／488／480 ms；30.23 ms 到達 1048 時差值回到約 3 ms。啟用相對落後上限的另一批丟棄 4 張，停頓前來源序號 1008，停頓結束後 44.96 ms 首張交付 1041，差值約 7.83 ms；後續沒有持續回放。來源序號跳號、丟棄與容量 1 覆蓋是不同計數，不互相相加；保護仍不能提供絕對新鮮度。
+
+另在修正尚未提交的工作樹做 100 ms 慢 consumer 30 秒批次：正式 30.027 秒收到 1,779 張／1,779 個不同計數、可見計數跨度 59.30 Hz；間隔 n=1,778，p50／p95／p99／最大為 16.06／31.08／38.93／53.15 ms；CPU 96.9%，RSS p50／最大 58.79／62.82 MiB。容量 1 緩衝區覆蓋 1,483 張、consumer 讀 296 張、正式 skip 1,478。最後暖機序號為 299，第一張正式消費序號為 300，首筆 skip=0；因此暖機影格沒有混入正式 skip。此批 `git_dirty=true`，主要用於邊界與慢 consumer 驗證，不能代替乾淨提交的正式正常三批。
+
+可逆故障檢查只針對 Fixture：關閉 AVD 螢幕 2 秒時 `dumpsys power` 顯示非 Awake，`inactive_frames=0`、worker 無錯誤；開啟並恢復 Fixture 前景後收到新 1280×720 影格。Android Studio 視窗最小化 2 秒再恢復期間，同樣收到有效影格、`inactive_frames=0`、worker 無錯誤，Studio 可見狀態已恢復。主動關閉**客戶端**已認證 gRPC source 得到 `gRPC screenshot stream failed: CANCELLED`，重新建立已認證來源後取得 1280×720 影格。這驗證客戶端中斷與重建，不代表整台 AVD 斷線／重連；兩種安全的可視性操作皆未觸發 `0×0` inactive，真實 inactive 路徑尚未實機驗證。假來源的 inactive→active 回歸仍通過。未清除裝置或遊戲資料，也未中斷登入。
+
+可重現正常命令：`$env:PYTHONPATH='src'; python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --duration-s 60 --warmup-s 10 --ready-timeout-s 15 --fixture-scale 1 --log measurements/<新 run id>/capture.jsonl`。對照批次改 `--duration-s 30 --warmup-s 5`，另加 `--receiver-pause-ms 500`、`--max-relative-lag-ms 100` 或 `--load`；consumer 批次加 `--consumer-delay-ms 100`。競態與故障檢查可用 `python scripts/verify_probe_race.py --serial emulator-5554 --log measurements/<新 run id>/events.jsonl`、`python scripts/verify_capture_faults.py --serial emulator-5554 --screen-off-s 2 --log measurements/<新 run id>/capture.jsonl`，前提是 Fixture 前景；安全可視性檢查的結果見原始日誌。每次新路徑不可覆寫。下列檔案存於此工作樹、被 Git 忽略；SHA-256 供核對，移除 worktree 前須另行保存。
+
+| 本工作樹 `measurements/` 下路徑 | SHA-256 |
+| --- | --- |
+| `round2_followup_consumer100/capture.jsonl` | `60DAAE4B236314B78502A0D0E09BA079E0CA9B6D2F759426B9991DBDBDBC593A` |
+| `round2_followup_clean_normal_1/capture.jsonl` | `BD6D15775D0ED70163614DF4DC2A417EA115AD7C4934206FA133B6C4AF23D8A1` |
+| `round2_followup_clean_normal_2/capture.jsonl` | `9B88513502359F9FF2296922CAB618F38185B4A889E02AC860FA439F83BFC14C` |
+| `round2_followup_clean_normal_3/capture.jsonl` | `675E5A3CA9AD5EA0A0EC276C9DBF49138C229885EC7400BA111D3A6430DC1D6A` |
+| `round2_followup_clean_pause/capture.jsonl` | `DC8088313B820097EF41AEF02790958466C44EE0BA4406E16A5C49266C43A5C5` |
+| `round2_followup_clean_guard/capture.jsonl` | `2012268A0266D70AF9A4EC479AA0A305705688C53656EC64732957B51C580A28` |
+| `round2_followup_clean_load/capture.jsonl` | `B59477F35A13922E85FEA0878EFB441F4FE184D60426852B6D83130B0F90E395` |
+| `round2_followup_gfxinfo/summary.json` | `C8FB83268868C690C36EE78EB418BF96A44B5C684781D4EDA168628D8429EA7B` |
+| `round2_probe_followup_2/events.jsonl` | `296F999D854A6554CE3B4B646AD9DC54CACA3C687250D2EAD5BF4F2C5348957F` |
+| `round2_fault_followup/capture.jsonl` | `12980ACAB41A577F0A5E810E6BF4A5DDFDE188ECB00645BF99C2D41525EECD60` |
+| `round2_visibility_followup/events.jsonl` | `2F03B89A57DD98CFFBA2153C6DC51E43B23781866B39E88ADD238C446BE72516` |

@@ -119,6 +119,7 @@ class EmulatorGrpcCapture:
         self.max_relative_lag_ns = (round(max_relative_lag_ms * 1e6)
                                     if max_relative_lag_ms is not None else None)
         self._lock = threading.Lock()
+        self._stats_lock = threading.Lock()
         self._channel = None
         self._call = None
         self._closed = False
@@ -126,10 +127,24 @@ class EmulatorGrpcCapture:
         self._last_source_sequence: int | None = None
         self._last_shape: tuple[int, int, int] | None = None
         self._lag_anchor: tuple[int, int] | None = None
+        self._last_source_time_us: int | None = None
+        self._last_source_host_ns: int | None = None
+        self._last_published_ns: int | None = None
+        self._frozen_timestamps = 0
+        self._drop_since_ns: int | None = None
+        self._drop_timer: threading.Timer | None = None
         self.inactive_frames = 0
         self.inactive = False
         self.source_gaps = 0
         self.relative_stale_drops = 0
+        self.invalid_frames = 0
+
+    def counters(self) -> dict[str, int]:
+        with self._stats_lock:
+            return {"inactive_frames": self.inactive_frames,
+                    "invalid_frames": self.invalid_frames,
+                    "source_gaps": self.source_gaps,
+                    "relative_stale_drops": self.relative_stale_drops}
 
     def _open(self):
         try:
@@ -175,7 +190,8 @@ class EmulatorGrpcCapture:
                     raise RuntimeError("gRPC screenshot stream ended") from None
                 complete_ns = self.clock.now_ns()
                 if image.format.width == 0 and image.format.height == 0:
-                    self.inactive_frames += 1
+                    with self._stats_lock:
+                        self.inactive_frames += 1
                     self.inactive = True
                     if self.telemetry:
                         self.telemetry.record("capture_inactive", monotonic_ns=complete_ns,
@@ -185,6 +201,8 @@ class EmulatorGrpcCapture:
                 try:
                     width, height, rgb = rgb24_from_image(image, requested, self.row_order)
                 except ValueError as error:
+                    with self._stats_lock:
+                        self.invalid_frames += 1
                     if self.telemetry:
                         self.telemetry.record("capture_invalid", reason=str(error),
                                               monotonic_ns=complete_ns,
@@ -195,25 +213,60 @@ class EmulatorGrpcCapture:
                 source_sequence = int(image.seq)
                 previous = self._last_source_sequence
                 if previous is not None and source_sequence > previous + 1:
-                    self.source_gaps += source_sequence - previous - 1
+                    gap = source_sequence - previous - 1
+                    with self._stats_lock:
+                        self.source_gaps += gap
+                    if self.telemetry:
+                        self.telemetry.record("capture_source_gap", monotonic_ns=complete_ns,
+                                              previous_source_sequence=previous,
+                                              source_sequence=source_sequence, gap=gap)
                 if previous is not None and source_sequence <= previous:
                     raise RuntimeError("emulator source sequence reset; restart capture source")
                 self._last_source_sequence = source_sequence
                 source_timestamp_us = int(image.timestampUs) or None
-                if source_timestamp_us is not None and self.max_relative_lag_ns is not None:
+                if self.max_relative_lag_ns is not None:
+                    if source_timestamp_us is None:
+                        raise RuntimeError("source Unix timestamp missing; relative lag guard untrusted")
+                    previous_us = self._last_source_time_us
+                    previous_host_ns = self._last_source_host_ns
+                    if previous_us is not None:
+                        source_delta_ns = (source_timestamp_us - previous_us) * 1000
+                        host_delta_ns = complete_ns - previous_host_ns
+                        if source_delta_ns < 0:
+                            raise RuntimeError("source Unix timestamp moved backwards; restart capture source")
+                        if source_delta_ns == 0:
+                            self._frozen_timestamps += 1
+                            if self._frozen_timestamps >= 3 or host_delta_ns >= 250_000_000:
+                                raise RuntimeError("source Unix timestamp stopped; restart capture source")
+                        else:
+                            self._frozen_timestamps = 0
+                        if source_delta_ns > max(1_000_000_000, host_delta_ns + 500_000_000):
+                            raise RuntimeError("source Unix timestamp jumped forward; restart capture source")
+                    self._last_source_time_us = source_timestamp_us
+                    self._last_source_host_ns = complete_ns
                     if self._lag_anchor is None:
                         self._lag_anchor = (complete_ns, source_timestamp_us)
                     anchor_host_ns, anchor_source_us = self._lag_anchor
                     relative_lag_ns = ((complete_ns - anchor_host_ns) -
                                        (source_timestamp_us - anchor_source_us) * 1000)
                     if relative_lag_ns > self.max_relative_lag_ns:
-                        self.relative_stale_drops += 1
+                        with self._stats_lock:
+                            self.relative_stale_drops += 1
+                        with self._lock:
+                            if self._drop_since_ns is None and not self._closed:
+                                self._drop_since_ns = complete_ns
+                                self._drop_timer = threading.Timer(1.0, self._cancel_stalled_drops)
+                                self._drop_timer.daemon = True
+                                self._drop_timer.start()
                         if self.telemetry:
                             self.telemetry.record("capture_relative_stale_drop",
                                                   frame_sequence=self._sequence,
                                                   source_sequence=source_sequence,
                                                   relative_lag_ms=relative_lag_ns / 1e6,
                                                   monotonic_ns=complete_ns)
+                        if (self._last_published_ns is not None and
+                                complete_ns - self._last_published_ns > 1_000_000_000):
+                            raise RuntimeError("relative lag guard made no progress for 1 second")
                         continue
                 shape = (width, height, int(image.format.rotation.rotation))
                 if self._last_shape is not None and shape != self._last_shape and self.telemetry:
@@ -222,9 +275,16 @@ class EmulatorGrpcCapture:
                 self._last_shape = shape
                 frame = Frame(self._sequence, width, height, rgb, complete_ns,
                               pixels_ready_ns=ready_ns, source_sequence=source_sequence,
+                              stream_generation=0,
                               source_timestamp_us=source_timestamp_us,
                               source_rotation=shape[2])
                 self._sequence += 1
+                self._last_published_ns = ready_ns
+                with self._lock:
+                    self._drop_since_ns = None
+                    if self._drop_timer is not None:
+                        self._drop_timer.cancel()
+                        self._drop_timer = None
                 return frame, wait_start_ns
         except Exception:
             raise
@@ -234,7 +294,47 @@ class EmulatorGrpcCapture:
             self._closed = True
             call, channel = self._call, self._channel
             self._call = self._channel = None
+            if self._drop_timer is not None:
+                self._drop_timer.cancel()
+                self._drop_timer = None
         if call is not None:
             call.cancel()
         if channel is not None:
             channel.close()
+
+    def _cancel_stalled_drops(self) -> None:
+        with self._lock:
+            if self._closed or self._drop_since_ns is None:
+                return
+            remaining_ns = 1_000_000_000 - (self.clock.now_ns() - self._drop_since_ns)
+            if remaining_ns > 0:
+                self._drop_timer = threading.Timer(remaining_ns / 1e9, self._cancel_stalled_drops)
+                self._drop_timer.daemon = True
+                self._drop_timer.start()
+                return
+            if self._call is not None:
+                self._call.cancel()
+
+    def probe_health(self, last_frame: Frame, timeout_s: float = 0.5) -> str:
+        """Check transport and visible pixels without publishing or dating an old frame."""
+        from .emulator_proto import emulator_controller_pb2 as pb
+        with self._lock:
+            channel = self._channel
+            if self._closed or channel is None:
+                return "failed"
+        request = pb.ImageFormat(format=pb.ImageFormat.RGB888 if self.image_format == "rgb888"
+                                 else pb.ImageFormat.RGBA8888,
+                                 width=self.width, height=self.height)
+        rpc = channel.unary_unary(
+            "/android.emulation.control.EmulatorController/getScreenshot",
+            request_serializer=lambda message: message.SerializeToString(),
+            response_deserializer=pb.Image.FromString)
+        try:
+            image = rpc(request, timeout=timeout_s,
+                        metadata=(("authorization", f"Bearer {self.endpoint.token}"),))
+            width, height, rgb = rgb24_from_image(image, request.format, self.row_order)
+        except Exception:
+            return "failed"
+        if width != last_frame.width or height != last_frame.height or rgb != last_frame.rgb:
+            return "changed"
+        return "static"

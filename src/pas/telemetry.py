@@ -31,6 +31,11 @@ class Telemetry:
                 self._file.close()
                 self._file = None
 
+    def flush(self) -> None:
+        with self._lock:
+            if self._file:
+                self._file.flush()
+
     def __enter__(self) -> "Telemetry":
         return self
 
