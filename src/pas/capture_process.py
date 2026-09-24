@@ -6,8 +6,10 @@ the emulator's independent MMAP writer.
 
 from dataclasses import dataclass
 from multiprocessing import get_context, parent_process, shared_memory
+from pathlib import Path
 import os
 import struct
+import tempfile
 import threading
 import time
 import zlib
@@ -24,7 +26,8 @@ _MAGIC = b"PAS1"
 # Header: magic, schema, generation, sequence, source sequence, width, height,
 # rotation, payload length, capture complete, pixels ready, child publish,
 # notification, source timestamp, produced (always -1), crc32, row order.
-_STATES = {0: "STARTING", 1: "READY", 2: "STOPPING", 3: "STOPPED", 4: "FAILED"}
+_STATES = {0: "STARTING", 1: "READY", 2: "STOPPING", 3: "STOPPED", 4: "FAILED",
+           5: "FORCED_STOPPED"}
 
 
 @dataclass(frozen=True)
@@ -98,7 +101,7 @@ class _FakeSource:
                 "inactive_frames": 0, "invalid_frames": 0}
 
 
-def _make_source(config):
+def _make_source(config, mmap_directory=None):
     if config.kind == "fake":
         return _FakeSource(config)
     from pathlib import Path
@@ -109,10 +112,32 @@ def _make_source(config):
                                image_format=config.image_format, width=config.width,
                                height=config.height, row_order=config.row_order,
                                max_relative_lag_ms=config.max_relative_lag_ms,
-                               transport=config.transport, max_rgb_bytes=config.max_rgb_bytes)
+                               transport=config.transport, max_rgb_bytes=config.max_rgb_bytes,
+                               mmap_directory=mmap_directory)
 
 
-def _child_main(config, shm_name, lock, stop, state, generation, counters, probe, pause):
+def _cleanup_mmap_directory(directory, timeout_s=0.75):
+    """Remove only this source's private directory, after its child has exited."""
+    if directory is None:
+        return
+    deadline = time.monotonic() + timeout_s
+    path = Path(directory)
+    while path.exists():
+        try:
+            for child in path.glob("pas-emulator-mmap-*.bin"):
+                child.unlink(missing_ok=True)
+            path.rmdir()
+            return
+        except OSError:
+            # On Windows the server may still be releasing its mapping after
+            # cancellation/disconnect. Never scan other sources' temp files.
+            if time.monotonic() >= deadline:
+                raise RuntimeError("owned MMAP directory could not be cleaned") from None
+            time.sleep(0.02)
+
+
+def _child_main(config, shm_name, lock, stop, state, generation, counters, probe, pause,
+                mmap_directory):
     """Module-level spawn entry. No channel, lock closure, or Frame is pickled."""
     clock = HostClock()
     shm = shared_memory.SharedMemory(name=shm_name)
@@ -120,10 +145,24 @@ def _child_main(config, shm_name, lock, stop, state, generation, counters, probe
     sequence = 0
     latest_frame = None
     stats_thread = None
+    cancel_thread = None
     load_thread = None
+    parent = parent_process()
     try:
-        source = _make_source(config)
-        parent = parent_process()
+        source = _make_source(config, mmap_directory)
+        def watch_stop():
+            # Independent of capture(), IPC locks, and potentially slow probes.
+            while not stop.value:
+                if parent is not None and not parent.is_alive():
+                    stop.value = 1
+                    break
+                time.sleep(0.02)
+            try:
+                getattr(source, "cancel", source.close)()
+            except Exception:
+                pass  # Parent still enforces a bounded join/terminate deadline.
+        cancel_thread = threading.Thread(target=watch_stop, name="capture-child-cancel", daemon=True)
+        cancel_thread.start()
         def spin():
             value = 0
             while not stop.value:
@@ -131,12 +170,7 @@ def _child_main(config, shm_name, lock, stop, state, generation, counters, probe
         def sample_status():
             while not stop.value:
                 time.sleep(0.05)
-                if parent is not None and not parent.is_alive():
-                    stop.value = 1
-                    try:
-                        source.close()
-                    except Exception:
-                        pass
+                if stop.value:
                     break
                 counts = source.counters()
                 counters[6] = counts.get("source_gaps", 0)
@@ -161,6 +195,8 @@ def _child_main(config, shm_name, lock, stop, state, generation, counters, probe
         stats_thread.start()
         while not stop.value:
             frame, _ = source.capture()
+            if stop.value:
+                break
             latest_frame = frame
             size = len(frame.rgb)
             if size > config.max_rgb_bytes:
@@ -203,10 +239,13 @@ def _child_main(config, shm_name, lock, stop, state, generation, counters, probe
     except Exception:
         # Never send an exception string across the boundary: gRPC failures
         # or a future source may embed credentials in one.
-        state.value = 4
-        counters[3] += 1
+        if not stop.value:
+            state.value = 4
+            counters[3] += 1
     finally:
         stop.value = 1
+        if cancel_thread is not None:
+            cancel_thread.join(0.5)
         if stats_thread is not None:
             stats_thread.join(0.2)
         if load_thread is not None:
@@ -219,6 +258,9 @@ def _child_main(config, shm_name, lock, stop, state, generation, counters, probe
         if state.value != 4:
             state.value = 3
         shm.close()
+        if parent is not None and not parent.is_alive():
+            # After abnormal parent exit there is no supervisor left to clean.
+            _cleanup_mmap_directory(mmap_directory)
 
 
 class ProcessCaptureSource:
@@ -244,6 +286,10 @@ class ProcessCaptureSource:
         self._last_sequence = 0
         self._closed = False
         self._guard = threading.Lock()
+        # Known before spawning, so even a forcibly killed writer is recoverable.
+        self._mmap_directory = (tempfile.mkdtemp(prefix="pas-capture-mmap-")
+                                if config.transport == "mmap" else None)
+        self.shutdown_report = None
 
     @property
     def inactive(self):
@@ -263,7 +309,7 @@ class ProcessCaptureSource:
                                                       self.stop_event,
                                                       self.state_value, self.generation,
                                                       self.counters_value, self.probe_value,
-                                                      self.pause_value),
+                                                      self.pause_value, self._mmap_directory),
                                                 name="pas-capture-child")
                 self.process.start()
 
@@ -368,13 +414,18 @@ class ProcessCaptureSource:
             if self._closed:
                 return
             self._closed = True
-            self.state_value.value = 2
+            if self.state_value.value != 4:
+                self.state_value.value = 2
             self.stop_event.value = 1
             process = self.process
+        forced = False
+        reaped = process is None or process.pid is None
+        cleanup_error = None
         try:
-            if process is not None:
+            if process is not None and process.pid is not None:
                 process.join(join_timeout_s)
                 if process.is_alive():
+                    forced = True
                     process.terminate()
                     process.join(1)
                 if process.is_alive():
@@ -382,8 +433,23 @@ class ProcessCaptureSource:
                     process.join(1)
                 if process.is_alive():
                     raise TimeoutError("capture child could not be reaped")
+                reaped = True
         finally:
             self.shm.close()
             self.shm.unlink()
-            if self.state_value.value != 4:
+            if reaped:
+                try:
+                    _cleanup_mmap_directory(self._mmap_directory)
+                except RuntimeError as error:
+                    cleanup_error = error
+            self.shutdown_report = {"forced": forced, "child_reaped": reaped,
+                                    "exitcode": process.exitcode if process else None,
+                                    "mmap_cleanup_complete": reaped and cleanup_error is None}
+            if not reaped or cleanup_error or (process and process.exitcode not in (None, 0) and not forced):
+                self.state_value.value = 4
+            elif forced:
+                self.state_value.value = 5
+            elif self.state_value.value != 4:
                 self.state_value.value = 3
+            if cleanup_error:
+                raise cleanup_error

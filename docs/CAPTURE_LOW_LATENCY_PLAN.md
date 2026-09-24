@@ -2,6 +2,12 @@
 
 日期：2026-09-24。狀態：冷開發已完成；使用者啟動模擬器後，已完成前景 Fixture 的 payload／MMAP 診斷實機批次。MMAP 生產端一致性、來源絕對年齡、約 60 Hz 同條件性能與後續觸控閉環仍待驗收。本輪同時實作獨立擷取程序與 gRPC MMAP 傳輸。
 
+## 驗收修正交付（2026-09-24）
+
+- 審查基線 `68e1a8b` 的三項必修已處理：獨立 RPC 取消與 parent-owned MMAP 目錄回收、晚送達暖機影格序號基準，以及資源取樣前後時間與個別 CPU 窗口。`FORCED_STOPPED` 與 shutdown 事件明確揭露強制退出，MMAP 仍只准診斷。
+- 新測試以真正 Windows spawn／loopback RPC 驗證首張影格前及後的阻塞取消，另以無法取消的假程序驗證强制退出與檔案清理；以同步事件重現暖機延遲交付，以注入取樣成本驗證 CPU 分母與偏差。已有 56 項完整 unittest 通過；本次不連線 emulator，實機性能與來源一致性限制不變。
+- 舊 CPU 與 skip 統計的適用限制已補入 MEASUREMENTS.md，保留所有歷史原始檔，不臆造校正數字。`PYTHONPATH=src python -S -m unittest discover -s tests -q` 為 43 通過、13 依賴型略過；完整模式 56 通過。三配置 loopback smoke（1280×720、暖機 0.25 秒、正式 1 秒）完成，兩個 process 配置皆 exitcode=0、forced=false、mmap_cleanup_complete=true，JSONL 重算吻合。原始檔與雜湊見 MEASUREMENTS.md；這次 smoke 只驗證交付與統計，不作性能比較。`git diff --check` 通過。
+
 ## 使用者開啟模擬器後的實機續測（2026-09-24）
 
 - 在 `emulator-5554`、Emulator 37.1.11.0、原生橫向 1280×720 `PAS Capture Fixture` 前景，以 RGB888/top-down 取得有非對稱色塊和動態可見計數的 PNG。thread payload 與 process payload 各三批就緒、暖機 10 秒、正式 60 秒；process payload 的 5 秒 `start-session` 正常停在 `NAVIGATING`、`frame_fresh=true`，未注入觸控。

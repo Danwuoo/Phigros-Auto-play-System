@@ -1,5 +1,23 @@
 # 2026-09-23 基線量測與限制
 
+## 2026-09-24 驗收修正（僅離線）
+
+`68e1a8b` 的程序版本驗收發現三項問題，現已補回歸並修正：阻塞串流停止沒有 cooperative RPC cancel，導致正常停止也 terminate 且殘留 MMAP 檔案；暖機圖晚送達污染正式 consumer skips；CPU 資源取樣窗口与影格窗口不一致且偏差欄位漏算取樣耗時。
+
+下方既有 `live_*`／`offline_final3_*` 原始紀錄保持原樣，27 份實機 JSONL 雜湊與 9 批正式影格數／到達間隔在審查中重算吻合。**舊程序 CPU 欄位不能當成精確正式窗口 CPU，舊 snapshot offset 也不是完整偏差界限**；CPU 降低的數值僅保留為歷史觀察，不作已校正的改善比例。舊 consumer skips 可能包含晚送達暖機影格。缺少取樣前後時間的舊資料不能事後補算；本次未為修復重新啟動或連線 emulator。
+
+新 JSONL 保存各項 CPU／counter 取樣 before/after 時間、CPU 個別窗口與誤差界限、完整批次偏差，以及每筆 consumer sequence_skip；詳細契約見 ARCHITECTURE.md。新的資源 CPU 百分比以取樣窗口中點估計，並非絕對來源延遲或精確影格窗口使用率。
+
+離線驗證包含 Windows spawn、payload/MMAP 假 gRPC server 在首張前／後阻塞時的正常取消及清理、無法取消的假 child 強制停止／私有檔案回收、晚送達暖機圖與真正正式跳幀的區分、注入慢速 CPU accessor 的成本排除及時間括號。完整 unittest 與無 extras 模式結果見低延遲計畫的修正交付紀錄。
+
+修正後本機 loopback smoke 使用 `PYTHONPATH=src python scripts/offline_capture_comparison.py --duration-s 1 --warmup-s 0.25 --width 1280 --height 720 --output-dir measurements/review_fixed_comparison`。執行於 `68e1a8b` 加上本次未提交修正的工作樹，僅作功能驗證，不作實機或新舊性能比較。thread payload、process payload、process MMAP 診斷分別有 47、49、55 筆正式 capture，三者窗口、樣本數及到達間隔摘要皆可由 JSONL 重算；兩個 process shutdown 都是 exitcode=0、forced=false、child_reaped=true、mmap_cleanup_complete=true。CPU 取樣中點時長均落在報告的時間上下界。原始資料位於主工作樹 `C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/review_fixed_comparison/`（Git 忽略，不隨 merge 複製）：
+
+| 檔案 | SHA-256 |
+| --- | --- |
+| thread-payload.jsonl | `7793620bb81752aebc209643ec4012957a7bbd44369bcd954b2ddc690bd872c1` |
+| process-payload.jsonl | `0c2f37ed93cf8ab4bb98b9d08f195597599822142867bd306b7f0cca7ba36218` |
+| process-mmap.jsonl | `510154463ce05690e7913e3afad98fc4ef9e36a426ff66279648181c6d895185` |
+
 ## 2026-09-24 使用者啟動模擬器後的獨立擷取程序實測
 
 環境：Windows 11 build 26200、Python 3.14.7、Emulator 37.1.11.0 的 `phigros` AVD（Small Phone、Android 16/API 36.1、4 vCPU、6 GB RAM、host GPU、顯示設定 60 Hz），ADB `emulator-5554`；原生 `org.pas.capturefixture` 前景，擷取為 1280×720、top-down、RGB888、`--fixture-scale 1`。主機其他工作與 GPU 負載未固定，不能假定顯示設定等於實際 Fixture 繪製率。所有批次以同機 `time.monotonic_ns()` 計時，在 `0eff346` 乾淨提交上執行；下文 CLI 輸入驗證修正是在量測後加入。正常批次依序 thread payload 1、process payload 1、process payload 2、thread payload 2、thread payload 3、process payload 3，然後 process MMAP 診斷 1–3；每批就緒後暖機 10 秒，正式窗口 60 秒。前景圖的非對稱角落色塊、可見計數和行序已用診斷 PNG 檢查。原始 JSONL／PNG 位於此工作樹被 Git 忽略的 `measurements/live_*/`，SHA-256 見 [雜湊清單](LIVE_CAPTURE_SHA256.txt)；移除工作樹前須另行保存原始資料。

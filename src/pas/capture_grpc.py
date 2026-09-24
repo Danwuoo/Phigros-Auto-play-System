@@ -100,7 +100,8 @@ class EmulatorGrpcCapture:
                  row_order: str = "top-down", clock: Clock | None = None,
                  telemetry: Telemetry | None = None,
                  max_relative_lag_ms: float | None = None,
-                 transport: str = "payload", max_rgb_bytes: int = 16 * 1024 * 1024):
+                 transport: str = "payload", max_rgb_bytes: int = 16 * 1024 * 1024,
+                 mmap_directory: str | None = None):
         if image_format not in ("rgb888", "rgba8888"):
             raise ValueError("image format must be rgb888 or rgba8888")
         if width < 0 or height < 0:
@@ -125,6 +126,7 @@ class EmulatorGrpcCapture:
         self.transport = transport
         self.consistency = "unverified" if transport == "mmap" else "payload"
         self.max_rgb_bytes = max_rgb_bytes
+        self._mmap_directory = mmap_directory
         self._mmap_file = None
         self._mmap_path = None
         self._mmap = None
@@ -178,7 +180,8 @@ class EmulatorGrpcCapture:
             # SharedMemory names are not emulator handles. The file is private
             # to this source and never resized while the stream may write it.
             raw_capacity = min(32 * 1024 * 1024, (self.max_rgb_bytes * 4 + 2) // 3)
-            fd, path = tempfile.mkstemp(prefix="pas-emulator-mmap-", suffix=".bin")
+            fd, path = tempfile.mkstemp(prefix="pas-emulator-mmap-", suffix=".bin",
+                                        dir=self._mmap_directory)
             file = None
             try:
                 os.fchmod(fd, 0o600) if hasattr(os, "fchmod") else None
@@ -350,7 +353,8 @@ class EmulatorGrpcCapture:
         except Exception:
             raise
 
-    def close(self) -> None:
+    def cancel(self) -> None:
+        """Wake a blocked capture without releasing pixels it may still copy."""
         with self._lock:
             self._closed = True
             call, channel = self._call, self._channel
@@ -362,6 +366,9 @@ class EmulatorGrpcCapture:
             call.cancel()
         if channel is not None:
             channel.close()
+
+    def close(self) -> None:
+        self.cancel()
         if self._mmap is not None:
             self._mmap.close()
             self._mmap = None

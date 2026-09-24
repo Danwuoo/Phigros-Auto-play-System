@@ -101,7 +101,9 @@ python -m pas.cli capture-bench --serial emulator-5554 --samples 30 --warmup 3 -
 
 ### 獨立擷取程序（2026-09-24 冷開發）
 
-`emulator-grpc` 新增可選 `--capture-execution process`；預設仍是原本的 `thread`。程序模式以 Windows `spawn` 建立子程序，子程序持有認證串流，經固定 16 MiB 上限的共享像素區把最新 RGB24 畫面交給父程序；父程序複製為不可變 `Frame.rgb`。正常 Session 僅允許 `--grpc-transport payload`。子程序阻塞時停止期限為 2 秒 cooperative 等待，之後僅強制回收本次建立的子程序。靜態畫面沒有新串流回覆時，Session 會退到 `DEGRADED`，不把 heartbeat 當新圖。
+`emulator-grpc` 新增可選 `--capture-execution process`；預設仍是原本的 `thread`。程序模式以 Windows `spawn` 建立子程序，子程序持有認證串流，經固定 16 MiB 上限的共享像素區把最新 RGB24 畫面交給父程序；父程序複製為不可變 `Frame.rgb`。正常 Session 僅允許 `--grpc-transport payload`。停止時獨立監控執行緒取消阻塞 RPC，再由擷取執行緒解除映射；2 秒仍未退出才強制回收本次 child，狀態為 `FORCED_STOPPED`，JSONL 的 `capture_process_shutdown` 記錄強制停止、exitcode 及映射檔回收結果。父程序持有 MMAP 私有目錄的清理責任，清理失敗會報錯。靜態畫面沒有新串流回覆時，Session 會退到 `DEGRADED`，不把 heartbeat 當新圖。
+
+程序量測的 `resource_windows` 分別保存父／子 CPU 及計數快照的取樣前後 monotonic 時間。CPU 百分比使用各自取樣區間的中點估計時長，附區間與偏差界限，**不是精確的影格正式窗口 CPU**；昂貴的子程序取樣不計入父程序 CPU 窗口。`snapshot_start_offset_ms`／`snapshot_end_offset_ms` 涵蓋完整取樣批次。暖機結束後才送達的舊影格會更新序號基準，不列入正式 `consumer_skips`；每筆 `frame_consumed.sequence_skip` 可重算摘要。
 
 ```powershell
 $env:PYTHONPATH='src'

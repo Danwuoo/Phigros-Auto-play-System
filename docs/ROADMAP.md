@@ -1,5 +1,7 @@
 # 開發路線圖
 
+> 2026-09-24 驗收修正：程序版的阻塞 RPC 取消／MMAP 殘留回收、暖機 consumer skip 邊界與 CPU 取樣窗口已補離線回歸。資源 CPU 現在按各自取樣區間估計並揭露邊界偏差；舊程序 CPU 數據不視為精確正式窗口量測。MMAP 繼續限制為診斷，本次沒有新增 emulator 實測結論。
+
 > 2026-09-24 冷開發：獨立程序 payload 路徑、固定容量 IPC 與 opt-in MMAP 診斷候選已完成離線實作及測試。實機相容性、同條件尾端延遲和來源 MMAP 一致性仍待集中驗收；不改變先完成擷取／觸控能力與簡單目標閉環、最後才做 Phigros 專用辨識的順序。清單見 [擷取低延遲開發計畫](CAPTURE_LOW_LATENCY_PLAN.md)。
 
 > 2026-09-24 Fixture 實機續測：已驗證獨立程序 payload 可連續擷取並完成 5 秒 Session；正常 thread／process payload 各三批 60 秒，MMAP 指定 1280×720 後另做三批診斷。MMAP 預設 `0×0` 無影格，仍因上游一致性未證明而禁止 Session。這次 Fixture 可見更新率約 39–44 Hz，三配置都不能套用約 60 Hz 的 55 張／秒研究門檻，也沒有證據選定遊戲用後端。完整分布與原始資料見 [量測紀錄](MEASUREMENTS.md)。

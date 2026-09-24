@@ -1,6 +1,7 @@
 """Real spawn and loopback tests. They never discover or contact an emulator."""
 
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import ExitStack
 import ctypes
 from multiprocessing import get_context
 from pathlib import Path
@@ -26,7 +27,31 @@ def _hold_lock(lock, ready):
     time.sleep(10)
 
 
+def _uncancellable_child(ready):
+    ready.set()
+    time.sleep(60)
+
+
 class ProcessCaptureTests(unittest.TestCase):
+    def test_forced_stop_is_reported_and_owned_mmap_files_are_reaped(self):
+        source = ProcessCaptureSource(ProcessCaptureConfig(kind="loopback",
+            endpoint="127.0.0.1:1", token_file="unused", transport="mmap"), diagnostic_mmap=True)
+        directory = Path(source._mmap_directory)
+        (directory / "pas-emulator-mmap-test.bin").write_bytes(b"owned")
+        ready = source.ctx.Event()
+        source.process = source.ctx.Process(target=_uncancellable_child, args=(ready,))
+        source.process.start()
+        try:
+            self.assertTrue(ready.wait(3))
+            source.close(join_timeout_s=0.01)
+            self.assertEqual(source.state, "FORCED_STOPPED")
+            self.assertTrue(source.shutdown_report["forced"])
+            self.assertTrue(source.shutdown_report["child_reaped"])
+            self.assertTrue(source.shutdown_report["mmap_cleanup_complete"])
+            self.assertFalse(directory.exists())
+        finally:
+            source.close()
+
     def test_spawn_rgb_snapshot_latest_and_monotonic(self):
         source = ProcessCaptureSource(ProcessCaptureConfig(kind="fake", fake_width=1280,
                                                            fake_height=720, fake_interval_ms=5))
@@ -203,31 +228,39 @@ class ProcessCaptureTests(unittest.TestCase):
 
 @unittest.skipUnless(__import__("importlib").util.find_spec("grpc"), "grpcio extra absent")
 class MmapLoopbackTests(unittest.TestCase):
-    def _server(self, writer, reply_bytes=b"", transport="mmap"):
+    def _server(self, writer, reply_bytes=b"", transport="mmap", block=None, state=None):
         import grpc
         from pas.emulator_proto import emulator_controller_pb2 as pb
         server = grpc.server(ThreadPoolExecutor(max_workers=2))
         def stream(request, context):
             if dict(context.invocation_metadata()).get("authorization") != "Bearer test-secret":
                 context.abort(grpc.StatusCode.UNAUTHENTICATED, "authentication required")
-            if transport == "mmap":
-                self.assertEqual(request.transport.channel, pb.ImageTransport.MMAP)
-                self.assertTrue(request.transport.handle.startswith("file:///"))
-                parsed = urlparse(request.transport.handle)
-                path = unquote(parsed.path)
-                if len(path) >= 3 and path[0] == "/" and path[2] == ":":
-                    path = path[1:]
-                with open(path, "r+b") as file:
-                    with mmap.mmap(file.fileno(), 0) as mapped:
-                        writer(mapped)
-            else:
-                self.assertEqual(request.transport.channel, 0)
-            image = pb.Image(seq=0, timestampUs=123456)
-            image.format.format = pb.ImageFormat.RGB888
-            image.format.width = 2
-            image.format.height = 2
-            image.image = reply_bytes
-            yield image
+            with ExitStack() as resources:
+                if transport == "mmap":
+                    self.assertEqual(request.transport.channel, pb.ImageTransport.MMAP)
+                    self.assertTrue(request.transport.handle.startswith("file:///"))
+                    parsed = urlparse(request.transport.handle)
+                    path = unquote(parsed.path)
+                    if len(path) >= 3 and path[0] == "/" and path[2] == ":":
+                        path = path[1:]
+                    file = resources.enter_context(open(path, "r+b"))
+                    mapped = resources.enter_context(mmap.mmap(file.fileno(), 0))
+                    writer(mapped)
+                    if state is not None:
+                        state["path"] = path
+                else:
+                    self.assertEqual(request.transport.channel, 0)
+                image = pb.Image(seq=0, timestampUs=123456)
+                image.format.format = pb.ImageFormat.RGB888
+                image.format.width = 2
+                image.format.height = 2
+                image.image = reply_bytes
+                if block != "before":
+                    yield image
+                if block:
+                    state["waiting"].set()
+                    while context.is_active():
+                        time.sleep(0.005)
         method = grpc.unary_stream_rpc_method_handler(
             stream, request_deserializer=pb.ImageFormat.FromString,
             response_serializer=lambda value: value.SerializeToString())
@@ -236,6 +269,45 @@ class MmapLoopbackTests(unittest.TestCase):
         port = server.add_insecure_port("127.0.0.1:0")
         server.start()
         return server, port
+
+    def test_stop_cancels_blocked_rpc_before_and_after_first_frame(self):
+        for transport in ("payload", "mmap"):
+            for block in ("before", "after"):
+                with self.subTest(transport=transport, block=block):
+                    state = {"waiting": threading.Event()}
+                    server, port = self._server(
+                        lambda m: m.__setitem__(slice(0, 12), b"a" * 12),
+                        reply_bytes=b"a" * 12 if transport == "payload" else b"",
+                        transport=transport, block=block, state=state)
+                    try:
+                        with TemporaryDirectory() as directory:
+                            token_file = Path(directory) / "token"
+                            token_file.write_text("test-secret")
+                            source = ProcessCaptureSource(ProcessCaptureConfig(kind="loopback",
+                                endpoint=f"127.0.0.1:{port}", token_file=str(token_file),
+                                transport=transport, max_rgb_bytes=1024),
+                                diagnostic_mmap=transport == "mmap")
+                            owned_directory = source._mmap_directory
+                            try:
+                                if block == "after":
+                                    source.capture()
+                                else:
+                                    source._start()
+                                self.assertTrue(state["waiting"].wait(3))
+                                started = time.monotonic()
+                                source.close()
+                                self.assertLess(time.monotonic() - started, 2)
+                                self.assertEqual(source.process.exitcode, 0)
+                                self.assertEqual(source.state, "STOPPED")
+                                self.assertFalse(source.shutdown_report["forced"])
+                                self.assertEqual(source.counters()["child_failures"], 0)
+                                if transport == "mmap":
+                                    self.assertFalse(Path(state["path"]).exists())
+                                    self.assertFalse(Path(owned_directory).exists())
+                            finally:
+                                source.close()
+                    finally:
+                        server.stop(0).wait()
 
     def test_mmap_file_uri_copy_and_cleanup(self):
         server, port = self._server(lambda mapped: mapped.__setitem__(slice(0, 12), bytes(range(12))))

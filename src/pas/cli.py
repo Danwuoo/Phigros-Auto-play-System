@@ -248,6 +248,32 @@ def _child_rss_bytes(pid: int | None) -> int | None:
         kernel.CloseHandle(handle)
 
 
+def _timed_resource_sample(clock, read):
+    before = clock.now_ns()
+    value = read()
+    return {"before_ns": before, "after_ns": clock.now_ns(), "value": value}
+
+
+def _cpu_sample_window(start, end, scale, measurement_start, measurement_end):
+    """CPU counters are not atomic with the frame clock; expose their bounds."""
+    start_mid = (start["before_ns"] + start["after_ns"]) / 2
+    end_mid = (end["before_ns"] + end["after_ns"]) / 2
+    duration_s = (end_mid - start_mid) / 1e9
+    seconds = ((end["value"] - start["value"]) / scale
+               if start["value"] is not None and end["value"] is not None else None)
+    return {"start": start, "end": end, "duration_s": duration_s,
+            "duration_min_s": max(0, end["before_ns"] - start["after_ns"]) / 1e9,
+            "duration_max_s": (end["after_ns"] - start["before_ns"]) / 1e9,
+            "start_offset_bounds_ms": [(start[key] - measurement_start) / 1e6
+                                       for key in ("before_ns", "after_ns")],
+            "end_offset_bounds_ms": [(end[key] - measurement_end) / 1e6
+                                     for key in ("before_ns", "after_ns")],
+            "cpu_seconds": seconds,
+            "one_core_percent": (seconds / duration_s * 100
+                                 if seconds is not None and duration_s > 0 else None),
+            "basis": "resource sample midpoint estimate; not exact frame-window CPU"}
+
+
 def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmup_s: float,
                           consumer_delay_ms: float, log: str | None = None,
                           ready_timeout_s: float = 10,
@@ -279,6 +305,7 @@ def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmu
     first_frame = None
     collecting_start = None
     collecting_end = None
+    last_pre_window_sequence = -1
     collection_lock = threading.Lock()
     load_stop = threading.Event()
     def spin_parent():
@@ -289,9 +316,10 @@ def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmu
     with Telemetry(log, instrument_write_cost=instrument_log_cost) as telemetry:
         source = ProcessCaptureSource(config, diagnostic_mmap=diagnostic_mmap)
         def collect(frame):
-            nonlocal frame_count, first_frame
+            nonlocal frame_count, first_frame, last_pre_window_sequence
             with collection_lock:
                 if collecting_start is None or frame.capture_complete_ns < collecting_start:
+                    last_pre_window_sequence = max(last_pre_window_sequence, frame.sequence)
                     return
                 if collecting_end is not None and frame.capture_complete_ns >= collecting_end:
                     return
@@ -346,16 +374,22 @@ def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmu
                 if worker.error:
                     raise RuntimeError("capture failed during warmup")
                 clock.sleep_until_ns(min(warmup_end, clock.now_ns() + 50_000_000))
-            cpu_parent_start = time.process_time_ns()
-            cpu_child_start = _child_cpu_seconds(source.process.pid)
-            counters_start = source.counters()
             snapshot_start_ns = clock.now_ns()
+            child_start_sample = _timed_resource_sample(
+                clock, lambda: _child_cpu_seconds(source.process.pid))
+            counter_start_sample = _timed_resource_sample(clock, source.counters)
             with collection_lock:
+                # Keep expensive child sampling outside the parent's CPU window.
+                parent_start_sample = _timed_resource_sample(clock, time.process_time_ns)
                 start_ns = clock.now_ns()
                 collecting_start = start_ns
+                last = max(last, last_pre_window_sequence)
                 boundary_frame = worker.latest.peek()
                 if boundary_frame is not None and boundary_frame.capture_complete_ns < start_ns:
                     last = max(last, boundary_frame.sequence)
+            cpu_parent_start = parent_start_sample["value"]
+            cpu_child_start = child_start_sample["value"]
+            counters_start = counter_start_sample["value"]
             planned_end = start_ns + round(duration_s * 1e9)
             if receiver_pause_ms:
                 source.request_receiver_pause(start_ns + round(duration_s * 0.4 * 1e9),
@@ -363,13 +397,21 @@ def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmu
             telemetry.record("bench_phase", phase="MEASURING", monotonic_ns=start_ns,
                              planned_end_ns=planned_end, counters=counters_start,
                              parent_cpu_ns=cpu_parent_start, child_cpu_s=cpu_child_start,
-                             snapshot_ns=snapshot_start_ns)
+                             snapshot_ns=snapshot_start_ns,
+                             resource_samples={"parent_cpu": parent_start_sample,
+                                               "child_cpu": child_start_sample,
+                                               "counters": counter_start_sample})
             while clock.now_ns() < planned_end:
                 frame = worker.latest.read_after(last, min(0.05, max(0, (planned_end - clock.now_ns()) / 1e9)))
                 if worker.error:
                     raise RuntimeError("capture failed during measurement")
-                if frame is None or frame.capture_complete_ns < start_ns:
+                if frame is None:
                     continue
+                if frame.capture_complete_ns < start_ns:
+                    last = max(last, frame.sequence)
+                    continue
+                with collection_lock:
+                    last = max(last, last_pre_window_sequence)
                 recovering = (consumer_recover_after_s is not None and
                               clock.now_ns() >= start_ns + round(consumer_recover_after_s * 1e9))
                 if recovering and recovery_first_residency_ms is None:
@@ -378,27 +420,36 @@ def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmu
                     telemetry.record("consumer_recovered", frame_sequence=frame.sequence,
                                      host_residency_ms=recovery_first_residency_ms,
                                      sequence_skip=recovery_first_sequence_skip)
-                skip_count += max(0, frame.sequence - last - 1)
+                sequence_skip = max(0, frame.sequence - last - 1)
+                skip_count += sequence_skip
                 last = frame.sequence
                 read_count += 1
                 consume_ns = clock.now_ns()
                 residency.append((consume_ns - frame.capture_complete_ns) / 1e6)
                 telemetry.record("frame_consumed", frame_sequence=frame.sequence,
-                                 consume_ns=consume_ns, capture_complete_ns=frame.capture_complete_ns)
+                                 consume_ns=consume_ns, capture_complete_ns=frame.capture_complete_ns,
+                                 sequence_skip=sequence_skip)
                 if consumer_delay_ms and not recovering:
-                    clock.sleep_until_ns(consume_ns + round(consumer_delay_ms * 1e6))
+                    clock.sleep_until_ns(min(planned_end, consume_ns + round(consumer_delay_ms * 1e6)))
             with collection_lock:
                 end_ns = clock.now_ns()
                 collecting_end = end_ns
+                parent_end_sample = _timed_resource_sample(clock, time.process_time_ns)
+            counter_end_sample = _timed_resource_sample(clock, source.counters)
+            child_end_sample = _timed_resource_sample(
+                clock, lambda: _child_cpu_seconds(source.process.pid))
             snapshot_end_ns = clock.now_ns()
-            counters_end = source.counters()
-            cpu_parent_end = time.process_time_ns()
-            cpu_child_end = _child_cpu_seconds(source.process.pid)
+            cpu_parent_end = parent_end_sample["value"]
+            cpu_child_end = child_end_sample["value"]
+            counters_end = counter_end_sample["value"]
             parent_rss = _rss_bytes()
             child_rss = _child_rss_bytes(source.process.pid)
             telemetry.record("bench_phase", phase="STOPPING", monotonic_ns=end_ns,
                              counters=counters_end, parent_cpu_ns=cpu_parent_end,
-                             child_cpu_s=cpu_child_end, snapshot_ns=snapshot_end_ns)
+                             child_cpu_s=cpu_child_end, snapshot_ns=snapshot_end_ns,
+                             resource_samples={"parent_cpu": parent_end_sample,
+                                               "child_cpu": child_end_sample,
+                                               "counters": counter_end_sample})
             if receiver_pause_ms:
                 telemetry.record("receiver_pause", **source.receiver_pause_times())
         except Exception as error:
@@ -420,8 +471,10 @@ def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmu
         window_s = (end_ns - start_ns) / 1e9
         values = list(arrival)
         gaps = [(b - a) / 1e6 for a, b in pairwise(values)]
-        child_cpu = (cpu_child_end - cpu_child_start if cpu_child_start is not None and
-                     cpu_child_end is not None else None)
+        parent_cpu_window = _cpu_sample_window(parent_start_sample, parent_end_sample, 1e9,
+                                               start_ns, end_ns)
+        child_cpu_window = _cpu_sample_window(child_start_sample, child_end_sample, 1,
+                                              start_ns, end_ns)
         dynamic_verified = (config.kind != "grpc" or len({v for _, v in fixture_values}) > 1)
         summary = {"mode": "process_capture_bench", "status": "complete" if frame_count and dynamic_verified else "incomplete",
                    "run_id": run_id, "execution": "process", "transport": config.transport,
@@ -450,10 +503,16 @@ def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmu
                                             for key in counters_start},
                    "telemetry_drops": 0,
                    "telemetry_policy": "synchronous bounded-memory JSONL; write failure fails capture",
-                   "parent_cpu_seconds": (cpu_parent_end - cpu_parent_start) / 1e9,
-                   "child_cpu_seconds": child_cpu,
-                   "child_cpu_one_core_percent": child_cpu / window_s * 100 if child_cpu is not None else None,
-                   "parent_cpu_one_core_percent": (cpu_parent_end - cpu_parent_start) / 1e7 / window_s,
+                   "resource_windows": {"parent_cpu": parent_cpu_window,
+                                        "child_cpu": child_cpu_window,
+                                        "counters": {"start": counter_start_sample,
+                                                     "end": counter_end_sample}},
+                   "counter_window_basis": "resource snapshots; not exact frame-window counts",
+                   "parent_cpu_seconds": parent_cpu_window["cpu_seconds"],
+                   "child_cpu_seconds": child_cpu_window["cpu_seconds"],
+                   "child_cpu_one_core_percent": child_cpu_window["one_core_percent"],
+                   "parent_cpu_one_core_percent": parent_cpu_window["one_core_percent"],
+                   "capture_shutdown": getattr(source, "shutdown_report", None),
                    "parent_rss_bytes_at_end": parent_rss, "child_rss_bytes_at_end": child_rss,
                    "log_write_cost_ms": telemetry.write_cost_distribution(start_ns, end_ns),
                    "source_frame_age": "unknown; Unix source timestamp not mapped to host monotonic",

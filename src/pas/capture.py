@@ -99,5 +99,8 @@ class CaptureWorker:
             self._thread.join(join_timeout_s)
             if self._thread.is_alive():
                 raise TimeoutError("capture worker did not stop within timeout")
+        shutdown = getattr(self.source, "shutdown_report", None)
+        if shutdown is not None:
+            self.telemetry.record("capture_process_shutdown", **shutdown)
         if close_error is not None:
             raise RuntimeError(f"capture source cleanup failed: {close_error}") from close_error
