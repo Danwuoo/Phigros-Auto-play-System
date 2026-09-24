@@ -36,13 +36,22 @@ class CaptureWorker:
                 frame, start_ns = self.source.capture()
                 frame = replace(frame, pixels_ready_ns=frame.pixels_ready_ns or self.clock.now_ns(),
                                 published_ns=self.clock.now_ns())
+                overwritten_before = self.latest.counters()["overwritten"]
                 self.latest.publish(frame)
+                if self.latest.counters()["overwritten"] > overwritten_before:
+                    self.telemetry.record("capture_overwrite", frame_sequence=frame.sequence,
+                                          monotonic_ns=frame.published_ns)
                 if self.on_frame:
                     self.on_frame(frame)
                 self.telemetry.record("capture", frame_sequence=frame.sequence,
                                       capture_wait_start_ns=start_ns,
                                       capture_start_ns=start_ns,
                                       capture_complete_ns=frame.capture_complete_ns,
+                                      notification_received_ns=frame.notification_received_ns,
+                                      snapshot_copy_started_ns=frame.snapshot_copy_started_ns,
+                                      snapshot_copy_complete_ns=frame.snapshot_copy_complete_ns,
+                                      ipc_published_ns=frame.ipc_published_ns,
+                                      parent_snapshot_complete_ns=frame.parent_snapshot_complete_ns,
                                       pixels_ready_ns=frame.pixels_ready_ns,
                                       decode_complete_ns=frame.pixels_ready_ns,
                                       published_ns=frame.published_ns,
@@ -90,5 +99,8 @@ class CaptureWorker:
             self._thread.join(join_timeout_s)
             if self._thread.is_alive():
                 raise TimeoutError("capture worker did not stop within timeout")
+        shutdown = getattr(self.source, "shutdown_report", None)
+        if shutdown is not None:
+            self.telemetry.record("capture_process_shutdown", **shutdown)
         if close_error is not None:
             raise RuntimeError(f"capture source cleanup failed: {close_error}") from close_error

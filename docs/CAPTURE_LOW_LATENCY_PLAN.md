@@ -1,6 +1,34 @@
 # 擷取低延遲開發計畫：獨立程序與 Emulator MMAP
 
-日期：2026-09-24。狀態：已規劃，待冷開發。本輪同時實作獨立擷取程序與 gRPC MMAP 傳輸；實機驗證另行集中安排。
+日期：2026-09-24。狀態：冷開發已完成；使用者啟動模擬器後，已完成前景 Fixture 的 payload／MMAP 診斷實機批次。MMAP 生產端一致性、來源絕對年齡、約 60 Hz 同條件性能與後續觸控閉環仍待驗收。本輪同時實作獨立擷取程序與 gRPC MMAP 傳輸。
+
+## 驗收修正交付（2026-09-24）
+
+- 審查基線 `68e1a8b` 的三項必修已處理：獨立 RPC 取消與 parent-owned MMAP 目錄回收、晚送達暖機影格序號基準，以及資源取樣前後時間與個別 CPU 窗口。`FORCED_STOPPED` 與 shutdown 事件明確揭露強制退出，MMAP 仍只准診斷。
+- 新測試以真正 Windows spawn／loopback RPC 驗證首張影格前及後的阻塞取消，另以無法取消的假程序驗證强制退出與檔案清理；以同步事件重現暖機延遲交付，以注入取樣成本驗證 CPU 分母與偏差。已有 56 項完整 unittest 通過；本次不連線 emulator，實機性能與來源一致性限制不變。
+- 舊 CPU 與 skip 統計的適用限制已補入 MEASUREMENTS.md，保留所有歷史原始檔，不臆造校正數字。`PYTHONPATH=src python -S -m unittest discover -s tests -q` 為 43 通過、13 依賴型略過；完整模式 56 通過。三配置 loopback smoke（1280×720、暖機 0.25 秒、正式 1 秒）完成，兩個 process 配置皆 exitcode=0、forced=false、mmap_cleanup_complete=true，JSONL 重算吻合。原始檔與雜湊見 MEASUREMENTS.md；這次 smoke 只驗證交付與統計，不作性能比較。`git diff --check` 通過。
+
+## 使用者開啟模擬器後的實機續測（2026-09-24）
+
+- 在 `emulator-5554`、Emulator 37.1.11.0、原生橫向 1280×720 `PAS Capture Fixture` 前景，以 RGB888/top-down 取得有非對稱色塊和動態可見計數的 PNG。thread payload 與 process payload 各三批就緒、暖機 10 秒、正式 60 秒；process payload 的 5 秒 `start-session` 正常停在 `NAVIGATING`、`frame_fresh=true`，未注入觸控。
+- process MMAP 診斷以預設 `0×0` 尺寸兩次等不到首張圖；即使把映射上限縮到 3 MB 仍相同。明確指定 `--width 1280 --height 720` 後，預設 16 MiB 上限與 3 MB 上限皆能取圖，並完成三批 60 秒診斷。CLI 現在對 MMAP 診斷要求正尺寸，避免不明就緒逾時。這只證實本機 file URI 在該尺寸可輸出圖像，**不證實**通知 metadata 與共享像素同屬一張完整影格；`consistency=unverified` 及 Session 門控維持。
+- 三配置的這批可見 Fixture 更新率只約 39–44 Hz，且隨批次變動；研究門檻的約 60 Hz 前提不成立。process payload 的到達間隔尾端未顯示優於 thread payload；process MMAP 子程序 CPU 明顯較低，但計時點與 payload 不同且快照一致性未知，不能以此作遊戲後端選型。負載、慢 consumer、恢復及停頓批次另見 [量測紀錄](MEASUREMENTS.md)。
+- 本節覆寫下方「本輪未執行」等冷開發歷史範圍敘述的**目前狀態**；保留原文作為當時的授權與驗收計畫，不把未做的方向變更、真實 inactive／AVD 斷線或觸控測試寫成已通過。
+
+## 冷開發交付紀錄（2026-09-24）
+
+- 已在自己的 `codex/capture-process-mmap` 分支合併本機已驗收 `8477aec`，保留本計畫。payload process 可由 `CaptureWorker`、`start-session` 和 `capture-bench` 使用，預設仍是 thread payload。固定容量共享像素區 schema 2：256-byte header + 最多 16 MiB RGB24，容量 1，父程序在跨程序 lock 內複製 immutable bytes；generation、序號、尺寸、格式／行序、時間和 CRC 拒收錯配。死亡鎖持有者最多 0.5 s 即失敗；Windows `Event` 死亡持有者造成的卡死已改為共享序號輪詢。子程序阻塞停止先等 2 s，再只回收本次建立的 child。
+- `ImageTransport.MMAP` 使用子程序建立的私有暫存檔與 `file:///` URI，固定大小，先取消串流／關閉 channel，再解除映射並刪檔；RGB888／RGBA8888、行序和容量檢查沿用像素正規化。`notification_received_ns` 與映射複製開始／完成、IPC 發布、父程序快照完成分別記錄。來源 MMAP `capture_complete_ns` 是**一次複製完成**，不是一致性保證。回覆含非空 payload 會拒收，沒有 silent fallback。Session 與一般 `ProcessCaptureSource` 拒絕 MMAP；只准 `capture-bench --diagnostic-mmap` 明確 opt-in，記錄 `consistency=unverified`。
+- 安裝版 37.1.11.0 proto (`proto/emulator_controller.proto` SHA-256 `1D62C6BCAD5F06621F90EC2BF26C661BA769CCD0F1416B5314D25A68E04EEE5F`) 明示 file URI、由 client 擁有 handle 及可能 tearing。官方 [Emulator 協定鏡像](https://android.googlesource.com/platform/tools/base/+/refs/heads/mirror-goog-studio-main/emulator/proto/emulator_controller.proto) 相同語義；官方 [MMAP 測試程式](https://android.googlesource.com/platform/external/adt-infra/+/5eaa4fdc645af4a5e29aae193d64607e41f55c22/pytest/test_embedded/tests/display/test_stream_screenshot.py) 建立檔案後 mmap 讀取，該測試標示 Windows skip。未取得可對應本機 37.1.11 binary 的 server 寫入／通知原始碼或 reader acknowledgment 證據，故無法證明上游快照一致。loopback 測試明確重現 image `seq=0`、檔案卻已變成下一次寫入像素的 metadata 錯配。可行改進需生產端加入 reader acknowledgment／slot ownership 或可驗證的 sequence fencing，並再做 Windows 實機驗收；本輪沒有改造 Emulator。
+- 離線已通過 51 項 unittest（含原有 36 項；無額外套件時 12 項明確 skip）；測試涵蓋真正 Windows spawn、1280×720、不可變快照、慢 consumer、父程序 GIL 忙碌、child crash、死亡 lock owner、父程序異常離開、重複清理、header 破壞、健康探測、接收暫停與 consumer 恢復、帶權杖 loopback payload、MMAP URI／清理／覆寫錯配／非法回覆。完整假 server 比較五種條件與 JSONL 雜湊見 [量測紀錄](MEASUREMENTS.md)。這些只驗證本機 harness 與 IPC；沒有實機性能結論。未加入原生 helper，因尚無真實 profiling 或必要同步能力證據。
+- **待實機**：MMAP file URI 在本機 Emulator 37.1.11 的 Windows 實際接受程度、RGB/RGBA 與 rotation／尺寸變更、來源映射安全、正式窗口資源快照、tail latency、取消和重啟、可見 fixture 計數及來源一致性。來源 Unix 時間仍未映射到 host monotonic，絕對來源影格年齡未知。MMAP 即使讀圖成功，未證實一致性前也只做診斷，不能解除 Session 門控。
+
+### 集中實機驗收順序（本輪未執行）
+
+1. 先手動確認同一 AVD／Emulator 版本與前景 1280×720 原生動態 fixture，記錄畫面可見計數、方向、GPU／主機負載。每配置先就緒、暖機 10 s、正式 60 s，正常至少三批，交錯比較 thread payload、process payload、process MMAP 診斷；每批保存獨立原始 JSONL、PNG、設定、雜湊與錯誤。MMAP 不列為 production 合格配置。
+2. 同一條件跑 parent GIL 負載、child 負載、consumer 50／100 ms 與恢復、接收暫停 500 ms、取消／子程序崩潰、靜態／inactive／斷線、方向／尺寸改變；先以診斷 PNG 與可見計數核對 RGB／RGBA、行序與 frame metadata。process benchmark 的 `--receiver-pause-ms`／`--consumer-recover-after-s` 已有離線時間測試，實機行為仍待驗收。
+3. 用 `scripts/recompute_offline_capture.py` 同法重算各 JSONL 的正式半開窗口，另計來源可見計數、p50／p95／p99／最大、各類丟棄、父子 CPU／RSS、IPC 與日誌成本；以相同條件評估至少 55 個不同畫面/s、p95 ≤33.4 ms、p99 ≤50 ms 的研究門檻，並單獨報告停頓恢復。來源更新率若未達約 60 Hz 或缺可信時鐘映射，分別標示門檻不適用與絕對來源年齡未知。
+4. 只有獲得與本機 Emulator 寫入順序相符的生產端同步證據、真實混幀／覆寫測試與完整故障回收結果後，才另行審議 MMAP 是否可供有效 Session frame。此步不能靠 client CRC、雙讀或 loopback server 的較強同步取代。
 
 ## 1. 授權範圍、基線與開始方式
 
