@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from pas.cli import _window_event_counts, grpc_capture_bench
 from pas.contracts import Frame
+from pas.telemetry import Telemetry
 
 
 class Source:
@@ -173,6 +174,27 @@ class BenchTests(unittest.TestCase):
             self.assertGreaterEqual(result["measurement_actual_duration_s"], 0.12)
             self.assertGreater(result["longest_interarrival_ms"], 40)
             self.assertGreater(result["no_frame_gap_ms"]["max"], 40)
+
+    def test_first_formal_skip_excludes_warmup_frames(self):
+        class DelayedMeasurementTelemetry(Telemetry):
+            def record(self, event, **fields):
+                super().record(event, **fields)
+                if event == "bench_phase" and fields.get("phase") == "MEASURING":
+                    time.sleep(0.025)
+
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "capture.jsonl"
+            with patch("pas.cli.Telemetry", DelayedMeasurementTelemetry):
+                result = self.run_bench(Source(), path, warmup_s=0.04, duration_s=0.1)
+            events = [json.loads(line) for line in path.read_text().splitlines()]
+            start = result["measurement_start_ns"]
+            warmup = [e["frame_sequence"] for e in events
+                      if e["event"] == "capture" and e["capture_complete_ns"] < start]
+            first = next(e for e in events if e["event"] == "frame_consumed")
+            self.assertGreater(len(warmup), 2)
+            self.assertGreater(first["sequence_skip"], 0)
+            self.assertEqual(first["sequence_skip"], first["frame_sequence"] - max(warmup) - 1)
+            self.assertEqual(result["last_pre_window_sequence_at_start"], max(warmup))
 
 
 if __name__ == "__main__":

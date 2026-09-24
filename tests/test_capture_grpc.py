@@ -145,6 +145,172 @@ class CaptureGrpcTests(unittest.TestCase):
         self.assertTrue(session.frame_fresh)
         session.stop()
 
+    def test_probe_change_during_new_stream_frame_recovers(self):
+        class Source:
+            event_driven = True
+            inactive = False
+
+            def __init__(self):
+                self.sequence = 0
+                self.emit = threading.Event()
+                self.closed = threading.Event()
+                self.probe_started = threading.Event()
+                self.release_probe = threading.Event()
+
+            def capture(self):
+                if self.sequence:
+                    self.emit.wait(2)
+                    self.closed.wait(0.004)
+                if self.closed.is_set():
+                    raise RuntimeError("closed")
+                now = time.monotonic_ns()
+                frame = Frame(self.sequence, 1, 1, b"\0\0\0", now)
+                self.sequence += 1
+                return frame, now
+
+            def probe_health(self, last_frame):
+                self.probe_started.set()
+                self.release_probe.wait(2)
+                return "changed"
+
+            def close(self):
+                self.closed.set()
+                self.emit.set()
+                self.release_probe.set()
+
+        class Launcher:
+            def launch(self, package):
+                now = time.monotonic_ns()
+                return now, now
+
+        source = Source()
+        clock = HostClock()
+        log = Telemetry()
+        worker = CaptureWorker(source, clock, log)
+        session = SessionController(worker, Launcher(), clock, log)
+        session.start("example.game", readiness_frames=1)
+        errors = []
+
+        def monitor():
+            try:
+                session.monitor_for(0.12, max_frame_age_s=0.035)
+            except Exception as error:
+                errors.append(error)
+
+        thread = threading.Thread(target=monitor)
+        thread.start()
+        self.assertTrue(source.probe_started.wait(1))
+        source.emit.set()
+        self.assertIsNotNone(worker.latest.read_after(0, 1))
+        source.release_probe.set()
+        thread.join(1)
+        self.assertFalse(thread.is_alive())
+        self.assertFalse(errors)
+        self.assertEqual(session.state, "NAVIGATING")
+        self.assertTrue(session.frame_fresh)
+        self.assertIn("new_valid_frame_during_probe",
+                      [event.get("reason") for event in log.events])
+        session.stop()
+
+    def test_probe_change_without_stream_progress_is_error(self):
+        class Source:
+            event_driven = True
+
+            def __init__(self):
+                self.closed = threading.Event()
+                self.sent = False
+
+            def capture(self):
+                if not self.sent:
+                    self.sent = True
+                    now = time.monotonic_ns()
+                    return Frame(0, 1, 1, b"\0\0\0", now), now
+                self.closed.wait(2)
+                raise RuntimeError("closed")
+
+            def probe_health(self, last_frame):
+                return "changed"
+
+            def close(self):
+                self.closed.set()
+
+        class Launcher:
+            def launch(self, package):
+                now = time.monotonic_ns()
+                return now, now
+
+        clock = HostClock()
+        session = SessionController(CaptureWorker(Source(), clock, Telemetry()),
+                                    Launcher(), clock, Telemetry())
+        session.start("example.game", readiness_frames=1)
+        with self.assertRaisesRegex(RuntimeError, "stalled"):
+            session.monitor_for(0.08, max_frame_age_s=0.01)
+        self.assertEqual(session.state, "ERROR")
+        session.stop()
+
+    def test_probe_rechecks_inactive_and_user_cancel(self):
+        class Source:
+            event_driven = True
+            inactive = False
+
+            def __init__(self):
+                self.sent = False
+                self.closed = threading.Event()
+                self.probe_started = threading.Event()
+                self.release_probe = threading.Event()
+
+            def capture(self):
+                if not self.sent:
+                    self.sent = True
+                    now = time.monotonic_ns()
+                    return Frame(0, 1, 1, b"\0\0\0", now), now
+                self.closed.wait(2)
+                raise RuntimeError("closed")
+
+            def probe_health(self, last_frame):
+                self.probe_started.set()
+                self.release_probe.wait(2)
+                return "changed"
+
+            def close(self):
+                self.closed.set()
+
+        class Launcher:
+            def launch(self, package):
+                now = time.monotonic_ns()
+                return now, now
+
+        for cancel in (False, True):
+            with self.subTest(cancel=cancel):
+                source = Source()
+                clock = HostClock()
+                session = SessionController(CaptureWorker(source, clock, Telemetry()),
+                                            Launcher(), clock, Telemetry())
+                session.start("example.game", readiness_frames=1)
+                errors = []
+
+                def monitor():
+                    try:
+                        session.monitor_for(0.04, max_frame_age_s=0.02)
+                    except Exception as error:
+                        errors.append(error)
+
+                thread = threading.Thread(target=monitor)
+                thread.start()
+                self.assertTrue(source.probe_started.wait(1))
+                if cancel:
+                    session.stop()
+                else:
+                    source.inactive = True
+                source.release_probe.set()
+                thread.join(1)
+                self.assertFalse(thread.is_alive())
+                self.assertFalse(errors)
+                self.assertEqual(session.state, "STOPPED" if cancel else "DEGRADED")
+                self.assertFalse(session.frame_fresh)
+                if not cancel:
+                    session.stop()
+
     def test_fixture_counter_decoding(self):
         width, height = 250, 150
         data = bytearray(width * height * 3)

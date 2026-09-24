@@ -1,5 +1,6 @@
 """Capture-first launch handshake. Game UI classification is a later milestone."""
 
+import threading
 from typing import Protocol
 
 from .capture import CaptureWorker
@@ -19,12 +20,17 @@ class SessionController:
         self.frame_fresh = False
         self._inactive_since_ns: int | None = None
         self._inactive_frame_sequence: int | None = None
+        self._state_lock = threading.RLock()
+        self._stopping = False
 
     def _transition(self, state: str, reason: str, frame_sequence: int | None = None) -> None:
-        self.telemetry.record("session_transition", from_state=self.state, to_state=state,
-                              reason=reason, source_frame_sequence=frame_sequence,
-                              monotonic_ns=self.clock.now_ns())
-        self.state = state
+        with self._state_lock:
+            if self._stopping and state != "STOPPED":
+                return
+            self.telemetry.record("session_transition", from_state=self.state, to_state=state,
+                                  reason=reason, source_frame_sequence=frame_sequence,
+                                  monotonic_ns=self.clock.now_ns())
+            self.state = state
 
     def start(self, package: str, readiness_frames: int = 3,
               readiness_timeout_s: float = 10) -> None:
@@ -46,8 +52,10 @@ class SessionController:
             raise
 
     def stop(self) -> None:
+        with self._state_lock:
+            self._stopping = True
+            self.frame_fresh = False
         self.worker.stop()
-        self.frame_fresh = False
         self._transition("STOPPED", "user_stop")
 
     def monitor_for(self, duration_s: float, max_frame_age_s: float = 1) -> None:
@@ -58,10 +66,14 @@ class SessionController:
         deadline_ns = self.clock.now_ns() + round(duration_s * 1e9)
         last_probe_ns = -1
         while self.clock.now_ns() < deadline_ns:
+            if self._stopping:
+                return
             frame = self.worker.latest.peek()
             stale = (frame is not None and self.clock.now_ns() - frame.capture_complete_ns > round(max_frame_age_s * 1e9))
             inactive = getattr(self.worker.source, "inactive", False)
             if self.worker.error is not None or frame is None:
+                if self._stopping:
+                    return
                 reason = "capture_disconnected"
                 self.frame_fresh = False
                 self._transition("ERROR", reason,
@@ -74,6 +86,8 @@ class SessionController:
                     self._inactive_frame_sequence = frame.sequence
                     self._transition("DEGRADED", "capture_inactive", frame.sequence)
                 if self.clock.now_ns() - self._inactive_since_ns >= round(max_frame_age_s * 1e9):
+                    if self._stopping:
+                        return
                     self._transition("ERROR", "capture_inactive_timeout", frame.sequence)
                     raise RuntimeError("capture inactive beyond deadline")
                 self.clock.sleep_until_ns(min(deadline_ns, self.clock.now_ns() + 100_000_000))
@@ -92,16 +106,48 @@ class SessionController:
                         (last_probe_ns < 0 or self.clock.now_ns() - last_probe_ns >= round(max_frame_age_s * 1e9))):
                     result = probe(frame)
                     last_probe_ns = self.clock.now_ns()
-                    self.telemetry.record("capture_health_probe", result=result,
-                                          source_frame_sequence=frame.sequence,
-                                          monotonic_ns=last_probe_ns)
-                    if result == "static":
-                        if self.state != "DEGRADED":
-                            self._transition("DEGRADED", "static_pixels_stream_unconfirmed", frame.sequence)
-                    else:
-                        self._transition("ERROR", "stream_stalled_or_probe_failed", frame.sequence)
-                        raise RuntimeError("capture stream stalled or health probe failed")
+                    with self._state_lock:
+                        if self._stopping:
+                            return
+                        newest = self.worker.latest.peek()
+                        inactive_now = getattr(self.worker.source, "inactive", False)
+                        self.telemetry.record("capture_health_probe", result=result,
+                                              source_frame_sequence=frame.sequence,
+                                              latest_frame_sequence=newest.sequence if newest else None,
+                                              inactive=inactive_now, monotonic_ns=last_probe_ns)
+                        if self.worker.error is not None or newest is None:
+                            self.frame_fresh = False
+                            self._transition("ERROR", "capture_disconnected_during_probe",
+                                             newest.sequence if newest else None)
+                            raise RuntimeError("capture disconnected during health probe")
+                        if inactive_now:
+                            self.frame_fresh = False
+                            if self._inactive_since_ns is None:
+                                self._inactive_since_ns = last_probe_ns
+                                self._inactive_frame_sequence = newest.sequence
+                            self._transition("DEGRADED", "capture_inactive", newest.sequence)
+                            continue
+                        if newest.sequence > frame.sequence:
+                            fresh_now = (last_probe_ns - newest.capture_complete_ns <=
+                                         round(max_frame_age_s * 1e9))
+                            self.frame_fresh = fresh_now
+                            if fresh_now:
+                                self._transition("NAVIGATING", "new_valid_frame_during_probe",
+                                                 newest.sequence)
+                            else:
+                                self._transition("DEGRADED", "new_frame_already_stale",
+                                                 newest.sequence)
+                            continue
+                        if result == "static":
+                            self._transition("DEGRADED", "static_pixels_stream_unconfirmed",
+                                             frame.sequence)
+                        else:
+                            self._transition("ERROR", "stream_stalled_or_probe_failed",
+                                             frame.sequence)
+                            raise RuntimeError("capture stream stalled or health probe failed")
                 elif not getattr(self.worker.source, "event_driven", False) or not probe:
+                    if self._stopping:
+                        return
                     self._transition("ERROR", "capture_stale_unverifiable", frame.sequence)
                     raise RuntimeError("capture stale and unverifiable")
             else:
@@ -110,6 +156,8 @@ class SessionController:
                     self._transition("NAVIGATING", "new_valid_frame", frame.sequence)
             self.clock.sleep_until_ns(min(deadline_ns, self.clock.now_ns() +
                                           min(100_000_000, round(max_frame_age_s * 1e9 / 2))))
+        if self._stopping:
+            return
         frame = self.worker.latest.peek()
         if (self.worker.error is not None or frame is None or
                 self.clock.now_ns() - frame.capture_complete_ns > round(max_frame_age_s * 1e9)):

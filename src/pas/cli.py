@@ -220,17 +220,19 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
     receiver_paused = False
     measurement_start: int | None = None
     measurement_end: int | None = None
+    last_pre_window_sequence = -1
     collection_lock = threading.Lock()
 
     def collect(frame: Frame) -> None:
         nonlocal first_frame, receiver_paused, frames_received_total
         nonlocal fixture_samples_total, counter_changes, last_fixture_counter
         nonlocal first_arrival_ns, last_arrival_ns, longest_interarrival_ns
+        nonlocal last_pre_window_sequence
         with collection_lock:
-            if measurement_start is None or (measurement_end is not None and
-                                             frame.capture_complete_ns >= measurement_end):
+            if measurement_start is None or frame.capture_complete_ns < measurement_start:
+                last_pre_window_sequence = frame.sequence
                 return
-            if frame.capture_complete_ns < measurement_start:
+            if measurement_end is not None and frame.capture_complete_ns >= measurement_end:
                 return
             arrival_times.append(frame.capture_complete_ns)
             if first_arrival_ns is None:
@@ -342,9 +344,12 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
             cpu_start_ns = time.process_time_ns()
             with collection_lock:
                 measurement_start = clock.now_ns()
+                last = max(last, last_pre_window_sequence)
+                boundary_sequence = last_pre_window_sequence
             planned_end_ns = measurement_start + round(duration_s * 1e9)
             telemetry.record("bench_phase", phase="MEASURING", monotonic_ns=measurement_start,
-                             cpu_process_ns=cpu_start_ns, counters=start_counts)
+                             cpu_process_ns=cpu_start_ns, counters=start_counts,
+                             last_pre_window_sequence=boundary_sequence)
             while clock.now_ns() < planned_end_ns:
                 frame = worker.latest.read_after(last, min(0.05, max(0, (planned_end_ns - clock.now_ns()) / 1e9)))
                 if worker.error:
@@ -352,8 +357,11 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                 if frame is None:
                     continue
                 if frame.capture_complete_ns < measurement_start:
-                    last = frame.sequence
+                    last = max(last, frame.sequence)
                     continue
+                # A pre-window frame can finish its callback after the boundary.
+                with collection_lock:
+                    last = max(last, last_pre_window_sequence)
                 recovering = (consumer_recover_after_s is not None and
                               clock.now_ns() >= measurement_start + round(consumer_recover_after_s * 1e9))
                 if recovering and recovery_residency_ms is None:
@@ -422,6 +430,7 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                    "ready_ns": ready_ns, "warmup_start_ns": warmup_start_ns,
                    "warmup_end_ns": warmup_end_ns,
                    "measurement_start_ns": measurement_start,
+                   "last_pre_window_sequence_at_start": boundary_sequence,
                    "measurement_end_ns": actual_end_ns,
                    "measurement_actual_duration_s": window_s,
                    "first_last_frame_span_s": frame_span_s,
