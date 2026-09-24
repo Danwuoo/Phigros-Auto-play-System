@@ -39,6 +39,12 @@ MMAP 相容性排查：`--width 0 --height 0`、16 MiB 上限的 5 秒就緒測�
 
 `start-session --package org.pas.capturefixture --capture-execution process --grpc-transport payload --duration-s 5` 完成，結束前 `monitor_state=NAVIGATING`、`frame_fresh_at_monitor_end=true`、發布 221 張、`capture_error=null`，未啟用遊玩觸控。重算例：`$env:PYTHONPATH='src'; python scripts/recompute_offline_capture.py measurements/live_round1_process_payload/capture.jsonl`；thread、process payload、MMAP 診斷第一批的重算窗口／樣本數／間隔與各自 summary 一致。尚未在此續測中驗證真實方向或尺寸切換、`0×0` inactive、整台 AVD 斷線，以及觸控與畫面回饋時序；先前可逆方向等測試見下文，不能挪作本次程序模式驗收。
 
+### 同日重啟診斷
+
+使用者詢問是否需要重啟重測後，以同一 `emulator-5554`、前景 Fixture、thread payload RGB888 做三次各暖機 2 秒／正式 10 秒的短測。原始檔為 `measurements/live_recheck_{before_restart,after_fixture_restart,after_emulator_reboot}/capture.jsonl`，SHA-256 見同一[雜湊清單](LIVE_CAPTURE_SHA256.txt)。重啟前收到／不同可見計數 423/423、可見更新率 42.61 Hz、到達間隔 n=422、p50/p95/p99/max=20.84/50.58/61.30/79.36 ms。只重開 Fixture 後為 388/388、39.00 Hz、n=387、23.97/49.91/65.79/114.42 ms；獨立 `dumpsys gfxinfo` 的 `Total frames rendered` 在主機 monotonic 10.368 秒增加 398 張，約 38.39 Hz，支持來源本身低速。
+
+隨後以 ADB 正常重啟模擬器，確認 `sys.boot_completed=1` 並重新開啟 Fixture，未清除應用資料。重啟後獨立 Android 繪製計數在主機 monotonic 10.697 秒增加 567 張，約 53.01 Hz；緊接的擷取正式窗口收到 473 張／472 個不同可見計數、可見率 47.55 Hz，到達間隔 n=472、p50/p95/p99/max=19.58/39.46/48.61/85.34 ms。重啟改善這次短測的繪製率與擷取尾端，但仍未回到前一約 59 Hz 來源條件；繪製計數與擷取窗口不是同時量測，不能相減當成掉幀。沒有以此短測代替三批 60 秒正式比較，也沒有證明低速原因或預測下次重啟的效果。Fixture 已留在前景。
+
 ## 2026-09-24 獨立程序／MMAP 冷開發離線結果
 
 本輪**未連線、操控或啟動 emulator**。環境：同一 Windows 11 build 26200 主機、Python 3.14.7、1280×720 RGB888、每 16.67 ms 嘗試產生一張的本機 loopback 假 gRPC server；每配置就緒後暖機 0.5 s、正式窗口 2 s，依序跑同程序 payload、spawn 程序 payload、spawn 程序 MMAP 診斷。來源 server 也在父程序內，因此「parent load」同時影響假來源，**不能由此推斷真實 Emulator 隔離改善**。下表是原始 JSONL 以 `scripts/recompute_offline_capture.py` 對 `[measurement_start, measurement_end)` 重算的擷取事件數和相鄰 `capture_complete_ns` 間隔；不是來源畫面年齡，也不是實機效能。
