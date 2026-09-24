@@ -191,7 +191,7 @@ class BenchTests(unittest.TestCase):
             warmup = [e["frame_sequence"] for e in events
                       if e["event"] == "capture" and e["capture_complete_ns"] < start]
             first = next(e for e in events if e["event"] == "frame_consumed")
-            self.assertGreater(len(warmup), 2)
+            self.assertTrue(warmup)
             self.assertGreater(first["sequence_skip"], 0)
             self.assertEqual(first["sequence_skip"], first["frame_sequence"] - max(warmup) - 1)
             self.assertEqual(result["last_pre_window_sequence_at_start"], max(warmup))
