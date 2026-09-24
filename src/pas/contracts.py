@@ -22,6 +22,11 @@ class Frame:
     stream_generation: int = 0
     source_timestamp_us: int | None = None
     source_rotation: int | None = None
+    notification_received_ns: int | None = None
+    snapshot_copy_started_ns: int | None = None
+    snapshot_copy_complete_ns: int | None = None
+    ipc_published_ns: int | None = None
+    parent_snapshot_complete_ns: int | None = None
 
     def __post_init__(self) -> None:
         if self.width <= 0 or self.height <= 0 or len(self.rgb) != self.width * self.height * 3:

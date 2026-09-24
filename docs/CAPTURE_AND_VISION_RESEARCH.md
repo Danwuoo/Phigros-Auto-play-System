@@ -1,5 +1,7 @@
 # 畫面擷取與視覺決策技術研究
 
+2026-09-24 更新：新增獨立 Python spawn + gRPC payload 作冷開發可用的隔離方案；MMAP 已有 file URI 映射與 loopback 診斷實作，但仍有上游 tearing／metadata 錯配風險，因此只准 opt-in benchmark。離線 loopback 的數據僅衡量本機 harness/IPC，不可替代真實 Emulator 更新率、來源延遲或性能選型。需要真實同條件比較，並先證明 MMAP 生產端同步，才可更改候選結論。詳見 [低延遲計畫](CAPTURE_LOW_LATENCY_PLAN.md)。
+
 研究日期：2026-09-23。本文區分已量測的基線、可用的技術介面與尚待實測的選型。執行時的遊戲決策仍只能來自即時畫面；記錄資料只能用於離線分析與訓練通用視覺模型，不能作為譜面或固定按鍵序列回放。
 
 ## 目前已量測的瓶頸

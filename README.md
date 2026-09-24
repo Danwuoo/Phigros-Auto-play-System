@@ -99,6 +99,22 @@ python -m pas.cli capture-bench --serial emulator-5554 --samples 30 --warmup 3 -
 
 ## 文件
 
+### 獨立擷取程序（2026-09-24 冷開發）
+
+`emulator-grpc` 新增可選 `--capture-execution process`；預設仍是原本的 `thread`。程序模式以 Windows `spawn` 建立子程序，子程序持有認證串流，經固定 16 MiB 上限的共享像素區把最新 RGB24 畫面交給父程序；父程序複製為不可變 `Frame.rgb`。正常 Session 僅允許 `--grpc-transport payload`。子程序阻塞時停止期限為 2 秒 cooperative 等待，之後僅強制回收本次建立的子程序。靜態畫面沒有新串流回覆時，Session 會退到 `DEGRADED`，不把 heartbeat 當新圖。
+
+```powershell
+$env:PYTHONPATH='src'
+python -m pas.cli offline-capture-bench --duration-s 3 --warmup-s 1 --width 1280 --height 720
+python scripts/offline_capture_comparison.py --duration-s 2 --warmup-s 0.5 --width 1280 --height 720 --output-dir measurements/another_offline_run
+python scripts/recompute_offline_capture.py measurements/another_offline_run/process-payload.jsonl
+# 以下命令留待集中實機驗收；本輪尚未執行：
+python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --capture-execution process --grpc-transport payload --duration-s 60 --warmup-s 10 --fixture-scale 1
+python -m pas.cli start-session --serial emulator-5554 --package <套件名稱> --capture-backend emulator-grpc --capture-execution process --grpc-transport payload --duration-s 30
+```
+
+`--grpc-transport mmap` 只能在 `capture-bench --capture-execution process --diagnostic-mmap` 明確啟用。其 `consistency=unverified`：Emulator 的 MMAP 生產端沒有已證明的讀取同步，通知和像素可錯配，診斷 PNG 與速率均不能視為有效 Session 畫面。`start-session` 直接拒絕 MMAP。`--max-rgb-bytes` 上限為 16 MiB；超容量會失敗並要求以新程序重建，不能在串流中縮放映射。詳見 [低延遲擷取計畫](docs/CAPTURE_LOW_LATENCY_PLAN.md) 和 [量測紀錄](docs/MEASUREMENTS.md)。
+
 - [AGENTS.md](AGENTS.md)：後續開發者與自動化代理的工作準則。
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)：模組邊界、時間戳與資料契約。
 - [docs/ROADMAP.md](docs/ROADMAP.md)：第一版里程碑與驗收方式。

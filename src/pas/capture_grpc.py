@@ -6,6 +6,8 @@ claiming bottom-up; row order is configurable and must be checked per version.
 
 from dataclasses import dataclass, field
 from pathlib import Path
+import mmap
+import os
 import re
 import tempfile
 import threading
@@ -51,7 +53,7 @@ def discover_endpoint(serial: str, running_dir: Path | None = None) -> GrpcEndpo
 
 
 def rgb24_from_image(image, requested_format: int,
-                     row_order: str = "top-down") -> tuple[int, int, bytes]:
+                     row_order: str = "top-down", source_bytes: bytes | None = None) -> tuple[int, int, bytes]:
     """Validate raw pixels and normalize row order into top-down RGB24."""
     width, height = image.format.width, image.format.height
     if width <= 0 or height <= 0 or width * height > 20_000_000:
@@ -61,7 +63,7 @@ def rgb24_from_image(image, requested_format: int,
     if row_order not in ("top-down", "bottom-up"):
         raise ValueError("invalid row order")
     channels = 3 if requested_format == 2 else 4
-    source = image.image
+    source = image.image if source_bytes is None else source_bytes
     stride = width * channels
     if len(source) != stride * height:
         raise ValueError("invalid screenshot payload length")
@@ -97,7 +99,8 @@ class EmulatorGrpcCapture:
                  image_format: str = "rgb888", width: int = 0, height: int = 0,
                  row_order: str = "top-down", clock: Clock | None = None,
                  telemetry: Telemetry | None = None,
-                 max_relative_lag_ms: float | None = None):
+                 max_relative_lag_ms: float | None = None,
+                 transport: str = "payload", max_rgb_bytes: int = 16 * 1024 * 1024):
         if image_format not in ("rgb888", "rgba8888"):
             raise ValueError("image format must be rgb888 or rgba8888")
         if width < 0 or height < 0:
@@ -106,6 +109,10 @@ class EmulatorGrpcCapture:
             raise ValueError("row order must be top-down or bottom-up")
         if max_relative_lag_ms is not None and max_relative_lag_ms <= 0:
             raise ValueError("relative lag limit must be positive")
+        if transport not in ("payload", "mmap"):
+            raise ValueError("invalid gRPC transport")
+        if not 0 < max_rgb_bytes <= 16 * 1024 * 1024:
+            raise ValueError("invalid maximum RGB capacity")
         self.endpoint = endpoint or discover_endpoint(serial)
         if not re.fullmatch(r"(?:127\.0\.0\.1|localhost):\d+", self.endpoint.target):
             raise ValueError("gRPC endpoint must be local loopback")
@@ -115,6 +122,15 @@ class EmulatorGrpcCapture:
         self.telemetry = telemetry
         self.image_format = image_format
         self.row_order = row_order
+        self.transport = transport
+        self.consistency = "unverified" if transport == "mmap" else "payload"
+        self.max_rgb_bytes = max_rgb_bytes
+        self._mmap_file = None
+        self._mmap_path = None
+        self._mmap = None
+        self.last_notification_ns = 0
+        self.last_snapshot_copy_started_ns = 0
+        self.last_snapshot_copy_complete_ns = 0
         self.width, self.height = width, height
         self.max_relative_lag_ns = (round(max_relative_lag_ms * 1e6)
                                     if max_relative_lag_ms is not None else None)
@@ -157,6 +173,28 @@ class EmulatorGrpcCapture:
         request = pb.ImageFormat(format=pb.ImageFormat.RGB888 if self.image_format == "rgb888"
                                  else pb.ImageFormat.RGBA8888,
                                  width=self.width, height=self.height)
+        if self.transport == "mmap":
+            # A real file URI is required by the emulator; multiprocessing
+            # SharedMemory names are not emulator handles. The file is private
+            # to this source and never resized while the stream may write it.
+            raw_capacity = min(32 * 1024 * 1024, (self.max_rgb_bytes * 4 + 2) // 3)
+            fd, path = tempfile.mkstemp(prefix="pas-emulator-mmap-", suffix=".bin")
+            file = None
+            try:
+                os.fchmod(fd, 0o600) if hasattr(os, "fchmod") else None
+                os.ftruncate(fd, raw_capacity)
+                file = os.fdopen(fd, "r+b", buffering=0)
+                mapping = mmap.mmap(file.fileno(), raw_capacity, access=mmap.ACCESS_READ)
+            except Exception:
+                if file is not None:
+                    file.close()
+                else:
+                    os.close(fd)
+                os.unlink(path)
+                raise
+            self._mmap_file, self._mmap_path, self._mmap = file, path, mapping
+            request.transport.channel = pb.ImageTransport.MMAP
+            request.transport.handle = Path(path).as_uri()
         rpc = channel.unary_stream(
             "/android.emulation.control.EmulatorController/streamScreenshot",
             request_serializer=lambda message: message.SerializeToString(),
@@ -189,6 +227,7 @@ class EmulatorGrpcCapture:
                 except StopIteration:
                     raise RuntimeError("gRPC screenshot stream ended") from None
                 complete_ns = self.clock.now_ns()
+                self.last_notification_ns = complete_ns
                 if image.format.width == 0 and image.format.height == 0:
                     with self._stats_lock:
                         self.inactive_frames += 1
@@ -199,7 +238,22 @@ class EmulatorGrpcCapture:
                     continue
                 requested = 2 if self.image_format == "rgb888" else 1
                 try:
-                    width, height, rgb = rgb24_from_image(image, requested, self.row_order)
+                    if self.transport == "mmap":
+                        if image.image:
+                            raise ValueError("MMAP reply unexpectedly contained payload bytes")
+                        raw_size = image.format.width * image.format.height * (3 if requested == 2 else 4)
+                        if (raw_size <= 0 or self._mmap is None or raw_size > len(self._mmap) or
+                                image.format.width * image.format.height * 3 > self.max_rgb_bytes):
+                            raise ValueError("MMAP image exceeds mapped capacity")
+                        self.last_snapshot_copy_started_ns = self.clock.now_ns()
+                        source_bytes = self._mmap[:raw_size]
+                        self.last_snapshot_copy_complete_ns = self.clock.now_ns()
+                        width, height, rgb = rgb24_from_image(image, requested, self.row_order,
+                                                              source_bytes)
+                    else:
+                        if len(image.image) > self.max_rgb_bytes * 4 // 3 + 4:
+                            raise ValueError("payload exceeds configured capacity")
+                        width, height, rgb = rgb24_from_image(image, requested, self.row_order)
                 except ValueError as error:
                     with self._stats_lock:
                         self.invalid_frames += 1
@@ -208,6 +262,8 @@ class EmulatorGrpcCapture:
                                               monotonic_ns=complete_ns,
                                               source_sequence=image.seq)
                     raise
+                if self.transport == "mmap":
+                    complete_ns = self.last_snapshot_copy_complete_ns
                 ready_ns = self.clock.now_ns()
                 self.inactive = False
                 source_sequence = int(image.seq)
@@ -277,7 +333,12 @@ class EmulatorGrpcCapture:
                               pixels_ready_ns=ready_ns, source_sequence=source_sequence,
                               stream_generation=0,
                               source_timestamp_us=source_timestamp_us,
-                              source_rotation=shape[2])
+                              source_rotation=shape[2],
+                              notification_received_ns=self.last_notification_ns,
+                              snapshot_copy_started_ns=(self.last_snapshot_copy_started_ns
+                                                        if self.transport == "mmap" else None),
+                              snapshot_copy_complete_ns=(self.last_snapshot_copy_complete_ns
+                                                         if self.transport == "mmap" else None))
                 self._sequence += 1
                 self._last_published_ns = ready_ns
                 with self._lock:
@@ -301,6 +362,15 @@ class EmulatorGrpcCapture:
             call.cancel()
         if channel is not None:
             channel.close()
+        if self._mmap is not None:
+            self._mmap.close()
+            self._mmap = None
+        if self._mmap_file is not None:
+            self._mmap_file.close()
+            self._mmap_file = None
+        if self._mmap_path is not None:
+            Path(self._mmap_path).unlink(missing_ok=True)
+            self._mmap_path = None
 
     def _cancel_stalled_drops(self) -> None:
         with self._lock:

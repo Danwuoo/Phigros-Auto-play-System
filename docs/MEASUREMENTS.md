@@ -1,5 +1,33 @@
 # 2026-09-23 基線量測與限制
 
+## 2026-09-24 獨立程序／MMAP 冷開發離線結果
+
+本輪**未連線、操控或啟動 emulator**。環境：同一 Windows 11 build 26200 主機、Python 3.14.7、1280×720 RGB888、每 16.67 ms 嘗試產生一張的本機 loopback 假 gRPC server；每配置就緒後暖機 0.5 s、正式窗口 2 s，依序跑同程序 payload、spawn 程序 payload、spawn 程序 MMAP 診斷。來源 server 也在父程序內，因此「parent load」同時影響假來源，**不能由此推斷真實 Emulator 隔離改善**。下表是原始 JSONL 以 `scripts/recompute_offline_capture.py` 對 `[measurement_start, measurement_end)` 重算的擷取事件數和相鄰 `capture_complete_ns` 間隔；不是來源畫面年齡，也不是實機效能。
+
+payload 的 `capture_complete_ns` 是完整 gRPC bytes 到達，MMAP 的是映射區一次複製完成；兩者起點不同，表中間隔只顯示各模式自身交付節奏，不能當作相同事件的 transport 延遲差或 MMAP 優勢。
+
+| 條件 | thread payload n / p95 ms | process payload n / p95 ms | process MMAP 診斷 n / p95 ms |
+| --- | ---: | ---: | ---: |
+| 正常 | 80 / 44.12 | 69 / 55.46 | 95 / 23.50 |
+| consumer 50 ms | 80 / 46.37 | 82 / 37.21 | 101 / 21.91 |
+| consumer 100 ms | 81 / 42.23 | 84 / 40.79 | 102 / 21.94 |
+| parent Python GIL 負載 | 27 / 121.40 | 25 / 121.45 | 26 / 120.22 |
+| child Python GIL 負載 | 81 / 50.23 | 32 / 79.21 | 29 / 112.49 |
+
+逐批 p50／p95／p99／最大值、讀取數、consumer skip、IPC 覆蓋、父子 CPU 與 RSS、時鐘快照偏差與同步 JSONL 寫入成本在各自 `summary.json` 和 JSONL；百分位數為線性插值，日誌成本抽樣有 100,000 筆上限，可用 `--no-log-cost` 作停用對照。慢 consumer 100 ms 下，process payload 收到 84 張但只讀 20 張；process MMAP 收到 102 張、只讀 20 張。這是固定容量 latest 交接的預期現象。MMAP 數值不表示安全、零複製或真實 Emulator 加速；loopback server 的寫入／通知行為不能證明安裝版 Emulator 的上游同步。原生 helper 未加入：目前證據顯示要先做實機 profiling 與來源一致性確認，不能只憑假 server 將 Python 接收器改寫成原生。
+
+原始資料只在本 worktree 的被 Git 忽略 `measurements/offline_final3_{normal,slow50,slow100,parentload,childload}/`，不隨提交或 merge 帶走。每個目錄有 `thread-payload.jsonl`、`process-payload.jsonl`、`process-mmap.jsonl` 及 `summary.json`。三配置各自 SHA-256（順序 thread／process payload／process MMAP）：
+
+| 條件 | SHA-256 |
+| --- | --- |
+| normal | `EE5797F90A5F5B26FBFF1F75AF386C230C38A3BDAAA9245183BD51F4D145C89A` / `DD1F6C3815B5C514A90CE76D0FD212B3CBBD0BA347A5DE54B8A27D686252004D` / `5693B91484160FEB83D14471C4FDCD747103CD636EA1ED4C759EAFAAA8EFB7B1` |
+| slow50 | `B53DE4120D6D3F65714435F5D1C541052355B7F1A02636C6DCECD23FCF1ECBBF` / `4FE5FFE6F1C1A0A047199D9F09046D7A9B277B9EA005D87FAC7A1B4DABF245FF` / `878AC3FFDB230AA020715B172737E5E1CBC2E80821F7E0E2DA8EC65423256192` |
+| slow100 | `E8565533623C8170975366E52C02284D6A2F75DA637D9AEBF1FFE183B0B87DFB` / `D0D13566DE33A43C491DB564C5B1833E2D4DD784CE328A33F5943CE7C5D37A77` / `E14911BD0271ED42F2799F899BD0FB1C10F74AE88935AE4F936668A1D01EE6EC` |
+| parentload | `FE36442DB0BB1A3BC17B7827A717D1A67038708AD7AF5629E7729BD7BFDB9932` / `CA8CD7350F3F7B0A79880DCDEA5C7EE73305777E6CAD1792DA8A78834512D727` / `76F413BD96944C3190AA835D8869461A739701B11C01B890F384B877C96ECE44` |
+| childload | `968A82EBC0404F4705F1AF9123150ECB52622900F434B9A6C02A195246532FDE` / `C90997E3B221344038DDCC939067CFAC430FDA14FEB010B3BD38133D4447514A` / `3F2760DA051438C1AA1787097495C8DE0BD4F5B76A6114983E3C03877B32DB95` |
+
+重算例：`$env:PYTHONPATH='src'; python scripts/recompute_offline_capture.py measurements/offline_final3_normal/process-payload.jsonl`。此前失敗批次 `offline_final_*` 保留在 ignored 目錄，失敗原因是 Windows 子程序 RSS 讀值的 ctypes 指標型別錯誤；已修正並重跑上表，沒有將失敗批次混入結果。
+
 ## 環境與重現
 
 - 主機：Windows 11 build 26200、AMD64、Python 3.14.7；時間來源為同一程序的 `time.monotonic_ns()`。CPU 型號、主機背景負載與使用率未控制或記錄，故主機排程數值僅是這台機器的初步基線。

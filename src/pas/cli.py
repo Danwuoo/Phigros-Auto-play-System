@@ -6,6 +6,7 @@ from collections import deque
 from itertools import pairwise
 import ctypes
 import json
+import os
 import platform
 import struct
 import subprocess
@@ -18,6 +19,7 @@ from pathlib import Path
 
 from .adb import AdbLauncher, AdbPngCapture, find_adb, list_devices, probe
 from .capture import CaptureWorker
+from .capture_process import ProcessCaptureConfig, ProcessCaptureSource
 from .capture_grpc import EmulatorGrpcCapture, GrpcEndpoint, discover_endpoint
 from .clock import HostClock
 from .contracts import Frame, HitIntent
@@ -176,6 +178,290 @@ def _grpc_source(serial: str, clock: HostClock, telemetry: Telemetry,
                                width=width, height=height, row_order=row_order,
                                clock=clock, telemetry=telemetry,
                                max_relative_lag_ms=max_relative_lag_ms)
+
+
+def _child_cpu_seconds(pid: int | None) -> float | None:
+    if pid is None:
+        return None
+    try:
+        import psutil
+        times = psutil.Process(pid).cpu_times()
+        return times.user + times.system
+    except (ImportError, OSError):
+        pass
+    if os.name != "nt":
+        return None
+    import ctypes
+    import ctypes.wintypes as wt
+    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel.OpenProcess.argtypes = [wt.DWORD, wt.BOOL, wt.DWORD]
+    kernel.OpenProcess.restype = wt.HANDLE
+    handle = kernel.OpenProcess(0x1000, False, pid)
+    if not handle:
+        return None
+    try:
+        creation, exit_time, kernel_time, user_time = (wt.FILETIME() for _ in range(4))
+        kernel.GetProcessTimes.argtypes = [wt.HANDLE, ctypes.POINTER(wt.FILETIME),
+                                           ctypes.POINTER(wt.FILETIME), ctypes.POINTER(wt.FILETIME),
+                                           ctypes.POINTER(wt.FILETIME)]
+        if not kernel.GetProcessTimes(handle, ctypes.byref(creation), ctypes.byref(exit_time),
+                                      ctypes.byref(kernel_time), ctypes.byref(user_time)):
+            return None
+        def ticks(value):
+            return (value.dwHighDateTime << 32) | value.dwLowDateTime
+        return (ticks(kernel_time) + ticks(user_time)) / 10_000_000
+    finally:
+        kernel.CloseHandle(handle)
+
+
+def _child_rss_bytes(pid: int | None) -> int | None:
+    if pid is None:
+        return None
+    try:
+        import psutil
+        return psutil.Process(pid).memory_info().rss
+    except (ImportError, OSError):
+        pass
+    if os.name != "nt":
+        return None
+    class MemoryCounters(ctypes.Structure):
+        _fields_ = [("cb", ctypes.c_ulong), ("PageFaultCount", ctypes.c_ulong)] + [
+            (name, ctypes.c_size_t) for name in (
+                "PeakWorkingSetSize", "WorkingSetSize", "QuotaPeakPagedPoolUsage",
+                "QuotaPagedPoolUsage", "QuotaPeakNonPagedPoolUsage",
+                "QuotaNonPagedPoolUsage", "PagefileUsage", "PeakPagefileUsage")]
+    kernel = ctypes.windll.kernel32
+    kernel.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
+    kernel.OpenProcess.restype = ctypes.c_void_p
+    handle = kernel.OpenProcess(0x1000 | 0x0400, False, pid)
+    if not handle:
+        return None
+    try:
+        counters = MemoryCounters()
+        counters.cb = ctypes.sizeof(counters)
+        ctypes.windll.psapi.GetProcessMemoryInfo.argtypes = [
+            ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong]
+        if ctypes.windll.psapi.GetProcessMemoryInfo(handle, ctypes.byref(counters), counters.cb):
+            return counters.WorkingSetSize
+        return None
+    finally:
+        kernel.CloseHandle(handle)
+
+
+def process_capture_bench(config: ProcessCaptureConfig, duration_s: float, warmup_s: float,
+                          consumer_delay_ms: float, log: str | None = None,
+                          ready_timeout_s: float = 10,
+                          fixture_x: int = 0, fixture_y: int = 0,
+                          fixture_scale: float = 1, fixture_scale_y: float | None = None,
+                          diagnostic_mmap: bool = False, parent_load: bool = False,
+                          receiver_pause_ms: float = 0,
+                          consumer_recover_after_s: float | None = None,
+                          instrument_log_cost: bool = True) -> dict:
+    """Full-window offline or emulator benchmark; MMAP results stay diagnostic."""
+    if duration_s <= 0 or warmup_s < 0 or ready_timeout_s <= 0 or consumer_delay_ms < 0:
+        raise ValueError("invalid benchmark duration")
+    if receiver_pause_ms < 0 or receiver_pause_ms > 10_000:
+        raise ValueError("invalid receiver pause")
+    if consumer_recover_after_s is not None and not 0 < consumer_recover_after_s < duration_s:
+        raise ValueError("consumer recovery must fall in measurement window")
+    if config.transport == "mmap" and not diagnostic_mmap:
+        raise ValueError("MMAP requires explicit diagnostic opt-in")
+    run_id = time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
+    log = log or str(Path("measurements") / run_id / "capture-process.jsonl")
+    if Path(log).exists():
+        raise FileExistsError(log)
+    clock = HostClock()
+    arrival = deque(maxlen=100_000)
+    residency = deque(maxlen=100_000)
+    ipc_handoff = deque(maxlen=100_000)
+    fixture_values = deque(maxlen=100_000)
+    frame_count = 0
+    first_frame = None
+    collecting_start = None
+    collecting_end = None
+    collection_lock = threading.Lock()
+    load_stop = threading.Event()
+    def spin_parent():
+        value = 0
+        while not load_stop.is_set():
+            value = (value * 3 + 1) & 65535
+    load_thread = threading.Thread(target=spin_parent, daemon=True) if parent_load else None
+    with Telemetry(log, instrument_write_cost=instrument_log_cost) as telemetry:
+        source = ProcessCaptureSource(config, diagnostic_mmap=diagnostic_mmap)
+        def collect(frame):
+            nonlocal frame_count, first_frame
+            with collection_lock:
+                if collecting_start is None or frame.capture_complete_ns < collecting_start:
+                    return
+                if collecting_end is not None and frame.capture_complete_ns >= collecting_end:
+                    return
+                frame_count += 1
+                arrival.append(frame.capture_complete_ns)
+                if frame.parent_snapshot_complete_ns is not None and frame.ipc_published_ns is not None:
+                    ipc_handoff.append((frame.parent_snapshot_complete_ns - frame.ipc_published_ns) / 1e6)
+                if first_frame is None:
+                    first_frame = frame
+                value = read_fixture_counter(frame, fixture_x, fixture_y,
+                                             fixture_scale, fixture_scale_y)
+                if value is not None:
+                    fixture_values.append((frame.capture_complete_ns, value))
+                    telemetry.record("fixture_counter", frame_sequence=frame.sequence,
+                                     counter=value, capture_complete_ns=frame.capture_complete_ns)
+        worker = CaptureWorker(source, clock, telemetry, on_frame=collect)
+        begin = clock.now_ns()
+        telemetry.record("run_config", mode="process_capture_bench", host=_host(),
+                         source_revision=_source_revision(), run_id=run_id,
+                         requested_execution="process", effective_execution="process",
+                         requested_transport=config.transport, effective_transport=config.transport,
+                         consistency="unverified" if config.transport == "mmap" else "payload",
+                         source_kind=config.kind, serial=config.serial,
+                         image_format=config.image_format, row_order=config.row_order,
+                         max_rgb_bytes=config.max_rgb_bytes, duration_s=duration_s,
+                         warmup_s=warmup_s, ready_timeout_s=ready_timeout_s,
+                         consumer_delay_ms=consumer_delay_ms, diagnostic_mmap=diagnostic_mmap,
+                         receiver_pause_ms=receiver_pause_ms,
+                         consumer_recover_after_s=consumer_recover_after_s,
+                         parent_load=parent_load, child_load=config.child_cpu_load,
+                         instrument_log_cost=instrument_log_cost,
+                         clock="time.monotonic_ns, same Windows host domain")
+        telemetry.record("bench_phase", phase="CONNECTING", monotonic_ns=begin)
+        worker.start()
+        read_count = skip_count = 0
+        recovery_first_residency_ms = recovery_first_sequence_skip = None
+        start_ns = end_ns = None
+        cpu_parent_start = cpu_parent_end = None
+        cpu_child_start = cpu_child_end = None
+        counters_start = counters_end = None
+        snapshot_start_ns = snapshot_end_ns = None
+        parent_rss = child_rss = None
+        try:
+            last = worker.wait_for_valid_frames(1, ready_timeout_s)
+            ready_ns = clock.now_ns()
+            telemetry.record("bench_phase", phase="WARMUP", monotonic_ns=ready_ns,
+                             first_frame_sequence=last)
+            if load_thread:
+                load_thread.start()
+            warmup_end = ready_ns + round(warmup_s * 1e9)
+            while clock.now_ns() < warmup_end:
+                if worker.error:
+                    raise RuntimeError("capture failed during warmup")
+                clock.sleep_until_ns(min(warmup_end, clock.now_ns() + 50_000_000))
+            cpu_parent_start = time.process_time_ns()
+            cpu_child_start = _child_cpu_seconds(source.process.pid)
+            counters_start = source.counters()
+            snapshot_start_ns = clock.now_ns()
+            with collection_lock:
+                start_ns = clock.now_ns()
+                collecting_start = start_ns
+                boundary_frame = worker.latest.peek()
+                if boundary_frame is not None and boundary_frame.capture_complete_ns < start_ns:
+                    last = max(last, boundary_frame.sequence)
+            planned_end = start_ns + round(duration_s * 1e9)
+            if receiver_pause_ms:
+                source.request_receiver_pause(start_ns + round(duration_s * 0.4 * 1e9),
+                                              receiver_pause_ms)
+            telemetry.record("bench_phase", phase="MEASURING", monotonic_ns=start_ns,
+                             planned_end_ns=planned_end, counters=counters_start,
+                             parent_cpu_ns=cpu_parent_start, child_cpu_s=cpu_child_start,
+                             snapshot_ns=snapshot_start_ns)
+            while clock.now_ns() < planned_end:
+                frame = worker.latest.read_after(last, min(0.05, max(0, (planned_end - clock.now_ns()) / 1e9)))
+                if worker.error:
+                    raise RuntimeError("capture failed during measurement")
+                if frame is None or frame.capture_complete_ns < start_ns:
+                    continue
+                recovering = (consumer_recover_after_s is not None and
+                              clock.now_ns() >= start_ns + round(consumer_recover_after_s * 1e9))
+                if recovering and recovery_first_residency_ms is None:
+                    recovery_first_residency_ms = (clock.now_ns() - frame.capture_complete_ns) / 1e6
+                    recovery_first_sequence_skip = max(0, frame.sequence - last - 1)
+                    telemetry.record("consumer_recovered", frame_sequence=frame.sequence,
+                                     host_residency_ms=recovery_first_residency_ms,
+                                     sequence_skip=recovery_first_sequence_skip)
+                skip_count += max(0, frame.sequence - last - 1)
+                last = frame.sequence
+                read_count += 1
+                consume_ns = clock.now_ns()
+                residency.append((consume_ns - frame.capture_complete_ns) / 1e6)
+                telemetry.record("frame_consumed", frame_sequence=frame.sequence,
+                                 consume_ns=consume_ns, capture_complete_ns=frame.capture_complete_ns)
+                if consumer_delay_ms and not recovering:
+                    clock.sleep_until_ns(consume_ns + round(consumer_delay_ms * 1e6))
+            with collection_lock:
+                end_ns = clock.now_ns()
+                collecting_end = end_ns
+            snapshot_end_ns = clock.now_ns()
+            counters_end = source.counters()
+            cpu_parent_end = time.process_time_ns()
+            cpu_child_end = _child_cpu_seconds(source.process.pid)
+            parent_rss = _rss_bytes()
+            child_rss = _child_rss_bytes(source.process.pid)
+            telemetry.record("bench_phase", phase="STOPPING", monotonic_ns=end_ns,
+                             counters=counters_end, parent_cpu_ns=cpu_parent_end,
+                             child_cpu_s=cpu_child_end, snapshot_ns=snapshot_end_ns)
+            if receiver_pause_ms:
+                telemetry.record("receiver_pause", **source.receiver_pause_times())
+        except Exception as error:
+            telemetry.record("bench_failed", reason=type(error).__name__,
+                             monotonic_ns=clock.now_ns(), frames_received=frame_count,
+                             child_state=source.state, child_alive=(source.process.is_alive()
+                                                                   if source.process else False),
+                             counters=source.counters())
+            raise
+        finally:
+            load_stop.set()
+            if load_thread and load_thread.ident is not None:
+                load_thread.join(0.5)
+            worker.stop(join_timeout_s=2)
+        telemetry.flush()
+        image_path = str(Path(log).with_suffix(".png"))
+        if first_frame is not None:
+            _write_rgb_png(image_path, first_frame)
+        window_s = (end_ns - start_ns) / 1e9
+        values = list(arrival)
+        gaps = [(b - a) / 1e6 for a, b in pairwise(values)]
+        child_cpu = (cpu_child_end - cpu_child_start if cpu_child_start is not None and
+                     cpu_child_end is not None else None)
+        dynamic_verified = (config.kind != "grpc" or len({v for _, v in fixture_values}) > 1)
+        summary = {"mode": "process_capture_bench", "status": "complete" if frame_count and dynamic_verified else "incomplete",
+                   "run_id": run_id, "execution": "process", "transport": config.transport,
+                   "consistency": "unverified" if config.transport == "mmap" else "payload",
+                   "diagnostic_only": config.transport == "mmap",
+                   "source_kind": config.kind, "ready_ns": ready_ns,
+                   "parent_load": parent_load, "child_load": config.child_cpu_load,
+                   "receiver_pause": source.receiver_pause_times() if receiver_pause_ms else None,
+                   "consumer_recover_after_s": consumer_recover_after_s,
+                   "recovery_first_host_residency_ms": recovery_first_residency_ms,
+                   "recovery_first_sequence_skip": recovery_first_sequence_skip,
+                   "measurement_start_ns": start_ns, "measurement_end_ns": end_ns,
+                   "measurement_actual_duration_s": window_s,
+                   "snapshot_start_ns": snapshot_start_ns, "snapshot_end_ns": snapshot_end_ns,
+                   "snapshot_start_offset_ms": (start_ns - snapshot_start_ns) / 1e6,
+                   "snapshot_end_offset_ms": (snapshot_end_ns - end_ns) / 1e6,
+                   "frames_received": frame_count, "frames_read": read_count,
+                   "consumer_skips": skip_count,
+                   "arrival_interval_ms": distribution(gaps),
+                   "host_residency_ms": distribution(residency),
+                   "ipc_publish_to_parent_snapshot_ms": distribution(ipc_handoff),
+                   "fixture_samples": len(fixture_values),
+                   "fixture_distinct_counters": len({v for _, v in fixture_values}),
+                   "window_counters_start": counters_start, "window_counters_end": counters_end,
+                   "window_counter_delta": {key: counters_end[key] - counters_start[key]
+                                            for key in counters_start},
+                   "telemetry_drops": 0,
+                   "telemetry_policy": "synchronous bounded-memory JSONL; write failure fails capture",
+                   "parent_cpu_seconds": (cpu_parent_end - cpu_parent_start) / 1e9,
+                   "child_cpu_seconds": child_cpu,
+                   "child_cpu_one_core_percent": child_cpu / window_s * 100 if child_cpu is not None else None,
+                   "parent_cpu_one_core_percent": (cpu_parent_end - cpu_parent_start) / 1e7 / window_s,
+                   "parent_rss_bytes_at_end": parent_rss, "child_rss_bytes_at_end": child_rss,
+                   "log_write_cost_ms": telemetry.write_cost_distribution(start_ns, end_ns),
+                   "source_frame_age": "unknown; Unix source timestamp not mapped to host monotonic",
+                   "log_path": log, "sample_png_path": image_path if first_frame else None}
+        telemetry.record("summary", **summary)
+        if frame_count == 0 or not dynamic_verified:
+            raise RuntimeError("benchmark had no valid dynamic frames in measurement window")
+        return summary
 
 
 def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
@@ -541,7 +827,13 @@ def start_session(serial: str, package: str, duration_s: float, log: str | None,
                   token_file: str | None = None, image_format: str = "rgb888",
                   width: int = 0, height: int = 0,
                   row_order: str = "top-down",
-                  max_relative_lag_ms: float | None = None) -> dict:
+                  max_relative_lag_ms: float | None = None,
+                  capture_execution: str = "thread", grpc_transport: str = "payload",
+                  max_rgb_bytes: int = 16 * 1024 * 1024) -> dict:
+    if grpc_transport != "payload":
+        raise ValueError("unverified MMAP cannot enter Session")
+    if capture_execution == "process" and backend != "emulator-grpc":
+        raise ValueError("process execution currently requires emulator-grpc")
     adb = find_adb()
     if not adb:
         raise RuntimeError("adb unavailable; install Android SDK platform-tools")
@@ -556,12 +848,21 @@ def start_session(serial: str, package: str, duration_s: float, log: str | None,
     with Telemetry(log) as telemetry:
         telemetry.record("run_config", mode="capture_first_session", host=_host(),
                          serial=serial, package=package,
-                         capture_backend=backend,
+                         capture_backend=backend, capture_execution=capture_execution,
+                         grpc_transport=grpc_transport, consistency="payload",
                          touch_backend="disabled")
-        source = (AdbPngCapture(adb, serial, clock) if backend == "adb-png"
-                  else _grpc_source(serial, clock, telemetry, endpoint, token_file,
-                                    image_format, width, height, row_order,
-                                    max_relative_lag_ms))
+        if backend == "adb-png":
+            source = AdbPngCapture(adb, serial, clock)
+        elif capture_execution == "process":
+            source = ProcessCaptureSource(ProcessCaptureConfig(
+                serial=serial, endpoint=endpoint, token_file=token_file,
+                image_format=image_format, width=width, height=height,
+                row_order=row_order, max_relative_lag_ms=max_relative_lag_ms,
+                max_rgb_bytes=max_rgb_bytes))
+        else:
+            source = _grpc_source(serial, clock, telemetry, endpoint, token_file,
+                                  image_format, width, height, row_order,
+                                  max_relative_lag_ms)
         worker = CaptureWorker(source, clock, telemetry)
         session = SessionController(worker, AdbLauncher(adb, serial, clock), clock, telemetry)
         monitor_state = None
@@ -662,6 +963,11 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("capture-bench", help="selected ADB screencap candidate")
     p.add_argument("--serial", required=True)
     p.add_argument("--capture-backend", choices=("adb-png", "emulator-grpc"), default="adb-png")
+    p.add_argument("--capture-execution", choices=("thread", "process"), default="thread")
+    p.add_argument("--grpc-transport", choices=("payload", "mmap"), default="payload")
+    p.add_argument("--diagnostic-mmap", action="store_true")
+    p.add_argument("--no-log-cost", action="store_true")
+    p.add_argument("--max-rgb-bytes", type=int, default=16 * 1024 * 1024)
     p.add_argument("--samples", type=int, default=100)
     p.add_argument("--warmup", type=int, default=10)
     p.add_argument("--duration-s", type=float, default=60)
@@ -670,6 +976,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--consumer-delay-ms", type=float, default=0)
     p.add_argument("--consumer-recover-after-s", type=float)
     p.add_argument("--load", action="store_true")
+    p.add_argument("--child-load", action="store_true")
     p.add_argument("--receiver-pause-ms", type=float, default=0)
     p.add_argument("--fixture-x", type=int, default=0)
     p.add_argument("--fixture-y", type=int, default=0)
@@ -687,6 +994,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--serial", required=True)
     p.add_argument("--package", required=True)
     p.add_argument("--capture-backend", choices=("adb-png", "emulator-grpc"), default="adb-png")
+    p.add_argument("--capture-execution", choices=("thread", "process"), default="thread")
+    p.add_argument("--grpc-transport", choices=("payload", "mmap"), default="payload")
+    p.add_argument("--max-rgb-bytes", type=int, default=16 * 1024 * 1024)
     p.add_argument("--grpc-endpoint")
     p.add_argument("--grpc-token-file")
     p.add_argument("--image-format", choices=("rgb888", "rgba8888"), default="rgb888")
@@ -695,6 +1005,17 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--width", type=int, default=0)
     p.add_argument("--height", type=int, default=0)
     p.add_argument("--duration-s", type=float, default=30)
+    p.add_argument("--log")
+    p = sub.add_parser("offline-capture-bench", help="spawn fake pixels; never discovers an emulator")
+    p.add_argument("--duration-s", type=float, default=3)
+    p.add_argument("--warmup-s", type=float, default=1)
+    p.add_argument("--fake-interval-ms", type=float, default=16.67)
+    p.add_argument("--width", type=int, default=1280)
+    p.add_argument("--height", type=int, default=720)
+    p.add_argument("--consumer-delay-ms", type=float, default=0)
+    p.add_argument("--load", action="store_true")
+    p.add_argument("--child-load", action="store_true")
+    p.add_argument("--no-log-cost", action="store_true")
     p.add_argument("--log")
     p = sub.add_parser("buffer-bench", help="host producer/slow-consumer capacity-one test")
     p.add_argument("--duration-s", type=float, default=1)
@@ -716,7 +1037,34 @@ def main(argv: list[str] | None = None) -> int:
                                     args.load, args.log)
         elif args.command == "capture-bench":
             if args.capture_backend == "emulator-grpc":
-                result = grpc_capture_bench(args.serial, args.duration_s, args.warmup_s,
+                if args.capture_execution == "process":
+                    if args.grpc_transport == "mmap" and not args.diagnostic_mmap:
+                        raise ValueError("MMAP requires --diagnostic-mmap")
+                    adb = find_adb()
+                    if not adb or args.serial not in [d["serial"] for d in list_devices(adb)
+                                                   if d["state"] == "device"]:
+                        raise ValueError("explicit connected ADB serial required")
+                    config = ProcessCaptureConfig(
+                        serial=args.serial, endpoint=args.grpc_endpoint,
+                        token_file=args.grpc_token_file, image_format=args.image_format,
+                        width=args.width, height=args.height, row_order=args.row_order,
+                        max_relative_lag_ms=args.max_relative_lag_ms,
+                        transport=args.grpc_transport, max_rgb_bytes=args.max_rgb_bytes,
+                        child_cpu_load=args.child_load)
+                    result = process_capture_bench(config, args.duration_s, args.warmup_s,
+                                                   args.consumer_delay_ms, args.log,
+                                                   args.ready_timeout_s, args.fixture_x,
+                                                   args.fixture_y, args.fixture_scale,
+                                                   args.fixture_scale_y, args.diagnostic_mmap,
+                                                   args.load, args.receiver_pause_ms,
+                                                   args.consumer_recover_after_s,
+                                                   not args.no_log_cost)
+                elif args.grpc_transport != "payload":
+                    raise ValueError("MMAP benchmark requires process execution")
+                else:
+                    if args.child_load:
+                        raise ValueError("--child-load requires process execution")
+                    result = grpc_capture_bench(args.serial, args.duration_s, args.warmup_s,
                                             args.consumer_delay_ms, args.log,
                                             args.grpc_endpoint, args.grpc_token_file,
                                             args.image_format, args.width, args.height,
@@ -729,7 +1077,18 @@ def main(argv: list[str] | None = None) -> int:
                                             args.max_relative_lag_ms,
                                             args.ready_timeout_s)
             else:
+                if (args.capture_execution != "thread" or args.grpc_transport != "payload" or
+                        args.child_load or args.diagnostic_mmap):
+                    raise ValueError("ADB benchmark supports only thread execution")
                 result = capture_bench(args.serial, args.samples, args.warmup, args.log)
+        elif args.command == "offline-capture-bench":
+            config = ProcessCaptureConfig(kind="fake", fake_interval_ms=args.fake_interval_ms,
+                                          fake_width=args.width, fake_height=args.height,
+                                          child_cpu_load=args.child_load)
+            result = process_capture_bench(config, args.duration_s, args.warmup_s,
+                                           args.consumer_delay_ms, args.log,
+                                           parent_load=args.load,
+                                           instrument_log_cost=not args.no_log_cost)
         elif args.command == "buffer-bench":
             result = buffer_bench(args.duration_s, args.capture_interval_ms,
                                   args.consumer_delay_ms, args.log)
@@ -738,7 +1097,8 @@ def main(argv: list[str] | None = None) -> int:
                                    args.capture_backend, args.grpc_endpoint,
                                    args.grpc_token_file, args.image_format,
                                    args.width, args.height, args.row_order,
-                                   args.max_relative_lag_ms)
+                                   args.max_relative_lag_ms, args.capture_execution,
+                                   args.grpc_transport, args.max_rgb_bytes)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     except (ValueError, RuntimeError, OSError) as error:
