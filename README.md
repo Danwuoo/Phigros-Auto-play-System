@@ -108,12 +108,12 @@ $env:PYTHONPATH='src'
 python -m pas.cli offline-capture-bench --duration-s 3 --warmup-s 1 --width 1280 --height 720
 python scripts/offline_capture_comparison.py --duration-s 2 --warmup-s 0.5 --width 1280 --height 720 --output-dir measurements/another_offline_run
 python scripts/recompute_offline_capture.py measurements/another_offline_run/process-payload.jsonl
-# 以下命令留待集中實機驗收；本輪尚未執行：
+# 本機已使用前景 PAS Capture Fixture 實測；以下命令可重跑：
 python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --capture-execution process --grpc-transport payload --duration-s 60 --warmup-s 10 --fixture-scale 1
-python -m pas.cli start-session --serial emulator-5554 --package <套件名稱> --capture-backend emulator-grpc --capture-execution process --grpc-transport payload --duration-s 30
+python -m pas.cli start-session --serial emulator-5554 --package org.pas.capturefixture --capture-backend emulator-grpc --capture-execution process --grpc-transport payload --duration-s 5
 ```
 
-`--grpc-transport mmap` 只能在 `capture-bench --capture-execution process --diagnostic-mmap` 明確啟用。其 `consistency=unverified`：Emulator 的 MMAP 生產端沒有已證明的讀取同步，通知和像素可錯配，診斷 PNG 與速率均不能視為有效 Session 畫面。`start-session` 直接拒絕 MMAP。`--max-rgb-bytes` 上限為 16 MiB；超容量會失敗並要求以新程序重建，不能在串流中縮放映射。詳見 [低延遲擷取計畫](docs/CAPTURE_LOW_LATENCY_PLAN.md) 和 [量測紀錄](docs/MEASUREMENTS.md)。
+`--grpc-transport mmap` 只能在 `capture-bench --capture-execution process --diagnostic-mmap` 明確啟用。本機 Emulator 37.1.11 的 MMAP 診斷還須指定 `--width 1280 --height 720`；預設 `0×0` 不交付影格，CLI 現在會先報錯。其 `consistency=unverified`：Emulator 的 MMAP 生產端沒有已證明的讀取同步，通知和像素可錯配，診斷 PNG 與速率均不能視為有效 Session 畫面。`start-session` 直接拒絕 MMAP。`--max-rgb-bytes` 上限為 16 MiB；超容量會失敗並要求以新程序重建，不能在串流中縮放映射。詳見 [低延遲擷取計畫](docs/CAPTURE_LOW_LATENCY_PLAN.md) 和 [量測紀錄](docs/MEASUREMENTS.md)。
 
 - [AGENTS.md](AGENTS.md)：後續開發者與自動化代理的工作準則。
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)：模組邊界、時間戳與資料契約。
@@ -125,3 +125,5 @@ python -m pas.cli start-session --serial emulator-5554 --package <套件名稱> 
 ## 目前狀態
 
 合成閉環和主機排程基線可重現。ADB PNG 的歷史基線約每 3 秒取得一張解碼畫面；原始 JSONL 目前缺失，不能重算。gRPC 原始畫面串流已能在本機 AVD 正確認證與取圖。先前原生 1280×720 動態 Fixture 三批各 60 秒約每秒取得 35.4–35.9 個不同畫面；在後續約 59 Hz 的 Fixture 繪製條件下，乾淨提交的三批各取得 3,509–3,559 個不同畫面／60 秒，到達間隔 p95 為 29.58–32.48 ms、p99 為 38.71–40.67 ms，符合該條件的研究門檻。兩組繪製條件不同，差異原因尚未證實；受控停頓仍顯示短暫舊圖，可選相對落後保護在此條件下丟棄舊圖。詳見[量測紀錄](docs/MEASUREMENTS.md)。來源絕對年齡與遊戲判定窗適用性未證明；真實 `0×0` inactive 仍未在 AVD 重現。已驗證可逆的客戶端 gRPC 斷線與重新連線，但未測整台 AVD 斷線。遊戲用擷取後端與觸控後端均未選定；須先完成擷取能力及時序，再做遊戲專用辨識。
+
+2026-09-24 使用者啟動模擬器後，獨立程序 payload 在原生 Fixture 上完成三批各 60 秒及 5 秒 Session；thread payload 也做三批對照。MMAP 指定 1280×720 後完成三批診斷取圖，子程序 CPU 較低，但共享像素一致性仍未證明，不能供 Session。這次 Fixture 可見更新率約 39–44 Hz，與上述約 59 Hz 的歷史條件不同，沒有選定新預設後端。批次分布、負載結果與原始檔雜湊見[量測紀錄](docs/MEASUREMENTS.md)。

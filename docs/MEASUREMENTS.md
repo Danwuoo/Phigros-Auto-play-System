@@ -1,5 +1,44 @@
 # 2026-09-23 基線量測與限制
 
+## 2026-09-24 使用者啟動模擬器後的獨立擷取程序實測
+
+環境：Windows 11 build 26200、Python 3.14.7、Emulator 37.1.11.0 的 `phigros` AVD（Small Phone、Android 16/API 36.1、4 vCPU、6 GB RAM、host GPU、顯示設定 60 Hz），ADB `emulator-5554`；原生 `org.pas.capturefixture` 前景，擷取為 1280×720、top-down、RGB888、`--fixture-scale 1`。主機其他工作與 GPU 負載未固定，不能假定顯示設定等於實際 Fixture 繪製率。所有批次以同機 `time.monotonic_ns()` 計時，在 `0eff346` 乾淨提交上執行；下文 CLI 輸入驗證修正是在量測後加入。正常批次依序 thread payload 1、process payload 1、process payload 2、thread payload 2、thread payload 3、process payload 3，然後 process MMAP 診斷 1–3；每批就緒後暖機 10 秒，正式窗口 60 秒。前景圖的非對稱角落色塊、可見計數和行序已用診斷 PNG 檢查。原始 JSONL／PNG 位於此工作樹被 Git 忽略的 `measurements/live_*/`，SHA-256 見 [雜湊清單](LIVE_CAPTURE_SHA256.txt)；移除工作樹前須另行保存原始資料。
+
+表中 `收到／不同` 為正式窗口擷取張數／解出的不同可見計數。可見率用正式窗口首末計數差除兩張的主機 `capture_complete_ns` 跨度，僅估計**畫面上看到**的更新速率。到達間隔是相鄰 `capture_complete_ns`，單位 ms，列 `n；p50/p95/p99/max`，百分位數線性插值。payload 的此時間點是完整 gRPC bytes 到達；MMAP 是子程序從映射區一次複製完成，兩者不能視作同一段 transport latency。CPU 是該正式窗口單核心百分比，程序配置列子程序；父程序另列於下文。jitter 可由同一 JSONL 的 `p95−p5` 和中位絕對偏差重算。`source_timestamp_us` 未映射到主機 monotonic，絕對來源影格年齡仍未知。
+
+| 配置／批次 | 收到／不同 | 可見率 Hz | 到達間隔 n；p50/p95/p99/max ms | CPU % |
+| --- | ---: | ---: | --- | ---: |
+| thread payload 1 | 2639/2639 | 44.05 | 2638；19.54/49.88/68.33/149.94 | 45.9 |
+| process payload 1 | 2489/2489 | 41.66 | 2488；21.38/51.46/67.71/113.36 | 54.7 |
+| process MMAP 診斷 1 | 2352/2352 | 39.28 | 2351；22.89/50.88/69.05/134.00 | 9.6 |
+| thread payload 2 | 2509/2508 | 41.90 | 2508；20.61/51.00/74.43/167.23 | 58.2 |
+| process payload 2 | 2448/2448 | 41.00 | 2447；21.83/52.64/69.64/140.68 | 58.9 |
+| process MMAP 診斷 2 | 2485/2485 | 41.63 | 2484；20.97/50.15/66.16/125.06 | 8.8 |
+| thread payload 3 | 2342/2341 | 39.11 | 2341；22.81/52.91/76.40/177.70 | 62.1 |
+| process payload 3 | 2386/2386 | 40.01 | 2385；22.87/52.32/70.19/170.21 | 59.6 |
+| process MMAP 診斷 3 | 2470/2470 | 41.42 | 2469；21.68/48.68/68.51/122.60 | 11.6 |
+
+process payload 三批的 parent CPU 依序為 8.3/9.7/8.2%，child RSS 結束快照 57.09/58.63/56.88 MiB，parent RSS 43.72/43.47/43.48 MiB；IPC 發布到 parent 快照 p95 6.32/6.65/6.38 ms。MMAP 診斷三批的 parent CPU 8.3/7.0/9.7%，child RSS 51.40/51.58/51.41 MiB，IPC 該段 p95 6.26/6.01/6.58 ms。process payload 三批 IPC 覆蓋 9/7/10 張、來源序號跳號 0/2/0、讀取拒絕與 child 失敗皆 0；MMAP 診斷覆蓋 2/12/11 張、來源跳號皆 0，不能把這些不同計數加總。thread 三批來源跳號各 2，正式 consumer skip 皆 0。
+
+三種配置的 Fixture 可見率都低於約 60 Hz，且從首批 44.05 Hz 至後段約 39–42 Hz 漂移；因此「至少 55 個不同畫面/s、p95 ≤33.4 ms、p99 ≤50 ms」的**約 60 Hz 來源前提不成立**，不能宣稱任何配置在這批條件下通過或未通過該研究門檻。這與前一節約 59 Hz 的歷史批次是不同環境條件，原因未查明。process payload 確認可用，但尾端間隔未見一致改善；MMAP 診斷的子程序 CPU 大幅降低，仍沒有上游共享區讀取同步證據，不能因 PNG 看起來正確或 CPU 低而解除 `consistency=unverified`／Session 禁令。thread 仍為預設，尚未選定遊戲用擷取後端。
+
+MMAP 相容性排查：`--width 0 --height 0`、16 MiB 上限的 5 秒就緒測試沒有任何影格，child 維持 alive/STARTING 且 heartbeat 前進；上限縮至 3 MB 仍無影格。指定 `--width 1280 --height 720` 後，16 MiB 或 3 MB 上限都能取得有效動態圖，三批完整窗口如上。CLI 現在要求 MMAP 診斷明確指定正尺寸，避免不明就緒逾時。短測 RGB888 與 RGBA8888 均有正向非對稱 PNG 和動態可見計數；RGBA process payload 2 秒窗口 80/80 張，MMAP 診斷 72/72 張，樣本及條件不足以比較效能。已驗證的只是**此本機 Emulator、尺寸與映射形式的圖像輸出**，不能證明 metadata/像素配對或排除 tearing。
+
+受控擾動均為 process payload、暖機 5 秒、正式 30 秒，沒有與 thread 同時跑的負載配對，故只看功能和退化方式：
+
+| 擾動 | 收到／讀到；不同可見計數 | 到達間隔 n；p50/p95/p99/max ms | 觀察 |
+| --- | ---: | --- | --- |
+| consumer 每張 50 ms | 1276/586；1276 | 1275；21.02/50.34/66.52/148.57 | consumer skip 689，host residency p95 41.99 ms；仍讀最新圖 |
+| 100 ms consumer 前 15 s 後恢復 | 1201/709；1201 | 1200；21.43/53.12/69.31/257.39 | skip 494，恢復首圖 host residency 14.32 ms、序號跳 5 |
+| receiver 暫停約 500 ms | 1266/1266；1266 | 1265；20.43/49.48/68.05/510.16 | source gaps 23，停頓後先交付可見計數 29334–29338 等舊圖 |
+| 同上，加相對落後上限 100 ms | 1208/1208；1208 | 1207；20.68/53.44/77.06/523.17 | 丟棄 3 張相對舊圖，停頓後首張計數 31246；不同批次不可直接相減當節省延遲 |
+| parent Python GIL 忙碌 | 894/887；887 | 893；31.42/48.12/62.80/91.12 | parent CPU 100.2%，IPC 發布→快照 p95 46.88 ms、host residency p95 98.61 ms、source gaps 359 |
+| child Python CPU 忙碌 | 379/379；379 | 378；76.29/139.19/170.02/172.40 | child CPU 112.5%，source gaps 861；來源可見率仍約 41.45 Hz |
+
+500 ms 停頓無保護批次的最後停頓前可見計數 29333；停頓結束後 5.96/11.58/17.14/25.02/38.04 ms 依序收到 29334–29338。保護批次最後停頓前為 31219，結束後 20.54 ms 首張交付 31246；這是**相對串流落後**的防護，無法證明絕對來源年齡。parent load 的子程序 CPU 為 50.3%，但 parent 接收與主機競爭也改變，不能推論「隔離後不受負載影響」。
+
+`start-session --package org.pas.capturefixture --capture-execution process --grpc-transport payload --duration-s 5` 完成，結束前 `monitor_state=NAVIGATING`、`frame_fresh_at_monitor_end=true`、發布 221 張、`capture_error=null`，未啟用遊玩觸控。重算例：`$env:PYTHONPATH='src'; python scripts/recompute_offline_capture.py measurements/live_round1_process_payload/capture.jsonl`；thread、process payload、MMAP 診斷第一批的重算窗口／樣本數／間隔與各自 summary 一致。尚未在此續測中驗證真實方向或尺寸切換、`0×0` inactive、整台 AVD 斷線，以及觸控與畫面回饋時序；先前可逆方向等測試見下文，不能挪作本次程序模式驗收。
+
 ## 2026-09-24 獨立程序／MMAP 冷開發離線結果
 
 本輪**未連線、操控或啟動 emulator**。環境：同一 Windows 11 build 26200 主機、Python 3.14.7、1280×720 RGB888、每 16.67 ms 嘗試產生一張的本機 loopback 假 gRPC server；每配置就緒後暖機 0.5 s、正式窗口 2 s，依序跑同程序 payload、spawn 程序 payload、spawn 程序 MMAP 診斷。來源 server 也在父程序內，因此「parent load」同時影響假來源，**不能由此推斷真實 Emulator 隔離改善**。下表是原始 JSONL 以 `scripts/recompute_offline_capture.py` 對 `[measurement_start, measurement_end)` 重算的擷取事件數和相鄰 `capture_complete_ns` 間隔；不是來源畫面年齡，也不是實機效能。

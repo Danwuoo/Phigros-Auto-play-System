@@ -1040,6 +1040,8 @@ def main(argv: list[str] | None = None) -> int:
                 if args.capture_execution == "process":
                     if args.grpc_transport == "mmap" and not args.diagnostic_mmap:
                         raise ValueError("MMAP requires --diagnostic-mmap")
+                    if args.grpc_transport == "mmap" and (args.width <= 0 or args.height <= 0):
+                        raise ValueError("MMAP requires explicit positive --width and --height on this Emulator")
                     adb = find_adb()
                     if not adb or args.serial not in [d["serial"] for d in list_devices(adb)
                                                    if d["state"] == "device"]:

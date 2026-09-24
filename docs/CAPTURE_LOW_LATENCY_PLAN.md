@@ -1,6 +1,13 @@
 # 擷取低延遲開發計畫：獨立程序與 Emulator MMAP
 
-日期：2026-09-24。狀態：冷開發已完成；實機相容性、性能與 MMAP 生產端一致性待集中驗收。本輪同時實作獨立擷取程序與 gRPC MMAP 傳輸；實機驗證另行集中安排。
+日期：2026-09-24。狀態：冷開發已完成；使用者啟動模擬器後，已完成前景 Fixture 的 payload／MMAP 診斷實機批次。MMAP 生產端一致性、來源絕對年齡、約 60 Hz 同條件性能與後續觸控閉環仍待驗收。本輪同時實作獨立擷取程序與 gRPC MMAP 傳輸。
+
+## 使用者開啟模擬器後的實機續測（2026-09-24）
+
+- 在 `emulator-5554`、Emulator 37.1.11.0、原生橫向 1280×720 `PAS Capture Fixture` 前景，以 RGB888/top-down 取得有非對稱色塊和動態可見計數的 PNG。thread payload 與 process payload 各三批就緒、暖機 10 秒、正式 60 秒；process payload 的 5 秒 `start-session` 正常停在 `NAVIGATING`、`frame_fresh=true`，未注入觸控。
+- process MMAP 診斷以預設 `0×0` 尺寸兩次等不到首張圖；即使把映射上限縮到 3 MB 仍相同。明確指定 `--width 1280 --height 720` 後，預設 16 MiB 上限與 3 MB 上限皆能取圖，並完成三批 60 秒診斷。CLI 現在對 MMAP 診斷要求正尺寸，避免不明就緒逾時。這只證實本機 file URI 在該尺寸可輸出圖像，**不證實**通知 metadata 與共享像素同屬一張完整影格；`consistency=unverified` 及 Session 門控維持。
+- 三配置的這批可見 Fixture 更新率只約 39–44 Hz，且隨批次變動；研究門檻的約 60 Hz 前提不成立。process payload 的到達間隔尾端未顯示優於 thread payload；process MMAP 子程序 CPU 明顯較低，但計時點與 payload 不同且快照一致性未知，不能以此作遊戲後端選型。負載、慢 consumer、恢復及停頓批次另見 [量測紀錄](MEASUREMENTS.md)。
+- 本節覆寫下方「本輪未執行」等冷開發歷史範圍敘述的**目前狀態**；保留原文作為當時的授權與驗收計畫，不把未做的方向變更、真實 inactive／AVD 斷線或觸控測試寫成已通過。
 
 ## 冷開發交付紀錄（2026-09-24）
 
