@@ -217,3 +217,44 @@ MMAP 傳輸目前沒有證據是必要且有撕裂風險，WGC／scrcpy 也尚�
 | `round2_profile_protobuf/summary.json` | `2F94CEBCB8E03409E58D68F1FFAB9A7D0195C7E4FE9F1512A08C1CF3FA8CE0A4` |
 | `round2_profile_rgb/summary.json` | `807197BD9BB32D3920E786B45D84E32930D883BF343C61D0306CAC3F2E7880BE` |
 | `round2_profile_fixture/summary.json` | `660391CDEA4C10D9CB84AC18DBA2DE6271457FF35A9AC258C807001AB951790E` |
+
+## 2026-09-24 後續 R2／R3 回歸與原生 Fixture 條件變化
+
+此節是上一節後續；保留所有約 35 Hz 的原始結果與解讀。程式提交 `e92d03e671db0a6d71530ac62d71a50a2d9a9798` 修正兩個可重現缺陷：事件式健康探測進行期間收到新有效串流影格時，不再依探測開始時的舊影格誤轉 `ERROR`；首次正式 consumer skip 以最後一個暖機影格序號為基準，包含窗口邊界後才完成的暖機 callback。假來源回歸涵蓋新影格、真正卡住、inactive、取消及故意延遲第一筆正式消費。安裝 gRPC extras 時以 `python -m unittest discover -s tests -q` 執行，36 項單元測試通過；設定 `PYTHONPATH=src` 的 `python -S` 模式 28 項通過、8 項依賴 gRPC 的測試跳過。真實 AVD 搭配受控探測回傳值時，等候新 gRPC 串流影格後再回傳 `changed`，觀察 `new_valid_frame_during_probe`、`NAVIGATING`、沒有 monitor 錯誤；此探測回傳值由測試控制，不能稱為真實 `getScreenshot` RPC 競態的直接重現。
+
+環境延續上一節 Windows 11、Emulator 37.1.11、Python 3.14.7、`phigros` AVD、`emulator-5554`，原生 `PAS Capture Fixture` 前景、gRPC RGB888、top-down、1280×720／`source_rotation=1`。後續量測時 Fixture 可見繪製率約 59 Hz，明顯高於前一約 35–36 Hz 條件。停止擷取程序後，用只讀 `dumpsys gfxinfo org.pas.capturefixture` 的累積 `Total frames rendered` 差值獨立觀察 606 張／10.2723452 秒（58.99 Hz），且確認 Fixture 前景。這支持來源此時確有接近 60 Hz 的畫面更新，卻**不能證明**為何與前一條件不同：螢幕／視窗狀態、模擬器排程及主機負載未受控，不把提升歸因於 R2／R3 修正。
+
+以下正式基準在乾淨提交 `e92d03e` 執行，`run_config.source_revision.git_dirty=false`。正常批次各就緒後暖機 10 秒、正式 60 秒；停頓及負載批次暖機 5 秒、正式 30 秒。均加 `--ready-timeout-s 15 --fixture-scale 1`，每批獨立 JSONL。百分位數是正式窗口全部相鄰 `capture_complete_ns` 間隔的線性插值；正式秒數含停頓，CPU 是同一正式窗口 process time／monotonic 時長，RSS 是程序 Working Set。`收到／不同計數` 的每秒值用不同計數除正式牆鐘，來源可見計數跨度率另由首末計數和影格跨度估計。主機其他負載未固定；來源 Unix 時戳不與主機 monotonic 直接相減。
+
+| 條件 | 正式秒數 | 收到／不同計數；不同計數／秒 | 可見計數跨度率 Hz | 到達間隔 n；p50 / p95 / p99 / 最大 ms | 來源跳號／相對丟棄／未讀覆蓋／consumer skip | CPU 單核心 | RSS p50 / 最大 MiB |
+| --- | ---: | --- | ---: | --- | ---: | ---: | ---: |
+| 正常 1 | 60.002 | 3,557 / 3,557；59.28 | 59.32 | 3,556；16.25 / 32.48 / 40.67 / 54.48 | 3 / 0 / 1 / 0 | 74.2% | 59.68 / 63.29 |
+| 正常 2 | 60.006 | 3,559 / 3,559；59.31 | 59.45 | 3,558；16.08 / 29.80 / 38.71 / 59.39 | 7 / 0 / 1 / 0 | 79.2% | 58.93 / 62.68 |
+| 正常 3 | 60.010 | 3,509 / 3,509；58.47 | 58.48 | 3,508；16.39 / 29.58 / 39.59 / 61.82 | 1 / 0 / 1 / 0 | 84.9% | 58.95 / 63.28 |
+| 接收暫停 500 ms，無保護 | 30.006 | 1,762 / 1,761；58.69 | 59.73 | 1,761；16.43 / 28.65 / 36.58 / 509.27 | 29 / 0 / 1 / 0 | 76.5% | 58.04 / 61.55 |
+| 接收暫停 500 ms，相對落後上限 100 ms | 30.012 | 1,754 / 1,754；58.44 | 59.55 | 1,753；16.32 / 29.29 / 36.76 / 546.49 | 28 / 4 / 1 / 0 | 72.2% | 58.21 / 63.37 |
+| 同程序 Python GIL 忙碌 thread | 30.004 | 510 / 510；17.00 | 59.93 | 509；61.78 / 92.99 / 96.33 / 140.60 | 1,289 / 0 / 8 / 7 | 109.2% | 62.22 / 66.50 |
+
+三批正常結果在此約 59 Hz 來源條件下，皆通過研究門檻：1280×720 至少 55 個不同畫面／秒、到達間隔 p95 ≤33.4 ms、p99 ≤50 ms。這只是**條件性的擷取到達驗收**；前一約 35 Hz 條件並未通過，絕對 source frame age、端到端觸控時序與遊戲判定窗仍未知。受控同程序 GIL 忙碌 thread 讓收到率降至約 17.00 張／秒，來源序號跳 1,289，儘管 Fixture 可見計數跨度仍約 59.93 Hz；這只描述同程序爭用，不代表主機或 AVD 外部負載性能。
+
+接收暫停無保護時，停頓前錨點來源序號 1016；停頓結束後 7.38／13.60／21.60 ms 先收到 1018–1020，兩個時域各自差值再相減顯示額外相對落後約 499／488／480 ms；30.23 ms 到達 1048 時差值回到約 3 ms。啟用相對落後上限的另一批丟棄 4 張，停頓前來源序號 1008，停頓結束後 44.96 ms 首張交付 1041，差值約 7.83 ms；後續沒有持續回放。來源序號跳號、丟棄與容量 1 覆蓋是不同計數，不互相相加；保護仍不能提供絕對新鮮度。
+
+另在修正尚未提交的工作樹做 100 ms 慢 consumer 30 秒批次：正式 30.027 秒收到 1,779 張／1,779 個不同計數、可見計數跨度 59.30 Hz；間隔 n=1,778，p50／p95／p99／最大為 16.06／31.08／38.93／53.15 ms；CPU 96.9%，RSS p50／最大 58.79／62.82 MiB。容量 1 緩衝區覆蓋 1,483 張、consumer 讀 296 張、正式 skip 1,478。最後暖機序號為 299，第一張正式消費序號為 300，首筆 skip=0；因此暖機影格沒有混入正式 skip。此批 `git_dirty=true`，主要用於邊界與慢 consumer 驗證，不能代替乾淨提交的正式正常三批。
+
+可逆故障檢查只針對 Fixture：關閉 AVD 螢幕 2 秒時 `dumpsys power` 顯示非 Awake，`inactive_frames=0`、worker 無錯誤；開啟並恢復 Fixture 前景後收到新 1280×720 影格。Android Studio 視窗最小化 2 秒再恢復期間，同樣收到有效影格、`inactive_frames=0`、worker 無錯誤，Studio 可見狀態已恢復。主動關閉**客戶端**已認證 gRPC source 得到 `gRPC screenshot stream failed: CANCELLED`，重新建立已認證來源後取得 1280×720 影格。這驗證客戶端中斷與重建，不代表整台 AVD 斷線／重連；兩種安全的可視性操作皆未觸發 `0×0` inactive，真實 inactive 路徑尚未實機驗證。假來源的 inactive→active 回歸仍通過。未清除裝置或遊戲資料，也未中斷登入。
+
+可重現正常命令：`$env:PYTHONPATH='src'; python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulator-grpc --duration-s 60 --warmup-s 10 --ready-timeout-s 15 --fixture-scale 1 --log measurements/<新 run id>/capture.jsonl`。對照批次改 `--duration-s 30 --warmup-s 5`，另加 `--receiver-pause-ms 500`、`--max-relative-lag-ms 100` 或 `--load`；consumer 批次加 `--consumer-delay-ms 100`。競態與故障檢查可用 `python scripts/verify_probe_race.py --serial emulator-5554 --log measurements/<新 run id>/events.jsonl`、`python scripts/verify_capture_faults.py --serial emulator-5554 --screen-off-s 2 --log measurements/<新 run id>/capture.jsonl`，前提是 Fixture 前景；安全可視性檢查的結果見原始日誌。每次新路徑不可覆寫。下列檔案存於此工作樹、被 Git 忽略；SHA-256 供核對，移除 worktree 前須另行保存。
+
+| 本工作樹 `measurements/` 下路徑 | SHA-256 |
+| --- | --- |
+| `round2_followup_consumer100/capture.jsonl` | `60DAAE4B236314B78502A0D0E09BA079E0CA9B6D2F759426B9991DBDBDBC593A` |
+| `round2_followup_clean_normal_1/capture.jsonl` | `BD6D15775D0ED70163614DF4DC2A417EA115AD7C4934206FA133B6C4AF23D8A1` |
+| `round2_followup_clean_normal_2/capture.jsonl` | `9B88513502359F9FF2296922CAB618F38185B4A889E02AC860FA439F83BFC14C` |
+| `round2_followup_clean_normal_3/capture.jsonl` | `675E5A3CA9AD5EA0A0EC276C9DBF49138C229885EC7400BA111D3A6430DC1D6A` |
+| `round2_followup_clean_pause/capture.jsonl` | `DC8088313B820097EF41AEF02790958466C44EE0BA4406E16A5C49266C43A5C5` |
+| `round2_followup_clean_guard/capture.jsonl` | `2012268A0266D70AF9A4EC479AA0A305705688C53656EC64732957B51C580A28` |
+| `round2_followup_clean_load/capture.jsonl` | `B59477F35A13922E85FEA0878EFB441F4FE184D60426852B6D83130B0F90E395` |
+| `round2_followup_gfxinfo/summary.json` | `C8FB83268868C690C36EE78EB418BF96A44B5C684781D4EDA168628D8429EA7B` |
+| `round2_probe_followup_2/events.jsonl` | `296F999D854A6554CE3B4B646AD9DC54CACA3C687250D2EAD5BF4F2C5348957F` |
+| `round2_fault_followup/capture.jsonl` | `12980ACAB41A577F0A5E810E6BF4A5DDFDE188ECB00645BF99C2D41525EECD60` |
+| `round2_visibility_followup/events.jsonl` | `2F03B89A57DD98CFFBA2153C6DC51E43B23781866B39E88ADD238C446BE72516` |

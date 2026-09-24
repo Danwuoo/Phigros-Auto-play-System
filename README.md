@@ -74,7 +74,7 @@ python -m pas.cli capture-bench --serial emulator-5554 --capture-backend emulato
 來源時間缺失、倒退、明顯前跳、停止前進或持續丟棄超過 1 秒時，保護會明確停止串流並要求重建來源；不重新設錨後接收積壓圖。來源 Unix metadata 不能用於絕對影格年齡或觸控排程。
 
 `start-session` 也支援 `--capture-backend emulator-grpc`。事件式串流的就緒條件是一張有效圖像；靜態畫面不會偽造新影格。此命令只啟動應用並監控 `NAVIGATING`／`DEGRADED` 等擷取狀態，不判斷遊玩狀態或注入觸控。
-事件式串流逾期時，Session 以獨立的 `getScreenshot` 探測傳輸及可見 pixels。相同靜態 pixels 只標為 `DEGRADED`，`frame_fresh=False`；探測失敗或探測到變化但串流未送達時轉為 `ERROR`。未確認的新鮮度不供未來遊玩門控使用。
+事件式串流逾期時，Session 以獨立的 `getScreenshot` 探測傳輸及可見 pixels。探測返回後會重新讀取最新串流影格、inactive、worker 錯誤與停止狀態；若探測期間已有未逾期的新有效影格，恢復 `NAVIGATING`。相同靜態 pixels 只標為 `DEGRADED`，`frame_fresh=False`；探測失敗或探測到變化但串流仍未送達時轉為 `ERROR`。未確認的新鮮度不供未來遊玩門控使用。
 
 `fixtures/capture/index.html` 是可重現的動態像素測試頁，含非對稱角落色塊、可見計數與位元編碼。其計數只供測試統計，不接入遊戲決策。可在倉庫根目錄執行 `python -m http.server 8765 --bind 127.0.0.1 --directory fixtures/capture`，由使用者在 AVD 瀏覽器開啟 `http://10.0.2.2:8765/`。先看輸出的診斷 PNG，依瀏覽器工具列位置與像素縮放設定 `--fixture-x`、`--fixture-y`、`--fixture-scale`、`--fixture-scale-y`，再跑長批次；本機 Chrome 直向 720×1280 的校準值為 `--fixture-y 162 --fixture-scale 2 --fixture-scale-y 2.25`。實際 callback 更新率由可見計數的首末值估計，不能由 AVD 60 Hz 設定推定。
 
@@ -108,4 +108,4 @@ python -m pas.cli capture-bench --serial emulator-5554 --samples 30 --warmup 3 -
 
 ## 目前狀態
 
-合成閉環和主機排程基線可重現。ADB PNG 的歷史基線約每 3 秒取得一張解碼畫面；原始 JSONL 目前缺失，不能重算。gRPC 原始畫面串流已能在本機 AVD 正確認證與取圖；修正窗口後乾淨提交的原生 1280×720 動態 Fixture 三批各 60 秒約每秒取得 35.4–35.9 個不同畫面，接收端停頓後會短暫交付較舊畫面，可選保護在受控測試中丟棄舊圖，詳見[量測紀錄](docs/MEASUREMENTS.md)。這尚未達每秒 55 張不同畫面及尾端間隔的研究目標，來源也未證明穩定 60 FPS；遊戲用擷取後端與觸控後端均未選定。可靠性修正與部分實機功能已驗證，來源絕對年齡、真實 inactive／斷線及性能仍待驗證；須先完成擷取能力及時序，再做遊戲專用辨識。
+合成閉環和主機排程基線可重現。ADB PNG 的歷史基線約每 3 秒取得一張解碼畫面；原始 JSONL 目前缺失，不能重算。gRPC 原始畫面串流已能在本機 AVD 正確認證與取圖。先前原生 1280×720 動態 Fixture 三批各 60 秒約每秒取得 35.4–35.9 個不同畫面；在後續約 59 Hz 的 Fixture 繪製條件下，乾淨提交的三批各取得 3,509–3,559 個不同畫面／60 秒，到達間隔 p95 為 29.58–32.48 ms、p99 為 38.71–40.67 ms，符合該條件的研究門檻。兩組繪製條件不同，差異原因尚未證實；受控停頓仍顯示短暫舊圖，可選相對落後保護在此條件下丟棄舊圖。詳見[量測紀錄](docs/MEASUREMENTS.md)。來源絕對年齡與遊戲判定窗適用性未證明；真實 `0×0` inactive 仍未在 AVD 重現。已驗證可逆的客戶端 gRPC 斷線與重新連線，但未測整台 AVD 斷線。遊戲用擷取後端與觸控後端均未選定；須先完成擷取能力及時序，再做遊戲專用辨識。
