@@ -1,6 +1,6 @@
 # Phigros Auto-play System
 
-2026-09-25 起的正式實作採 **C++20**：Windows x64／MSVC／CMake／vcpkg，單程序多執行緒，Android NativeActivity Fixture 亦由 C++ 編寫。Python、Java 與網頁 Fixture 原始碼已凍結於 [`legacy/`](legacy/README.md)，只供歷史重算與比較。T0–T5 遷移仍以 [遷移計畫](docs/CPP_MIGRATION_PLAN.md) 及 [驗收矩陣](docs/CPP_PARITY_MATRIX.md) 逐項驗證；未取得實測證據的能力不能宣稱通過。程式不向 Phigros 注入遊玩觸控。
+2026-09-25 起的正式實作採 **C++20**：Windows x64／MSVC／CMake／vcpkg，單程序多執行緒，Android NativeActivity Fixture 亦由 C++ 編寫。Python、Java 與網頁 Fixture 原始碼已凍結於 [`legacy/`](legacy/README.md)，只供歷史重算與比較。T0–T5 的功能與可執行驗證已完成，正常擷取的性能數值門檻仍待使用者依新基線決定；逐項證據見 [驗收矩陣](docs/CPP_PARITY_MATRIX.md) 與 [驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。程式不向 Phigros 注入遊玩觸控。
 
 ## C++ 建置與執行
 
@@ -19,7 +19,7 @@ cmake --build --preset windows-release
 ctest --preset windows-release
 ```
 
-`windows-debug` 與 `windows-asan` presets 用於除錯；性能量測只使用 Release。這台機器的 BuildTools 14.51 缺 ASan 元件，`windows-asan` preset 暫借 Community 14.50 的 sanitizer header/runtime；嚴格 ASan 的 gRPC loopback 仍有工具鏈相關報告，詳見 [C++ 驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。正式命令是 `out/release-v145/Release/pas.exe`，不需要 Python PATH 或 pip 套件。量測輸出保存在 ignored 的 `measurements/`，不要提交原始畫面、權杖或 debug keystore。
+`windows-debug` 與 `windows-asan` presets 用於除錯；性能量測只使用 Release。這台機器的 BuildTools 14.51 缺 ASan 元件，`windows-asan` preset 暫借 Community 14.50 的 sanitizer header/runtime，並使 Abseil 標頭與未受 ASan 編譯的 vcpkg 二進位套件使用相同的 `Cord` 行為；嚴格 ASan 19/19 通過。第三方二進位套件本身未受插樁，詳見 [C++ 驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。正式命令是 `out/release-v145/Release/pas.exe`，不需要 Python PATH 或 pip 套件。量測輸出保存在 ignored 的 `measurements/`，不要提交原始畫面、權杖或 debug keystore。
 
 ```powershell
 out/release-v145/Release/pas.exe probe --serial emulator-5554

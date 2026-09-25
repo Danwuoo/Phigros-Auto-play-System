@@ -1,6 +1,6 @@
 # 全 C++ 遷移與擷取候選開發計畫
 
-日期：2026-09-25。狀態：T0 來源已逐 hash 核對並凍結；T1–T5 正依此計畫實作與驗收，逐項實證狀態另見 [C++ 驗收矩陣](CPP_PARITY_MATRIX.md)。新基線後的性能數值門檻仍須詢問使用者。盤點依據見 [盤點報告](CPP_MIGRATION_AUDIT.md) 與 [逐檔 hash](CPP_MIGRATION_INVENTORY.json)。本計畫中的目標目錄、命令、類別與測試要求是開發規格；不能僅憑此文件視為已完成。
+日期：2026-09-25。狀態：T0–T5 的功能與可執行驗證已完成，逐項實證狀態見 [C++ 驗收矩陣](CPP_PARITY_MATRIX.md) 與 [驗收紀錄](CPP_ACCEPTANCE_20260925.md)。新基線後的性能數值門檻仍須使用者決定。盤點依據見 [盤點報告](CPP_MIGRATION_AUDIT.md) 與 [逐檔 hash](CPP_MIGRATION_INVENTORY.json)。本計畫中的目標目錄、命令、類別與測試要求是開發規格；不能僅憑此文件視為已完成。
 
 ## 1. 使用者決策與適用範圍
 

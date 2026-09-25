@@ -1,6 +1,6 @@
 # C++20 遷移與驗收矩陣
 
-2026-09-25。本表區分「已有 C++ 程式碼」與「已用新原始證據驗收」。本輪 Release／Debug 各 19/19、原生 Touch Fixture 180+30、雙指 batch 30、三批正常擷取與七批壓力／穩定性都已取得新證據；ASan 完整嚴格驗收及正常性能門檻仍待結案。完整數字與限制見 [C++ 驗收紀錄](CPP_ACCEPTANCE_20260925.md)。來源凍結與雜湊見 [來源清單](CPP_SOURCE_SNAPSHOT_MANIFEST.json)，可取得的歷史 raw 與缺失項見 [證據索引](CPP_EVIDENCE_INDEX.json)。
+2026-09-25。本表區分「已有 C++ 程式碼」與「已用新原始證據驗收」。本輪 Release／Debug／嚴格 ASan 各 19/19、原生 Touch Fixture 180+30、雙指 batch 30、三批正常擷取與七批壓力／穩定性都已取得新證據；正常性能數值門檻仍待使用者決定。ASan 的第三方二進位依賴未受插樁。完整數字與限制見 [C++ 驗收紀錄](CPP_ACCEPTANCE_20260925.md)。來源凍結與雜湊見 [來源清單](CPP_SOURCE_SNAPSHOT_MANIFEST.json)，可取得的歷史 raw 與缺失項見 [證據索引](CPP_EVIDENCE_INDEX.json)。
 
 ## 正式元件
 
@@ -16,7 +16,7 @@
 | 排程與假觸控 | `src/core.cpp` | gate／plan 到期、單調 birth ID、stop 線性化三項 P1 回歸 |
 | gRPC 多指觸控 | `src/emulator.cpp` | RPC 成功只代表呼叫返回；接觸效果由 native Fixture pixels 驗證 |
 | Capture／Touch Fixture | `fixtures/android/` | NDK x86_64 NativeActivity；APK hash 一致；六類逐指 180、取消 30、batch 30 通過 |
-| JSONL／pause 分析 | `src/analysis.cpp` | 有界 streaming、半開窗口；舊 normal-1-T 與 pause500-T differential 一致；新 campaign 七批 raw hash 一致 |
+| JSONL／pause 分析 | `src/analysis.cpp` | 有界 streaming、半開窗口；17 個可取得的歷史 raw 與舊 summary 的共同關鍵欄位一致，舊 pause500-T 首秒相對 lag 一致；新 campaign 七批 raw hash 一致 |
 | 量測與正式日誌 | `src/bench.cpp`、`src/journal.cpp` | bounded writer；3×60 秒 Release 正常基線與 600 秒穩定性完成；性能門檻待使用者確認 |
 
 ## 11 個既有 CLI 用途
@@ -46,9 +46,9 @@
 | `build_touch_fixture.py` | 同上，touch target |
 | `offline_capture_comparison.py` | `pas offline-capture-bench`；process/thread 比較因正式架構變更退役 |
 | `profile_grpc_stages.py` | `capture.jsonl` 分段時戳與 `pas analyze capture`；更細的 protobuf-only profile 待驗收 |
-| `recompute_offline_capture.py` | `pas analyze capture`；舊 process raw 的欄位相容需 differential |
-| `summarize_unified_capture.py` | `pas analyze capture` 單 run，`pas analyze campaign` 跨 run 重算與 hash 驗證；待實測驗收 |
-| `unified_capture_bench.py` | `pas capture-campaign` 預先寫入固定順序、逐 run manifest/raw/summary；待實測驗收 |
+| `recompute_offline_capture.py` | `pas analyze capture`；17 個可取得的歷史 raw 已完成共同關鍵欄位 differential |
+| `summarize_unified_capture.py` | `pas analyze capture` 單 run，`pas analyze campaign` 跨 run 重算與 hash 驗證；三批正常及七批壓力／穩定性均已實測 |
+| `unified_capture_bench.py` | `pas capture-campaign` 預先寫入固定順序、逐 run manifest/raw/summary；七批壓力／穩定性已實測 |
 | `verify_capture_faults.py` | C++ loopback／fault 測試；真實 invalid／inactive 待驗收 |
 | `verify_probe_race.py` | C++ 健康 probe 返回後重檢；回歸測試待補 |
 | `verify_scheduler_acceptance.py` | `tests/core_tests.cpp` 三項 P1 回歸 |
@@ -58,14 +58,14 @@
 | 凍結測試 | C++ 對應／處置 | 新證據狀態 |
 | --- | --- | --- |
 | `test_capture_bench.py` | `pas offline-capture-bench`、`pas buffer-bench`、`pas capture-bench`；新 C++ JSONL 窗口驗證 | Release 實測通過 |
-| `test_capture_grpc.py` | `tests/grpc_loopback_tests.cpp`：真 RPC、截斷 payload、凍結 timestamp、取消；實機 payload／MMAP 診斷 | Release／Debug 通過；嚴格 ASan 第三方 poison 報告待解 |
+| `test_capture_grpc.py` | `tests/grpc_loopback_tests.cpp`：真 RPC、截斷 payload、凍結 timestamp、取消；實機 payload／MMAP 診斷 | Release／Debug／嚴格 ASan 通過；第三方二進位依賴未受插樁 |
 | `test_capture_process.py` | process IPC 按單程序決策退役；有界 `LatestFrame`、worker 取消與 ownership 改由 C++ 測試／observe 驗證 | CTest 與 observe 通過 |
 | `test_input_grpc_server.py` | `pas touch-bench`、`pas touch-batch-bench`、`pas touch-disconnect-smoke` 加 native pixels 逐指驗證 | 正式樣本通過 |
 | `test_pipeline.py` | `tests/core_tests.cpp` 的 pixels→追蹤→預測與 `pas synthetic` 端到端假觸控 | 30/30 合成命中 |
 | `test_process_bench_boundaries.py` | process CPU／RSS 取樣退役；半開時間窗口、跨界 frame 排除與新 JSONL 重算 | CTest 與正式窗口重算通過 |
 | `test_runtime_core.py` | schema 2 設定、gate／stop、`run observe`、Session／probe race 實機與 fake profile | 實機與 fake 短測通過 |
-| `test_unified_capture_analysis.py` | `pas analyze capture|pause|campaign`，歷史 JSONL golden 差分與新 campaign hash 驗證 | 舊 normal/pause 差分與新十批 hash 通過 |
+| `test_unified_capture_analysis.py` | `pas analyze capture|pause|campaign`，歷史 JSONL golden 差分與新 campaign hash 驗證 | 17 個歷史 raw 共同關鍵欄位與新十批 hash 通過 |
 
 ## 尚未授權的性能數值門檻
 
-40–57 Hz 是正常來源區間，並非自動通過。待 5 vCPU／8 GB AVD 的第一批 C++ Release 基線完成後，將 p95／p99、最大無圖空窗、來源跟隨比例及失敗容許值連同測試環境、樣本數與原始分布交由使用者決定。不能沿用舊 57–63 Hz pass 欄位。
+40–57 Hz 是正常來源區間，並非自動通過。5 vCPU／8 GB AVD 的三批 C++ Release 基線已完成；p95／p99、最大無圖空窗、來源跟隨比例及失敗容許值連同測試環境、樣本數與原始分布已交由使用者決定。不能沿用舊 57–63 Hz pass 欄位。

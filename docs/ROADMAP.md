@@ -1,10 +1,10 @@
 # 開發路線圖
 
-## 目前執行順序：C++20 T0–T5
+## 目前狀態：C++20 T0–T5 功能驗收完成
 
 本輪先完成來源凍結、C++20 基礎與單程序執行、既有 gRPC payload／ADB／診斷 MMAP、簡單目標與 scheduler、Android Native Fixture、最後做功能與資料驗收。T6–T7 的 WGC／DXGI／scrcpy 新候選比較留待下一輪。功能驗收必須以 C++ 新命令、原始 JSONL 與 Fixture pixels 重新證明；舊 Python pass 不直接轉移。逐項狀態與缺口見 [遷移矩陣](CPP_PARITY_MATRIX.md)。
 
-目前 T0 來源快照已逐 hash 核對並凍結於 `legacy/`；T1–T5 的程式碼與新 Fixture 正在建置及測試，不能先宣稱全部通過。第一批 5 vCPU／8 GB C++ Release 擷取基線之後，再由使用者決定 p95／p99、無圖空窗、來源跟隨與失敗容許的數值門檻。40–57 Hz 是正常來源條件，並非自動通過性能。
+T0 來源快照已逐 hash 核對並凍結於 `legacy/`；T1–T5 的 C++ 程式、新 Fixture、Release／Debug／嚴格 ASan 測試與新原始量測已完成，限制見 [驗收紀錄](CPP_ACCEPTANCE_20260925.md)。5 vCPU／8 GB C++ Release 的三批 60 秒正常基線已取得；p95／p99、無圖空窗、來源跟隨與失敗容許的數值門檻仍待使用者決定。40–57 Hz 是正常來源條件，並非自動通過性能。
 
 ## 歷史路線與驗收紀錄
 
