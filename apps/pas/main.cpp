@@ -7,6 +7,7 @@
 #include "pas/touch_bench.hpp"
 #include "pas/preview.hpp"
 #include "pas/journal.hpp"
+#include "pas/native_capture.hpp"
 
 #include <CLI/CLI.hpp>
 #include <nlohmann/json.hpp>
@@ -566,7 +567,8 @@ int main(int argc, char** argv) {
     session_cmd->add_option("--duration-s", session_duration_s)->check(CLI::PositiveNumber);
     CaptureBenchOptions bench;
     std::string capture_execution = "thread", bench_output;
-    auto* bench_cmd = app.add_subcommand("capture-bench", "Measure existing gRPC payload or diagnostic ADB/MMAP capture");
+    auto* windows_cmd = app.add_subcommand("capture-windows", "List explicit Win32 capture targets and client geometry");
+    auto* bench_cmd = app.add_subcommand("capture-bench", "Measure gRPC, WGC, DXGI, scrcpy or diagnostic ADB/MMAP capture");
     bench_cmd->add_option("--serial", bench.serial)->required();
     bench_cmd->add_option("--capture-backend", bench.backend);
     bench_cmd->add_option("--capture-execution", capture_execution);
@@ -575,6 +577,18 @@ int main(int argc, char** argv) {
     bench_cmd->add_option("--grpc-token-file", bench.grpc_token_file);
     bench_cmd->add_option("--image-format", bench.image_format);
     bench_cmd->add_option("--row-order", bench.row_order);
+    bench_cmd->add_option("--grpc-copy-mode", bench.grpc_copy_mode);
+    bench_cmd->add_flag("--grpc-rotate-ccw", bench.grpc_rotate_ccw);
+    bench_cmd->add_option("--run-class", bench.run_class);
+    bench_cmd->add_option("--window-hwnd", bench.window_hwnd);
+    bench_cmd->add_option("--monitor-index", bench.monitor_index);
+    bench_cmd->add_option("--crop-x", bench.crop_x);
+    bench_cmd->add_option("--crop-y", bench.crop_y);
+    bench_cmd->add_option("--scrcpy-server", bench.scrcpy_server);
+    bench_cmd->add_option("--scrcpy-max-fps", bench.scrcpy_max_fps);
+    bench_cmd->add_option("--scrcpy-video-bit-rate", bench.scrcpy_video_bit_rate);
+    bench_cmd->add_option("--scrcpy-video-encoder", bench.scrcpy_video_encoder);
+    bench_cmd->add_option("--memory-load-mib", bench.memory_load_mib);
     bench_cmd->add_option("--max-rgb-bytes", bench.max_rgb_bytes);
     bench_cmd->add_option("--width", bench.width);
     bench_cmd->add_option("--height", bench.height);
@@ -601,10 +615,22 @@ int main(int argc, char** argv) {
     campaign_cmd->add_option("--width", campaign.width);
     campaign_cmd->add_option("--height", campaign.height);
     campaign_cmd->add_option("--source-rotation", campaign.source_rotation);
+    campaign_cmd->add_option("--capture-backend", campaign.backend);
+    campaign_cmd->add_option("--window-hwnd", campaign.window_hwnd);
+    campaign_cmd->add_option("--monitor-index", campaign.monitor_index);
+    campaign_cmd->add_option("--crop-x", campaign.crop_x);
+    campaign_cmd->add_option("--crop-y", campaign.crop_y);
+    campaign_cmd->add_option("--scrcpy-server", campaign.scrcpy_server);
+    campaign_cmd->add_option("--scrcpy-max-fps", campaign.scrcpy_max_fps);
+    campaign_cmd->add_option("--scrcpy-video-bit-rate", campaign.scrcpy_video_bit_rate);
+    campaign_cmd->add_option("--scrcpy-video-encoder", campaign.scrcpy_video_encoder);
+    campaign_cmd->add_option("--memory-load-mib", campaign.memory_load_mib);
     campaign_cmd->add_option("--grpc-endpoint", campaign.grpc_endpoint);
     campaign_cmd->add_option("--grpc-token-file", campaign.grpc_token_file);
     campaign_cmd->add_option("--image-format", campaign.image_format);
     campaign_cmd->add_option("--row-order", campaign.row_order);
+    campaign_cmd->add_option("--grpc-copy-mode", campaign.grpc_copy_mode);
+    campaign_cmd->add_flag("--grpc-rotate-ccw", campaign.grpc_rotate_ccw);
     campaign_cmd->add_option("--max-rgb-bytes", campaign.max_rgb_bytes);
     campaign_cmd->add_option("--warmup-s", campaign.warmup_s);
     campaign_cmd->add_option("--duration-s", campaign.duration_s);
@@ -613,6 +639,37 @@ int main(int argc, char** argv) {
     campaign_cmd->add_option("--stability-s", campaign_stability_s);
     campaign_cmd->add_option("--fixture-apk", campaign.fixture_apk)->required();
     campaign_cmd->add_option("--output-dir", campaign.output_dir)->required();
+    CaptureBenchOptions five;
+    int five_normal_runs = 3;
+    double five_stability_s = 600;
+    bool five_no_stress = false, five_plan_only = false;
+    std::string five_revision, five_diff_hash;
+    auto* five_cmd = app.add_subcommand("capture-five-campaign",
+        "Prewrite and run a serial fixed-order five-path native Fixture campaign");
+    five_cmd->add_option("--serial", five.serial)->required();
+    five_cmd->add_option("--fixture-apk", five.fixture_apk)->required();
+    five_cmd->add_option("--scrcpy-server", five.scrcpy_server)->required();
+    five_cmd->add_option("--window-hwnd", five.window_hwnd)->required();
+    five_cmd->add_option("--monitor-index", five.monitor_index);
+    five_cmd->add_option("--crop-x", five.crop_x);
+    five_cmd->add_option("--crop-y", five.crop_y);
+    five_cmd->add_option("--wgc-crop-x", five.wgc_crop_x);
+    five_cmd->add_option("--wgc-crop-y", five.wgc_crop_y);
+    five_cmd->add_option("--dxgi-crop-x", five.dxgi_crop_x);
+    five_cmd->add_option("--dxgi-crop-y", five.dxgi_crop_y);
+    five_cmd->add_option("--width", five.width);
+    five_cmd->add_option("--height", five.height);
+    five_cmd->add_option("--source-rotation", five.source_rotation);
+    five_cmd->add_option("--normal-runs", five_normal_runs);
+    five_cmd->add_option("--stability-s", five_stability_s);
+    five_cmd->add_option("--scrcpy-max-fps", five.scrcpy_max_fps);
+    five_cmd->add_option("--scrcpy-video-bit-rate", five.scrcpy_video_bit_rate);
+    five_cmd->add_option("--scrcpy-video-encoder", five.scrcpy_video_encoder);
+    five_cmd->add_option("--source-revision", five_revision);
+    five_cmd->add_option("--dirty-diff-sha256", five_diff_hash);
+    five_cmd->add_flag("--no-stress", five_no_stress);
+    five_cmd->add_flag("--plan-only", five_plan_only);
+    five_cmd->add_option("--output-dir", five.output_dir)->required();
     std::string touch_config, touch_output;
     std::filesystem::path touch_fixture_apk;
     int touch_repetitions = 30;
@@ -677,6 +734,8 @@ int main(int argc, char** argv) {
             else if (*pause_analysis) std::cout << analyze_pause_jsonl(analysis_path).dump(2) << '\n';
             else if (*campaign_analysis) std::cout << analyze_capture_campaign(analysis_path).dump(2) << '\n';
             else throw std::invalid_argument("choose an analyze subcommand");
+        } else if (*windows_cmd) {
+            std::cout << enumerate_capture_windows_json() << '\n';
         } else if (*probe_cmd) {
             std::cout << probe_adb(find_adb(), probe_serial).dump(2) << '\n';
         } else if (*session_cmd) {
@@ -690,6 +749,10 @@ int main(int argc, char** argv) {
             campaign.fixture = true;
             run_capture_campaign(campaign, campaign_normal_runs,
                                  campaign_stress, campaign_stability_s);
+        } else if (*five_cmd) {
+            run_five_capture_campaign(five, five_normal_runs, !five_no_stress,
+                                      five_stability_s, five_revision, five_diff_hash,
+                                      five_plan_only);
         } else if (*touch_cmd) {
             run_touch_bench(touch_config, touch_repetitions, touch_kinds, touch_output,
                             touch_fixture_apk);

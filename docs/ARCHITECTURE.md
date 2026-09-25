@@ -1,5 +1,15 @@
 # 架構與資料契約
 
+## T6 擷取候選開發契約（2026-09-26）
+
+五條擷取路徑沿用同一 `LatestFrame` 和有界 Journal；比較終點是完整 CPU RGB24。`Frame` 新增 backend、原始格式／stride、裁切、來源有效性，以及 receive、copy、GPU readback、decode 的可觀察時間點。未能直接觀察的階段維持 null，來源 Unix、Windows WGC system-relative 100 ns、DXGI QPC ticks、scrcpy PTS 微秒分開保存；`capture_complete_ns` 依後端分別是完整 gRPC payload 到達、WGC frame 取得、DXGI `AcquireNextFrame` 返回、完整編碼封包到達，MMAP 診斷則是通知後 snapshot 複製完成。絕對 Android 來源年齡仍 unknown。
+
+本機 Emulator gRPC 截圖在 Android 橫向時仍沿直向來源軸輸出 720×1280，metadata rotation 為 0。T6 bench 的 `--grpc-rotate-ccw` 請求該原始尺寸，再逆時針旋轉 -90° 輸出與其他候選相同的 1280×720 CPU RGB24；raw dimensions、rotation metadata 與正規化角度分別寫入 manifest／Frame。控制配置先逐列複製再旋轉，優化配置融合旋轉直接寫入輸出 buffer；一般無需旋轉的 top-down RGB888 仍採單次 `memcpy`。Session 既有 profile 不受 bench 的旋轉選項影響。
+
+WGC 擷取明示的 HWND，使用 free-threaded frame pool、D3D11 staging readback 與 BGRA→RGB24；DXGI 擷取明示的 monitor，將 HWND client crop 轉到桌面像素，限制目標前景、可見且無上層視窗相交並通過受檢點，access lost 後重建 duplication。原生後端遇到 GPU device lost 最多重建兩次並記錄事件；尺寸、旋轉或視窗有效性不符即 fault，必須重新校準 profile。scrcpy 使用官方 v4.1 server，H.264 packet/session 解析及固定 FFmpeg 軟體解碼，音訊／控制關閉；目前 AVD 清單確認 `c2.android.avc.encoder` 為軟體 H.264 編碼器，正式配置顯式指定該名稱且禁止編碼錯誤時自動降解析度。封包至多 4 MiB，PTS 相對積壓超限最多重連一次並記錄 gap。新候選現階段只供 bench，尚未授予 Session 資格。MMAP distributed proto 明示可能 tearing，保持 diagnostic-only，見 [可行性報告](MMAP_FEASIBILITY_20260926.md)。
+
+`capture-five-campaign` 預先列出 40／48／57 Hz 的三輪輪換日程及壓力／長測，再逐案串行執行。分析從原始 JSONL 重算半開窗口、階段耗時、可見 counter、資源 brackets，驗證原始資料與診斷 PNG hash；正式性能數值門檻仍是 null。本節描述開發契約，不等同五候選已通過實機測試或完成選型。
+
 ## C++20 現行架構（T0–T5）
 
 正式核心為單程序、多專用執行緒。擷取 worker 接收 Emulator gRPC payload 或診斷用 ADB PNG，驗證幾何／RGB24 後只發布到 `LatestFrame`；三個預先配置的物理 buffer 提供一個邏輯最新 frame，仍被 reader 持有的 slot 不會改寫，耗盡時丟棄新輸入並計數。主執行緒消費最新 frame、執行健康探測及 Win32/D3D11 降頻預覽；預覽不在擷取 callback 內。量測用有界 Journal 另有 writer 執行緒，重要事件無法保存時視為 fault。

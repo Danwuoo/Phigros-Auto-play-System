@@ -4,6 +4,7 @@
   "builtin-baseline": "93c50752b23e350ca6b9063a167f0a4cf8a3b3eb",
   "dependencies": [
     "cli11",
+    {"name": "ffmpeg", "default-features": false, "features": ["avcodec", "swscale"]},
     "grpc",
     "gtest",
     "nlohmann-json",

@@ -28,6 +28,8 @@ struct CaptureOptions {
     int source_rotation = -1;
     bool rgba = false;
     bool bottom_up = false;
+    bool optimized_rgb_copy = true;
+    bool rotate_ccw = false;
     bool diagnostic_mmap = false;
     std::size_t max_rgb_bytes = 16 * 1024 * 1024;
     std::optional<Nanoseconds> max_relative_lag_ns;

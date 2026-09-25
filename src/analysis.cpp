@@ -7,6 +7,7 @@
 #include <deque>
 #include <fstream>
 #include <iomanip>
+#include <map>
 #include <numeric>
 #include <optional>
 #include <set>
@@ -131,11 +132,22 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
     if (!start || !end || *end <= *start) throw std::runtime_error("missing complete measurement window");
     const double duration = (*end - *start) / 1e9;
     Samples arrivals, no_frame_gaps, normalize_cost, residency, first15, after15, rss_mib;
+    Samples readback_cost, copy_cost, receive_wait, parse_cost, decode_cost,
+        publish_cost, capture_to_publish, fixture_color_error;
+    Samples fixture_line_displacement, fixture_line_width, fixture_line_contrast,
+        fixture_square_width;
+    std::uint64_t square_missing = 0;
     std::optional<json> resource_start, resource_end;
+    std::map<std::uint64_t, std::uint64_t> related_rss_peak;
     std::optional<std::int64_t> previous_capture, first_counter_time, last_counter_time;
     std::optional<std::int64_t> previous_counter;
     std::uint64_t capture_count = 0, consumer_count = 0, counter_count = 0,
                   distinct = 0, counter_increment = 0, consumer_skips = 0, cross_boundary = 0;
+    std::uint64_t source_invalid = 0;
+    std::uint64_t published_frames = 0, publish_drops = 0;
+    std::uint64_t source_callbacks = 0, duplicate_pixels = 0, access_lost = 0,
+                  device_lost_rebuilds = 0, resync_gaps = 0;
+    std::uint64_t encoded_packets = 0, config_packets = 0, decoded_frames = 0;
     // Fixture counters are 24-bit. A fixed 2 MiB bitmap gives exact distinct
     // counts for arbitrarily long JSONL input without retaining events.
     std::vector<std::uint8_t> seen_counters(1u << 21);
@@ -143,21 +155,46 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
     std::set<std::tuple<int, int, int>> geometry;
     std::set<std::string> fixture_schemas;
     std::unordered_map<std::uint64_t, std::int64_t> capture_by_sequence;
+    std::unordered_map<std::uint64_t, std::int64_t> pixels_ready_by_sequence;
     std::deque<std::uint64_t> capture_order;
     each_jsonl(path, [&](const json& event, std::size_t) {
         const auto kind = event.value("event", "");
-        if (kind == "capture") {
+        if (kind == "source_callback" || kind == "duplicate_pixels" ||
+            kind == "access_lost" || kind == "device_lost_rebuild" || kind == "resync_gap" ||
+            kind == "encoded_packet" || kind == "codec_config_packet" ||
+            kind == "decoded_frame") {
+            const auto time = integer(event, "monotonic_ns");
+            if (time < *start || time >= *end) return;
+            if (kind == "source_callback") ++source_callbacks;
+            else if (kind == "duplicate_pixels") ++duplicate_pixels;
+            else if (kind == "access_lost") ++access_lost;
+            else if (kind == "device_lost_rebuild") ++device_lost_rebuilds;
+            else if (kind == "resync_gap") ++resync_gaps;
+            else if (kind == "encoded_packet") ++encoded_packets;
+            else if (kind == "codec_config_packet") ++config_packets;
+            else ++decoded_frames;
+        } else if (kind == "capture") {
             const auto time = integer(event, "capture_complete_ns");
             if (event.contains("frame_sequence")) {
                 const auto sequence = event.at("frame_sequence").get<std::uint64_t>();
                 capture_by_sequence[sequence] = time;
+                if (event.contains("pixels_ready_ns") && event.at("pixels_ready_ns").is_number_integer())
+                    pixels_ready_by_sequence[sequence] = integer(event, "pixels_ready_ns");
                 capture_order.push_back(sequence);
                 if (capture_order.size() > 100'000) {
-                    capture_by_sequence.erase(capture_order.front()); capture_order.pop_front();
+                    capture_by_sequence.erase(capture_order.front());
+                    pixels_ready_by_sequence.erase(capture_order.front());
+                    capture_order.pop_front();
                 }
             }
             if (time < *start || time >= *end) return;
             ++capture_count;
+            if (event.contains("published_to_latest")) {
+                if (event.at("published_to_latest") == true) ++published_frames;
+                else ++publish_drops;
+            }
+            if (event.contains("source_valid") && event.at("source_valid") == false)
+                ++source_invalid;
             no_frame_gaps.add((time - (previous_capture ? *previous_capture : *start)) / 1e6);
             if (previous_capture) {
                 if (time < *previous_capture) throw std::runtime_error("capture time regressed in JSONL");
@@ -166,9 +203,36 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             previous_capture = time;
             if (event.contains("pixels_ready_ns") && event.at("pixels_ready_ns").is_number_integer())
                 normalize_cost.add((integer(event, "pixels_ready_ns") - time) / 1e6);
+            if (event.contains("readback_start_ns") && event.at("readback_start_ns").is_number_integer() &&
+                event.contains("readback_end_ns") && event.at("readback_end_ns").is_number_integer())
+                readback_cost.add((integer(event, "readback_end_ns") -
+                                   integer(event, "readback_start_ns")) / 1e6);
+            if (event.contains("copy_start_ns") && event.at("copy_start_ns").is_number_integer() &&
+                event.contains("copy_end_ns") && event.at("copy_end_ns").is_number_integer())
+                copy_cost.add((integer(event, "copy_end_ns") - integer(event, "copy_start_ns")) / 1e6);
+            if (event.contains("receive_start_ns") && event.at("receive_start_ns").is_number_integer())
+                receive_wait.add((time - integer(event, "receive_start_ns")) / 1e6);
+            if (event.contains("parse_start_ns") && event.at("parse_start_ns").is_number_integer() &&
+                event.contains("parse_end_ns") && event.at("parse_end_ns").is_number_integer())
+                parse_cost.add((integer(event, "parse_end_ns") -
+                                integer(event, "parse_start_ns")) / 1e6);
+            if (event.contains("decode_start_ns") && event.at("decode_start_ns").is_number_integer() &&
+                event.contains("decode_end_ns") && event.at("decode_end_ns").is_number_integer())
+                decode_cost.add((integer(event, "decode_end_ns") -
+                                 integer(event, "decode_start_ns")) / 1e6);
             if (event.contains("width") && event.contains("height") && event.contains("source_rotation"))
                 geometry.emplace(event.at("width").get<int>(), event.at("height").get<int>(),
                                  event.at("source_rotation").get<int>());
+        } else if (kind == "published") {
+            const auto time = integer(event, "published_ns");
+            if (time < *start || time >= *end) return;
+            const auto sequence = event.at("frame_sequence").get<std::uint64_t>();
+            if (const auto ready = pixels_ready_by_sequence.find(sequence);
+                ready != pixels_ready_by_sequence.end())
+                publish_cost.add((time - ready->second) / 1e6);
+            if (const auto captured = capture_by_sequence.find(sequence);
+                captured != capture_by_sequence.end())
+                capture_to_publish.add((time - captured->second) / 1e6);
         } else if (kind == "frame_consumed") {
             const auto time = integer(event, "consume_ns");
             if (time < *start || time >= *end) return;
@@ -192,12 +256,35 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             else if (event.value("phase", "") == "end") resource_end = event;
         } else if (kind == "resource_sample") {
             const auto time = integer(event, "before_ns");
-            if (time >= *start && time < *end)
+            if (time >= *start && time < *end) {
                 rss_mib.add(integer(event, "working_set_bytes") / 1048576.0);
+                if (event.contains("related_processes") && event.at("related_processes").is_array())
+                    for (const auto& process : event.at("related_processes"))
+                        if (process.contains("pid") && process.contains("working_set_bytes") &&
+                            process.at("working_set_bytes").is_number_unsigned()) {
+                            const auto pid = process.at("pid").get<std::uint64_t>();
+                            related_rss_peak[pid] = std::max(related_rss_peak[pid],
+                                process.at("working_set_bytes").get<std::uint64_t>());
+                        }
+            }
         } else if (kind == "fixture_counter") {
             const auto time = integer(event, "capture_complete_ns");
             if (time < *start || time >= *end) return;
             fixture_schemas.insert(event.value("fixture_schema", "legacy_unspecified"));
+            if (event.contains("max_color_error") && event.at("max_color_error").is_number_integer())
+                fixture_color_error.add(event.at("max_color_error").get<double>());
+            if (event.contains("line_peak_y") && event.at("line_peak_y").is_number_integer() &&
+                event.contains("line_width_px") && event.at("line_width_px").is_number_integer()) {
+                const auto peak_y = integer(event, "line_peak_y");
+                if (peak_y >= 0 && event.contains("line_expected_y"))
+                    fixture_line_displacement.add(std::abs(peak_y - integer(event, "line_expected_y")));
+                fixture_line_width.add(integer(event, "line_width_px"));
+            }
+            if (event.contains("line_contrast") && event.at("line_contrast").is_number_integer())
+                fixture_line_contrast.add(integer(event, "line_contrast"));
+            if (event.contains("square_left_x") && integer(event, "square_left_x") >= 0)
+                fixture_square_width.add(integer(event, "square_width_px"));
+            else if (event.contains("square_left_x")) ++square_missing;
             const auto counter = integer(event, "counter");
             if (counter < 0 || counter >= (1 << 24))
                 throw std::runtime_error("Fixture counter outside 24-bit encoding");
@@ -239,11 +326,58 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             {"rss_start_bytes", integer(*resource_start, "working_set_bytes")},
             {"rss_end_bytes", integer(*resource_end, "working_set_bytes")},
             {"rss_sample_mib", rss_mib.result()}};
+        json related = json::array();
+        if (resource_start->contains("related_processes") &&
+            resource_end->contains("related_processes")) {
+            for (const auto& process : resource_end->at("related_processes")) {
+                const auto pid = process.at("pid").get<std::uint64_t>();
+                const json* initial = nullptr;
+                for (const auto& candidate : resource_start->at("related_processes"))
+                    if (candidate.at("pid").get<std::uint64_t>() == pid) {
+                        initial = &candidate; break;
+                    }
+                json cores = nullptr;
+                if (initial && initial->at("process_cpu_ns").is_number_integer() &&
+                    process.at("process_cpu_ns").is_number_integer()) {
+                    const auto cpu_before = initial->at("process_cpu_ns").get<std::int64_t>();
+                    const auto cpu_after = process.at("process_cpu_ns").get<std::int64_t>();
+                    if (cpu_after >= cpu_before)
+                        cores = (cpu_after - cpu_before) / (end_mid - start_mid);
+                }
+                related.push_back({{"pid", pid}, {"name", process.value("name", "")},
+                    {"cpu_core_equivalent", cores},
+                    {"rss_start_bytes", initial ? initial->at("working_set_bytes") : json(nullptr)},
+                    {"rss_end_bytes", process.at("working_set_bytes")},
+                    {"rss_peak_sample_bytes", related_rss_peak.contains(pid) ?
+                        json(related_rss_peak.at(pid)) : json(nullptr)}});
+            }
+        }
+        resource_window["related_processes"] = std::move(related);
     }
     const auto counter_span = first_counter_time && last_counter_time && *last_counter_time > *first_counter_time
         ? std::optional<double>(counter_increment / ((*last_counter_time - *first_counter_time) / 1e9)) : std::nullopt;
+    json geometry_valid = shape == json::array({json::array({1280, 720, 1})});
+    const auto manifest_path = path.parent_path() / "manifest.json";
+    if (std::filesystem::exists(manifest_path)) {
+        std::ifstream input(manifest_path, std::ios::binary);
+        const auto manifest = json::parse(input);
+        if (manifest.value("schema_version", 0) >= 3)
+            geometry_valid = shape == json::array({json::array({manifest.at("width"),
+                manifest.at("height"), manifest.value("capture_backend", "") == "wgc" ||
+                manifest.value("capture_backend", "") == "dxgi" ||
+                manifest.value("capture_backend", "") == "scrcpy" ? 0 :
+                manifest.value("source_rotation", 0)})});
+    }
     return {{"measurement_start_ns", *start}, {"measurement_end_ns", *end}, {"window_s", duration},
             {"capture_events", capture_count}, {"consumer_events", consumer_count},
+            {"published_frames", published_frames}, {"publish_drops", publish_drops},
+            {"source_invalid_events", source_invalid},
+            {"source_callbacks", source_callbacks}, {"duplicate_pixel_callbacks", duplicate_pixels},
+            {"access_lost_events", access_lost},
+            {"device_lost_rebuilds", device_lost_rebuilds},
+            {"resync_gaps", resync_gaps},
+            {"encoded_packets", encoded_packets}, {"codec_config_packets", config_packets},
+            {"decoded_frames", decoded_frames},
             {"received_hz", capture_count / duration}, {"fixture_samples", counter_count},
             {"fixture_distinct", distinct}, {"fixture_distinct_hz", distinct / duration},
             {"fixture_counter_span_hz", counter_order_valid && counter_span ? json(*counter_span) : json(nullptr)},
@@ -253,10 +387,23 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             {"fixture_decoded_fraction", capture_count ? double(counter_count) / capture_count : 0.0},
             {"fixture_decoded_consumer_fraction", consumer_count ? double(counter_count) / consumer_count : 0.0},
             {"fixture_schemas", schema_names},
-            {"geometry", shape}, {"geometry_valid", shape == json::array({json::array({1280, 720, 1})})},
+            {"fixture_max_color_error", fixture_color_error.result()},
+            {"fixture_line_displacement_px", fixture_line_displacement.result()},
+            {"fixture_line_width_px", fixture_line_width.result()},
+            {"fixture_line_contrast", fixture_line_contrast.result()},
+            {"fixture_square_width_px", fixture_square_width.result()},
+            {"fixture_square_missing", square_missing},
+            {"geometry", shape}, {"geometry_valid", geometry_valid},
             {"arrival_interval_ms", arrivals.result()},
             {"no_frame_gap_ms", no_frame_gaps.result()},
             {"capture_to_pixels_ready_ms", normalize_cost.result()},
+            {"gpu_readback_ms", readback_cost.result()},
+            {"cpu_copy_or_conversion_ms", copy_cost.result()},
+            {"receive_wait_ms", receive_wait.result()},
+            {"header_parse_ms", parse_cost.result()},
+            {"software_decode_ms", decode_cost.result()},
+            {"pixels_ready_to_publish_ms", publish_cost.result()},
+            {"capture_to_publish_ms", capture_to_publish.result()},
             {"host_residency_ms", residency.result()},
             {"consumer_sequence_skips", consumer_skips},
             {"consumer_cross_boundary_frames", cross_boundary},
@@ -268,16 +415,32 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
 
 json analyze_pause_jsonl(const std::filesystem::path& path) {
     std::optional<json> pause, anchor;
+    std::string source_field;
     each_jsonl(path, [&](const json& event, std::size_t) {
         const auto kind = event.value("event", "");
         if (kind == "receiver_pause") pause = event;
-        else if (kind == "capture" && event.contains("source_timestamp_us") &&
-                 event.at("source_timestamp_us").is_number_integer() &&
+        else if (kind == "capture" &&
                  (!pause || integer(event, "capture_complete_ns") <
-                      (pause->contains("start_ns") ? integer(*pause, "start_ns") : integer(*pause, "started_ns"))))
-            anchor = event;
+                      (pause->contains("start_ns") ? integer(*pause, "start_ns") : integer(*pause, "started_ns")))) {
+            for (const auto* field : {"source_timestamp_us", "codec_pts",
+                                      "source_qpc_ticks", "source_system_relative_100ns"})
+                if (event.contains(field) && event.at(field).is_number_integer()) {
+                    anchor = event;
+                    source_field = field;
+                    break;
+                }
+        }
     });
     if (!pause || !anchor) throw std::runtime_error("pause or pre-pause timestamp anchor missing");
+    double source_units_per_ms = 1'000.0;
+    if (source_field == "source_system_relative_100ns") source_units_per_ms = 10'000.0;
+    else if (source_field == "source_qpc_ticks") {
+        std::ifstream manifest(path.parent_path() / "manifest.json", std::ios::binary);
+        if (!manifest) throw std::runtime_error("DXGI pause analysis requires QPC frequency manifest");
+        const auto metadata = json::parse(manifest);
+        source_units_per_ms = metadata.at("qpc_frequency").get<double>() / 1'000.0;
+        if (source_units_per_ms <= 0) throw std::runtime_error("invalid QPC frequency in pause manifest");
+    }
     const auto start = pause->contains("start_ns") ? integer(*pause, "start_ns") : integer(*pause, "started_ns");
     const bool measured = pause->contains("ended_ns") && pause->at("ended_ns").is_number_integer();
     const auto end = measured ? integer(*pause, "ended_ns") :
@@ -285,13 +448,14 @@ json analyze_pause_jsonl(const std::filesystem::path& path) {
     json points = json::array();
     bool points_truncated = false;
     each_jsonl(path, [&](const json& event, std::size_t) {
-        if (event.value("event", "") != "capture" || !event.contains("source_timestamp_us") ||
-            !event.at("source_timestamp_us").is_number_integer()) return;
+        if (event.value("event", "") != "capture" || !event.contains(source_field) ||
+            !event.at(source_field).is_number_integer()) return;
         const auto time = integer(event, "capture_complete_ns");
         if (time < end || time >= end + 1'000'000'000LL) return;
         const bool same = event.value("stream_generation", 0) == anchor->value("stream_generation", 0);
         const auto relative = same ? json((time - integer(*anchor, "capture_complete_ns")) / 1e6 -
-            (integer(event, "source_timestamp_us") - integer(*anchor, "source_timestamp_us")) / 1e3) : json(nullptr);
+            (integer(event, source_field.c_str()) - integer(*anchor, source_field.c_str())) /
+                source_units_per_ms) : json(nullptr);
         if (points.size() >= 100'000) { points_truncated = true; return; }
         points.push_back({{"frame_sequence", event.value("frame_sequence", 0)},
                           {"source_sequence", event.value("source_sequence", 0)},
@@ -299,7 +463,8 @@ json analyze_pause_jsonl(const std::filesystem::path& path) {
                           {"after_resume_ms", (time - end) / 1e6},
                           {"extra_relative_lag_ms", relative}});
     });
-    return {{"start_ns", start}, {"end_ns", end},
+    return {{"start_ns", start}, {"end_ns", end}, {"source_field", source_field},
+            {"source_units_per_ms", source_units_per_ms},
             {"end_basis", measured ? "measured" : "requested duration; actual thread resume not logged"},
             {"sample_truncated", points_truncated},
             {"first_second_after_end", points}};
@@ -316,6 +481,113 @@ json analyze_capture_campaign(const std::filesystem::path& directory) {
     if (!plan.contains("cases") || !plan.at("cases").is_array() ||
         !results.contains("runs") || !results.at("runs").is_array())
         throw std::runtime_error("invalid campaign plan or results schema");
+    if (plan.value("schema_version", 0) >= 3 &&
+        plan.value("kind", "") == "five_capture_campaign") {
+        json runs = json::array();
+        bool all_valid = results.value("complete", false);
+        bool formal_valid = all_valid;
+        bool environment_consistent = true;
+        std::map<std::string, std::vector<double>> arrival_p95, residency_p99, source_hz;
+        std::map<std::string, std::uint64_t> valid_normal_count;
+        for (const auto& item : plan.at("cases")) {
+            const auto name = item.at("name").get<std::string>();
+            if (name.empty() || !std::all_of(name.begin(), name.end(), [](unsigned char c) {
+                    return std::isalnum(c) || c == '-' || c == '_';
+                })) throw std::runtime_error("invalid five-campaign case name");
+            const auto candidate = item.at("candidate").get<std::string>();
+            const bool diagnostic = item.value("diagnostic_only", false);
+            const json* recorded = nullptr;
+            for (const auto& result : results.at("runs"))
+                if (result.value("name", "") == name) { recorded = &result; break; }
+            if (!recorded || recorded->value("returncode", 1) != 0) {
+                all_valid = false;
+                if (!diagnostic) formal_valid = false;
+                runs.push_back({{"name", name}, {"candidate", candidate}, {"target_hz", item.at("target_hz")},
+                    {"valid", false}, {"diagnostic_only", diagnostic},
+                    {"error", recorded ? recorded->value("error", "failed without error") : "not run"}});
+                continue;
+            }
+            const auto folder = directory / name;
+            const auto manifest = read_json(folder / "manifest.json");
+            const auto summary = analyze_capture_jsonl(folder / "capture.jsonl");
+            const bool hashes = summary.at("raw_sha256") == recorded->at("raw_sha256") &&
+                sha256_file(folder / "diagnostic.png") ==
+                    recorded->at("diagnostic_png_sha256").get<std::string>();
+            const bool fixture = manifest.at("fixture_apk_sha256") == plan.at("fixture_apk_sha256") &&
+                manifest.at("installed_apk_sha256") == plan.at("installed_apk_sha256");
+            auto planned_device = plan.at("preflight");
+            auto observed_device = manifest.at("device_preflight");
+            planned_device.erase("fixture_target_hz_property");
+            observed_device.erase("fixture_target_hz_property");
+            auto planned_host = plan.at("host_capture_environment");
+            auto observed_host = manifest.at("host_capture_environment");
+            planned_host.erase("selected_window_dpi");
+            observed_host.erase("selected_window_dpi");
+            const bool environment = planned_device == observed_device && planned_host == observed_host;
+            if (!environment) environment_consistent = false;
+            const bool binary = manifest.at("binary_sha256") == plan.at("binary_sha256");
+            const bool server = candidate != "scrcpy" ||
+                manifest.at("scrcpy_server_sha256") == plan.at("scrcpy_server_sha256");
+            const bool ready = recorded->contains("ready_preflight") &&
+                recorded->at("ready_preflight").is_object() &&
+                recorded->at("ready_preflight").value("first_counter", -1) !=
+                    recorded->at("ready_preflight").value("second_counter", -1);
+            bool schemas_valid = !summary.at("fixture_schemas").empty();
+            for (const auto& schema : summary.at("fixture_schemas")) {
+                const auto value = schema.get<std::string>();
+                if (value != "native_v2_four_region" &&
+                    !(candidate == "scrcpy" && value == "native_v2_lossy_validated"))
+                    schemas_valid = false;
+            }
+            const auto& line_displacement = summary.at("fixture_line_displacement_px");
+            const auto& line_width = summary.at("fixture_line_width_px");
+            const bool quality = summary.at("fixture_square_missing").get<std::uint64_t>() == 0 &&
+                line_displacement.value("n", 0u) > 0 &&
+                line_displacement.value("max", 999.0) <= 1.0 &&
+                line_width.value("n", 0u) > 0 &&
+                line_width.value("p50", 0.0) >= 1.0 &&
+                line_width.value("p50", 999.0) <= 2.0;
+            const bool source_valid = diagnostic ||
+                summary.at("source_invalid_events").get<std::uint64_t>() == 0;
+            const bool valid = hashes && fixture && environment && binary && server && ready &&
+                summary.at("geometry_valid").get<bool>() &&
+                summary.at("fixture_counter_order_valid").get<bool>() &&
+                schemas_valid && quality && source_valid &&
+                summary.at("consumer_events") == summary.at("fixture_samples") &&
+                manifest.value("run_class", "") == "formal_campaign";
+            if (!valid) {
+                all_valid = false;
+                if (!diagnostic) formal_valid = false;
+            }
+            if (valid && name.rfind("normal-", 0) == 0) {
+                const auto key = candidate + "-" + std::to_string(item.at("target_hz").get<int>());
+                ++valid_normal_count[key];
+                if (summary.at("arrival_interval_ms").contains("p95"))
+                    arrival_p95[key].push_back(summary.at("arrival_interval_ms").at("p95").get<double>());
+                if (summary.at("host_residency_ms").contains("p99"))
+                    residency_p99[key].push_back(summary.at("host_residency_ms").at("p99").get<double>());
+                if (summary.at("fixture_counter_span_hz").is_number())
+                    source_hz[key].push_back(summary.at("fixture_counter_span_hz").get<double>());
+            }
+            runs.push_back({{"name", name}, {"candidate", candidate}, {"target_hz", item.at("target_hz")},
+                {"valid", valid}, {"diagnostic_only", diagnostic}, {"raw_hash_matches", hashes},
+                {"fixture_hash_matches", fixture}, {"environment_matches", environment},
+                {"binary_hash_matches", binary}, {"server_hash_matches", server},
+                {"ready_preflight_valid", ready}, {"fixture_quality_valid", quality},
+                {"source_valid", source_valid},
+                {"analysis", summary}});
+        }
+        json groups = json::object();
+        for (const auto& [key, count] : valid_normal_count)
+            groups[key] = {{"valid_runs", count},
+                {"source_counter_span_hz", distribution(source_hz[key])},
+                {"arrival_p95_ms", distribution(arrival_p95[key])},
+                {"residency_p99_ms", distribution(residency_p99[key])}};
+        return {{"schema_version", 3}, {"campaign_complete", results.value("complete", false)},
+            {"all_valid", all_valid}, {"formal_candidates_valid", formal_valid},
+            {"environment_consistent", environment_consistent},
+            {"groups", groups}, {"performance_pass", nullptr}, {"runs", runs}};
+    }
     json runs = json::array();
     std::optional<json> environment;
     bool environment_consistent = true, all_valid = results.value("complete", false);

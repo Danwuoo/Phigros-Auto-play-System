@@ -15,8 +15,9 @@ namespace emulator_pb = android::emulation::control;
 namespace {
 class ScreenshotService final : public emulator_pb::EmulatorController::Service {
 public:
-    explicit ScreenshotService(bool invalid = false, bool frozen = false, bool reset = false)
-        : invalid_(invalid), frozen_(frozen), reset_(reset) {}
+    explicit ScreenshotService(bool invalid = false, bool frozen = false, bool reset = false,
+                               bool portrait = false)
+        : invalid_(invalid), frozen_(frozen), reset_(reset), portrait_(portrait) {}
     grpc::Status streamScreenshot(grpc::ServerContext* context,
                                   const emulator_pb::ImageFormat* request,
                                   grpc::ServerWriter<emulator_pb::Image>* writer) override {
@@ -44,8 +45,12 @@ public:
                                emulator_pb::Image* result) override {
         result->mutable_format()->CopyFrom(*request);
         result->mutable_format()->set_width(2);
-        result->mutable_format()->set_height(2);
-        result->set_image(std::string(12, '\x10'));
+        result->mutable_format()->set_height(portrait_ ? 3 : 2);
+        if (portrait_) {
+            std::string pixels;
+            for (int i = 1; i <= 18; ++i) pixels.push_back(static_cast<char>(i));
+            result->set_image(std::move(pixels));
+        } else result->set_image(std::string(12, '\x10'));
         return grpc::Status::OK;
     }
     std::atomic<bool> wrote = false;
@@ -53,6 +58,7 @@ private:
     bool invalid_;
     bool frozen_;
     bool reset_;
+    bool portrait_;
 };
 
 class LoopbackServer {
@@ -142,4 +148,31 @@ TEST(GrpcLoopback, SourceSequenceResetFaultsBeforeSecondPublish) {
     int published = 0;
     EXPECT_THROW(capture.stream(stop.get_token(), [&](Frame&&) { ++published; }), std::runtime_error);
     EXPECT_EQ(published, 1);
+}
+
+TEST(GrpcLoopback, PortraitSourceRotatesCounterclockwiseIntoLandscape) {
+    ScreenshotService service(false, false, false, true);
+    LoopbackServer server(service);
+    HostClock clock;
+    for (const bool fast : {false, true}) {
+        CaptureOptions options;
+        options.width = 2;
+        options.height = 3;
+        options.source_rotation = 0;
+        options.rotate_ccw = true;
+        options.optimized_rgb_copy = fast;
+        GrpcCapture capture(clock, server.endpoint(), options);
+        const auto frame = capture.snapshot(std::chrono::milliseconds(500));
+        EXPECT_EQ(frame.width, 3);
+        EXPECT_EQ(frame.height, 2);
+        EXPECT_EQ(frame.stride, 9);
+        EXPECT_EQ(frame.source_stride, 6);
+        EXPECT_EQ(frame.crop_width, 2);
+        EXPECT_EQ(frame.crop_height, 3);
+        EXPECT_EQ(frame.normalization_rotation_degrees, -90);
+        const std::vector<std::uint8_t> expected = {
+            4, 5, 6, 10, 11, 12, 16, 17, 18,
+            1, 2, 3, 7, 8, 9, 13, 14, 15};
+        EXPECT_EQ(frame.rgb, expected);
+    }
 }

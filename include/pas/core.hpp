@@ -48,9 +48,33 @@ struct Frame {
     int height = 0;
     int stride = 0;
     int source_rotation = 0;
+    int normalization_rotation_degrees = 0;
+    // Every published frame is tightly packed, top-down CPU RGB24. The
+    // source-specific layout and crop are retained as evidence, not inferred.
+    std::string capture_backend;
+    std::string source_pixel_format;
+    int source_stride = 0;
+    int crop_x = 0;
+    int crop_y = 0;
+    int crop_width = 0;
+    int crop_height = 0;
+    bool source_valid = true;
     Nanoseconds capture_complete_ns = 0;
     Nanoseconds pixels_ready_ns = 0;
     Nanoseconds published_ns = 0;
+    std::optional<Nanoseconds> receive_start_ns;
+    std::optional<Nanoseconds> parse_start_ns;
+    std::optional<Nanoseconds> parse_end_ns;
+    std::optional<Nanoseconds> notification_received_ns;
+    std::optional<Nanoseconds> copy_start_ns;
+    std::optional<Nanoseconds> copy_end_ns;
+    std::optional<Nanoseconds> readback_start_ns;
+    std::optional<Nanoseconds> readback_end_ns;
+    std::optional<Nanoseconds> decode_start_ns;
+    std::optional<Nanoseconds> decode_end_ns;
+    std::optional<std::int64_t> source_qpc_ticks;
+    std::optional<std::int64_t> source_system_relative_100ns;
+    std::optional<std::int64_t> codec_pts;
     std::optional<std::int64_t> source_timestamp_us;
     std::optional<std::uint64_t> source_sequence;
     std::vector<std::uint8_t> rgb;

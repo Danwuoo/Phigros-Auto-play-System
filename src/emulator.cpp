@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstring>
 #include <fstream>
 #include <limits>
 #include <stdexcept>
@@ -128,7 +129,14 @@ Frame GrpcCapture::normalize(const pb::Image& image, Nanoseconds arrival_ns,
         (options_.width && width != static_cast<std::uint32_t>(options_.width)) ||
         (options_.height && height != static_cast<std::uint32_t>(options_.height)) ||
         (options_.source_rotation >= 0 && image.format().rotation().rotation() != options_.source_rotation))
-        throw std::runtime_error("invalid or changed screenshot geometry/format/rotation");
+        throw std::runtime_error("invalid or changed screenshot geometry/format/rotation: " +
+            std::to_string(width) + "x" + std::to_string(height) +
+            " format=" + std::to_string(static_cast<int>(image.format().format())) +
+            " rotation=" + std::to_string(image.format().rotation().rotation()) +
+            " expected=" + std::to_string(options_.width) + "x" +
+            std::to_string(options_.height) + " format=" +
+            std::to_string(static_cast<int>(expected_format)) + " rotation=" +
+            std::to_string(options_.source_rotation));
     const auto pixels = static_cast<std::uint64_t>(width) * height;
     if (pixels * 3 > options_.max_rgb_bytes) throw std::runtime_error("RGB capacity exceeded");
     const auto raw_bytes = static_cast<std::size_t>(pixels * channels);
@@ -136,13 +144,47 @@ Frame GrpcCapture::normalize(const pb::Image& image, Nanoseconds arrival_ns,
     const auto length = alternate ? alternate_bytes : image.image().size();
     if (length != raw_bytes) throw std::runtime_error("invalid screenshot payload length");
     Frame frame;
-    frame.width = static_cast<int>(width);
-    frame.height = static_cast<int>(height);
+    frame.width = static_cast<int>(options_.rotate_ccw ? height : width);
+    frame.height = static_cast<int>(options_.rotate_ccw ? width : height);
     frame.stride = frame.width * 3;
     frame.source_rotation = image.format().rotation().rotation();
+    frame.normalization_rotation_degrees = options_.rotate_ccw ? -90 : 0;
+    frame.capture_backend = options_.diagnostic_mmap ? "emulator-mmap-diagnostic" : "emulator-grpc";
+    frame.source_pixel_format = options_.rgba ? "RGBA8888" : "RGB888";
+    frame.source_stride = static_cast<int>(width) * channels;
+    frame.crop_width = static_cast<int>(width);
+    frame.crop_height = static_cast<int>(height);
+    frame.source_valid = !options_.diagnostic_mmap;
     frame.capture_complete_ns = arrival_ns;
+    frame.copy_start_ns = clock_.now_ns();
     frame.rgb.resize(static_cast<std::size_t>(pixels * 3));
-    for (std::uint32_t y = 0; y < height; ++y) {
+    if (options_.rotate_ccw) {
+        // The emulator's RGB screenshot follows the sensor's portrait axes even
+        // while Android presents a landscape app. Preserve the source geometry
+        // above and convert it to the same landscape RGB profile as other paths.
+        std::vector<std::uint8_t> legacy_rows;
+        if (!options_.optimized_rgb_copy && channels == 3 && !options_.bottom_up) {
+            legacy_rows.resize(raw_bytes);
+            for (std::uint32_t y = 0; y < height; ++y)
+                std::copy_n(raw + static_cast<std::size_t>(y) * width * 3,
+                            static_cast<std::size_t>(width) * 3,
+                            legacy_rows.data() + static_cast<std::size_t>(y) * width * 3);
+            raw = legacy_rows.data();
+        }
+        for (std::uint32_t target_y = 0; target_y < width; ++target_y) {
+            const auto source_x = width - 1 - target_y;
+            for (std::uint32_t target_x = 0; target_x < height; ++target_x) {
+                const auto source_y = options_.bottom_up ? height - 1 - target_x : target_x;
+                const auto* source = raw +
+                    (static_cast<std::size_t>(source_y) * width + source_x) * channels;
+                auto* target = frame.rgb.data() +
+                    (static_cast<std::size_t>(target_y) * height + target_x) * 3;
+                std::copy_n(source, 3, target);
+            }
+        }
+    } else if (channels == 3 && !options_.bottom_up && options_.optimized_rgb_copy) {
+        std::memcpy(frame.rgb.data(), raw, raw_bytes);
+    } else for (std::uint32_t y = 0; y < height; ++y) {
         const auto source_y = options_.bottom_up ? height - 1 - y : y;
         const auto* row = raw + static_cast<std::size_t>(source_y) * width * channels;
         auto* target = frame.rgb.data() + static_cast<std::size_t>(y) * width * 3;
@@ -151,7 +193,8 @@ Frame GrpcCapture::normalize(const pb::Image& image, Nanoseconds arrival_ns,
             target[3*x] = row[4*x]; target[3*x+1] = row[4*x+1]; target[3*x+2] = row[4*x+2];
         }
     }
-    frame.pixels_ready_ns = clock_.now_ns();
+    frame.copy_end_ns = clock_.now_ns();
+    frame.pixels_ready_ns = *frame.copy_end_ns;
     return frame;
 }
 
@@ -173,7 +216,9 @@ void GrpcCapture::stream(std::stop_token stop, const std::function<void(Frame&&)
     try {
         auto reader = stub_->streamScreenshot(&context, request);
         pb::Image image;
-        while (!stop.stop_requested() && reader->Read(&image)) {
+        while (!stop.stop_requested()) {
+            const auto receive_start = clock_.now_ns();
+            if (!reader->Read(&image)) break;
             const auto arrival = clock_.now_ns();
             { std::lock_guard lock(mutex_); stats_.last_notification_ns = arrival; }
             if (!image.format().width() && !image.format().height()) {
@@ -182,6 +227,7 @@ void GrpcCapture::stream(std::stop_token stop, const std::function<void(Frame&&)
             std::vector<std::uint8_t> snapshot;
             const std::uint8_t* alternate = nullptr;
             std::size_t alternate_bytes = 0;
+            Nanoseconds copy_complete = arrival;
             if (options_.diagnostic_mmap) {
                 if (!image.image().empty()) throw std::runtime_error("MMAP notification contained payload");
                 if (!image.format().width() || !image.format().height() ||
@@ -194,10 +240,13 @@ void GrpcCapture::stream(std::stop_token stop, const std::function<void(Frame&&)
                     throw std::runtime_error("MMAP notification exceeds mapping");
                 snapshot.assign(mmap.data, mmap.data + alternate_bytes);
                 alternate = snapshot.data();
+                copy_complete = clock_.now_ns();
             }
             Frame frame;
-            try { frame = normalize(image, arrival, alternate, alternate_bytes); }
+            try { frame = normalize(image, copy_complete, alternate, alternate_bytes); }
             catch (...) { std::lock_guard lock(mutex_); ++stats_.invalid; throw; }
+            frame.receive_start_ns = receive_start;
+            frame.notification_received_ns = arrival;
             const auto source_sequence = static_cast<std::uint64_t>(image.seq());
             if (last_source_sequence_ && source_sequence <= *last_source_sequence_)
                 throw std::runtime_error("source sequence reset; reconstruct capture source");
