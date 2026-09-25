@@ -1,0 +1,47 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "windows-release",
+      "displayName": "Windows x64 Release (MSVC and vcpkg)",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "toolset": "v145",
+      "binaryDir": "${sourceDir}/out/release-v145",
+      "cacheVariables": {
+        "CMAKE_GENERATOR_INSTANCE": "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools,version=18.9.12105.275",
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/out/vcpkg_installed",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "inherits": "windows-release",
+      "binaryDir": "${sourceDir}/out/debug-v145"
+    },
+    {
+      "name": "windows-asan",
+      "inherits": "windows-debug",
+      "binaryDir": "${sourceDir}/out/asan-buildtools-v145",
+      "cacheVariables": {
+        "CMAKE_GENERATOR_INSTANCE": "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools,version=18.9.12105.275",
+        "CMAKE_TRY_COMPILE_TARGET_TYPE": "STATIC_LIBRARY",
+        "PAS_ASAN_SUPPORT_ROOT": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/include",
+        "CMAKE_CXX_FLAGS_DEBUG": "/MDd /Zi /Od /D_DEBUG /D_DISABLE_VECTOR_ANNOTATION /D_DISABLE_STRING_ANNOTATION /D_DISABLE_OPTIONAL_ANNOTATION /fsanitize=address",
+        "CMAKE_EXE_LINKER_FLAGS_DEBUG": "/DEBUG /INCREMENTAL:NO /fsanitize=address /LIBPATH:\"${sourceDir}/out/asan-buildtools-v145/asan_support/lib\""
+      }
+    }
+  ],
+  "buildPresets": [
+    {"name": "windows-release", "configurePreset": "windows-release", "configuration": "Release", "jobs": 4},
+    {"name": "windows-debug", "configurePreset": "windows-debug", "configuration": "Debug", "jobs": 4},
+    {"name": "windows-asan", "configurePreset": "windows-asan", "configuration": "Debug", "jobs": 4}
+  ],
+  "testPresets": [
+    {"name": "windows-release", "configurePreset": "windows-release", "configuration": "Release", "output": {"outputOnFailure": true}},
+    {"name": "windows-debug", "configurePreset": "windows-debug", "configuration": "Debug", "output": {"outputOnFailure": true}},
+    {"name": "windows-asan", "configurePreset": "windows-asan", "configuration": "Debug", "output": {"outputOnFailure": true}}
+  ]
+}

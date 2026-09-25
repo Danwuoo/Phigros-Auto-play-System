@@ -1,6 +1,6 @@
 # 全 C++ 遷移與擷取候選開發計畫
 
-日期：2026-09-25。狀態：本次開發範圍與架構決策已由使用者確認，交由 GPT-6 Sol／xhigh 執行 T0–T5；尚未開始 C++ 實作。新基線後的性能數值門檻仍須詢問使用者。盤點依據見 [盤點報告](CPP_MIGRATION_AUDIT.md) 與 [逐檔 hash](CPP_MIGRATION_INVENTORY.json)。本計畫中的目標目錄、命令、類別與測試要求都是待開發規格，不代表已完成。
+日期：2026-09-25。狀態：T0 來源已逐 hash 核對並凍結；T1–T5 正依此計畫實作與驗收，逐項實證狀態另見 [C++ 驗收矩陣](CPP_PARITY_MATRIX.md)。新基線後的性能數值門檻仍須詢問使用者。盤點依據見 [盤點報告](CPP_MIGRATION_AUDIT.md) 與 [逐檔 hash](CPP_MIGRATION_INVENTORY.json)。本計畫中的目標目錄、命令、類別與測試要求是開發規格；不能僅憑此文件視為已完成。
 
 ## 1. 使用者決策與適用範圍
 
@@ -14,7 +14,7 @@
 | D6 | 40–57 Hz 為正常來源範圍；先固定測法並取得新基線，再把延遲／掉幀門檻交使用者決定 | 已確認 |
 | D7 | 第三方依賴允許原語言，包括 NDK C glue、FFmpeg C、scrcpy 官方 Java server；自有正式邏輯全 C++ | 已確認 |
 | D8 | CLI＋Win32／D3D11 輕量診斷預覽；完整 GUI 後置 | 已確認 |
-| D9 | AVD 5 vCPU、8 GB RAM，其餘固定；先核對實際套用狀態 | 已確認目標，執行狀態待 preflight |
+| D9 | AVD 5 vCPU、8 GB RAM，其餘固定；先核對實際套用狀態 | 已核對：guest online processors 5，`MemTotal` 8,130,828 KiB；見 C++ 驗收紀錄 |
 | D10 | 由新的 GPT-6 Sol、xhigh 任務開發，在隔離 worktree 工作 | 已指定 |
 
 本計畫覆蓋舊文件的 Python／混合語言、process runtime、必須接近 59–60 Hz，以及「只有既有 gRPC 失敗才探索候選」的未來工作限制。歷史測試結果、AGENTS 的 pixels-only／最新 frame／monotonic／閉環先行原則仍有效。

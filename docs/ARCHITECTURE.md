@@ -1,5 +1,34 @@
 # 架構與資料契約
 
+## C++20 現行架構（遷移中）
+
+正式核心為單程序、多專用執行緒。擷取 worker 接收 Emulator gRPC payload 或診斷用 ADB PNG，驗證幾何／RGB24 後只發布到 `LatestFrame`；三個預先配置的物理 buffer 提供一個邏輯最新 frame，仍被 reader 持有的 slot 不會改寫，耗盡時丟棄新輸入並計數。主執行緒消費最新 frame、執行健康探測及 Win32/D3D11 降頻預覽；預覽不在擷取 callback 內。量測用有界 Journal 另有 writer 執行緒，重要事件無法保存時視為 fault。
+
+```text
+Emulator gRPC / diagnostic ADB → capture worker → fixed-slot LatestFrame
+                                             ↓
+                           observe consumer / optional D3D11 preview
+                                             ↓
+                         bounded JSONL Journal / offline C++ analyzer
+
+simple target pixels → detector → tracker → line-crossing predictor
+                    → ContactScheduler owner → FakeTouch / Fixture gRPC touch
+```
+
+`Frame` 保留 `sequence`、`epoch`、`generation`、`geometry_version`、width／height／stride、RGB24、`capture_complete_ns`、`pixels_ready_ns`、`published_ns`，以及分離時域的 `source_sequence`／`source_timestamp_us`。`consume_ns`、辨識完成、預定觸控、注入開始／返回在各自階段記錄。所有 host 時差只用 `HostClock` 的 QPC nanoseconds；來源 Unix／Android 時戳未校準，不能拿來算絕對來源年齡或觸控排程。
+
+擷取量測的程序 CPU／RSS 使用 Win32 `GetProcessTimes`／`GetProcessMemoryInfo`，每筆資源讀取在 QPC `before_ns`／`after_ns` 間取樣。CPU core-equivalent 的分母採起訖讀取中點之差，並保留括號供重算；不把取樣值聲稱為與影格邊界原子同步。每秒 RSS 樣本與兩端 CPU／RSS 原始值均寫進 JSONL。
+
+`ContactScheduler` 由單一 owner 依 monotonic deadline dispatch。gate 與各 plan 的證據分開到期；`now >= deadline` 即撤銷並釋放接觸點。每個 epoch 使用單調 birth ID watermark 防止完成意圖被晚到 revision 復活；已送出的 down 保留 contact ID 與釋放責任。`request_stop()` 對注入臨界區線性化。RPC 返回仍不證明 Android 已執行觸控，因此能力報告需核對 native Touch Fixture v2 的逐指像素事件；未知結果使 input faulted，後續 move 不執行。
+
+observe／Session 不建立遊戲觸控後端，`assist` 明確拒絕。觸控測試僅限前景 `org.pas.touchfixture.cpp` 加可見 schema 雙檢查。Native Capture Fixture v2 的四區可見 identity 供來源新鮮度與 tearing 診斷；目標 40／48／57 Hz 與實際可見更新分開記錄。Emulator MMAP 未有 producer 同步證據，仍只可診斷。AVD、ABI、解析度、方向、實際核心／記憶體、Fixture APK hash 及工具鏈記入 manifest／驗收報告。詳細逐項狀態見 [遷移矩陣](CPP_PARITY_MATRIX.md)。
+
+首批 5 vCPU／8 GB AVD 的三批 60 秒 Release 基線採 gRPC RGB888 payload，實際來源 43.5–44.6 Hz、來源跟隨約 99.9%；其可見 freshness 與分布比診斷 ADB PNG 的短測更適合作為目前 observe 擷取基線。RGBA payload 可運作但多出轉換成本；MMAP 在相同 Fixture 上可取得畫面，仍因 producer 同步未證明而限診斷。這是現階段的測試選擇，不代表已證明絕對來源年齡或遊戲端到端延遲。原始窗口、樣本數、尾端分布、觸控與工具鏈限制見 [C++ 驗收紀錄](CPP_ACCEPTANCE_20260925.md)。
+
+## 歷史 Python 架構與研究紀錄
+
+以下舊段落描述凍結在 `legacy/` 的實作及當時驗收，不能作為 C++20 新結果。
+
 > 2026-09-25 使用者新決策：目標架構為全自有 C++20、單程序多專用執行緒，CLI＋Win32／D3D11 預覽。這取代下文 Python process runtime 的未來架構選擇，但不改寫其歷史實作／驗證結果。新契約、遷移範圍與待決項見 [C++ 遷移計畫](CPP_MIGRATION_PLAN.md)。
 
 > 2026-09-25 獨立驗收修正：目前 scheduler 的 freshness 維持、逐 plan dispatch 證據與 completed intent 去重尚有缺口；多指獨立移動／Flick 反向的可見驗證也不足。詳見 [驗收報告](ACCEPTANCE_20260925.md)。下文「已落地」描述實作存在，不代表上述契約已通過。

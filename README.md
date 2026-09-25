@@ -1,8 +1,51 @@
 # Phigros Auto-play System
 
-> 2026-09-25 開發方向更新：使用者決定所有自有正式邏輯改為 C++20（含測試／分析與 Android Fixture），Windows x64／MSVC／CMake／vcpkg，正式 runtime 採單程序多執行緒；舊程式凍結為 legacy。來源 40–57 Hz 視為正常，下一輪 AVD 目標為 5 vCPU／8 GB RAM；延遲與掉幀門檻待新基線後由使用者決定。詳見 [C++ 遷移計畫](docs/CPP_MIGRATION_PLAN.md) 與 [盤點報告](docs/CPP_MIGRATION_AUDIT.md)。以下 Python 命令與測試結果仍是目前實作／歷史紀錄，C++ 遷移尚未完成。
+2026-09-25 起的正式實作採 **C++20**：Windows x64／MSVC／CMake／vcpkg，單程序多執行緒，Android NativeActivity Fixture 亦由 C++ 編寫。Python、Java 與網頁 Fixture 原始碼已凍結於 [`legacy/`](legacy/README.md)，只供歷史重算與比較。T0–T5 遷移仍以 [遷移計畫](docs/CPP_MIGRATION_PLAN.md) 及 [驗收矩陣](docs/CPP_PARITY_MATRIX.md) 逐項驗證；未取得實測證據的能力不能宣稱通過。程式不向 Phigros 注入遊玩觸控。
 
-> 2026-09-25 獨立驗收：74 tests 通過，但額外重現了 3 個排程契約問題，多指／反向軌跡的能力證據也待補；M0–M2 尚未全數通過。修正清單見 [驗收報告](docs/ACCEPTANCE_20260925.md)；[統一擷取重測](docs/CAPTURE_RETEST_20260925.md) 已完成 17 批，正常來源 21.10–30.47 Hz，未達原訂研究門檻。以下實作與實測紀錄不等同完整驗收通過。
+## C++ 建置與執行
+
+需要 Visual Studio 2026 MSVC、Windows SDK、CMake 3.28+，以及包含 vcpkg 的工具鏈。`vcpkg.json` 鎖定 registry baseline。這個工作樹的深路徑會使 gRPC 的 Ninja 暫存檔碰到 Windows 260 字元限制；初次安裝依賴時，請指定短的 buildtrees／packages 路徑。以下路徑為本工作樹的例子，其他 checkout 請改用自己的短路徑。
+
+本機的 `C:\pas-bld-9408`、`C:\pas-pkg-9408` 是指向本工作樹 `out/` 下資料夾的 junction；重現時先建立各自的短路徑或 junction。CMake presets 中的 VS instance 路徑與版本也需符合本機安裝。
+
+```powershell
+$env:VCPKG_ROOT='C:\Program Files\Microsoft Visual Studio\18\Community\VC\vcpkg'
+$env:VCPKG_MAX_CONCURRENCY='4'
+& "$env:VCPKG_ROOT\vcpkg.exe" install --triplet x64-windows `
+  --x-install-root "$PWD\out\vcpkg_installed" `
+  --x-buildtrees-root 'C:\pas-bld-9408' --x-packages-root 'C:\pas-pkg-9408'
+cmake --preset windows-release
+cmake --build --preset windows-release
+ctest --preset windows-release
+```
+
+`windows-debug` 與 `windows-asan` presets 用於除錯；性能量測只使用 Release。這台機器的 BuildTools 14.51 缺 ASan 元件，`windows-asan` preset 暫借 Community 14.50 的 sanitizer header/runtime；嚴格 ASan 的 gRPC loopback 仍有工具鏈相關報告，詳見 [C++ 驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。正式命令是 `out/release-v145/Release/pas.exe`，不需要 Python PATH 或 pip 套件。量測輸出保存在 ignored 的 `measurements/`，不要提交原始畫面、權杖或 debug keystore。
+
+```powershell
+out/release-v145/Release/pas.exe probe --serial emulator-5554
+out/release-v145/Release/pas.exe synthetic --count 30 --fps 60
+out/release-v145/Release/pas.exe run --config configs/avd-observe.json --mode observe --duration-s 30 --no-preview
+out/release-v145/Release/pas.exe capture-bench --serial emulator-5554 --capture-backend emulator-grpc `
+  --width 1280 --height 720 --fixture --fixture-apk measurements/fixture_cpp_v2/pas-capture-fixture-v2.apk `
+  --warmup-s 10 --duration-s 60 --output-dir measurements/cpp-payload-example
+out/release-v145/Release/pas.exe analyze capture measurements/cpp-payload-example/capture.jsonl
+out/release-v145/Release/pas.exe capture-campaign --serial emulator-5554 --fixture-apk `
+  measurements/fixture_cpp_v2/pas-capture-fixture-v2.apk --include-stress --stability-s 600 `
+  --output-dir measurements/cpp-campaign-example
+out/release-v145/Release/pas.exe analyze campaign measurements/cpp-campaign-example
+out/release-v145/Release/pas.exe touch-bench --config configs/avd-fixture.json --repetitions 30 `
+  --fixture-apk measurements/fixture_cpp_v2/pas-touch-fixture-v2.apk
+out/release-v145/Release/pas.exe touch-batch-bench --config configs/avd-fixture.json --repetitions 30 `
+  --fixture-apk measurements/fixture_cpp_v2/pas-touch-fixture-v2.apk
+```
+
+`run` 僅提供 observe；未指定 `--no-preview` 時可開啟 Win32/D3D11 診斷預覽。`capture-bench` 的來源可為 gRPC payload 或診斷用 ADB PNG；MMAP 必須明確指定 `--diagnostic-mmap`，且結果不能進入 Session。`start-session` 在擷取就緒後啟動已安裝套件，但不判斷遊玩狀態。觸控命令只會在獨立的 `org.pas.touchfixture.cpp` 前景 Fixture 接受測試，並以其 pixels 的逐指事件驗證。
+
+Android Fixture 使用 SDK build-tools 36.0.0、platform android-37、NDK 30.0.16248370 與 Android Studio JBR。CMake 以 `fixtures/android/CMakeLists.txt` 建立 x86_64 native library；`cmake/PackageFixture.cmake` 負責 APK 打包與簽章，輸出新的 package 名稱。Fixture 目標 40／48／57 Hz 可用 `debug.pas.fixture_hz` 選擇；實際畫面更新率仍由可見計數與主機量測決定。目標 AVD 配置為 5 vCPU／8192 MiB，請以量測 manifest 中的 guest 實際值核對。
+
+## 歷史 Python 實作與研究紀錄
+
+以下敘述及命令屬於凍結的 Python 時期，原路徑現位於 `legacy/python/`、`legacy/android-java/` 或 `legacy/web-fixture/`。歷史通過結果不自動轉移到 C++ 版本；以驗收矩陣及新原始日誌為準。
 
 以 **Android 模擬器的即時畫面** 為唯一遊戲狀態來源，研究從畫面辨識、時間預測到虛擬觸控的完整閉環。目前已有合成畫面／假觸控閉環、擷取優先的啟動協調器，以及 M0–M2 的 observe runtime、一般接觸排程與獨立 Android 觸控 Fixture。**Fixture 上的觸控能力已實測；Phigros 辨識及真實遊戲閉環仍未實作，程式不會向 Phigros 注入遊玩觸控。**
 
