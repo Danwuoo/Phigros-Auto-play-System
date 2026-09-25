@@ -4,6 +4,8 @@
 
 ## C++ 建置與執行
 
+合併前的獨立審查與修正見 [合併驗收](docs/CPP_MERGE_REVIEW_20260925.md)：Release／Debug／ASan 各 21/21 測試通過，實機性能門檻仍待確認。依賴版本與授權原文見 [第三方紀錄](docs/THIRD_PARTY_NOTICES.md)。
+
 需要 Visual Studio 2026 MSVC、Windows SDK、CMake 3.28+，以及包含 vcpkg 的工具鏈。`vcpkg.json` 鎖定 registry baseline。這個工作樹的深路徑會使 gRPC 的 Ninja 暫存檔碰到 Windows 260 字元限制；初次安裝依賴時，請指定短的 buildtrees／packages 路徑。以下路徑為本工作樹的例子，其他 checkout 請改用自己的短路徑。
 
 本機的 `C:\pas-bld-9408`、`C:\pas-pkg-9408` 是指向本工作樹 `out/` 下資料夾的 junction；重現時先建立各自的短路徑或 junction。CMake presets 中的 VS instance 路徑與版本也需符合本機安裝。

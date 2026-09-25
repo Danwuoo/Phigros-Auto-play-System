@@ -32,7 +32,8 @@ using namespace pas;
 
 class EventLog {
 public:
-    explicit EventLog(const std::string& path) {
+    explicit EventLog(const std::string& path, std::string clock_domain = "host_qpc_ns")
+        : clock_domain_(std::move(clock_domain)) {
         if (!path.empty()) {
             const auto parent = std::filesystem::path(path).parent_path();
             if (!parent.empty()) std::filesystem::create_directories(parent);
@@ -42,25 +43,27 @@ public:
     }
     void write(json record) {
         record["schema_version"] = 2;
-        record["clock_domain"] = "host_qpc_ns";
+        record["clock_domain"] = clock_domain_;
         if (file_.is_open()) file_ << record.dump() << '\n';
     }
 private:
     std::ofstream file_;
+    std::string clock_domain_;
 };
 
 void synthetic(int count, int fps, double recognition_delay_ms, const std::string& log_path) {
-    if (count < 1 || fps < 2 || !std::isfinite(recognition_delay_ms) || recognition_delay_ms < 0)
+    if (count < 1 || count > 10'000 || fps < 2 || fps > 1000 ||
+        !std::isfinite(recognition_delay_ms) || recognition_delay_ms < 0 || recognition_delay_ms > 1000)
         throw std::invalid_argument("invalid synthetic arguments");
     FakeClock clock;
     GreenTargetDetector detector(clock);
     VelocityTracker tracker;
     LineCrossingPredictor predictor(48);
     FakeTouchBackend backend(clock);
-    EventLog log(log_path);
+    EventLog log(log_path, "synthetic_virtual_ns");
     const Nanoseconds interval = static_cast<Nanoseconds>(std::llround(1e9 / fps));
     const Nanoseconds delay = static_cast<Nanoseconds>(std::llround(recognition_delay_ms * 1e6));
-    struct Truth { Nanoseconds appearance, crossing; bool hit = false; bool effect_seen = false; };
+    struct Truth { Nanoseconds appearance, crossing; bool hit = false; };
     std::vector<Truth> truths;
     for (int i = 0; i < count; ++i) truths.push_back({i * 1'000'000'000LL, i * 1'000'000'000LL + 500'000'000});
     int attempts = 0;
@@ -80,16 +83,20 @@ void synthetic(int count, int fps, double recognition_delay_ms, const std::strin
     Nanoseconds last_frame = 0;
     std::uint64_t skipped = 0;
     std::uint64_t effects = 0;
+    bool effect_visible_before = false;
+    const auto dispatch_due = [&] {
+        for (const auto& receipt : scheduler.run_due()) {
+            if (receipt.command.phase == Phase::down)
+                scheduling.push_back((receipt.injection_start_ns - receipt.command.scheduled_ns) / 1e6);
+        }
+    };
     while (next_frame < count * 1'000'000'000LL || scheduler.pending_count()) {
         Nanoseconds now = next_frame < count * 1'000'000'000LL ? next_frame : std::numeric_limits<Nanoseconds>::max();
         if (const auto due = scheduler.next_due_ns()) now = std::min(now, *due);
         if (now == std::numeric_limits<Nanoseconds>::max()) break;
         now = std::max(now, clock.now_ns());
         clock.set(now);
-        for (const auto& receipt : scheduler.run_due()) {
-            if (receipt.command.phase == Phase::down)
-                scheduling.push_back((receipt.injection_start_ns - receipt.command.scheduled_ns) / 1e6);
-        }
+        dispatch_due();
         if (now < next_frame || next_frame >= count * 1'000'000'000LL) continue;
         Frame frame;
         frame.sequence = ++sequence; frame.width = 64; frame.height = 64; frame.stride = 192;
@@ -104,7 +111,6 @@ void synthetic(int count, int fps, double recognition_delay_ms, const std::strin
             const auto elapsed = now - truths[index].appearance;
             const int y = std::clamp(static_cast<int>(std::llround(8 + 40.0 * elapsed / 500'000'000)), 0, 63);
             if (truths[index].hit) {
-                if (!truths[index].effect_seen) { truths[index].effect_seen = true; ++effects; }
                 for (int dy = -3; dy <= 3; ++dy) for (int dx = -3; dx <= 3; ++dx) {
                     if (48 + dy >= 0 && 48 + dy < 64 && 32 + dx >= 0 && 32 + dx < 64)
                         frame.rgb[((48 + dy) * 64 + 32 + dx) * 3] = 255;
@@ -116,7 +122,24 @@ void synthetic(int count, int fps, double recognition_delay_ms, const std::strin
         }
         if (sequence > 1) arrival.push_back((now - last_frame) / 1e6);
         last_frame = now;
-        clock.set(now + delay);
+        // Model the dedicated scheduler continuing to run while perception
+        // processes this captured frame. Do not advance past pending deadlines.
+        const auto recognition_complete = now + delay;
+        while (const auto due = scheduler.next_due_ns()) {
+            if (*due > recognition_complete) break;
+            clock.set(std::max(clock.now_ns(), *due));
+            dispatch_due();
+        }
+        clock.set(recognition_complete);
+        // Effect evidence comes from the rendered pixels. Truth is used only
+        // by the fixture renderer and offline scoring, never by perception.
+        int effect_pixels = 0;
+        for (std::size_t pixel = 0; pixel + 2 < frame.rgb.size(); pixel += 3)
+            if (frame.rgb[pixel] > 180 && frame.rgb[pixel + 1] < 80 && frame.rgb[pixel + 2] < 80)
+                ++effect_pixels;
+        const bool effect_visible = effect_pixels >= 9;
+        if (effect_visible && !effect_visible_before) ++effects;
+        effect_visible_before = effect_visible;
         auto observation = detector.detect(frame);
         // Refresh the gate only after pixels have been processed; the
         // evidence timestamp remains the frame's capture time.
@@ -125,7 +148,7 @@ void synthetic(int count, int fps, double recognition_delay_ms, const std::strin
         auto track = tracker.update(observation);
         if (track) if (auto intent = predictor.predict(*track)) {
             if (intent->predicted_hit_ns >= clock.now_ns()) {
-                auto candidate = ContactPlan{1, index + 1, sequence, now,
+                auto candidate = ContactPlan{1, intent->intent_id, sequence, now,
                     intent->predicted_hit_ns + 30'000'000, sequence, intent->basis,
                     {{Phase::down, intent->x, intent->y, intent->predicted_hit_ns},
                      {Phase::up, intent->x, intent->y, intent->predicted_hit_ns + 20'000'000}}};
@@ -205,7 +228,7 @@ json fake_capture_bench(double duration_s, double warmup_s, double interval_ms,
     if (!std::isfinite(duration_s) || !std::isfinite(warmup_s) ||
         !std::isfinite(interval_ms) || !std::isfinite(consumer_delay_ms) ||
         duration_s <= 0 || duration_s > 3600 || warmup_s < 0 || warmup_s > 60 ||
-        interval_ms <= 0 || interval_ms > 1000 || width <= 0 || height <= 0 ||
+        interval_ms < 0.001 || interval_ms > 1000 || width <= 0 || height <= 0 ||
         static_cast<std::uint64_t>(width) * height * 3 > 16 * 1024 * 1024 ||
         consumer_delay_ms < 0 || consumer_delay_ms > 1000)
         throw std::invalid_argument("invalid fake capture benchmark options");
@@ -231,7 +254,7 @@ json fake_capture_bench(double duration_s, double warmup_s, double interval_ms,
                 source_intervals.push_back((now - previous_source) / 1e6);
             previous_source = now;
             // The source changes visible pixels for each generated frame.
-            for (int bit = 0; bit < 8; ++bit)
+            for (std::size_t bit = 0; bit < std::min<std::size_t>(8, rgb.size()); ++bit)
                 rgb[bit] = static_cast<std::uint8_t>((sequence >> (bit * 8)) & 255);
             Frame frame;
             frame.sequence = ++sequence;
@@ -256,7 +279,8 @@ json fake_capture_bench(double duration_s, double warmup_s, double interval_ms,
         if (!frame) continue;
         const auto now = clock.now_ns();
         last = frame->sequence;
-        if (now < formal_start) continue;
+        if (now >= formal_end) break;
+        if (now < formal_start || frame->capture_complete_ns < formal_start) continue;
         ++consumed;
         if (previous && intervals.size() < 100'000) intervals.push_back((now - previous) / 1e6);
         previous = now;

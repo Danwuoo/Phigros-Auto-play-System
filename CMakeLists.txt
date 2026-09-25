@@ -71,8 +71,9 @@ endif()
 
 enable_testing()
 add_executable(pas_tests tests/core_tests.cpp tests/grpc_loopback_tests.cpp
-                         tests/config_analysis_tests.cpp)
+                         tests/config_analysis_tests.cpp tests/cli_tests.cpp)
 target_link_libraries(pas_tests PRIVATE pas_emulator pas_core GTest::gtest_main)
+add_dependencies(pas_tests pas)
 if(MSVC)
   target_compile_options(pas_tests PRIVATE /W4 /permissive- /EHsc)
 endif()

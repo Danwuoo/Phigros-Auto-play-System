@@ -2,6 +2,8 @@
 
 本頁只記錄 C++20 新執行檔與原生 Android Fixture 的證據。歷史 Python 結果沒有轉成新版本的 pass；原始日誌位於忽略提交的 `measurements/`。遊戲 assist 未啟用，也沒有向 Phigros 注入觸控。
 
+合併前另經獨立審查，修正極小 frame 越界與合成閉環驗證缺口；修正後 Release／Debug／ASan 各 21/21 通過。下方 19 項為開發任務當時的紀錄，合併結論、原始資料複本與限制以 [合併驗收](CPP_MERGE_REVIEW_20260925.md) 為準。
+
 ## 環境與可重現性
 
 - 主機：Windows，18 logical processors、34,037,383,168 bytes physical RAM；host monotonic clock 為 QPC，頻率 10 MHz。

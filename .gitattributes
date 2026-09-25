@@ -1,0 +1,2 @@
+# Preserve upstream license bytes, including their original whitespace.
+docs/third_party/*.txt -text -whitespace
