@@ -1,0 +1,553 @@
+{
+  "schema": 1,
+  "created_at_utc": "2026-09-25T07:23:46.4267311Z",
+  "head": "b5da5c834d0b5b2343e83ef394697a8b235bd1be",
+  "snapshot_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\cpp_migration_handoff_20260925_9f77a855\\source",
+  "scope": "T0-T5 only: full self-owned C++20 migration, existing defects and acceptance. New five-backend development is a later task.",
+  "source_provenance": "Desktop current docs and source, with five recovered files verified against pre-deletion retest hashes; whole old worktree and raw evidence not recovered.",
+  "files": [
+    {
+      "path": ".gitignore",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\.gitignore",
+      "sha256": "E7494B92E7E35392204C6EABEC8F91A1835CDE7A7E35D61F5B0F340B108F57B0",
+      "bytes": 61,
+      "recovered_override": false
+    },
+    {
+      "path": "AGENTS.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\AGENTS.md",
+      "sha256": "ED0F2AEA6001A8CE55A1D0C77931027AC20EEBB1FCC7E8C232797A235E29C2DA",
+      "bytes": 2645,
+      "recovered_override": false
+    },
+    {
+      "path": "configs/avd-fixture.json",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\configs\\avd-fixture.json",
+      "sha256": "8EDF070D9954BAFD3594AF69D77FD5F8BDF54C9889B278ABA43EC486E561B027",
+      "bytes": 549,
+      "recovered_override": false
+    },
+    {
+      "path": "configs/avd-observe.json",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\configs\\avd-observe.json",
+      "sha256": "880B840048129347C77F2E6F509DA93BBB0FE6F4F0F37BC122A673F62D85FE6F",
+      "bytes": 490,
+      "recovered_override": false
+    },
+    {
+      "path": "configs/fake-observe.json",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\configs\\fake-observe.json",
+      "sha256": "ED0FC0A5EC0125DC7656CE057989DEE4E55E86EB5BFD782B3420F3FC2D31AB43",
+      "bytes": 479,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/ACCEPTANCE_20260925.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\ACCEPTANCE_20260925.md",
+      "sha256": "2FD427F3DEA4B50D13AA19F1467BB2FE380D97674BDAFE55B0B6C9C97CC8D3EF",
+      "bytes": 8151,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\ARCHITECTURE.md",
+      "sha256": "85B505F8C156EF36A411F2107AA435143D1D9CD7B19306D318878DB3803D2AB0",
+      "bytes": 20628,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CAPTURE_AND_VISION_RESEARCH.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CAPTURE_AND_VISION_RESEARCH.md",
+      "sha256": "8D18D88E428D8D32AF0C7E7CF3B958B70BCD0DEE447DC409D19AB6F6A7F1798F",
+      "bytes": 10088,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CAPTURE_IDLE_RETEST_20260925.md",
+      "source_path": "C:\\Users\\wurre\\Documents\\Codex\\2026-09-25\\new-chat\\outputs\\recovered-8bd4\\docs\\CAPTURE_IDLE_RETEST_20260925.md",
+      "sha256": "D52E4AC3D4E633F0C4CCDDDF65D546FBF8114E060687963C6E9083BCD4BB6607",
+      "bytes": 10654,
+      "recovered_override": true
+    },
+    {
+      "path": "docs/CAPTURE_IMPLEMENTATION_PLAN.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CAPTURE_IMPLEMENTATION_PLAN.md",
+      "sha256": "617CF40BA1262075A20E4EDED072B5DC193E4A9D5694093FE69FE2863145B0FB",
+      "bytes": 15716,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CAPTURE_LOW_LATENCY_PLAN.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CAPTURE_LOW_LATENCY_PLAN.md",
+      "sha256": "0354CA965F61124F9C90D78F8182C2CDEC74A249CB52A4868E1DFA2145847580",
+      "bytes": 24070,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CAPTURE_RETEST_20260925.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CAPTURE_RETEST_20260925.md",
+      "sha256": "3544D5A26D3E9E060CB077C531335A9AC3BB27B0A6FD48DB98581D9BA27B96ED",
+      "bytes": 12640,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CPP_MIGRATION_AUDIT.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CPP_MIGRATION_AUDIT.md",
+      "sha256": "75823E060758F74027CA830485668695B559D5A8CF559C7EBCC0986389B29B3A",
+      "bytes": 10344,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CPP_MIGRATION_INVENTORY.json",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CPP_MIGRATION_INVENTORY.json",
+      "sha256": "14A67CE454C9001B173FB9C3F6C85A13144A71DC4FAA55E04A6205094A2C8134",
+      "bytes": 20934,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CPP_MIGRATION_PLAN.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CPP_MIGRATION_PLAN.md",
+      "sha256": "4F5F015B3C3E0D6D7FFD87B777E4368AF406B0E2C20DB8CC9368FC9E43C82857",
+      "bytes": 25463,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CPP_RECOVERY_VERIFICATION.json",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CPP_RECOVERY_VERIFICATION.json",
+      "sha256": "669DBDB114F11559D195146E0B809D3B87092FE57F6E0C3058C2C614B38D76A5",
+      "bytes": 22336,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/CPP_RETEST_RECOVERY_NOTES.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\CPP_RETEST_RECOVERY_NOTES.md",
+      "sha256": "FD4ED6AACA9B70A078266C5F890517072631812F9BF4FE8D1FBFA1DD51E6BE93",
+      "bytes": 5428,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/LIVE_CAPTURE_SHA256.txt",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\LIVE_CAPTURE_SHA256.txt",
+      "sha256": "AFC754062027E964D772642FC04BF36CFADA675FA52654BA58EDD14263406C6D",
+      "bytes": 3416,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\MAIN_PROGRAM_DEVELOPMENT_PLAN.md",
+      "sha256": "8FEF287CAD4861ECC797292BCA2E9AD24FA83EB4B6A209C777BBC6A35C96AFD0",
+      "bytes": 25360,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/MEASUREMENTS.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\MEASUREMENTS.md",
+      "sha256": "42698F62466E02AB564A93E29DDDAFBA32FF8B8D0B77ABF2401DA4F00A4C5147",
+      "bytes": 65743,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/PHIGROS_MECHANICS_RESEARCH.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\PHIGROS_MECHANICS_RESEARCH.md",
+      "sha256": "C44065C4DEE85B225BA294F686AB205AD3F5C51826453FA92900F809E3F83C56",
+      "bytes": 9823,
+      "recovered_override": false
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\ROADMAP.md",
+      "sha256": "A83AE0FB7ACDB5F3CDC9A273B5E5260B84D40ADECAB2A6214F5D77C8EAAF9934",
+      "bytes": 13276,
+      "recovered_override": false
+    },
+    {
+      "path": "fixtures/capture_android/AndroidManifest.xml",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\fixtures\\capture_android\\AndroidManifest.xml",
+      "sha256": "04C9BAFA23AF904591359F7DD6EB925F77777BC6D12672CC03F2437ABA180D17",
+      "bytes": 789,
+      "recovered_override": false
+    },
+    {
+      "path": "fixtures/capture_android/src/org/pas/capturefixture/MainActivity.java",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\fixtures\\capture_android\\src\\org\\pas\\capturefixture\\MainActivity.java",
+      "sha256": "2F621662361DAF51B05844F572F765E7C1864071EAE4C0F806E77C3A16F73155",
+      "bytes": 2747,
+      "recovered_override": false
+    },
+    {
+      "path": "fixtures/capture/index.html",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\fixtures\\capture\\index.html",
+      "sha256": "53635FB0D49380F7008F6916526B5A2EAD4D7EB502E7D351A6ED7FFF6C63B58D",
+      "bytes": 2278,
+      "recovered_override": false
+    },
+    {
+      "path": "fixtures/touch_android/AndroidManifest.xml",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\fixtures\\touch_android\\AndroidManifest.xml",
+      "sha256": "8A9B53CC2CAC9DCA30D58E362EA24CA3399B864BC47138C66CE65D19E0182121",
+      "bytes": 716,
+      "recovered_override": false
+    },
+    {
+      "path": "fixtures/touch_android/src/org/pas/touchfixture/MainActivity.java",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\fixtures\\touch_android\\src\\org\\pas\\touchfixture\\MainActivity.java",
+      "sha256": "2D169E76C47563BFADB74D22AA870539BDC3BD4AD40D602F7CE493F8BDDC0DA8",
+      "bytes": 5541,
+      "recovered_override": false
+    },
+    {
+      "path": "proto/emulator_controller.proto",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\proto\\emulator_controller.proto",
+      "sha256": "DB03A185A6548CD4D7FF4DA1F5589B82E7254BFE6FCAF7C1EC26DA5F066E9CD0",
+      "bytes": 83484,
+      "recovered_override": false
+    },
+    {
+      "path": "pyproject.toml",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\pyproject.toml",
+      "sha256": "E72333332E68A70C6E66444434347E7E26B68586365DD188C5036D1199F3CC68",
+      "bytes": 445,
+      "recovered_override": false
+    },
+    {
+      "path": "README.md",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\README.md",
+      "sha256": "38AC2D3175B5EDABED2D4CA0089F7473C7567E9E5804302BB81ED00F4CC106CA",
+      "bytes": 19333,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/analyze_capture_pause.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\analyze_capture_pause.py",
+      "sha256": "206853F2041C38D799C04B011BE3481A7F92FC15F25C9E890833E51965E8699C",
+      "bytes": 1746,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/build_capture_fixture.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\build_capture_fixture.py",
+      "sha256": "34793EE958187457799DD262756F1F38D40CE2200878BAB6E4C61D33DFD79B30",
+      "bytes": 3399,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/build_touch_fixture.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\build_touch_fixture.py",
+      "sha256": "99CE5E83566F234FBC900F19AE6BD0AD200F2B922CD0EA78885D8D5131C5EC9B",
+      "bytes": 3407,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/offline_capture_comparison.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\offline_capture_comparison.py",
+      "sha256": "3EB1D0D3CA02D6DE20737A57E4B3548F07245042412DF007A3FF0A48E1AEFA3D",
+      "bytes": 9439,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/profile_grpc_stages.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\profile_grpc_stages.py",
+      "sha256": "EC4A075E5B10514E1C13B733EF90765105929F47F6E7EEB62FE396B5D810B93C",
+      "bytes": 5273,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/recompute_offline_capture.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\recompute_offline_capture.py",
+      "sha256": "600838408C95588048C6B884EA27DB8899FE33544A1892EC743267E7D6BD722C",
+      "bytes": 1351,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/summarize_unified_capture.py",
+      "source_path": "C:\\Users\\wurre\\Documents\\Codex\\2026-09-25\\new-chat\\outputs\\recovered-8bd4\\scripts\\summarize_unified_capture.py",
+      "sha256": "A8D1ABD27508F0C05B64280B405218781E30FB65D91F1B2C55A65B66F6BB91A2",
+      "bytes": 8966,
+      "recovered_override": true
+    },
+    {
+      "path": "scripts/unified_capture_bench.py",
+      "source_path": "C:\\Users\\wurre\\Documents\\Codex\\2026-09-25\\new-chat\\outputs\\recovered-8bd4\\scripts\\unified_capture_bench.py",
+      "sha256": "CDB6BBC06FF658A6015A2351E56D852364DFBC28C6EE432B7EF8EB296D2D9BC3",
+      "bytes": 11944,
+      "recovered_override": true
+    },
+    {
+      "path": "scripts/verify_capture_faults.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\verify_capture_faults.py",
+      "sha256": "4B96CD965572C91C7D05EB40FB6A1FB79A2E5061DA154FB49D2444F0CE312265",
+      "bytes": 5733,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/verify_probe_race.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\verify_probe_race.py",
+      "sha256": "2656B7A9262CECFEA858B6BCB1CCFEE781F1553CEEE269F315CE71EA1598F255",
+      "bytes": 4190,
+      "recovered_override": false
+    },
+    {
+      "path": "scripts/verify_scheduler_acceptance.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\scripts\\verify_scheduler_acceptance.py",
+      "sha256": "F992C99DBFA8528F129B93FD08A9ECE94B5EF5CC7F40A66BEC5673505616BD7D",
+      "bytes": 3711,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/__init__.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\__init__.py",
+      "sha256": "6FE95CCDF6C383AB45D82C250B086F55320C4E3EA2E1AAD7CB749604FC160EB7",
+      "bytes": 62,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/action_planner.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\action_planner.py",
+      "sha256": "79BAB7143DBE852AF151EBCDCB8C0CD32A5C0D989B5BA5036746421B7BAD50C6",
+      "bytes": 2703,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/adb.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\adb.py",
+      "sha256": "C9EFF5550E06B84439B7113FA80127D9FD86D671570FED81C9207CA132725F27",
+      "bytes": 8017,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/capability.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\capability.py",
+      "sha256": "2F69DF41756FCDACB311B82E96712CA84FCC55A12F842EE523FC0F7F9C172667",
+      "bytes": 1710,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/capture_grpc.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\capture_grpc.py",
+      "sha256": "949EEE96601C9B97F171859AA595B2E4EBDDF0A6BDC7DD0D2442CE9E70656129",
+      "bytes": 21821,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/capture_process.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\capture_process.py",
+      "sha256": "6A27B8AD35B522E7B3EEB8FB810A816F1E375A1A9A182D3A8FBFA2119365FB24",
+      "bytes": 21796,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/capture.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\capture.py",
+      "sha256": "17D67C08FC72862059C1958F234EF9732F40E97C67E6CA7E172B8C67E6F5B246",
+      "bytes": 5192,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/cli.py",
+      "source_path": "C:\\Users\\wurre\\Documents\\Codex\\2026-09-25\\new-chat\\outputs\\recovered-8bd4\\src\\pas\\cli.py",
+      "sha256": "29A2E174C890A70D494F7101807F73D451393593062667FCBC235EAA9527FF78",
+      "bytes": 71876,
+      "recovered_override": true
+    },
+    {
+      "path": "src/pas/clock.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\clock.py",
+      "sha256": "879C43A5758484478503C6B228BFD0E872FF539EDFD85ECE21C29A18BC838E7B",
+      "bytes": 1074,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/config.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\config.py",
+      "sha256": "54522B168F4DD0065FD4B7DA588F5577CCA245F1410B7A0A4FA30BC07660DD4E",
+      "bytes": 5715,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/contact_scheduler.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\contact_scheduler.py",
+      "sha256": "5748EF5C110CE5ADEA3A9B7B755334BC7F24C06AF7A4A7F8388322ED2A84A294",
+      "bytes": 11565,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/contracts.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\contracts.py",
+      "sha256": "1BEB8DACF1FA1A6C3CC933252AB45AC156B26ED727ABDFEB1491151120641879",
+      "bytes": 2162,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/emulator_proto/__init__.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\emulator_proto\\__init__.py",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/emulator_proto/emulator_controller_pb2.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\emulator_proto\\emulator_controller_pb2.py",
+      "sha256": "6684BDEB84A9CE4764BF00C0F8408D156FFFD4DA994AFE7CEA71BE471BC333DD",
+      "bytes": 37705,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/fixture.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\fixture.py",
+      "sha256": "1A677B66D1307D28F9F7BA66D6B58D759B214B1DE74D72154DA7B7ED672B20D0",
+      "bytes": 1455,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/input_grpc.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\input_grpc.py",
+      "sha256": "306B047294F4E970120C8913E81B4B884A6D49A398952320C05618571C91B4A5",
+      "bytes": 8276,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/input.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\input.py",
+      "sha256": "5315A56C96B10DF4AFD08759ED5F73832D98350D74542DC4CF831428DD829E9C",
+      "bytes": 4397,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/latest.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\latest.py",
+      "sha256": "2D8B9EE695380CFA342A8D1DC2A081FA365D25CACE475138BE86F2EB49004444",
+      "bytes": 1605,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/preview.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\preview.py",
+      "sha256": "60B208E5E8882AC9B313CBB71D40FED1FF178FA8AD7D3319D9FB8CB9294DE058",
+      "bytes": 2110,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/runtime.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\runtime.py",
+      "sha256": "289EC6E721275D939E42CA83D2BCEED42BF8EE187EC13296BBA7D9DDB80DC47F",
+      "bytes": 9649,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/scheduler.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\scheduler.py",
+      "sha256": "73C73078B0FCD5029E89AEA0DACCABDF5BF736989851E601E89797AD514E75B3",
+      "bytes": 5305,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/session.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\session.py",
+      "sha256": "D5921F923B8DE64DFE63F0A6C7FC4053F3F87C4809FAB1832B63A66101D2001D",
+      "bytes": 9147,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/synthetic.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\synthetic.py",
+      "sha256": "EE339B946B7F54122A23AE93D8A51D608C58E2BF651FEC117A977635E92471A4",
+      "bytes": 10167,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/telemetry.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\telemetry.py",
+      "sha256": "C0C24671296BC46D777E992653B2C47573F9371D0AD4D32FCD0F26C4FA054C2C",
+      "bytes": 3178,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/touch_bench.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\touch_bench.py",
+      "sha256": "BE9D930BA2B4D124A9E90F642793E24B1250CCA1F12E49E30091506744D408B0",
+      "bytes": 28511,
+      "recovered_override": false
+    },
+    {
+      "path": "src/pas/vision.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\pas\\vision.py",
+      "sha256": "F7BB8BE5538FBB579D24F6E8D2D37A5DCBBBC55F3BB0926E96F1589140D4B9CC",
+      "bytes": 4469,
+      "recovered_override": false
+    },
+    {
+      "path": "tests/test_capture_bench.py",
+      "source_path": "C:\\Users\\wurre\\Documents\\Codex\\2026-09-25\\new-chat\\outputs\\recovered-8bd4\\tests\\test_capture_bench.py",
+      "sha256": "87D09DD5C28BBA1F9E899031E9A82A654521807AA4566BD478F194EBFBA59911",
+      "bytes": 11282,
+      "recovered_override": true
+    },
+    {
+      "path": "tests/test_capture_grpc.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\test_capture_grpc.py",
+      "sha256": "4F1A046EB37CACF9C18DEE9D7DA8567F2F7908ED4DB1EBD719C5BA39E140021A",
+      "bytes": 25581,
+      "recovered_override": false
+    },
+    {
+      "path": "tests/test_capture_process.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\test_capture_process.py",
+      "sha256": "D94D2E72A08B257F24336A159BB279A3E48634365F87F6B485E5F7D0E7C6B930",
+      "bytes": 18683,
+      "recovered_override": false
+    },
+    {
+      "path": "tests/test_input_grpc_server.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\test_input_grpc_server.py",
+      "sha256": "87B19551885E51074C57AC3C28764CF84268BAEE0FA44A0E29FCA9668CAE4F91",
+      "bytes": 3287,
+      "recovered_override": false
+    },
+    {
+      "path": "tests/test_pipeline.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\test_pipeline.py",
+      "sha256": "64B73F9A5E558D35E4C5B9CF295B50E8C181182AC55159CF150C0B4B187715B9",
+      "bytes": 6362,
+      "recovered_override": false
+    },
+    {
+      "path": "tests/test_process_bench_boundaries.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\test_process_bench_boundaries.py",
+      "sha256": "29A0A95322FAE2FEB854B8E59ECEB8923B163C007D48A4C9E7B2CE732E4A247E",
+      "bytes": 5750,
+      "recovered_override": false
+    },
+    {
+      "path": "tests/test_runtime_core.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\test_runtime_core.py",
+      "sha256": "5C276D5C592F74F6F17B4B974DB43D2E3B5888AA36C5B80E6D9D0686FE023332",
+      "bytes": 10454,
+      "recovered_override": false
+    },
+    {
+      "path": "tests/test_unified_capture_analysis.py",
+      "source_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\test_unified_capture_analysis.py",
+      "sha256": "0897270C8787CE81E6F96064533A21F8637A42D00E629F331AD50062DBDCB6D7",
+      "bytes": 3743,
+      "recovered_override": false
+    }
+  ],
+  "existing_evidence": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925",
+      "exists": true,
+      "copied": false
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925",
+      "exists": true,
+      "copied": false
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime",
+      "exists": true,
+      "copied": false
+    }
+  ],
+  "missing_evidence": "measurements/capture_idle_retest_20260925T052732Z: original 164 files unavailable. Do not fabricate or claim recomputation."
+}

@@ -1,0 +1,10 @@
+{
+  "schema": 2,
+  "name": "fake-observe",
+  "serial": "emulator-5554",
+  "capture": {"kind": "fake", "execution": "thread", "transport": "payload", "image_format": "rgb888", "row_order": "top-down", "width": 64, "height": 36, "source_rotation": 0},
+  "touch": {"kind": "none", "timeout_ms": 500, "max_contacts": 2},
+  "scheduler": {"max_plans": 64, "max_steps": 16, "horizon_ms": 2000, "evidence_max_age_ms": 150},
+  "preview": {"hz": 0},
+  "log_dir": "measurements/runtime"
+}

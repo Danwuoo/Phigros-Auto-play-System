@@ -1,0 +1,76 @@
+#include "pas/analysis.hpp"
+#include "pas/config.hpp"
+
+#include <gtest/gtest.h>
+
+#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <stdexcept>
+#include <string>
+
+using namespace pas;
+
+namespace {
+class TempJson final {
+public:
+    explicit TempJson(const std::string& contents) {
+        path_ = std::filesystem::temp_directory_path() /
+            ("pas-cpp-test-" + std::to_string(
+                std::chrono::steady_clock::now().time_since_epoch().count()) + ".json");
+        std::ofstream output(path_, std::ios::binary);
+        if (!output) throw std::runtime_error("cannot write test input");
+        output << contents;
+    }
+    ~TempJson() { std::error_code ignored; std::filesystem::remove(path_, ignored); }
+    const std::filesystem::path& path() const { return path_; }
+private:
+    std::filesystem::path path_;
+};
+}
+
+TEST(ConfigMigration, ExplicitProcessToThreadAndStrictSchema) {
+    const TempJson old(R"({"schema":1,"name":"test","serial":"emulator-5554",
+        "capture":{"kind":"fake","execution":"process","transport":"payload",
+                   "image_format":"rgb888","row_order":"top-down","width":64,
+                   "height":36,"source_rotation":0},
+        "touch":{"kind":"none","timeout_ms":500,"max_contacts":2},
+        "scheduler":{"max_plans":4,"max_steps":4,"horizon_ms":2000,
+                     "evidence_max_age_ms":150},
+        "preview":{"hz":0},"log_dir":"test-output"})");
+    const auto converted = old.path().string() + ".migrated";
+    EXPECT_THROW(load_config(old.path()), std::invalid_argument);
+    ASSERT_NO_THROW(migrate_config(old.path(), converted));
+    const auto config = load_config(converted);
+    EXPECT_EQ(config.public_json.at("schema"), 2);
+    EXPECT_EQ(config.public_json.at("capture").at("execution"), "thread");
+    EXPECT_EQ(config.width, 64);
+    EXPECT_THROW(migrate_config(old.path(), converted), std::runtime_error);
+    std::filesystem::remove(converted);
+}
+
+TEST(AnalysisWindow, HalfOpenCaptureAndConsumerBoundary) {
+    const TempJson raw(
+        "{\"event\":\"bench_phase\",\"phase\":\"MEASURING\",\"monotonic_ns\":1000000000}\n"
+        "{\"event\":\"capture\",\"frame_sequence\":1,\"capture_complete_ns\":999999999,\"pixels_ready_ns\":1000000000}\n"
+        "{\"event\":\"capture\",\"frame_sequence\":2,\"capture_complete_ns\":1000000000,\"pixels_ready_ns\":1001000000,\"width\":1280,\"height\":720,\"source_rotation\":1}\n"
+        "{\"event\":\"frame_consumed\",\"frame_sequence\":2,\"consume_ns\":1010000000,\"capture_complete_ns\":1000000000,\"sequence_skip\":0}\n"
+        "{\"event\":\"fixture_counter\",\"frame_sequence\":2,\"capture_complete_ns\":1000000000,\"counter\":7,\"fixture_schema\":\"native_v2_four_region\"}\n"
+        "{\"event\":\"capture\",\"frame_sequence\":3,\"capture_complete_ns\":2000000000,\"pixels_ready_ns\":2001000000}\n"
+        "{\"event\":\"bench_phase\",\"phase\":\"STOPPING\",\"monotonic_ns\":2000000000}\n");
+    const auto result = analyze_capture_jsonl(raw.path());
+    EXPECT_EQ(result.at("capture_events"), 1);
+    EXPECT_EQ(result.at("consumer_events"), 1);
+    EXPECT_EQ(result.at("fixture_samples"), 1);
+    EXPECT_EQ(result.at("fixture_distinct"), 1);
+    EXPECT_EQ(result.at("fixture_schemas"), nlohmann::json::array({"native_v2_four_region"}));
+    EXPECT_TRUE(result.at("geometry_valid").get<bool>());
+    EXPECT_DOUBLE_EQ(result.at("received_hz").get<double>(), 1.0);
+    EXPECT_DOUBLE_EQ(result.at("host_residency_ms").at("p50").get<double>(), 10.0);
+    EXPECT_EQ(result.at("arrival_interval_ms").at("n"), 0);
+}
+
+TEST(AnalysisWindow, MalformedJsonIsRejected) {
+    const TempJson raw("{this is not JSON}\n");
+    EXPECT_THROW(analyze_capture_jsonl(raw.path()), std::runtime_error);
+}

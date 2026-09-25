@@ -535,7 +535,8 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                        fixture_scale_y: float | None = None,
                        consumer_recover_after_s: float | None = None,
                        max_relative_lag_ms: float | None = None,
-                       ready_timeout_s: float = 10) -> dict:
+                       ready_timeout_s: float = 10,
+                       sample_consumer_rss: bool = True) -> dict:
     if (duration_s <= 0 or warmup_s < 0 or consumer_delay_ms < 0 or
             receiver_pause_ms < 0 or ready_timeout_s <= 0):
         raise ValueError("invalid duration, warmup or consumer delay")
@@ -573,6 +574,7 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
         nonlocal fixture_samples_total, counter_changes, last_fixture_counter
         nonlocal first_arrival_ns, last_arrival_ns, longest_interarrival_ns
         nonlocal last_pre_window_sequence
+        pause_start_ns = None
         with collection_lock:
             if measurement_start is None or frame.capture_complete_ns < measurement_start:
                 last_pre_window_sequence = frame.sequence
@@ -610,10 +612,14 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                 first_frame = frame
             if receiver_pause_ms and not receiver_paused and frame.capture_complete_ns >= measurement_start + round(duration_s * 0.4 * 1e9):
                 receiver_paused = True
-                telemetry.record("receiver_pause", frame_sequence=frame.sequence,
-                                 duration_ms=receiver_pause_ms,
-                                 start_ns=clock.now_ns())
-                clock.sleep_until_ns(clock.now_ns() + round(receiver_pause_ms * 1e6))
+                pause_start_ns = clock.now_ns()
+        # Block only the receiver callback. The consumer must remain able to
+        # read the latest published frame while the injected pause is active.
+        if pause_start_ns is not None:
+            clock.sleep_until_ns(pause_start_ns + round(receiver_pause_ms * 1e6))
+            telemetry.record("receiver_pause", frame_sequence=frame.sequence,
+                             duration_ms=receiver_pause_ms, start_ns=pause_start_ns,
+                             ended_ns=clock.now_ns())
 
     stop_load = threading.Event()
 
@@ -653,6 +659,7 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                          fixture_offset=[fixture_x, fixture_y], fixture_scale=fixture_scale,
                          fixture_scale_y=fixture_scale_y,
                          load=load, clock="host_monotonic_ns",
+                         sample_consumer_rss=sample_consumer_rss,
                          source_timestamp_clock="unix_us_unmapped")
         worker = CaptureWorker(source, clock, telemetry, on_frame=collect)
         worker.start()
@@ -722,9 +729,10 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                 read_count += 1
                 now_ns = clock.now_ns()
                 host_residency_ms.append((now_ns - frame.capture_complete_ns) / 1e6)
-                rss = _rss_bytes()
-                if rss is not None:
-                    rss_samples.append(rss)
+                if sample_consumer_rss:
+                    rss = _rss_bytes()
+                    if rss is not None:
+                        rss_samples.append(rss)
                 telemetry.record("frame_consumed", frame_sequence=frame.sequence,
                                  source_sequence=frame.source_sequence,
                                  consume_ns=now_ns, sequence_skip=sequence_skip)
@@ -823,6 +831,7 @@ def grpc_capture_bench(serial: str, duration_s: float, warmup_s: float,
                    "process_cpu_end_ns": cpu_end_ns,
                    "process_cpu_one_core_percent": cpu_s / window_s * 100,
                    "process_rss_mib": distribution([size / (1024 * 1024) for size in rss_samples]),
+                   "consumer_rss_sampling": "per_frame" if sample_consumer_rss else "disabled",
                    "source_frame_age": "unknown; Unix source timestamp not mapped to host monotonic",
                    "log_path": log, "sample_png_path": image_path if first_frame else None}
         telemetry.record("summary", **summary)
@@ -1006,6 +1015,24 @@ def buffer_bench(duration_s: float, capture_interval_ms: float,
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="pas")
     sub = parser.add_subparsers(dest="command", required=True)
+    p = sub.add_parser("run", help="new runtime; observe mode never creates input")
+    p.add_argument("--config", required=True)
+    p.add_argument("--mode", choices=("observe", "assist"), default="observe")
+    p.add_argument("--duration-s", type=float, default=30)
+    p.add_argument("--no-preview", action="store_true")
+    p = sub.add_parser("touch-bench", help="isolated Android touch Fixture only")
+    p.add_argument("--config", required=True)
+    p.add_argument("--repetitions", type=int, default=30)
+    p.add_argument("--kinds", nargs="+", choices=("tap","hold","move","flick","pair","simultaneous","edge"),
+                   default=("tap","hold","move","flick","pair","simultaneous"))
+    p.add_argument("--output-dir")
+    p = sub.add_parser("touch-batch-bench", help="two pointers in one gRPC event on the isolated Fixture")
+    p.add_argument("--config", required=True)
+    p.add_argument("--repetitions", type=int, default=30)
+    p.add_argument("--output-dir")
+    p = sub.add_parser("touch-disconnect-smoke", help="isolated Fixture input disconnect and emergency release")
+    p.add_argument("--config", required=True)
+    p.add_argument("--output-dir")
     p = sub.add_parser("probe", help="inventory ADB and optionally a selected device")
     p.add_argument("--serial")
     p = sub.add_parser("synthetic", help="deterministic pixels-to-touch-to-pixels test")
@@ -1026,6 +1053,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--grpc-transport", choices=("payload", "mmap"), default="payload")
     p.add_argument("--diagnostic-mmap", action="store_true")
     p.add_argument("--no-log-cost", action="store_true")
+    p.add_argument("--no-consumer-rss", action="store_true",
+                   help="disable thread benchmark per-frame RSS sampling for paired capture tests")
     p.add_argument("--max-rgb-bytes", type=int, default=16 * 1024 * 1024)
     p.add_argument("--samples", type=int, default=100)
     p.add_argument("--warmup", type=int, default=10)
@@ -1083,7 +1112,35 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--log")
     args = parser.parse_args(argv)
     try:
-        if args.command == "probe":
+        if args.command == "run":
+            from .config import RuntimeConfig
+            from .runtime import run_observe
+            config = RuntimeConfig.load(args.config)
+            if args.mode != "observe":
+                raise ValueError("assist remains disabled until M3/M4 visual and capability gates pass")
+            result = run_observe(config,duration_s=args.duration_s,no_preview=args.no_preview)
+        elif args.command == "touch-bench":
+            from .config import RuntimeConfig
+            from .touch_bench import run_touch_bench
+            config = RuntimeConfig.load(args.config)
+            result = run_touch_bench(config,repetitions=args.repetitions,
+                                     kinds=tuple(args.kinds),output_dir=args.output_dir)
+            print(json.dumps(result,ensure_ascii=False,indent=2))
+            return 0 if result["failure"] is None and result["stop_error"] is None else 2
+        elif args.command == "touch-batch-bench":
+            from .config import RuntimeConfig
+            from .touch_bench import run_batch_bench
+            result=run_batch_bench(RuntimeConfig.load(args.config),
+                                   repetitions=args.repetitions,output_dir=args.output_dir)
+            print(json.dumps(result,ensure_ascii=False,indent=2))
+            return 0 if result["failure"] is None else 2
+        elif args.command == "touch-disconnect-smoke":
+            from .config import RuntimeConfig
+            from .touch_bench import run_disconnect_recovery_smoke
+            result=run_disconnect_recovery_smoke(RuntimeConfig.load(args.config),output_dir=args.output_dir)
+            print(json.dumps(result,ensure_ascii=False,indent=2))
+            return 0 if result["failure"] is None else 2
+        elif args.command == "probe":
             adb = find_adb()
             result = probe(adb, args.serial) if adb else {
                 "adb_path": None, "devices": [],
@@ -1136,7 +1193,8 @@ def main(argv: list[str] | None = None) -> int:
                                             args.fixture_scale_y,
                                             args.consumer_recover_after_s,
                                             args.max_relative_lag_ms,
-                                            args.ready_timeout_s)
+                                            args.ready_timeout_s,
+                                            not args.no_consumer_rss)
             else:
                 if (args.capture_execution != "thread" or args.grpc_transport != "payload" or
                         args.child_load or args.diagnostic_mmap):

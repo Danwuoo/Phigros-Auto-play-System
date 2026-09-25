@@ -1,0 +1,1095 @@
+{
+  "schema": 1,
+  "source_manifest_sha256": "F22BEE68D66FCED82AC8B0693E101491B465320CC748D19A8CB8A218E7E788A5",
+  "present_file_count": 217,
+  "missing": [
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\capture_idle_retest_20260925T052732Z"
+  ],
+  "files": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\analysis.json",
+      "bytes": 219863,
+      "sha256": "10AB4501BE9F5E6150EF11C6DD4F4A25C8022C77A2700DE6871DCF38E0B8564E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\host_load.jsonl",
+      "bytes": 93365,
+      "sha256": "BD20F1C6AFBC07D1B3645CF41D8727D52B432A278493B1D325C2A47393BB038D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\installed-capture-fixture.apk",
+      "bytes": 12689,
+      "sha256": "2F50B989C6ED48BFB804D3F5A9C6A289DB49B6325A813608A373FD7358F25E23"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\manifest.json",
+      "bytes": 13447,
+      "sha256": "113037E020DBA85D640520DD0C1B0948777F6F577356CE5E1C50B65997106EAA"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\results.json",
+      "bytes": 55164,
+      "sha256": "5ADFD2EC60DC7B559F91D94BEBE08CBF9282706F39A94E5EE3C5CC5DB77192C1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\tables.md",
+      "bytes": 7152,
+      "sha256": "4916D1E64565676B96FC17AD5300E9FCF114534F1D86D4CF6906078FF60E98C6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-1-T\\capture.jsonl",
+      "bytes": 1257771,
+      "sha256": "E22F466F503C6C348FDAA1345F7CB75BCC94E5949D4D19340E012C6912CD7981"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-1-T\\capture.png",
+      "bytes": 34037,
+      "sha256": "F246A50195CF3E7BB1A794E4ECBB71256D62508B1BF06906C15E3C13046B7C29"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-1-T\\invocation.json",
+      "bytes": 845,
+      "sha256": "79B725CF107CB1EFB2E748047EF2F83933B5AF7FB23D39A6538ABF28D8E77FF5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-1-T\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-1-T\\stdout.json",
+      "bytes": 5762,
+      "sha256": "D6E44A6C15ADD932A1448B7909221A9EECB85AB303A9D91BB74542834B9D9C4F"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-2-P\\capture.jsonl",
+      "bytes": 1873286,
+      "sha256": "613104DC5FC501BCD1F673C1B326F6DC52471F76DE4EEFEFD59F89F69C742FB4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-2-P\\capture.png",
+      "bytes": 33673,
+      "sha256": "D16EE33E0C2AF896FD03EBD744EAF83AE0D8E4F73358D22E2A09D0035A166097"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-2-P\\invocation.json",
+      "bytes": 846,
+      "sha256": "04823527BF20ED0852E747AB90D43B1AA84A03ACD2629E27F9E0BE6012196243"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-2-P\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-2-P\\stdout.json",
+      "bytes": 6678,
+      "sha256": "5B0A5CC0FD934AD2A95A2FD2DA30092F1F26A9DEC336EFA3A004E623985A9043"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-3-M\\capture.jsonl",
+      "bytes": 1633459,
+      "sha256": "C249376D4A26E7621B62702682862E8B99B65FDCD75ADB5E24A97073B4561A36"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-3-M\\capture.png",
+      "bytes": 33619,
+      "sha256": "473C6A15D1F01D9C51EA5A561399112258D7A169522F4648C3D20ED8D2CC58C3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-3-M\\invocation.json",
+      "bytes": 869,
+      "sha256": "040B37C09E8580E78F5A7EA6BFDBD6AE475F7F790D6C5C0DA7D605FA925CBC28"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-3-M\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-3-M\\stdout.json",
+      "bytes": 6625,
+      "sha256": "F1227A33E8F8471823E8532AA34C33562D6FDB4CE254F4FA2DC171D9A00058D2"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-4-P\\capture.jsonl",
+      "bytes": 1423182,
+      "sha256": "F7779E59A3CCB3DCB15BD7C8AE29B1452651CE81470B9E536AC75358FDEDFA30"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-4-P\\capture.png",
+      "bytes": 34015,
+      "sha256": "DD58626A49C5F26BF2383F6299D7498E918E0DDA41900B1CF32E45A440D64FE2"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-4-P\\invocation.json",
+      "bytes": 846,
+      "sha256": "4F95EF4E697DC2EE279C07B7167D94C8CF9488C8ABCDE1C6F4236D8DE5578128"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-4-P\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-4-P\\stdout.json",
+      "bytes": 6672,
+      "sha256": "79B1C7F5B14BADB9BAB0F126E422B48BD7C1CC75BD9E7778E545D98E5A68CF32"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-5-M\\capture.jsonl",
+      "bytes": 1557969,
+      "sha256": "BC278D5B225709A10A2EDFF5B984A658CAE913FDF485CD0CBE0EE64049E60162"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-5-M\\capture.png",
+      "bytes": 34281,
+      "sha256": "38D4533BF17FD2F385CFB567517BBBC585176C9F516919CAA9B96A20636A2EF6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-5-M\\invocation.json",
+      "bytes": 869,
+      "sha256": "9D268B512F95F3FBEB5AED40551E393BCA4E9A030E827BF0DF43454EE2FB2446"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-5-M\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-5-M\\stdout.json",
+      "bytes": 6623,
+      "sha256": "FFD3C3DB5B16FE69AE2E9F4977A34BD8BEB1607CB97ABF8F128CE51ACF4CB966"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-6-T\\capture.jsonl",
+      "bytes": 1472169,
+      "sha256": "D9463DCF22A4378E0A557BF0FBA8655C14181D4CE408F3AB0AEFF5C35AE3A70D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-6-T\\capture.png",
+      "bytes": 34177,
+      "sha256": "91D2164F7D0BE81EE6122CF9094A29D504B50BC19C7732F20646D88D8F14DF68"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-6-T\\invocation.json",
+      "bytes": 845,
+      "sha256": "83E6D087680362022963D6E44486EE0E69F1CB5FB404F1E91428F6CE4A19E499"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-6-T\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-6-T\\stdout.json",
+      "bytes": 5755,
+      "sha256": "329AF63827E02745212A7AE32C23EA3C987200E053FD594D621C997C392E75F5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-7-M\\capture.jsonl",
+      "bytes": 1548716,
+      "sha256": "D9645D25621FA058F7BBF0C8B2402EAC34BD6C452701C729A1A2CF452086B84F"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-7-M\\capture.png",
+      "bytes": 34514,
+      "sha256": "8E60B5A6DECBE42B20DCB79BF2B197CC22CDEFEF4F517DD0BC84822B37BCDB76"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-7-M\\invocation.json",
+      "bytes": 869,
+      "sha256": "354B8B3734CBC3C34B705D83E85076BED87D2FB34E469B4068CDA15A47750EE1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-7-M\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-7-M\\stdout.json",
+      "bytes": 6664,
+      "sha256": "59178A9BEAA75D3CC621EF488E562BBD6FC73C16D0885286A50CDE35BBD52252"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-8-T\\capture.jsonl",
+      "bytes": 1414804,
+      "sha256": "7B9BC389A6983B2843D6686434732E5F5A64ECE09263043D574E90336BE036C4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-8-T\\capture.png",
+      "bytes": 33640,
+      "sha256": "E2F1D0FDC391D7CD44F8034A9D16C82D47F73E45EE5C7525D49E4E1DE781C2CB"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-8-T\\invocation.json",
+      "bytes": 845,
+      "sha256": "429245630B58566B79B0541DD4BEE5A7AE69A3863C3D824E60C00A05A1053F5E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-8-T\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-8-T\\stdout.json",
+      "bytes": 5702,
+      "sha256": "D4B630BE79131E5A7B20C62D8D77C6DA7A88DCFE7C7D3C8C319D7764C2173BC4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-9-P\\capture.jsonl",
+      "bytes": 1478223,
+      "sha256": "C001E34310C8B87CE75F9393CD4EEBF12654B154EDB261FEBAEFAC6A18A09E32"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-9-P\\capture.png",
+      "bytes": 33498,
+      "sha256": "BEDBAD63159B09A12A99AA635F1D1075CE6348D631754EA02B31C9B3A8715D26"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-9-P\\invocation.json",
+      "bytes": 846,
+      "sha256": "FEA50B606D406123990C0DAFA33D5A00AFD90B81F1D0AB86D92D679AB63F9C5A"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-9-P\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\normal-9-P\\stdout.json",
+      "bytes": 6671,
+      "sha256": "6CBBD8637BC3C9DCF9579E725F145F54493E3C85269467FB2D2E781AE7BE6EEB"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-P\\capture.jsonl",
+      "bytes": 704161,
+      "sha256": "986F640761140A5D39FB38C4201EBE117B3642AB9080F7232DCAD23285E40C75"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-P\\capture.png",
+      "bytes": 33873,
+      "sha256": "2C016FDD296B4E3ED69C0002D57D5C035E94B472D0269439EF213280F1C4D666"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-P\\invocation.json",
+      "bytes": 863,
+      "sha256": "ED5F6A9460C71EB7A80913BBB84428C2A7BDD85BA6AD8E0240864CFC70576273"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-P\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-P\\stdout.json",
+      "bytes": 6679,
+      "sha256": "8373F5CB98982E374622CA1A1F889381064DE61449FBD46A4728CE96BC58C1A1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-T\\capture.jsonl",
+      "bytes": 568855,
+      "sha256": "85134E4CAF96F59B1BBACE183C4F78F07D74C0C77FF75F0A5F40C992E033B942"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-T\\capture.png",
+      "bytes": 33046,
+      "sha256": "154187361308BB1379058BCBBE1743B939D9BEB4850F8D986A865FDF34AEE72B"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-T\\invocation.json",
+      "bytes": 862,
+      "sha256": "66A267799E4A63D525155347C1F9C22FF904AF22CC296004D4A899BC5A0E0929"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-T\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\parent-gil-T\\stdout.json",
+      "bytes": 5707,
+      "sha256": "F01CF53078BFDC26A7FE4A8E400466A2A479EDE9F7B69BF18C02EF1FF1E08ED9"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-P\\capture.jsonl",
+      "bytes": 797943,
+      "sha256": "95A6FA83D5287861642A5867FFC884668E9126E091CD5CEED52C1199DA0D0568"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-P\\capture.png",
+      "bytes": 35079,
+      "sha256": "CDA8EF429D457E80E53DCFF5BDAB33A2D38188CCE73BF914CCDF1794EFAC1198"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-P\\invocation.json",
+      "bytes": 937,
+      "sha256": "E37FAEC1F269AAE0579B9A11E5AEF52F350D9D07917188863F379FDC3140B82E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-P\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-P\\stdout.json",
+      "bytes": 6781,
+      "sha256": "391FEBBBCBCC19E73D215AD131EB794BAF1E1BAC6CBAAE804116EEE72DFB38BC"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-T\\capture.jsonl",
+      "bytes": 795857,
+      "sha256": "CA85D3734F01E6DB3E58AFCC65668EE98801D10C53D67D0B3DD281D54FEB8FF2"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-T\\capture.png",
+      "bytes": 34149,
+      "sha256": "7EF998F92006548894764B5C89B314BE0C5480FA0492F385E6E0A24EE3F25540"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-T\\invocation.json",
+      "bytes": 936,
+      "sha256": "9F125666C5B917BE0F2B2A33A0B8275FA07A38182489994A00DE449CF0F8A78C"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-T\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-guard100-T\\stdout.json",
+      "bytes": 5763,
+      "sha256": "6A66E6598DB9A1F7922094BA0BE27087CF8984812AEDB808A228D5B812CC78BC"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-P\\capture.jsonl",
+      "bytes": 770737,
+      "sha256": "1D212ECAF5F88FC1BED750E4BCDE51A44DC2EC6B6AB55ADF4CCEBF90C68F7C83"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-P\\capture.png",
+      "bytes": 35155,
+      "sha256": "19233887779E792A205D852F205B74D9C9DAE5A3B68A2C235CACC90A58F78BF4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-P\\invocation.json",
+      "bytes": 886,
+      "sha256": "80FCED55937C8BCE6B09502CE15CE3B67EDF973B12C10B0E50BC4BC9DE2BAD02"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-P\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-P\\stdout.json",
+      "bytes": 6758,
+      "sha256": "8B8D61F37290F6D9CC034D7CBAAA169A223D4C7C3CD24FA5DA63475D49721EE1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-T\\capture.jsonl",
+      "bytes": 710989,
+      "sha256": "ADC5C8733E2150526AC239BEB921590AC1051E14B75AA0E2B69C9BADB23017D8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-T\\capture.png",
+      "bytes": 34934,
+      "sha256": "4FD76A6ACE13E9295608754C59D919BF8717CDB6E66E8CD003C7B588AD0A67CF"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-T\\invocation.json",
+      "bytes": 885,
+      "sha256": "59D8630B097F2D82F7BAE079AC099315629C6D0C64D7BDB535EFC1D0BA5E5E31"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-T\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\pause500-T\\stdout.json",
+      "bytes": 5667,
+      "sha256": "3797974BD2D7AD164DB84076A1C513BBBDDCE9547889F3C26B9C9ECB00BF753B"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-P\\capture.jsonl",
+      "bytes": 803461,
+      "sha256": "D89D19A915F9CA97EA3F8BBB476DBEE974937ADDE63B0D01F6883A472A8CF7F4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-P\\capture.png",
+      "bytes": 34861,
+      "sha256": "052BAC17CC6A3E94F07B113DDE7CE2922C9F0187F1449DAB86B089C1DAE8A47D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-P\\invocation.json",
+      "bytes": 934,
+      "sha256": "A45C808FD9C8D2E12FBE252004D888F3F07250C3FDC7548D0906157021DA5683"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-P\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-P\\stdout.json",
+      "bytes": 6627,
+      "sha256": "927DEE44B65E7B9D0017D2E793A0F83BD6F548FF683226FF4A6FFFCAA2CFD08E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-T\\capture.jsonl",
+      "bytes": 872368,
+      "sha256": "C1934F682654837CB7860CD25649EF9A92B1C08D0231CF63B00C8339C0FCE692"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-T\\capture.png",
+      "bytes": 34838,
+      "sha256": "5BF84EE56EB0E9DF54331EC6BCEEA18C56A412066880B5E40DADEC0AD83D2190"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-T\\invocation.json",
+      "bytes": 933,
+      "sha256": "39DF9CDC14BB19AFBAD6A62F2E1CD80C35219D140E343FC134A0396A80CB84DC"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-T\\stderr.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\unified_capture_20260925\\recover100-T\\stdout.json",
+      "bytes": 5709,
+      "sha256": "5F89716E3B6943F85A38E473DC4ADAF7E5DC4EC64E51AD686F1B48DCEDCAF640"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\before.png",
+      "bytes": 39119,
+      "sha256": "8F0A5F465EC29EE42BE87A34959D21DB9442284A9A6D718623DD3FC982BF8610"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\capture_smoke.jsonl",
+      "bytes": 176018,
+      "sha256": "FD86FCCEECCDB2A5B1249830757A1136AEDE8A40FBE1C4D1F513BA23F483EBAA"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\capture_smoke.png",
+      "bytes": 33528,
+      "sha256": "C251CB81A82229CC194501464F4F35D792873A33EBECB56AA267F03180B1C000"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\host_context.json",
+      "bytes": 492,
+      "sha256": "170FAD407777D5E5F134E80FE379FF4E5997447950FCD97E785A19788C14FC68"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\observe_smoke_stdout.json",
+      "bytes": 863,
+      "sha256": "3A5FFF8252075E901486740A453C55CEA82B8FEB28402E7019D61DF2F09F6142"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\scheduler_regressions.json",
+      "bytes": 1022,
+      "sha256": "C6BA1F9F99E3F54D377DD272887CE5D069A9E0ED352F8A31A6B69A49C8792A67"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch_smoke_stdout.json",
+      "bytes": 12608,
+      "sha256": "F0E444AA33F033EF8E03DCAEE4BE074239303422E6086D77B4DB7FD30D36A0CF"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\unittest.txt",
+      "bytes": 12166,
+      "sha256": "83BA60BBD347EC107EAA9651F022461F5E5550B39D65B79EAF4FD93F5EC116EB"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch-20260925-131651-1224e270\\cancel_cases.jsonl",
+      "bytes": 501,
+      "sha256": "4CF09C2DE48532FCA9015035370232FBFAD6E1B3BAC67DD882FE30F4BF599DBD"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch-20260925-131651-1224e270\\capability.json",
+      "bytes": 689,
+      "sha256": "22E5772D6AF8151D846B86256E779485ACBEA1264C3787664438B777D056B185"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch-20260925-131651-1224e270\\cases.jsonl",
+      "bytes": 4588,
+      "sha256": "3FD256E7FE86B218A93616C68ACAB7F9A9FA2F15ED686B1F1E51B934EA6983E5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch-20260925-131651-1224e270\\events.jsonl",
+      "bytes": 8464,
+      "sha256": "EE3B108FF839985352398864D9ED09793151513D37C8826C90B747CD1E7C624D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch-20260925-131651-1224e270\\final.png",
+      "bytes": 59817,
+      "sha256": "3A15D5B8A217192D01973A0121187FF9925A866D35FD144E5788310049506A6B"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch-20260925-131651-1224e270\\pair-two-pointers.png",
+      "bytes": 65601,
+      "sha256": "F34D8F6ED2B76F35305CBAACC319CEBD47F2A8D6C4B9904055925A3F16C91EC6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch-20260925-131651-1224e270\\simultaneous-two-pointers.png",
+      "bytes": 64925,
+      "sha256": "63ACD203F6CB5F867822F956F7A5C2C4E8A5F129FD3D23C87632BB8141D43926"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\acceptance_20260925\\touch-20260925-131651-1224e270\\summary.json",
+      "bytes": 12606,
+      "sha256": "2D1081D180FAD93EC298976522A1CCFA31BF6313B9557089D3F01EDAC0C81493"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T164235Z-bf142442\\config.json",
+      "bytes": 494,
+      "sha256": "09635CA661082724A692D68DBFD355FE6F3053F5575445EC73303A41B1937D8D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T164235Z-bf142442\\events.jsonl",
+      "bytes": 788,
+      "sha256": "C12EA1D6D05768B6ADC1D7F0884F1B2285DB52EE317A6A5F2632277D36544CFE"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T164235Z-bf142442\\manifest.json",
+      "bytes": 989,
+      "sha256": "E0C6B57F611C70A20B838CEE8C5F95999340C333950C88150C1EFC4DA82D55D5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T164235Z-bf142442\\summary.json",
+      "bytes": 793,
+      "sha256": "A7A40EA9CB43D733D2104F4FF7E6CE75D48E0119C1FCDA35A8E792A88D21DB7B"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T164907Z-65dc796f\\config.json",
+      "bytes": 480,
+      "sha256": "195E2DDD1BEDC1E5B3158A843321B99FFF464A7275DFC4024AF3AC3797A9A3A1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T164907Z-65dc796f\\events.jsonl",
+      "bytes": 13544,
+      "sha256": "BD36C21DEFD539BDE13DAFC1EEC0DAD050D72CE4F535D7B855883CF9237E7173"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T164907Z-65dc796f\\manifest.json",
+      "bytes": 725,
+      "sha256": "656DC283F35EFD89026B81DB3F79223013DEB0EE9A4333BEB9EAB55D4F7E59F4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T164907Z-65dc796f\\summary.json",
+      "bytes": 1150,
+      "sha256": "4539FAF8E65802411276F9B0FD85BD8C10F6A4CF3040882BAE99E1B273A1C80A"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T165257Z-e4760109\\config.json",
+      "bytes": 494,
+      "sha256": "09635CA661082724A692D68DBFD355FE6F3053F5575445EC73303A41B1937D8D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T165257Z-e4760109\\events.jsonl",
+      "bytes": 787,
+      "sha256": "EC3C40D927527B7C9AD1E0744DB99481E68192880B6AA13C2FDB0650EB2AC52F"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T165257Z-e4760109\\manifest.json",
+      "bytes": 989,
+      "sha256": "9A5485818B7E9A6FCF399882DFBCAD775FDAB655CA28D6C4D8B3374AE0696A1C"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T165257Z-e4760109\\summary.json",
+      "bytes": 807,
+      "sha256": "3EB474AE6639693180EC946644E8F45DD85357A09E3FB50F0DFE35071FEE1282"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T170358Z-922c3f57\\config.json",
+      "bytes": 480,
+      "sha256": "195E2DDD1BEDC1E5B3158A843321B99FFF464A7275DFC4024AF3AC3797A9A3A1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T170358Z-922c3f57\\events.jsonl",
+      "bytes": 13544,
+      "sha256": "C357CF920675D4C1152F177FAACE090FA8BE32BBB8ED420A97C2835E1C593EAD"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T170358Z-922c3f57\\manifest.json",
+      "bytes": 725,
+      "sha256": "70E2FAFF9A011E923C2F39DD53201FADA7DAB8EC9B98B80728730C2DA7DA24F8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T170358Z-922c3f57\\summary.json",
+      "bytes": 1189,
+      "sha256": "D8FDD931311E5557F5009020455A4F8C14640D426E2063617D12BB33F10336FB"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T170712Z-8aa4fbb2\\config.json",
+      "bytes": 494,
+      "sha256": "09635CA661082724A692D68DBFD355FE6F3053F5575445EC73303A41B1937D8D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T170712Z-8aa4fbb2\\events.jsonl",
+      "bytes": 787,
+      "sha256": "2DEB0510CA66913B614128BC0FE5FC94B18DB3493062277487559B00312DE503"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T170712Z-8aa4fbb2\\manifest.json",
+      "bytes": 1323,
+      "sha256": "B4370BDE87E326287FF398392F203FDB318707593906B64E0CFF4C70501E7DB3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260924T170712Z-8aa4fbb2\\summary.json",
+      "bytes": 847,
+      "sha256": "6F2BC9F3C6880924DD93176EEC13BC64A616ACAC3B8A52B27EAF54A256EDEE4E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T043630Z-0c015f4a\\config.json",
+      "bytes": 494,
+      "sha256": "09635CA661082724A692D68DBFD355FE6F3053F5575445EC73303A41B1937D8D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T043630Z-0c015f4a\\events.jsonl",
+      "bytes": 892,
+      "sha256": "3FB32A534E988638DDAE6652AF295DB7B7BAD8BB87375DC995B10AB55C370789"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T043630Z-0c015f4a\\manifest.json",
+      "bytes": 1343,
+      "sha256": "62A640BD0BAECD2571852EA869C5A2229BA4D41794DBD4271D4DBE07DF9CA4AA"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T043630Z-0c015f4a\\summary.json",
+      "bytes": 621,
+      "sha256": "38C9A70D01C81B15304C457460DE743CCEE312426140328ECC22C8166FCEB50A"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T043655Z-a7ac95ae\\config.json",
+      "bytes": 494,
+      "sha256": "09635CA661082724A692D68DBFD355FE6F3053F5575445EC73303A41B1937D8D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T043655Z-a7ac95ae\\events.jsonl",
+      "bytes": 893,
+      "sha256": "A19EAC292AD2DEF19EFBBE80F7BF617E8BBB03B4D47DE08DD29E9DC0C6893EFB"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T043655Z-a7ac95ae\\manifest.json",
+      "bytes": 1343,
+      "sha256": "9848A9540C058C8A65429A53631C81BBAB6F47CDCD4FCBB1E2A369DCFB635F6C"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T043655Z-a7ac95ae\\summary.json",
+      "bytes": 622,
+      "sha256": "FB4A08BA1CEBC77DDFF80C6C87A72B559A8BBCEBAA45948AAFD9DA84C7239C68"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T044318Z-4c19b88c\\config.json",
+      "bytes": 494,
+      "sha256": "09635CA661082724A692D68DBFD355FE6F3053F5575445EC73303A41B1937D8D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T044318Z-4c19b88c\\events.jsonl",
+      "bytes": 778,
+      "sha256": "4F0FCC40E378BFECADCA413AF6551DC5D948CB7609277EDD7B8D3746E11B37D6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T044318Z-4c19b88c\\manifest.json",
+      "bytes": 1323,
+      "sha256": "EDC500E86623C25E1BDA17441A4090F500AAA48B2B606A90774D4072D6933607"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T044318Z-4c19b88c\\summary.json",
+      "bytes": 847,
+      "sha256": "4B6C450DB80A6DD60D673E492AD56B28571C14B071C53557555AAA2F33AED439"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T044603Z-e3f8a49a\\config.json",
+      "bytes": 519,
+      "sha256": "FD69EEC470B58CFA65023B7CBBB17C605EAC8BD7A14880C5DBC52E033A981955"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T044603Z-e3f8a49a\\events.jsonl",
+      "bytes": 779,
+      "sha256": "9E3A45660B4B2B175E5215578FF895B35C22E69CB35CAD4E113145206E83EBE7"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T044603Z-e3f8a49a\\manifest.json",
+      "bytes": 1323,
+      "sha256": "667DE21FC9255A50BFD47CF2081331A5375A59C5BE52392718121E4E08527ACD"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T044603Z-e3f8a49a\\summary.json",
+      "bytes": 846,
+      "sha256": "93F11244E0A8588F9CDE20C28A9484855B3963B372E2006EC22A7FB0F550D0BD"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T051711Z-799fba21\\config.json",
+      "bytes": 519,
+      "sha256": "FD69EEC470B58CFA65023B7CBBB17C605EAC8BD7A14880C5DBC52E033A981955"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T051711Z-799fba21\\events.jsonl",
+      "bytes": 778,
+      "sha256": "B05203D35099F414A50CCFEA409EB8D8B554CD9DD7391A25C4A6BEF23B4FC976"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T051711Z-799fba21\\manifest.json",
+      "bytes": 1323,
+      "sha256": "E947D610C3DB97062BA45C4B9FBDF7A8E604B275F7D130E2E34531DB4B9B591E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\20260925T051711Z-799fba21\\summary.json",
+      "bytes": 861,
+      "sha256": "E665838AE793FAE0622DBD5315D363637F812A6EE18AE81AA577BEA415CF2C77"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-005941\\cases.jsonl",
+      "bytes": 635,
+      "sha256": "6E3F9452EE2CD127A43EE6A81EC031B1F02F3A3359EFDC45647F341B213AD250"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-005941\\summary.json",
+      "bytes": 1148,
+      "sha256": "2D63E9389A8E6ED0DF29A94D4014C59631D47E12B3D685D283A1F915873179E6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-005941\\two-pointers.png",
+      "bytes": 61878,
+      "sha256": "B4134BF322D692673CC9AEFFC44A0BDF4FCB5D10D9902B2007EEC9B5EF0E3615"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-005946\\cases.jsonl",
+      "bytes": 19087,
+      "sha256": "C1988D5CFBC66E62001FDF53E32678106A6B678EC8FE078CD61325F67AA59DB6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-005946\\summary.json",
+      "bytes": 1230,
+      "sha256": "1FAD2F67071D07DCB88F1955AB3F24801B653E78A63ADA2153FB07D473C792D8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-005946\\two-pointers.png",
+      "bytes": 61055,
+      "sha256": "ABC95AE860139DBF2B06CF2C7D7BE572945AB2C38DEF593AA8EC64B86F0F7B44"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-010738-1114b5be\\cases.jsonl",
+      "bytes": 19085,
+      "sha256": "7F8FDEE0F20BDAD1FB25CA2A4453F40B5AFED699DC8F14B34E9518115BACA12F"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-010738-1114b5be\\summary.json",
+      "bytes": 1594,
+      "sha256": "2E0D6F41F9F29F4A19BD4C12CF7BA028D73A51F5FE89AE606025FCE7576FC5E4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\batch-20260925-010738-1114b5be\\two-pointers.png",
+      "bytes": 58879,
+      "sha256": "08DD8613E11F494AB988A3590AC6FEA66FA2A67D05F835484E059E5971F6F48C"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\disconnect-20260925-010049\\summary.json",
+      "bytes": 1869,
+      "sha256": "1C0CD7BB04FA1DD2F4B15E0C5509734984641E72CD7E932A8BE6F540D146105D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\timeout-20260925-010002\\summary.json",
+      "bytes": 1574,
+      "sha256": "AC5D6034DA681F7937133237AB2BE5364D5259245B2D8DB124984F456814DF87"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004001\\cases.jsonl",
+      "bytes": 659,
+      "sha256": "80E58492A06CCA1B033FFBD23F291311592C0A99F371195DD7BCD5EC41970649"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004001\\events.jsonl",
+      "bytes": 1220,
+      "sha256": "22AB9E3A550E6ED41E825573E68562BC7EBF6EE652ACC9A0D9C008E86FF0D786"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004001\\final.png",
+      "bytes": 51311,
+      "sha256": "32ABC84CC78B85BDBF4376F16961743E4E5F9E1ED9BF20FD20F7BE91F7DE89B4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004001\\summary.json",
+      "bytes": 1729,
+      "sha256": "8D6D493368E6762C4BA2CB6BE2D35E0C0334E567DE043DD60243D3D9472A0F8E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004102\\cases.jsonl",
+      "bytes": 1349,
+      "sha256": "0F0B498E6AB2064F3922F529CAE8FBAB6DACAD6A4ECF11E774E0636C8A8C8298"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004102\\events.jsonl",
+      "bytes": 2746,
+      "sha256": "95BBBA8C896AD7F1DC4DC6AD5056D541334003F28EEE2E9156F9E85EBFFD4873"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004102\\final.png",
+      "bytes": 52636,
+      "sha256": "92A56B48265F716B1963B61340B5D3006DA4BD3BE4A41D50963CBC90E448A927"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004102\\summary.json",
+      "bytes": 1807,
+      "sha256": "14C1EE95FCC49A7930FA6AA2F60019C3866CB32DFBA0BD19FE74584253F47558"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004421\\cases.jsonl",
+      "bytes": 103117,
+      "sha256": "0F6C18BF227965F9F728168658DD213C0EDBE8D86855CABA29B446C435C5EEA3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004421\\events.jsonl",
+      "bytes": 160685,
+      "sha256": "05718A186135363C5821BF00B52DC8DD8ED618B4ADE6A9A6562A31433054C1DE"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004421\\final.png",
+      "bytes": 56374,
+      "sha256": "763F3ECA35FA79F119F6DEFDF2D60BF41D776AAD8ECC5DB8379AED0DBB294556"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004421\\summary.json",
+      "bytes": 1969,
+      "sha256": "A8DB17FBE502C3A4F6E470B22BFAC8EF27E3E920E207BFEE75B4FB770E4070A1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004655\\cases.jsonl",
+      "bytes": 64625,
+      "sha256": "0834B5E4DB230ACEA7EC187624B71AF6CE0E525FCD2B40107AB55DA4B8CFCD0E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004655\\events.jsonl",
+      "bytes": 74509,
+      "sha256": "3BC0F50DFF75463FD4397971B0B54CD8CE3F6A147C66250D07701BA1FAC43CD1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004655\\summary.json",
+      "bytes": 5831,
+      "sha256": "DDCC49DC41952CCF646E333CC81EEF0466B6407EB4908541EA54F7B9E2EC21EB"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004756\\cases.jsonl",
+      "bytes": 2191,
+      "sha256": "BC1BF3DAF0AE5D656E2451814A5F244BA09C6427DE95ACC36500782BE183D785"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004756\\events.jsonl",
+      "bytes": 5120,
+      "sha256": "C50D8FDF43CE2A69BF05FF21EE72A93DB518AB9E32D644A8E80E57ED3E85391D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004756\\final.png",
+      "bytes": 55443,
+      "sha256": "BE9C1C51F01028AB02A8CEBD7A40B8FED85D7CF233C26F38492FAD04B2374F12"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004756\\pair-two-pointers.png",
+      "bytes": 60939,
+      "sha256": "097DD9C835B2FE51694828989738ED97964E9FB5D99CD162D28E41A6B534D9B1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004756\\simultaneous-two-pointers.png",
+      "bytes": 61228,
+      "sha256": "7921280FB41B7E3EA1905E37F80273373269F0E83B7A9C2AE55031B4A99A6EF1"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004756\\summary.json",
+      "bytes": 4305,
+      "sha256": "3824A036E0F85D8F1C448CF41FCE2B2AB04472857D60629218450E11BFC307D2"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004951\\cancel_cases.jsonl",
+      "bytes": 15351,
+      "sha256": "FAC36D6675C4F3E5B2570E1F75057E6EFDE2D08FFBCCAE88DDD862921AAECFCC"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004951\\cases.jsonl",
+      "bytes": 139803,
+      "sha256": "15ADA0B8FC9300A0E267BE115D5A9009FEBD3E5D3577717EBD821C3FAAEBDF4C"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004951\\events.jsonl",
+      "bytes": 239119,
+      "sha256": "0525474109C12B2FE0D6F3C9609976C8689CA7D464B4613FF07D0DF6CD7F135F"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004951\\final.png",
+      "bytes": 55337,
+      "sha256": "4857F7D6A6355790F6A7F1F2862D33DD9C0F3DEB11B5560526F410C356048E5A"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004951\\pair-two-pointers.png",
+      "bytes": 61318,
+      "sha256": "8069DCAF022091D169CA43F9DE15BD33ECAD985C1E0A9A433C3B18BEC82A6835"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004951\\simultaneous-two-pointers.png",
+      "bytes": 61937,
+      "sha256": "0A3AE0825642B49A3EBE5F0BCFA14C40A9BB7744B159B493630EBB055742934B"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-004951\\summary.json",
+      "bytes": 12987,
+      "sha256": "F212333CB4D466E61EE49693BB020F868B85406D8543DD6DB6B36F7668C56F3D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005213\\cancel_cases.jsonl",
+      "bytes": 15351,
+      "sha256": "6FC8E1B51259CC1F4CA36DA1FD01227C9EDEE23D38127FCC54E9D8C9A04A7C62"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005213\\cases.jsonl",
+      "bytes": 22342,
+      "sha256": "2D099564CE67F943E4C9EC8196D7A5B620988F1E3A42E8B144859AA05EB0124A"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005213\\events.jsonl",
+      "bytes": 50849,
+      "sha256": "DAFB638E8F4C41053980BC7CBCC72F17C3C28B62D51711D83720921F2DB4176C"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005213\\final.png",
+      "bytes": 53938,
+      "sha256": "D5AC766B592649642CC4B75D5C62BC35796E34FA3D47335BF9F6E9EACFF02640"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005213\\summary.json",
+      "bytes": 4598,
+      "sha256": "EAFC482A0B4C712E778CED812FF35738CB0C1D7110F1C98B7E988A953DCA4542"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005328\\cancel_cases.jsonl",
+      "bytes": 15411,
+      "sha256": "CCE34E31E949D2A4E0055F9326513214A9E3D34836053A63E559FC27F9AF5928"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005328\\cases.jsonl",
+      "bytes": 139796,
+      "sha256": "3D7565C58A4BE2F0128F87AB61A0A3389C80029F5887B4387A6924EBB36FD10B"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005328\\events.jsonl",
+      "bytes": 239119,
+      "sha256": "3D4D30D780C539852FC44C3E94A0C1D3EA4AFB62EC798AC913A9FAC53F100E47"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005328\\final.png",
+      "bytes": 55743,
+      "sha256": "72ACB2CEB005F5B5E93D44C1AA460B6F396F0AFF8BAF70B72BD32B056ECF3DD7"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005328\\pair-two-pointers.png",
+      "bytes": 61613,
+      "sha256": "B01A68DF3CFF3DF8E8ECC2AC69ED58E3AF94DD2919A1A8EF1FA07DEA6D74ABF7"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005328\\simultaneous-two-pointers.png",
+      "bytes": 61517,
+      "sha256": "CB1DD68B3DFC20D4E7EFA2B2AD10FB3B641AA6725F66798AA75F9425806D306B"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005328\\summary.json",
+      "bytes": 13115,
+      "sha256": "CB7B24D1DD0DCF2098962901615096D901C35E0E9CD481C7F90221E561B3370D"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005501\\cancel_cases.jsonl",
+      "bytes": 2053,
+      "sha256": "0B34F99A4AA79D92A9A5982CE15C67FBAB3803A29F28EE611173E4A9256AA475"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005501\\cases.jsonl",
+      "bytes": 2974,
+      "sha256": "BEF28B3EE7280E8890E4BDD03886A16B1FC1B397C5F5ED0E17D43B4C68296CFE"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005501\\events.jsonl",
+      "bytes": 7323,
+      "sha256": "CB77E498AC7A07CDE4882DC5AFFECA40273756E8DF6D653D74E7B4DC77BE0225"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005501\\final.png",
+      "bytes": 54785,
+      "sha256": "A297E75AEF9A1387551D9F444F5C7B1810FE4750F374AB90983579FD3B93FAA6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005501\\summary.json",
+      "bytes": 4517,
+      "sha256": "A24F5BB42C5D2545188F22BAE00F2A8B64F8210B1FDDD3E2CAD8E9AA5D5DC8A4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005509\\cancel_cases.jsonl",
+      "bytes": 15591,
+      "sha256": "2B85E2C8A18A92305AD9934346F67E9FC64BC8E2BF0B5C1AF9046F115799B43F"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005509\\capability.json",
+      "bytes": 763,
+      "sha256": "344F0E5BE81584193343B88C2C380A2FC123845E126B05F0F998981B7AB033F5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005509\\cases.jsonl",
+      "bytes": 140444,
+      "sha256": "7D9C6C9AE280CAAA59027B6450BFE145274ABE8D2C20DAD3AAB03E9D74BAC33F"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005509\\events.jsonl",
+      "bytes": 239119,
+      "sha256": "0C66FBC2FC8276213CC6A7DBFB60711381AB98A2DF6E2BDBA217D232BBA2EB30"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005509\\final.png",
+      "bytes": 56024,
+      "sha256": "453473A9335746E79F2440E2F79EA198F777F94B2215A35AEDCCF69A080948D3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005509\\pair-two-pointers.png",
+      "bytes": 62105,
+      "sha256": "F108D06CCD8CEEEE42C74CBD5114E3D9E3718C1C3E0A5DD9E171150B1839A53E"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005509\\simultaneous-two-pointers.png",
+      "bytes": 61975,
+      "sha256": "A664A138CC0A034E41E49209D2D78C632E8185F9AEA95A8ECCD4BBCDC7DE6C74"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-005509\\summary.json",
+      "bytes": 12980,
+      "sha256": "4DB2544A60EDE96BE804B4647555F0DFDF9245B332EB9F1766789338F9C5C91F"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-010816-990662a7\\cancel_cases.jsonl",
+      "bytes": 519,
+      "sha256": "A65DB542349AE8C6DFE4DB91F570B8C7677B583B5DF4A7C24F858C1FBCEE75EC"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-010816-990662a7\\capability.json",
+      "bytes": 499,
+      "sha256": "199332BEC0770FB8F00DFDB9E1BD65FAF3D5D3BD9514670D93AB058ACB071A6C"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-010816-990662a7\\cases.jsonl",
+      "bytes": 751,
+      "sha256": "5001BA57BCAB0F5F56F91F1EF8599906F5E0B2A7C56607B3CDB44F5CC45F571C"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-010816-990662a7\\events.jsonl",
+      "bytes": 2304,
+      "sha256": "C017E2D3F2C7C83C9918C6D1FF5FAFE8B7FEB6DDF644BAD829228AA48BE7C06A"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-010816-990662a7\\final.png",
+      "bytes": 53857,
+      "sha256": "6B60C1F4CA80806319CF64AEC76DF732667DE9381CEE1A384A437AACF5C321EA"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\runtime\\touch-20260925-010816-990662a7\\summary.json",
+      "bytes": 4559,
+      "sha256": "073ABD9CC78D65A735843A15DC2896E3EA6328277B3B24DCF3B318F0A361BEC1"
+    }
+  ]
+}

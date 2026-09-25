@@ -1,0 +1,12 @@
+{
+  "name": "phigros-auto-play-system",
+  "version-string": "0.1.0",
+  "builtin-baseline": "93c50752b23e350ca6b9063a167f0a4cf8a3b3eb",
+  "dependencies": [
+    "cli11",
+    "grpc",
+    "gtest",
+    "nlohmann-json",
+    "protobuf"
+  ]
+}

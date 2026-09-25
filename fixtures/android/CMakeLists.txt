@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 3.28)
+project(PasNativeFixtures LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(NOT ANDROID OR NOT CMAKE_ANDROID_NDK)
+  message(FATAL_ERROR "Configure with the pinned Android NDK toolchain and x86_64 ABI")
+endif()
+
+set(GLUE ${CMAKE_ANDROID_NDK}/sources/android/native_app_glue)
+foreach(kind IN ITEMS capture touch)
+  set(target pas_${kind}_fixture_v2)
+  add_library(${target} SHARED common/main.cpp ${GLUE}/android_native_app_glue.c)
+  target_include_directories(${target} PRIVATE ${GLUE})
+  target_link_libraries(${target} PRIVATE android log EGL GLESv2)
+  target_compile_options(${target} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-Werror>)
+  if(kind STREQUAL "touch")
+    target_compile_definitions(${target} PRIVATE PAS_TOUCH_FIXTURE=1)
+  endif()
+endforeach()

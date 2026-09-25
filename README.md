@@ -1,6 +1,55 @@
 # Phigros Auto-play System
 
-以 **Android 模擬器的即時畫面** 為唯一遊戲狀態來源，研究從畫面辨識、時間預測到虛擬觸控的完整閉環。目前已有合成畫面／假觸控閉環、主機排程基線、ADB 擷取候選與擷取優先的啟動協調器，並完成一台 AVD 的連線與擷取基線。**目前擷取速度不足，且尚無多點觸控後端或 Phigros 辨識；程式不會操作遊戲譜面。**
+2026-09-25 起的正式實作採 **C++20**：Windows x64／MSVC／CMake／vcpkg，單程序多執行緒，Android NativeActivity Fixture 亦由 C++ 編寫。Python、Java 與網頁 Fixture 原始碼已凍結於 [`legacy/`](legacy/README.md)，只供歷史重算與比較。T0–T5 的功能與可執行驗證已完成，正常擷取的性能數值門檻仍待使用者依新基線決定；逐項證據見 [驗收矩陣](docs/CPP_PARITY_MATRIX.md) 與 [驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。程式不向 Phigros 注入遊玩觸控。
+
+## C++ 建置與執行
+
+合併前的獨立審查與修正見 [合併驗收](docs/CPP_MERGE_REVIEW_20260925.md)：Release／Debug／ASan 各 21/21 測試通過，實機性能門檻仍待確認。依賴版本與授權原文見 [第三方紀錄](docs/THIRD_PARTY_NOTICES.md)。
+
+需要 Visual Studio 2026 MSVC、Windows SDK、CMake 3.28+，以及包含 vcpkg 的工具鏈。`vcpkg.json` 鎖定 registry baseline。這個工作樹的深路徑會使 gRPC 的 Ninja 暫存檔碰到 Windows 260 字元限制；初次安裝依賴時，請指定短的 buildtrees／packages 路徑。以下路徑為本工作樹的例子，其他 checkout 請改用自己的短路徑。
+
+本機的 `C:\pas-bld-9408`、`C:\pas-pkg-9408` 是指向本工作樹 `out/` 下資料夾的 junction；重現時先建立各自的短路徑或 junction。CMake presets 中的 VS instance 路徑與版本也需符合本機安裝。
+
+```powershell
+$env:VCPKG_ROOT='C:\Program Files\Microsoft Visual Studio\18\Community\VC\vcpkg'
+$env:VCPKG_MAX_CONCURRENCY='4'
+& "$env:VCPKG_ROOT\vcpkg.exe" install --triplet x64-windows `
+  --x-install-root "$PWD\out\vcpkg_installed" `
+  --x-buildtrees-root 'C:\pas-bld-9408' --x-packages-root 'C:\pas-pkg-9408'
+cmake --preset windows-release
+cmake --build --preset windows-release
+ctest --preset windows-release
+```
+
+`windows-debug` 與 `windows-asan` presets 用於除錯；性能量測只使用 Release。這台機器的 BuildTools 14.51 缺 ASan 元件，`windows-asan` preset 暫借 Community 14.50 的 sanitizer header/runtime，並使 Abseil 標頭與未受 ASan 編譯的 vcpkg 二進位套件使用相同的 `Cord` 行為；嚴格 ASan 19/19 通過。第三方二進位套件本身未受插樁，詳見 [C++ 驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。正式命令是 `out/release-v145/Release/pas.exe`，不需要 Python PATH 或 pip 套件。量測輸出保存在 ignored 的 `measurements/`，不要提交原始畫面、權杖或 debug keystore。
+
+```powershell
+out/release-v145/Release/pas.exe probe --serial emulator-5554
+out/release-v145/Release/pas.exe synthetic --count 30 --fps 60
+out/release-v145/Release/pas.exe run --config configs/avd-observe.json --mode observe --duration-s 30 --no-preview
+out/release-v145/Release/pas.exe capture-bench --serial emulator-5554 --capture-backend emulator-grpc `
+  --width 1280 --height 720 --fixture --fixture-apk measurements/fixture_cpp_v2/pas-capture-fixture-v2.apk `
+  --warmup-s 10 --duration-s 60 --output-dir measurements/cpp-payload-example
+out/release-v145/Release/pas.exe analyze capture measurements/cpp-payload-example/capture.jsonl
+out/release-v145/Release/pas.exe capture-campaign --serial emulator-5554 --fixture-apk `
+  measurements/fixture_cpp_v2/pas-capture-fixture-v2.apk --include-stress --stability-s 600 `
+  --output-dir measurements/cpp-campaign-example
+out/release-v145/Release/pas.exe analyze campaign measurements/cpp-campaign-example
+out/release-v145/Release/pas.exe touch-bench --config configs/avd-fixture.json --repetitions 30 `
+  --fixture-apk measurements/fixture_cpp_v2/pas-touch-fixture-v2.apk
+out/release-v145/Release/pas.exe touch-batch-bench --config configs/avd-fixture.json --repetitions 30 `
+  --fixture-apk measurements/fixture_cpp_v2/pas-touch-fixture-v2.apk
+```
+
+`run` 僅提供 observe；未指定 `--no-preview` 時可開啟 Win32/D3D11 診斷預覽。`capture-bench` 的來源可為 gRPC payload 或診斷用 ADB PNG；MMAP 必須明確指定 `--diagnostic-mmap`，且結果不能進入 Session。`start-session` 在擷取就緒後啟動已安裝套件，但不判斷遊玩狀態。觸控命令只會在獨立的 `org.pas.touchfixture.cpp` 前景 Fixture 接受測試，並以其 pixels 的逐指事件驗證。
+
+Android Fixture 使用 SDK build-tools 36.0.0、platform android-37、NDK 30.0.16248370 與 Android Studio JBR。CMake 以 `fixtures/android/CMakeLists.txt` 建立 x86_64 native library；`cmake/PackageFixture.cmake` 負責 APK 打包與簽章，輸出新的 package 名稱。Fixture 目標 40／48／57 Hz 可用 `debug.pas.fixture_hz` 選擇；實際畫面更新率仍由可見計數與主機量測決定。目標 AVD 配置為 5 vCPU／8192 MiB，請以量測 manifest 中的 guest 實際值核對。
+
+## 歷史 Python 實作與研究紀錄
+
+以下敘述及命令屬於凍結的 Python 時期，原路徑現位於 `legacy/python/`、`legacy/android-java/` 或 `legacy/web-fixture/`。歷史通過結果不自動轉移到 C++ 版本；以驗收矩陣及新原始日誌為準。
+
+以 **Android 模擬器的即時畫面** 為唯一遊戲狀態來源，研究從畫面辨識、時間預測到虛擬觸控的完整閉環。目前已有合成畫面／假觸控閉環、擷取優先的啟動協調器，以及 M0–M2 的 observe runtime、一般接觸排程與獨立 Android 觸控 Fixture。**Fixture 上的觸控能力已實測；Phigros 辨識及真實遊戲閉環仍未實作，程式不會向 Phigros 注入遊玩觸控。**
 
 ## 目標與邊界
 
@@ -28,7 +77,28 @@ Note 與判定線追蹤
 虛擬多點觸控 → Android Emulator
 ```
 
-目前的合成測試完整經過畫面 pixels、辨識、追蹤、預測、排程、假觸控與再次觀察畫面。真實模擬器上的 Tap / Hold / Move / Flick / 多點觸控能力均未驗證；確認其能力與延遲後才接入 Phigros Note 與判定線辨識。
+目前的合成測試完整經過畫面 pixels、辨識、追蹤、預測、排程、假觸控與再次觀察畫面。真實模擬器上的觸控能力只在獨立 Fixture 通過下述可見回饋驗證；尚未有 M3 簡單目標真實閉環或 Phigros Note／判定線辨識。
+
+## 主程式 M0–M2（Fixture 專用觸控）
+
+新 runtime 固定使用 `emulator-grpc`＋`process`＋`payload`＋`RGB888`＋`top-down`；`MMAP` 不能進入 Session。profile 指定擷取寬高及 `source_rotation`（目前 AVD 橫向為 1），執行時有任何不符即停止並要求新 epoch/profile。`run --mode observe` 只擷取並顯示主機降頻診斷預覽，UI 維持 `UNKNOWN`，不建立輸入後端。`assist` 明確拒絕，直到後續閉環／遊戲門控驗收。設定為嚴格 JSON；run 目錄保存去敏設定、雜湊、環境、事件與摘要。
+
+```powershell
+python -m pip install -e '.[emulator-grpc]'
+$env:PYTHONPATH='src'
+python -m pas.cli run --config configs/fake-observe.json --mode observe --duration-s 2 --no-preview
+python -m pas.cli run --config configs/avd-observe.json --mode observe --duration-s 30
+python scripts/build_touch_fixture.py
+$adb=Join-Path $env:LOCALAPPDATA 'Android\Sdk\platform-tools\adb.exe'
+& $adb -s emulator-5554 install -r measurements/touch_fixture_android/pas-touch-fixture.apk
+& $adb -s emulator-5554 shell am start -n org.pas.touchfixture/.MainActivity
+python -m pas.cli touch-bench --config configs/avd-fixture.json --repetitions 30
+python -m pas.cli touch-batch-bench --config configs/avd-fixture.json --repetitions 30
+python -m pas.cli touch-bench --config configs/avd-fixture.json --repetitions 4 --kinds edge
+python -m pas.cli touch-disconnect-smoke --config configs/avd-fixture.json
+```
+
+操作前以 `python -m pas.cli probe --serial emulator-5554` 重新確認裝置及畫面；Fixture 工具每組動作也檢查前景 package 和像素簽名，避免觸碰遊戲。Fixture 的彩色格將 Android 事件計數編進 pixels，短觸與多指狀態可由 gRPC 截圖核對；`RPC OK` 不當作觸控已生效。本機 2026-09-25 的六類各 30 組、取消 30 組、雙指 batch 30 組均零可見失敗，四角各一次只算 smoke。原始 JSONL／PNG 與分布見 [量測紀錄](docs/MEASUREMENTS.md#主程式-m0m2-觸控-fixture2026-09-25)。這些結果不賦予 Phigros 遊玩資格。
 
 ## 執行與重現
 
@@ -122,10 +192,12 @@ python -m pas.cli start-session --serial emulator-5554 --package org.pas.capture
 - [docs/ROADMAP.md](docs/ROADMAP.md)：第一版里程碑與驗收方式。
 - [docs/MEASUREMENTS.md](docs/MEASUREMENTS.md)：本機環境盤點、合成與主機時序基線。
 - [docs/CAPTURE_AND_VISION_RESEARCH.md](docs/CAPTURE_AND_VISION_RESEARCH.md)：擷取候選、量測方法與混合式視覺決策方案。
+- [docs/PHIGROS_MECHANICS_RESEARCH.md](docs/PHIGROS_MECHANICS_RESEARCH.md)：遊戲機制來源、主程式設計修正與待實測項目。
+- [docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)：主程式完整開發計畫、分期契約、驗收門檻與 GPT-6 Sol xhigh 開發交接。
 - [docs/CAPTURE_IMPLEMENTATION_PLAN.md](docs/CAPTURE_IMPLEMENTATION_PLAN.md)：持續擷取的驗證計畫與研究門檻。
 
 ## 目前狀態
 
 合成閉環和主機排程基線可重現。ADB PNG 的歷史基線約每 3 秒取得一張解碼畫面；原始 JSONL 目前缺失，不能重算。gRPC 原始畫面串流已能在本機 AVD 正確認證與取圖。先前原生 1280×720 動態 Fixture 三批各 60 秒約每秒取得 35.4–35.9 個不同畫面；在後續約 59 Hz 的 Fixture 繪製條件下，乾淨提交的三批各取得 3,509–3,559 個不同畫面／60 秒，到達間隔 p95 為 29.58–32.48 ms、p99 為 38.71–40.67 ms，符合該條件的研究門檻。兩組繪製條件不同，差異原因尚未證實；受控停頓仍顯示短暫舊圖，可選相對落後保護在此條件下丟棄舊圖。詳見[量測紀錄](docs/MEASUREMENTS.md)。來源絕對年齡與遊戲判定窗適用性未證明；真實 `0×0` inactive 仍未在 AVD 重現。已驗證可逆的客戶端 gRPC 斷線與重新連線，但未測整台 AVD 斷線。遊戲用擷取後端與觸控後端均未選定；須先完成擷取能力及時序，再做遊戲專用辨識。
 
-2026-09-24 使用者啟動模擬器後，獨立程序 payload 在原生 Fixture 上完成三批各 60 秒及 5 秒 Session；thread payload 也做三批對照。MMAP 指定 1280×720 後完成三批診斷取圖，子程序 CPU 較低，但共享像素一致性仍未證明，不能供 Session。這次 Fixture 可見更新率約 39–44 Hz，與上述約 59 Hz 的歷史條件不同，沒有選定新預設後端。批次分布、負載結果與原始檔雜湊見[量測紀錄](docs/MEASUREMENTS.md)。
+2026-09-24 使用者啟動模擬器後，獨立程序 payload 在原生 Fixture 上完成三批各 60 秒及 5 秒 Session；thread payload 也做三批對照。MMAP 指定 1280×720 後完成三批診斷取圖，子程序 CPU 較低，但共享像素一致性仍未證明，不能供 Session。這次 Fixture 可見更新率約 39–44 Hz，與上述約 59 Hz 的歷史條件不同。新主程式已依開發決策把 process＋payload 作為明確擷取基線，不聲稱已滿足遊戲判定窗；Fixture 的 gRPC 多指觸控已驗證，但遊戲 assist 尚未啟用。批次分布、負載結果與原始檔雜湊見[量測紀錄](docs/MEASUREMENTS.md)。

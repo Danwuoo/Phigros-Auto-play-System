@@ -2,6 +2,8 @@
 
 本文件適用於整個倉庫。開始工作前，先閱讀 [README.md](README.md)、[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) 與 [docs/ROADMAP.md](docs/ROADMAP.md)。
 
+2026-09-25 起的新開發另讀 [C++ 遷移計畫](docs/CPP_MIGRATION_PLAN.md) 與 [盤點報告](docs/CPP_MIGRATION_AUDIT.md)。使用者已決定自有正式邏輯全 C++20、單程序多執行緒；舊 Python／Java／HTML 留 legacy 對照。第三方原版依賴可保留原語言。遷移與五擷取候選評估先於新的遊戲主程式功能；下列 pixels-only、計時、緩衝與驗證原則不變。
+
 ## 不可偏離的原則
 
 1. 執行時的遊戲決策只能來自即時畫面。不得讀取譜面、遊戲內部狀態、記憶體或已記錄的按鍵序列來決定下一次觸控。

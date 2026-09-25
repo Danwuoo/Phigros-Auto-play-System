@@ -175,6 +175,20 @@ class BenchTests(unittest.TestCase):
             self.assertGreater(result["longest_interarrival_ms"], 40)
             self.assertGreater(result["no_frame_gap_ms"]["max"], 40)
 
+    def test_receiver_pause_does_not_hold_consumer_lock_and_logs_resume(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "capture.jsonl"
+            result = self.run_bench(Source(), path, warmup_s=0.02,
+                                    duration_s=0.4, receiver_pause_ms=150,
+                                    sample_consumer_rss=False)
+            events = [json.loads(line) for line in path.read_text().splitlines()]
+            pauses = [event for event in events if event["event"] == "receiver_pause"]
+            self.assertEqual(len(pauses), 1)
+            pause = pauses[0]
+            self.assertGreaterEqual(pause["ended_ns"] - pause["start_ns"], 150_000_000)
+            self.assertLess(result["host_residency_ms"]["max"], 120)
+            self.assertEqual(result["consumer_rss_sampling"], "disabled")
+
     def test_first_formal_skip_excludes_warmup_frames(self):
         class DelayedMeasurementTelemetry(Telemetry):
             def record(self, event, **fields):

@@ -36,6 +36,32 @@ class CoordinateTransform:
         return tx + u * tw, ty + v * th
 
 
+class PixelCoordinateMap:
+    """Map inclusive frame pixels to inclusive touch pixels, with rotation."""
+
+    def __init__(self, frame_width: int, frame_height: int,
+                 touch_width: int, touch_height: int, rotation_deg: int = 0):
+        if min(frame_width, frame_height, touch_width, touch_height) < 2:
+            raise ValueError("pixel dimensions must exceed one")
+        if rotation_deg not in (0, 90, 180, 270):
+            raise ValueError("invalid touch rotation")
+        self.frame_width, self.frame_height = frame_width, frame_height
+        self.touch_width, self.touch_height = touch_width, touch_height
+        self.rotation_deg = rotation_deg
+
+    def map(self, x: float, y: float) -> tuple[int, int]:
+        if not 0 <= x < self.frame_width or not 0 <= y < self.frame_height:
+            raise ValueError("frame coordinate outside display")
+        u, v = x / (self.frame_width - 1), y / (self.frame_height - 1)
+        if self.rotation_deg == 90:
+            u, v = 1-v, u
+        elif self.rotation_deg == 180:
+            u, v = 1-u, 1-v
+        elif self.rotation_deg == 270:
+            u, v = v, 1-u
+        return round(u*(self.touch_width-1)), round(v*(self.touch_height-1))
+
+
 class FakeTouchBackend:
     """Independent contacts and phase validation; effects are supplied by test world."""
 

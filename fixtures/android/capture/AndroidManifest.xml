@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="org.pas.capturefixture.cpp" android:versionCode="2" android:versionName="2.0">
+    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="36" />
+    <application android:label="PAS C++ Capture Fixture" android:hasCode="false"
+                 android:extractNativeLibs="true" android:theme="@android:style/Theme.Material.NoActionBar">
+        <activity android:name="android.app.NativeActivity" android:exported="true"
+                  android:screenOrientation="landscape">
+            <meta-data android:name="android.app.lib_name" android:value="pas_capture_fixture_v2" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
