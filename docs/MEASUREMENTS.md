@@ -1,5 +1,7 @@
 # 2026-09-23 基線量測與限制
 
+> 最新：2026-09-25 [統一擷取重測](CAPTURE_RETEST_20260925.md) 已完成 17 批；日常負載下正常來源為 21.10–30.47 Hz，9 批正常效能門檻均未通過，不能套用先前約 59 Hz 的條件性通過結論。[M0–M2 獨立驗收](ACCEPTANCE_20260925.md) 另發現 3 個排程契約問題及觸控軌跡證據缺口。以下數據保留為各自條件下的歷史紀錄。
+
 ## 2026-09-24 驗收修正（僅離線）
 
 `68e1a8b` 的程序版本驗收發現三項問題，現已補回歸並修正：阻塞串流停止沒有 cooperative RPC cancel，導致正常停止也 terminate 且殘留 MMAP 檔案；暖機圖晚送達污染正式 consumer skips；CPU 資源取樣窗口与影格窗口不一致且偏差欄位漏算取樣耗時。
@@ -349,3 +351,30 @@ MMAP 傳輸目前沒有證據是必要且有撕裂風險，WGC／scrcpy 也尚�
 | `round2_probe_followup_2/events.jsonl` | `296F999D854A6554CE3B4B646AD9DC54CACA3C687250D2EAD5BF4F2C5348957F` |
 | `round2_fault_followup/capture.jsonl` | `12980ACAB41A577F0A5E810E6BF4A5DDFDE188ECB00645BF99C2D41525EECD60` |
 | `round2_visibility_followup/events.jsonl` | `2F03B89A57DD98CFFBA2153C6DC51E43B23781866B39E88ADD238C446BE72516` |
+
+## 主程式 M0–M2 觸控 Fixture（2026-09-25）
+
+環境：Windows 11 `10.0.26200`、Python 3.14.7、Android Emulator 37.1.11／Android 16 API 36、`sdk_gphone64_x86_64`、ADB `emulator-5554`。Fixture 前景畫面為 1280×720；gRPC `sendTouch` 使用裝置 720×1280 座標，profile 指定 90° 映射。主機 timer resolution 在觸控 owner 運作期間請求 1 ms，停止時還原。gRPC 截圖使用 RGB888、top-down；觸控 RPC timeout 500 ms。Git HEAD `b5da5c834d0b5b2343e83ef394697a8b235bd1be`，dirty=true（含本次未提交原有研究與新增程式）；Fixture APK SHA-256 `c31b4b9a29245688c5ac1d526d03ff019e06c8092ac1b367a797c97dbf34f236`。原始紀錄只存本工作樹、被 Git 忽略。
+
+實際驗證：Tap／Hold／兩段 Move／多段往返 Flick／A 保持時 B 按下且 A 移動、B 先放開／兩指同時期限各 30 組，共 180 組，Android 可見事件零失敗、RPC 失敗 0。取消正在按住的接觸 30 組，畫面回報 active 歸零且 up 增加，失敗 0。每類 30 次循環覆蓋九個網格點；四個真正畫面角點另做各一次 smoke，4/4 畫面可見且座標誤差 1 px，不能把 4 次的 p99 當能力保證。相同 RPC 內兩個 down、move、up 的 batch 另 30 組，Android 同時兩指及獨立移動可見，零失敗。`pair-two-pointers.png`／`simultaneous-two-pointers.png` 和 batch 的 `two-pointers.png` 顯示 Android pointer 0、1；它們與 Emulator identifier 不能直接等同。
+
+| 指標（正式 Fixture 批次） | n | p50 | p95 | p99 | 最大值 | 失敗 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| owner 排程誤差，注入開始−預定時間（ms） | 690 | 1.082 | 2.439 | 3.403 | 5.581 | 0 |
+| `sendTouch` 呼叫耗時（ms） | 690 | 0.775 | 1.863 | 3.055 | 5.199 | 0 |
+| 注入開始→第一次截圖看到事件（ms） | 180 | 60.429 | 87.122 | 98.864 | 111.972 | 0 |
+| 最後 Android 觸點與規劃點 L1 座標誤差（px） | 180 | 1 | 1 | 1 | 1 | 0 |
+| 同 RPC 雙指 batch 呼叫耗時（ms） | 90 | 0.724 | 1.018 | 1.650 | 1.942 | 0 |
+| batch 注入→首次可見（ms） | 30 | 69.260 | 97.130 | 106.859 | 109.745 | 0 |
+
+排程 jitter 定義為排程誤差 p95−p5，這批為 2.142 ms；上述 p99 是樣本分布描述，不能外推為遊戲保證。截圖首次看到事件的時間含 Android 處理、顯示與再次截圖輪詢；不是觸控真正生效時間。`RPC OK` 本身不算通過，能力判定同時要求 Fixture 的 down／up／move／pairs 計數、持續 active 視窗、回到零接觸與座標核對。Windows 未請求 1 ms timer resolution 的前一批 690 步 p99 約 16.79 ms；兩批條件的主機背景負載未嚴格配對，改善原因與可移植性仍須 M3 配對測試。
+
+實機故障 smoke：在 Android 顯示一指按住後，主動關閉本次 gRPC input channel；放開 RPC 回報失敗，原後端 `release_all` 將 ID 0 列為 failed/unknown。獨立新 channel 對有限 ID pool 連續兩次送出 pressure=0，之後 0.5 秒反覆截圖均為 active=0、up 計數增加；僅證明這次斷線的最佳努力恢復。**真實 RPC deadline 逾時未成功重現**：曾嘗試極短 deadline，RPC 仍返回成功，該次報告為失敗而未納入能力通過；fake gRPC server 另驗證逾時、未知狀態、禁止重送 down、釋放失敗與 batch 結果不確定。整台 AVD 失聯、客戶端程序猝死後的釋放與其他旋轉尚未驗。
+
+原始檔：`measurements/runtime/touch-20260925-005509/{summary.json,capability.json,cases.jsonl,cancel_cases.jsonl,events.jsonl,pair-two-pointers.png,simultaneous-two-pointers.png,final.png}`；表中 batch 重測為 `measurements/runtime/batch-20260925-010738-1114b5be/`（較早一批亦零失敗），端點 smoke 為 `measurements/runtime/touch-20260925-005501/`，故障 smoke 為 `measurements/runtime/disconnect-20260925-010049/`。observe runtime 的 fake 0.5 秒取到 21 張、`process` 正常回收；真實靜態 Fixture 2 秒只交付一張有效串流 frame（不偽造 heartbeat），主機預覽已啟動並正常結束。這些資料不能替代 M3 真實移動目標畫面→預測→觸控→畫面閉環。
+
+### 2026-09-25 emulator 顯示方向恢復
+
+本機 `emulator-5554`（Emulator 37.1.11、Android 16、Windows 11、Python 3.14.7）一度停在直向主畫面。啟動已安裝的 Touch Fixture 後，ADB 截圖為正常橫向 1280×720、Android active=0，但 emulator gRPC `getScreenshot` 原生輸出為 720×1280、來源方向 3；要求 1280×720 時輸出 405×720。原 observe profile 的短測因此因尺寸不符失敗，見 `measurements/runtime/20260925T043630Z-0c015f4a/` 和 `20260925T043655Z-a7ac95ae/`。以 `cmd window user-rotation` 和 `wm size` 單獨調整均未修復；`wm size` 已 reset，rotation mode 已恢復 free。
+
+重新啟動 Android guest 後，gRPC 一度輸出 1280×720 但內容倒轉 180°；再使用 emulator console `rotate` 兩次，得到正向 1280×720、來源方向 1，並以 Fixture 的像素簽章 `0x504153`、active=0 和 ADB 同場景截圖核對。`run --mode observe --duration-s 3 --no-preview` 成功：靜態 Fixture 有效串流 frame 1、錯誤 0、擷取程序正常回收，原始 run 為 `measurements/runtime/20260925T044318Z-4c19b88c/`。runtime 隨後增加 profile `source_rotation` 驗證，防止同尺寸倒轉畫面被當作有效幀；改動後的 observe smoke 亦通過，run 為 `measurements/runtime/20260925T044603Z-e3f8a49a/`。這只是故障恢復 smoke，沒有進行觸控或性能批次；旋轉操作的普遍可重現性未驗。

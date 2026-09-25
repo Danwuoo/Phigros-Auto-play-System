@@ -1,6 +1,10 @@
 # Phigros Auto-play System
 
-以 **Android 模擬器的即時畫面** 為唯一遊戲狀態來源，研究從畫面辨識、時間預測到虛擬觸控的完整閉環。目前已有合成畫面／假觸控閉環、主機排程基線、ADB 擷取候選與擷取優先的啟動協調器，並完成一台 AVD 的連線與擷取基線。**目前擷取速度不足，且尚無多點觸控後端或 Phigros 辨識；程式不會操作遊戲譜面。**
+> 2026-09-25 開發方向更新：使用者決定所有自有正式邏輯改為 C++20（含測試／分析與 Android Fixture），Windows x64／MSVC／CMake／vcpkg，正式 runtime 採單程序多執行緒；舊程式凍結為 legacy。來源 40–57 Hz 視為正常，下一輪 AVD 目標為 5 vCPU／8 GB RAM；延遲與掉幀門檻待新基線後由使用者決定。詳見 [C++ 遷移計畫](docs/CPP_MIGRATION_PLAN.md) 與 [盤點報告](docs/CPP_MIGRATION_AUDIT.md)。以下 Python 命令與測試結果仍是目前實作／歷史紀錄，C++ 遷移尚未完成。
+
+> 2026-09-25 獨立驗收：74 tests 通過，但額外重現了 3 個排程契約問題，多指／反向軌跡的能力證據也待補；M0–M2 尚未全數通過。修正清單見 [驗收報告](docs/ACCEPTANCE_20260925.md)；[統一擷取重測](docs/CAPTURE_RETEST_20260925.md) 已完成 17 批，正常來源 21.10–30.47 Hz，未達原訂研究門檻。以下實作與實測紀錄不等同完整驗收通過。
+
+以 **Android 模擬器的即時畫面** 為唯一遊戲狀態來源，研究從畫面辨識、時間預測到虛擬觸控的完整閉環。目前已有合成畫面／假觸控閉環、擷取優先的啟動協調器，以及 M0–M2 的 observe runtime、一般接觸排程與獨立 Android 觸控 Fixture。**Fixture 上的觸控能力已實測；Phigros 辨識及真實遊戲閉環仍未實作，程式不會向 Phigros 注入遊玩觸控。**
 
 ## 目標與邊界
 
@@ -28,7 +32,28 @@ Note 與判定線追蹤
 虛擬多點觸控 → Android Emulator
 ```
 
-目前的合成測試完整經過畫面 pixels、辨識、追蹤、預測、排程、假觸控與再次觀察畫面。真實模擬器上的 Tap / Hold / Move / Flick / 多點觸控能力均未驗證；確認其能力與延遲後才接入 Phigros Note 與判定線辨識。
+目前的合成測試完整經過畫面 pixels、辨識、追蹤、預測、排程、假觸控與再次觀察畫面。真實模擬器上的觸控能力只在獨立 Fixture 通過下述可見回饋驗證；尚未有 M3 簡單目標真實閉環或 Phigros Note／判定線辨識。
+
+## 主程式 M0–M2（Fixture 專用觸控）
+
+新 runtime 固定使用 `emulator-grpc`＋`process`＋`payload`＋`RGB888`＋`top-down`；`MMAP` 不能進入 Session。profile 指定擷取寬高及 `source_rotation`（目前 AVD 橫向為 1），執行時有任何不符即停止並要求新 epoch/profile。`run --mode observe` 只擷取並顯示主機降頻診斷預覽，UI 維持 `UNKNOWN`，不建立輸入後端。`assist` 明確拒絕，直到後續閉環／遊戲門控驗收。設定為嚴格 JSON；run 目錄保存去敏設定、雜湊、環境、事件與摘要。
+
+```powershell
+python -m pip install -e '.[emulator-grpc]'
+$env:PYTHONPATH='src'
+python -m pas.cli run --config configs/fake-observe.json --mode observe --duration-s 2 --no-preview
+python -m pas.cli run --config configs/avd-observe.json --mode observe --duration-s 30
+python scripts/build_touch_fixture.py
+$adb=Join-Path $env:LOCALAPPDATA 'Android\Sdk\platform-tools\adb.exe'
+& $adb -s emulator-5554 install -r measurements/touch_fixture_android/pas-touch-fixture.apk
+& $adb -s emulator-5554 shell am start -n org.pas.touchfixture/.MainActivity
+python -m pas.cli touch-bench --config configs/avd-fixture.json --repetitions 30
+python -m pas.cli touch-batch-bench --config configs/avd-fixture.json --repetitions 30
+python -m pas.cli touch-bench --config configs/avd-fixture.json --repetitions 4 --kinds edge
+python -m pas.cli touch-disconnect-smoke --config configs/avd-fixture.json
+```
+
+操作前以 `python -m pas.cli probe --serial emulator-5554` 重新確認裝置及畫面；Fixture 工具每組動作也檢查前景 package 和像素簽名，避免觸碰遊戲。Fixture 的彩色格將 Android 事件計數編進 pixels，短觸與多指狀態可由 gRPC 截圖核對；`RPC OK` 不當作觸控已生效。本機 2026-09-25 的六類各 30 組、取消 30 組、雙指 batch 30 組均零可見失敗，四角各一次只算 smoke。原始 JSONL／PNG 與分布見 [量測紀錄](docs/MEASUREMENTS.md#主程式-m0m2-觸控-fixture2026-09-25)。這些結果不賦予 Phigros 遊玩資格。
 
 ## 執行與重現
 
@@ -122,10 +147,12 @@ python -m pas.cli start-session --serial emulator-5554 --package org.pas.capture
 - [docs/ROADMAP.md](docs/ROADMAP.md)：第一版里程碑與驗收方式。
 - [docs/MEASUREMENTS.md](docs/MEASUREMENTS.md)：本機環境盤點、合成與主機時序基線。
 - [docs/CAPTURE_AND_VISION_RESEARCH.md](docs/CAPTURE_AND_VISION_RESEARCH.md)：擷取候選、量測方法與混合式視覺決策方案。
+- [docs/PHIGROS_MECHANICS_RESEARCH.md](docs/PHIGROS_MECHANICS_RESEARCH.md)：遊戲機制來源、主程式設計修正與待實測項目。
+- [docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)：主程式完整開發計畫、分期契約、驗收門檻與 GPT-6 Sol xhigh 開發交接。
 - [docs/CAPTURE_IMPLEMENTATION_PLAN.md](docs/CAPTURE_IMPLEMENTATION_PLAN.md)：持續擷取的驗證計畫與研究門檻。
 
 ## 目前狀態
 
 合成閉環和主機排程基線可重現。ADB PNG 的歷史基線約每 3 秒取得一張解碼畫面；原始 JSONL 目前缺失，不能重算。gRPC 原始畫面串流已能在本機 AVD 正確認證與取圖。先前原生 1280×720 動態 Fixture 三批各 60 秒約每秒取得 35.4–35.9 個不同畫面；在後續約 59 Hz 的 Fixture 繪製條件下，乾淨提交的三批各取得 3,509–3,559 個不同畫面／60 秒，到達間隔 p95 為 29.58–32.48 ms、p99 為 38.71–40.67 ms，符合該條件的研究門檻。兩組繪製條件不同，差異原因尚未證實；受控停頓仍顯示短暫舊圖，可選相對落後保護在此條件下丟棄舊圖。詳見[量測紀錄](docs/MEASUREMENTS.md)。來源絕對年齡與遊戲判定窗適用性未證明；真實 `0×0` inactive 仍未在 AVD 重現。已驗證可逆的客戶端 gRPC 斷線與重新連線，但未測整台 AVD 斷線。遊戲用擷取後端與觸控後端均未選定；須先完成擷取能力及時序，再做遊戲專用辨識。
 
-2026-09-24 使用者啟動模擬器後，獨立程序 payload 在原生 Fixture 上完成三批各 60 秒及 5 秒 Session；thread payload 也做三批對照。MMAP 指定 1280×720 後完成三批診斷取圖，子程序 CPU 較低，但共享像素一致性仍未證明，不能供 Session。這次 Fixture 可見更新率約 39–44 Hz，與上述約 59 Hz 的歷史條件不同，沒有選定新預設後端。批次分布、負載結果與原始檔雜湊見[量測紀錄](docs/MEASUREMENTS.md)。
+2026-09-24 使用者啟動模擬器後，獨立程序 payload 在原生 Fixture 上完成三批各 60 秒及 5 秒 Session；thread payload 也做三批對照。MMAP 指定 1280×720 後完成三批診斷取圖，子程序 CPU 較低，但共享像素一致性仍未證明，不能供 Session。這次 Fixture 可見更新率約 39–44 Hz，與上述約 59 Hz 的歷史條件不同。新主程式已依開發決策把 process＋payload 作為明確擷取基線，不聲稱已滿足遊戲判定窗；Fixture 的 gRPC 多指觸控已驗證，但遊戲 assist 尚未啟用。批次分布、負載結果與原始檔雜湊見[量測紀錄](docs/MEASUREMENTS.md)。

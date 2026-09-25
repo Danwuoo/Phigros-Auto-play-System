@@ -1,5 +1,13 @@
 # 開發路線圖
 
+> 2026-09-25 使用者重排路線：先全 C++ 遷移（含既有功能與缺陷修正），再完成 gRPC payload／WGC／DXGI／scrcpy／MMAP 五候選評估，之後才進入新的主程式閉環與遊戲功能。40–57 Hz 為正常來源範圍；5 vCPU／8 GB RAM 為下一輪 AVD 目標，實際配置須核對。新性能數值門檻由新基線後的使用者決策決定，不回溯改寫歷史結果。工作包見 [C++ 遷移計畫](CPP_MIGRATION_PLAN.md)。
+
+> 2026-09-25 獨立驗收結論：**先修 M1 的 3 個排程問題並補 M2 軌跡證據，再驗收 M3。** 原有 70 tests 通過，額外契約重現 3/3 失敗；此前「M0–M2 實作驗收」不能視為全數通關。詳見 [驗收報告](ACCEPTANCE_20260925.md)。統一擷取重測保留所有日常負載批次及來源率，不與先前不同來源條件混算。
+
+> 2026-09-25 M0–M2 實作驗收：observe runtime／profile／manifest、單 owner 一般接觸排程、gRPC `sendTouch`、獨立 Android 觸控 Fixture、前景防誤觸的能力工具與降頻主機預覽已落地。六類各 30 組、取消 30 組、雙指 batch 30 組皆由 Fixture 可見 pixels 驗證；四角各一次為 smoke。真實 RPC deadline 逾時嘗試未重現，fake server 逾時／未知狀態回歸與實機 channel 斷線後緊急釋放已分開驗證。遊戲 assist 維持禁用；下一階段是 M3 真實簡單目標閉環，不能由本次觸控量測直接宣稱遊戲可用。環境、分布與限制見 [量測紀錄](MEASUREMENTS.md#主程式-m0m2-觸控-fixture2026-09-25)。
+
+> 2026-09-25 主程式開發：詳細工作包與驗收依 [主程式完整開發計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN.md)。使用者選擇 CLI＋即時診斷預覽，指定 GPT-6 Sol xhigh 開發。新 runtime 以 process＋gRPC payload 為開發基線，先做 M0–M2 核心／觸控 Fixture，再驗收 M3 真實閉環，最後進入遊戲辨識。這不表示既有路線圖第 1–4 階段已全部通過，也不宣稱遊戲延遲已達標。
+
 > 2026-09-24 驗收修正：程序版的阻塞 RPC 取消／MMAP 殘留回收、暖機 consumer skip 邊界與 CPU 取樣窗口已補離線回歸。資源 CPU 現在按各自取樣區間估計並揭露邊界偏差；舊程序 CPU 數據不視為精確正式窗口量測。MMAP 繼續限制為診斷，本次沒有新增 emulator 實測結論。
 
 > 2026-09-24 冷開發：獨立程序 payload 路徑、固定容量 IPC 與 opt-in MMAP 診斷候選已完成離線實作及測試。實機相容性、同條件尾端延遲和來源 MMAP 一致性仍待集中驗收；不改變先完成擷取／觸控能力與簡單目標閉環、最後才做 Phigros 專用辨識的順序。清單見 [擷取低延遲開發計畫](CAPTURE_LOW_LATENCY_PLAN.md)。

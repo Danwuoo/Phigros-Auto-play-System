@@ -1,5 +1,21 @@
 # 架構與資料契約
 
+> 2026-09-25 使用者新決策：目標架構為全自有 C++20、單程序多專用執行緒，CLI＋Win32／D3D11 預覽。這取代下文 Python process runtime 的未來架構選擇，但不改寫其歷史實作／驗證結果。新契約、遷移範圍與待決項見 [C++ 遷移計畫](CPP_MIGRATION_PLAN.md)。
+
+> 2026-09-25 獨立驗收修正：目前 scheduler 的 freshness 維持、逐 plan dispatch 證據與 completed intent 去重尚有缺口；多指獨立移動／Flick 反向的可見驗證也不足。詳見 [驗收報告](ACCEPTANCE_20260925.md)。下文「已落地」描述實作存在，不代表上述契約已通過。
+
+主程式契約、資源所有權與落地順序見 [完整開發計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN.md)。M0–M2 的已實作範圍在下節；M3 以後及下文帶舊日期的未實作敘述仍屬規劃／歷史基線。
+
+## 2026-09-25 M0–M2 落地狀態
+
+- `RuntimeConfig` 嚴格驗證 JSON profile；observe runtime 只建立原有 `ProcessCaptureSource`／`CaptureWorker`，固定 gRPC payload、RGB888、top-down、容量 1。profile 鎖定擷取尺寸與來源方向；不符時停止並要求新 epoch/profile，避免同尺寸倒轉畫面繼續流入視覺與座標映射。fake source 可離線驗證；任何 MMAP profile 在啟動前被拒絕。run 目錄保存去敏 config、SHA-256、Git dirty／環境 manifest、有限 journal 與摘要。`observe` 沒有輸入後端；`assist` 仍禁用。
+- `ContactPlan` 的 note／intent key 與有限 contact ID 分離；`ContactScheduler` 擁有 plans、revision、epoch、gate、證據期限、遲到期限及接觸釋放責任。live `SchedulerOwner` 是唯一修改者與注入者；mailbox、plan 數與步數均有上限，反覆 revision 不累積舊 heap。停止與注入用同一 guard 排序。Windows owner 運作時請求 1 ms timer resolution，停止時還原；這只改善主機量測尾端，不構成硬即時保證。
+- `EmulatorGrpcTouch` 使用與擷取獨立的認證 channel；唯一 `PixelCoordinateMap` 將 1280×720 已定向 frame 轉至本機 720×1280 觸控座標（90°）。`sendTouch` 的多指事件與普通 down／move／up 已經隔離的 Android Fixture 可見回饋驗證。RPC 成功仍只代表呼叫返回；RPC 失敗／逾時使後端鎖定，釋放請求保留 `effect_unverified_ids`。重新建立後端前須確認 Fixture 可見零接觸。真實 channel 斷線的一次緊急全 ID 釋放已驗；真實 deadline 逾時未重現。
+- `CapabilityReport` 保存 serial、frame／touch 尺寸、旋轉、後端、APK 雜湊、逐能力樣本與失敗數，`matches()` 拒絕指紋不合的 profile；報告明列 `gameplay_enabled=false`。Fixture 量測報告不作自動 arm 的捷徑。
+- `DiagnosticPreview` 是最多 10 Hz 的主機視窗，只讀取最新 frame；靜態畫面不增加新 frame 或更新來源時間。來源絕對年齡仍未知，UI 維持 `UNKNOWN`。Fixture 的固定動作只在 `touch-bench` 前景 package 和像素簽名雙重檢查下執行，不接入 Phigros 決策。原有合成 `Scheduler`、CLI 與擷取測試的契約未替換。
+
+本地實測與未完成門檻見 [量測紀錄](MEASUREMENTS.md#主程式-m0m2-觸控-fixture2026-09-25)。下文帶有 2026-09-23／24 日期的「尚無觸控後端」等敘述是當時基線。
+
 ## 閉環模組
 
 | 模組 | 輸入 | 輸出 | 責任 |
@@ -13,6 +29,8 @@
 | Telemetry | 各模組事件 | 結構化日誌 | 建立同一條時間線，計算延遲與 jitter |
 
 第一個閉環測試可以用簡單目標偵測器取代 Note 追蹤與預測，但仍經過相同的排程器和觸控後端。
+
+2026-09-24 遊戲機制研究提出的下一版需求見 [Phigros 機制研究](PHIGROS_MECHANICS_RESEARCH.md)：預測需分離時間與有效觸控區域，Note ID 與 contact ID 分離，並在預測與排程間增加處理 Hold／Drag／Flick 與接觸衝突的動作規劃層。這是待實作設計，不代表現有單點／Tap 契約已支援上述能力；遊戲機制仍須在觸控與簡單目標閉環驗收後實測。
 
 ## 啟動協調與介面狀態
 
