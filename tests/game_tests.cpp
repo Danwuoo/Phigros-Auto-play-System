@@ -110,6 +110,54 @@ TEST(GameObserver, UiLossCancelsAndCapacityIsBounded) {
     EXPECT_LE(s.targets.size(),128); EXPECT_FALSE(s.capacity_valid); EXPECT_FALSE(s.playing_gate);
 }
 
+TEST(GameObserver, FreshHudAfterShortGapKeepsUiButClearsAllMotionAcrossEpoch) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot s;
+    const auto observe=[&](int frame,Nanoseconds time,std::uint64_t epoch) {
+        auto f=image(frame,time);f.epoch=epoch;hud(f);
+        rect(f,0,575,1280,2,{255,255,255});
+        rect(f,400,450+frame*8,144,8,{40,190,255});
+        clock.set(time);return observer.process(f);
+    };
+    for(int i=0;i<5;++i) s=observe(i+1,i*20'000'000,1);
+    ASSERT_TRUE(s.playing_gate);ASSERT_EQ(s.targets.size(),1);
+    ASSERT_TRUE(s.targets[0].crossing_ns);const auto old_id=s.targets[0].note_id;
+    s=observe(6,181'700'000,1); // Current HUD visible after a 101.7 ms gap.
+    EXPECT_TRUE(s.playing_gate);ASSERT_EQ(s.targets.size(),1);
+    EXPECT_NE(s.targets[0].note_id,old_id);EXPECT_EQ(s.targets[0].samples,1);
+    EXPECT_FALSE(s.targets[0].crossing_ns);EXPECT_EQ(s.targets[0].history_span_ns,0);
+    const auto gap_id=s.targets[0].note_id;
+    s=observe(7,201'700'000,2); // Input revoke changes epoch, not visual scene.
+    EXPECT_TRUE(s.playing_gate);ASSERT_EQ(s.targets.size(),1);
+    EXPECT_NE(s.targets[0].note_id,gap_id);EXPECT_EQ(s.targets[0].samples,1);
+    EXPECT_FALSE(s.targets[0].crossing_ns);
+}
+
+TEST(GameObserver, HudContinuityNeverBridgesMissingPixelsLongGapOrGeometry) {
+    FakeClock clock;GameObserver observer(clock);
+    const auto observe=[&](int frame,Nanoseconds time,bool visible,std::uint64_t geometry=1,bool valid=true) {
+        auto f=image(frame,time);f.geometry_version=geometry;f.source_valid=valid;
+        if(visible) hud(f);clock.set(time);return observer.process(f);
+    };
+    EXPECT_FALSE(observe(1,1,true).playing_gate);
+    EXPECT_FALSE(observe(2,20'000'001,true).playing_gate);
+    ASSERT_TRUE(observe(3,40'000'001,true).playing_gate);
+    EXPECT_FALSE(observe(4,160'000'001,false).playing_gate);
+    EXPECT_FALSE(observe(5,180'000'001,true).playing_gate);
+    EXPECT_FALSE(observe(6,200'000'001,true).playing_gate);
+    ASSERT_TRUE(observe(7,220'000'001,true).playing_gate);
+    EXPECT_FALSE(observe(8,471'000'001,true).playing_gate);
+    EXPECT_FALSE(observe(9,491'000'001,true).playing_gate);
+    ASSERT_TRUE(observe(10,511'000'001,true).playing_gate);
+    EXPECT_FALSE(observe(11,531'000'001,true,2).playing_gate);
+    EXPECT_FALSE(observe(12,551'000'001,true,2).playing_gate);
+    ASSERT_TRUE(observe(13,571'000'001,true,2).playing_gate);
+    EXPECT_FALSE(observe(14,591'000'001,true,2,false).playing_gate);
+    EXPECT_FALSE(observe(15,611'000'001,true,2).playing_gate);
+    EXPECT_FALSE(observe(16,631'000'001,true,2).playing_gate);
+    ASSERT_TRUE(observe(17,651'000'001,true,2).playing_gate);
+    EXPECT_FALSE(observe(17,651'000'001,true,2).playing_gate); // Replay resets.
+}
+
 TEST(GameObserver, OnePixelLineJoinedToHoldBorderStaysObservable) {
     FakeClock clock; GameObserver observer(clock); auto f=image(1,1);
     hud(f); rect(f,0,575,1280,1,{255,255,255});

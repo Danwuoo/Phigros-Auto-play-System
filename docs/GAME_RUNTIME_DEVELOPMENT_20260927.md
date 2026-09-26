@@ -273,3 +273,11 @@ v52新增三項短回歸，投影及密集Drag兩項失敗、成員消失一項�
 planner6只對已active、未到release的Drag，且新Drag具新鮮pixels、可靠短期crossing、同位置≤2px、預定覆蓋區間重疊，延長既有up而不送第二次down。只共用已成功維持的本機plan，不合併pending down、Tap、Hold、Flick或不同位置。primary與alias仍在128個identity內；每幀以目前可見成員重新核對同一位置與期限，失去全部支持／gate時釋放，單一alias消失不解除仍有支持的接觸。已完成或unknown input不得重播。未增加實體手指容量，也未啟用batch。
 
 `game_drag_coverage` 記member／leader Note、原intent、source frame、QPC evidence／accept／release與unknown遊戲效果，最多128筆待取診斷；與新physical down分開。C++分析只在先前successful RPC down及尚未up的本機歷史成立時列 `covered_by_active_drag`，不稱Perfect或真實譜面數量。v53 Release86／86通過（5.69秒），v54同步planner版本及real_input診斷，增加不同位置／gate失效／新epoch與分析unknown歷史回歸，Release88／88通過（5.95秒）。v52／v53未進實戰，v54仍需完整曲驗證。
+
+v54 run `cpp-observe-17904606480434858`，35ms、185秒STOPPED、9,662消費frames／995真實命令。結算818,537分、Perfect351／Good1／Bad0／Miss41、max combo52、accuracy89.48%、Early1／Late0，未AP。raw SHA-256 `f4ee0fd191988470f17accc5bceb53a234a066afbe90e53747e052b1816316b3`、manual結果／PNG、兩張診斷圖及 `assist-lead35-v54-analysis.json` 保存，無中途第二gRPC stream。down Tap137／Hold98／Drag109／Flick6；3次coverage均有journal順序的既有successful RPC contact支持，遊戲判定仍unknown。1 contact conflict／1 gate expiry，runtime8次revoke。擷取間隔n9661，p50／p95／p99／max=17.6791／39.6279／52.9433／684.5945ms；絕對source age仍unknown。漏音未有明顯改善，接下來針對motion reset與當前HUD確認的耦合做短回歸，保留100ms輸入期限。
+
+## Motion reset 與當前 HUD 確認（build v55）
+
+v51的101.7ms間隔曾同時清空 motion 與三幀 HUD 確認，在當前HUD仍完整時先撤銷，再因epoch改變清空第二次。observer22將分類確認與motion reset分離：物理幾何不變、sequence/QPC递增、间隔≤250ms且source有效時保留確認計數；新frame仍須當前完整HUD及容量有效。>100ms間隔或新epoch清空全部tracks／rail anchor，不保留旧触控計畫，不改变input100ms硬期限。缺HUD、重播、長間隔、幾何變化及無效source仍冷啟動。兩項新回歸核對101.7ms後立即分類但新Note只有一點／無crossing，新epoch再次清空motion；缺HUD、251ms、幾何與無效source均重新三幀確認。等待Release回歸，尚未實測。
+
+v55 Release90／90通過（6.26秒），既有scheduler來源期限／取消回歸亦通過。保持planner6／35ms／兩指，開始下一輪完整HD；未把分類快取期限當作輸入期限或延遲性能改善。

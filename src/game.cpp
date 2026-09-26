@@ -72,9 +72,12 @@ double distance(Vec2 a, Vec2 b) {return std::hypot(a.x-b.x,a.y-b.y);}
 double normal_distance(Vec2 p, const LineCandidate& l) {
     return (p.x-l.center.x)*(-l.tangent.y)+(p.y-l.center.y)*l.tangent.x;
 }
-bool same_geometry(const SceneContext& a,const SceneContext& b) {
-    return a.epoch==b.epoch&&a.generation==b.generation&&a.geometry==b.geometry&&
+bool same_visual_geometry(const SceneContext& a,const SceneContext& b) {
+    return a.generation==b.generation&&a.geometry==b.geometry&&
         a.width==b.width&&a.height==b.height&&a.rotation==b.rotation;
+}
+bool same_geometry(const SceneContext& a,const SceneContext& b) {
+    return a.epoch==b.epoch&&same_visual_geometry(a,b);
 }
 struct HoldRails {double depth=0;std::optional<Vec2> tail;};
 std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& note,double minimum_depth,
@@ -307,8 +310,14 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     out.context={f.epoch,f.generation,f.geometry_version,f.sequence,f.capture_complete_ns,
                  f.width,f.height,f.source_rotation};
     out.recognition_start_ns=clock_.now_ns();
-    if(!same_geometry(previous_,out.context)||f.capture_complete_ns<=previous_.capture_ns||
-       f.capture_complete_ns-previous_.capture_ns>100'000'000) reset();
+    const auto gap=f.capture_complete_ns-previous_.capture_ns;
+    // UI classification and motion fitting have different continuity needs.
+    // A short gap/revocation discards every motion anchor; an independently
+    // visible, fresh HUD can still confirm the same scene. No old frame or
+    // motion evidence survives, and input keeps its separate 100 ms expiry.
+    if(!same_visual_geometry(previous_,out.context)||f.sequence<=previous_.frame||
+       gap<=0||gap>250'000'000||!f.source_valid) reset();
+    else if(f.epoch!=previous_.epoch||gap>100'000'000) tracks_.clear();
     const bool distinct=f.sequence>previous_.frame;
     previous_=out.context;
     const auto all=components(f,out.capacity_valid);
@@ -486,8 +495,9 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     // Independent HUD evidence: line/note presence never arms gameplay.
     // Non-playing classes require live evidence before templates are enabled.
     const bool hud=pause_bars>=2&&score_glyphs>=4;
-    if(distinct) playing_confirmations_=hud?std::min(3,playing_confirmations_+1):0;
-    out.playing_gate=f.source_valid&&out.capacity_valid&&playing_confirmations_>=3;
+    if(distinct) playing_confirmations_=hud&&f.source_valid&&out.capacity_valid?
+        std::min(3,playing_confirmations_+1):0;
+    out.playing_gate=hud&&f.source_valid&&out.capacity_valid&&playing_confirmations_>=3;
     out.ui=out.playing_gate?GameUi::playing:GameUi::unknown;
     out.ui_basis="development HUD: pause_bars="+std::to_string(pause_bars)+
         ";score_glyphs="+std::to_string(score_glyphs)+";confirmations="+

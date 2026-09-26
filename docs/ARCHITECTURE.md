@@ -2,6 +2,8 @@
 
 ## 主程式設計與開發接線（2026-09-27）
 
+observer22 分開即時 HUD 分類與 motion history 的連續性。相同 generation／geometry／尺寸／rotation、sequence／QPC 嚴格遞增，且間隔≤250ms時，可以保留三幀分類計數；每張仍必須有當前 pause／score 像素、有效 source 與容量才能開 gate。epoch 改變或間隔>100ms立即清空所有 motion／rail anchor，新目標需重新累積跨度。缺 HUD、無效 source、容量失效、重播、>250ms間隔或幾何改變皆冷啟動分類。此上限只屬分類確認政策，不能刷新旧 evidence；scheduler／supervisor 的100ms期限及epoch撤銷不變。
+
 observer21 的hit是實際頭部在當前可見線上的正交投影；擬合distance只估計crossing與uncertainty，不以殘差偏移hit。planner6可讓新鮮可靠、同位置≤2px且覆蓋時間重疊的Drag沿用已active的Drag plan，只延長up、保留原down及prefix。alias／primary仍包含於128 identity上限；仍有支持的成員可維持同一接觸，全部失效或gate撤銷則釋放。pending down、其他Note種類及不同位置不共用；兩指能力與100ms来源期限維持。`game_drag_coverage`最多128筆待取，分析區分physical down與有successful RPC歷史支持的本機共用；遊戲判定仍unknown。
 
 observer20 的新Hold前緣兩排填色除7／9之外，兩側外部取樣群各須至少一點支持，避免一側完整body加另一側裝飾線擴大寬度。opt-in第二診斷槽僅保留近線association ambiguous或有≥30ms跨度、尚未到線的nonlinear mismatch；初始insufficient history及已到線的停止不單獨觸發。這是診斷訊號，不是逐Note判定真值。
