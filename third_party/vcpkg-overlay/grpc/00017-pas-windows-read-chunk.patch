@@ -1,0 +1,145 @@
+diff --git a/src/core/lib/event_engine/windows/windows_endpoint.cc b/src/core/lib/event_engine/windows/windows_endpoint.cc
+index 1c081fc..c61e48f 100644
+--- a/src/core/lib/event_engine/windows/windows_endpoint.cc
++++ b/src/core/lib/event_engine/windows/windows_endpoint.cc
+@@ -32,10 +32,21 @@
+ #include "absl/status/status.h"
+ #include "absl/strings/str_format.h"
+ 
++// PAS extension: opt in per endpoint; preserve upstream sizing by default.
++extern "C" int grpc_pas_windows_read_patch_version() { return 2; }
++extern "C" int grpc_pas_windows_read_chunk_bytes(int requested) {
++  switch (requested) {
++    case 65536:
++    case 262144:
++      return requested;
++    default:
++      return 8192;
++  }
++}
++
+ namespace grpc_event_engine::experimental {
+ 
+ namespace {
+-constexpr size_t kDefaultTargetReadSize = 8192;
+ constexpr int kMaxWSABUFCount = 16;
+ 
+ void DumpSliceBuffer(SliceBuffer* buffer, absl::string_view context_string) {
+@@ -53,11 +64,13 @@ WindowsEndpoint::WindowsEndpoint(
+     const EventEngine::ResolvedAddress& peer_address,
+     std::unique_ptr<WinSocket> socket, MemoryAllocator&& allocator,
+     const EndpointConfig& /* config */, ThreadPool* thread_pool,
+-    std::shared_ptr<EventEngine> engine)
++    std::shared_ptr<EventEngine> engine, int read_chunk_bytes)
+     : peer_address_(peer_address),
+       allocator_(std::move(allocator)),
++      target_read_size_(grpc_pas_windows_read_chunk_bytes(read_chunk_bytes)),
+       io_state_(std::make_shared<AsyncIOState>(
+           this, std::move(socket), std::move(engine), thread_pool)) {
++  GRPC_TRACE_LOG(event_engine_endpoint, INFO) << "PAS read_chunk_bytes=" << target_read_size_;
+   auto local_address = SocketToAddress(io_state_->socket->raw_socket());
+   GRPC_CHECK(local_address.ok())
+       << "Failed to get local socket address: " << local_address.status();
+@@ -132,7 +145,7 @@ bool WindowsEndpoint::Read(absl::AnyInvocable<void(absl::Status)> on_read,
+   io_state_->handle_read_event.DonateSpareSlices(buffer);
+   // TODO(hork): sometimes args->read_hint_bytes is 1, which is not useful.
+   // Choose an appropriate size.
+-  size_t min_read_size = kDefaultTargetReadSize;
++  size_t min_read_size = target_read_size_;
+   if (buffer->Length() < min_read_size && buffer->Count() < kMaxWSABUFCount) {
+     buffer->AppendIndexed(Slice(allocator_.MakeSlice(min_read_size)));
+   }
+diff --git a/src/core/lib/event_engine/windows/windows_endpoint.h b/src/core/lib/event_engine/windows/windows_endpoint.h
+index d34bb61..b3c3e1c 100644
+--- a/src/core/lib/event_engine/windows/windows_endpoint.h
++++ b/src/core/lib/event_engine/windows/windows_endpoint.h
+@@ -29,7 +29,8 @@ class WindowsEndpoint : public EventEngine::Endpoint {
+   WindowsEndpoint(const EventEngine::ResolvedAddress& peer_address,
+                   std::unique_ptr<WinSocket> socket,
+                   MemoryAllocator&& allocator, const EndpointConfig& config,
+-                  ThreadPool* thread_pool, std::shared_ptr<EventEngine> engine);
++                  ThreadPool* thread_pool, std::shared_ptr<EventEngine> engine,
++                  int read_chunk_bytes = 8192);
+   ~WindowsEndpoint() override;
+   bool Read(absl::AnyInvocable<void(absl::Status)> on_read, SliceBuffer* buffer,
+             ReadArgs args) override;
+@@ -114,6 +115,7 @@ class WindowsEndpoint : public EventEngine::Endpoint {
+   EventEngine::ResolvedAddress local_address_;
+   std::string local_address_string_;
+   MemoryAllocator allocator_;
++  const size_t target_read_size_;
+   std::shared_ptr<AsyncIOState> io_state_;
+ };
+ 
+diff --git a/src/core/lib/event_engine/windows/windows_engine.cc b/src/core/lib/event_engine/windows/windows_engine.cc
+index d6e4839..a310d36 100644
+--- a/src/core/lib/event_engine/windows/windows_engine.cc
++++ b/src/core/lib/event_engine/windows/windows_engine.cc
+@@ -69,10 +69,12 @@ WindowsEventEngine::ConnectionState::ConnectionState(
+     std::shared_ptr<WindowsEventEngine> engine,
+     std::unique_ptr<WinSocket> socket, EventEngine::ResolvedAddress address,
+     MemoryAllocator allocator,
+-    EventEngine::OnConnectCallback on_connect_user_callback)
++    EventEngine::OnConnectCallback on_connect_user_callback,
++    int read_chunk_bytes)
+     : socket_(std::move(socket)),
+       address_(address),
+       allocator_(std::move(allocator)),
++      read_chunk_bytes_(read_chunk_bytes),
+       on_connect_user_callback_(std::move(on_connect_user_callback)),
+       engine_(std::move(engine)) {
+   GRPC_CHECK(socket_ != nullptr);
+@@ -100,7 +102,7 @@ WindowsEventEngine::ConnectionState::FinishConnectingAndMakeEndpoint(
+   ChannelArgsEndpointConfig cfg;
+   return std::make_unique<WindowsEndpoint>(address_, std::move(socket_),
+                                            std::move(allocator_), cfg,
+-                                           thread_pool, engine_);
++                                           thread_pool, engine_, read_chunk_bytes_);
+ }
+ 
+ void WindowsEventEngine::ConnectionState::AbortOnConnect() {
+@@ -448,9 +450,11 @@ void WindowsEventEngine::OnDeadlineTimerFired(
+ 
+ EventEngine::ConnectionHandle WindowsEventEngine::Connect(
+     OnConnectCallback on_connect, const ResolvedAddress& addr,
+-    const EndpointConfig& /* args */, MemoryAllocator memory_allocator,
++    const EndpointConfig& args, MemoryAllocator memory_allocator,
+     Duration timeout) {
+-  // TODO(hork): utilize the endpoint config
++  // Snapshot this value during Connect. EndpointConfig need not outlive it.
++  const int read_chunk_bytes =
++      args.GetInt("pas.grpc.windows_read_chunk_bytes").value_or(8192);
+   absl::Status status;
+   int istatus;
+   auto uri = ResolvedAddressToURI(addr);
+@@ -532,7 +536,7 @@ EventEngine::ConnectionHandle WindowsEventEngine::Connect(
+       std::static_pointer_cast<WindowsEventEngine>(shared_from_this()),
+       /*socket=*/iocp_.Watch(sock), address,
+       /*memory_allocator=*/std::move(memory_allocator),
+-      /*on_connect_user_callback=*/std::move(on_connect));
++      /*on_connect_user_callback=*/std::move(on_connect), read_chunk_bytes);
+   grpc_core::MutexLock lock(&connection_state->mu());
+   auto* info = connection_state->socket()->write_info();
+   {
+diff --git a/src/core/lib/event_engine/windows/windows_engine.h b/src/core/lib/event_engine/windows/windows_engine.h
+index 389b42d..b3da477 100644
+--- a/src/core/lib/event_engine/windows/windows_engine.h
++++ b/src/core/lib/event_engine/windows/windows_engine.h
+@@ -116,7 +116,8 @@ class WindowsEventEngine
+                     std::unique_ptr<WinSocket> socket,
+                     EventEngine::ResolvedAddress address,
+                     MemoryAllocator allocator,
+-                    EventEngine::OnConnectCallback on_connect_user_callback);
++                    EventEngine::OnConnectCallback on_connect_user_callback,
++                    int read_chunk_bytes = 8192);
+ 
+     // Starts the deadline timer, and sets up the socket to notify on writes.
+     //
+@@ -206,6 +207,7 @@ class WindowsEventEngine
+     std::unique_ptr<WinSocket> socket_ ABSL_GUARDED_BY(mu_);
+     EventEngine::ResolvedAddress address_ ABSL_GUARDED_BY(mu_);
+     MemoryAllocator allocator_ ABSL_GUARDED_BY(mu_);
++    const int read_chunk_bytes_;
+     EventEngine::OnConnectCallback on_connect_user_callback_
+         ABSL_GUARDED_BY(mu_);
+     // This guarantees the EventEngine survives long enough to execute these

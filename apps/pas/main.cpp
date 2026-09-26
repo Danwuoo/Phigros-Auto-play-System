@@ -332,6 +332,8 @@ void run_observe(const std::string& config_path, double duration_s, bool no_prev
         manifest << json{{"schema_version", 2}, {"mode", "observe"},
                          {"config", config.public_json}, {"clock_domain", "host_qpc_ns"},
                          {"qpc_frequency", clock.frequency()}, {"input_created", false},
+                         {"grpc_transport", config.capture_kind == "emulator-grpc" ?
+                             grpc_transport_manifest(config.grpc_read_chunk_kib) : json(nullptr)},
                          {"preview_requested", !no_preview && config.preview_hz > 0},
                          {"stale_ms", stale_ms}}.dump(2) << '\n';
     }
@@ -356,6 +358,7 @@ void run_observe(const std::string& config_path, double duration_s, bool no_prev
             endpoint.instance = "explicit";
         }
         CaptureOptions options;
+        options.grpc_read_chunk_kib = config.grpc_read_chunk_kib;
         options.width = config.width;
         options.height = config.height;
         options.source_rotation = config.source_rotation;
@@ -578,6 +581,7 @@ int main(int argc, char** argv) {
     bench_cmd->add_option("--image-format", bench.image_format);
     bench_cmd->add_option("--row-order", bench.row_order);
     bench_cmd->add_option("--grpc-copy-mode", bench.grpc_copy_mode);
+    bench_cmd->add_option("--grpc-read-chunk-kib", bench.grpc_read_chunk_kib)->check(CLI::IsMember({8, 64, 256}));
     bench_cmd->add_flag("--grpc-rotate-ccw", bench.grpc_rotate_ccw);
     bench_cmd->add_option("--run-class", bench.run_class);
     bench_cmd->add_option("--window-hwnd", bench.window_hwnd);
@@ -602,6 +606,8 @@ int main(int argc, char** argv) {
     bench_cmd->add_flag("--load", bench.load);
     bench_cmd->add_flag("--gpu-load", bench.gpu_load);
     bench_cmd->add_flag("--preview", bench.preview);
+    bench_cmd->add_flag("--keep-diagnostic-image", bench.keep_diagnostic_image,
+        "Keep one diagnostic PNG per run (default: no images written)");
     bench_cmd->add_option("--source-static-s", bench.source_static_s);
     bench_cmd->add_option("--max-relative-lag-ms", bench.max_relative_lag_ms);
     bench_cmd->add_flag("--diagnostic-mmap", bench.diagnostic_mmap);
@@ -635,12 +641,15 @@ int main(int argc, char** argv) {
     campaign_cmd->add_option("--image-format", campaign.image_format);
     campaign_cmd->add_option("--row-order", campaign.row_order);
     campaign_cmd->add_option("--grpc-copy-mode", campaign.grpc_copy_mode);
+    campaign_cmd->add_option("--grpc-read-chunk-kib", campaign.grpc_read_chunk_kib)->check(CLI::IsMember({8, 64, 256}));
     campaign_cmd->add_flag("--grpc-rotate-ccw", campaign.grpc_rotate_ccw);
     campaign_cmd->add_option("--max-rgb-bytes", campaign.max_rgb_bytes);
     campaign_cmd->add_option("--warmup-s", campaign.warmup_s);
     campaign_cmd->add_option("--duration-s", campaign.duration_s);
     campaign_cmd->add_option("--normal-runs", campaign_normal_runs);
     campaign_cmd->add_flag("--include-stress", campaign_stress);
+    campaign_cmd->add_flag("--keep-diagnostic-image", campaign.keep_diagnostic_image,
+        "Keep one diagnostic PNG per run (default: no images written)");
     campaign_cmd->add_option("--stability-s", campaign_stability_s);
     campaign_cmd->add_option("--fixture-apk", campaign.fixture_apk)->required();
     campaign_cmd->add_option("--output-dir", campaign.output_dir)->required();
@@ -666,6 +675,7 @@ int main(int argc, char** argv) {
     five_cmd->add_option("--height", five.height);
     five_cmd->add_option("--source-rotation", five.source_rotation);
     five_cmd->add_flag("--grpc-rotate-ccw", five.grpc_rotate_ccw);
+    five_cmd->add_option("--grpc-read-chunk-kib", five.grpc_read_chunk_kib)->check(CLI::IsMember({8, 64, 256}));
     five_cmd->add_option("--normal-runs", five_normal_runs);
     five_cmd->add_option("--stability-s", five_stability_s);
     five_cmd->add_option("--scrcpy-max-fps", five.scrcpy_max_fps);
@@ -674,6 +684,8 @@ int main(int argc, char** argv) {
     five_cmd->add_option("--source-revision", five_revision);
     five_cmd->add_option("--dirty-diff-sha256", five_diff_hash);
     five_cmd->add_flag("--no-stress", five_no_stress);
+    five_cmd->add_flag("--keep-diagnostic-image", five.keep_diagnostic_image,
+        "Keep one diagnostic PNG per run (default: no images written)");
     five_cmd->add_flag("--plan-only", five_plan_only);
     five_cmd->add_option("--output-dir", five.output_dir)->required();
     std::string touch_config, touch_output;

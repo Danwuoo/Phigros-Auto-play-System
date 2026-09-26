@@ -1,8 +1,64 @@
 #include "pas/native_capture.hpp"
 #include "pas/scrcpy_capture.hpp"
 #include "pas/bench.hpp"
+#include "pas/analysis.hpp"
 
 #include <gtest/gtest.h>
+#include <chrono>
+#include <fstream>
+
+namespace {
+struct DiagnosticTestDirectory {
+    std::filesystem::path root = std::filesystem::temp_directory_path() /
+        ("pas-image-retention-" + std::to_string(
+            std::chrono::steady_clock::now().time_since_epoch().count()));
+    DiagnosticTestDirectory() {
+        if (!std::filesystem::create_directory(root))
+            throw std::runtime_error("test directory already exists");
+    }
+    ~DiagnosticTestDirectory() {
+        std::error_code ignored;
+        std::filesystem::remove(root / "diagnostic.png", ignored);
+        std::filesystem::remove(root, ignored);
+    }
+};
+}
+
+TEST(CaptureImages, DefaultNeverWritesOrDeletesAnExistingImage) {
+    DiagnosticTestDirectory directory;
+    const auto path = directory.root / "diagnostic.png";
+    pas::CaptureBenchOptions options;
+    EXPECT_FALSE(options.keep_diagnostic_image);
+    pas::Frame empty;
+    EXPECT_EQ(pas::save_capture_diagnostic(path, empty, options.keep_diagnostic_image), std::nullopt);
+    EXPECT_FALSE(std::filesystem::exists(path));
+    EXPECT_TRUE(pas::diagnostic_image_matches(path, "none", nullptr));
+    EXPECT_FALSE(pas::diagnostic_image_matches(path, "keep", "missing"));
+    EXPECT_FALSE(pas::diagnostic_image_matches(path, "none", "unexpected-hash"));
+    { std::ofstream file(path); file << "existing evidence"; }
+    const auto original = pas::sha256_file(path);
+    EXPECT_EQ(pas::save_capture_diagnostic(path, empty, false), std::nullopt);
+    EXPECT_EQ(pas::sha256_file(path), original);
+    EXPECT_FALSE(pas::diagnostic_image_matches(path, "none", nullptr));
+}
+
+TEST(CaptureImages, ExplicitKeepWritesVerifiablePngAndNeverOverwrites) {
+    DiagnosticTestDirectory directory;
+    const auto path = directory.root / "diagnostic.png";
+    pas::Frame frame;
+    frame.width = 2; frame.height = 1; frame.stride = 6;
+    frame.rgb = {255, 0, 0, 0, 255, 0};
+    const auto hash = pas::save_capture_diagnostic(path, frame, true);
+    ASSERT_TRUE(hash.has_value());
+    EXPECT_TRUE(pas::diagnostic_image_matches(path, "keep", *hash));
+    EXPECT_FALSE(pas::diagnostic_image_matches(path, "keep", nullptr));
+    EXPECT_FALSE(pas::diagnostic_image_matches(path, "unknown", *hash));
+    EXPECT_THROW(pas::save_capture_diagnostic(path, frame, true), std::runtime_error);
+    { std::ofstream file(path, std::ios::app | std::ios::binary); file << "tampered"; }
+    EXPECT_FALSE(pas::diagnostic_image_matches(path, "keep", *hash));
+    std::filesystem::remove(path);
+    EXPECT_FALSE(pas::diagnostic_image_matches(path, "keep", *hash));
+}
 
 TEST(NativeRgb, HonorsMappedRowPitchAndRejectsTruncation) {
     const std::array<std::uint8_t, 24> bgra = {

@@ -1,10 +1,18 @@
 # Phigros Auto-play System
 
+**擷取器本輪已結案：五路徑選型與 gRPC 接收層優化均完成，主用為 gRPC payload fast／256 KiB，正式備用暫缺。** WGC 保留 bench 備援候選、DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 僅診斷。完整終態與驗收界線以[最後驗收與選型](docs/CAPTURE_FINAL_ACCEPTANCE_20260926.md)為準；不再自動續跑原矩陣或長測。
+
+現行 Release **34／34** 回歸通過，gRPC 正式版本完成 18 批短測及擷取／恢復／observe 驗證。畫面只在有界記憶體中處理重用，預設不存 PNG。尚未完成的 Session 相對積壓保護接線與簡單目標觸控閉環屬下一階段 M3；絕對來源年齡、長期性能與 Phigros 遊玩時序均未通過宣告。
+
 2026-09-25 起的正式實作採 **C++20**：Windows x64／MSVC／CMake／vcpkg，單程序多執行緒，Android NativeActivity Fixture 亦由 C++ 編寫。Python、Java 與網頁 Fixture 原始碼已凍結於 [`legacy/`](legacy/README.md)，只供歷史重算與比較。T0–T5 的功能與可執行驗證已完成，正常擷取的性能數值門檻仍待使用者依新基線決定；逐項證據見 [驗收矩陣](docs/CPP_PARITY_MATRIX.md) 與 [驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。T6–T7 五擷取候選的開發及集中測試規格見 [本輪計畫](docs/CAPTURE_FIVE_BACKENDS_PLAN_20260926.md)，正常來源研究範圍為 **40–59 Hz**。程式不向 Phigros 注入遊玩觸控。
 
 ## C++ 建置與執行
 
-2026-09-26 五擷取候選依使用者最新要求以短測收尾：原第四版日程保留 37 個有效正常批次與 3 個失敗，沒有完成原 96 批或本版長測。初步主用／備用建議、必要恢復短測和限制見 [比較報告](docs/CAPTURE_COMPARISON_20260926.md)；`performance_pass=null`，新原生／scrcpy 後端仍僅供 bench。剩餘完整矩陣及 30 分鐘驗證已取消，不會自動續跑。
+gRPC Windows 接收區塊優化已接入建置：固定 gRPC 1.81.1 的 vcpkg overlay 修補，畫面擷取預設 256 KiB，觸控等未指定的 channel 保留上游 8 KiB。profile 可設定 `capture.grpc_read_chunk_kib=8|64|256`，bench 可用 `--grpc-read-chunk-kib`；manifest 記錄實際設定及修補版本。開發驗證見 [正式接入紀錄](docs/GRPC_TRANSPORT_INTEGRATION_20260926.md)，先前中位數／CPU 改善與 p99 限制見 [短測研究](docs/GRPC_TRANSPORT_RESEARCH_20260926.md)。
+
+擷取畫面預設只在有界記憶體 buffer 中處理／重用，`run` 不逐幀存圖；`capture-bench`、`capture-campaign`、`capture-five-campaign` 現在也預設不寫診斷 PNG。只有加 `--keep-diagnostic-image` 才每個 bench run 保留一張圖供人工檢查。manifest 記錄 `diagnostic_image_retention=none|keep`；不存圖時 hash 為 null，分析仍檢查 raw／像素證據。歷史驗收圖不會被新程序刪除。空間清理與 gRPC 延遲研究方向見 [儲存政策與清理紀錄](docs/STORAGE_RETENTION_20260926.md)。
+
+五路徑選型的歷史證據：第四版日程保留 37 個有效正常批次與 3 個失敗，沒有完成原 96 批或該版長測。當時的比較、恢復短測和限制見 [比較報告](docs/CAPTURE_COMPARISON_20260926.md)；`performance_pass=null`，原生／scrcpy 後端仍僅供 bench。後續 gRPC 優化另有獨立版本與短測，沒有覆寫歷史結果。
 
 合併前的獨立審查與修正見 [合併驗收](docs/CPP_MERGE_REVIEW_20260925.md)：Release／Debug／ASan 各 21/21 測試通過，實機性能門檻仍待確認。依賴版本與授權原文見 [第三方紀錄](docs/THIRD_PARTY_NOTICES.md)。
 
@@ -16,6 +24,7 @@
 $env:VCPKG_ROOT='C:\Program Files\Microsoft Visual Studio\18\Community\VC\vcpkg'
 $env:VCPKG_MAX_CONCURRENCY='4'
 & "$env:VCPKG_ROOT\vcpkg.exe" install --triplet x64-windows `
+  --clean-buildtrees-after-build --clean-packages-after-build `
   --x-install-root "$PWD\out\vcpkg_installed" `
   --x-buildtrees-root 'C:\pas-bld-9408' --x-packages-root 'C:\pas-pkg-9408'
 cmake --preset windows-release
@@ -34,7 +43,7 @@ out/release-v145/Release/pas.exe run --config configs/avd-observe.json --mode ob
 out/release-v145/Release/pas.exe capture-bench --serial emulator-5554 --capture-backend emulator-grpc `
   --width 1280 --height 720 --source-rotation 1 --fixture `
   --fixture-apk measurements/fixture_cpp_v2/pas-capture-fixture-v2.apk `
-  --warmup-s 10 --duration-s 60 --output-dir measurements/cpp-payload-example
+  --warmup-s 1 --duration-s 4 --grpc-read-chunk-kib 256 --output-dir measurements/cpp-payload-example
 out/release-v145/Release/pas.exe analyze capture measurements/cpp-payload-example/capture.jsonl
 out/release-v145/Release/pas.exe capture-campaign --serial emulator-5554 --fixture-apk `
   measurements/fixture_cpp_v2/pas-capture-fixture-v2.apk --include-stress --stability-s 600 `

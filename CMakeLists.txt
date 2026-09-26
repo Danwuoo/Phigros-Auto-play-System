@@ -20,7 +20,7 @@ endif()
 find_package(CLI11 CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(Protobuf CONFIG REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
+find_package(gRPC 1.81.1 EXACT CONFIG REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 find_package(FFMPEG REQUIRED)
 
@@ -50,7 +50,7 @@ if(MSVC)
   target_compile_options(pas_core PRIVATE /W4 /permissive- /EHsc)
 endif()
 
-add_library(pas_emulator STATIC src/emulator.cpp)
+add_library(pas_emulator STATIC src/emulator.cpp src/grpc_transport.cpp)
 target_include_directories(pas_emulator PUBLIC include)
 target_link_libraries(pas_emulator PUBLIC pas_core pas_proto)
 if(MSVC)
@@ -73,7 +73,17 @@ if(MSVC)
 endif()
 
 enable_testing()
+add_executable(pas_grpc_latency apps/grpc_latency/main.cpp)
+target_link_libraries(pas_grpc_latency PRIVATE pas_emulator pas_core CLI11::CLI11 winmm)
+if(MSVC)
+  target_compile_options(pas_grpc_latency PRIVATE /W4 /permissive- /EHsc)
+endif()
+if(PAS_GRPC_RESEARCH_SOURCE_DIR)
+  message(FATAL_ERROR "Legacy endpoint override is incompatible with the patched dependency; clear PAS_GRPC_RESEARCH_SOURCE_DIR and use --read-chunk-kib")
+endif()
+
 add_executable(pas_tests tests/core_tests.cpp tests/grpc_loopback_tests.cpp
+                         tests/grpc_transport_tests.cpp
                          tests/config_analysis_tests.cpp tests/cli_tests.cpp
                          tests/capture_backend_tests.cpp)
 target_link_libraries(pas_tests PRIVATE pas_bench pas_emulator pas_core GTest::gtest_main)

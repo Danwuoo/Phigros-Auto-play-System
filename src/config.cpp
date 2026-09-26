@@ -49,7 +49,7 @@ RuntimeConfig load_config(const std::filesystem::path& path) {
     const auto& s = raw.at("scheduler");
     const auto& p = raw.at("preview");
     fields(c, {"kind", "execution", "transport", "image_format", "row_order", "width", "height",
-               "source_rotation", "endpoint", "token_file"},
+               "source_rotation", "endpoint", "token_file", "grpc_read_chunk_kib"},
            {"kind", "execution", "transport", "image_format", "row_order", "width", "height", "source_rotation"}, "capture");
     fields(t, {"kind", "timeout_ms", "max_contacts", "width", "height", "rotation_deg"},
            {"kind", "timeout_ms", "max_contacts"}, "touch");
@@ -74,6 +74,11 @@ RuntimeConfig load_config(const std::filesystem::path& path) {
     if (static_cast<std::uint64_t>(config.width) * config.height * 3 > 16 * 1024 * 1024)
         throw std::invalid_argument("capture geometry exceeds fixed pool capacity");
     config.source_rotation = integer(c.at("source_rotation"), 0, 3, "source rotation");
+    config.grpc_read_chunk_kib = integer(c.value("grpc_read_chunk_kib", json(256)),
+                                       8, 256, "gRPC read chunk KiB");
+    if (config.grpc_read_chunk_kib != 8 && config.grpc_read_chunk_kib != 64 &&
+        config.grpc_read_chunk_kib != 256)
+        throw std::invalid_argument("gRPC read chunk must be 8, 64 or 256 KiB");
     config.endpoint = c.contains("endpoint") ? string(c.at("endpoint"), "endpoint") : "";
     config.token_file = c.contains("token_file") ? string(c.at("token_file"), "token_file") : "";
     if (config.endpoint.empty() != config.token_file.empty())
@@ -97,6 +102,7 @@ RuntimeConfig load_config(const std::filesystem::path& path) {
     config.preview_hz = p.at("hz").get<double>();
     config.log_dir = string(raw.at("log_dir"), "log directory");
     config.public_json = raw;
+    config.public_json["capture"]["grpc_read_chunk_kib"] = config.grpc_read_chunk_kib;
     if (config.public_json.at("capture").contains("token_file"))
         config.public_json.at("capture")["token_file"] = "<redacted>";
     return config;

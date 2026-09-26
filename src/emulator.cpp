@@ -110,8 +110,7 @@ GrpcCapture::GrpcCapture(const Clock& clock, GrpcEndpoint endpoint, CaptureOptio
         options_.max_rgb_bytes == 0 || options_.max_rgb_bytes > 16 * 1024 * 1024 ||
         (options_.diagnostic_mmap && (options_.width == 0 || options_.height == 0)))
         throw std::invalid_argument("invalid capture endpoint or options");
-    grpc::ChannelArguments args;
-    args.SetMaxReceiveMessageSize(80 * 1024 * 1024);
+    auto args = capture_channel_arguments(options_.grpc_read_chunk_kib);
     channel_ = grpc::CreateCustomChannel(endpoint_.target, grpc::InsecureChannelCredentials(), args);
     stub_ = pb::EmulatorController::NewStub(channel_);
 }

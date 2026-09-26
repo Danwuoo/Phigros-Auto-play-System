@@ -1,6 +1,10 @@
 # 五擷取路徑就緒與量測矩陣（2026-09-26）
 
-本文件隨開發及實測更新。`development_smoke` 僅證明取圖與基本正確性；只有同一凍結版本的 `formal_campaign` 可供候選比較。正常來源研究範圍為 40–59 Hz，目標設定和實際可見更新率分別報告。性能數值門檻尚未決定，`performance_pass=null`。
+**現行終態：本輪擷取器研究與 gRPC 優化開發均已結案。** gRPC payload fast／256 KiB 為主用；正式備用暫缺，WGC 留作 bench 備援候選；DXGI 受限比較、scrcpy 本配置不列主／備、MMAP 僅診斷。完整界線以[最後驗收](CAPTURE_FINAL_ACCEPTANCE_20260926.md)為準。
+
+後續正式 gRPC 1.81.1 overlay revision 2 已完成 Release 34／34 回歸、18 批短測及正式擷取／恢復／observe 驗證，見[接入紀錄](GRPC_TRANSPORT_INTEGRATION_20260926.md)。下表與後續段落保留五路徑比較時的凍結版本證據，不代表其他後端已在新 gRPC 版本重跑。Session 相對 lag 配置與簡單目標觸控閉環列入下一階段 M3，原完整矩陣／長測不再續跑。
+
+以下為五路徑開發及比較歷史。`development_smoke` 僅證明取圖與基本正確性；五路徑比較採同一凍結版本的 `formal_campaign`。正常來源研究範圍為 40–59 Hz，目標設定和實際可見更新率分別報告。歷史性能數值門檻未通過，`performance_pass=null`。
 
 使用者已授權自行關閉及重啟 AVD，並修訂為有上限的短測收尾。r4 原 96 批日程未完成：40 批記錄、37 成功／3 失敗，另有一批中斷；剩餘矩陣及長測取消。現有正常對照足夠，不重跑，只補主用／備用的關鍵恢復與 120 秒短期穩定性。初步選型與完整限制見 [集中比較](CAPTURE_COMPARISON_20260926.md)。本版沒有長期穩定性驗證，MMAP 維持 `diagnostic-only`，數值性能門檻未通過。
 

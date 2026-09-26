@@ -337,6 +337,17 @@ std::optional<FixtureCounter> decode_capture_fixture_counter(const Frame& frame)
     return fixture_counter(frame);
 }
 
+std::optional<std::string> save_capture_diagnostic(
+    const std::filesystem::path& path, const Frame& frame, bool keep) {
+    // Do not write-and-delete: no image reaches disk in the default mode,
+    // including on cancellation or failure. Historical run directories are untouched.
+    if (!keep) return std::nullopt;
+    if (std::filesystem::exists(path))
+        throw std::runtime_error("diagnostic image already exists; refusing to overwrite");
+    save_diagnostic_png(path, frame);
+    return sha256_file(path);
+}
+
 void run_capture_bench(const CaptureBenchOptions& options) {
     if (!std::isfinite(options.source_static_s) || options.source_static_s < 0 ||
         options.source_static_s > 10 || (options.source_static_s > 0 &&
@@ -417,6 +428,7 @@ void run_capture_bench(const CaptureBenchOptions& options) {
     std::string endpoint_target;
     if (options.backend == "emulator-grpc") {
         CaptureOptions capture_options;
+        capture_options.grpc_read_chunk_kib = options.grpc_read_chunk_kib;
         capture_options.width = options.grpc_rotate_ccw ? options.height : options.width;
         capture_options.height = options.grpc_rotate_ccw ? options.width : options.height;
         capture_options.source_rotation = options.source_rotation;
@@ -452,6 +464,8 @@ void run_capture_bench(const CaptureBenchOptions& options) {
     const auto adb = options.backend == "adb-png" ? adb_for_preflight : std::filesystem::path{};
     const auto manifest = json{{"schema_version", 3}, {"serial", options.serial},
         {"binary_sha256", binary_hash},
+        {"grpc_transport", options.backend == "emulator-grpc" ?
+            grpc_transport_manifest(options.grpc_read_chunk_kib) : json(nullptr)},
         {"capture_backend", options.backend}, {"transport", native ? "native_gpu" :
             options.backend == "scrcpy" ? "h264" : options.transport},
         {"consistency", options.transport == "mmap" ? "unverified" : "payload"},
@@ -488,6 +502,7 @@ void run_capture_bench(const CaptureBenchOptions& options) {
             options.backend == "dxgi" ? "DXGI AcquireNextFrame returned" :
             options.backend == "scrcpy" ? "complete encoded packet received" :
             options.transport == "mmap" ? "MMAP notification snapshot copied" : "complete payload received"},
+        {"diagnostic_image_retention", options.keep_diagnostic_image ? "keep" : "none"},
         {"duration_s", options.duration_s}, {"ready_timeout_s", options.ready_timeout_s},
         {"consumer_delay_ms", options.consumer_delay_ms},
         {"consumer_recover_after_s", options.consumer_recover_after_s
@@ -631,8 +646,10 @@ void run_capture_bench(const CaptureBenchOptions& options) {
             throw std::runtime_error("capture source did not deliver a valid frame before ready timeout" +
                 (error ? ": " + tokenless_failure(error) : std::string{}));
         }
-        save_diagnostic_png(options.output_dir / "diagnostic.png", *first);
+        const auto diagnostic_hash = save_capture_diagnostic(
+            options.output_dir / "diagnostic.png", *first, options.keep_diagnostic_image);
         last_sequence = first->sequence;
+        first.reset(); // Release the READY frame lease before measuring subsequent frames.
         if (options.memory_load_mib)
             memory_load.assign(static_cast<std::size_t>(options.memory_load_mib) * 1024 * 1024, 0xA5);
         if (options.load) {
@@ -835,7 +852,8 @@ void run_capture_bench(const CaptureBenchOptions& options) {
         summary["source_absolute_age"] = nullptr;
         summary["performance_pass"] = nullptr;
         summary["log_path"] = std::filesystem::absolute(raw).string();
-        summary["diagnostic_png_sha256"] = sha256_file(options.output_dir / "diagnostic.png");
+        summary["diagnostic_image_retention"] = options.keep_diagnostic_image ? "keep" : "none";
+        summary["diagnostic_png_sha256"] = diagnostic_hash ? json(*diagnostic_hash) : json(nullptr);
         std::ofstream file(options.output_dir / "summary.json", std::ios::binary);
         file << summary.dump(2) << '\n';
         std::cout << summary.dump(2) << '\n';
@@ -896,6 +914,8 @@ void run_capture_campaign(CaptureBenchOptions options, int normal_runs,
     {
         std::ofstream plan(root / "campaign-plan.json", std::ios::binary);
         plan << json{{"schema_version", 2}, {"order_fixed_before_runs", true},
+                     {"grpc_transport", grpc_transport_manifest(options.grpc_read_chunk_kib)},
+                     {"diagnostic_image_retention", options.keep_diagnostic_image ? "keep" : "none"},
                      {"serial", options.serial}, {"backend", options.backend},
                      {"transport", options.transport},
                      {"image_format", options.image_format}, {"row_order", options.row_order},
@@ -914,6 +934,7 @@ void run_capture_campaign(CaptureBenchOptions options, int normal_runs,
             auto summary = json::parse(summary_file);
             completed.push_back({{"name", item.name}, {"returncode", 0},
                 {"raw_sha256", summary.at("raw_sha256")},
+                {"diagnostic_png_sha256", summary.at("diagnostic_png_sha256")},
                 {"capture_events", summary.at("capture_events")},
                 {"fixture_distinct_hz", summary.at("fixture_distinct_hz")},
                 {"fixture_counter_span_hz", summary.at("fixture_counter_span_hz")},
@@ -1052,6 +1073,8 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
             {"diagnostic_only", item.candidate == "mmap-diagnostic"}});
     }
     const auto plan = json{{"schema_version", 3}, {"kind", "five_capture_campaign"},
+        {"grpc_transport", grpc_transport_manifest(options.grpc_read_chunk_kib)},
+        {"diagnostic_image_retention", options.keep_diagnostic_image ? "keep" : "none"},
         {"order_fixed_before_runs", true}, {"rotation_rule", "candidate index (rank + round + 2*hz_index) mod 5"},
         {"normal_target_hz", targets}, {"normal_runs_per_target", normal_runs},
         {"source_revision", source_revision.empty() ? json(nullptr) : json(source_revision)},

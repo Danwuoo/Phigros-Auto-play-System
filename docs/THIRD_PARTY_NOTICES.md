@@ -8,7 +8,8 @@
 | c-ares | 1.34.8 | [c-ares](third_party/c-ares.txt) |
 | cli11 | 2.7.2 | [cli11](third_party/cli11.txt) |
 | FFmpeg | 9.0.2，vcpkg `avcodec`／`swscale`，動態連結 | [FFmpeg 原版授權彙整](third_party/ffmpeg.txt) |
-| grpc | 1.81.1 | [grpc](third_party/grpc.txt) |
+| grpc | 1.81.1，本地 overlay port revision 2（Windows 每 channel 接收 slice 與設定生命週期修補） | [grpc](third_party/grpc.txt) |
+| vcpkg grpc port | baseline `93c50752b23e350ca6b9063a167f0a4cf8a3b3eb` 的原 port／七個 patches | [vcpkg MIT](third_party/vcpkg.txt) |
 | gtest | 1.18.0 | [gtest](third_party/gtest.txt) |
 | nlohmann-json | 3.12.0 | [nlohmann-json](third_party/nlohmann-json.txt) |
 | openssl | 3.6.4 | [openssl](third_party/openssl.txt) |

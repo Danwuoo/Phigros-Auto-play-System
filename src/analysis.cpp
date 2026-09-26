@@ -23,6 +23,13 @@ namespace pas {
 namespace {
 using json = nlohmann::json;
 
+bool grpc_transport_matches(const json& plan, const json& manifest) {
+    if (!plan.contains("grpc_transport")) return true;
+    if (!manifest.contains("capture_backend")) return false;
+    if (manifest.at("capture_backend") != "emulator-grpc") return true;
+    return manifest.contains("grpc_transport") && manifest.at("grpc_transport") == plan.at("grpc_transport");
+}
+
 class Samples {
 public:
     void add(double value) {
@@ -119,6 +126,15 @@ std::string sha256_file(const std::filesystem::path& path) {
     result << std::hex << std::setfill('0');
     for (const auto byte : digest) result << std::setw(2) << static_cast<int>(byte);
     return result.str();
+}
+
+bool diagnostic_image_matches(const std::filesystem::path& path,
+                              const std::string& retention, const json& expected_hash) {
+    if (retention == "none")
+        return expected_hash.is_null() && !std::filesystem::exists(path);
+    if (retention != "keep" || !expected_hash.is_string() ||
+        !std::filesystem::is_regular_file(path)) return false;
+    return sha256_file(path) == expected_hash.get<std::string>();
 }
 
 json analyze_capture_jsonl(const std::filesystem::path& path) {
@@ -572,9 +588,14 @@ json analyze_capture_campaign(const std::filesystem::path& directory) {
             const auto folder = directory / name;
             const auto manifest = read_json(folder / "manifest.json");
             const auto summary = analyze_capture_jsonl(folder / "capture.jsonl");
-            const bool hashes = summary.at("raw_sha256") == recorded->at("raw_sha256") &&
-                sha256_file(folder / "diagnostic.png") ==
-                    recorded->at("diagnostic_png_sha256").get<std::string>();
+            // Absence of policy means the historical required-PNG contract.
+            const auto retention = plan.value("diagnostic_image_retention", std::string("keep"));
+            const bool hashes = grpc_transport_matches(plan, manifest) &&
+                summary.at("raw_sha256") == recorded->at("raw_sha256") &&
+                manifest.value("diagnostic_image_retention", std::string("keep")) == retention &&
+                recorded->contains("diagnostic_png_sha256") &&
+                diagnostic_image_matches(folder / "diagnostic.png", retention,
+                                         recorded->at("diagnostic_png_sha256"));
             const bool fixture = manifest.at("fixture_apk_sha256") == plan.at("fixture_apk_sha256") &&
                 manifest.at("installed_apk_sha256") == plan.at("installed_apk_sha256");
             auto planned_device = plan.at("preflight");
@@ -689,7 +710,16 @@ json analyze_capture_campaign(const std::filesystem::path& directory) {
         else if (*environment != compared) environment_consistent = false;
         const bool hash_matches = recorded->value("raw_sha256", "") ==
             summary.at("raw_sha256").get<std::string>();
-        const bool valid = hash_matches &&
+        // Legacy schema-2 campaigns did not record a PNG hash. Preserve their
+        // contract; new campaigns explicitly declare and validate image retention.
+        const bool image_matches = !plan.contains("diagnostic_image_retention") ||
+            (manifest.value("diagnostic_image_retention", std::string("keep")) ==
+                 plan.at("diagnostic_image_retention").get<std::string>() &&
+             recorded->contains("diagnostic_png_sha256") &&
+             diagnostic_image_matches(folder / "diagnostic.png",
+                 plan.at("diagnostic_image_retention").get<std::string>(),
+                 recorded->at("diagnostic_png_sha256")));
+        const bool valid = hash_matches && image_matches && grpc_transport_matches(plan, manifest) &&
             manifest.at("fixture_apk_sha256") == manifest.at("installed_apk_sha256") &&
             summary.at("geometry_valid").get<bool>() &&
             summary.at("fixture_counter_order_valid").get<bool>() &&

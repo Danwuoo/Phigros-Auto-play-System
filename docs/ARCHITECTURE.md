@@ -1,5 +1,23 @@
 # 架構與資料契約
 
+## gRPC Windows 接收區塊
+
+正式 dependency 由 vcpkg manifest 的本地 overlay 固定為 gRPC 1.81.1、port revision 2。補丁在 Connect 呼叫時複製 channel argument `pas.grpc.windows_read_chunk_bytes` 的整數值，交由 Windows EventEngine 非同步建立的接收端使用，不延後存取設定參照。`GrpcCapture` 預設 256 KiB；profile 的 `capture.grpc_read_chunk_kib` 與 capture bench 的 `--grpc-read-chunk-kib` 僅允許 8／64／256。未指定的 channel（包含 touch）維持 8 KiB；HTTP/2、BDP 及 frame pool 策略未改。
+
+`grpc_transport` manifest 保存 client version、patch version、實際 read bytes 與 argument 名稱；campaign plan 鎖定該物件，分析拒絕新批次與計畫不符的傳輸設定。舊 evidence 沒有此欄位時仍使用舊契約。profile 缺少新欄位時採 256 KiB，public config 會補上實際值。補丁的版本 symbol 必須由連結的 library 提供，防止 stock gRPC 靜默忽略私有 argument。詳細驗證見 [接入紀錄](GRPC_TRANSPORT_INTEGRATION_20260926.md)。
+
+## 畫面保留政策
+
+使用者要求已處理畫面不持續占用儲存空間。正式擷取仍只使用有界 Frame／reader lease，消費完畢釋放引用後重用 buffer，不逐幀落盤，也不逐幀向 OS 釋放再重配置。擷取 bench／兩種 campaign 預設不寫 `diagnostic.png`；明確指定 `--keep-diagnostic-image` 才保存一張 READY 圖，隨即釋放 READY lease。所有成功／失敗路徑的預設模式都沒有圖檔可累積。
+
+新 manifest／summary／campaign-plan 記錄 `diagnostic_image_retention=none|keep`。none 要求 PNG 不存在且 hash=null；keep 驗證檔案及 hash。schema-3 舊 plan 沒有 retention 字段時仍依原規則必須有 PNG，不能以檔案缺失當成已清理；舊 schema-2 保留其原驗證語義。raw JSONL 與必要配置／數值證據繼續保留，不因畫面不落盤而失去可重算性。歷史圖檔不由新程序掃描／刪除。
+
+## 最後選型決定
+
+依[擷取器終態與最後驗收](CAPTURE_FINAL_ACCEPTANCE_20260926.md)，本輪五路徑研究與 gRPC 接收層正式化已完成。主用為 gRPC payload fast（RGB888、top-down、顯式尺寸／方向、256 KiB 接收區塊）。WGC 僅為 bench 備援候選，正式備用暫缺；DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 維持診斷，沒有自動切換。
+
+gRPC revision 2 的 Release 34／34 回歸與 18 批短測、正式擷取／暫停恢復／observe 已完成。bench 的 250 ms 相對 lag guard 尚未由 `run_observe()`／profile 傳遞，故該接線、證據撤銷與簡單目標觸控閉環是下一階段 M3 前置工作。擷取器研究結案不代表 runtime 已具相同保護，也不代表絕對 source age、長期性能或遊戲時序已驗收。舊 raw 性能與完整矩陣通過旗標保持原值；不再自動續跑取消的矩陣／長測。
+
 ## T6 擷取候選開發契約（2026-09-26）
 
 量測範圍依使用者最新 [縮短修訂](CAPTURE_FIVE_BACKENDS_PLAN_20260926.md#最新使用者修訂縮短剩餘測試) 收尾：本版原 96 批未完成，正常資料與必要恢復／120 秒補測提供初步選型，沒有長期穩定性或完整故障／負載資格。結論與適用條件見 [比較報告](CAPTURE_COMPARISON_20260926.md)。下列資料所有權、pixels-only、時域和有效性硬條件仍適用；新後端接入 Session／M3 需另做顯式門控。

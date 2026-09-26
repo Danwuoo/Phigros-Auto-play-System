@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pas/core.hpp"
+#include "pas/grpc_transport.hpp"
 
 #include <grpcpp/grpcpp.h>
 #include "emulator_controller.grpc.pb.h"
@@ -23,6 +24,7 @@ GrpcEndpoint discover_endpoint(const std::string& serial,
                                const std::filesystem::path& running_dir = {});
 
 struct CaptureOptions {
+    int grpc_read_chunk_kib = default_grpc_read_chunk_kib;
     int width = 0;
     int height = 0;
     int source_rotation = -1;

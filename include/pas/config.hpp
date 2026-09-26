@@ -14,6 +14,7 @@ struct RuntimeConfig {
     int width = 0;
     int height = 0;
     int source_rotation = 0;
+    int grpc_read_chunk_kib = 256;
     std::string touch_kind;
     int touch_width = 0;
     int touch_height = 0;
