@@ -213,3 +213,9 @@ observer 13 從當幀藍色 body 碎片、跨畫面主線及兩側窄白輪廓�
 v28 的 70／73、v29 的 74／75、v31 的 74／75、v32 的 73／75 失敗紀錄均保留；v30 的診斷 assertion 呼叫錯函式名造成编譯失敗亦保留，未進實戰。修正包含不讓新幾何遮掉已到線身分、不沿與裝飾線相連的輪廓越過 body 填色尾端、完整當前前緣不另做歷史搜尋、逐像素前緣定位以避免 2 px 二次量化的速度偏差，以及保留完整色芯的已知 tail。原幾何／預測數值要求未放寬；舊裝飾線測試的觀測依據容許新增當幀證據，仍驗證完整身分、位置及速度。
 
 v33 Release build／75 項回歸全部通過（CTest 5.42 秒）。有限離線重算 v25 frame 6064 與 v27 frame 5995，均得到一條完整 Hold 與另一獨立 Tap；早先失敗重算檔案保留。v27 重算約為 width 153 px、head y=546、tail y=240，而非兩個窄 Hold。`analyze game-image` 只有單幀、無 input、無撞線預測，不把歷史 PNG 餵給 runtime。忽略的 `hold-rails-diagnostic.cpp` 為自有 C++ 單張 WIC 診斷，包含現行幾何 helper 的離線快照及 probe 輸出；初次 NOMINMAX 建置失敗與修正紀錄亦保留。這些只證實該畫面的幾何，不能替代完整實測或 AP。
+
+v33 run `cpp-observe-17904542683786152`，35 ms、185 秒正常 STOPPED，9,693 消費 frames／1,355 真實命令；結算 798,321 分、Perfect 343／Good 4／Bad 0／Miss 46、max combo 27、accuracy 87.94%、Early 0／Late 4，較 v25 最佳退步，未 AP。沒有中途第二 gRPC stream。結果 PNG／manual JSON 與兩張診斷圖保存；`assist-lead35-v33-analysis.json` raw SHA-256 `a3ae90c5bffec3592469d106e2795136bdea8c78b693456c1d4498c322ac62ef`，down Tap 136／Hold 109／Drag 125／Flick 6、5 contact conflict、1 UI gate lost／2 source evidence expired。Hold 時長 n=109，p50／p95／p99／max = 312.537／1129.015／1385.551／3491.707 ms；識別 n=9693，5.302／8.135／10.541／24.731 ms。環境由該 run manifest 核對，非受控性能比較，不能把增加 Hold down 當成命中改善。
+
+第一張窄 Hold 對移至 frame 6024／QPC 144259486930300 ns。原圖約 x=355–525 的另一條接近中 Hold，左側 rail 被短粒子特效遮擋；C++ 單張 probe 中左側支持到 depth 30 就停，右側持續約 308 px。暫時離線 helper 用 32 px 遮擋限制後，兩側均為 308 px、width 約153 px／head y≈548，附近裝飾線造成的較寬錯配仍因末端差異被拒絕。probe／build 與前後失敗重算全部保留，不能把離線重算当作 live 驗收。
+
+observer 14 只有在當前前緣兩排填色支持成立時，對新幾何的 rails 容許最多 32 px 短遮擋，保留 body 填色尾端、兩側末端差與 4 px 側向搜尋限制。正例增加接近中單側 24 px 遮擋；新的 44 px 斷裂負例讓 v34 回歸 75／76，暴露搜尋在 body 內部重新起算 head。v35 要求前緣前方 4 px 的一排不再有完整填色，不能把內部截面当成新的 leading edge。v35 Release build／76／76 全部通過（CTest 5.63 秒）；實際 v33 frame 6024 的無 input 單張重算仍保留一條完整 Hold（153 px／head≈548／tail≈241）與獨立 Tap。尚待下一輪完整實測，未更改 planner 5／35 ms 提前量。

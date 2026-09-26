@@ -18,7 +18,7 @@ decision schema 2 明列 Note anchor 語義（Tap／Flick 芯中心、Hold leadi
 
 少量候選漏辨的容忍仍受像素證據期限約束：Tap／Drag 40 ms、Hold 60 ms、Flick 75 ms；超過時取消個別意圖，UNKNOWN UI／source 失效則立即取消全部。不由 tombstone 重啟已完成意圖。離線分析另保留最多 512 個近期觀測身分，按是否形成近線預測、計畫接受及實際 down 列結果；像素身分可能碎裂，這些數量不能當作真實譜面個數或逐 Note 判定。
 
-observer 13 增加無歷史前提的當幀 Hold 外輪廓重建，schema 2 的 `observation_basis=hold_current_parallel_rails_and_fill` 與近期身分續接分開。只在充分可見的跨畫面主線存在時，從當幀藍色 body 碎片搜尋兩條窄中性白輪廓；最多 128 個種子、每截面 16 個窄帶、兩個截面、129 個前緣探針。兩側至少延續 `max(24 px, width×0.25)` 且末端相差不超過 20 px，前緣兩排各九點至少七點有藍／灰填色；尾端另受當幀較淡 body 填色約束，避免輪廓接上裝飾線。當前完整前緣不再由舊位置另擬合一次；到線的既有 Hold 仍用原近期身分路徑。辨識可在 UI gate 成立前提供幾何，觸控仍必須通過獨立三幀 PLAYING／新鮮來源門控。傾斜薄 Tap 的正常方向厚度受到保護；無 body、單側輪廓及短閃光不形成新 Hold。
+observer 14 增加無歷史前提的當幀 Hold 外輪廓重建，schema 2 的 `observation_basis=hold_current_parallel_rails_and_fill` 與近期身分續接分開。只在充分可見的跨畫面主線存在時，從當幀藍色 body 碎片搜尋兩條窄中性白輪廓；最多 128 個種子、每截面 16 個窄帶、兩個截面、129 個前緣探針。兩側最多容許 32 px 短遮擋，仍至少延續 `max(24 px, width×0.25)` 且末端相差不超過 20 px，前緣兩排各九點至少七點有藍／灰填色，前方一排須已離開完整填色以排除內部假 head；尾端另受當幀較淡 body 填色約束，避免輪廓接上裝飾線。當前完整前緣不再由舊位置另擬合一次；到線的既有 Hold 仍用原近期身分路徑。辨識可在 UI gate 成立前提供幾何，觸控仍必須通過獨立三幀 PLAYING／新鮮來源門控。傾斜薄 Tap 的正常方向厚度受到保護；無 body、單側輪廓及短閃光不形成新 Hold。
 
 planner version 5 以預估 crossing 到現在不超過 40 ms 為晚預測補接下限，與校準提前量分開；尚未執行的 down 可改為立即排程。原 100 ms 證據與 UI gate 仍必要，已執行 down 不重播。`ContactPlan.predicted_down_ns` 保存原始預測下壓期限，scheduler 只依 `steps[].due_ns` 執行。分析分開原預測期限的晚到量、實际排程晚到量與刻意 clamp 次數；舊 log 缺預測下壓期限列 unknown，不將立即补接解釋成新計時性能改善。Drag 名義接觸 90 ms，實际接觸亦可能因證據／gate／漏辨撤銷提前結束。
 

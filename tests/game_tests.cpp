@@ -257,6 +257,7 @@ TEST(GameObserver, CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWhole
         oriented_box(f,{head.x-n.x*35,head.y-n.y*35},u,146,70,{140,210,240});
         for(const int side:{-1,1}) oriented_box(f,
             {body.x+side*u.x*76,body.y+side*u.y*76},u,2,300,{245,245,245});
+        if(i>=3) oriented_box(f,{head.x-n.x*55-u.x*76,head.y-n.y*55-u.y*76},u,4,24,{0,0,0});
         rect(f,594,80,4,560,{255,255,255}); // Internal decoration extends past both ends.
         oriented_box(f,{960,540},u,140,8,{40,190,255});
         clock.set(f.capture_complete_ns);result=observer.process(f);
@@ -298,6 +299,14 @@ TEST(GameObserver, ShortWideCurrentRailsNeedDepthAndCannotJoinAdjacentBodiesOrEm
     EXPECT_TRUE(std::all_of(separate.targets.begin(),separate.targets.end(),[](const auto& t) {
         return t.note.kind==NoteKind::hold&&t.note.width<90&&t.note.direct_rails_evidence;
     }));
+}
+TEST(GameObserver, CurrentHoldReconstructionRejectsLongRailGapDespiteBodyFill) {
+    FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
+    rect(f,0,575,1280,2,{255,255,255});
+    rect(f,400,400,2,70,{245,245,245});rect(f,544,400,2,70,{245,245,245});
+    rect(f,403,400,138,70,{40,190,255});
+    rect(f,400,414,2,44,{0,0,0});
+    clock.set(1);const auto s=observer.process(f);EXPECT_TRUE(s.targets.empty())<<decision_json(s).dump();
 }
 TEST(GameObserver, ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;int frame=0;

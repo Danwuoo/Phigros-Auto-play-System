@@ -190,8 +190,14 @@ std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& s
             for(int forward=96;forward>=-32;--forward) {
                 const Vec2 probe{base.x+n.x*forward,base.y+n.y*forward};
                 if(!fill(probe,width,4)||!fill(probe,width,24)) continue;
+                // It must be a visible leading edge. After a long rail gap,
+                // an arbitrary interior cross section cannot become a head.
+                if(fill(probe,width,-4)) continue;
                 candidate.center={probe.x-n.x*6,probe.y-n.y*6};
-                const auto rails=visible_hold_rails(f,candidate,std::max(24.0,width*.25),12,4,true);
+                // Both front rows already prove current fill. A bounded
+                // particle occlusion may interrupt either attached rail;
+                // body fill still bounds the tail and both ends must agree.
+                const auto rails=visible_hold_rails(f,candidate,std::max(24.0,width*.25),32,4,true);
                 if(!rails) continue;
                 candidate.tail=rails->tail;candidate.height=rails->depth;candidate.rails_geometry=true;
                 candidate.head_on_line=std::abs(normal_distance(candidate.center,line))<=8;
