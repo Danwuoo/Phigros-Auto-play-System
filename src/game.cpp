@@ -782,7 +782,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             note.tangent=line->tangent;
             const bool held_fill=recent_rails&&hold_fill_near_head(f,note);
             rails=visible_hold_rails(f,note,16,held_fill?32:12,16,false,held_fill,held_fill);
-            if(!rails&&held_fill) {
+            if(!rails&&recent_rails) {
                 if(const auto current=current_held_rail_section(f,note);current&&hold_fill_near_head(f,*current)) {
                     rails=visible_hold_rails(f,*current,16,32,16,false,true,true);
                     if(rails) note=*current;
@@ -1105,8 +1105,9 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
                 if(std::hypot(t.hit.x-last.x,t.hit.y-last.y)>2&&t.samples>0&&
                    t.hit.x>=0&&t.hit.x<s.context.width&&t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height)
                     plan.steps.push_back({Phase::move,t.hit.x,t.hit.y,clock_.now_ns()});
-                const auto release=t.tail_crossing_ns?*t.tail_crossing_ns+20'000'000:clock_.now_ns()+70'000'000;
-                const auto due=std::clamp(release,clock_.now_ns(),clock_.now_ns()+70'000'000);
+                const auto limit=t.evidence_ns+100'000'000;
+                const auto release=t.tail_crossing_ns?*t.tail_crossing_ns+20'000'000:limit;
+                const auto due=std::max(clock_.now_ns(),std::min(release,limit));
                 const auto at=plan.steps.back(); plan.steps.push_back({Phase::up,at.x,at.y,due});
                 if(executed>1) {
                     plan.steps.erase(plan.steps.begin(),plan.steps.begin()+static_cast<std::ptrdiff_t>(executed-1));
@@ -1152,14 +1153,16 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
             }
             if(covered) continue;
         }
+        if(t.note.kind==NoteKind::hold&&due>=t.evidence_ns+100'000'000) continue;
         id.intent=++next_intent_; id.revision=t.revision;
         ContactPlan plan{epoch_,id.intent,t.revision,t.evidence_ns,due+30'000'000,
             s.context.frame,std::string("live_pixels_short_linear_fit_")+name(t.note.kind),
             {{Phase::down,t.hit.x,t.hit.y,due},
              {Phase::up,t.hit.x,t.hit.y,due+18'000'000}}};
         if(t.note.kind==NoteKind::hold) {
-            const auto release=t.tail_crossing_ns?*t.tail_crossing_ns+20'000'000:due+70'000'000;
-            plan.steps.back().due_ns=std::max(due+20'000'000,std::min(release,due+70'000'000));
+            const auto limit=t.evidence_ns+100'000'000;
+            const auto release=t.tail_crossing_ns?*t.tail_crossing_ns+20'000'000:limit;
+            plan.steps.back().due_ns=std::min(limit,std::max(due+20'000'000,release));
         } else if(t.note.kind==NoteKind::drag) {
             plan.steps.front().due_ns=due-15'000'000;
             plan.steps.back().due_ns=due+75'000'000;

@@ -567,6 +567,7 @@ TEST(GameObserver, WarmRailsRequireRecentAnchorCurrentFillAndBothNeutralSections
 }
 
 TEST(GameObserver, WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased) {
+    for(const bool cover_head:{false,true}) {
     FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
     GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t id=0;
     for(int i=0;i<18;++i) {
@@ -578,6 +579,7 @@ TEST(GameObserver, WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased) {
         rect(f,403,head-200,144,200,{40,190,255});
         rect(f,396,0,2,head,{245,245,245});rect(f,554,0,2,head,{245,245,245});
         if(i>=9) {rect(f,396,495,2,80,{210,197,146});rect(f,554,495,2,80,{246,231,169});}
+        if(i>=9&&cover_head) rect(f,421,560,108,15,{210,197,146});
         clock.set(f.capture_complete_ns);const auto s=observer.process(f);
         const auto h=std::find_if(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.kind==NoteKind::hold;});
         ASSERT_NE(h,s.targets.end())<<"frame "<<i<<" "<<decision_json(s).dump();
@@ -589,10 +591,11 @@ TEST(GameObserver, WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased) {
     owner.stop();EXPECT_TRUE(touch.contacts().empty());
     EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
         return r.command.phase==Phase::down;}),1);
+    }
 }
 
 TEST(GameObserver, WarmSectionCannotUseEmptyOrMismatchedWhitePair) {
-    for(int failure=0;failure<3;++failure) {
+    for(int failure=0;failure<4;++failure) {
         FakeClock clock;GameObserver observer(clock);
         for(int i=0;i<9;++i) {
             auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
@@ -606,6 +609,7 @@ TEST(GameObserver, WarmSectionCannotUseEmptyOrMismatchedWhitePair) {
         rect(f,396,0,2,575,{245,245,245});rect(f,554,0,2,575,{245,245,245});
         rect(f,396,495,2,80,{210,197,146});rect(f,554,495,2,80,{246,231,169});
         if(failure==0) for(const int y:{384,448}) rect(f,403,y-6,144,12,{0,0,0});
+        else if(failure==3) rect(f,403,560,144,15,{0,0,0});
         else {
             rect(f,396,0,2,495,{0,0,0});rect(f,554,0,2,495,{0,0,0});
             // Both are inside the bounded search and have fill. One pair is
@@ -885,6 +889,34 @@ TEST(GameOwner, HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact) {
     }
     clock.set(clock.now_ns()+60'000'000); s=snapshot(40,clock.now_ns()); owner.accept(s);
     EXPECT_TRUE(backend.contacts().empty()); EXPECT_TRUE(owner.scheduler().fault().empty());
+}
+TEST(GameOwner, LongHoldBridgesFreshSparseFramesButStopsAtActualEvidenceExpiry) {
+    for(const bool refresh_before_gap:{false,true}) {
+        FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{2,0,30'000'000});
+        auto h=target(1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=3;
+        auto s=snapshot(1,0);s.targets={h};owner.accept(s);owner.take_accepted_plans();
+        clock.set(10'000'000);ASSERT_EQ(owner.poll().size(),1);
+        const Nanoseconds last_evidence=refresh_before_gap?30'000'000:0;
+        if(refresh_before_gap) {
+            clock.set(last_evidence);s=snapshot(2,last_evidence);h.evidence_ns=last_evidence;
+            h.expires_ns=last_evidence+100'000'000;h.revision++;s.targets={h};
+            owner.accept(s);owner.poll();owner.take_accepted_plans();
+        }
+        // A still-fresh 85 ms capture gap must not execute an artificial
+        // 70 ms rolling Up before the next current Hold can renew the contact.
+        clock.set(last_evidence+85'000'000);owner.poll();EXPECT_EQ(touch.contacts().size(),1);
+        const auto current_evidence=clock.now_ns();clock.set(current_evidence+5'000'000);
+        s=snapshot(3,current_evidence);h.evidence_ns=current_evidence;h.expires_ns=current_evidence+100'000'000;
+        h.revision++;h.samples=2;h.crossing_ns.reset();h.reason="insufficient_history";s.targets={h};
+        owner.accept(s);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+        const auto plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);
+        EXPECT_EQ(plans[0].steps.back().due_ns,current_evidence+100'000'000);
+        clock.set(current_evidence+99'000'000);owner.poll();EXPECT_EQ(touch.contacts().size(),1);
+        clock.set(current_evidence+100'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+        EXPECT_FALSE(owner.scheduler().armed());EXPECT_TRUE(owner.scheduler().fault().empty());
+        EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+            return r.command.phase==Phase::down;}),1);
+    }
 }
 TEST(GameOwner, TypeGateAndFlickUseIndependentDownMoveUpSequence) {
     FakeClock clock; FakeTouchBackend backend(clock); GamePlanOwner owner(clock,backend,2,{8,0,30'000'000});

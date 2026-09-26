@@ -12,6 +12,10 @@ observer26只在已到線、90ms內有rails anchor且當前藍灰front fill有�
 
 observer27在上述近期held fill有效但原輪廓驗證失敗時，另用當前頭後128／192px兩個截面校正paired rail寬度與中心。各截面只搜原half width+20px範圍、最多16個≤12px白band；pair須包含原頭部、width為原0.8–1.2倍、中心偏移≤16px、內部5／7藍灰fill成立。校正不搜尋新leading head，仍位於同一條當前主線；再驗當前front fill、±4px／≤96px染色、每側三個中性白樣本與原paired extent要求後才能續接。不影響原本已成功的白rail路徑，也不延長90／100／60ms期限。
 
+observer28允許上述白色section校正在近期rails有效、舊位置的rail路徑失敗時先運行，不再要求舊width的front fill先成立。校正後的當前front fill仍须原4／8／12px、5／15藍灰樣本，所有section幾何／白樣本／染色／paired extent條件照舊。這處理旧寬度取樣落在中央特效、當前完整輪廓外側仍有藍灰fill的情況；沒有當前頭部fill（例如純黑缺口）仍不能續接，不把深處body或金色特效單獨當成頭部。
+
+planner7將Hold未知tail的初始／更新Up上限改為該target的 `evidence_ns+100ms`，與scheduler既有target／gate freshness硬界線一致；不再額外用接受後70ms提早完成接觸。可見tail仍預測tail crossing+20ms、不能超過evidence硬界線；初始Down须在該界線前，原20ms最短Up偏移僅在剩餘freshness足夠時成立。沒有新frame到達時，scheduler at100ms仍撤銷並釋放；新frame明確缺失該Hold時，既有60ms missing grace仍取消，未知UI／來源／場景改變照舊立即撤銷。這允許80–90ms但仍fresh的稀疏畫面續接單一Down，不能以舊evidence延長接觸。manifest附hold_release_limit_ms=100／hold_missing_grace_ms=60。
+
 diagnostics version2將第一圖槽改為長Hold幾何消失（`diagnostic-hold-disappearance.png`），第二仍為combo字形消失。獨立只讀Hold latch最多存16份上一張的坐標摘要；只有主線充分可見、當前PLAYING／容量有效、同epoch／物理幾何、frame與QPC遞增、間隔≤100ms才比較。上一張近線80px內、寬≥8%畫面且有rails、depth≥max(128px,0.8width)的Hold，下一張沒有兼容位置／寬度的當前Hold時列診斷；短尾結束、source／UI／geometry失效不沿用。幾何消失不代表active contact或Miss，record附prior frame／Note／QPC／頭部／寬高，效果仍unknown，不供input使用。combo分割另容許被細白色ribbon連上的寬字形cluster，但需有局部高白色ink columns；純橫邊框加窄直線不足。計數仍為形狀cluster，非數字OCR。
 
 observer22 分開即時 HUD 分類與 motion history 的連續性。相同 generation／geometry／尺寸／rotation、sequence／QPC 嚴格遞增，且間隔≤250ms時，可以保留三幀分類計數；每張仍必須有當前 pause／score 像素、有效 source 與容量才能開 gate。epoch 改變或間隔>100ms立即清空所有 motion／rail anchor，新目標需重新累積跨度。缺 HUD、無效 source、重播、>250ms間隔或幾何改變皆冷啟動分類；容量失效當幀關閉gate，分類計數在HUD階段容量檢查失效時清空。此上限只屬分類確認政策，不能刷新旧 evidence；scheduler／supervisor 的100ms期限及epoch撤銷不變。
