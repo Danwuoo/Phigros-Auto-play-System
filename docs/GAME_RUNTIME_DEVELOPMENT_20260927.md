@@ -263,3 +263,13 @@ v46 的衝突226包含已到線的約135px Hold與同位置附近的新200.5px�
 observer20 保留兩排7／9要求，另要求兩側外部取樣群各至少一點有當前填色；前方續接檢查亦保持同一幾何規則。只靠一側body加白裝飾線不能擴寬，內部裝飾切開、漸層、黄色覆蓋、短rail gap与短Hold等既有正／負例不放寬。v51 Release83／83通過（5.62秒）。純單幀重算v46 frame5949仍含碎片／部分head，只有當前畫面且無近期identity，不能宣告其持續觸控已解決。
 
 opt-in第二個診斷槽不再由預期的stationary Hold初始insufficient history觸發；只記近線association ambiguous，或至少30ms跨度、尚未到線的nonlinear mismatch。兩槽容量、停止後編碼、預設不存圖與不回饋input原則不變。此變更只改善诊斷選取，不代表所有被保留畫面都是Miss；v50未進實戰，v51待全曲。
+
+v51 run `cpp-observe-17904594247906811`，35ms、185秒STOPPED、9,663消費frames／1,179真實命令。結算810,674分、Perfect344／Good7／Bad0／Miss42、max combo49、accuracy88.69%、Early2／Late5，未AP。raw SHA-256 `ca016c28a1f9f714727260f58a31407568c1382620e3bed771e5f06b2cc9110a`、manual結果／PNG、两張診斷圖及 `assist-lead35-v51-analysis.json` 保存，無中途第二gRPC stream。down Tap137／Hold96／Drag112／Flick6，沒有contact conflict，3 gate expiry；runtime5 UI／5 source revoke。零容量衝突仍有42 Miss，不能把剩餘失敗歸於容量。新第二診斷 frame825 是已轉暗的Hold；frame806先前因101.7ms擷取間隔清空history及HUD counter，雖當前pause_bars2／score_glyphs8，仍觸發UI gate lost。這是待研究的時間／重辨識事件，不在此輪放寬100ms輸入期限。
+
+## 當前線投影與有限 Drag 共用（build v52–v54）
+
+v52新增三項短回歸，投影及密集Drag兩項失敗、成員消失一項通過。±4px位置誤差的5點擬合雖有有效crossing，舊hit點偏離當前線3.2px；時間估計使用擬合distance，不應把殘差變成觸控法向位移。observer21保留時間／uncertainty計算，hit使用當前獨立可見線與實際頭部的正交投影；移動線未來姿態仍未驗證。
+
+planner6只對已active、未到release的Drag，且新Drag具新鮮pixels、可靠短期crossing、同位置≤2px、預定覆蓋區間重疊，延長既有up而不送第二次down。只共用已成功維持的本機plan，不合併pending down、Tap、Hold、Flick或不同位置。primary與alias仍在128個identity內；每幀以目前可見成員重新核對同一位置與期限，失去全部支持／gate時釋放，單一alias消失不解除仍有支持的接觸。已完成或unknown input不得重播。未增加實體手指容量，也未啟用batch。
+
+`game_drag_coverage` 記member／leader Note、原intent、source frame、QPC evidence／accept／release與unknown遊戲效果，最多128筆待取診斷；與新physical down分開。C++分析只在先前successful RPC down及尚未up的本機歷史成立時列 `covered_by_active_drag`，不稱Perfect或真實譜面數量。v53 Release86／86通過（5.69秒），v54同步planner版本及real_input診斷，增加不同位置／gate失效／新epoch與分析unknown歷史回歸，Release88／88通過（5.95秒）。v52／v53未進實戰，v54仍需完整曲驗證。

@@ -477,6 +477,20 @@ TEST(GameObserver, ContinuousFastFramesKeepEnoughTemporalHistoryToPredict) {
     ASSERT_TRUE(result.targets[0].crossing_ns);EXPECT_GE(result.targets[0].history_span_ns,30'000'000);
     EXPECT_NEAR(result.targets[0].velocity,500,20);
 }
+TEST(GameObserver, FitResidualDoesNotDisplaceTheHitPointFromTheObservedLine) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot result;
+    constexpr int jitter[]{0,4,-4,4,-4,4};
+    for(int i=0;i<6;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,359,360+i*20+jitter[i],128,6,{255,240,20});
+        clock.set(f.capture_complete_ns);result=observer.process(f);
+    }
+    ASSERT_EQ(result.targets.size(),1);ASSERT_EQ(result.lines.size(),1);
+    const auto& t=result.targets[0];const auto& line=result.lines[0];ASSERT_TRUE(t.crossing_ns);
+    EXPECT_LE(t.residual,8);
+    const double hit_distance=-(t.hit.x-line.center.x)*line.tangent.y+(t.hit.y-line.center.y)*line.tangent.x;
+    EXPECT_NEAR(hit_distance,0,.01)<<decision_json(result).dump();
+}
 TEST(GameObserver, SlantedLineSurvivesIntersectionAndMatchesNoteOrientation) {
     FakeClock clock; GameObserver observer(clock); DecisionSnapshot s;
     const Vec2 u{.9950371902,-.0995037190},n{.0995037190,.9950371902};
@@ -646,6 +660,59 @@ TEST(GameOwner, DragCoverageSurvivesLateCrossingWithoutReplayingDown) {
     EXPECT_EQ(touch.contacts().size(),1);EXPECT_EQ(touch.receipts().size(),1);
     clock.set(105'000'000);ASSERT_EQ(owner.poll().size(),1);EXPECT_TRUE(touch.contacts().empty());
     EXPECT_EQ(touch.receipts().size(),2);
+}
+TEST(GameOwner, DenseColocatedDragsShareOneActiveContactAndKeepTapIndependent) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{5,0,30'000'000});
+    auto a=target(1,0,30'000'000);a.note.kind=NoteKind::drag;a.samples=4;
+    auto s=snapshot(1,0);s.targets={a};owner.accept(s);owner.take_accepted_plans();
+    clock.set(15'000'000);ASSERT_EQ(owner.poll().size(),1);
+    clock.set(20'000'000);auto b=target(2,clock.now_ns(),50'000'000);b.note.kind=NoteKind::drag;b.samples=4;
+    a.evidence_ns=clock.now_ns();a.expires_ns=clock.now_ns()+100'000'000;a.revision++;
+    auto tap_note=target(3,clock.now_ns(),40'000'000);tap_note.hit.x=850;tap_note.samples=4;
+    s=snapshot(2,clock.now_ns());s.targets={a,b,tap_note};owner.accept(s);owner.take_accepted_plans();
+    EXPECT_EQ(owner.scheduler().pending_count(),2);
+    clock.set(40'000'000);const auto down=owner.poll();ASSERT_EQ(down.size(),1);
+    EXPECT_EQ(down[0].command.x,850);EXPECT_EQ(touch.contacts().size(),2);
+    clock.set(45'000'000);auto c=target(4,clock.now_ns(),70'000'000);c.note.kind=NoteKind::drag;c.samples=4;
+    b.evidence_ns=clock.now_ns();b.expires_ns=clock.now_ns()+100'000'000;b.revision++;
+    tap_note.evidence_ns=clock.now_ns();tap_note.expires_ns=clock.now_ns()+100'000'000;tap_note.revision++;
+    // The original leader disappeared, but fresh colocated Drag evidence remains.
+    s=snapshot(3,clock.now_ns());s.targets={b,c,tap_note};owner.accept(s);
+    clock.set(60'000'000);owner.poll();EXPECT_EQ(touch.contacts().size(),1);
+    EXPECT_TRUE(owner.scheduler().fault().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),2);
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+}
+TEST(GameOwner, ADisappearingDragMemberCannotReleaseTheStillObservedGroup) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{4,0,30'000'000});
+    auto a=target(1,0,30'000'000);a.note.kind=NoteKind::drag;a.samples=4;
+    auto s=snapshot(1,0);s.targets={a};owner.accept(s);owner.take_accepted_plans();
+    clock.set(15'000'000);owner.poll();clock.set(20'000'000);
+    auto b=target(2,clock.now_ns(),50'000'000);b.note.kind=NoteKind::drag;b.samples=4;
+    s=snapshot(2,clock.now_ns());s.targets={a,b};owner.accept(s);owner.take_accepted_plans();
+    EXPECT_EQ(owner.scheduler().pending_count(),1);
+    clock.set(60'000'000);a.evidence_ns=clock.now_ns();a.expires_ns=clock.now_ns()+100'000'000;a.revision++;
+    s=snapshot(3,clock.now_ns());s.targets={a};owner.accept(s);
+    EXPECT_EQ(touch.contacts().size(),1);
+    clock.set(100'000'000);s=snapshot(4,clock.now_ns());owner.accept(s);
+    EXPECT_TRUE(touch.contacts().empty());EXPECT_TRUE(owner.scheduler().fault().empty());
+}
+TEST(GameOwner, DifferentDragPositionsKeepIndependentContactsAndGateLossReleasesTheGroup) {
+    for(const bool colocated:{false,true}) {
+        FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{4,0,30'000'000});
+        auto a=target(1,0,30'000'000);a.note.kind=NoteKind::drag;a.samples=4;
+        auto s=snapshot(1,0);s.targets={a};owner.accept(s);owner.take_accepted_plans();
+        clock.set(15'000'000);owner.poll();clock.set(20'000'000);
+        auto b=target(2,clock.now_ns(),50'000'000);b.note.kind=NoteKind::drag;b.samples=4;if(!colocated) b.hit.x=850;
+        s=snapshot(2,clock.now_ns());s.targets={a,b};owner.accept(s);owner.take_accepted_plans();
+        const auto coverage=owner.take_coverage_updates();EXPECT_EQ(coverage.size(),colocated?1:0);
+        if(colocated) {EXPECT_EQ(coverage[0].at("note_id"),2);EXPECT_EQ(coverage[0].at("leader_note_id"),1);}
+        clock.set(35'000'000);owner.poll();EXPECT_EQ(touch.contacts().size(),colocated?1:2);
+        s=snapshot(3,clock.now_ns());s.playing_gate=false;owner.accept(s);
+        EXPECT_TRUE(touch.contacts().empty());EXPECT_EQ(owner.scheduler().pending_count(),0);
+        s=snapshot(4,clock.now_ns());s.context.epoch=2;s.targets={a,b};owner.accept(s);
+        clock.set(50'000'000);owner.poll();owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    }
 }
 TEST(GameOwner, BoundedLatePredictionRecoversNowButOldEvidenceAndExecutedDownCannotReplay) {
     for(const auto kind:{NoteKind::tap,NoteKind::hold,NoteKind::drag,NoteKind::flick}) {

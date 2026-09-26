@@ -260,3 +260,15 @@ TEST(GameAnalysis, ConflictDetailsFollowSuccessfulReceiptsAndExplicitOwnerReset)
     EXPECT_TRUE(conflicts[2].at("plan").is_null());EXPECT_EQ(result.at("unknown_contact_receipts"),1);
     EXPECT_EQ(result.at("contact_history_resets"),1);
 }
+TEST(GameAnalysis, SharedDragCoverageNeedsARecordedSuccessfulLocalDown) {
+    const TempJson raw(R"({"event":"game_drag_coverage","intent_id":1,"note_id":2,"real_input":true}
+{"event":"game_plan_accepted","intent_id":1,"note_id":1,"basis":"drag","steps":[]}
+{"event":"game_touch_receipt","intent_id":1,"contact_id":0,"success":true,"phase":0,"scheduled_ns":0,"injection_start_ns":1,"injection_return_ns":2}
+{"event":"game_drag_coverage","intent_id":1,"note_id":3,"real_input":true}
+{"event":"game_touch_receipt","intent_id":1,"contact_id":0,"success":true,"phase":2,"scheduled_ns":4,"injection_start_ns":4,"injection_return_ns":5}
+{"event":"game_drag_coverage","intent_id":1,"note_id":4,"real_input":true}
+)");
+    const auto result=analyze_game_jsonl(raw.path());EXPECT_EQ(result.at("drag_coverage_updates"),3);
+    EXPECT_EQ(result.at("drag_coverage_with_known_local_contact"),1);
+    EXPECT_EQ(result.at("real_downs_by_basis").at("drag"),1);
+}

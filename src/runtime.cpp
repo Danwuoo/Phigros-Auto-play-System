@@ -172,8 +172,9 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         file<<json{{"schema_version",3},{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"config",config.public_json},
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
-            {"dry_owner",!assist},{"game_observer_version",20},{"executable_sha256",sha256_file(executable)},
-            {"game_planner_version",5},{"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
+            {"dry_owner",!assist},{"game_observer_version",21},{"executable_sha256",sha256_file(executable)},
+            {"game_planner_version",6},{"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
+            {"drag_shared_contact","fresh_colocated_drag_extends_existing_active_contact_only"},
             {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},
             {"game_uncertainty_ms",config.game_uncertainty_ms},
             {"action_wait","win32_high_resolution_relative_timer_and_event"},
@@ -380,6 +381,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                         dispatch_epoch=current->context.epoch;
                         if(!assist||!start_scheduler||start_scheduler->pending_count()==0)
                             receipts(owner.accept(*current));
+                        for(auto coverage:owner.take_coverage_updates()) {coverage["real_input"]=assist;record(std::move(coverage));}
                         for(const auto& plan:owner.take_accepted_plans()) {
                             json steps=json::array(); for(const auto& step:plan.steps)
                                 steps.push_back({{"phase",static_cast<int>(step.phase)},{"x",step.x},{"y",step.y},{"due_ns",step.due_ns}});

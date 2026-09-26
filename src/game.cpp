@@ -780,9 +780,9 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                         target.crossing_ns=now+static_cast<Nanoseconds>(std::llround(tau*1e9));
                         target.uncertainty_ns=static_cast<Nanoseconds>(std::llround(
                             std::max(2.0,residual)/std::abs(v)*1e9));
-                        // Projection at the observed line is diagnostic only;
-                        // rotating/moving-line hit regions require validation.
-                        target.hit={target.note.center.x+d*l.tangent.y,target.note.center.y-d*l.tangent.x};
+                        // Timing uses the fitted distance. The hit point stays
+                        // on the independently observed current line; fit
+                        // residual must not displace it in the normal axis.
                     }
                     if(target.note.kind==NoteKind::hold&&target.note.tail) {
                         double tt=0,td=0,tail_den=0,tail_num=0; int count=0;
@@ -816,6 +816,9 @@ GamePlanOwner::GamePlanOwner(const Clock& clock, TouchBackend& backend, int cont
 std::vector<ContactPlan> GamePlanOwner::take_accepted_plans() {
     auto result=std::move(accepted_plans_); accepted_plans_.clear(); return result;
 }
+std::vector<nlohmann::json> GamePlanOwner::take_coverage_updates() {
+    auto result=std::move(coverage_updates_);coverage_updates_.clear();return result;
+}
 std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     std::vector<TouchReceipt> receipts;
     if(s.sequence<=last_snapshot_) {last_rejection_="snapshot_order"; return receipts;}
@@ -833,11 +836,52 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     if(!scheduler_.set_context(epoch_,s.context.generation,s.context.geometry,
         s.playing_gate&&s.capacity_valid&&fresh,s.context.capture_ns)) return receipts;
     if(!s.playing_gate||!s.capacity_valid||!fresh) {last_rejection_="gate_invalid"; return receipts;}
+    const auto current_drag=[&](const GameTarget& t) {
+        return t.note.kind==NoteKind::drag&&t.samples>0&&t.reason!="association_ambiguous"&&
+            t.evidence_ns<=clock_.now_ns()&&clock_.now_ns()-t.evidence_ns<100'000'000&&
+            t.expires_ns>clock_.now_ns()&&t.hit.x>=0&&t.hit.x<s.context.width&&
+            t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height;
+    };
+    const auto drag_release=[&](const GameTarget& t)->std::optional<Nanoseconds> {
+        const auto now=clock_.now_ns();
+        if(!current_drag(t)||!t.crossing_ns||t.reason!="prediction_observe_only"||
+           t.uncertainty_ns>options_.uncertainty_ns||*t.crossing_ns-now< -40'000'000||
+           *t.crossing_ns-options_.lead_ns-now>60'000'000) return {};
+        return std::max(*t.crossing_ns-options_.lead_ns,now+15'000'000)+75'000'000;
+    };
+    const auto refresh_drag=[&](Identity& leader,const GameTarget& t,bool attach) {
+        const auto cursor=scheduler_.executed_steps(leader.intent);
+        if(!cursor||*cursor<=leader.plan.prefix_offset||!current_drag(t)||
+           t.evidence_ns<leader.plan.evidence_ns||leader.plan.steps.back().due_ns<=clock_.now_ns()) return false;
+        const auto executed=static_cast<std::size_t>(*cursor-leader.plan.prefix_offset);
+        const auto& at=leader.plan.steps.at(executed-1);
+        if(std::hypot(t.hit.x-at.x,t.hit.y-at.y)>2) return false;
+        const auto release=drag_release(t);if(attach&&!release) return false;
+        auto plan=leader.plan;plan.revision++;plan.evidence_ns=t.evidence_ns;
+        plan.source_frame_sequence=s.context.frame;
+        if(release) plan.steps.back().due_ns=std::max(plan.steps.back().due_ns,*release);
+        if(!scheduler_.submit(plan)) return false;
+        leader.plan=plan;
+        if(accepted_plans_.size()>=256) throw std::runtime_error("accepted plan diagnostic capacity");
+        accepted_plans_.push_back(std::move(plan));return true;
+    };
+    std::set<std::uint64_t> group_seen,group_alive;
+    for(const auto& t:s.targets) {
+        const auto member=identities_.find(t.note_id);if(member==identities_.end()) continue;
+        const auto leader_id=member->second.drag_leader?member->second.drag_leader:
+            member->second.shared_drag?t.note_id:0;
+        if(!leader_id) continue;
+        group_seen.insert(leader_id);
+        const auto leader=identities_.find(leader_id);
+        if(leader!=identities_.end()&&refresh_drag(leader->second,t,false)) group_alive.insert(leader_id);
+    }
     std::set<std::uint64_t> visible;
     for(const auto& t:s.targets) visible.insert(t.note_id);
-    for(auto& [id,identity]:identities_) if(!visible.contains(id)) {
+    for(const auto leader:group_alive) visible.insert(leader);
+    for(auto& [id,identity]:identities_) if(!identity.drag_leader&&
+        (identity.shared_drag?!group_alive.contains(id):!visible.contains(id))) {
         const auto grace=identity.kind==NoteKind::hold?60'000'000:identity.kind==NoteKind::flick?75'000'000:40'000'000;
-        if(clock_.now_ns()-identity.plan.evidence_ns<grace) continue;
+        if(!group_seen.contains(id)&&clock_.now_ns()-identity.plan.evidence_ns<grace) continue;
         auto canceled=scheduler_.cancel_intent(identity.intent);
         receipts.insert(receipts.end(),canceled.begin(),canceled.end());
     }
@@ -853,6 +897,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         }
         auto& id=found->second; id.expires=t.expires_ns+250'000'000;
         if(id.submitted) {
+            if(id.drag_leader||id.shared_drag) continue;
             const auto cursor=scheduler_.executed_steps(id.intent);
             if(!cursor) continue;
             if(t.expires_ns<=clock_.now_ns()||t.reason=="association_ambiguous"||
@@ -914,6 +959,24 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         const auto due=std::max(predicted_due,now+(t.note.kind==NoteKind::drag?15'000'000:0));
         if(t.hit.x<0||t.hit.y<s.context.height*.12||t.hit.x>=s.context.width||t.hit.y>=s.context.height) {
             last_rejection_="unsafe_region"; continue;
+        }
+        if(t.note.kind==NoteKind::drag) {
+            bool covered=false;
+            for(auto& [leader_note,leader]:identities_) {
+                if(leader_note==t.note_id||leader.drag_leader||!leader.submitted||leader.kind!=NoteKind::drag||
+                   due-15'000'000>leader.plan.steps.back().due_ns) continue;
+                if(!refresh_drag(leader,t,true)) continue;
+                leader.shared_drag=true;id.drag_leader=leader_note;id.intent=leader.intent;
+                id.submitted=true;id.kind=NoteKind::drag;id.plan=leader.plan;covered=true;
+                if(coverage_updates_.size()>=128) throw std::runtime_error("drag coverage diagnostic capacity");
+                coverage_updates_.push_back({{"event","game_drag_coverage"},{"note_id",t.note_id},
+                    {"leader_note_id",leader_note},{"intent_id",leader.intent},{"source_frame",s.context.frame},
+                    {"evidence_ns",t.evidence_ns},{"accepted_ns",clock_.now_ns()},
+                    {"crossing_ns",*t.crossing_ns},{"release_ns",leader.plan.steps.back().due_ns},
+                    {"basis","fresh_colocated_drag_on_active_contact"},{"game_effect","unknown"}});
+                break;
+            }
+            if(covered) continue;
         }
         id.intent=++next_intent_; id.revision=t.revision;
         ContactPlan plan{epoch_,id.intent,t.revision,t.evidence_ns,due+30'000'000,
@@ -997,7 +1060,7 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::map<std::string,std::uint64_t> playing_kinds,playing_reasons;
     struct IntentEvidence {std::string kind; std::optional<Nanoseconds> down; std::optional<bool> planned_future;
         std::uint64_t note=0;std::optional<Nanoseconds> predicted_down;json plan=nullptr;};
-    struct TrackEvidence {std::string kind;Nanoseconds last=0;bool predicted=false,near=false,accepted=false,down=false;
+    struct TrackEvidence {std::string kind;Nanoseconds last=0;bool predicted=false,near=false,accepted=false,down=false,covered=false;
         std::optional<double> first_near_available_lead_ms;};
     std::map<std::uint64_t,TrackEvidence> observed_tracks;
     std::map<std::string,std::map<std::string,std::uint64_t>> track_outcomes;
@@ -1008,6 +1071,7 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     json latest_targets=json::array(),conflicts=json::array();
     Nanoseconds latest_capture=0;
     std::uint64_t conflicts_omitted=0,contact_history_resets=0,unknown_contact_receipts=0;
+    std::uint64_t drag_coverage_updates=0,drag_coverage_with_known_contact=0;
     const auto describe_intent=[&](std::uint64_t intent) {
         json result={{"intent_id",intent},{"plan",nullptr},{"current_target",nullptr},
             {"target_capture_ns",latest_capture}};
@@ -1036,7 +1100,7 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         ++counts[key];
     };
     const auto finish_track=[&](const TrackEvidence& evidence) {
-        const std::string outcome=evidence.down?"actual_down":evidence.accepted?"accepted_without_down":
+        const std::string outcome=evidence.down?"actual_down":evidence.covered?"covered_by_active_drag":evidence.accepted?"accepted_without_down":
             evidence.near?"near_prediction_not_accepted":evidence.predicted?"prediction_never_near":"never_predicted";
         count(track_outcomes[evidence.kind],outcome);
         if(evidence.first_near_available_lead_ms)
@@ -1109,6 +1173,15 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             if(intent>latest_intent) {
                 latest_intent=intent;
                 count(accepted_kinds,e.value("basis","unknown"));
+            }
+        } else if(event=="game_drag_coverage") {
+            ++drag_coverage_updates;
+            const auto intent=e.at("intent_id").get<std::uint64_t>();
+            const bool known=e.value("real_input",false)&&std::any_of(active_contacts.begin(),active_contacts.end(),
+                [&](const auto& contact){return contact.second==intent;});
+            if(known) ++drag_coverage_with_known_contact;
+            if(auto track=observed_tracks.find(e.at("note_id").get<std::uint64_t>());track!=observed_tracks.end()) {
+                track->second.accepted=true;track->second.covered=track->second.covered||known;
             }
         } else if(event=="dry_touch_receipt") {
             ++dry;
@@ -1194,6 +1267,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         {"scheduler_rejections_by_reason",rejection_reasons},{"runtime_revokes_by_reason",revoke_reasons},
         {"contact_conflicts",conflicts},{"contact_conflicts_omitted",conflicts_omitted},
         {"contact_history_resets",contact_history_resets},{"unknown_contact_receipts",unknown_contact_receipts},
+        {"drag_coverage_updates",drag_coverage_updates},{"drag_coverage_with_known_local_contact",drag_coverage_with_known_contact},
+        {"drag_coverage_semantics","fresh pixels share an already active local Drag contact; successful RPC history supports local coverage only, game judgment remains unknown"},
         {"contact_conflict_semantics","journal-order successful RPC receipts reconstruct local contacts; game effect and true simultaneous note count remain unknown; owner revoke clears local history"},
         {"game_rpc_duration_ms",distribution(rpc_duration)},
         {"capture_interval_ms",distribution(intervals)},{"recognition_duration_ms",distribution(processing)},

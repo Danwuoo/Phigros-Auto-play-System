@@ -104,9 +104,11 @@ public:
     ContactScheduler& scheduler() { return scheduler_; }
     const std::string& last_rejection() const { return last_rejection_; }
     std::vector<ContactPlan> take_accepted_plans();
+    std::vector<nlohmann::json> take_coverage_updates();
 private:
     struct Identity { std::uint64_t intent, revision; Nanoseconds expires; bool submitted = false;
-        NoteKind kind=NoteKind::ambiguous; ContactPlan plan; };
+        NoteKind kind=NoteKind::ambiguous; ContactPlan plan;
+        std::uint64_t drag_leader=0;bool shared_drag=false; };
     const Clock& clock_;
     ContactScheduler scheduler_;
     std::map<std::uint64_t, Identity> identities_;
@@ -115,6 +117,7 @@ private:
     std::string last_rejection_;
     GameActionOptions options_;
     std::vector<ContactPlan> accepted_plans_;
+    std::vector<nlohmann::json> coverage_updates_;
 };
 
 class PlayButtonPlanner final {

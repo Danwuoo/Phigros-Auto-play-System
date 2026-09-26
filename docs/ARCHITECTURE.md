@@ -2,6 +2,8 @@
 
 ## 主程式設計與開發接線（2026-09-27）
 
+observer21 的hit是實際頭部在當前可見線上的正交投影；擬合distance只估計crossing與uncertainty，不以殘差偏移hit。planner6可讓新鮮可靠、同位置≤2px且覆蓋時間重疊的Drag沿用已active的Drag plan，只延長up、保留原down及prefix。alias／primary仍包含於128 identity上限；仍有支持的成員可維持同一接觸，全部失效或gate撤銷則釋放。pending down、其他Note種類及不同位置不共用；兩指能力與100ms来源期限維持。`game_drag_coverage`最多128筆待取，分析區分physical down與有successful RPC歷史支持的本機共用；遊戲判定仍unknown。
+
 observer20 的新Hold前緣兩排填色除7／9之外，兩側外部取樣群各須至少一點支持，避免一側完整body加另一側裝飾線擴大寬度。opt-in第二診斷槽僅保留近線association ambiguous或有≥30ms跨度、尚未到線的nonlinear mismatch；初始insufficient history及已到線的停止不單獨觸發。這是診斷訊號，不是逐Note判定真值。
 
 observer19 的短期點保留最多六點／90ms，每身分10ms的QPC bucket只保留最新坐標；bucket起點固定直到新增下一點。速度外推／相對撞線擬合／接近rail搜尋均要求至少30ms跨度，沒有足夠跨度列等待，不用低殘差單獨接受短擷取突發。每幀的即時辨識與當前輪廓核對仍執行；`history_span_ns` 為schema2的可選診斷欄位，舊紀錄缺欄位不反推真實來源時間。
