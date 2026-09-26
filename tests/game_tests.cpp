@@ -174,6 +174,9 @@ TEST(GameObserver, CurrentHoldRailsOverrideFragmentedCoreWithoutRemovingIndepend
         auto f=image(i+4,(i+3)*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
         rect(f,778,146+i*10,2,430-i*10,{230,230,230});
         rect(f,932,146+i*10,2,430-i*10,{230,230,230});
+        if(i>0) {
+            rect(f,778,528,2,48,{255,220,40});rect(f,932,528,2,48,{255,220,40});
+        }
         // Later frames contain the short asymmetric rail occlusion caused
         // by hit effects. Current head fill still proves an attached body.
         if(i>0) {
@@ -227,6 +230,35 @@ TEST(GameObserver, HoldRailAnchorSurvivesOneMissingRailButRequiresCurrentPairToR
     rect(old,778,200,2,376,{230,230,230});rect(old,932,200,2,376,{230,230,230});
     rect(old,783,552,144,20,{160,175,185});clock.set(old.capture_complete_ns);
     EXPECT_TRUE(observer.process(old).targets.empty());
+}
+TEST(GameObserver, HeldTiltedBodyPreservesAnIndependentThinTapInsideItsRails) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot result;std::uint64_t held_id=0,tap_id=0;
+    const Vec2 u{.9916004112,-.1293391841},n{-u.y,u.x};
+    const Vec2 on_line{640+u.x*220,575+u.y*220};
+    for(int i=0;i<8;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);oriented_box(f,{640,575},u,1300,2,{255,255,255});
+        const int offset=i<3?-30+i*10:0;
+        const Vec2 head{on_line.x+n.x*offset,on_line.y+n.y*offset};
+        const Vec2 body{head.x-n.x*100,head.y-n.y*100};
+        oriented_box(f,body,u,144,200,i<3?std::array<std::uint8_t,3>{40,190,255}:
+            std::array<std::uint8_t,3>{160,175,185});
+        if(i>=3) {
+            for(const int side:{-1,1}) oriented_box(f,
+                {body.x+side*u.x*76,body.y+side*u.y*76},u,2,200,{245,245,245});
+            const int depth=80-(i-3)*10;
+            oriented_box(f,{on_line.x-n.x*depth,on_line.y-n.y*depth},u,120,8,{40,190,255});
+        }
+        clock.set(f.capture_complete_ns);result=observer.process(f);
+        if(i<3) {ASSERT_EQ(result.targets.size(),1);held_id=result.targets[0].note_id;continue;}
+        ASSERT_EQ(result.targets.size(),2)<<decision_json(result).dump();
+        const auto held=std::find_if(result.targets.begin(),result.targets.end(),[](const auto& t){return t.note.kind==NoteKind::hold;});
+        const auto thin=std::find_if(result.targets.begin(),result.targets.end(),[](const auto& t){return t.note.kind==NoteKind::tap;});
+        ASSERT_NE(held,result.targets.end());ASSERT_NE(thin,result.targets.end());
+        EXPECT_EQ(held->note_id,held_id);EXPECT_TRUE(held->note.outline_evidence);
+        if(!tap_id) tap_id=thin->note_id;EXPECT_EQ(thin->note_id,tap_id);EXPECT_GT(thin->note.height,12);
+    }
+    const auto thin=std::find_if(result.targets.begin(),result.targets.end(),[](const auto& t){return t.note.kind==NoteKind::tap;});
+    ASSERT_TRUE(thin->crossing_ns);EXPECT_NEAR(thin->velocity,500,20);
 }
 TEST(GameObserver, ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsCore) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;DecisionSnapshot result;

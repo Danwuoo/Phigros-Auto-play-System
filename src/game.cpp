@@ -76,7 +76,8 @@ bool same_geometry(const SceneContext& a,const SceneContext& b) {
 }
 struct HoldRails {double depth=0;std::optional<Vec2> tail;};
 std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& note,double minimum_depth,
-                                          int maximum_gap=12,int lateral_radius=16,bool bound_by_fill=false) {
+                                          int maximum_gap=12,int lateral_radius=16,bool bound_by_fill=false,
+                                          bool allow_yellow=false) {
     const Vec2 normal{-note.tangent.y,note.tangent.x};
     std::array<int,2> extent{};
     for(int side=0;side<2;++side) {
@@ -104,8 +105,9 @@ std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& 
                           y=static_cast<int>(std::lround(cy+offset*note.tangent.y));
                 if(x<0||y<0||x>=f.width||y>=f.height) continue;
                 const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
-                found=std::min({p[0],p[1],p[2]})>170 &&
-                    std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<30;
+                found=(std::min({p[0],p[1],p[2]})>170 &&
+                    std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<30)||
+                    (allow_yellow&&classify(p)==2);
             }
             if(found) {last=depth;gaps=0;}
             else if((last>=0&&(gaps+=2)>maximum_gap)||(last<0&&depth>=maximum_gap)) break;
@@ -198,7 +200,7 @@ std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& s
                 // Both front rows already prove current fill. A bounded
                 // particle occlusion may interrupt either attached rail;
                 // body fill still bounds the tail and both ends must agree.
-                const auto rails=visible_hold_rails(f,candidate,std::max(24.0,width*.25),32,4,true);
+                const auto rails=visible_hold_rails(f,candidate,std::max(24.0,width*.25),32,4,true,true);
                 if(!rails) continue;
                 candidate.tail=rails->tail;candidate.height=rails->depth;candidate.rails_geometry=true;
                 candidate.head_on_line=std::abs(normal_distance(candidate.center,line))<=8;
@@ -601,7 +603,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             note.center={note.center.x+d*line->tangent.y,note.center.y-d*line->tangent.x};
             note.tangent=line->tangent;
             const bool held_fill=recent_rails&&hold_fill_near_head(f,note);
-            rails=visible_hold_rails(f,note,16,held_fill?32:12);
+            rails=visible_hold_rails(f,note,16,held_fill?32:12,16,false,held_fill);
             if(!rails) continue;
             note.head_on_line=true;
         }
@@ -615,7 +617,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             if(incoming.kind!=NoteKind::hold&&incoming.kind!=NoteKind::tap) return false;
             // An independent thin Tap can coexist with a Hold. Require a
             // body-shaped component enclosed by the currently observed rails.
-            if(incoming.kind==NoteKind::tap&&incoming.height<12) return false;
+            if(incoming.kind==NoteKind::tap&&incoming.height<12+std::abs(note.tangent.y)*incoming.width) return false;
             const double along=(incoming.center.x-note.center.x)*note.tangent.x+
                                (incoming.center.y-note.center.y)*note.tangent.y;
             const double across=normal_distance(incoming.center,*line)-normal_distance(note.center,*line);

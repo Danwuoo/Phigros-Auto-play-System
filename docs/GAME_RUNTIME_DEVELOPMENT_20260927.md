@@ -225,3 +225,9 @@ v35 run `cpp-observe-17904549524972216`，35 ms、185 秒 STOPPED，9,873 消費
 frame 6034／QPC 144943787955000 ns 的已到線 Hold 在黃色特效覆蓋下，當幀重建又輸出上部 note747（head≈515、depth62）與下部 note738（head≈570、depth46），而完整外輪廓仍約在 y=440–600。這次是 body 的內部黃色覆蓋被當成填色結束，同時讓前方「沒有藍色」誤充 leading edge，並非已知裝飾線錯配本身。後續 observer15 保留新前緣兩排藍／灰支持，在 body 結束／前方不延續的判斷中額外識別當前黃色覆蓋；黃色本身不能建立新 Hold。合成完整漸層／斜向／裝飾／短 rail 遮擋序列新增跨 body 的黃色帶，原完整 head／tail／速度要求保留。尚待 build v36 回歸及實測。
 
 v36 的黃色帶合成回歸 76／76 通過（5.35 秒），但原始 v35 frame6034 的單張重算仍出現多個假 head／短 tail；保留 `assist-v35-anomaly-observer15-v36.json`，不宣稱離線單幀已解決。v37–v38 增加 bounded held-region 排他：只有 90 ms 內、已驗證到線的 rail anchor，才抑制其寬度與近期 body 範圍內重新建立完整頭部；原既有路徑仍必須重新驗證當前雙側輪廓才能續接。已到線 anchor 不被未到線的破碎 rail 候選覆寫。8 張已按住 Hold 的合成序列加入內部黃色覆蓋，仍核對完整身分／到線位置、獨立另一 Hold／薄 Tap，以及輪廓消失時停止形成候選。v38 Release build／76／76 通過（5.23 秒）；v37 只完成編譯，未進實战。保持 observer15／planner5，下一輪全曲仍須驗證，最高分仍為 v25。
+
+v38 run `cpp-observe-17904557528045827`，35 ms、185 秒 STOPPED，9,632 消費 frames／1,345 真實命令；結算 828,880 分、Perfect349／Good10／Bad1／Miss33、max combo58、accuracy90.46%、Early1／Late9，未 AP。Miss 為目前最低，但總分與 accuracy 仍未超過 v25，不能視為受控淨改善。原始 raw SHA-256 `b69604edd32c94a33c2e19c72425ac1bbafd86a4bd41a5d6652523cd91906e6d`、result PNG／manual JSON、兩張異常圖與 `assist-lead35-v38-analysis.json` 保存，無中途第二 gRPC stream。down Tap135／Hold98／Drag132／Flick6，4 contact conflict／1 gate evidence expiry；runtime5 UI／6 source revoke。Hold 時長 n98，p50／p95／p99／max=490.853／1352.047／1811.434／2290.860 ms。frame5846仍有已到線 Hold 的黃色輪廓／覆蓋下窄碎片；純白轮廓支持不足仍未解決。
+
+檢查另外發現近期身分續接的薄 Tap 保護仍以畫面包圍盒高度<12判斷，與當幀重建的線法向厚度保護不一致；傾斜的8px薄 Tap會有高於12px的包圍盒，可能被刪掉。v39新增合成已到線斜Hold、其body內獨立薄Tap的五幀運動，要求保留兩身分及500px/s預測；既有8張輪廓續接正例另增加下部48px黃色rail。等待回歸重現後才修正，無新增實機完成宣告。
+
+v39僅新增/加強兩個合成測試，75／77失敗，確實重現已到線黃色rail拆裂及傾斜薄Tap被刪除。v40 observer16同步使用法向薄帶保護；對具有當前兩排藍／灰前緣的完整重建，或近期rail anchor加當前head填色證據成立的到線續接，才允許黃色覆蓋參與雙側rail支持。無填色、單rail、過長gap、空輪廓等負例保留。v40 Release build／77／77通過，CTest5.09秒；planner5／35ms不變，尚待完整實測，不把合成通過等同AP。
