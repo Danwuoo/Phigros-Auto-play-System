@@ -243,3 +243,13 @@ v43 的 C++ 分析器依 journal 順序維持最多 16 個已成功 RPC down／u
 同一份 v42 raw 的 `assist-lead35-v42-conflicts-v43.json` 顯示重複 Hold 及黃色候選的例子，尚無足夠證據增加已驗證的兩指容量。intent 303 被拒時兩指由 Tap／Flick 使用；其 Drag 候選約 (411,542)、148×26，而 Tap 約 (410,541)、126×8。原 highlight 過濾在高度超過 24 px 時跳過，會讓完整黃色端帽建立多餘身分。v44 新增 148×26 的連通外框與獨立 Drag、Tap、Flick 的運動回歸，確實失敗（4 候選而非 3），原失敗紀錄保留。
 
 observer18 以黄色帶相對自身方向的法向厚度，核對可見色芯寬度的 25%（最低仍 24 px），再沿用位置、寬度及當前藍／紅芯像素支持過濾 highlight；不是放寬全部 Drag 形狀。v45 Release 80／80 通過（5.57 秒）。v46 同步 manifest 版本，decision schema2 以可選診斷欄位輸出 `rails_geometry`／`head_on_line`，便於下一輪分辨色芯與已驗證輪廓。planner5／35ms、兩指能力門控與來源期限不變，尚待完整實測。
+
+v46 Release 80／80 通過（5.70 秒）；run `cpp-observe-17904581124806726`，35 ms、185 秒 STOPPED、9,596 消費 frames／1,299 真實命令。結算 812,926 分、Perfect344／Good8／Bad0／Miss41、max combo52、accuracy88.85%、Early1／Late7，未 AP，較 v42 退步。raw SHA-256 `c3e5523ccaff632c56c83d6d115fbee69d1269c25378d1a939a5430221dc0a5e`；manual結果、PNG、兩張異常圖及 `assist-lead35-v46-analysis.json` 保存，沒有中途第二 gRPC stream。down Tap138／Hold95／Drag134／Flick6，4 contact conflict／1 gate expiry；runtime2 UI／2 source revoke。四個衝突仍含重複 Hold、highlight碎片或同列早到的多個Drag，不能據此宣告真實三押。
+
+## 短突發的時間跨度與歷史保留（build v47–v48）
+
+v46 frame3169／QPC148051508178600 的 note334，位置約(423,256)，離線約320px，只有3個樣本卻預測58.5ms後撞線；速度5466.8px/s、殘差0.00084px，已下壓的同列兩個Drag亦在遠離線的位置。其前三次觀察的host時間跨度不足30ms，低殘差不能證明可可靠外推。v47新增短突發合成回歸，3張1.8ms間隔、每張前進10px重現5555.6px/s／零殘差與錯誤短期crossing。原失敗保存；穩定段末尾尚在350ms horizon之外，該正例的crossing assertion另須按實際距離校正，不放寬速度要求。
+
+observer19 對相對運動擬合、追蹤速度外推及接近中rail anchor搜尋要求至少30ms時間跨度。近期點以各身分10ms host-QPC bucket保留最新坐標，bucket起點不隨替換推進，避免連續快幀永遠只剩一點；最多六點並嚴格移除90ms以前的點。每幀仍辨識／更新當前evidence，不以降頻代替來源期限，active Hold 的當前輪廓核對不依賴新crossing。schema2追加可選 `history_span_ns`，記錄实际預測跨度；絕對source age仍unknown，30ms為待實測的估計政策，不是遊戲判定時窗。等待回歸與實機驗證。
+
+v48 Release 80／81，只有上述穩定段誤設crossing的assertion失敗；短突發拒絕已成立，其餘既有回歸皆通過。v49依該段實際距離核對 `outside_short_horizon` 與500px/s，另新增25張／4ms連續快幀，要求最多六點、跨度≤90ms、至少30ms的實際crossing與500px/s（±20）預測。Release 82／82通過（5.68秒）；只修正正例的錯誤horizon期待，未放寬原負例或速度要求。v47／v48未進實戰，下一輪仍35ms／兩指。

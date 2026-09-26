@@ -22,6 +22,8 @@ const char* name(NoteKind v) {
     }
 }
 namespace {
+constexpr Nanoseconds minimum_fit_span_ns=30'000'000;
+constexpr Nanoseconds history_bucket_ns=10'000'000;
 struct Component {
     int color = 0, count = 0, x0 = 0, y0 = 0, x1 = 0, y1 = 0;
     double sx = 0, sy = 0, xx = 0, yy = 0, xy = 0;
@@ -583,7 +585,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             for(const auto& p:track.points) if(p.rails&&now-p.t<=90'000'000) {
                 mt+=(p.t-now)/1e9;mx+=p.p.x;my+=p.p.y;++count;
             }
-            if(count<3) continue;
+            if(count<3||track.points.back().t-track.points.front().t<minimum_fit_span_ns) continue;
             mt/=count;mx/=count;my/=count;
             for(const auto& p:track.points) if(p.rails&&now-p.t<=90'000'000) {
                 const double dt=(p.t-now)/1e9-mt;den+=dt*dt;nx+=dt*(p.p.x-mx);ny+=dt*(p.p.y-my);
@@ -680,7 +682,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                 point=shortened_holds[ni]->center;
             }
             Vec2 expected=t.last;
-            if(t.points.size()>=2) {
+            if(t.points.size()>=2&&t.points.back().t-t.points.front().t>=minimum_fit_span_ns) {
                 const auto& a=t.points[t.points.size()>3?t.points.size()-4:0]; const auto& b=t.points.back();
                 const double dt=(b.t-a.t)/1e9;
                 if(dt>0) {const double future=(now-b.t)/1e9;
@@ -740,12 +742,20 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             const auto latest_distance=normal_distance(target.note.center,l);
             target.hit={target.note.center.x+latest_distance*l.tangent.y,
                         target.note.center.y-latest_distance*l.tangent.x};
-            match->points.push_back({now,target.note.center,l,target.note.tail,target.note.rails_geometry});
-            while(match->points.size()>6 || (match->points.size()>3&&now-match->points.front().t>90'000'000))
+            const Point point{now,target.note.center,l,target.note.tail,target.note.rails_geometry};
+            // A delivery burst must not evict the complete temporal baseline.
+            // Keep the newest point in each bounded, host-clock 10 ms bucket.
+            if(!match->points.empty()&&now-match->point_bucket_ns<history_bucket_ns)
+                match->points.back()=point;
+            else {match->points.push_back(point);match->point_bucket_ns=now;}
+            while(match->points.size()>6 || (!match->points.empty()&&now-match->points.front().t>90'000'000))
                 match->points.pop_front();
             target.samples=static_cast<int>(match->points.size());
+            target.history_span_ns=match->points.back().t-match->points.front().t;
             target.reason="insufficient_history";
-            if(match->points.size()>=3) {
+            if(match->points.size()>=3&&target.history_span_ns<minimum_fit_span_ns)
+                target.reason="insufficient_temporal_span";
+            if(match->points.size()>=3&&target.history_span_ns>=minimum_fit_span_ns) {
                 double mt=0,md=0,denom=0,numerator=0;
                 for(const auto& p:match->points) {mt+=(p.t-now)/1e9; md+=normal_distance(p.p,p.line);}
                 mt/=match->points.size(); md/=match->points.size();
@@ -964,7 +974,7 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
             t.note.outline_evidence?"hold_parallel_rails_and_recent_identity":"color_core"},
         {"rails_geometry",t.note.rails_geometry},{"head_on_line",t.note.head_on_line},
         {"relative_distance_px",t.distance},{"relative_velocity_px_s",t.velocity},
-        {"residual_px",t.residual},{"samples",t.samples},{"reason",t.reason}});
+        {"residual_px",t.residual},{"samples",t.samples},{"history_span_ns",t.history_span_ns},{"reason",t.reason}});
     return {{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
         {"note_anchor_semantics","tap_flick_core_center_hold_leading_edge"},
         {"epoch",s.context.epoch},{"generation",s.context.generation},{"geometry_version",s.context.geometry},

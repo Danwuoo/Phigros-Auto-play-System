@@ -44,6 +44,7 @@ struct GameTarget {
     std::string reason;
     int samples = 0;
     std::optional<Nanoseconds> tail_crossing_ns;
+    Nanoseconds history_span_ns = 0;
 };
 struct DecisionSnapshot {
     std::uint64_t sequence = 0;
@@ -76,6 +77,7 @@ private:
         NoteCandidate appearance;
         std::optional<NoteCandidate> rail_anchor;
         Nanoseconds rail_observed = 0;
+        Nanoseconds point_bucket_ns = 0;
     };
     const Clock& clock_;
     SceneContext previous_;

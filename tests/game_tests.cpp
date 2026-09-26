@@ -432,6 +432,39 @@ TEST(GameObserver, TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag) 
     }
     for(const auto& t:result.targets) {ASSERT_TRUE(t.crossing_ns);EXPECT_NEAR(t.velocity,500,20);}
 }
+TEST(GameObserver, ShortCaptureBurstCannotPredictAnImminentCrossingFromFarNotes) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot result;
+    for(int i=0;i<3;++i) {
+        auto f=image(i+1,i*1'800'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,359,236+i*10,128,6,{255,240,20});
+        clock.set(f.capture_complete_ns);result=observer.process(f);
+    }
+    ASSERT_TRUE(result.playing_gate);ASSERT_EQ(result.targets.size(),1);
+    // Three near-instant host deliveries do not establish a reliable speed.
+    // This live failure yielded ~5,467 px/s with nearly zero fit residual.
+    EXPECT_FALSE(result.targets[0].crossing_ns)<<decision_json(result).dump();
+    for(int i=1;i<=7;++i) {
+        auto f=image(i+3,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,359,244+i*10,128,6,{255,240,20});
+        clock.set(f.capture_complete_ns);result=observer.process(f);
+    }
+    ASSERT_EQ(result.targets.size(),1);
+    EXPECT_FALSE(result.targets[0].crossing_ns);EXPECT_EQ(result.targets[0].reason,"outside_short_horizon");
+    EXPECT_GE(result.targets[0].history_span_ns,30'000'000);
+    EXPECT_NEAR(result.targets[0].velocity,500,20);
+}
+TEST(GameObserver, ContinuousFastFramesKeepEnoughTemporalHistoryToPredict) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot result;
+    for(int i=0;i<25;++i) {
+        auto f=image(i+1,i*4'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,359,400+i*2,128,6,{255,240,20});
+        clock.set(f.capture_complete_ns);result=observer.process(f);
+        ASSERT_EQ(result.targets.size(),1);
+        EXPECT_LE(result.targets[0].samples,6);EXPECT_LE(result.targets[0].history_span_ns,90'000'000);
+    }
+    ASSERT_TRUE(result.targets[0].crossing_ns);EXPECT_GE(result.targets[0].history_span_ns,30'000'000);
+    EXPECT_NEAR(result.targets[0].velocity,500,20);
+}
 TEST(GameObserver, SlantedLineSurvivesIntersectionAndMatchesNoteOrientation) {
     FakeClock clock; GameObserver observer(clock); DecisionSnapshot s;
     const Vec2 u{.9950371902,-.0995037190},n{.0995037190,.9950371902};
