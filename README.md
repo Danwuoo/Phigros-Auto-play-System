@@ -4,6 +4,8 @@
 
 ## C++ 建置與執行
 
+2026-09-26 五擷取候選依使用者最新要求以短測收尾：原第四版日程保留 37 個有效正常批次與 3 個失敗，沒有完成原 96 批或本版長測。初步主用／備用建議、必要恢復短測和限制見 [比較報告](docs/CAPTURE_COMPARISON_20260926.md)；`performance_pass=null`，新原生／scrcpy 後端仍僅供 bench。剩餘完整矩陣及 30 分鐘驗證已取消，不會自動續跑。
+
 合併前的獨立審查與修正見 [合併驗收](docs/CPP_MERGE_REVIEW_20260925.md)：Release／Debug／ASan 各 21/21 測試通過，實機性能門檻仍待確認。依賴版本與授權原文見 [第三方紀錄](docs/THIRD_PARTY_NOTICES.md)。
 
 需要 Visual Studio 2026 MSVC、Windows SDK、CMake 3.28+，以及包含 vcpkg 的工具鏈。`vcpkg.json` 鎖定 registry baseline。這個工作樹的深路徑會使 gRPC 的 Ninja 暫存檔碰到 Windows 260 字元限制；初次安裝依賴時，請指定短的 buildtrees／packages 路徑。以下路徑為本工作樹的例子，其他 checkout 請改用自己的短路徑。

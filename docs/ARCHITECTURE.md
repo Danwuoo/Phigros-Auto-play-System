@@ -2,6 +2,8 @@
 
 ## T6 擷取候選開發契約（2026-09-26）
 
+量測範圍依使用者最新 [縮短修訂](CAPTURE_FIVE_BACKENDS_PLAN_20260926.md#最新使用者修訂縮短剩餘測試) 收尾：本版原 96 批未完成，正常資料與必要恢復／120 秒補測提供初步選型，沒有長期穩定性或完整故障／負載資格。結論與適用條件見 [比較報告](CAPTURE_COMPARISON_20260926.md)。下列資料所有權、pixels-only、時域和有效性硬條件仍適用；新後端接入 Session／M3 需另做顯式門控。
+
 Native Fixture counter 驗證需要色彩四區與獨立黑白 binary 交叉核對；相同的壓縮色差可能碰巧保留 XOR，不能只憑四區 byte 一致就接受。raw 保留兩個解碼值；lossy 分支只供 scrcpy 的正式 schema，其他後端仍要求 exact 格式。這些真值只供測試／離線分析，沒有進入遊戲決策。DXGI 整個 crop 必須位於 client 內，並位於選定 monitor 內，不能以九個內部可見點代替完整邊界檢查。
 
 WGC frame pool 容量二，每次回呼最多取兩張並 Close 被替換圖；以主機／SystemRelativeTime 的 elapsed 差監控相對積壓，預設 250 ms 上限，舊圖先丟棄再進 GPU readback。時戳倒退終止來源；stream 重建時另建 guard。該時間不是 Android render age。停止時 shared callback state 先 closing 並排空正在執行的回呼，後撤銷事件、Close session/pool；本機 Windows 的 `GraphicsCapture.dll_unloaded` 崩潰以僅常駐 System32 模組修正，session/frame/GPU 資源照常回收。證據與完整重測見 [就緒紀錄](CAPTURE_READINESS_20260926.md)。

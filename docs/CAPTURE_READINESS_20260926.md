@@ -2,7 +2,7 @@
 
 本文件隨開發及實測更新。`development_smoke` 僅證明取圖與基本正確性；只有同一凍結版本的 `formal_campaign` 可供候選比較。正常來源研究範圍為 40–59 Hz，目標設定和實際可見更新率分別報告。性能數值門檻尚未決定，`performance_pass=null`。
 
-使用者已授權自行關閉及重啟 AVD。gRPC 控制／優化、WGC、DXGI 與 scrcpy 已通過開發取圖檢查，待同版正式集中測試；MMAP 維持 `diagnostic-only`。目前尚無正式選型結果。
+使用者已授權自行關閉及重啟 AVD，並修訂為有上限的短測收尾。r4 原 96 批日程未完成：40 批記錄、37 成功／3 失敗，另有一批中斷；剩餘矩陣及長測取消。現有正常對照足夠，不重跑，只補主用／備用的關鍵恢復與 120 秒短期穩定性。初步選型與完整限制見 [集中比較](CAPTURE_COMPARISON_20260926.md)。本版沒有長期穩定性驗證，MMAP 維持 `diagnostic-only`，數值性能門檻未通過。
 
 | 路徑 | 實作與輸出 | 就緒證據 | 限制／門控 |
 | --- | --- | --- | --- |
@@ -13,6 +13,15 @@
 | scrcpy v4.1 H.264 | 官方 server hash 固定、Android 軟體編碼、FFmpeg 9.0.2 軟體解碼、CPU RGB24 | Release 成功；CTest 25/25；[獨立視窗 5 秒短測](../measurements/standalone_20260926_scrcpy_01/summary.json) 221/221 消費影格可解碼、方向正確 | audio/control 關閉；封包 4 MiB 上限；積壓超限最多重連一次；不接 Session |
 | Emulator MMAP | 有界映射、通知後 snapshot、四區 tearing 診斷 | [版本與契約證據](MMAP_FEASIBILITY_20260926.md)；[5 秒診斷](../measurements/five_20260926_smoke_mmap_01/summary.json) 239/239 消費影格可解碼 | **diagnostic-only**；proto 明示可能 tearing，無已證實 writer ownership／fence；像素通過不證明一致性 |
 
+上表為逐階段的開發證據；最新凍結版本 `2d43dd7` Release／CTest 為 **29/29**。最新修訂下的結案：gRPC control／fast、WGC、DXGI 為 `implemented-and-tested`（僅已測條件），scrcpy 固定軟體 H.264 配置為 `failed-with-reproduction`，MMAP 為 `diagnostic-only`。這些研究狀態不授予遊戲／Session 或性能資格。
+
+## 最新縮短收尾結果
+
+- r4 成功的 37 個完整正常窗口已由同版 C++ analyzer 驗 hash、APK、binary、環境與像素；93,473/93,473 消費圖可解碼。原 96 批仍未完成；3 個失敗、1 個中斷與 55 個未開始全數保留，見 [收尾分類](../measurements/shortened_followup_20260926_01/original-campaign-closure.json)。
+- 不再補正常矩陣；gRPC fast／WGC 各一次 20 秒 pause500、一次 20 秒 recover100（十秒解除）、一次 120 秒短期穩定性，三秒暖機。六批 6/6 成功，12,102/12,102 消費圖可解碼；實測與清理 wall 606.27 秒，無 PAS 留在背景。
+- 初步主用 gRPC fast；WGC 僅為有條件備援候選：120 秒跟隨 71.47%、不同圖 34.21 Hz（可見來源 47.87 Hz），尚不能宣稱性能合格備援。gRPC 同場景為 99.36%、44.32 Hz（來源 44.60 Hz）。
+- 原完整 CPU／GPU／memory／preview／static／driver fault 與長測未覆蓋；舊版本長測不替代本版。整輪 supplement、11 項 manual-fault 計畫依新修訂取消，沒有長測自動續跑排程。逐批分布、資源與未驗證限制見 [比較報告](CAPTURE_COMPARISON_20260926.md)。
+
 ## 已核對的測試環境
 
 - AVD `phigros`：設定 5 vCPU／8192 MiB／host GPU／720×1280 自然方向；Fixture 橫向輸出 1280×720。獨立視窗冷啟動後 guest 為 5 個 processor、`MemTotal` 8,130,816 kB（先前內嵌執行為 8,130,828 kB）。
@@ -22,7 +31,7 @@
 - 官方 scrcpy v4.1 tag commit `49c9501fb26f456bbf4a341dd68879f670c67452`，server SHA-256 `deacb991ed2509715160ffdc7907e47b4160eb30d1566217e9047fd5b8850cae`。在本 AVD 以原版 server 的 `list_encoders=true` 查得 H.264 `c2.android.avc.encoder` 為軟體編碼器；候選顯式使用該名稱及固定 8 Mb/s、最高 60 fps。
 - 先前內嵌視窗的 gRPC API 回傳 720×1280、rotation 0，使用明示 -90° 正規化；該資料保留為開發證據。獨立視窗旋轉為橫向後，[新 gRPC 短測](../measurements/standalone_20260926_grpc_01/summary.json) 直接回傳 1280×720、rotation 1（142/142 消費影格可解碼），正式 campaign 使用 `--source-rotation 1`，不啟用旋轉轉換。
 
-## 集中日程與證據
+## 原集中日程與證據（長測要求已由最新修訂取代）
 
 `pas capture-five-campaign` 先寫 `campaign-plan.json`，再依固定輪換順序串行執行每個可行候選 40／48／57 Hz 各三批，每批 10 秒暖機加 60 秒量測。每批前的 Fixture READY 條件為 10 秒內從四區像素讀到兩個不同 counter。日程還包含慢消費、500 ms 接收暫停、CPU／256 MiB 記憶體負載、10 分鐘穩定性與 MMAP 診斷。所有批次寫出 raw JSONL、manifest、診斷 PNG 與 SHA-256；分析可從 raw 重新計算並產生 `comparison.md`。
 
@@ -54,7 +63,7 @@
 
 暫停／靜止恢復有獨立 ADB pixels reference，包含呼叫前後 QPC bracket；分析尋找第一張消費 counter 不早於該 reference 的圖。該指標包含診斷呼叫等待，不稱為精確的來源年齡或瞬時恢復下限。靜止的兩個 reference counter 必須相同，恢復 reference 必須更新。
 
-開發回歸：Release／CTest **27/27**；WGC 暫停短測丟棄一張、gRPC 丟棄三張，所有消費圖可解碼；WGC／gRPC 靜止測試的兩個獨立 reference 相同、恢復更新；WGC GPU＋preview 開發測試完成 570 dispatch、9 個 GPU 採樣，280/280 消費圖可解碼。DXGI preview 開發短測 133/133，移動左右誤差 0；scrcpy 短測 124/124，左邊緣誤差 0–1 px、右邊緣 0 px。上述短測不作性能排名。接續新 revision 完整重測及依選型規則的主用／備用三十分鐘驗證。
+開發回歸：Release／CTest **27/27**；WGC 暫停短測丟棄一張、gRPC 丟棄三張，所有消費圖可解碼；WGC／gRPC 靜止測試的兩個獨立 reference 相同、恢復更新；WGC GPU＋preview 開發測試完成 570 dispatch、9 個 GPU 採樣，280/280 消費圖可解碼。DXGI preview 開發短測 133/133，移動左右誤差 0；scrcpy 短測 124/124，左邊緣誤差 0–1 px、右邊緣 0 px。上述短測不作性能排名。當時規劃的完整重測及三十分鐘驗證，後由最新使用者修訂取消；本版長期穩定性仍未驗證。
 
 ## 第三版色彩 identity 異常與交叉核對
 
@@ -64,6 +73,6 @@
 
 每張 native-v2 Fixture 現在先讀 binary counter，再接受與其相符的四區 exact identity；不同則使用既有四區最大 colour error ≤32 的 lossy 分支，後端 schema 門控不變。raw 同時記 `binary_counter`／`exact_colour_identity`，重算報告分開計數碰巧通過 exact 四區但與 binary 不同的情形。不使用歷史 counter 強制修正或推算下一值。
 
-另外 DXGI crop 現在在擷取前後都檢查整個矩形位於 HWND client 內；九個可見取樣點不足以排除邊緣超出一個 pixel。新增越界一個 pixel／負 origin 回歸。static host probe 的 GPU missing 說明也明確指向 bench 的動態 PDH resource events。Release／CTest **29/29** 通過；同一新版 APK、encoder、解析度與日程保持固定，第四版將整組重測。
+另外 DXGI crop 現在在擷取前後都檢查整個矩形位於 HWND client 內；九個可見取樣點不足以排除邊緣超出一個 pixel。新增越界一個 pixel／負 origin 回歸。static host probe 的 GPU missing 說明也明確指向 bench 的動態 PDH resource events。Release／CTest **29/29** 通過；同一新版 APK、encoder、解析度保持固定，第四版已開始整組測試，但在 40 批已記錄後依最新修訂收尾，原矩陣未完成。
 
 交叉核對後開發短測：scrcpy 188/188、gRPC 70/70、WGC 70/70 可解碼，counter order 有效且位置真值皆可讀；短測未出現色彩／binary collision，不把合成回歸稱作新的實機 collision。DXGI `crop_x=1,width=1280` 在 1280-pixel client 被明確拒絕，raw 只有 CONNECTING，沒有發布污染圖；[拒絕紀錄](../measurements/r4_dxgi_client_overshoot_01_stderr.log)。

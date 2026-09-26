@@ -4,6 +4,11 @@ Status: **diagnostic-only** for the installed Android Emulator 37.1.11.0,
 build 15917651. MMAP is excluded from Session and from eligible capture
 recommendations.
 
+The user's latest shortened-test revision leaves this conclusion unchanged.
+No new MMAP long run was added; the r4 diagnostic case was not executed.
+Earlier diagnostic pixels remain historical evidence, without producer
+ownership or fence proof. See the [current comparison](CAPTURE_COMPARISON_20260926.md).
+
 ## Version and source evidence
 
 - `emulator.exe -version` on this host reports 37.1.11.0, build 15917651.
