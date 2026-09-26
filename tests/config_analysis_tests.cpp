@@ -195,6 +195,16 @@ TEST(GameAnalysis, FutureWaitAndAlreadyLateDecisionAreDifferentDistributions) {
     EXPECT_EQ(result.at("unclassified_down_deadlines"),1);
     EXPECT_DOUBLE_EQ(result.at("contact_duration_ms_by_basis").at("tap").at("p50").get<double>(),19);
     EXPECT_EQ(result.at("real_downs_by_basis").at("unknown"),1);
+    EXPECT_EQ(result.at("unknown_predicted_downs"),3);
+}
+TEST(GameAnalysis, LateRecoverySeparatesPredictionDeadlineFromActualDispatch) {
+    const TempJson raw(R"({"event":"game_plan_accepted","intent_id":1,"basis":"tap","accepted_ns":50000000,"predicted_down_ns":20000000,"steps":[{"phase":0,"due_ns":50000000}]}
+{"event":"game_touch_receipt","intent_id":1,"phase":0,"scheduled_ns":50000000,"injection_start_ns":51000000,"injection_return_ns":52000000}
+)");
+    const auto result=analyze_game_jsonl(raw.path());
+    EXPECT_EQ(result.at("intentionally_clamped_downs"),1);EXPECT_EQ(result.at("unknown_predicted_downs"),0);
+    EXPECT_DOUBLE_EQ(result.at("real_schedule_lateness_ms").at("p50").get<double>(),1);
+    EXPECT_DOUBLE_EQ(result.at("predicted_deadline_down_lateness_ms").at("p50").get<double>(),31);
 }
 TEST(GameAnalysis, PlayingEvidenceExcludesResultCoverCandidates) {
     const TempJson raw(R"({"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"lines":[],"capture_complete_ns":1000000,"recognition_start_ns":1000000,"recognition_end_ns":2000000,"targets":[{"kind":"tap","reason":"line_unobservable","crossing_ns":null}]}
@@ -227,4 +237,6 @@ TEST(GameAnalysis, TrackOutcomesDistinguishMissingPredictionAndCanceledAcceptedI
     for(const auto* key:{"never_predicted","prediction_never_near","near_prediction_not_accepted",
         "accepted_without_down","actual_down"}) EXPECT_EQ(outcomes.at(key),1);
     EXPECT_EQ(result.at("observed_track_evictions"),0);
+    EXPECT_NEAR(result.at("first_near_prediction_available_lead_ms_by_track_outcome").at("tap_near_prediction_not_accepted")
+        .at("p50").get<double>(),19.999999,.000001);
 }

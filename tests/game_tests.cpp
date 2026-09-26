@@ -359,6 +359,36 @@ TEST(GameOwner, SingleMissingDragFrameKeepsFutureDownButGraceExpiryCancelsIt) {
             clock.set(50'000'000);EXPECT_TRUE(owner.poll().empty());EXPECT_TRUE(touch.contacts().empty());}
     }
 }
+TEST(GameOwner, DragCoverageSurvivesLateCrossingWithoutReplayingDown) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{4,0,30'000'000});
+    auto t=target(1,0,30'000'000);t.note.kind=NoteKind::drag;t.samples=4;
+    auto s=snapshot(1,0);s.targets={t};owner.accept(s);
+    clock.set(15'000'000);ASSERT_EQ(owner.poll().size(),1);
+    for(int i=1;i<=4;++i) {
+        clock.set(i*20'000'000);s=snapshot(i+1,clock.now_ns());t.evidence_ns=clock.now_ns();
+        t.expires_ns=clock.now_ns()+100'000'000;t.revision=i+1;s.targets={t};owner.accept(s);owner.poll();
+    }
+    // At 70 ms, a delayed visible crossing is still covered; no second down.
+    EXPECT_EQ(touch.contacts().size(),1);EXPECT_EQ(touch.receipts().size(),1);
+    clock.set(105'000'000);ASSERT_EQ(owner.poll().size(),1);EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(touch.receipts().size(),2);
+}
+TEST(GameOwner, BoundedLatePredictionRecoversNowButOldEvidenceAndExecutedDownCannotReplay) {
+    for(const auto kind:{NoteKind::tap,NoteKind::hold,NoteKind::drag,NoteKind::flick}) {
+        FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{15,20'000'000,30'000'000});
+        auto t=target(1,0,-10'000'000);t.note.kind=kind;t.samples=4;auto s=snapshot(1,0);s.targets={t};
+        owner.accept(s);const auto plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);
+        EXPECT_EQ(plans.front().steps.front().due_ns,0);ASSERT_EQ(owner.poll().size(),1);
+        ASSERT_TRUE(plans.front().predicted_down_ns);EXPECT_EQ(*plans.front().predicted_down_ns,
+            kind==NoteKind::drag?-45'000'000:-30'000'000);
+        clock.set(5'000'000);s=snapshot(2,clock.now_ns());t.evidence_ns=clock.now_ns();t.revision=2;s.targets={t};
+        owner.accept(s);owner.poll();EXPECT_EQ(touch.receipts().size(),1);owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    }
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{15,20'000'000,30'000'000});
+    auto s=snapshot(1,0);s.targets={target(1,0,-41'000'000)};owner.accept(s);EXPECT_TRUE(owner.poll().empty());
+    clock.set(100'000'000);s=snapshot(2,0);s.targets={target(2,0,100'000'000)};owner.accept(s);
+    EXPECT_TRUE(owner.poll().empty());EXPECT_TRUE(touch.contacts().empty());
+}
 TEST(GameRuntime, ActualCaptureOptionsUseEffectiveProfileGuard) {
     RuntimeConfig c; c.width=1280; c.height=720; c.source_rotation=1;
     c.max_relative_lag_ms=73; c.grpc_read_chunk_kib=256;

@@ -172,7 +172,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
             {"dry_owner",!assist},{"game_observer_version",8},{"executable_sha256",sha256_file(executable)},
-            {"game_planner_version",2},
+            {"game_planner_version",4},{"drag_planned_contact_ms",90},{"late_prediction_recovery_limit_ms",60},
             {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},
             {"game_uncertainty_ms",config.game_uncertainty_ms},
             {"action_wait","win32_high_resolution_relative_timer_and_event"},
@@ -346,10 +346,12 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                         for(const auto& plan:owner.take_accepted_plans()) {
                             json steps=json::array(); for(const auto& step:plan.steps)
                                 steps.push_back({{"phase",static_cast<int>(step.phase)},{"x",step.x},{"y",step.y},{"due_ns",step.due_ns}});
+                            json predicted_down=nullptr;
+                            if(plan.predicted_down_ns) predicted_down=*plan.predicted_down_ns;
                             record({{"event","game_plan_accepted"},{"intent_id",plan.intent_id},{"note_id",plan.note_id},
                                 {"epoch",plan.epoch},{"generation",plan.generation},{"geometry_version",plan.geometry_version},
                                 {"revision",plan.revision},{"prefix_offset",plan.prefix_offset},{"evidence_ns",plan.evidence_ns},
-                                {"accepted_ns",clock.now_ns()},
+                                {"accepted_ns",clock.now_ns()},{"predicted_down_ns",predicted_down},
                                 {"valid_until_ns",plan.valid_until_ns},{"source_frame",plan.source_frame_sequence},
                                 {"steps",steps},{"basis",plan.basis},{"real_input",assist}});
                         }

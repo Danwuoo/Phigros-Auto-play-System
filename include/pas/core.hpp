@@ -195,6 +195,9 @@ struct ContactPlan {
     // Active revisions may compact old executed steps, retaining at least the
     // last executed step for position/phase verification and release duty.
     std::uint64_t prefix_offset = 0;
+    // Diagnostic original prediction, before intentional late dispatch clamp.
+    // The scheduler uses steps' QPC deadlines only.
+    std::optional<Nanoseconds> predicted_down_ns;
 };
 
 struct TouchCommand {

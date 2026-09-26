@@ -625,15 +625,16 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
                t.uncertainty_ns<=options_.uncertainty_ns&&
                t.hit.x>=0&&t.hit.x<s.context.width&&t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height) {
                 const auto due=*t.crossing_ns-options_.lead_ns;
-                if(due-clock_.now_ns()>=-20'000'000&&due-clock_.now_ns()<=60'000'000) {
-                    const auto down=due-(id.kind==NoteKind::drag?15'000'000:0);
+                if(due-clock_.now_ns()>=-60'000'000&&due-clock_.now_ns()<=60'000'000) {
+                    const auto down=std::max(clock_.now_ns(),due-(id.kind==NoteKind::drag?15'000'000:0));
+                    plan.predicted_down_ns=due-(id.kind==NoteKind::drag?15'000'000:0);
                     const auto shift=down-plan.steps.front().due_ns;
                     const double dx=t.hit.x-plan.steps.front().x,dy=t.hit.y-plan.steps.front().y;
                     for(auto& step:plan.steps) {
                         step.due_ns+=shift;step.x+=dx;
                         step.y=std::min(s.context.height*.94,step.y+dy);
                     }
-                    plan.valid_until_ns=due+30'000'000;
+                    plan.valid_until_ns=down+45'000'000;
                 }
             }
             if(id.kind==NoteKind::hold&&*cursor>plan.prefix_offset) {
@@ -662,9 +663,13 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
                       t.note.kind==NoteKind::drag?4:t.note.kind==NoteKind::flick?8:0;
         if(!(options_.enabled_types&bit)||!t.crossing_ns||t.reason!="prediction_observe_only"||
            t.uncertainty_ns>options_.uncertainty_ns||t.expires_ns<=clock_.now_ns()) continue;
-        const auto due=*t.crossing_ns-options_.lead_ns;
-        const auto remaining=due-clock_.now_ns();
-        if(remaining< -20'000'000||remaining>60'000'000) continue;
+        const auto predicted_due=*t.crossing_ns-options_.lead_ns;
+        const auto now=clock_.now_ns();
+        const auto remaining=predicted_due-now;
+        if(remaining< -60'000'000||remaining>60'000'000) continue;
+        // Late but bounded live evidence may still be recoverable. Dispatch
+        // immediately; retain the original prediction separately in the journal.
+        const auto due=std::max(predicted_due,now+(t.note.kind==NoteKind::drag?15'000'000:0));
         if(t.hit.x<0||t.hit.y<s.context.height*.12||t.hit.x>=s.context.width||t.hit.y>=s.context.height) {
             last_rejection_="unsafe_region"; continue;
         }
@@ -678,7 +683,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
             plan.steps.back().due_ns=std::max(due+20'000'000,std::min(release,due+70'000'000));
         } else if(t.note.kind==NoteKind::drag) {
             plan.steps.front().due_ns=due-15'000'000;
-            plan.steps.back().due_ns=due+35'000'000;
+            plan.steps.back().due_ns=due+75'000'000;
         } else if(t.note.kind==NoteKind::flick) {
             plan.steps.pop_back();
             for(int k=1;k<=4;++k) plan.steps.push_back({Phase::move,t.hit.x,
@@ -686,6 +691,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
             const auto last=plan.steps.back(); plan.steps.push_back({Phase::up,last.x,last.y,due+52'000'000});
         }
         plan.note_id=t.note_id; plan.generation=s.context.generation; plan.geometry_version=s.context.geometry;
+        plan.predicted_down_ns=predicted_due-(t.note.kind==NoteKind::drag?15'000'000:0);
         id.submitted=scheduler_.submit(plan); id.kind=t.note.kind; id.plan=plan;
         if(id.submitted) {
             if(accepted_plans_.size()>=256) throw std::runtime_error("accepted plan diagnostic capacity");
@@ -746,10 +752,12 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::map<std::string,std::uint64_t> kinds,reasons,uis,accepted_kinds,real_phases,rejection_reasons,revoke_reasons;
     std::map<std::string,std::uint64_t> playing_kinds,playing_reasons;
     struct IntentEvidence {std::string kind; std::optional<Nanoseconds> down; std::optional<bool> planned_future;
-        std::uint64_t note=0;};
-    struct TrackEvidence {std::string kind;Nanoseconds last=0;bool predicted=false,near=false,accepted=false,down=false;};
+        std::uint64_t note=0;std::optional<Nanoseconds> predicted_down;};
+    struct TrackEvidence {std::string kind;Nanoseconds last=0;bool predicted=false,near=false,accepted=false,down=false;
+        std::optional<double> first_near_available_lead_ms;};
     std::map<std::uint64_t,TrackEvidence> observed_tracks;
     std::map<std::string,std::map<std::string,std::uint64_t>> track_outcomes;
+    std::map<std::string,std::vector<double>> first_near_leads;
     std::uint64_t track_evictions=0;
     std::map<std::uint64_t,IntentEvidence> intent_evidence;
     std::map<std::string,std::uint64_t> actual_down_kinds;
@@ -759,6 +767,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::vector<double> processing,uncertainty,residual,intervals,down_skew;
     std::vector<double> actual_lateness,rpc_duration;
     std::vector<double> future_down_lateness,already_past_down_lateness;
+    std::vector<double> predicted_deadline_down_lateness;
+    std::uint64_t intentionally_clamped_downs=0,unknown_predicted_downs=0;
     std::uint64_t unclassified_down_deadlines=0;
     Nanoseconds previous=0,last_down_due=-1,last_down_start=0;
     const auto sample=[](std::vector<double>& values,double value) {if(values.size()<100'000) values.push_back(value);};
@@ -770,6 +780,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         const std::string outcome=evidence.down?"actual_down":evidence.accepted?"accepted_without_down":
             evidence.near?"near_prediction_not_accepted":evidence.predicted?"prediction_never_near":"never_predicted";
         count(track_outcomes[evidence.kind],outcome);
+        if(evidence.first_near_available_lead_ms)
+            sample(first_near_leads[evidence.kind+"_"+outcome],*evidence.first_near_available_lead_ms);
     };
     std::string line;
     while(std::getline(file,line)) {
@@ -805,8 +817,12 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                         if(!target.at("crossing_ns").is_null()) {
                             evidence.predicted=true;
                             const auto gap=target.at("crossing_ns").get<Nanoseconds>()-t;
-                            evidence.near=evidence.near||(gap>=-40'000'000&&gap<=100'000'000&&
-                                target.at("uncertainty_ns").get<Nanoseconds>()<=30'000'000);
+                            const bool near=gap>=-40'000'000&&gap<=100'000'000&&
+                                target.at("uncertainty_ns").get<Nanoseconds>()<=30'000'000;
+                            if(near&&!evidence.first_near_available_lead_ms)
+                                evidence.first_near_available_lead_ms=(target.at("crossing_ns").get<Nanoseconds>()-
+                                    e.at("recognition_end_ns").get<Nanoseconds>())/1e6;
+                            evidence.near=evidence.near||near;
                         }
                     }
                 }
@@ -825,6 +841,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             if(auto track=observed_tracks.find(evidence.note);track!=observed_tracks.end()) track->second.accepted=true;
             if(!evidence.down&&e.contains("accepted_ns")&&!e.at("steps").empty()&&e.at("steps").front().at("phase")==0)
                 evidence.planned_future=e.at("steps").front().at("due_ns").get<Nanoseconds>()>e.at("accepted_ns").get<Nanoseconds>();
+            if(!evidence.down&&e.contains("predicted_down_ns")&&!e.at("predicted_down_ns").is_null())
+                evidence.predicted_down=e.at("predicted_down_ns").get<Nanoseconds>();
             if(intent>latest_intent) {
                 latest_intent=intent;
                 count(accepted_kinds,e.value("basis","unknown"));
@@ -849,11 +867,15 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                 sample(down_lateness[kind],(start-e.at("scheduled_ns").get<Nanoseconds>())/1e6);
                 if(found!=intent_evidence.end()) {
                     found->second.down=start;
+                    if(found->second.predicted_down) {
+                        sample(predicted_deadline_down_lateness,(start-*found->second.predicted_down)/1e6);
+                        if(*found->second.predicted_down<e.at("scheduled_ns").get<Nanoseconds>()) ++intentionally_clamped_downs;
+                    } else ++unknown_predicted_downs;
                     if(auto track=observed_tracks.find(found->second.note);track!=observed_tracks.end()) track->second.down=true;
                     if(found->second.planned_future) sample(*found->second.planned_future?future_down_lateness:
                         already_past_down_lateness,(start-e.at("scheduled_ns").get<Nanoseconds>())/1e6);
                     else ++unclassified_down_deadlines;
-                } else ++unclassified_down_deadlines;
+                } else {++unclassified_down_deadlines;++unknown_predicted_downs;}
             } else if(e.at("phase")==2&&found!=intent_evidence.end()) {
                 if(found->second.down) sample(contact_durations[kind],(start-*found->second.down)/1e6);
                 intent_evidence.erase(found);
@@ -862,14 +884,16 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         else if(event=="scheduler_rejection") {++rejections; count(rejection_reasons,e.value("reason","unknown"));}
     }
     for(const auto& [id,evidence]:observed_tracks) finish_track(evidence);
-    json durations=json::object(),lateness_by_kind=json::object();
+    json durations=json::object(),lateness_by_kind=json::object(),first_leads=json::object();
     for(const auto& [kind,values]:contact_durations) durations[kind]=distribution(values);
     for(const auto& [kind,values]:down_lateness) lateness_by_kind[kind]=distribution(values);
+    for(const auto& [outcome,values]:first_near_leads) first_leads[outcome]=distribution(values);
     return {{"schema_version",1},{"frames",frames},{"playing_gate_frames",gate_frames},
         {"ui_occurrences",uis},{"note_candidate_occurrences",kinds},{"target_reason_occurrences",reasons},
         {"playing_no_line_frames",playing_no_line},{"playing_note_candidate_occurrences",playing_kinds},
         {"playing_target_reason_occurrences",playing_reasons},
         {"observed_track_outcomes_by_kind",track_outcomes},{"observed_track_evictions",track_evictions},
+        {"first_near_prediction_available_lead_ms_by_track_outcome",first_leads},
         {"track_outcome_semantics","pixels identities, not chart notes; near means crossing relative to capture [-40,100]ms and uncertainty<=30ms"},
         {"prediction_occurrences",predictions},{"multi_line_frames",multi_line},
         {"dry_command_count",dry},{"runtime_revokes",revokes},{"scheduler_rejections",rejections},
@@ -880,6 +904,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         {"future_at_accept_down_lateness_ms",distribution(future_down_lateness)},
         {"already_past_at_accept_down_lateness_ms",distribution(already_past_down_lateness)},
         {"unclassified_down_deadlines",unclassified_down_deadlines},
+        {"predicted_deadline_down_lateness_ms",distribution(predicted_deadline_down_lateness)},
+        {"intentionally_clamped_downs",intentionally_clamped_downs},{"unknown_predicted_downs",unknown_predicted_downs},
         {"scheduler_rejections_by_reason",rejection_reasons},{"runtime_revokes_by_reason",revoke_reasons},
         {"game_rpc_duration_ms",distribution(rpc_duration)},
         {"capture_interval_ms",distribution(intervals)},{"recognition_duration_ms",distribution(processing)},

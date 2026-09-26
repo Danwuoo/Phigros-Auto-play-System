@@ -1,6 +1,6 @@
 # 遊戲 runtime 開發與實測紀錄（2026-09-27）
 
-狀態：第一批 runtime／scheduler、遊戲 observer 與自動 PLAY 已接入；後續 G2 assist 有真實命中，四類完整試驗最佳結算 Perfect 302／Good 8／Bad 0／Miss 83。G1 全項、G3 所需能力與 HD／IN AP 尚未驗收。下列每批的版本、故障與結果分開保留，不以新修正回填舊 run。
+狀態：第一批 runtime／scheduler、遊戲 observer 與自動 PLAY 已接入；後續 G2 assist 有真實命中，四類完整試驗最高分結算 Perfect 317／Good 6／Bad 0／Miss 70。G1 全項、G3 所需能力與 HD／IN AP 尚未驗收。下列每批的版本、故障與結果分開保留，不以新修正回填舊 run。
 
 ## 規劃與工作區
 
@@ -142,4 +142,24 @@ build v12 的色彩不變性回歸暴露斜線跨畫面 fit 與 PCA 重複候選
 
 build v15 的全曲 run `cpp-observe-17904472910856189`，20 ms、185 秒正常 STOPPED，結算 695,763 分、Perfect 293／Good 11／Bad 0／Miss 89、max combo 33、accuracy 76.37%、Early 0／Late 11，未 AP，未超越 v11。只少量 CU 觀察、無中途第二擷取 stream。結果圖、manual JSON、`assist-all-v15-analysis.json` 與 raw 保留；真實 down 為 Tap 136／Hold 82／Drag 90／Flick 6，Drag accepted without down 32；6 個 scheduler 拒絕（1 conflict、5 late）。這輪尚未含 40 ms 漏辨容忍，不能歸因為其結果。
 
-build v16 的 `ctest-assist-v16.log` 67／67 通過：單張 Drag 缺候選後恢復時，原待送 down 正常執行；到 40 ms 仍未恢復則取消、停止釋放且不重播。manifest 保留 observer version 8，新增 planner version 2，與更新前二進位 hash 分開記錄。此版的完整實戰驗證進行中，不能先算能力／AP 通過。
+build v16 的 `ctest-assist-v16.log` 67／67 通過：單張 Drag 缺候選後恢復時，原待送 down 正常執行；到 40 ms 仍未恢復則取消、停止釋放且不重播。manifest 保留 observer version 8，新增 planner version 2，與更新前二進位 hash 分開記錄。
+
+run `cpp-observe-17904476712326667`，20 ms、185 秒正常 STOPPED，9,859 消費 frames、1,268 真實命令。結算 727,863 分、Perfect 307／Good 10／Bad 1／Miss 75、max combo 39、accuracy 79.77%、Early 1／Late 9，仍未 AP；無中途第二擷取 stream。`assist-all-v16-confirmed-analysis.json` raw SHA-256 `690c1a825176269dff9078a0eb322143451193a007eaca1741a7494f363bc358`：實際 down Tap 134／Hold 80／Drag 108／Flick 5，Drag accepted without down 10，6 contact conflict。相較 v15 的 32 個未下壓 Drag 接受計畫減少，但逐 Note 判定仍 unknown，增加觸控不等於全部成功。
+
+v16 shell 重導向的 `live-assist-all-v16.json` 為空，原因未確定；程式自身 `summary.json`、manifest、events 原樣完整保留，正式狀態以該 summary 核對。以空檔取得 run path 的後續分析呼叫失敗（path is required），錯誤 `assist-all-v16-analysis.json` 保留；改用已核對 run 路徑產生上述 confirmed 分析。結果 PNG／manual JSON 均已保存，沒有用推定填補 raw。
+
+build v17 將 Drag 計畫接觸從 50 ms 擴至 90 ms（仍受新鮮證據、40 ms 漏辨及即時全局撤銷約束），檢查捕捉時間的 jitter／表觀 crossing 誤差是否使短接觸漏接；這是待實測假設，不宣稱 Drag 判定窗或可承受 90 ms 擷取延遲。新增晚 crossing 仍有接觸、沒有重播 down 的合成回歸，68／68 通過；planner version 3，manifest 明列 90 ms。
+
+run `cpp-observe-17904480876064329`，20 ms、185 秒 STOPPED，10,069 消費 frames、1,311 真實命令。結算 741,997 分、Perfect 310／Good 13／Bad 0／Miss 70、max combo 50、accuracy 81.03%、Early 0／Late 13；未 AP。無中途第二 stream，結果 PNG／manual JSON 保存。`assist-all-v17-analysis.json` raw SHA-256 `a2c2687d11a9defc6d5d91ed33b7db96fa4f6f05d76eb3410bd094e4c7626235`：down Tap 136／Hold 86／Drag 101／Flick 6，Drag accepted without down 4、near prediction not accepted 28，contact conflict 1。v16 的有限近線原始決策亦顯示一段成對 Drag 間隔約 74 px／1453 px/s≈51 ms；但 v17 實際衝突只有 1，不能只憑理論重疊將 70 個 Miss 歸因於 contact capacity。
+
+build v18 保留 observer 8／planner 3 行為，只增加 first near prediction 相對 recognition end 的 available lead 診斷，68／68 通過。重算 v17：未接受的近線 Hold 候選 n=8，第一次可靠近線預測 available lead p50／max = −26.405／−0.850 ms；Tap n=3 = −19.788／−1.993 ms。這些是追蹤候選，不能單獨視為真实漏掉的 Note。
+
+同版 35 ms profile 的 run `cpp-observe-17904484620758492`，185 秒正常 STOPPED，結算 744,809 分、Perfect 317／Good 6／Bad 0／Miss 70、max combo 39、accuracy 81.65%、Early 1／Late 5。無中途第二 stream，結果 PNG／manual JSON、raw 與 `assist-lead35-v18-analysis.json` 保存；Good 改善而 Miss 不變，仍未 AP。新 planned deadline 恢復將另開版本，不回填本輪。
+
+## 有界晚預測補接（build v19）
+
+planner version 4 將接受下限從校準後 due 已過 20 ms 改為不超過 60 ms，超過仍拒絕；可靠的 crossing／uncertainty、新鮮 100 ms pixels、獨立 PLAYING gate 與安全座標仍必要。尚未 down 時可把過去期限改為立即執行，四類未執行步驟維持順序與名義接觸長度；已 down 不重播，停止／失效照舊釋放。這是待實測恢復政策，60 ms 不是遊戲 Perfect 時窗、來源絕對延遲或 scheduler 可容忍的 jitter。
+
+`ContactPlan` 附加可選 `predicted_down_ns`（host QPC），只供診斷，不替代 scheduler 的步驟期限。初始／真正使用的新 pending 預測保存原下壓期限；active 已下壓時保留。計畫 journal 同步輸出，C++ 分開 real schedule lateness、predicted deadline lateness、intentionally clamped downs 與缺歷史欄位的 unknown。補接當下約 1 ms 的 schedule lateness 不能掩蓋原預測晚到 31 ms；短回歸明確核對兩者。
+
+build v19 的 `ctest-assist-v19.log` 70／70 通過，包含四類有界晚預測立即 down、原預測期限保存、超限／來源過期拒絕、active down 不重播及兩組晚到量分開核對。此版本先用 20 ms profile 開完整實戰，結果尚待結算。
