@@ -297,3 +297,13 @@ v57 observer24只修正診斷分割：中央HUD ROI內先裁切、再建立半�
 v57 Release四項GameDiagnostics短回歸通過（101ms），原v56 frame878 PNG單幀重算 `assist-v56-combo-observer24-v57.json` 正確輸出1字形；PNG SHA-256 `dde3f198dbf710f044810ba43208453311f0e4545144263d50fba4e5d3d9a5a8`。這只核對該張圖，不把離線影像回饋input，也不宣告其他所有消失事件已消除。Debug與ASan正在建置，期間沒有遊玩／capture stream。
 
 v57同一份source的Release／Debug／嚴格預設ASan各94／94通過，CTest總時間12.69／12.07／30.99秒。ASAN_OPTIONS未設定，沿用v27的BuildTools14.51與Community14.50 sanitizer支援；pinned第三方vcpkg二進位仍未插樁。build／test日誌均保存，沒有與遊玩／capture stream併行。開始observer24／planner6／35ms的下一輪完整HD診斷，AP仍未達標。
+
+v57 run `cpp-observe-17904621971078348`，35ms／185秒STOPPED，9,518消費frames／993真實命令。結算807,277分、Perfect332／Good16／Bad0／Miss45、max combo91、accuracy87.12%、Early0／Late16，未AP；combo提高不代表總體改善。raw SHA-256 `b791ef0fe210f5b97822ff395e388dcd597cbbbfd01f59dc0d1cb7c5b49d6eae`、manual結果／PNG、兩張診斷圖與分析保存。down Tap134／Hold90／Drag106／Flick6，2 coverage／4 conflict／1 gate expiry，runtime6 source／1 UI revoke。first combo disappearance frame796確實無中央數字，長Hold仍在畫面：Note51在frame782–784連續無候選，intent6成功down QPC152090557282800後，在152090592690600由missing evidence取消並成功up；frame785又恢復同Note，但已完成intent不重播。此段無source／UI revoke。下一步核對頂端裁切藍色body跨過75%畫面高度時的辨識缺口，不放寬60ms Hold grace／100ms來源期限。
+
+v58新增14張裁切長Hold由藍色接近、跨540px高度、到線後轉灰的觀測＋owner回歸，原observer24即通過（82ms）。已有anchor與完整當前輪廓足夠時，近期路徑可以補回，因此不能把v57失敗完全歸於高度限制。另補v58b無任何先前anchor、第一次就由550px裁切body開始的當幀雙側輪廓＋前緣回歸；此例針對direct route目前排除頂端seed的限制。v58與v58b尚未進實戰。
+
+v58b單項確實失敗：首次550px裁切body、兩條完整白rails及清楚leading edge仍沒有候選，日誌保留。v59 observer25僅讓觸及頂端的藍色seed走當前雙側輪廓重建，高度上限95%／底端至少20%畫面，普通seed保持75%／頂部10%排除；前緣雙側填色、paired rails、tail未知、來源與grace期限均不變。另加入無rail／單rail／無fill的裁切負例。此改動補足無歷史幾何路徑，不宣稱v57那三張未保留的missing frame已被唯一定位；等待Release完整回歸及實機驗證。
+
+v59 Release96／97通過（6.97秒）。首次裁切幾何已出現、所有原回歸與新負例通過；唯一失敗是新正例末張讓head從到線跨到590px，卻仍期待既有on-line Hold路徑繼續以500px/s離開線。原路徑在到線後使用stationary leading anchor，並非本例要核對的「首次已裁切接近」階段。v60将五張正例改為550→566px／200px/s，保持全部初始高度>540px、相同輪廓、同ID、leading位置／未知tail／有效預測要求；不放寬幾何容差或原負例。到線轉灰與owner續接仍由v58的14幀回歸核對。v59未進實戰，失敗保留，等待v60完整回歸。
+
+v60 Release97／97通過（6.83秒），observer25／planner6／35ms／兩指不變，開始完整HD驗證。Debug／ASan的94項通過僅屬v57 source，不能代替本次新增裁切seed路徑的完整驗證。

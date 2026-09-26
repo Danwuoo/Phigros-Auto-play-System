@@ -412,6 +412,65 @@ TEST(GameObserver, ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsC
     ASSERT_TRUE(result.targets[0].crossing_ns);EXPECT_NEAR(result.targets[0].velocity,500,20);
     EXPECT_LT(result.targets[0].residual,2);
 }
+
+TEST(GameObserver, ClippedTopHoldKeepsCurrentRailsAndContactAcrossTheHeightLimit) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t id=0;
+    for(int i=0;i<14;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=std::min(575,500+i*10);
+        rect(f,403,0,144,head,i<8?std::array<std::uint8_t,3>{40,190,255}:
+            std::array<std::uint8_t,3>{160,175,185});
+        rect(f,400,0,2,head,{245,245,245});rect(f,550,0,2,head,{245,245,245});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1)<<"frame "<<i<<" "<<decision_json(s).dump();
+        const auto& t=s.targets[0];ASSERT_EQ(t.note.kind,NoteKind::hold);
+        if(!id) id=t.note_id;EXPECT_EQ(t.note_id,id);
+        EXPECT_NEAR(t.note.center.x,475,4);EXPECT_NEAR(t.note.center.y,head-4,5);
+        EXPECT_TRUE(t.note.rails_geometry);EXPECT_FALSE(t.note.tail); // Cropped tail stays unknown.
+        if(i>=4&&i<8) {ASSERT_TRUE(t.crossing_ns);EXPECT_NEAR(t.velocity,500,20);}
+        owner.accept(s);owner.poll();
+        if(i>=7) EXPECT_EQ(touch.contacts().size(),1)<<"frame "<<i;
+    }
+    auto blank=image(15,280'000'000);hud(blank);rect(blank,0,575,1280,2,{255,255,255});
+    clock.set(blank.capture_complete_ns);owner.accept(observer.process(blank));owner.poll();
+    blank.sequence=16;blank.capture_complete_ns=340'000'000;clock.set(blank.capture_complete_ns);
+    owner.accept(observer.process(blank));owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),1);
+}
+
+TEST(GameObserver, ClippedTopHoldCanValidateCurrentLeadingEdgeWithoutPriorAnchor) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot s;std::uint64_t id=0;
+    for(int i=0;i<5;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=550+i*4; // Stay before the on-line Hold transition.
+        rect(f,403,0,144,head,{40,190,255});
+        rect(f,400,0,2,head,{245,245,245});rect(f,550,0,2,head,{245,245,245});
+        clock.set(f.capture_complete_ns);s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1)<<"frame "<<i<<" "<<decision_json(s).dump();
+        const auto& t=s.targets[0];EXPECT_EQ(t.note.kind,NoteKind::hold);
+        EXPECT_TRUE(t.note.direct_rails_evidence);EXPECT_TRUE(t.note.rails_geometry);
+        EXPECT_FALSE(t.note.tail);EXPECT_NEAR(t.note.center.x,475,3);
+        EXPECT_NEAR(t.note.center.y,head-4,4);
+        if(!id) id=t.note_id;EXPECT_EQ(t.note_id,id);
+    }
+    ASSERT_TRUE(s.targets[0].crossing_ns);EXPECT_NEAR(s.targets[0].velocity,200,10);
+    EXPECT_TRUE(s.playing_gate);
+}
+
+TEST(GameObserver, ClippedBlueColumnWithoutBothRailsCannotBecomeANewHold) {
+    for(int rails=0;rails<2;++rails) {
+        FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
+        rect(f,0,575,1280,2,{255,255,255});rect(f,403,0,144,560,{40,190,255});
+        if(rails) rect(f,400,0,2,560,{245,245,245});
+        clock.set(1);EXPECT_TRUE(observer.process(f).targets.empty());
+    }
+    FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
+    rect(f,0,575,1280,2,{255,255,255});
+    rect(f,400,0,2,560,{245,245,245});rect(f,550,0,2,560,{245,245,245});
+    clock.set(1);EXPECT_TRUE(observer.process(f).targets.empty()); // No body fill.
+}
 TEST(GameObserver, CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore) {
     FakeClock clock;GameObserver observer(clock);DecisionSnapshot result;std::uint64_t id=0;
     const Vec2 u{.9987523389,-.04993761694},n{-u.y,u.x};

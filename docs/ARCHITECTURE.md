@@ -6,6 +6,8 @@ observer23的 `combo_digit_glyphs` 是中央HUD白色字形計數（上限16）�
 
 observer24在中央HUD的有限ROI內先裁切再分割白色字形，避免畫面裝飾線在ROI外接到數字，使full-frame連通區被高度限制誤刪。半解析度mask／queue最多65,536格，字形計數上限16；单獨窄直線、進度條與COMBO字樣不計入。這仍是可誤辨的診斷形狀觀察，不修改HUD gameplay gate或Note演算法。
 
+observer25的direct Hold route另可使用觸及畫面頂端（y0≤2px）的藍色seed；此seed高度上限為95%畫面、底端須至少達20%畫面。一般seed仍維持原75%高度及10%頂部排除。例外仍只用當前雙側輪廓、兩排前緣填色與可見leading edge建立幾何；裁切tail保持unknown，沒有白色雙側／前緣不能建立Hold。來源期限、近期anchor期限、接觸grace及種類判斷未放寬。
+
 observer22 分開即時 HUD 分類與 motion history 的連續性。相同 generation／geometry／尺寸／rotation、sequence／QPC 嚴格遞增，且間隔≤250ms時，可以保留三幀分類計數；每張仍必須有當前 pause／score 像素、有效 source 與容量才能開 gate。epoch 改變或間隔>100ms立即清空所有 motion／rail anchor，新目標需重新累積跨度。缺 HUD、無效 source、重播、>250ms間隔或幾何改變皆冷啟動分類；容量失效當幀關閉gate，分類計數在HUD階段容量檢查失效時清空。此上限只屬分類確認政策，不能刷新旧 evidence；scheduler／supervisor 的100ms期限及epoch撤銷不變。
 
 observer21 的hit是實際頭部在當前可見線上的正交投影；擬合distance只估計crossing與uncertainty，不以殘差偏移hit。planner6可讓新鮮可靠、同位置≤2px且覆蓋時間重疊的Drag沿用已active的Drag plan，只延長up、保留原down及prefix。alias／primary仍包含於128 identity上限；仍有支持的成員可維持同一接觸，全部失效或gate撤銷則釋放。pending down、其他Note種類及不同位置不共用；兩指能力與100ms来源期限維持。`game_drag_coverage`最多128筆待取，分析區分physical down與有successful RPC歷史支持的本機共用；遊戲判定仍unknown。

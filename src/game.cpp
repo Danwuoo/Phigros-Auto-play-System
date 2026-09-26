@@ -575,8 +575,13 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         std::size_t seeds=0;
         if(main) for(const auto& c:all) {
             const double w=c.x1-c.x0+2.0,h=c.y1-c.y0+2.0;
-            if(c.color!=1||w<16||w>f.width*.20||h<18||h>f.height*.75||
-               c.y0<f.height*.10||c.count*4<w*h*.13) continue;
+            const bool clipped_top=c.y0<=2;
+            if(c.color!=1||w<16||w>f.width*.20||h<18||
+               h>f.height*(clipped_top?.95:.75)||
+               (clipped_top?c.y1<f.height*.20:c.y0<f.height*.10)||c.count*4<w*h*.13) continue;
+            // Clipping may make a valid body taller than the generic color
+            // model permits. It still needs current paired rails, two front
+            // fill rows and a visible leading edge; the tail stays unknown.
             if(++seeds>128) {out.capacity_valid=false;break;}
             const auto body=current_hold_body(f,c,*main);if(!body) continue;
             // A recently validated, on-line Hold already owns this visible
