@@ -833,17 +833,14 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
         if (candidate == "grpc-control" || candidate == "grpc-fast") {
             choice.backend = "emulator-grpc";
             choice.grpc_copy_mode = candidate == "grpc-control" ? "legacy-rows" : "fast-memcpy";
-            choice.source_rotation = 0;
-            choice.grpc_rotate_ccw = true;
         } else if (candidate == "mmap-diagnostic") {
             choice.backend = "emulator-grpc";
             choice.transport = "mmap";
             choice.diagnostic_mmap = true;
-            choice.source_rotation = 0;
-            choice.grpc_rotate_ccw = true;
         } else {
             choice.backend = candidate;
             choice.source_rotation = 0;
+            choice.grpc_rotate_ccw = false;
             if (candidate == "wgc") {
                 if (choice.wgc_crop_x >= 0) choice.crop_x = choice.wgc_crop_x;
                 if (choice.wgc_crop_y >= 0) choice.crop_y = choice.wgc_crop_y;
@@ -933,6 +930,8 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
         {"wgc_crop", {options.wgc_crop_x, options.wgc_crop_y}},
         {"dxgi_crop", {options.dxgi_crop_x, options.dxgi_crop_y}},
         {"width", options.width}, {"height", options.height},
+        {"grpc_source_rotation", options.source_rotation},
+        {"grpc_normalization_rotation_degrees", options.grpc_rotate_ccw ? -90 : 0},
         {"scrcpy_video_encoder", options.scrcpy_video_encoder},
         {"scrcpy_video_bit_rate", options.scrcpy_video_bit_rate},
         {"scrcpy_max_fps", options.scrcpy_max_fps},

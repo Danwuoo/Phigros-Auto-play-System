@@ -61,7 +61,7 @@ add_library(pas_bench STATIC src/bench.cpp src/touch_bench.cpp src/native_captur
 target_include_directories(pas_bench PUBLIC include)
 target_include_directories(pas_bench PRIVATE ${FFMPEG_INCLUDE_DIRS})
 target_link_directories(pas_bench PRIVATE ${FFMPEG_LIBRARY_DIRS})
-target_link_libraries(pas_bench PUBLIC pas_emulator pas_core PRIVATE psapi windowsapp runtimeobject ws2_32 ${FFMPEG_LIBRARIES})
+target_link_libraries(pas_bench PUBLIC pas_emulator pas_core PRIVATE psapi windowsapp runtimeobject ws2_32 dwmapi ${FFMPEG_LIBRARIES})
 if(MSVC)
   target_compile_options(pas_bench PRIVATE /W4 /permissive- /EHsc)
 endif()

@@ -36,7 +36,7 @@ Reproduce diagnostic acquisition with the installed native Fixture APK:
 ```powershell
 out/release-v145/Release/pas.exe capture-bench --serial emulator-5554 `
   --capture-backend emulator-grpc --grpc-transport mmap --diagnostic-mmap `
-  --width 1280 --height 720 --source-rotation 0 --grpc-rotate-ccw --fixture `
+  --width 1280 --height 720 --source-rotation 1 --fixture `
   --fixture-apk measurements/fixture_cpp_v2/pas-capture-fixture-v2.apk `
   --warmup-s 10 --duration-s 60 --output-dir measurements/mmap-diagnostic-NEWID
 ```

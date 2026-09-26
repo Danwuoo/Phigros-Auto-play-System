@@ -14,6 +14,7 @@
 #include <windows.h>
 #include <d3d11.h>
 #include <dxgi1_2.h>
+#include <dwmapi.h>
 #include <windows.graphics.capture.interop.h>
 #include <windows.graphics.directx.direct3d11.interop.h>
 #include <winrt/base.h>
@@ -87,6 +88,7 @@ BOOL CALLBACK describe_window(HWND hwnd, LPARAM parameter) {
     auto* entries = reinterpret_cast<nlohmann::json*>(parameter);
     entries->push_back({{"hwnd", handle_text(hwnd)}, {"pid", pid},
                         {"class", utf8(klass)}, {"title", utf8(title)},
+                        {"minimized", IsIconic(hwnd) != FALSE}, {"dpi", GetDpiForWindow(hwnd)},
                         {"client_origin_screen", {origin.x, origin.y}},
                         {"client_size", {client.right, client.bottom}}});
     return TRUE;
@@ -207,6 +209,7 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
           "CreateDirect3D11DeviceFromDXGIDevice");
     auto winrt_device = inspectable.as<winrt::Windows::Graphics::DirectX::Direct3D11::IDirect3DDevice>();
     const auto initial_size = item.Size();
+    const auto initial_dpi = GetDpiForWindow(hwnd);
     auto pool = Direct3D11CaptureFramePool::CreateFreeThreaded(winrt_device,
         winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized,
         2, initial_size);
@@ -224,6 +227,8 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
             const auto received = clock.now_ns();
             if (on_signal) on_signal("source_callback", received);
             check_window(hwnd);
+            if (GetDpiForWindow(hwnd) != initial_dpi)
+                throw std::runtime_error("WGC window DPI changed; crop profile invalidated");
             const auto size = frame.ContentSize();
             if (size.Width != initial_size.Width || size.Height != initial_size.Height)
                 throw std::runtime_error("WGC content size changed; explicit crop profile must be recalibrated");
@@ -302,12 +307,18 @@ void stream_dxgi(const Clock& clock, const NativeCaptureOptions& options, HWND h
     d3d.create(chosen_adapter.get());
     auto output1 = chosen_output.as<IDXGIOutput1>();
     std::optional<std::uint64_t> last_hash;
-    while (!stop.stop_requested() && !cancelled.load()) {
-        com_ptr<IDXGIOutputDuplication> duplication;
-        check(output1->DuplicateOutput(d3d.device.get(), duplication.put()), "DuplicateOutput");
-        ++generation;
-        while (!stop.stop_requested() && !cancelled.load()) {
+    RECT initial_client{};
+    check_window(hwnd);
+    if (!GetClientRect(hwnd, &initial_client))
+        throw std::runtime_error("DXGI initial client geometry unavailable");
+    const auto initial_dpi = GetDpiForWindow(hwnd);
+    const auto checked_crop = [&] {
             check_window(hwnd);
+            RECT client{};
+            if (!GetClientRect(hwnd, &client) ||
+                client.right != initial_client.right || client.bottom != initial_client.bottom ||
+                GetDpiForWindow(hwnd) != initial_dpi)
+                throw std::runtime_error("DXGI client size or DPI changed; crop profile invalidated");
             if (GetAncestor(GetForegroundWindow(), GA_ROOT) != GetAncestor(hwnd, GA_ROOT))
                 throw std::runtime_error("DXGI target is no longer the foreground window");
             POINT origin{};
@@ -323,10 +334,23 @@ void stream_dxgi(const Clock& clock, const NativeCaptureOptions& options, HWND h
             for (auto above = GetWindow(root, GW_HWNDPREV); above;
                  above = GetWindow(above, GW_HWNDPREV)) {
                 if (!IsWindowVisible(above) || IsIconic(above)) continue;
+                DWORD cloaked = 0;
+                if (SUCCEEDED(DwmGetWindowAttribute(above, DWMWA_CLOAKED, &cloaked, sizeof(cloaked))) &&
+                    cloaked) continue;
                 RECT overlay{}, overlap{};
-                if (GetWindowRect(above, &overlay) &&
-                    IntersectRect(&overlap, &target_rect, &overlay))
-                    throw std::runtime_error("DXGI target region intersects a higher window");
+                const bool bounds_known = SUCCEEDED(DwmGetWindowAttribute(above,
+                    DWMWA_EXTENDED_FRAME_BOUNDS, &overlay, sizeof(overlay))) ||
+                    GetWindowRect(above, &overlay);
+                if (!bounds_known)
+                    throw std::runtime_error("DXGI higher-window bounds unavailable; visibility unproven");
+                if (IntersectRect(&overlap, &target_rect, &overlay)) {
+                    wchar_t title[256]{};
+                    GetWindowTextW(above, title, 255);
+                    throw std::runtime_error("DXGI target region intersects higher window " +
+                        handle_text(above) + " (" + utf8(title) + ") at [" +
+                        std::to_string(overlap.left) + "," + std::to_string(overlap.top) + "," +
+                        std::to_string(overlap.right) + "," + std::to_string(overlap.bottom) + "]");
+                }
             }
             for (int gy = 0; gy < 3; ++gy) for (int gx = 0; gx < 3; ++gx) {
                 POINT point{left + (2*gx + 1) * options.width / 6,
@@ -338,6 +362,14 @@ void stream_dxgi(const Clock& clock, const NativeCaptureOptions& options, HWND h
             auto actual = options;
             actual.crop_x = output_x;
             actual.crop_y = output_y;
+            return actual;
+    };
+    while (!stop.stop_requested() && !cancelled.load()) {
+        com_ptr<IDXGIOutputDuplication> duplication;
+        check(output1->DuplicateOutput(d3d.device.get(), duplication.put()), "DuplicateOutput");
+        ++generation;
+        while (!stop.stop_requested() && !cancelled.load()) {
+            const auto actual = checked_crop();
             DXGI_OUTDUPL_FRAME_INFO info{};
             com_ptr<IDXGIResource> resource;
             const auto acquired = duplication->AcquireNextFrame(100, &info, resource.put());
@@ -355,6 +387,9 @@ void stream_dxgi(const Clock& clock, const NativeCaptureOptions& options, HWND h
                     info.LastPresentTime.QuadPart ? std::optional<std::int64_t>(info.LastPresentTime.QuadPart)
                                                   : std::nullopt,
                     ++sequence, generation);
+                const auto confirmed = checked_crop();
+                if (confirmed.crop_x != actual.crop_x || confirmed.crop_y != actual.crop_y)
+                    throw std::runtime_error("DXGI target moved during acquisition; frame invalidated");
                 const auto hash = fingerprint(normalized.rgb);
                 if (!last_hash || *last_hash != hash) {
                     last_hash = hash;
@@ -401,6 +436,12 @@ std::pair<int, int> map_desktop_crop(int screen_x, int screen_y, int width, int 
 }
 
 std::string enumerate_capture_windows_json() {
+    const auto previous_dpi = SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+    if (!previous_dpi) throw std::runtime_error("per-monitor DPI awareness unavailable for window enumeration");
+    struct DpiScope {
+        DPI_AWARENESS_CONTEXT previous;
+        ~DpiScope() { SetThreadDpiAwarenessContext(previous); }
+    } dpi_scope{previous_dpi};
     nlohmann::json entries = nlohmann::json::array();
     EnumWindows(describe_top_window, reinterpret_cast<LPARAM>(&entries));
     return entries.dump(2);

@@ -23,14 +23,14 @@ ctest --preset windows-release
 
 `windows-debug` 與 `windows-asan` presets 用於除錯；性能量測只使用 Release。這台機器的 BuildTools 14.51 缺 ASan 元件，`windows-asan` preset 暫借 Community 14.50 的 sanitizer header/runtime，並使 Abseil 標頭與未受 ASan 編譯的 vcpkg 二進位套件使用相同的 `Cord` 行為；嚴格 ASan 19/19 通過。第三方二進位套件本身未受插樁，詳見 [C++ 驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。正式命令是 `out/release-v145/Release/pas.exe`，不需要 Python PATH 或 pip 套件。量測輸出保存在 ignored 的 `measurements/`，不要提交原始畫面、權杖或 debug keystore。
 
-T6 開發版另加入顯式 `--capture-backend wgc|dxgi|scrcpy`。本機 Emulator gRPC 在橫向 Fixture 仍回傳直向 720×1280；bench 加 `--grpc-rotate-ccw --source-rotation 0` 才能輸出同樣 1280×720。WGC／DXGI 需先以 `pas capture-windows` 選定 HWND；兩者用 `--crop-x`／`--crop-y` 指出實際 Fixture 畫面區，DXGI 另需 `--monitor-index` 並要求前景可見。scrcpy 需提供經 SHA-256 驗證的官方 v4.1 server (`--scrcpy-server`)；接收器只開 video、H.264、FFmpeg 軟體解碼，audio／control 停用。新後端目前只接入 `capture-bench`，不進 Session。開發短測以 `--run-class development_smoke` 標記；集中比較由 `capture-five-campaign` 預先寫定五路徑加 gRPC 控制配置的完整日程，正式門檻仍待確認。[就緒矩陣](docs/CAPTURE_READINESS_20260926.md)記錄各路徑的實測狀態；MMAP 的版本證據與 diagnostic-only 結論見 [可行性報告](docs/MMAP_FEASIBILITY_20260926.md)。
+T6 開發版另加入顯式 `--capture-backend wgc|dxgi|scrcpy`。gRPC source geometry 必須依實際顯示 profile 驗證；本機獨立橫向視窗使用 1280×720、`--source-rotation 1`。先前直向內嵌 profile 的 720×1280 可用 `--grpc-rotate-ccw --source-rotation 0` 正規化。WGC／DXGI 需先以 `pas capture-windows` 選定 HWND；列出的座標與尺寸為實體像素。兩者用 `--crop-x`／`--crop-y` 指出實際 Fixture 畫面區，DXGI 另需 `--monitor-index` 並要求前景可見。本機 WGC top-level crop=(1,38)，DXGI client crop=(0,0)；重啟或 DPI／尺寸變更後須重新核對。scrcpy 需提供經 SHA-256 驗證的官方 v4.1 server (`--scrcpy-server`)；接收器只開 video、H.264、FFmpeg 軟體解碼，audio／control 停用。新後端只供 bench，不進 Session。開發短測以 `--run-class development_smoke` 標記；`capture-five-campaign` 預先固定串行日程，正式門檻仍待確認。[就緒矩陣](docs/CAPTURE_READINESS_20260926.md)記錄實測狀態；MMAP diagnostic-only 結論見 [可行性報告](docs/MMAP_FEASIBILITY_20260926.md)。
 
 ```powershell
 out/release-v145/Release/pas.exe probe --serial emulator-5554
 out/release-v145/Release/pas.exe synthetic --count 30 --fps 60
 out/release-v145/Release/pas.exe run --config configs/avd-observe.json --mode observe --duration-s 30 --no-preview
 out/release-v145/Release/pas.exe capture-bench --serial emulator-5554 --capture-backend emulator-grpc `
-  --width 1280 --height 720 --source-rotation 0 --grpc-rotate-ccw --fixture `
+  --width 1280 --height 720 --source-rotation 1 --fixture `
   --fixture-apk measurements/fixture_cpp_v2/pas-capture-fixture-v2.apk `
   --warmup-s 10 --duration-s 60 --output-dir measurements/cpp-payload-example
 out/release-v145/Release/pas.exe analyze capture measurements/cpp-payload-example/capture.jsonl

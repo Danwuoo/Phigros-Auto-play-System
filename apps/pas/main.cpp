@@ -660,6 +660,7 @@ int main(int argc, char** argv) {
     five_cmd->add_option("--width", five.width);
     five_cmd->add_option("--height", five.height);
     five_cmd->add_option("--source-rotation", five.source_rotation);
+    five_cmd->add_flag("--grpc-rotate-ccw", five.grpc_rotate_ccw);
     five_cmd->add_option("--normal-runs", five_normal_runs);
     five_cmd->add_option("--stability-s", five_stability_s);
     five_cmd->add_option("--scrcpy-max-fps", five.scrcpy_max_fps);
