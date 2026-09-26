@@ -167,6 +167,54 @@ TEST(GameObserver, OnePixelLineJoinedToHoldBorderStaysObservable) {
     EXPECT_NEAR(s.lines[0].center.y,575,1); EXPECT_GT(s.lines[0].length,1200);
 }
 
+TEST(GameDiagnostics, CurrentCentralDigitShapesExcludeComboLabelRailsAndProgress) {
+    FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
+    rect(f,0,0,640,8,{255,255,255}); // Progress bar.
+    rect(f,560,0,4,550,{255,255,255}); // Hold rail through the HUD.
+    for(int i=0;i<5;++i) rect(f,612+i*10,64,6,12,{255,255,255}); // COMBO label.
+    clock.set(1);EXPECT_EQ(observer.process(f).combo_digit_glyphs,0);
+    rect(f,620,18,10,36,{255,255,255});
+    rect(f,648,18,22,36,{255,255,255});
+    f.sequence=2;f.capture_complete_ns=20'000'001;clock.set(f.capture_complete_ns);
+    const auto s=observer.process(f);EXPECT_EQ(s.combo_digit_glyphs,2);
+    EXPECT_EQ(decision_json(s).at("combo_digit_glyphs"),2);
+    EXPECT_EQ(decision_json(s).at("per_note_feedback"),"unknown");
+}
+
+TEST(GameDiagnostics, ComboDisappearanceRequiresFreshSustainedAbsenceAndRearms) {
+    ComboVisibilityDiagnostic diagnostic;
+    const auto observe=[&](int frame,Nanoseconds time,int glyphs,bool gate=true) {
+        auto s=snapshot(frame,time);s.combo_digit_glyphs=glyphs;s.playing_gate=gate;
+        return diagnostic.observe(s);
+    };
+    EXPECT_FALSE(observe(1,1,1));EXPECT_FALSE(observe(2,20'000'001,1));
+    EXPECT_FALSE(observe(3,40'000'001,0));
+    EXPECT_FALSE(observe(4,45'000'001,0)); // Burst shorter than 12 ms.
+    EXPECT_TRUE(observe(5,60'000'001,0));
+    EXPECT_FALSE(observe(6,80'000'001,0));EXPECT_FALSE(observe(7,100'000'001,0));
+    EXPECT_FALSE(observe(8,120'000'001,1));EXPECT_FALSE(observe(9,140'000'001,0));
+    EXPECT_FALSE(observe(10,160'000'001,0)); // One positive frame cannot arm.
+    EXPECT_FALSE(observe(11,180'000'001,1));EXPECT_FALSE(observe(12,200'000'001,1));
+    EXPECT_FALSE(observe(13,220'000'001,0));EXPECT_FALSE(observe(14,240'000'001,1)); // Flicker.
+    EXPECT_FALSE(observe(15,260'000'001,0));EXPECT_TRUE(observe(16,280'000'001,0));
+}
+
+TEST(GameDiagnostics, ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange) {
+    for(int discontinuity=0;discontinuity<4;++discontinuity) {
+        ComboVisibilityDiagnostic diagnostic;
+        auto a=snapshot(1,1);a.combo_digit_glyphs=1;EXPECT_FALSE(diagnostic.observe(a));
+        a=snapshot(2,20'000'001);a.combo_digit_glyphs=1;EXPECT_FALSE(diagnostic.observe(a));
+        auto b=snapshot(3,40'000'001);
+        if(discontinuity==0) b.context.frame=2;
+        if(discontinuity==1) b.playing_gate=false;
+        if(discontinuity==2) b.context.capture_ns=271'000'001;
+        if(discontinuity==3) b.context.geometry=2;
+        EXPECT_FALSE(diagnostic.observe(b));
+        b.sequence++;b.context.frame++;b.context.capture_ns+=20'000'000;b.playing_gate=true;
+        EXPECT_FALSE(diagnostic.observe(b));
+    }
+}
+
 TEST(GameObserver, NestedRibbonsMergeButEqualWidthOverlapsRemainDistinct) {
     FakeClock clock; GameObserver observer(clock); auto f=image(1,1);
     rect(f,280,200,150,4,{255,220,40}); rect(f,292,208,126,4,{255,220,40});

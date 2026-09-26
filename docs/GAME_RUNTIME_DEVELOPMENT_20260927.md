@@ -281,3 +281,11 @@ v54 run `cpp-observe-17904606480434858`，35ms、185秒STOPPED、9,662消費fram
 v51的101.7ms間隔曾同時清空 motion 與三幀 HUD 確認，在當前HUD仍完整時先撤銷，再因epoch改變清空第二次。observer22將分類確認與motion reset分離：物理幾何不變、sequence/QPC递增、间隔≤250ms且source有效時保留確認計數；新frame仍須當前完整HUD及容量有效。>100ms間隔或新epoch清空全部tracks／rail anchor，不保留旧触控計畫，不改变input100ms硬期限。缺HUD、重播、長間隔、幾何變化及無效source仍冷啟動。兩項新回歸核對101.7ms後立即分類但新Note只有一點／無crossing，新epoch再次清空motion；缺HUD、251ms、幾何與無效source均重新三幀確認。等待Release回歸，尚未實測。
 
 v55 Release90／90通過（6.26秒），既有scheduler來源期限／取消回歸亦通過。保持planner6／35ms／兩指，開始下一輪完整HD；未把分類快取期限當作輸入期限或延遲性能改善。
+
+v55 run `cpp-observe-17904611692364172`，35ms、185秒STOPPED、9,394消費frames／928真實命令。結算785,445分、Perfect332／Good8／Bad0／Miss53、max combo52、accuracy85.80%、Early0／Late8，較v54退步、未AP。raw SHA-256 `737ed9e5a7df25eac92646a397f61b2447f09bfae1a70e5f5510880a00891fa3`、manual結果／PNG、兩張診斷圖及分析保存。down Tap136／Hold85／Drag102／Flick6，2次本機Drag coverage、3 conflict／2 gate expiry；journal7 source expiry／1 UI revoke。擷取間隔n9393，p50／p95／p99／max=18.0313／39.9216／56.5348／329.6893ms，來源絕對年齡unknown。UI重複撤銷减少不代表實戰總體改善。
+
+## Combo 消失診斷（build v56）
+
+既有近線history failure常在命中特效附近觸發，缺少失敗關聯。observer23只增加中央HUD白色數字形狀計數（上限16），排除上方進度／長rail／較低COMBO字樣；不做數字OCR，不作觸控決策或逐Note判定。獨立read-only latch以兩張當前存在的字形arm，至少兩張且跨12ms的消失觸發；250ms內同物理幾何／遞增QPC及frame的觀察才連續，UI未知／容量失效／長間隔／重播／幾何變化清空。第一個消失畫面取代第二診斷slot，最多兩張、decision發布後copy、input停止後PNG編碼、預設不保留。每次消失的journal事件只列unknown per-note feedback，不反饋排程。三項短回歸核對字形區域、閃爍／突發／重新arm及不連續負例，等待Release驗證。
+
+v56 Release93／93通過（6.49秒）。observer23／planner6／35ms、兩指與輸入期限不變，開始一輪完整HD診斷；合成字形符合不代表所有真實字體／遮擋已驗證，combo消失仍不唯一對應Miss或某顆Note。

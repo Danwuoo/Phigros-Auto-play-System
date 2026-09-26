@@ -54,8 +54,21 @@ struct DecisionSnapshot {
     Nanoseconds recognition_start_ns = 0, recognition_end_ns = 0;
     std::string ui_basis;
     std::optional<Vec2> play_button;
+    int combo_digit_glyphs = 0; // Diagnostic shape count only; no OCR/judgment.
     std::vector<LineCandidate> lines;
     std::vector<GameTarget> targets;
+};
+
+// Read-only diagnostic trigger. Never supplied to the planner or scheduler.
+// Two current positive frames arm; two missing frames over >=12 ms trigger.
+class ComboVisibilityDiagnostic final {
+public:
+    bool observe(const DecisionSnapshot& scene);
+private:
+    SceneContext previous_;
+    int present_ = 0, absent_ = 0;
+    bool armed_ = false;
+    Nanoseconds absent_since_ = 0;
 };
 
 // All thresholds are development hypotheses. The observer supplies pixel

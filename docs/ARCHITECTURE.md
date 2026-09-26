@@ -2,6 +2,8 @@
 
 ## 主程式設計與開發接線（2026-09-27）
 
+observer23的 `combo_digit_glyphs` 是中央HUD白色字形計數（上限16），不做OCR、不代表combo值／逐Note判定。啟用異常圖時，獨立只讀diagnostic以兩張存在／兩張至少12ms消失觸發combo disappearance事件；只在≤250ms且同物理幾何、frame/QPC遞增、當前PLAYING／容量有效時延續。第二slot保存首次消失的live frame（`diagnostic-combo-disappearance.png`），取代舊近線history slot；第一slot仍為窄Hold對，總數≤2，發布後copy、停止後編碼，不回饋input。沒有開啟opt-in時不運行latch、不存圖。
+
 observer22 分開即時 HUD 分類與 motion history 的連續性。相同 generation／geometry／尺寸／rotation、sequence／QPC 嚴格遞增，且間隔≤250ms時，可以保留三幀分類計數；每張仍必須有當前 pause／score 像素、有效 source 與容量才能開 gate。epoch 改變或間隔>100ms立即清空所有 motion／rail anchor，新目標需重新累積跨度。缺 HUD、無效 source、容量失效、重播、>250ms間隔或幾何改變皆冷啟動分類。此上限只屬分類確認政策，不能刷新旧 evidence；scheduler／supervisor 的100ms期限及epoch撤銷不變。
 
 observer21 的hit是實際頭部在當前可見線上的正交投影；擬合distance只估計crossing與uncertainty，不以殘差偏移hit。planner6可讓新鮮可靠、同位置≤2px且覆蓋時間重疊的Drag沿用已active的Drag plan，只延長up、保留原down及prefix。alias／primary仍包含於128 identity上限；仍有支持的成員可維持同一接觸，全部失效或gate撤銷則釋放。pending down、其他Note種類及不同位置不共用；兩指能力與100ms来源期限維持。`game_drag_coverage`最多128筆待取，分析區分physical down與有successful RPC歷史支持的本機共用；遊戲判定仍unknown。

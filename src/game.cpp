@@ -302,6 +302,29 @@ std::optional<Vec2> song_play_button(const Frame& f) {
 }
 void GameObserver::reset() {tracks_.clear(); playing_confirmations_=0; menu_confirmations_=0; previous_={};}
 
+bool ComboVisibilityDiagnostic::observe(const DecisionSnapshot& s) {
+    const auto gap=s.context.capture_ns-previous_.capture_ns;
+    if(!s.playing_gate||!s.capacity_valid||!same_visual_geometry(previous_,s.context)||
+       s.context.frame<=previous_.frame||gap<=0||gap>250'000'000) {
+        present_=absent_=0;armed_=false;absent_since_=0;
+    }
+    previous_=s.context;
+    if(!s.playing_gate||!s.capacity_valid) return false;
+    if(s.combo_digit_glyphs>0) {
+        present_=std::min(2,present_+1);absent_=0;absent_since_=0;
+        if(present_>=2) armed_=true;
+        return false;
+    }
+    present_=0;
+    if(!armed_) return false;
+    if(absent_++==0) absent_since_=s.context.capture_ns;
+    absent_=std::min(2,absent_);
+    if(absent_>=2&&s.context.capture_ns-absent_since_>=12'000'000) {
+        armed_=false;absent_=0;absent_since_=0;return true;
+    }
+    return false;
+}
+
 DecisionSnapshot GameObserver::process(const Frame& f) {
     if(f.width<2||f.height<2||f.stride!=f.width*3||
        f.rgb.size()!=static_cast<std::size_t>(f.stride)*f.height)
@@ -369,6 +392,10 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
            h>f.height*.013 && h>1.4*w && w<f.width*.02) ++pause_bars;
         if(c.color==4 && c.x0>f.width*.78 && c.y1<f.height*.12 &&
            h>f.height*.01 && h<f.height*.07 && w<f.width*.035) ++score_glyphs;
+        if(c.color==4&&c.x0>f.width*.43&&c.x1<f.width*.57&&
+           c.y0>f.height*.015&&c.y1<f.height*.085&&h>=f.height*.025&&
+           w>=f.width*.005&&w<=f.width*.05)
+            out.combo_digit_glyphs=std::min(16,out.combo_digit_glyphs+1);
         const double xx=c.xx/c.count-center.x*center.x,
                      yy=c.yy/c.count-center.y*center.y, xy=c.xy/c.count-center.x*center.y;
         const double theta=.5*std::atan2(2*xy,xx-yy);
@@ -1056,6 +1083,7 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"frame_sequence",s.context.frame},{"capture_complete_ns",s.context.capture_ns},
         {"recognition_start_ns",s.recognition_start_ns},{"recognition_end_ns",s.recognition_end_ns},
         {"ui",name(s.ui)},{"ui_basis",s.ui_basis},{"playing_gate",s.playing_gate},
+        {"combo_digit_glyphs",s.combo_digit_glyphs},{"combo_glyph_semantics","diagnostic_shapes_only_not_ocr_or_judgment"},
         {"play_button",s.play_button?json{{"x",s.play_button->x},{"y",s.play_button->y}}:json(nullptr)},
         {"capacity_valid",s.capacity_valid},{"lines",lines},{"targets",targets},
         {"source_absolute_age",nullptr},{"per_note_feedback","unknown"}};
