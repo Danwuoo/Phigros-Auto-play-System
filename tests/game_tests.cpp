@@ -414,6 +414,24 @@ TEST(GameObserver, SplitFlickRequiresCentralArrowAndHighlightCannotBecomeDrag) {
     ASSERT_NE(joined,s.targets.end()); EXPECT_NEAR(joined->note.center.x,277,2);
     EXPECT_GT(joined->note.width,125);
 }
+TEST(GameObserver, TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot result;
+    for(int i=0;i<6;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int y=460+i*10;
+        // Connected outer highlight with tall end caps and a thin blue core.
+        // The yellow component is 148x26, matching the rejected live candidate.
+        rect(f,336,y-13,148,4,{255,240,20});
+        rect(f,336,y-13,4,26,{255,240,20});rect(f,480,y-13,4,26,{255,240,20});
+        rect(f,346,y-4,128,8,{40,190,255});
+        rect(f,759,y-4,128,8,{245,40,120});
+        rect(f,1000,y-4,128,8,{255,240,20});
+        clock.set(f.capture_complete_ns);result=observer.process(f);
+        ASSERT_EQ(result.targets.size(),3)<<decision_json(result).dump();
+        EXPECT_EQ(std::count_if(result.targets.begin(),result.targets.end(),[](const auto& t){return t.note.kind==NoteKind::drag;}),1);
+    }
+    for(const auto& t:result.targets) {ASSERT_TRUE(t.crossing_ns);EXPECT_NEAR(t.velocity,500,20);}
+}
 TEST(GameObserver, SlantedLineSurvivesIntersectionAndMatchesNoteOrientation) {
     FakeClock clock; GameObserver observer(clock); DecisionSnapshot s;
     const Vec2 u{.9950371902,-.0995037190},n{.0995037190,.9950371902};

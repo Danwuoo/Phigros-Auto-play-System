@@ -233,3 +233,13 @@ v38 run `cpp-observe-17904557528045827`，35 ms、185 秒 STOPPED，9,632 消費
 v39僅新增/加強兩個合成測試，75／77失敗，確實重現已到線黃色rail拆裂及傾斜薄Tap被刪除。v40 observer16同步使用法向薄帶保護；對具有當前兩排藍／灰前緣的完整重建，或近期rail anchor加當前head填色證據成立的到線續接，才允許黃色覆蓋參與雙側rail支持。無填色、單rail、過長gap、空輪廓等負例保留。v40 Release build／77／77通過，CTest5.09秒；planner5／35ms不變，尚待完整實測，不把合成通過等同AP。
 
 v41的兩側碎片負例單項1／1通過；v41b改以單一側邊碎片隔離邊界，1／1失敗，輸出明確讓原note1的觀測head從到線位置跳到x≈904.5／y≈505、width64，可能污染既有接觸更新。v42 observer17把held-region排他從中心±0.3width改為整個候選寬度落在近期body半寬+16px之內，沿用90ms期限与當前完整輪廓另驗證原則；排除不能刷新原Contact。這同時保留v40黄色rail與傾斜Tap修正。v42 Release build／78／78通過（5.27秒）；v40／v41／v41b未進實戰，失敗日誌及單幀異常重算保留。下一輪35ms全曲驗證，未宣稱AP。
+
+v42 run `cpp-observe-17904569085009563`，35 ms、185 秒正常 STOPPED，9,807 消費 frames／1,304 真實命令。結算 817,939 分、Perfect 347／Good 10／Bad 0／Miss 36、max combo 33、accuracy 89.95%、Early 1／Late 9，較 v38 退步、未 AP。raw SHA-256 `33161957d214d85aa6d4fd27e5131cb263045d6c3a373060660ac34f73204ccb`；結果 PNG／manual JSON、兩張異常圖及 `assist-lead35-v42-analysis.json` 保存，無中途第二擷取 stream。down Tap 136／Hold 97／Drag 127／Flick 5，8 contact conflict、1 gate expiry；runtime 1 UI／2 source revoke。frame 3410 的保留圖實為 Drag 命中特效附近的窄藍色碎片，不能當作兩條真實 Hold。
+
+## 接觸衝突診斷與完整黃色 highlight（build v43–v46）
+
+v43 的 C++ 分析器依 journal 順序維持最多 16 個已成功 RPC down／up 的本機接觸摘要；owner revoke 清空本機歷史，失敗或缺必要欄位的 receipt 列 unknown。每份分析最多保留 64 個 conflict，含被拒絕計畫、當時最新目標及既有接觸計畫，其餘只計 omitted；計畫／targets 另限制 16／128。這不證明遊戲實際接觸效果或真實三押，舊紀錄缺欄位也不能推成成功。短回歸核對失敗 down 不佔摘要、成功 up 移除及 owner reset；Release 79／79 通過（5.09 秒）。
+
+同一份 v42 raw 的 `assist-lead35-v42-conflicts-v43.json` 顯示重複 Hold 及黃色候選的例子，尚無足夠證據增加已驗證的兩指容量。intent 303 被拒時兩指由 Tap／Flick 使用；其 Drag 候選約 (411,542)、148×26，而 Tap 約 (410,541)、126×8。原 highlight 過濾在高度超過 24 px 時跳過，會讓完整黃色端帽建立多餘身分。v44 新增 148×26 的連通外框與獨立 Drag、Tap、Flick 的運動回歸，確實失敗（4 候選而非 3），原失敗紀錄保留。
+
+observer18 以黄色帶相對自身方向的法向厚度，核對可見色芯寬度的 25%（最低仍 24 px），再沿用位置、寬度及當前藍／紅芯像素支持過濾 highlight；不是放寬全部 Drag 形狀。v45 Release 80／80 通過（5.57 秒）。v46 同步 manifest 版本，decision schema2 以可選診斷欄位輸出 `rails_geometry`／`head_on_line`，便於下一輪分辨色芯與已驗證輪廓。planner5／35ms、兩指能力門控與來源期限不變，尚待完整實測。

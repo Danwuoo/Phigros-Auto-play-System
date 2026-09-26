@@ -2,6 +2,8 @@
 
 ## 主程式設計與開發接線（2026-09-27）
 
+observer18 的 simultaneous highlight 過濾以黄色候選的法向厚度核對可見藍／紅芯寬度（上限為 max(24 px,25% core width)），並保留原位置、寬度與當前芯像素支持要求；獨立 Drag 不因高度變大而一律刪除。decision schema2 可附 `rails_geometry`／`head_on_line` 診斷欄位，舊紀錄缺欄位視為 unknown。離線 C++ conflict 分析最多保留64筆摘要、16個成功 RPC 本機接觸、128個最新 targets、每計畫16步；成功 receipt 與 owner reset 只能重建本機歷史，不證明遊戲效果或三押需求。
+
 使用者改採 Glaciaxion HD 直接實戰研究、首次 AP 後進 IN；[主程式計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN.md) 定義新 G0–G6 與資料契約，取代獨立 M3 Fixture 閉環前置順序，不改寫歷史結果。
 
 單程序 C++20：既有 capture worker／LatestFrame → perception worker（UI、線／Note、追蹤、相對運動預測）→ 最新完整有界 DecisionSnapshot → 唯一 action／scheduler／touch owner。supervisor 可獨立撤銷；preview、journal、結果分析只讀，曲名／難度只作記錄。

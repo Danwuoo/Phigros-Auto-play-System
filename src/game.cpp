@@ -456,9 +456,15 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     // A simultaneous-note highlight is a yellow outline around a blue/red
     // core. Its thin edge fragments must not create extra Drag identities.
     std::erase_if(notes,[&](const NoteCandidate& yellow) {
-        if(yellow.kind!=NoteKind::drag||yellow.height>24) return false;
+        if(yellow.kind!=NoteKind::drag) return false;
         for(const auto& core:notes) {
             if(core.kind!=NoteKind::tap&&core.kind!=NoteKind::hold&&core.kind!=NoteKind::flick) continue;
+            // A complete simultaneous-note outline has taller end caps than
+            // a Drag core. Compare its normal thickness to the visible core
+            // width, including rotation, rather than a fixed screen-Y cap.
+            const double ux=std::abs(yellow.tangent.x),uy=std::abs(yellow.tangent.y),den=ux*ux-uy*uy;
+            const double thickness=den>.2?std::max(0.0,(yellow.height*ux-yellow.width*uy)/den):yellow.height;
+            if(thickness>std::max(24.0,core.width*.25)) continue;
             if(std::abs(yellow.center.y-core.center.y)>16) continue;
             const double gap=std::abs(yellow.center.x-core.center.x)-(yellow.width+core.width)/2;
             if(gap>12||yellow.width>core.width*1.35) continue;
@@ -956,6 +962,7 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"tail_x",t.note.tail?json(t.note.tail->x):json(nullptr)},{"tail_y",t.note.tail?json(t.note.tail->y):json(nullptr)},
         {"observation_basis",t.note.direct_rails_evidence?"hold_current_parallel_rails_and_fill":
             t.note.outline_evidence?"hold_parallel_rails_and_recent_identity":"color_core"},
+        {"rails_geometry",t.note.rails_geometry},{"head_on_line",t.note.head_on_line},
         {"relative_distance_px",t.distance},{"relative_velocity_px_s",t.velocity},
         {"residual_px",t.residual},{"samples",t.samples},{"reason",t.reason}});
     return {{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
@@ -977,7 +984,7 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::map<std::string,std::uint64_t> kinds,reasons,uis,accepted_kinds,real_phases,rejection_reasons,revoke_reasons;
     std::map<std::string,std::uint64_t> playing_kinds,playing_reasons;
     struct IntentEvidence {std::string kind; std::optional<Nanoseconds> down; std::optional<bool> planned_future;
-        std::uint64_t note=0;std::optional<Nanoseconds> predicted_down;};
+        std::uint64_t note=0;std::optional<Nanoseconds> predicted_down;json plan=nullptr;};
     struct TrackEvidence {std::string kind;Nanoseconds last=0;bool predicted=false,near=false,accepted=false,down=false;
         std::optional<double> first_near_available_lead_ms;};
     std::map<std::uint64_t,TrackEvidence> observed_tracks;
@@ -985,6 +992,21 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::map<std::string,std::vector<double>> first_near_leads;
     std::uint64_t track_evictions=0;
     std::map<std::uint64_t,IntentEvidence> intent_evidence;
+    std::map<int,std::uint64_t> active_contacts;
+    json latest_targets=json::array(),conflicts=json::array();
+    Nanoseconds latest_capture=0;
+    std::uint64_t conflicts_omitted=0,contact_history_resets=0,unknown_contact_receipts=0;
+    const auto describe_intent=[&](std::uint64_t intent) {
+        json result={{"intent_id",intent},{"plan",nullptr},{"current_target",nullptr},
+            {"target_capture_ns",latest_capture}};
+        const auto found=intent_evidence.find(intent);
+        if(found==intent_evidence.end()) return result;
+        result["plan"]=found->second.plan;
+        for(const auto& target:latest_targets) if(target.value("note_id",std::uint64_t{0})==found->second.note) {
+            result["current_target"]=target;break;
+        }
+        return result;
+    };
     std::map<std::string,std::uint64_t> actual_down_kinds;
     std::map<std::string,std::vector<double>> contact_durations,down_lateness;
     std::uint64_t intent_evidence_evictions=0;
@@ -1020,6 +1042,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             if(playing) {++gate_frames;if(e.at("lines").empty()) ++playing_no_line;}
             if(e.at("lines").size()>1) ++multi_line;
             const auto t=e.at("capture_complete_ns").get<Nanoseconds>();
+            if(e.at("targets").size()>128) throw std::runtime_error("game analyzer target capacity");
+            latest_targets=e.at("targets");latest_capture=t;
             for(auto it=observed_tracks.begin();it!=observed_tracks.end();) {
                 if(t-it->second.last>200'000'000) {finish_track(it->second);it=observed_tracks.erase(it);}
                 else ++it;
@@ -1063,6 +1087,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                 intent_evidence.emplace(intent,IntentEvidence{e.value("basis","unknown"),{}, {},e.value("note_id",std::uint64_t{0})});
             }
             auto& evidence=intent_evidence.at(intent);
+            if(e.at("steps").size()>16) throw std::runtime_error("game analyzer plan capacity");
+            evidence.plan=e;
             if(auto track=observed_tracks.find(evidence.note);track!=observed_tracks.end()) track->second.accepted=true;
             if(!evidence.down&&e.contains("accepted_ns")&&!e.at("steps").empty()&&e.at("steps").front().at("phase")==0)
                 evidence.planned_future=e.at("steps").front().at("due_ns").get<Nanoseconds>()>e.at("accepted_ns").get<Nanoseconds>();
@@ -1086,6 +1112,14 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             sample(actual_lateness,(start-e.at("scheduled_ns").get<Nanoseconds>())/1e6);
             sample(rpc_duration,(e.at("injection_return_ns").get<Nanoseconds>()-start)/1e6);
             const auto found=intent_evidence.find(e.at("intent_id").get<std::uint64_t>());
+            if(e.contains("contact_id")&&e.contains("success")&&e.at("success")==true) {
+                const auto contact=e.at("contact_id").get<int>();
+                if(e.at("phase")==0) {
+                    if(!active_contacts.contains(contact)&&active_contacts.size()>=16)
+                        throw std::runtime_error("game analyzer active contact capacity");
+                    active_contacts[contact]=e.at("intent_id").get<std::uint64_t>();
+                } else if(e.at("phase")==2) active_contacts.erase(contact);
+            } else ++unknown_contact_receipts;
             const std::string kind=found==intent_evidence.end()?"unknown":found->second.kind;
             if(e.at("phase")==0) {
                 count(actual_down_kinds,kind);
@@ -1106,7 +1140,21 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                 intent_evidence.erase(found);
             }
         } else if(event=="runtime_revoke") {++revokes; count(revoke_reasons,e.value("reason","unknown"));}
-        else if(event=="scheduler_rejection") {++rejections; count(rejection_reasons,e.value("reason","unknown"));}
+        else if(event=="owner_revoked") {active_contacts.clear();++contact_history_resets;}
+        else if(event=="scheduler_rejection") {
+            ++rejections;count(rejection_reasons,e.value("reason","unknown"));
+            if(e.value("reason","")=="contact_conflict") {
+                if(conflicts.size()>=64) {++conflicts_omitted;continue;}
+                auto detail=describe_intent(e.at("intent_id").get<std::uint64_t>());
+                detail["rejection_ns"]=e.value("monotonic_ns",Nanoseconds{0});
+                detail["active_contacts"]=json::array();
+                for(const auto& [contact,intent]:active_contacts) {
+                    auto active=describe_intent(intent);active["contact_id"]=contact;
+                    detail["active_contacts"].push_back(std::move(active));
+                }
+                conflicts.push_back(std::move(detail));
+            }
+        }
     }
     for(const auto& [id,evidence]:observed_tracks) finish_track(evidence);
     json durations=json::object(),lateness_by_kind=json::object(),first_leads=json::object();
@@ -1132,6 +1180,9 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         {"predicted_deadline_down_lateness_ms",distribution(predicted_deadline_down_lateness)},
         {"intentionally_clamped_downs",intentionally_clamped_downs},{"unknown_predicted_downs",unknown_predicted_downs},
         {"scheduler_rejections_by_reason",rejection_reasons},{"runtime_revokes_by_reason",revoke_reasons},
+        {"contact_conflicts",conflicts},{"contact_conflicts_omitted",conflicts_omitted},
+        {"contact_history_resets",contact_history_resets},{"unknown_contact_receipts",unknown_contact_receipts},
+        {"contact_conflict_semantics","journal-order successful RPC receipts reconstruct local contacts; game effect and true simultaneous note count remain unknown; owner revoke clears local history"},
         {"game_rpc_duration_ms",distribution(rpc_duration)},
         {"capture_interval_ms",distribution(intervals)},{"recognition_duration_ms",distribution(processing)},
         {"prediction_uncertainty_ms",distribution(uncertainty)},{"prediction_residual_px",distribution(residual)},

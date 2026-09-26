@@ -240,3 +240,23 @@ TEST(GameAnalysis, TrackOutcomesDistinguishMissingPredictionAndCanceledAcceptedI
     EXPECT_NEAR(result.at("first_near_prediction_available_lead_ms_by_track_outcome").at("tap_near_prediction_not_accepted")
         .at("p50").get<double>(),19.999999,.000001);
 }
+TEST(GameAnalysis, ConflictDetailsFollowSuccessfulReceiptsAndExplicitOwnerReset) {
+    const TempJson raw(R"({"event":"game_plan_accepted","intent_id":1,"note_id":11,"basis":"hold","source_frame":1,"steps":[]}
+{"event":"game_plan_accepted","intent_id":2,"note_id":12,"basis":"tap","source_frame":1,"steps":[]}
+{"event":"game_touch_receipt","intent_id":1,"contact_id":0,"success":true,"phase":0,"scheduled_ns":0,"injection_start_ns":1,"injection_return_ns":2}
+{"event":"game_touch_receipt","intent_id":2,"contact_id":1,"success":false,"phase":0,"scheduled_ns":0,"injection_start_ns":1,"injection_return_ns":2}
+{"event":"scheduler_rejection","intent_id":2,"reason":"contact_conflict","monotonic_ns":3}
+{"event":"game_touch_receipt","intent_id":1,"contact_id":0,"success":true,"phase":2,"scheduled_ns":4,"injection_start_ns":4,"injection_return_ns":5}
+{"event":"scheduler_rejection","intent_id":2,"reason":"contact_conflict","monotonic_ns":6}
+{"event":"game_touch_receipt","intent_id":2,"contact_id":1,"success":true,"phase":0,"scheduled_ns":7,"injection_start_ns":7,"injection_return_ns":8}
+{"event":"owner_revoked"}
+{"event":"scheduler_rejection","intent_id":3,"reason":"contact_conflict","monotonic_ns":9}
+)");
+    const auto result=analyze_game_jsonl(raw.path());const auto& conflicts=result.at("contact_conflicts");
+    ASSERT_EQ(conflicts.size(),3);ASSERT_EQ(conflicts[0].at("active_contacts").size(),1);
+    EXPECT_EQ(conflicts[0].at("active_contacts")[0].at("intent_id"),1);
+    EXPECT_EQ(conflicts[0].at("active_contacts")[0].at("plan").at("note_id"),11);
+    EXPECT_TRUE(conflicts[1].at("active_contacts").empty());EXPECT_TRUE(conflicts[2].at("active_contacts").empty());
+    EXPECT_TRUE(conflicts[2].at("plan").is_null());EXPECT_EQ(result.at("unknown_contact_receipts"),1);
+    EXPECT_EQ(result.at("contact_history_resets"),1);
+}
