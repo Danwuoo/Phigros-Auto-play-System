@@ -218,6 +218,18 @@ TEST(GameDiagnostics, DecorativeRailConnectedToDigitDoesNotReportDisappearance) 
     s=observer.process(blank);EXPECT_EQ(s.combo_digit_glyphs,0);EXPECT_TRUE(diagnostic.observe(s));
 }
 
+TEST(GameDiagnostics, ThinHorizontalRibbonJoiningDigitsKeepsVisibleTallInk) {
+    FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
+    rect(f,638,0,4,575,{255,255,255});
+    rect(f,564,33,152,2,{255,255,255});rect(f,564,41,152,2,{255,255,255});
+    rect(f,564,35,152,6,{255,220,40});
+    clock.set(1);EXPECT_EQ(observer.process(f).combo_digit_glyphs,0); // Only borders and a rail.
+    rect(f,620,18,10,36,{255,255,255});rect(f,648,18,10,36,{255,255,255});
+    rect(f,564,35,152,6,{255,220,40}); // Current ribbon partially occludes both digits.
+    f.sequence=2;f.capture_complete_ns=20'000'001;clock.set(f.capture_complete_ns);
+    EXPECT_GE(observer.process(f).combo_digit_glyphs,1); // A cluster count, not OCR "11".
+}
+
 TEST(GameDiagnostics, ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange) {
     for(int discontinuity=0;discontinuity<4;++discontinuity) {
         ComboVisibilityDiagnostic diagnostic;
@@ -231,6 +243,51 @@ TEST(GameDiagnostics, ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange
         EXPECT_FALSE(diagnostic.observe(b));
         b.sequence++;b.context.frame++;b.context.capture_ns+=20'000'000;b.playing_gate=true;
         EXPECT_FALSE(diagnostic.observe(b));
+    }
+}
+
+namespace {
+DecisionSnapshot diagnostic_hold_scene(std::uint64_t frame,Nanoseconds time) {
+    auto s=snapshot(frame,time);s.lines.push_back({{640,575},{1,0},1280,2,.85});
+    auto h=target(17,time,time+60'000'000);h.note.kind=NoteKind::hold;
+    h.note.center={850,530};h.note.width=144;h.note.height=300;h.note.rails_geometry=true;
+    s.targets.push_back(h);return s;
+}
+}
+
+TEST(GameDiagnostics, LongHoldDisappearanceRetainsOnlyItsPriorCoordinateEvidence) {
+    HoldVisibilityDiagnostic diagnostic;auto s=diagnostic_hold_scene(1,1);
+    EXPECT_FALSE(diagnostic.observe(s));
+    s.context.frame=2;s.context.capture_ns=20'000'001;s.targets.clear();
+    const auto loss=diagnostic.observe(s);ASSERT_TRUE(loss);
+    EXPECT_EQ(loss->source_frame,1);EXPECT_EQ(loss->note_id,17);EXPECT_EQ(loss->capture_ns,1);
+    EXPECT_EQ(loss->head.x,850);EXPECT_EQ(loss->height,300);
+    s.context.frame=3;s.context.capture_ns=40'000'001;EXPECT_FALSE(diagnostic.observe(s));
+    EXPECT_EQ(decision_json(s).at("per_note_feedback"),"unknown");
+}
+
+TEST(GameDiagnostics, HoldDiagnosticKeepsVisibleNewIdentityButRejectsNarrowFragments) {
+    HoldVisibilityDiagnostic diagnostic;auto s=diagnostic_hold_scene(1,1);
+    EXPECT_FALSE(diagnostic.observe(s));
+    s.context.frame=2;s.context.capture_ns=20'000'001;s.targets[0].note_id=18;
+    s.targets[0].note.center.y=550;EXPECT_FALSE(diagnostic.observe(s));
+    s.context.frame=3;s.context.capture_ns=40'000'001;s.targets[0].note.width=50;
+    const auto loss=diagnostic.observe(s);ASSERT_TRUE(loss);EXPECT_EQ(loss->note_id,18);
+}
+
+TEST(GameDiagnostics, HoldDiagnosticSkipsEndingBodyAndFrameDiscontinuities) {
+    for(int variation=0;variation<7;++variation) {
+        HoldVisibilityDiagnostic diagnostic;auto s=diagnostic_hold_scene(1,1);
+        if(variation==0) s.targets[0].note.height=32;
+        if(variation==6) s.targets[0].note.rails_geometry=false;
+        EXPECT_FALSE(diagnostic.observe(s));s.context.frame=2;s.context.capture_ns=20'000'001;
+        s.targets.clear();
+        if(variation==1) s.playing_gate=false;
+        if(variation==2) s.context.capture_ns=101'000'001;
+        if(variation==3) s.context.geometry=2;
+        if(variation==4) s.context.frame=1;
+        if(variation==5) s.lines[0].confidence=.6;
+        EXPECT_FALSE(diagnostic.observe(s));
     }
 }
 

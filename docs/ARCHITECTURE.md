@@ -8,6 +8,8 @@ observer24在中央HUD的有限ROI內先裁切再分割白色字形，避免畫�
 
 observer25的direct Hold route另可使用觸及畫面頂端（y0≤2px）的藍色seed；此seed高度上限為95%畫面、底端須至少達20%畫面。一般seed仍維持原75%高度及10%頂部排除。例外仍只用當前雙側輪廓、兩排前緣填色與可見leading edge建立幾何；裁切tail保持unknown，沒有白色雙側／前緣不能建立Hold。來源期限、近期anchor期限、接觸grace及種類判斷未放寬。
 
+diagnostics version2將第一圖槽改為長Hold幾何消失（`diagnostic-hold-disappearance.png`），第二仍為combo字形消失。獨立只讀Hold latch最多存16份上一張的坐標摘要；只有主線充分可見、當前PLAYING／容量有效、同epoch／物理幾何、frame與QPC遞增、間隔≤100ms才比較。上一張近線80px內、寬≥8%畫面且有rails、depth≥max(128px,0.8width)的Hold，下一張沒有兼容位置／寬度的當前Hold時列診斷；短尾結束、source／UI／geometry失效不沿用。幾何消失不代表active contact或Miss，record附prior frame／Note／QPC／頭部／寬高，效果仍unknown，不供input使用。combo分割另容許被細白色ribbon連上的寬字形cluster，但需有局部高白色ink columns；純橫邊框加窄直線不足。計數仍為形狀cluster，非數字OCR。
+
 observer22 分開即時 HUD 分類與 motion history 的連續性。相同 generation／geometry／尺寸／rotation、sequence／QPC 嚴格遞增，且間隔≤250ms時，可以保留三幀分類計數；每張仍必須有當前 pause／score 像素、有效 source 與容量才能開 gate。epoch 改變或間隔>100ms立即清空所有 motion／rail anchor，新目標需重新累積跨度。缺 HUD、無效 source、重播、>250ms間隔或幾何改變皆冷啟動分類；容量失效當幀關閉gate，分類計數在HUD階段容量檢查失效時清空。此上限只屬分類確認政策，不能刷新旧 evidence；scheduler／supervisor 的100ms期限及epoch撤銷不變。
 
 observer21 的hit是實際頭部在當前可見線上的正交投影；擬合distance只估計crossing與uncertainty，不以殘差偏移hit。planner6可讓新鮮可靠、同位置≤2px且覆蓋時間重疊的Drag沿用已active的Drag plan，只延長up、保留原down及prefix。alias／primary仍包含於128 identity上限；仍有支持的成員可維持同一接觸，全部失效或gate撤銷則釋放。pending down、其他Note種類及不同位置不共用；兩指能力與100ms来源期限維持。`game_drag_coverage`最多128筆待取，分析區分physical down與有successful RPC歷史支持的本機共用；遊戲判定仍unknown。

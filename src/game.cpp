@@ -79,12 +79,14 @@ int combo_digit_shapes(const Frame& f) {
     for(int y=0;y<h;++y) for(int x=0;x<w;++x) mask[static_cast<std::size_t>(y)*w+x]=
         classify(f.rgb.data()+static_cast<std::size_t>(y0+y*scale)*f.stride+(x0+x*scale)*3)==4;
     std::vector<int> queue;queue.reserve(mask.size());int count=0;
+    std::vector<int> column_ink(w,0),touched_columns;touched_columns.reserve(w);
     for(int y=0;y<h;++y) for(int x=0;x<w;++x) {
         const int index=y*w+x;if(!mask[index]) continue;
-        queue.clear();queue.push_back(index);mask[index]=0;
+        queue.clear();touched_columns.clear();queue.push_back(index);mask[index]=0;
         int left=x,right=x,top=y,bottom=y;
         for(std::size_t i=0;i<queue.size();++i) {
             const int px=queue[i]%w,py=queue[i]/w;
+            if(column_ink[px]++==0) touched_columns.push_back(px);
             left=std::min(left,px);right=std::max(right,px);
             top=std::min(top,py);bottom=std::max(bottom,py);
             for(const auto [dx,dy]:{std::pair{-1,0},{1,0},{0,-1},{0,1}}) {
@@ -95,7 +97,16 @@ int combo_digit_shapes(const Frame& f) {
             }
         }
         const int width=(right-left+1)*scale,height=(bottom-top+1)*scale;
-        if(height>=f.height*.025&&width>=f.width*.005&&width<=f.width*.05)
+        int vertical_ink_width=0;
+        for(const int column:touched_columns) {
+            if(column_ink[column]*scale>=f.height*.025) vertical_ink_width+=scale;
+            column_ink[column]=0;
+        }
+        // A thin white ribbon can join several digits into a wide cluster.
+        // Require localized tall ink columns before keeping such a cluster;
+        // a horizontal border crossed by one narrow rail is insufficient.
+        if(height>=f.height*.025&&width>=f.width*.005&&
+           (width<=f.width*.05||vertical_ink_width>=f.width*.0045))
             count=std::min(16,count+1);
     }
     return count;
@@ -355,6 +366,37 @@ bool ComboVisibilityDiagnostic::observe(const DecisionSnapshot& s) {
         armed_=false;absent_=0;absent_since_=0;return true;
     }
     return false;
+}
+
+std::optional<HoldDisappearance> HoldVisibilityDiagnostic::observe(const DecisionSnapshot& s) {
+    const LineCandidate* line=nullptr;
+    for(const auto& candidate:s.lines) if(candidate.confidence>=.8&&candidate.length>=s.context.width*.8&&
+        (!line||candidate.confidence>line->confidence)) line=&candidate;
+    if(!s.playing_gate||!s.capacity_valid||!line) {
+        previous_count_=0;previous_=s.context;return {};
+    }
+    const auto gap=s.context.capture_ns-previous_.capture_ns;
+    if(!same_geometry(previous_,s.context)||s.context.frame<=previous_.frame||gap<=0||gap>100'000'000)
+        previous_count_=0;
+    std::optional<HoldDisappearance> missing;
+    for(std::size_t i=0;i<previous_count_&&!missing;++i) {
+        const auto& prior=previous_holds_[i];
+        const bool present=std::any_of(s.targets.begin(),s.targets.end(),[&](const auto& t) {
+            return t.note.kind==NoteKind::hold&&t.note.rails_geometry&&
+                t.note.width>=prior.width*.65&&t.note.width<=prior.width*1.5&&
+                distance(t.note.center,prior.head)<=80;
+        });
+        if(!present) missing=prior;
+    }
+    previous_count_=0;previous_=s.context;
+    for(const auto& t:s.targets) {
+        if(t.note.kind!=NoteKind::hold||!t.note.rails_geometry||t.note.width<s.context.width*.08||
+           t.note.height<std::max(128.0,t.note.width*.8)||std::abs(normal_distance(t.note.center,*line))>80) continue;
+        if(previous_count_==previous_holds_.size()) {previous_count_=0;return {};}
+        previous_holds_[previous_count_++]={s.context.frame,t.note_id,s.context.capture_ns,
+            t.note.center,t.note.width,t.note.height};
+    }
+    return missing;
 }
 
 DecisionSnapshot GameObserver::process(const Frame& f) {

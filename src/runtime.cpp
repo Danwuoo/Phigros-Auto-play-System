@@ -172,7 +172,8 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         file<<json{{"schema_version",3},{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"config",config.public_json},
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
-            {"dry_owner",!assist},{"game_observer_version",25},{"executable_sha256",sha256_file(executable)},
+            {"dry_owner",!assist},{"game_observer_version",25},{"game_diagnostics_version",2},
+            {"executable_sha256",sha256_file(executable)},
             {"game_planner_version",6},{"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
             {"drag_shared_contact","fresh_colocated_drag_extends_existing_active_contact_only"},
             {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},
@@ -266,6 +267,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         try {
             GameObserver observer(clock);
             ComboVisibilityDiagnostic combo_diagnostic;
+            HoldVisibilityDiagnostic hold_diagnostic;
             std::uint64_t seq=0; Nanoseconds previous=0, preview_time=0; bool was_playing=false;
             while(!stop.stop_requested()&&!stopping) {
                 auto f=latest.read_after(seq,10'000'000);
@@ -310,33 +312,18 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                             {"diagnostic_copy_used_for_input",false}});
                     }
                 }
-                if(keep_diagnostic_anomalies&&!anomaly_frames[0]&&s->playing_gate&&s->capacity_valid) {
-                    const LineCandidate* main_line=nullptr;
-                    for(const auto& line:s->lines) if(line.confidence>=.8&&line.length>=config.width*.8&&
-                        (!main_line||line.confidence>main_line->confidence)) main_line=&line;
-                    if(main_line) {
-                        const auto near_line=[&](const NoteCandidate& n,double limit) {
-                            return std::abs(-(n.center.x-main_line->center.x)*main_line->tangent.y+
-                                (n.center.y-main_line->center.y)*main_line->tangent.x)<=limit;
-                        };
-                        bool fragments=false;
-                        for(std::size_t a=0;a<s->targets.size();++a) {
-                            const auto& target=s->targets[a];const auto& note=target.note;
-                            if(note.kind!=NoteKind::hold||note.width>=config.width*.08||!near_line(note,80)) continue;
-                            for(std::size_t b=a+1;b<s->targets.size();++b) {
-                                const auto& other=s->targets[b].note;
-                                const double gap=std::abs(note.center.x-other.center.x);
-                                if(other.kind==NoteKind::hold&&other.width<config.width*.08&&near_line(other,80)&&
-                                    std::abs(note.center.y-other.center.y)<20&&gap>20&&gap<config.width*.11)
-                                    fragments=true;
-                            }
-                        }
-                        if(fragments) {
-                            anomaly_frames[0]=std::make_shared<Frame>(*f);
-                            record({{"event","diagnostic_frame_retained"},{"slot",0},{"source_frame",s->context.frame},
-                                {"reason","hold_fragment_pair"},
-                                {"capture_complete_ns",s->context.capture_ns},{"diagnostic_copy_used_for_input",false}});
-                        }
+                if(keep_diagnostic_anomalies) if(const auto missing=hold_diagnostic.observe(*s)) {
+                    record({{"event","diagnostic_hold_disappearance"},{"source_frame",s->context.frame},
+                        {"capture_complete_ns",s->context.capture_ns},{"prior_source_frame",missing->source_frame},
+                        {"prior_note_id",missing->note_id},{"prior_capture_ns",missing->capture_ns},
+                        {"prior_head_x",missing->head.x},{"prior_head_y",missing->head.y},
+                        {"prior_width",missing->width},{"prior_height",missing->height},
+                        {"per_note_feedback","unknown"},{"diagnostic_used_for_input",false}});
+                    if(!anomaly_frames[0]) {
+                        anomaly_frames[0]=std::make_shared<Frame>(*f);
+                        record({{"event","diagnostic_frame_retained"},{"slot",0},{"source_frame",s->context.frame},
+                            {"reason","near_line_long_hold_disappearance"},
+                            {"capture_complete_ns",s->context.capture_ns},{"diagnostic_copy_used_for_input",false}});
                     }
                 }
                 f.reset(); // Diagnostic copies never hold capture-pool leases.
@@ -539,7 +526,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     action_worker.join(); perception_worker.join(); capture_worker.join();
     std::uint64_t diagnostic_saved=0;
     for(int slot=0;slot<2;++slot) if(anomaly_frames[slot]) {
-        const auto path=run_dir/(slot?"diagnostic-combo-disappearance.png":"diagnostic-hold-fragments.png");
+        const auto path=run_dir/(slot?"diagnostic-combo-disappearance.png":"diagnostic-hold-disappearance.png");
         try {
             write_diagnostic_png(path,*anomaly_frames[slot]);++diagnostic_saved;
             record({{"event","diagnostic_frame_saved"},{"source_frame",anomaly_frames[slot]->sequence},

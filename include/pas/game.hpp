@@ -1,5 +1,6 @@
 #pragma once
 #include "pas/core.hpp"
+#include <array>
 #include <deque>
 #include <filesystem>
 #include <nlohmann/json.hpp>
@@ -69,6 +70,22 @@ private:
     int present_ = 0, absent_ = 0;
     bool armed_ = false;
     Nanoseconds absent_since_ = 0;
+};
+
+struct HoldDisappearance {
+    std::uint64_t source_frame=0,note_id=0;
+    Nanoseconds capture_ns=0;
+    Vec2 head;
+    double width=0,height=0;
+};
+// At most 16 recent coordinate summaries; no frame or input state retained.
+class HoldVisibilityDiagnostic final {
+public:
+    std::optional<HoldDisappearance> observe(const DecisionSnapshot& scene);
+private:
+    SceneContext previous_;
+    std::array<HoldDisappearance,16> previous_holds_{};
+    std::size_t previous_count_=0;
 };
 
 // All thresholds are development hypotheses. The observer supplies pixel

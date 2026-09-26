@@ -307,3 +307,9 @@ v58b單項確實失敗：首次550px裁切body、兩條完整白rails及清楚le
 v59 Release96／97通過（6.97秒）。首次裁切幾何已出現、所有原回歸與新負例通過；唯一失敗是新正例末張讓head從到線跨到590px，卻仍期待既有on-line Hold路徑繼續以500px/s離開線。原路徑在到線後使用stationary leading anchor，並非本例要核對的「首次已裁切接近」階段。v60将五張正例改為550→566px／200px/s，保持全部初始高度>540px、相同輪廓、同ID、leading位置／未知tail／有效預測要求；不放寬幾何容差或原負例。到線轉灰與owner續接仍由v58的14幀回歸核對。v59未進實戰，失敗保留，等待v60完整回歸。
 
 v60 Release97／97通過（6.83秒），observer25／planner6／35ms／兩指不變，開始完整HD驗證。Debug／ASan的94項通過僅屬v57 source，不能代替本次新增裁切seed路徑的完整驗證。
+
+v60 run `cpp-observe-17904630843405836`，35ms／185秒STOPPED，9,676消費frames／1,014真實命令。結算828,053分、Perfect351／Good5／Bad0／Miss37、max combo66、accuracy90.14%、Early0／Late5，未AP，仍未超過歷史最高分或最低Miss。raw SHA-256 `a8334c0fe71660871ae17fa5c2dbd4de372b8fcdc5fa4e2822bc2dd387158dd3`、manual結果／PNG、兩張診斷圖與分析保存，無中途第二擷取。down Tap138／Hold89／Drag105／Flick6，3 coverage／1 conflict／1 target expiry，runtime3 source／1 UI revoke。first combo事件frame1107仍清楚有combo11：黃色ribbon的白邊連接兩字形，寬度超過64px使整個cluster被刪除，不能將事件延後解釋為first Miss延後。
+
+v61只補diagnostics version2，遊玩仍observer25／planner6／35ms。第一slot改存首次近線長Hold幾何消失，latch只保存上一張最多16份坐標／幾何摘要，當前主線／PLAYING有效且同epoch／幾何、≤100ms遞增來源才比较；已近尾端／短body不觸發。兼容新pixel identity仍視為可見，窄碎片不能充完整body，未知UI／長間隔／replay等負例均不延續。附prior frame／Note／QPC，未讀input內部狀態，故不稱active接觸或Miss。第二combo診斷接受與細白邊相連的寬cluster，但額外要求有局部高白ink columns；純橫邊框加窄直線為負例。兩個slot仍write once／總共≤2，先發布decision、後copy、input停止後編碼，預設不運行latch／不存圖；等待100+短回歸。
+
+v61 Release101／101通過（6.70秒），原v60 frame1107 PNG單張重算為1個可見字形cluster；SHA-256 `52e7fabbe4c68cea111eee2b05d9c58104aaaeea1ba7925f0eee80713c3d7db9` 與 `assist-v60-combo-diagnostics2-v61.json` 保留，不代表OCR11或即時逐Note判定。開始相同35ms的完整HD，無同時build／第二capture；AP未達標。
