@@ -172,7 +172,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         file<<json{{"schema_version",3},{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"config",config.public_json},
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
-            {"dry_owner",!assist},{"game_observer_version",14},{"executable_sha256",sha256_file(executable)},
+            {"dry_owner",!assist},{"game_observer_version",15},{"executable_sha256",sha256_file(executable)},
             {"game_planner_version",5},{"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
             {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},
             {"game_uncertainty_ms",config.game_uncertainty_ms},

@@ -183,6 +183,7 @@ TEST(GameObserver, CurrentHoldRailsOverrideFragmentedCoreWithoutRemovingIndepend
         // Upper core and two disconnected head fragments, as seen in the
         // retained live anomaly. Their PCA axes no longer describe the Hold.
         rect(f,794,360,110,112,{40,190,255});
+        rect(f,794,432,110,16,{255,220,40}); // Internal overlay cannot create a new held head.
         rect(f,800,490,58,58,{40,190,255});rect(f,876,500,52,48,{40,190,255});
         rect(f,300,150,140,180,{40,190,255}); // A separate approaching Hold.
         rect(f,800,600,140,6,{40,190,255}); // A separate thin Tap.
@@ -255,6 +256,9 @@ TEST(GameObserver, CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWhole
         const Vec2 body{head.x-n.x*150,head.y-n.y*150};
         oriented_box(f,body,u,146,300,{135,145,150});
         oriented_box(f,{head.x-n.x*35,head.y-n.y*35},u,146,70,{140,210,240});
+        // A yellow hit overlay inside the body must not create a new head
+        // or truncate both rails into a matching but false short tail.
+        oriented_box(f,{head.x-n.x*45,head.y-n.y*45},u,146,16,{255,220,40});
         for(const int side:{-1,1}) oriented_box(f,
             {body.x+side*u.x*76,body.y+side*u.y*76},u,2,300,{245,245,245});
         if(i>=3) oriented_box(f,{head.x-n.x*55-u.x*76,head.y-n.y*55-u.y*76},u,4,24,{0,0,0});

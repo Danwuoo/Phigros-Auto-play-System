@@ -89,7 +89,7 @@ std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& 
                               y=static_cast<int>(std::lround(note.center.y-normal.y*depth+k*note.width*.115*note.tangent.y));
                     if(x<0||x>=f.width||y<f.height*.10||y>=f.height) continue;
                     const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
-                    if(p[2]>110&&p[1]>100&&p[2]>p[0]+5) ++support;
+                    if((p[2]>110&&p[1]>100&&p[2]>p[0]+5)||classify(p)==2) ++support;
                 }
                 // A rail crossing an unrelated white decoration must end
                 // with the body fill, rather than follow that decoration.
@@ -155,12 +155,13 @@ std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& s
         if(x<0||x>=f.width||y<f.height*.10||y>=f.height) return nullptr;
         return f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
     };
-    const auto fill=[&](Vec2 center,double width,int depth) {
+    const auto fill=[&](Vec2 center,double width,int depth,bool include_occlusion=false) {
         int support=0;
         for(int k=-4;k<=4;++k) {
             const double along=k*width*.09;
             const auto* p=pixel({center.x-n.x*depth+u.x*along,center.y-n.y*depth+u.y*along});
-            if(p&&p[2]>145&&p[1]>130&&p[2]>p[0]+8) ++support;
+            if(p&&((p[2]>145&&p[1]>130&&p[2]>p[0]+8)||
+                (include_occlusion&&((p[2]>110&&p[1]>100&&p[2]>p[0]+5)||classify(p)==2)))) ++support;
         }
         return support>=7;
     };
@@ -192,7 +193,7 @@ std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& s
                 if(!fill(probe,width,4)||!fill(probe,width,24)) continue;
                 // It must be a visible leading edge. After a long rail gap,
                 // an arbitrary interior cross section cannot become a head.
-                if(fill(probe,width,-4)) continue;
+                if(fill(probe,width,-4,true)) continue;
                 candidate.center={probe.x-n.x*6,probe.y-n.y*6};
                 // Both front rows already prove current fill. A bounded
                 // particle occlusion may interrupt either attached rail;
@@ -500,6 +501,18 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                c.y0<f.height*.10||c.count*4<w*h*.13) continue;
             if(++seeds>128) {out.capacity_valid=false;break;}
             const auto body=current_hold_body(f,c,*main);if(!body) continue;
+            // A recently validated, on-line Hold already owns this visible
+            // body region. Interior hit effects must not create fresh heads
+            // there. Its existing path must still validate current rails.
+            if(std::any_of(tracks_.begin(),tracks_.end(),[&](const History& track) {
+                if(!track.rail_anchor||!track.rail_anchor->head_on_line||now-track.rail_observed>90'000'000) return false;
+                const auto& held=*track.rail_anchor;
+                const Vec2 delta{body->center.x-held.center.x,body->center.y-held.center.y};
+                const double along=delta.x*main->tangent.x+delta.y*main->tangent.y,
+                    depth=normal_distance(body->center,*main);
+                return std::abs(along)<held.width*.3&&body->width<=held.width*1.2&&
+                    depth<=12&&depth>=-held.height-16;
+            })) continue;
             if(std::any_of(bodies.begin(),bodies.end(),[&](const auto& other) {
                 return distance(body->center,other.center)<8&&std::abs(body->width-other.width)<8;
             })) continue;
@@ -700,7 +713,8 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         }
         match->last=target.note.center;
         match->appearance=target.note;
-        if(target.note.rails_geometry&&!ambiguous) {
+        const bool held_anchor=match->rail_anchor&&match->rail_anchor->head_on_line&&now-match->rail_observed<=90'000'000;
+        if(target.note.rails_geometry&&!ambiguous&&(!held_anchor||target.note.head_on_line)) {
             match->rail_anchor=target.note;match->rail_observed=now;
         }
         target.evidence_ns=now; target.expires_ns=now+100'000'000;

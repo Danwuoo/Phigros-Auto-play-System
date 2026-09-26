@@ -18,7 +18,7 @@ decision schema 2 明列 Note anchor 語義（Tap／Flick 芯中心、Hold leadi
 
 少量候選漏辨的容忍仍受像素證據期限約束：Tap／Drag 40 ms、Hold 60 ms、Flick 75 ms；超過時取消個別意圖，UNKNOWN UI／source 失效則立即取消全部。不由 tombstone 重啟已完成意圖。離線分析另保留最多 512 個近期觀測身分，按是否形成近線預測、計畫接受及實際 down 列結果；像素身分可能碎裂，這些數量不能當作真實譜面個數或逐 Note 判定。
 
-observer 14 增加無歷史前提的當幀 Hold 外輪廓重建，schema 2 的 `observation_basis=hold_current_parallel_rails_and_fill` 與近期身分續接分開。只在充分可見的跨畫面主線存在時，從當幀藍色 body 碎片搜尋兩條窄中性白輪廓；最多 128 個種子、每截面 16 個窄帶、兩個截面、129 個前緣探針。兩側最多容許 32 px 短遮擋，仍至少延續 `max(24 px, width×0.25)` 且末端相差不超過 20 px，前緣兩排各九點至少七點有藍／灰填色，前方一排須已離開完整填色以排除內部假 head；尾端另受當幀較淡 body 填色約束，避免輪廓接上裝飾線。當前完整前緣不再由舊位置另擬合一次；到線的既有 Hold 仍用原近期身分路徑。辨識可在 UI gate 成立前提供幾何，觸控仍必須通過獨立三幀 PLAYING／新鮮來源門控。傾斜薄 Tap 的正常方向厚度受到保護；無 body、單側輪廓及短閃光不形成新 Hold。
+observer 15 增加無歷史前提的當幀 Hold 外輪廓重建，schema 2 的 `observation_basis=hold_current_parallel_rails_and_fill` 與近期身分續接分開。只在充分可見的跨畫面主線存在時，從當幀藍色 body 碎片搜尋兩條窄中性白輪廓；最多 128 個種子、每截面 16 個窄帶、兩個截面、129 個前緣探針。兩側最多容許 32 px 短遮擋，仍至少延續 `max(24 px, width×0.25)` 且末端相差不超過 20 px，前緣兩排各九點至少七點有藍／灰填色，前方一排須已離開完整填色以排除內部假 head；尾端另受當幀較淡 body 填色約束，避免輪廓接上裝飾線。當前完整前緣不再由舊位置另擬合一次；到線的既有 Hold 仍用原近期身分路徑。辨識可在 UI gate 成立前提供幾何，觸控仍必須通過獨立三幀 PLAYING／新鮮來源門控。傾斜薄 Tap 的正常方向厚度受到保護；無 body、單側輪廓及短閃光不形成新 Hold。
 
 planner version 5 以預估 crossing 到現在不超過 40 ms 為晚預測補接下限，與校準提前量分開；尚未執行的 down 可改為立即排程。原 100 ms 證據與 UI gate 仍必要，已執行 down 不重播。`ContactPlan.predicted_down_ns` 保存原始預測下壓期限，scheduler 只依 `steps[].due_ns` 執行。分析分開原預測期限的晚到量、實际排程晚到量與刻意 clamp 次數；舊 log 缺預測下壓期限列 unknown，不將立即补接解釋成新計時性能改善。Drag 名義接觸 90 ms，實际接觸亦可能因證據／gate／漏辨撤銷提前結束。
 
@@ -188,3 +188,5 @@ Capture 只維護容量為 1 的共享緩衝區。新 frame 覆蓋尚未處理�
 - `GreenTargetDetector`、`VelocityTracker`、`LineCrossingPredictor` 是簡單目標研究用，從當下 RGB pixels 取得位置，使用至多 8 筆追蹤狀態線性估速，計算判定線交會時間。`Scheduler` 可更新未送出的預測、拒絕過期／重複意圖、取消排程，依 monotonic 截止時間注入並記錄收據。
 - `FakeTouchBackend` 驗證獨立接觸點的 down／move／up 狀態機和取消釋放；它不證明 Android 多指能力。`CoordinateTransform` 統一處理裁切、黑邊映射及四種直角旋轉。尚無任何已通過模擬器實測的觸控注入後端；`adb shell input tap` 僅列為單點能力候選，未宣稱支援 Hold／Move／Flick／多指。
 - 合成 world 的目標出現及撞線真值只供測試 fixture 和離線摘要。執行中的 detector、tracker、predictor、scheduler 不讀真值。合成閉環與主機排程實際分布、限制見 [量測紀錄](MEASUREMENTS.md)。
+
+到線的已確認 rail anchor 在 90 ms 內可排除其近期 body 中的新假 head，但這項排除不產生新的觸控證據；既有 Hold 續接仍驗證當前雙側輪廓。當前未到線的破碎候選不得覆寫到線 anchor。新頭部的前緣仍必須有藍／灰填色；尾端及前方是否延續的檢查另外識別當前黃色覆蓋，避免內部特效造成假 body 邊界。黃色本身不能建立新 Hold。
