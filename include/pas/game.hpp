@@ -28,6 +28,9 @@ struct NoteCandidate {
     std::optional<Vec2> tail;
     Vec2 tangent{1,0};
     bool outline_evidence = false;
+    std::uint64_t recent_identity = 0; // Current rails validated against a bounded recent anchor.
+    bool rails_geometry = false;
+    bool head_on_line = false;
 };
 struct GameTarget {
     std::uint64_t note_id = 0, revision = 0;
@@ -55,14 +58,14 @@ struct DecisionSnapshot {
 
 // All thresholds are development hypotheses. The observer supplies pixel
 // evidence without injecting input. The runtime chooses dry or real transport.
-// History has <=128 tracks, <=8 points each, no retained frames.
+// History has <=128 tracks, <=6 points each, no retained frames.
 class GameObserver final {
 public:
     explicit GameObserver(const Clock& clock) : clock_(clock) {}
     DecisionSnapshot process(const Frame& frame);
     void reset();
 private:
-    struct Point { Nanoseconds t; Vec2 p; LineCandidate line; std::optional<Vec2> tail; };
+    struct Point { Nanoseconds t; Vec2 p; LineCandidate line; std::optional<Vec2> tail; bool rails = false; };
     struct History {
         std::uint64_t id = 0, revision = 0;
         NoteKind kind;
@@ -70,6 +73,8 @@ private:
         Nanoseconds observed = 0;
         std::deque<Point> points;
         NoteCandidate appearance;
+        std::optional<NoteCandidate> rail_anchor;
+        Nanoseconds rail_observed = 0;
     };
     const Clock& clock_;
     SceneContext previous_;

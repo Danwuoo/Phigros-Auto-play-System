@@ -75,7 +75,8 @@ bool same_geometry(const SceneContext& a,const SceneContext& b) {
         a.width==b.width&&a.height==b.height&&a.rotation==b.rotation;
 }
 struct HoldRails {double depth=0;std::optional<Vec2> tail;};
-std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& note,double minimum_depth) {
+std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& note,double minimum_depth,
+                                          int maximum_gap=12) {
     const Vec2 normal{-note.tangent.y,note.tangent.x};
     std::array<int,2> extent{};
     for(int side=0;side<2;++side) {
@@ -94,7 +95,7 @@ std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& 
                     std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<30;
             }
             if(found) {last=depth;gaps=0;}
-            else if(last>=0&&(gaps+=2)>12) break;
+            else if((last>=0&&(gaps+=2)>maximum_gap)||(last<0&&depth>=maximum_gap)) break;
         }
         extent[side]=last;
     }
@@ -106,6 +107,29 @@ std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& 
 std::optional<Vec2> visible_hold_tail(const Frame& f,const NoteCandidate& note) {
     const auto rails=visible_hold_rails(f,note,note.width*.65);
     return rails?rails->tail:std::nullopt;
+}
+bool hold_fill_near_head(const Frame& f,const NoteCandidate& note) {
+    const Vec2 normal{-note.tangent.y,note.tangent.x};
+    int support=0;
+    for(const int depth:{4,8,12}) for(const double fraction:{-.35,-.175,0.0,.175,.35}) {
+        const int x=static_cast<int>(std::lround(note.center.x-normal.x*depth+fraction*note.width*note.tangent.x)),
+                  y=static_cast<int>(std::lround(note.center.y-normal.y*depth+fraction*note.width*note.tangent.y));
+        if(x<0||y<0||x>=f.width||y>=f.height) continue;
+        const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+        if(p[2]>145&&p[1]>130&&p[2]>p[0]+8) ++support;
+    }
+    return support>=5;
+}
+bool hold_fill_at_front(const Frame& f,const NoteCandidate& note) {
+    const Vec2 normal{-note.tangent.y,note.tangent.x};int support=0;
+    for(const double fraction:{-.35,-.175,0.0,.175,.35}) {
+        const int x=static_cast<int>(std::lround(note.center.x-normal.x*4+fraction*note.width*note.tangent.x)),
+                  y=static_cast<int>(std::lround(note.center.y-normal.y*4+fraction*note.width*note.tangent.y));
+        if(x<0||y<0||x>=f.width||y>=f.height) continue;
+        const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+        if(p[2]>145&&p[1]>130&&p[2]>p[0]+8) ++support;
+    }
+    return support>=3;
 }
 std::optional<LineCandidate> spanning_line(const Frame& f) {
     struct Column {int x; std::vector<double> y;};
@@ -315,7 +339,9 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                 candidate.width=std::max(8.0,(w*std::abs(axis.y)-h*std::abs(axis.x))/den);
                 candidate.center.x+=axis.x*(length/2-2); candidate.center.y+=axis.y*(length/2-2);
             } else candidate.center.y=c.y1-2;
-            candidate.tail=visible_hold_tail(f,candidate);
+            if(const auto rails=visible_hold_rails(f,candidate,candidate.width*.65)) {
+                candidate.tail=rails->tail;candidate.rails_geometry=true;
+            }
             if(candidate.tail) candidate.height=candidate.center.y-candidate.tail->y;
         }
         notes.push_back(candidate);
@@ -385,32 +411,78 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     }
     const auto now=f.capture_complete_ns;
     std::erase_if(tracks_,[&](const History& t){return now-t.observed>=100'000'000;});
-    // A judged Hold can lose its saturated core. Continue only a recent Hold
-    // whose same-frame parallel rails still attach to an observable line.
+    // A judged Hold can lose or fragment its saturated core. Same-frame
+    // parallel rails take precedence over those enclosed fragments; otherwise
+    // a partial core moves the identity away from the still-visible head.
     if(out.playing_gate) for(const auto& track:tracks_) {
-        if(track.kind!=NoteKind::hold||track.points.empty()||track.appearance.width<f.width*.04) continue;
+        if(track.kind!=NoteKind::hold||track.points.empty()) continue;
+        const bool recent_rails=track.rail_anchor&&now-track.rail_observed<=90'000'000;
+        auto note=recent_rails?*track.rail_anchor:track.appearance;
+        if(note.width<f.width*.04) continue;
         const LineCandidate* line=nullptr;
         for(const auto& candidate:out.lines) if(candidate.confidence>=.8&&candidate.length>=f.width*.8&&
-            std::abs(candidate.tangent.x*track.appearance.tangent.x+
-                     candidate.tangent.y*track.appearance.tangent.y)>.95) {
+            std::abs(candidate.tangent.x*note.tangent.x+
+                     candidate.tangent.y*note.tangent.y)>.95) {
             if(!line||candidate.confidence>line->confidence) line=&candidate;
         }
-        if(!line||std::abs(normal_distance(track.last,*line))>40) continue;
-        auto note=track.appearance;
-        const double d=normal_distance(track.last,*line);
-        note.center={track.last.x+d*line->tangent.y,track.last.y-d*line->tangent.x};
-        note.tangent=line->tangent;note.outline_evidence=true;note.confidence=.7;
-        const bool colored=std::any_of(notes.begin(),notes.end(),[&](const NoteCandidate& incoming) {
-            if(incoming.kind!=NoteKind::hold&&incoming.kind!=NoteKind::tap) return false;
-            if(incoming.kind==NoteKind::tap&&incoming.height<12) return false;
-            return std::abs((incoming.center.x-note.center.x)*note.tangent.x+
-                            (incoming.center.y-note.center.y)*note.tangent.y)<note.width*.4&&
-                   distance(incoming.center,note.center)<std::max(30.0,incoming.height/2+8);
-        });
-        if(colored) continue;
-        const auto rails=visible_hold_rails(f,note,16);
-        if(!rails) continue;
+        if(!line) continue;
+        const bool approaching=recent_rails&&!note.head_on_line&&
+            std::abs(normal_distance(note.center,*line))>8;
+        std::optional<HoldRails> rails;
+        if(approaching) {
+            // Fit only recent, rail-validated heads. A decorative line can
+            // split the next core without changing its outer Hold geometry.
+            double mt=0,mx=0,my=0,den=0,nx=0,ny=0;int count=0;
+            for(const auto& p:track.points) if(p.rails&&now-p.t<=90'000'000) {
+                mt+=(p.t-now)/1e9;mx+=p.p.x;my+=p.p.y;++count;
+            }
+            if(count<3) continue;
+            mt/=count;mx/=count;my/=count;
+            for(const auto& p:track.points) if(p.rails&&now-p.t<=90'000'000) {
+                const double dt=(p.t-now)/1e9-mt;den+=dt*dt;nx+=dt*(p.p.x-mx);ny+=dt*(p.p.y-my);
+            }
+            if(den<=0) continue;
+            const Vec2 expected{mx-nx/den*mt,my-ny/den*mt};
+            note.tangent=line->tangent;
+            const Vec2 normal{-note.tangent.y,note.tangent.x};
+            for(int offset=32;offset>=-32;offset-=2) {
+                note.center={expected.x+normal.x*offset,expected.y+normal.y*offset};
+                if(!hold_fill_at_front(f,note)) continue;
+                // Front support is sampled 4 px behind this probe. Keep the
+                // same 2 px inner leading-edge anchor as the color detector.
+                note.center.x-=normal.x*6;note.center.y-=normal.y*6;
+                rails=visible_hold_rails(f,note,note.width*.65);
+                if(rails) break;
+            }
+            if(!rails) continue;
+            note.head_on_line=std::abs(normal_distance(note.center,*line))<=8;
+        } else {
+            if(std::abs(normal_distance(note.center,*line))>40) continue;
+            const double d=normal_distance(note.center,*line);
+            note.center={note.center.x+d*line->tangent.y,note.center.y-d*line->tangent.x};
+            note.tangent=line->tangent;
+            const bool held_fill=recent_rails&&hold_fill_near_head(f,note);
+            rails=visible_hold_rails(f,note,16,held_fill?32:12);
+            if(!rails) continue;
+            note.head_on_line=true;
+        }
+        note.outline_evidence=true;note.rails_geometry=true;note.confidence=.7;
+        // The hit effect briefly covers a rail after it has been confirmed.
+        // Bridge at most 32 px only with current blue/gray fill at the head;
+        // a new body separated from the line cannot refresh this identity.
         note.tail=rails->tail;note.height=rails->depth;
+        note.recent_identity=track.id;
+        std::erase_if(notes,[&](const NoteCandidate& incoming) {
+            if(incoming.kind!=NoteKind::hold&&incoming.kind!=NoteKind::tap) return false;
+            // An independent thin Tap can coexist with a Hold. Require a
+            // body-shaped component enclosed by the currently observed rails.
+            if(incoming.kind==NoteKind::tap&&incoming.height<12) return false;
+            const double along=(incoming.center.x-note.center.x)*note.tangent.x+
+                               (incoming.center.y-note.center.y)*note.tangent.y;
+            const double across=normal_distance(incoming.center,*line)-normal_distance(note.center,*line);
+            return std::abs(along)+incoming.width*.5<=note.width*.5+16&&
+                   across>=-rails->depth-8&&across<=12;
+        });
         if(notes.size()==128) {out.capacity_valid=false;out.playing_gate=false;out.ui=GameUi::unknown;break;}
         notes.push_back(note);
     }
@@ -443,10 +515,17 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     }
     struct Pair { std::size_t note, track; double cost; };
     std::vector<Pair> pairs; pairs.reserve(notes.size()*tracks_.size());
+    std::set<std::uint64_t> rail_claims;
+    for(const auto& note:notes) if(note.recent_identity) rail_claims.insert(note.recent_identity);
     for(std::size_t ni=0;ni<notes.size();++ni) {
         const auto& n=notes[ni];
         for(std::size_t ti=0;ti<tracks_.size();++ti) {
             const auto& t=tracks_[ti];
+            if(n.recent_identity) {
+                if(n.recent_identity==t.id) pairs.push_back({ni,ti,0});
+                continue;
+            }
+            if(rail_claims.contains(t.id)) continue;
             Vec2 point=n.center;
             if(t.kind!=n.kind) {
                 if(t.kind!=NoteKind::hold||!shortened_holds[ni]||
@@ -495,6 +574,9 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         }
         match->last=target.note.center;
         match->appearance=target.note;
+        if(target.note.rails_geometry&&!ambiguous) {
+            match->rail_anchor=target.note;match->rail_observed=now;
+        }
         target.evidence_ns=now; target.expires_ns=now+100'000'000;
         target.reason=ambiguous?"association_ambiguous":"line_unobservable";
         const LineCandidate* selected=nullptr;
@@ -510,7 +592,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             const auto latest_distance=normal_distance(target.note.center,l);
             target.hit={target.note.center.x+latest_distance*l.tangent.y,
                         target.note.center.y-latest_distance*l.tangent.x};
-            match->points.push_back({now,target.note.center,l,target.note.tail});
+            match->points.push_back({now,target.note.center,l,target.note.tail,target.note.rails_geometry});
             while(match->points.size()>6 || (match->points.size()>3&&now-match->points.front().t>90'000'000))
                 match->points.pop_front();
             target.samples=static_cast<int>(match->points.size());

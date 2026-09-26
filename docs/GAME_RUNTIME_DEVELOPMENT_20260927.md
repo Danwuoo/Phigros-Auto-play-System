@@ -1,6 +1,6 @@
 # 遊戲 runtime 開發與實測紀錄（2026-09-27）
 
-狀態：第一批 runtime／scheduler、遊戲 observer 與自動 PLAY 已接入；後續 G2 assist 有真實命中，四類完整試驗最高分結算 Perfect 335／Good 6／Bad 0／Miss 52。G1 全項、G3 所需能力與 HD／IN AP 尚未驗收。下列每批的版本、故障與結果分開保留，不以新修正回填舊 run。
+狀態：第一批 runtime／scheduler、遊戲 observer 與自動 PLAY 已接入；後續 G2 assist 有真實命中，四類完整試驗最高分結算 Perfect 350／Good 9／Bad 0／Miss 34。G1 全項、G3 所需能力與 HD／IN AP 尚未驗收。下列每批的版本、故障與結果分開保留，不以新修正回填舊 run。
 
 ## 規劃與工作區
 
@@ -175,3 +175,31 @@ run `cpp-observe-17904493232314195`，35 ms、185 秒 STOPPED、10,052 消費 fr
 後續可選 `--keep-diagnostic-anomalies` 在同一即時 frame 的近線窄 Hold 對或近線 history／association／fit 失敗時，各只保留第一張，最多兩張。以固定兩槽副本保存，輸入停止／釋放後才編碼；預設 none，不讀檔案回饋 Note 操作。共用既有 WIC PNG writer 到 core（與讀取 helper 相同模組），不從 runtime 反向依賴 bench。這是為精確對上 raw 決策而保留的有限診斷，不擴大為長期錄影或 frame 佇列。
 
 build v21 保留 Windows `near` 巨集名稱衝突的編譯失敗；改用 `near_line` 後 build v22 成功，70／70 短回歸通過。`fake-observe-v22.json` 的 fake run 正常 STOPPED、input_created=false、diagnostic_images_saved=0，目錄只有 manifest／events／summary；非 assist 使用診斷旗標明確拒絕（`diagnostic-invalid-mode-v22.log`）。observer 8／planner 5 的實際識別／遊玩政策保留，另開 35 ms 有限診斷 run，PNG 留待輸入停止後核對。
+
+## 同幀異常證據與 Hold 核心碎裂（build v22–v23）
+
+v22 run `cpp-observe-17904498546490119`，35 ms、185 秒正常 STOPPED，9,958 消費 frames／1,400 真實命令；結算 771,743 分、Perfect 329／Good 7／Bad 2／Miss 55、max combo 31、accuracy 84.87%、Early 3／Late 4，未 AP。原始 raw SHA-256 `746a11f692c5febd9c274117f5a395f2643fc6f44e8e5f32173676b6d824cc3c`，結果 PNG／manual JSON 與 `assist-lead35-v22-analysis.json` 保存。沒有中途第二擷取 stream，輸入停止後實際保存兩張診斷 PNG。
+
+`diagnostic-hold-fragments.png` 對上 source frame 506／capture QPC 139743125272100 ns：一條 Hold 的當前頭部停在 y≈576 主線，白色 rails x≈779／931 延續至 y≈146；命中特效截斷藍色核心。舊 observer 將上部核心當作 note 15 的新 head（y≈473），另將下部碎片建立 note 18／19，並因方向與多線關聯未驗證而失去可靠樣本。這是同一畫面的幾何錯誤證據，不能由 score=0 推成 Hold 未命中（長按結算尚未出現）。第二張 frame 584 顯示左侧 Hold 即將結束的短藍色核心與 hit effect，旁邊另有正常接近的 Hold。
+
+v23 observer version 9 保留 planner 5：最近 Hold head 靠近充分可見主線時，同幀兩側 rails 先驗證連續支持，再以完整近期身分續接。rail 頭部 12 px 內沒有支持即拒絕，不能跨空白接到遠方 body；rails 已證實時，包在當前 body 範圍的厚藍色碎片不再各建新身分。其他位置的 Note 及獨立薄 Tap 保留。新的短合成回歸涵蓋八張碎片／rails 連續畫面、同時另一 Hold／薄 Tap，以及 rails 與主線有空白時不得延續。此修正不讀取診斷 PNG 作執行時輸入。
+
+v23 build／71 項 Release 測試通過。run `cpp-observe-17904505170905854`，35 ms、185 秒 STOPPED，9,882 消費 frames／1,233 真實命令。結算 764,135 分、Perfect 321／Good 13／Bad 0／Miss 59、max combo 38、accuracy 83.83%、Early 2／Late 11；未改善、未 AP。`assist-lead35-v23-analysis.json` raw SHA-256 `5f431fdd7fcedd4351ffccd647b3bd0362e9989886b9b44ffd2546087d3c0128`，結果與兩張同幀異常圖保留。沒有中途第二 stream。
+
+frame 395–402 的第一條 Hold 確曾以完整 rails 續接（原下壓 intent 1 已執行）；frame 403 因命中特效遮住 rail 而退回偏移核心，frame 432 又分成三個 Hold。v24 observer 10 只對前一張已確認 rails 的 Hold，且當前 head 上方 4／8／12 px 的多點取樣仍有藍／灰長條填色時，允許最多 32 px 的短 rail 遮擋。其他情況仍為 12 px，沒有當前填色的 24 px 真空白不能續接。八張合成序列增加兩側不同位置的 24 px 遮擋，並保留反例；不能將對特效的容忍套成放寬來源期限。build v24／71 項 Release 測試通過。
+
+v24 run `cpp-observe-17904509835434632`，35 ms、185 秒 STOPPED，9,742 消費 frames／1,295 真實命令；結算 797,952 分、Perfect 340／Good 7／Bad 0／Miss 46、max combo 35、accuracy 87.67%、Early 0／Late 7，為目前最高分、未 AP。結果 PNG／manual JSON、`assist-lead35-v24-analysis.json` 與兩張診斷圖保留，無中途第二 stream。實際 down Tap 136／Hold 88／Drag 133／Flick 6，Hold 時長 n=88 的 p50／p95／p99／max = 484.634／951.624／1588.338／2825.303 ms。來源／gate 中斷亦出現，不能把 Miss 全歸因於辨識或宣稱受控性能改善。
+
+frame 519 的 Hold 17 仍正確續接，frame 520 退回核心，head 突然移到 y≈496（當時 PCA 僅列出一側 rail）；單側輪廓支持失效是待核對的解釋；身分的 appearance 被覆寫，使後續即使 rails 重新清楚也因 last-head 距線大於 40 px 而無法恢复。frame 529 的同幀 PNG／C++ WIC 像素讀取顯示雙側輪廓與 head 填色實際仍可見。有限離線 pixel helper 原始碼、失敗／修正建置及輸出保存在 ignored `measurements/g0-preflight/png-pixels*`，不接入正式輸入。
+
+v25 observer 11 為每個既有 Hold 另保留一份已確認 rail 幾何／QPC，最多 90 ms；不保存 frame。暫時破碎核心不能覆寫這份 anchor；恢復時仍先核對當前雙側 rails、主線與必要填色。驗證成功的 outline 候選明確沿用原身分，避免其他短期碎片搶走配對；沒有當前雙側支持時不造 outline，不延長來源／owner 證據期限。新增單側 rail 缺一幀後恢復原身分及過期不得恢復的合成測試。
+
+v25 build／72 項 Release 測試通過。run `cpp-observe-17904516371318531`，35 ms、185 秒 STOPPED，9,865 消費 frames／1,288 真實命令。結算 830,700 分、Perfect 350／Good 9／Bad 0／Miss 34、max combo 62、accuracy 90.55%、Early 1／Late 8，為目前最高分、未 AP。`assist-lead35-v25-analysis.json` raw SHA-256 `cd7b875f1abe15be7e9908a46edbd528f5e2a33a6ae7dea0bd4a80c3b817b0da`，結果 PNG／manual JSON 與診斷圖保留，無中途第二 stream。
+
+v25 第一個窄 Hold 對移至 frame 6064／QPC 141627271546600 ns。原圖含一條接近中 Hold（完整外輪廓約 x=454–618、head y≈548）及旁邊獨立 Tap；穿過 body 的垂直裝飾線把藍色核心切開，observer 輸出兩個窄 Hold 且多線配對沒有樣本。此處尚未在判定線上，原先只對已到線 Hold 的修正無法涵蓋。
+
+build v26–v27 observer 12 將當前完整彩色 Hold 的雙側 rails 支持也存入同一份 90 ms anchor。接近中僅用最近最多六個、90 ms 內 rail-validated 頭部坐標擬合預期位置，在其法向 ±32 px 內尋找當前完整前緣填色與雙側 body rails；搜尋不是未見畫面的觸控依據，驗證失敗就不續接。前緣保留 color detector 的 2 px 內側語義；接近主線至 8 px 才轉已有到線維持路徑。完整身分配對排除同 body 的碎片，其他薄 Tap 保留。新增移動 Hold 被垂直線切開的合成序列，核對身分、完整寬度、頭部位置與 500 px/s 時間預測。v26 完成編譯後檢查短尾部的分支條件，v27 補上 8 px 轉換；v26 未進實戰。
+
+v27 build／73 項 Release 測試通過。run `cpp-observe-17904522950572565`，35 ms、185 秒 STOPPED，9,926 消費 frames／1,312 真實命令。結算 807,405 分、Perfect 344／Good 6／Bad 0／Miss 43、max combo 42、accuracy 88.52%、Early 0／Late 6；較 v25 退步、未 AP。`assist-lead35-v27-analysis.json` raw SHA-256 `7b713398dd184cd94a0e4c56eecfd91dba779d5324297590ba640d1c56de7523`，結果與兩張同幀診斷圖保留，無中途第二 stream。down Tap 134／Hold 94／Drag 129／Flick 6，4 contact conflict；這些像素身分數量仍非譜面個數。
+
+frame 5995 與 v25 frame 6064 是相同幾何類型的有限診斷，仍輸出兩個窄 Hold（其中寬度約 34 px）而非完整可見 body。只靠舊 anchor 的接近恢復未解決此例，不能因合成測試通過而宣稱已修正；下一步需要從當前外輪廓直接取得完整幾何，保留 v25 最高分基線與全部退步紀錄。

@@ -152,6 +152,88 @@ TEST(GameObserver, DesaturatedHoldRequiresFreshParallelRailsAndDoesNotInventClip
     rect(old,400,200,2,376,{230,230,230});rect(old,542,200,2,376,{230,230,230});
     clock.set(old.capture_complete_ns);EXPECT_TRUE(observer.process(old).targets.empty());
 }
+TEST(GameObserver, CurrentHoldRailsOverrideFragmentedCoreWithoutRemovingIndependentNotes) {
+    FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;
+    for(int i=0;i<3;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,783,300+i*10,144,250,{40,190,255});clock.set(f.capture_complete_ns);
+        const auto s=observer.process(f);ASSERT_EQ(s.targets.size(),1);identity=s.targets[0].note_id;
+    }
+    for(int i=0;i<8;++i) {
+        auto f=image(i+4,(i+3)*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,778,146+i*10,2,430-i*10,{230,230,230});
+        rect(f,932,146+i*10,2,430-i*10,{230,230,230});
+        // Later frames contain the short asymmetric rail occlusion caused
+        // by hit effects. Current head fill still proves an attached body.
+        if(i>0) {
+            rect(f,778,548,2,24,{0,0,0});rect(f,932,480,2,24,{0,0,0});
+        }
+        rect(f,783,552,144,20,{160,175,185});
+        // Upper core and two disconnected head fragments, as seen in the
+        // retained live anomaly. Their PCA axes no longer describe the Hold.
+        rect(f,794,360,110,112,{40,190,255});
+        rect(f,800,490,58,58,{40,190,255});rect(f,876,500,52,48,{40,190,255});
+        rect(f,300,150,140,180,{40,190,255}); // A separate approaching Hold.
+        rect(f,800,600,140,6,{40,190,255}); // A separate thin Tap.
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),3);
+        const auto held=std::find_if(s.targets.begin(),s.targets.end(),[&](const auto& t){return t.note_id==identity;});
+        ASSERT_NE(held,s.targets.end());EXPECT_TRUE(held->note.outline_evidence);
+        EXPECT_NEAR(held->note.center.x,855,2);EXPECT_NEAR(held->note.center.y,575,2);
+        EXPECT_NEAR(held->note.width,144,2);EXPECT_GT(held->samples,0);
+        EXPECT_EQ(std::count_if(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.kind==NoteKind::tap;}),1);
+    }
+    auto f=image(12,220'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+    // Even a 24 px gap within the occlusion allowance cannot refresh a
+    // previous held identity when current head fill is absent.
+    rect(f,778,200,2,350,{230,230,230});rect(f,932,200,2,350,{230,230,230});
+    clock.set(f.capture_complete_ns);EXPECT_TRUE(observer.process(f).targets.empty());
+}
+TEST(GameObserver, HoldRailAnchorSurvivesOneMissingRailButRequiresCurrentPairToRecover) {
+    FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;
+    for(int i=0;i<3;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,783,300+i*10,144,250,{40,190,255});clock.set(f.capture_complete_ns);
+        const auto s=observer.process(f);ASSERT_EQ(s.targets.size(),1);identity=s.targets[0].note_id;
+    }
+    for(int i=0;i<3;++i) {
+        auto f=image(i+4,(i+3)*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        if(i!=1) rect(f,778,200,2,376,{230,230,230});
+        rect(f,932,200,2,376,{230,230,230});rect(f,783,552,144,20,{160,175,185});
+        rect(f,794,360,110,112,{40,190,255});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        const auto held=std::find_if(s.targets.begin(),s.targets.end(),[&](const auto& t){return t.note_id==identity;});
+        if(i==1) {
+            EXPECT_TRUE(std::none_of(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.outline_evidence;}));
+        } else {
+            ASSERT_NE(held,s.targets.end());EXPECT_TRUE(held->note.outline_evidence);
+            EXPECT_NEAR(held->note.center.x,855,2);EXPECT_NEAR(held->note.center.y,575,2);
+            EXPECT_NEAR(held->note.width,144,2);
+        }
+    }
+    auto old=image(7,240'000'000);hud(old);rect(old,0,575,1280,2,{255,255,255});
+    rect(old,778,200,2,376,{230,230,230});rect(old,932,200,2,376,{230,230,230});
+    rect(old,783,552,144,20,{160,175,185});clock.set(old.capture_complete_ns);
+    EXPECT_TRUE(observer.process(old).targets.empty());
+}
+TEST(GameObserver, ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsCore) {
+    FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;DecisionSnapshot result;
+    for(int i=0;i<7;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=430+i*10,top=head-180;
+        rect(f,400,top,2,184,{255,255,255});rect(f,550,top,2,184,{255,255,255});
+        rect(f,403,top,144,180,{40,190,255});
+        if(i>=3) rect(f,472,100,4,550,{255,255,255}); // Independent decorative line.
+        clock.set(f.capture_complete_ns);result=observer.process(f);
+        ASSERT_EQ(result.targets.size(),1);
+        if(!identity) identity=result.targets[0].note_id;
+        EXPECT_EQ(result.targets[0].note_id,identity);EXPECT_GT(result.targets[0].note.width,135);
+        EXPECT_NEAR(result.targets[0].note.center.y,head-4,3);
+        if(i>=3) EXPECT_TRUE(result.targets[0].note.outline_evidence);
+    }
+    ASSERT_TRUE(result.targets[0].crossing_ns);EXPECT_NEAR(result.targets[0].velocity,500,20);
+    EXPECT_LT(result.targets[0].residual,2);
+}
 TEST(GameObserver, ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;int frame=0;
     for(const int height:{160,120,100,80,60,40,20}) {

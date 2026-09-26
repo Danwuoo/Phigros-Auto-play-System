@@ -14,7 +14,7 @@
 
 assist profile 的可選 `game` 物件嚴格限制 `enabled_types`（1–4 個不重複的 tap／hold／drag／flick）、`lead_ms`（整數 −60 至 60）及 `uncertainty_ms`（整數 1 至 60）；省略時預設 Tap／8 ms／30 ms。Hold 可由新 pixels 修改未執行的 move／up，已執行 prefix 不可改；`prefix_offset` 允許丟棄舊已執行步驟但必須保留最後一步，防止長 Hold 的 plan 無限增長。每次觸控 receipt 記錄 QPC scheduled／start／return、source frame、intent；RPC success 不代表遊戲 Perfect。
 
-decision schema 2 明列 Note anchor 語義（Tap／Flick 芯中心、Hold leading edge）及 color core／近期 Hold 與當幀 parallel rails 的觀測依據。後者只在新鮮 PLAYING gate、最近 100 ms 身分、當幀支持充分的線與兩側輪廓同時成立時續接；裁切 tail 仍 unknown，不能由舊 body 長度計時維持。歷史 schema 1 可由 C++ 分析器重算，不能回填新觀測依據。計畫記錄 `accepted_ns`，分析分開 future-at-accept 與 already-past-at-accept 的 down lateness；缺此舊欄位時列為 unclassified。
+decision schema 2 明列 Note anchor 語義（Tap／Flick 芯中心、Hold leading edge）及 color core／近期 Hold 與當幀 parallel rails 的觀測依據。後者只在新鮮 PLAYING gate、最近 100 ms 身分、當幀支持充分的線與兩側輪廓同時成立時續接；裁切 tail 仍 unknown，不能由舊 body 長度計時維持。observer 11 的 rails 一般須在 projected head 12 px 內開始支持，且延續至少 16 px；前一張已確認 rails 且當前 head 仍有藍／灰 body 填色時，才容許最多 32 px 的短邊框遮擋。成立時優先維持完整 Hold 身分並抑制其當前 body 內厚核心碎片，獨立薄 Tap 與其他位置的候選保留。已確認 rail 幾何／QPC 另有每身分一份、90 ms 上限的 anchor；當前核心碎裂不能覆寫它，只有當前 rails 再驗證成功才恢復原身分，不以歷史 anchor 單獨延長觸控。歷史 schema 1 可由 C++ 分析器重算，不能回填新觀測依據。計畫記錄 `accepted_ns`，分析分開 future-at-accept 與 already-past-at-accept 的 down lateness；缺此舊欄位時列為 unclassified。
 
 少量候選漏辨的容忍仍受像素證據期限約束：Tap／Drag 40 ms、Hold 60 ms、Flick 75 ms；超過時取消個別意圖，UNKNOWN UI／source 失效則立即取消全部。不由 tombstone 重啟已完成意圖。離線分析另保留最多 512 個近期觀測身分，按是否形成近線預測、計畫接受及實際 down 列結果；像素身分可能碎裂，這些數量不能當作真實譜面個數或逐 Note 判定。
 
