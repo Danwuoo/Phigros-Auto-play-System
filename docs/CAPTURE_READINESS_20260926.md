@@ -39,3 +39,19 @@
 此停止故障觸發已預定的整組重測；先完成同程序反覆啟停驗證，再以新 source revision 重跑完整五路徑日程。原資料保留。
 
 修正後 Release／CTest 25/25 通過；[同程序 WGC 啟停驗證](../measurements/wgc_stop_start_20260926_01/campaign-results.json) 完成 20 次（每次暖機 1 秒、量測 2 秒），再完成暖機 1 秒＋量測 60 秒，21/21 成功。這是停止故障的開發回歸，不能替代正式三批或十分鐘穩定性。
+
+## 第二版完整日程及暫停後舊圖修正
+
+`five_formal_20260926_r2` 凍結 `6fa6dbde65e488986c8ca969994426649e797aa6`，76 批全部執行：69 成功、7 失敗。DXGI 兩批 48 Hz 因前景被其他視窗取代而拒絕；scrcpy 四批正常及十分鐘長測因相對 PTS 積壓保護終止。gRPC 控制／優化、WGC、DXGI 各完成十分鐘；該版所有原始資料與生成比較表保留，不能把失敗刪去再聲稱整體通過。舊版 EXE／DLL 另存 `measurements/frozen_6fa6dbde_release/`。
+
+暫停後離線稽核發現 WGC 第一張發布圖相對暫停前時域落後增加 500.7144 ms；未啟用相對保護的 gRPC 控制／優化第一張分別增加 494.3589／493.7612 ms。DXGI 的第一張增加為 -0.2882 ms。這是主機／來源**增量**的差，沒有 Android 絕對來源年齡校準。第二版的幾何有效不代表恢復行為符合最新圖契約。
+
+新 WGC 在容量二的 pool 最多取兩張、明確 Close 被替換與已用 frame，先檢查 SystemRelativeTime 增量再 readback／發布，超過 250 ms 相對積壓增加即丟棄，並記錄 `pool_older_frame_drop`／`relative_stale_drop`。來源或主機時戳倒退終止來源。250 ms 是有界積壓保護配置，不是已確認的性能通過門檻。新的五路徑日程也固定 gRPC 兩配置 `max_relative_lag_ms=250`；原控制與優化只有複製策略不同。WGC 單獨 bench 預設相同保護，gRPC 單獨 bench 需顯式啟用。
+
+新 Fixture 保留 native-v2 四區格式，增加獨立 binary 移動 X 真值、低對比區與紅／藍邊緣，以及只限 Fixture 的 `debug.pas.fixture_freeze`。每 100 ms 查一次 property；凍結不 swap、不增加 counter，恢復繼續繪圖。新 APK 位於 `measurements/fixture_cpp_position_static/pas-capture-fixture-v2.apk`，SHA-256 `195b6a0673c5d2182fe9b9face60cbfae8457dcf4c46bb82a873ad99d35fe964`。原 APK 不覆寫，重測所有候選，避免混合 Fixture 成本與品質版本。ADB shell 沒有 su，原 package 不可 run-as，未用未經證實的外部 SIGSTOP 冒充靜止來源。
+
+新版集中日程為 96 批：45 正常、45 壓力（每配置新增三秒靜止、獨立 GPU 負載、preview off/on）、五次十分鐘及 MMAP 診斷。GPU 負載是同程序專用 thread 的 D3D11 512×512 float4 compute、每 pixel 128 iterations、最多一個 dispatch 在途、完成期限二秒；adapter LUID、shader 與 dispatch 數記錄在 raw。PDH GPU Engine utilization 原始 instance、percent 與 QPC brackets 同時採樣；每 engine 分別歸一，不能把所有 engine 加總當整卡百分比。preview 使用不啟用焦點的明示位置 (1460,125)、client 400×225，RGB endpoint 仍為 1280×720，本位置只適用本機桌面 profile。
+
+暫停／靜止恢復有獨立 ADB pixels reference，包含呼叫前後 QPC bracket；分析尋找第一張消費 counter 不早於該 reference 的圖。該指標包含診斷呼叫等待，不稱為精確的來源年齡或瞬時恢復下限。靜止的兩個 reference counter 必須相同，恢復 reference 必須更新。
+
+開發回歸：Release／CTest **27/27**；WGC 暫停短測丟棄一張、gRPC 丟棄三張，所有消費圖可解碼；WGC／gRPC 靜止測試的兩個獨立 reference 相同、恢復更新；WGC GPU＋preview 開發測試完成 570 dispatch、9 個 GPU 採樣，280/280 消費圖可解碼。DXGI preview 開發短測 133/133，移動左右誤差 0；scrcpy 短測 124/124，左邊緣誤差 0–1 px、右邊緣 0 px。上述短測不作性能排名。接續新 revision 完整重測及依選型規則的主用／備用三十分鐘驗證。

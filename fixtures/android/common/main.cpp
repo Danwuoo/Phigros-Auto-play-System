@@ -41,6 +41,8 @@ struct Fixture {
     std::uint32_t sequence = 0;
     std::uint32_t overflow = 0;
     std::uint32_t down = 0, up = 0, move = 0, cancel = 0;
+    std::int64_t next_property_ns = 0;
+    bool capture_frozen = false;
     std::array<Trace, kTraceSlots> traces{};
     std::array<bool, 16> active{};
 };
@@ -80,8 +82,18 @@ void capture_scene(Fixture& fixture, std::int64_t frame_ns) {
     const auto seconds = (frame_ns - fixture.first_frame_ns) / 1e9;
     const auto travel = std::max(1, fixture.width - 80);
     const int x = 40 + static_cast<int>(std::fmod(seconds * 420.0, travel));
+    // Lossy-tolerant binary position truth, separate from runtime game logic.
+    rect(fixture, 230, 55, 12, 12, 1, 0, 0);
+    rect(fixture, 425, 55, 12, 12, 1, 0, 0);
+    for (int bit = 0; bit < 11; ++bit) {
+        const float on = (x & (1 << bit)) ? 1.f : 0.f;
+        rect(fixture, 250 + bit * 14, 55, 12, 12, on, on, on);
+    }
     rect(fixture, x, fixture.height / 2 - 25, 40, 50, 1, 1, 0);
     rect(fixture, 80, fixture.height / 2 + 50, fixture.width - 160, 1, 1, 1, 1);
+    rect(fixture, 200, fixture.height - 140, 200, 20, 24/255.f, 24/255.f, 24/255.f);
+    rect(fixture, 420, fixture.height - 140, 80, 20, 1, 0, 0);
+    rect(fixture, 500, fixture.height - 140, 80, 20, 0, 0, 1);
     // Four identical identity cells permit cross-region consistency checks.
     for (int corner = 0; corner < 4; ++corner) {
         const int cx = corner % 2 ? fixture.width - 90 : 65;
@@ -229,7 +241,14 @@ void frame_callback(std::int64_t frame_ns, void* user) {
 #endif
     if (!fixture.app->destroyRequested) {
 #ifndef PAS_TOUCH_FIXTURE
+        if (frame_ns >= fixture.next_property_ns) {
+            char frozen[PROP_VALUE_MAX]{};
+            __system_property_get("debug.pas.fixture_freeze", frozen);
+            fixture.capture_frozen = frozen[0] == '1';
+            fixture.next_property_ns = frame_ns + 100'000'000;
+        }
         if (fixture.display != EGL_NO_DISPLAY &&
+            !fixture.capture_frozen &&
             (!fixture.interval_ns || !fixture.next_draw_ns || frame_ns >= fixture.next_draw_ns)) {
             if (!fixture.first_frame_ns) fixture.first_frame_ns = frame_ns;
             capture_scene(fixture, frame_ns);

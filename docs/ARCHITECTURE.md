@@ -2,6 +2,10 @@
 
 ## T6 擷取候選開發契約（2026-09-26）
 
+WGC frame pool 容量二，每次回呼最多取兩張並 Close 被替換圖；以主機／SystemRelativeTime 的 elapsed 差監控相對積壓，預設 250 ms 上限，舊圖先丟棄再進 GPU readback。時戳倒退終止來源；stream 重建時另建 guard。該時間不是 Android render age。停止時 shared callback state 先 closing 並排空正在執行的回呼，後撤銷事件、Close session/pool；本機 Windows 的 `GraphicsCapture.dll_unloaded` 崩潰以僅常駐 System32 模組修正，session/frame/GPU 資源照常回收。證據與完整重測見 [就緒紀錄](CAPTURE_READINESS_20260926.md)。
+
+bench 的來源靜止、GPU 負載和預覽都是診斷選項。靜止只操作原生擷取 Fixture 的 property，控制 thread 確保恢復；ADB reference 的讀取前後都記 QPC。GPU 負載同程序、單 dispatch 在途、二秒完成期限；資源採樣收錄 PDH GPU Engine 的獨立 instance 百分比，不假設加總等於整卡百分比。預覽用 CPU RGB24 做 D3D11 上傳，common capture endpoint 保持相同；明示的本機 preview placement 不得當跨機器通用座標。所有新後端仍只在 bench，pixels-only 的遊戲觀察契約不變。
+
 五條擷取路徑沿用同一 `LatestFrame` 和有界 Journal；比較終點是完整 CPU RGB24。`Frame` 新增 backend、原始格式／stride、裁切、來源有效性，以及 receive、copy、GPU readback、decode 的可觀察時間點。未能直接觀察的階段維持 null，來源 Unix、Windows WGC system-relative 100 ns、DXGI QPC ticks、scrcpy PTS 微秒分開保存；`capture_complete_ns` 依後端分別是完整 gRPC payload 到達、WGC frame 取得、DXGI `AcquireNextFrame` 返回、完整編碼封包到達，MMAP 診斷則是通知後 snapshot 複製完成。絕對 Android 來源年齡仍 unknown。
 
 Emulator gRPC 的幾何由實際顯示 profile 決定。先前內嵌直向視窗回傳 720×1280、rotation 0，bench 可明示 `--grpc-rotate-ccw` 正規化 -90°；raw dimensions、rotation metadata 與正規化角度分別記錄。控制配置先逐列複製再旋轉，優化配置融合旋轉直接寫入輸出 buffer。獨立橫向視窗已驗證直接回傳 1280×720、rotation 1，正式 campaign 使用該 profile：控制逐列複製、優化單次 `memcpy`。Session 既有 profile 不受 bench 選項影響。

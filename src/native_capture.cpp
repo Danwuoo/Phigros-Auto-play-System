@@ -238,9 +238,11 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
         std::mutex mutex;
         std::exception_ptr failure;
         std::optional<std::uint64_t> last_hash;
+        NativeRelativeLagGuard lag;
         bool closing = false;
+        explicit CallbackState(const NativeCaptureOptions& config) : lag(config.max_relative_lag_ns) {}
     };
-    const auto state = std::make_shared<CallbackState>();
+    const auto state = std::make_shared<CallbackState>(options);
     auto token = pool.FrameArrived([&, state](auto const& sender, auto const&) {
         std::lock_guard lock(state->mutex);
         // A queued callback may outlive event revocation. Its shared state stays
@@ -249,6 +251,17 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
         try {
             auto frame = sender.TryGetNextFrame();
             if (!frame) return;
+            struct FrameScope {
+                Direct3D11CaptureFrame& frame;
+                ~FrameScope() { try { if (frame) frame.Close(); } catch (...) {} }
+            } frame_scope{frame};
+            // Pool capacity is two. At most one extra acquisition keeps work
+            // bounded even when new frames arrive during the drain.
+            if (auto newer = sender.TryGetNextFrame()) {
+                frame.Close();
+                frame = std::move(newer);
+                if (on_signal) on_signal("pool_older_frame_drop", clock.now_ns());
+            }
             const auto received = clock.now_ns();
             if (on_signal) on_signal("source_callback", received);
             check_window(hwnd);
@@ -257,6 +270,13 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
             const auto size = frame.ContentSize();
             if (size.Width != initial_size.Width || size.Height != initial_size.Height)
                 throw std::runtime_error("WGC content size changed; explicit crop profile must be recalibrated");
+            const auto source_100ns = frame.SystemRelativeTime().count();
+            if (source_100ns < 0 || source_100ns > INT64_MAX / 100)
+                throw std::runtime_error("WGC source timestamp outside nanosecond range");
+            if (!state->lag.accept(received, source_100ns * 100)) {
+                if (on_signal) on_signal("relative_stale_drop", received);
+                return;
+            }
             auto access = frame.Surface().as<
                 ::Windows::Graphics::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess>();
             com_ptr<ID3D11Texture2D> texture;
@@ -264,7 +284,7 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
                   "GetInterface captured texture");
             auto normalized = d3d.read(clock, texture.get(), options, received,
                 std::nullopt, ++sequence, generation);
-            normalized.source_system_relative_100ns = frame.SystemRelativeTime().count();
+            normalized.source_system_relative_100ns = source_100ns;
             const auto hash = fingerprint(normalized.rgb);
             if (state->last_hash && *state->last_hash == hash) {
                 if (on_signal) on_signal("duplicate_pixels", received);
@@ -433,6 +453,19 @@ void stream_dxgi(const Clock& clock, const NativeCaptureOptions& options, HWND h
     }
 }
 } // namespace
+
+bool NativeRelativeLagGuard::accept(Nanoseconds host, Nanoseconds source) {
+    if (limit_ <= 0 || host < 0 || source < 0 ||
+        (last_host_ && host < *last_host_) || (last_source_ && source < *last_source_))
+        throw std::runtime_error("native relative lag clock or limit invalid");
+    last_host_ = host;
+    last_source_ = source;
+    const auto current = host - source;
+    if (!offset_ || current < *offset_) offset_ = current;
+    // Avoid subtraction overflow: both times are nonnegative, but their
+    // offsets may have opposite signs.
+    return static_cast<long double>(current) - *offset_ <= limit_;
+}
 
 void copy_bgra_rows_to_rgb24(const std::uint8_t* source, std::size_t source_bytes,
                              int source_stride, int width, int height,

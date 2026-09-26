@@ -21,6 +21,17 @@ struct NativeCaptureOptions {
     int crop_y = 0;
     int width = 0;
     int height = 0;
+    Nanoseconds max_relative_lag_ns = 250'000'000;
+};
+
+// Compares elapsed host and source time only; never estimates absolute age.
+class NativeRelativeLagGuard {
+public:
+    explicit NativeRelativeLagGuard(Nanoseconds limit) : limit_(limit) {}
+    bool accept(Nanoseconds host, Nanoseconds source);
+private:
+    Nanoseconds limit_;
+    std::optional<Nanoseconds> offset_, last_host_, last_source_;
 };
 
 std::string enumerate_capture_windows_json();

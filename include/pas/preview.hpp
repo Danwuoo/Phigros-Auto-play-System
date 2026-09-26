@@ -7,7 +7,7 @@ namespace pas {
 
 class PreviewWindow final {
 public:
-    PreviewWindow(int width, int height);
+    PreviewWindow(int width, int height, bool benchmark_placement = false);
     ~PreviewWindow();
     PreviewWindow(const PreviewWindow&) = delete;
     PreviewWindow& operator=(const PreviewWindow&) = delete;

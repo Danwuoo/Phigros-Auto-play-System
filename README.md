@@ -48,6 +48,8 @@ out/release-v145/Release/pas.exe touch-batch-bench --config configs/avd-fixture.
 
 Android Fixture 使用 SDK build-tools 36.0.0、platform android-37、NDK 30.0.16248370 與 Android Studio JBR。CMake 以 `fixtures/android/CMakeLists.txt` 建立 x86_64 native library；`cmake/PackageFixture.cmake` 負責 APK 打包與簽章，輸出新的 package 名稱。Fixture 目標 40／48／57 Hz 可用 `debug.pas.fixture_hz` 選擇；實際畫面更新率仍由可見計數與主機量測決定。目標 AVD 配置為 5 vCPU／8192 MiB，請以量測 manifest 中的 guest 實際值核對。
 
+擷取 Fixture 新 profile 另含 binary 移動 X 真值與可控靜止（`debug.pas.fixture_freeze`，100 ms 輪詢）。使用新 APK 時可加 `capture-bench --fixture-position-truth` 檢查每張圖的位置真值；`--source-static-s 3` 在正式開始兩秒後凍結三秒並恢復。`--gpu-load` 是獨立的有界 D3D11 計算負載；`--preview` 在本機明示桌面位置開啟不搶焦點的 400×225 預覽。兩者僅用量測。WGC 以 250 ms 相對積壓保護丟棄舊 pool 圖；gRPC 可用 `--max-relative-lag-ms 250` 啟用既有保護。新版 `capture-five-campaign` 固定 gRPC 控制／優化與 WGC 的相同保護並納入上述場景。原始 GPU Engine 計數與 QPC brackets 保留於 JSONL，絕對 Android source age 仍為 unknown。
+
 ## 歷史 Python 實作與研究紀錄
 
 以下敘述及命令屬於凍結的 Python 時期，原路徑現位於 `legacy/python/`、`legacy/android-java/` 或 `legacy/web-fixture/`。歷史通過結果不自動轉移到 C++ 版本；以驗收矩陣及新原始日誌為準。

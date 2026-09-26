@@ -6,6 +6,8 @@
 #include "pas/emulator.hpp"
 #include "pas/journal.hpp"
 #include "pas/native_capture.hpp"
+#include "pas/bench_workloads.hpp"
+#include "pas/preview.hpp"
 #include "pas/scrcpy_capture.hpp"
 
 #include <nlohmann/json.hpp>
@@ -69,6 +71,8 @@ struct FixtureQuality {
     int line_contrast = 0;
     int square_left_x = -1;
     int square_width_px = 0;
+    std::optional<int> square_expected_x;
+    int low_contrast_delta = 0;
 };
 
 FixtureQuality fixture_quality(const Frame& frame) {
@@ -95,7 +99,7 @@ FixtureQuality fixture_quality(const Frame& frame) {
     result.line_contrast = peak - (luminance(expected_y - 6) + luminance(expected_y + 6)) / 2;
     const int square_y = frame.height / 2;
     int right = -1;
-    for (int x = 30; x < frame.width - 30; ++x) {
+    for (int x = 30; x < frame.width; ++x) {
         if (pixel(x, square_y, 0) > 160 && pixel(x, square_y, 1) > 160 &&
             pixel(x, square_y, 2) < 100) {
             if (result.square_left_x < 0) result.square_left_x = x;
@@ -104,6 +108,22 @@ FixtureQuality fixture_quality(const Frame& frame) {
     }
     if (right >= result.square_left_x && result.square_left_x >= 0)
         result.square_width_px = right - result.square_left_x + 1;
+    const auto red = [&](int x) { return pixel(x, 61, 0) > 180 &&
+        pixel(x, 61, 1) < 90 && pixel(x, 61, 2) < 90; };
+    if (frame.width > 440 && red(236) && red(431)) {
+        int truth = 0;
+        bool valid = true;
+        for (int bit = 0; bit < 11; ++bit) {
+            const int x = 256 + bit * 14;
+            const int value = (pixel(x, 61, 0) + pixel(x, 61, 1) + pixel(x, 61, 2)) / 3;
+            if (value > 180) truth |= 1 << bit;
+            else if (value >= 90) valid = false;
+        }
+        if (valid && truth >= 40 && truth + 40 <= frame.width) result.square_expected_x = truth;
+    }
+    if (frame.width > 400 && frame.height > 200)
+        result.low_contrast_delta = pixel(300, frame.height - 130, 0) -
+            pixel(180, frame.height - 130, 0);
     return result;
 }
 
@@ -217,6 +237,7 @@ struct ResourceSample {
     std::uint64_t process_cpu_ns = 0;
     std::uint64_t working_set_bytes = 0;
     json related_processes = json::array();
+    json gpu_engines;
 };
 
 std::uint64_t filetime_100ns(const FILETIME& value) {
@@ -267,6 +288,7 @@ ResourceSample process_resources(const Clock& clock) {
         } while (Process32NextW(snapshot, &entry));
         CloseHandle(snapshot);
     }
+    sample.gpu_engines = sample_gpu_engines();
     sample.after_ns = clock.now_ns();
     return sample;
 }
@@ -312,6 +334,10 @@ void save_diagnostic_png(const std::filesystem::path& path, const Frame& frame) 
 }
 
 void run_capture_bench(const CaptureBenchOptions& options) {
+    if (!std::isfinite(options.source_static_s) || options.source_static_s < 0 ||
+        options.source_static_s > 10 || (options.source_static_s > 0 &&
+        (!options.fixture || options.duration_s < options.source_static_s + 5)))
+        throw std::invalid_argument("static source test needs native Fixture and enough recovery time");
     if (options.serial.empty() || options.width <= 0 || options.height <= 0 ||
         options.width > 4096 || options.height > 4096 ||
         options.source_rotation < 0 || options.source_rotation > 3 ||
@@ -410,6 +436,8 @@ void run_capture_bench(const CaptureBenchOptions& options) {
         native_options.crop_y = options.crop_y;
         native_options.width = options.width;
         native_options.height = options.height;
+        if (options.max_relative_lag_ms)
+            native_options.max_relative_lag_ns = static_cast<Nanoseconds>(std::llround(*options.max_relative_lag_ms * 1e6));
         native_capture = std::make_unique<NativeCapture>(clock, std::move(native_options));
     } else if (options.backend == "scrcpy") {
         scrcpy_capture = std::make_unique<ScrcpyCapture>(clock,
@@ -433,6 +461,11 @@ void run_capture_bench(const CaptureBenchOptions& options) {
         {"image_format", options.image_format}, {"row_order", options.row_order},
         {"grpc_copy_mode", options.backend == "emulator-grpc" ? json(options.grpc_copy_mode) : json(nullptr)},
         {"run_class", options.run_class},
+        {"max_relative_lag_ms", options.backend == "wgc" ?
+            json(options.max_relative_lag_ms.value_or(250)) : options.max_relative_lag_ms ?
+            json(*options.max_relative_lag_ms) : json(nullptr)},
+        {"relative_lag_semantics", "elapsed host minus elapsed source; absolute age unknown"},
+        {"wgc_pool_drain_limit", options.backend == "wgc" ? json(2) : json(nullptr)},
         {"max_rgb_bytes", options.max_rgb_bytes}, {"grpc_endpoint", endpoint_target},
         {"window_hwnd", native ? json(options.window_hwnd) : json(nullptr)},
         {"monitor_index", native ? json(options.monitor_index) : json(nullptr)},
@@ -464,11 +497,15 @@ void run_capture_bench(const CaptureBenchOptions& options) {
             "after ADB RGB publication, before next screencap"},
         {"host_load", options.load},
         {"memory_load_mib", options.memory_load_mib},
-        {"preview", false}, {"qpc_frequency", clock.frequency()},
+        {"preview", options.preview}, {"preview_placement", options.preview ?
+            json{{"x",1460},{"y",125},{"client_width",400},{"client_height",225},{"activate",false}} : json(nullptr)},
+        {"source_static_s", options.source_static_s}, {"gpu_load", options.gpu_load},
+        {"qpc_frequency", clock.frequency()},
         {"source_absolute_age", nullptr}, {"produced_ns", nullptr},
         {"device_preflight", preflight},
         {"host_capture_environment", json::parse(capture_host_environment_json(options.window_hwnd))},
         {"fixture_schema_requested", options.fixture ? json(options.fixture_schema) : json(nullptr)},
+        {"fixture_position_truth_required", options.fixture_position_truth},
         {"fixture_apk_sha256", fixture_hash.empty() ? json(nullptr) : json(fixture_hash)},
         {"installed_apk_sha256", installed_fixture_hash.empty() ? json(nullptr)
             : json(installed_fixture_hash)}};
@@ -484,9 +521,13 @@ void run_capture_bench(const CaptureBenchOptions& options) {
     std::atomic<bool> worker_done = false;
     std::atomic<bool> pause_used = false;
     std::atomic<Nanoseconds> measurement_start = 0;
+    std::atomic<Nanoseconds> receiver_resumed = 0;
     std::mutex fault_mutex;
     std::exception_ptr worker_fault;
     std::jthread load_worker;
+    std::jthread gpu_worker, source_worker, reference_worker;
+    std::unique_ptr<PreviewWindow> preview;
+    if (options.preview) preview = std::make_unique<PreviewWindow>(options.width, options.height, true);
     std::vector<std::uint8_t> memory_load;
     std::jthread worker([&](std::stop_token stop) {
         try {
@@ -538,6 +579,7 @@ void run_capture_bench(const CaptureBenchOptions& options) {
                     const auto pause_start = clock.now_ns();
                     std::this_thread::sleep_for(std::chrono::nanoseconds(
                         static_cast<Nanoseconds>(std::llround(options.receiver_pause_ms * 1e6))));
+                    receiver_resumed = clock.now_ns();
                     if (!journal.push({{"event", "receiver_pause"}, {"start_ns", pause_start},
                         {"ended_ns", clock.now_ns()}, {"duration_ms", options.receiver_pause_ms},
                         {"frame_sequence", frame.sequence}}))
@@ -565,6 +607,8 @@ void run_capture_bench(const CaptureBenchOptions& options) {
         latest.close();
     });
     const auto stop_worker = [&] {
+        for (auto* auxiliary : {&gpu_worker, &source_worker, &reference_worker})
+            if (auxiliary->joinable()) { auxiliary->request_stop(); auxiliary->join(); }
         if (load_worker.joinable()) { load_worker.request_stop(); load_worker.join(); }
         worker.request_stop();
         if (capture) capture->cancel();
@@ -606,17 +650,83 @@ void run_capture_bench(const CaptureBenchOptions& options) {
         const auto formal_start = clock.now_ns();
         measurement_start = formal_start;
         event("MEASURING", formal_start);
+        const auto auxiliary_failed = [&] {
+            { std::lock_guard lock(fault_mutex); worker_fault = std::current_exception(); }
+            worker_done = true;
+        };
+        const auto reference = [&](const char* context) {
+            const auto before = clock.now_ns();
+            const auto frame = capture_adb_png(clock, adb_for_preflight, options.serial, 1);
+            const auto counter = fixture_counter(frame);
+            if (!counter) throw std::runtime_error("independent ADB Fixture reference undecodable");
+            if (!journal.push({{"event", "fixture_reference"}, {"context", context},
+                {"before_ns", before}, {"after_ns", clock.now_ns()}, {"counter",counter->value},
+                {"basis","ADB screencap bracket; Android render age uncalibrated"}}))
+                throw std::runtime_error("Fixture reference journal overrun");
+        };
+        if ((options.receiver_pause_ms > 0 || options.consumer_recover_after_s) && options.fixture)
+            reference_worker = std::jthread([&, formal_start, reference, auxiliary_failed](std::stop_token stop) {
+                try {
+                    if (options.receiver_pause_ms > 0) {
+                        while (!stop.stop_requested() && !receiver_resumed.load())
+                            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                        if (!stop.stop_requested()) reference("receiver_resume");
+                    } else {
+                        const auto until = formal_start + static_cast<Nanoseconds>(*options.consumer_recover_after_s * 1e9);
+                        while (!stop.stop_requested() && clock.now_ns() < until)
+                            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                        if (!stop.stop_requested()) reference("consumer_resume");
+                    }
+                } catch (...) { auxiliary_failed(); }
+            });
+        if (options.gpu_load) gpu_worker = std::jthread([&, auxiliary_failed](std::stop_token stop) {
+            try { run_bench_gpu_load(stop, clock, [&](json item) {
+                if (!journal.push(std::move(item))) throw std::runtime_error("GPU load journal overrun");
+            }); } catch (...) { auxiliary_failed(); }
+        });
+        if (options.source_static_s > 0) source_worker = std::jthread([&, formal_start, reference, auxiliary_failed](std::stop_token stop) {
+            bool frozen = false;
+            try {
+                const auto wait_until = [&](Nanoseconds until) {
+                    while (!stop.stop_requested() && clock.now_ns() < until)
+                        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                    return !stop.stop_requested();
+                };
+                const auto set_freeze = [&](bool value) {
+                    const auto before = clock.now_ns();
+                    adb_call(adb_for_preflight, {"-s", options.serial, "shell", "setprop",
+                        "debug.pas.fixture_freeze", value ? "1" : "0"});
+                    if (!journal.push({{"event", "source_freeze_command"}, {"freeze", value},
+                        {"before_ns", before}, {"after_ns", clock.now_ns()}, {"poll_limit_ms",100}}))
+                        throw std::runtime_error("source control journal overrun");
+                };
+                if (wait_until(formal_start + 2'000'000'000)) {
+                    frozen = true; set_freeze(true);
+                    if (wait_until(formal_start + 2'500'000'000)) reference("static_first");
+                    if (wait_until(formal_start + 3'500'000'000)) reference("static_second");
+                    wait_until(formal_start + 2'000'000'000 + static_cast<Nanoseconds>(options.source_static_s * 1e9));
+                    set_freeze(false); frozen = false;
+                    if (wait_until(formal_start + 2'200'000'000 + static_cast<Nanoseconds>(options.source_static_s * 1e9)))
+                        reference("static_resume");
+                }
+            } catch (...) {
+                if (frozen) try { adb_call(adb_for_preflight, {"-s", options.serial, "shell", "setprop",
+                    "debug.pas.fixture_freeze", "0"}); } catch (...) {}
+                auxiliary_failed();
+            }
+        });
         const auto resource_start = process_resources(clock);
         if (!journal.push({{"event", "resource_boundary"}, {"phase", "start"},
             {"before_ns", resource_start.before_ns}, {"after_ns", resource_start.after_ns},
             {"process_cpu_ns", resource_start.process_cpu_ns},
             {"working_set_bytes", resource_start.working_set_bytes},
-            {"related_processes", resource_start.related_processes}}))
+            {"related_processes", resource_start.related_processes}, {"gpu_engines", resource_start.gpu_engines}}))
             throw std::runtime_error("critical journal overrun");
         const auto formal_end = formal_start + static_cast<Nanoseconds>(std::llround(options.duration_s * 1e9));
         std::uint64_t consumed = 0, skips = 0, decoded = 0;
         Nanoseconds next_resource_ns = formal_start;
         while (clock.now_ns() < formal_end && !worker_done) {
+            if (preview && !preview->pump()) throw std::runtime_error("preview closed before benchmark end");
             if (clock.now_ns() >= next_resource_ns) {
                 if (!memory_load.empty()) {
                     volatile std::uint8_t* pages = memory_load.data();
@@ -628,7 +738,7 @@ void run_capture_bench(const CaptureBenchOptions& options) {
                     {"before_ns", sample.before_ns}, {"after_ns", sample.after_ns},
                     {"process_cpu_ns", sample.process_cpu_ns},
                     {"working_set_bytes", sample.working_set_bytes},
-                    {"related_processes", sample.related_processes}}))
+                    {"related_processes", sample.related_processes}, {"gpu_engines", sample.gpu_engines}}))
                     throw std::runtime_error("critical journal overrun");
                 next_resource_ns += 1'000'000'000;
             }
@@ -646,6 +756,7 @@ void run_capture_bench(const CaptureBenchOptions& options) {
                 ? frame->sequence - last_sequence - 1 : 0;
             last_sequence = frame->sequence;
             ++consumed;
+            if (preview) preview->draw(*frame);
             if (!journal.push({{"event", "frame_consumed"}, {"frame_sequence", frame->sequence},
                 {"consume_ns", consume}, {"capture_complete_ns", frame->capture_complete_ns},
                 {"sequence_skip", sequence_skip}})) throw std::runtime_error("critical journal overrun");
@@ -669,6 +780,8 @@ void run_capture_bench(const CaptureBenchOptions& options) {
                         {"line_width_px", quality.line_width_px},
                         {"line_contrast", quality.line_contrast},
                         {"square_left_x", quality.square_left_x},
+                        {"square_expected_x", quality.square_expected_x ? json(*quality.square_expected_x) : json(nullptr)},
+                        {"low_contrast_delta", quality.low_contrast_delta},
                         {"square_width_px", quality.square_width_px}}))
                         throw std::runtime_error("critical journal overrun");
                 }
@@ -693,7 +806,7 @@ void run_capture_bench(const CaptureBenchOptions& options) {
             {"before_ns", resource_end.before_ns}, {"after_ns", resource_end.after_ns},
             {"process_cpu_ns", resource_end.process_cpu_ns},
             {"working_set_bytes", resource_end.working_set_bytes},
-            {"related_processes", resource_end.related_processes}}))
+            {"related_processes", resource_end.related_processes}, {"gpu_engines", resource_end.gpu_engines}}))
             throw std::runtime_error("critical journal overrun");
         stop_worker();
         std::exception_ptr error;
@@ -721,6 +834,10 @@ void run_capture_bench(const CaptureBenchOptions& options) {
         file << summary.dump(2) << '\n';
         std::cout << summary.dump(2) << '\n';
         if (options.fixture && decoded < consumed) throw std::runtime_error("Fixture pixels could not be decoded on all consumed frames");
+        if (options.fixture_position_truth &&
+            (summary.at("fixture_position_truth_missing").get<std::uint64_t>() != 0 ||
+             summary.at("fixture_square_left_error_px").at("n").get<std::uint64_t>() != decoded))
+            throw std::runtime_error("Fixture moving position truth could not be decoded on all consumed frames");
         if (options.fixture && (summary.at("fixture_samples").get<std::uint64_t>() < 2 ||
             summary.at("fixture_distinct").get<std::uint64_t>() < 2 ||
             !summary.at("fixture_counter_order_valid").get<bool>() ||
@@ -827,9 +944,12 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
     const auto configured = [&](const std::string& candidate) {
         auto choice = options;
         choice.fixture = true;
+        choice.fixture_position_truth = true;
         choice.run_class = "formal_campaign";
         choice.warmup_s = 10;
         choice.duration_s = 60;
+        if (candidate == "grpc-control" || candidate == "grpc-fast" || candidate == "wgc")
+            choice.max_relative_lag_ms = 250;
         if (candidate == "grpc-control" || candidate == "grpc-fast") {
             choice.backend = "emulator-grpc";
             choice.grpc_copy_mode = candidate == "grpc-control" ? "legacy-rows" : "fast-memcpy";
@@ -870,7 +990,8 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
     }
     if (include_stress) {
         for (const auto& candidate : candidates) {
-            for (const auto& kind : {"slow50", "recover100", "pause500", "cpu-load", "memory256"}) {
+            for (const auto& kind : {"slow50", "recover100", "pause500", "cpu-load", "memory256",
+                                    "static3", "gpu-load", "preview-off", "preview-on"}) {
                 auto choice = configured(candidate);
                 choice.duration_s = 30;
                 if (std::string_view(kind) == "slow50") choice.consumer_delay_ms = 50;
@@ -879,7 +1000,10 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
                     choice.consumer_recover_after_s = 15;
                 } else if (std::string_view(kind) == "pause500") choice.receiver_pause_ms = 500;
                 else if (std::string_view(kind) == "cpu-load") choice.load = true;
-                else choice.memory_load_mib = 256;
+                else if (std::string_view(kind) == "memory256") choice.memory_load_mib = 256;
+                else if (std::string_view(kind) == "static3") choice.source_static_s = 3;
+                else if (std::string_view(kind) == "gpu-load") choice.gpu_load = true;
+                else if (std::string_view(kind) == "preview-on") choice.preview = true;
                 cases.push_back({"stress-48-" + candidate + "-" + kind,
                                  candidate, 48, std::move(choice)});
             }
@@ -916,6 +1040,9 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
                 json(*item.options.consumer_recover_after_s) : json(nullptr)},
             {"receiver_pause_ms", item.options.receiver_pause_ms}, {"host_load", item.options.load},
             {"memory_load_mib", item.options.memory_load_mib},
+            {"source_static_s", item.options.source_static_s}, {"gpu_load", item.options.gpu_load},
+            {"preview", item.options.preview},
+            {"max_relative_lag_ms", item.options.max_relative_lag_ms ? json(*item.options.max_relative_lag_ms) : json(nullptr)},
             {"diagnostic_only", item.candidate == "mmap-diagnostic"}});
     }
     const auto plan = json{{"schema_version", 3}, {"kind", "five_capture_campaign"},
@@ -953,6 +1080,7 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
     save_results(false);
     if (plan_only) return;
     int active_hz = 0;
+    adb_call(adb, {"-s", options.serial, "shell", "setprop", "debug.pas.fixture_freeze", "0"});
     for (auto& item : cases) {
         item.options.output_dir = options.output_dir / item.name;
         json ready_evidence = nullptr;
@@ -998,6 +1126,11 @@ void run_five_capture_campaign(CaptureBenchOptions options, int normal_runs,
                 {"target_hz", item.target_hz}, {"returncode", 1},
                 {"ready_preflight", ready_evidence}, {"error", error.what()}});
         }
+        json artifacts = json::object();
+        for (const auto* filename : {"capture.jsonl", "manifest.json", "diagnostic.png", "summary.json"})
+            if (std::filesystem::is_regular_file(item.options.output_dir / filename))
+                artifacts[filename] = sha256_file(item.options.output_dir / filename);
+        completed.back()["artifacts_sha256"] = std::move(artifacts);
         save_results(completed.size() == cases.size());
     }
     const auto results = analyze_capture_campaign(options.output_dir);

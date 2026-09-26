@@ -135,10 +135,13 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
     Samples readback_cost, copy_cost, receive_wait, parse_cost, decode_cost,
         publish_cost, capture_to_publish, fixture_color_error;
     Samples fixture_line_displacement, fixture_line_width, fixture_line_contrast,
-        fixture_square_width;
+        fixture_square_width, fixture_square_left_error, fixture_square_right_error, fixture_low_contrast;
+    std::uint64_t position_truth_missing = 0;
     std::uint64_t square_missing = 0;
     std::optional<json> resource_start, resource_end;
     std::map<std::uint64_t, std::uint64_t> related_rss_peak;
+    std::map<std::string, Samples> gpu_engine_samples;
+    std::uint64_t gpu_available_samples = 0, gpu_missing_samples = 0;
     std::optional<std::int64_t> previous_capture, first_counter_time, last_counter_time;
     std::optional<std::int64_t> previous_counter;
     std::uint64_t capture_count = 0, consumer_count = 0, counter_count = 0,
@@ -147,7 +150,8 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
     std::uint64_t published_frames = 0, publish_drops = 0;
     std::uint64_t source_callbacks = 0, duplicate_pixels = 0, access_lost = 0,
                   device_lost_rebuilds = 0, resync_gaps = 0;
-    std::uint64_t encoded_packets = 0, config_packets = 0, decoded_frames = 0;
+    std::uint64_t encoded_packets = 0, config_packets = 0, decoded_frames = 0,
+                  relative_stale_drops = 0, pool_older_frame_drops = 0;
     // Fixture counters are 24-bit. A fixed 2 MiB bitmap gives exact distinct
     // counts for arbitrarily long JSONL input without retaining events.
     std::vector<std::uint8_t> seen_counters(1u << 21);
@@ -162,7 +166,7 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
         if (kind == "source_callback" || kind == "duplicate_pixels" ||
             kind == "access_lost" || kind == "device_lost_rebuild" || kind == "resync_gap" ||
             kind == "encoded_packet" || kind == "codec_config_packet" ||
-            kind == "decoded_frame") {
+            kind == "decoded_frame" || kind == "relative_stale_drop" || kind == "pool_older_frame_drop") {
             const auto time = integer(event, "monotonic_ns");
             if (time < *start || time >= *end) return;
             if (kind == "source_callback") ++source_callbacks;
@@ -172,6 +176,8 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             else if (kind == "resync_gap") ++resync_gaps;
             else if (kind == "encoded_packet") ++encoded_packets;
             else if (kind == "codec_config_packet") ++config_packets;
+            else if (kind == "relative_stale_drop") ++relative_stale_drops;
+            else if (kind == "pool_older_frame_drop") ++pool_older_frame_drops;
             else ++decoded_frames;
         } else if (kind == "capture") {
             const auto time = integer(event, "capture_complete_ns");
@@ -258,6 +264,11 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             const auto time = integer(event, "before_ns");
             if (time >= *start && time < *end) {
                 rss_mib.add(integer(event, "working_set_bytes") / 1048576.0);
+                if (event.contains("gpu_engines") && event.at("gpu_engines").value("available", false)) {
+                    ++gpu_available_samples;
+                    for (const auto& engine : event.at("gpu_engines").at("engines"))
+                        gpu_engine_samples[engine.at("instance").get<std::string>()].add(engine.at("percent").get<double>());
+                } else ++gpu_missing_samples;
                 if (event.contains("related_processes") && event.at("related_processes").is_array())
                     for (const auto& process : event.at("related_processes"))
                         if (process.contains("pid") && process.contains("working_set_bytes") &&
@@ -285,6 +296,16 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             if (event.contains("square_left_x") && integer(event, "square_left_x") >= 0)
                 fixture_square_width.add(integer(event, "square_width_px"));
             else if (event.contains("square_left_x")) ++square_missing;
+            if (event.contains("square_expected_x")) {
+                if (event.at("square_expected_x").is_number_integer() &&
+                    integer(event, "square_left_x") >= 0) {
+                    const auto left = integer(event, "square_left_x");
+                    const auto expected = integer(event, "square_expected_x");
+                    fixture_square_left_error.add(left - expected);
+                    fixture_square_right_error.add(left + integer(event, "square_width_px") - expected - 40);
+                } else ++position_truth_missing;
+            }
+            if (event.contains("low_contrast_delta")) fixture_low_contrast.add(integer(event, "low_contrast_delta"));
             const auto counter = integer(event, "counter");
             if (counter < 0 || counter >= (1 << 24))
                 throw std::runtime_error("Fixture counter outside 24-bit encoding");
@@ -368,7 +389,37 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
                 manifest.value("capture_backend", "") == "scrcpy" ? 0 :
                 manifest.value("source_rotation", 0)})});
     }
+    json gpu_engines = json::object();
+    for (const auto& [instance, samples] : gpu_engine_samples) gpu_engines[instance] = samples.result();
+    json references = json::array();
+    std::optional<std::int64_t> pause_end, static_resume;
+    each_jsonl(path, [&](const json& event, std::size_t) {
+        if (event.value("event", "") == "receiver_pause" && event.contains("ended_ns"))
+            pause_end = integer(event, "ended_ns");
+        if (event.value("event", "") == "source_freeze_command" && !event.value("freeze",true))
+            static_resume = integer(event, "after_ns");
+        if (event.value("event", "") == "fixture_reference" && references.size() < 8)
+            references.push_back(event);
+    });
+    for (auto& reference : references) {
+        reference["first_consumed_matching_or_newer_ns"] = nullptr;
+        each_jsonl(path, [&](const json& event, std::size_t) {
+            if (!reference.at("first_consumed_matching_or_newer_ns").is_null() ||
+                event.value("event", "") != "fixture_counter" ||
+                integer(event, "capture_complete_ns") < integer(reference, "before_ns")) return;
+            const auto increment = (integer(event, "counter") - integer(reference, "counter") + (1 << 24)) % (1 << 24);
+            if (increment < (1 << 23)) reference["first_consumed_matching_or_newer_ns"] = integer(event, "capture_complete_ns");
+        });
+        const auto context = reference.value("context", "");
+        const auto origin = context == "receiver_resume" ? pause_end : context == "static_resume" ? static_resume : std::nullopt;
+        reference["recovery_from_resume_ms"] = origin && !reference.at("first_consumed_matching_or_newer_ns").is_null()
+            ? json((integer(reference, "first_consumed_matching_or_newer_ns") - *origin) / 1e6) : json(nullptr);
+        reference["recovery_semantics"] = "first consumed pixel counter matching/newer than bracketed ADB reference; includes diagnostic call delay; not absolute source age";
+    }
     return {{"measurement_start_ns", *start}, {"measurement_end_ns", *end}, {"window_s", duration},
+            {"gpu_engine_percent", gpu_engines}, {"gpu_available_samples", gpu_available_samples},
+            {"gpu_missing_samples", gpu_missing_samples},
+            {"fixture_references", references},
             {"capture_events", capture_count}, {"consumer_events", consumer_count},
             {"published_frames", published_frames}, {"publish_drops", publish_drops},
             {"source_invalid_events", source_invalid},
@@ -378,6 +429,8 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             {"resync_gaps", resync_gaps},
             {"encoded_packets", encoded_packets}, {"codec_config_packets", config_packets},
             {"decoded_frames", decoded_frames},
+            {"relative_stale_drops", relative_stale_drops},
+            {"pool_older_frame_drops", pool_older_frame_drops},
             {"received_hz", capture_count / duration}, {"fixture_samples", counter_count},
             {"fixture_distinct", distinct}, {"fixture_distinct_hz", distinct / duration},
             {"fixture_counter_span_hz", counter_order_valid && counter_span ? json(*counter_span) : json(nullptr)},
@@ -393,6 +446,10 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             {"fixture_line_contrast", fixture_line_contrast.result()},
             {"fixture_square_width_px", fixture_square_width.result()},
             {"fixture_square_missing", square_missing},
+            {"fixture_square_left_error_px", fixture_square_left_error.result()},
+            {"fixture_square_right_error_px", fixture_square_right_error.result()},
+            {"fixture_position_truth_missing", position_truth_missing},
+            {"fixture_low_contrast_delta", fixture_low_contrast.result()},
             {"geometry", shape}, {"geometry_valid", geometry_valid},
             {"arrival_interval_ms", arrivals.result()},
             {"no_frame_gap_ms", no_frame_gaps.result()},
@@ -458,7 +515,7 @@ json analyze_pause_jsonl(const std::filesystem::path& path) {
                 source_units_per_ms) : json(nullptr);
         if (points.size() >= 100'000) { points_truncated = true; return; }
         points.push_back({{"frame_sequence", event.value("frame_sequence", 0)},
-                          {"source_sequence", event.value("source_sequence", 0)},
+                          {"source_sequence", event.contains("source_sequence") ? event.at("source_sequence") : json(nullptr)},
                           {"after_pause_start_ms", (time - start) / 1e6},
                           {"after_resume_ms", (time - end) / 1e6},
                           {"extra_relative_lag_ms", relative}});
@@ -541,6 +598,9 @@ json analyze_capture_campaign(const std::filesystem::path& directory) {
             }
             const auto& line_displacement = summary.at("fixture_line_displacement_px");
             const auto& line_width = summary.at("fixture_line_width_px");
+            const bool position = !manifest.value("fixture_position_truth_required", false) ||
+                (summary.at("fixture_position_truth_missing").get<std::uint64_t>() == 0 &&
+                 summary.at("fixture_square_left_error_px").value("n", 0u) == summary.at("consumer_events"));
             const bool quality = summary.at("fixture_square_missing").get<std::uint64_t>() == 0 &&
                 line_displacement.value("n", 0u) > 0 &&
                 line_displacement.value("max", 999.0) <= 1.0 &&
@@ -552,7 +612,7 @@ json analyze_capture_campaign(const std::filesystem::path& directory) {
             const bool valid = hashes && fixture && environment && binary && server && ready &&
                 summary.at("geometry_valid").get<bool>() &&
                 summary.at("fixture_counter_order_valid").get<bool>() &&
-                schemas_valid && quality && source_valid &&
+                schemas_valid && quality && position && source_valid &&
                 summary.at("consumer_events") == summary.at("fixture_samples") &&
                 manifest.value("run_class", "") == "formal_campaign";
             if (!valid) {
@@ -574,6 +634,7 @@ json analyze_capture_campaign(const std::filesystem::path& directory) {
                 {"fixture_hash_matches", fixture}, {"environment_matches", environment},
                 {"binary_hash_matches", binary}, {"server_hash_matches", server},
                 {"ready_preflight_valid", ready}, {"fixture_quality_valid", quality},
+                {"fixture_position_truth_valid", position},
                 {"source_valid", source_valid},
                 {"analysis", summary}});
         }

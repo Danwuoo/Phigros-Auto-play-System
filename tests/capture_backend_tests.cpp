@@ -24,6 +24,15 @@ TEST(NativeGeometry, MapsNegativeDesktopOriginAndRejectsCrossMonitorCrop) {
                  std::runtime_error);
 }
 
+TEST(NativeTiming, RejectsQueuedPauseFrameThenAcceptsCurrentAndClockRegressionFails) {
+    pas::NativeRelativeLagGuard guard(250'000'000);
+    EXPECT_TRUE(guard.accept(1'000'000'000, 800'000'000));
+    EXPECT_TRUE(guard.accept(1'020'000'000, 820'000'000));
+    EXPECT_FALSE(guard.accept(1'520'000'000, 840'000'000));
+    EXPECT_TRUE(guard.accept(1'540'000'000, 1'340'000'000));
+    EXPECT_THROW(guard.accept(1'560'000'000, 1'300'000'000), std::runtime_error);
+}
+
 TEST(ScrcpyProtocol, DistinguishesSessionAndBoundedMediaPackets) {
     const std::array<std::uint8_t, 12> session = {
         0x80, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0};

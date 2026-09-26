@@ -600,9 +600,13 @@ int main(int argc, char** argv) {
     bench_cmd->add_option("--consumer-recover-after-s", bench.consumer_recover_after_s);
     bench_cmd->add_option("--receiver-pause-ms", bench.receiver_pause_ms);
     bench_cmd->add_flag("--load", bench.load);
+    bench_cmd->add_flag("--gpu-load", bench.gpu_load);
+    bench_cmd->add_flag("--preview", bench.preview);
+    bench_cmd->add_option("--source-static-s", bench.source_static_s);
     bench_cmd->add_option("--max-relative-lag-ms", bench.max_relative_lag_ms);
     bench_cmd->add_flag("--diagnostic-mmap", bench.diagnostic_mmap);
     bench_cmd->add_flag("--fixture", bench.fixture);
+    bench_cmd->add_flag("--fixture-position-truth", bench.fixture_position_truth);
     bench_cmd->add_option("--fixture-schema", bench.fixture_schema);
     bench_cmd->add_option("--fixture-apk", bench.fixture_apk);
     bench_cmd->add_option("--output-dir", bench_output)->required();
@@ -625,6 +629,7 @@ int main(int argc, char** argv) {
     campaign_cmd->add_option("--scrcpy-video-bit-rate", campaign.scrcpy_video_bit_rate);
     campaign_cmd->add_option("--scrcpy-video-encoder", campaign.scrcpy_video_encoder);
     campaign_cmd->add_option("--memory-load-mib", campaign.memory_load_mib);
+    campaign_cmd->add_option("--max-relative-lag-ms", campaign.max_relative_lag_ms);
     campaign_cmd->add_option("--grpc-endpoint", campaign.grpc_endpoint);
     campaign_cmd->add_option("--grpc-token-file", campaign.grpc_token_file);
     campaign_cmd->add_option("--image-format", campaign.image_format);

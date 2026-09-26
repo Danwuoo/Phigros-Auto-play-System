@@ -74,3 +74,14 @@ TEST(AnalysisWindow, MalformedJsonIsRejected) {
     const TempJson raw("{this is not JSON}\n");
     EXPECT_THROW(analyze_capture_jsonl(raw.path()), std::runtime_error);
 }
+
+TEST(AnalysisPause, NativeTimestampWithNullSourceSequenceRemainsAnalyzable) {
+    const TempJson raw(
+        "{\"event\":\"capture\",\"frame_sequence\":1,\"capture_complete_ns\":2000000000,\"source_sequence\":null,\"source_system_relative_100ns\":20000000,\"stream_generation\":1}\n"
+        "{\"event\":\"receiver_pause\",\"start_ns\":2010000000,\"ended_ns\":2510000000}\n"
+        "{\"event\":\"capture\",\"frame_sequence\":2,\"capture_complete_ns\":2520000000,\"source_sequence\":null,\"source_system_relative_100ns\":25200000,\"stream_generation\":1}\n");
+    const auto result = analyze_pause_jsonl(raw.path());
+    const auto& point = result.at("first_second_after_end").at(0);
+    EXPECT_TRUE(point.at("source_sequence").is_null());
+    EXPECT_DOUBLE_EQ(point.at("extra_relative_lag_ms").get<double>(), 0.0);
+}

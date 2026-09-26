@@ -60,7 +60,7 @@ struct PreviewWindow::Impl {
     ComPtr<ID3D11SamplerState> sampler;
     std::vector<std::uint8_t> bgra;
 
-    Impl(int w, int h) : width(w), height(h) {
+    Impl(int w, int h, bool benchmark_placement) : width(w), height(h) {
         if (w < 1 || h < 1 || static_cast<std::uint64_t>(w) * h * 3 > 16 * 1024 * 1024)
             throw std::invalid_argument("invalid preview geometry");
         static std::once_flag registered;
@@ -73,10 +73,12 @@ struct PreviewWindow::Impl {
             if (!RegisterClassW(&type)) throw std::runtime_error("preview class registration failed");
         });
         constexpr DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
-        RECT rectangle{0, 0, w, h};
+        RECT rectangle{0, 0, benchmark_placement ? 400 : w, benchmark_placement ? 225 : h};
         if (!AdjustWindowRect(&rectangle, style, FALSE)) throw std::runtime_error("preview window sizing failed");
-        window = CreateWindowW(L"PASNativePreview", L"PAS observe preview", style,
-            CW_USEDEFAULT, CW_USEDEFAULT, rectangle.right - rectangle.left,
+        window = CreateWindowExW(benchmark_placement ? WS_EX_NOACTIVATE : 0,
+            L"PASNativePreview", L"PAS observe preview", style,
+            benchmark_placement ? 1460 : CW_USEDEFAULT, benchmark_placement ? 125 : CW_USEDEFAULT,
+            rectangle.right - rectangle.left,
             rectangle.bottom - rectangle.top, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
         if (!window) throw std::runtime_error("preview window creation failed");
         try {
@@ -121,7 +123,7 @@ struct PreviewWindow::Impl {
             sampling.MaxLOD = D3D11_FLOAT32_MAX;
             check(device->CreateSamplerState(&sampling, &sampler), "D3D11 sampler");
             bgra.resize(static_cast<std::size_t>(w) * h * 4);
-            ShowWindow(window, SW_SHOWNORMAL);
+            ShowWindow(window, benchmark_placement ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
         } catch (...) {
             DestroyWindow(window);
             window = nullptr;
@@ -129,10 +131,15 @@ struct PreviewWindow::Impl {
         }
     }
 
-    ~Impl() { if (window && IsWindow(window)) DestroyWindow(window); }
+    ~Impl() {
+        if (window && IsWindow(window)) DestroyWindow(window);
+        MSG message{};
+        while (PeekMessageW(&message, nullptr, WM_QUIT, WM_QUIT, PM_REMOVE)) {}
+    }
 };
 
-PreviewWindow::PreviewWindow(int width, int height) : impl_(std::make_unique<Impl>(width, height)) {}
+PreviewWindow::PreviewWindow(int width, int height, bool benchmark_placement)
+    : impl_(std::make_unique<Impl>(width, height, benchmark_placement)) {}
 PreviewWindow::~PreviewWindow() = default;
 
 bool PreviewWindow::pump() {

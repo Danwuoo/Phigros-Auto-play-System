@@ -41,10 +41,14 @@ struct CaptureBenchOptions {
     std::optional<double> consumer_recover_after_s;
     double receiver_pause_ms = 0;
     bool load = false;
+    bool gpu_load = false;
+    bool preview = false;
+    double source_static_s = 0;
     int memory_load_mib = 0;
     std::optional<double> max_relative_lag_ms;
     bool diagnostic_mmap = false;
     bool fixture = false;
+    bool fixture_position_truth = false;
     std::string fixture_schema = "native-v2";
     std::filesystem::path fixture_apk;
     std::filesystem::path output_dir;
