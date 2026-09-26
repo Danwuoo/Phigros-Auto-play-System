@@ -59,7 +59,7 @@ out/release-v145/Release/pas.exe touch-batch-bench --config configs/avd-fixture.
 
 `run --mode observe` 觀察即時遊戲 pixels，不建立真實 input；`--mode auto-start` 先核對 `--capability` 歷史觸控指紋，再由即時選曲頁／PLAY 圖形送出一次 UI down/up，曲中仍只做 dry 排程。`--mode assist` 使用同一能力門控及單一 action owner 執行 profile 允許的真實遊玩觸控；目前屬開發試驗，不能當作 AP 能力。`game.enabled_types` 可指定 tap／hold／drag／flick，`lead_ms` 是固定版本的綜合提前量，`uncertainty_ms` 是預測接受上限。未指定 `--no-preview` 時可開啟 Win32/D3D11 診斷預覽。使用者後續授權 computer-use 做重試導覽，Note 決策仍只來自 C++ 即時 pixels。以下為本輪獨立 build 的入口，選好曲目並保留 PLAY：
 
-assist 可選 `--keep-diagnostic-anomalies`，一輪最多兩張與近線異常決策配對的原始 PNG，輸入停止後才編碼並寫入 run 目錄；預設不保留畫面，診斷檔案不回饋遊玩。`analyze game-image <PNG>` 僅供離線幾何檢查。
+assist 可選 `--keep-diagnostic-anomalies`，一輪最多保留兩張原始 PNG（近線窄 Hold 對、首次觀察到 combo 字形消失），輸入停止後才編碼並寫入 run 目錄；預設不保留畫面，診斷檔案不回饋遊玩。字形消失只供診斷，不代表逐音符判定。`analyze game-image <PNG>` 僅供離線幾何檢查。
 
 ```powershell
 out/game-release/Release/pas.exe game-preflight --config configs/phigros-hd-auto-start.json `
