@@ -323,3 +323,13 @@ v62 Release102／103通過（7.09秒）；染色正例仍失敗於i8，因上一
 v63 Release103／103（7.27秒）、Debug103／103（18.31秒）通過。檢查負例fixture後發現其前置亦尚未到線，因此v64替六個負例補足到線anchor（無anchor例除外），過期例改為最後160ms→261ms仍101ms間隔；另補200px染色超出96px辨識範圍加32px缺口，不能連接更遠白rail的負例。正例与production observer26不改；等待Release／Debug／嚴格ASan當前fixture驗證，v63未進實戰。
 
 v63嚴格ASan103／103亦通過（38.88秒）。v64最終fixture與observer26／planner6／diagnostics2，Release／Debug／嚴格ASan各103／103通過，CTest總時間8.29／16.81／44.52秒；ASAN_OPTIONS未設定、pinned第三方DLL未插樁，build warnings保留。全部build／test停止後才開始35ms／185秒HD；v62／v63沒有實戰。當前六負例確實先建立到線anchor再破壞必要當前證據，正例全程只一Down；不以合成成功宣稱AP。
+
+v64 run `cpp-observe-17904648453833349`，35ms／185秒STOPPED exit0，8,803消費frames／965真實命令。结算794,720分、Perfect337／Good5／Bad1／Miss50、max combo61、accuracy86.58%、Early0／Late5，未AP；raw SHA-256 `f2c1c992b18d42e76a4904c9fbd06ef832ff033206e5ee10150fc3b2704d13a2`、manual结果／PNG与兩張診斷保存。down Tap136／Hold84／Drag109／Flick6，2 coverage／0 conflict／3 gate expiry，runtime13 source／1 UI revoke；capture interval n8,802，p50／p95／p99／max=19.149／43.69355／60.719687／323.8695ms。first Hold診斷frame333仍是相同染色場景：prior center425.921／width138.407，左側預期356.718px，實際白rail約348px，差8.7px，超過只准染色±4px。當張仍藍body到線，卻選color_core head428.525,495.566／width132.894／depth426；次張恢復原on-line anchor。不能宣稱v64已修好此例或總體穩定。v65先補較窄core與較寬paired rails的合成例，要求續接從當前白段重算完整width，不能把染色corridor直接擴成任意16px。
+
+v65第一個寬rail／窄core合成例在observer26即通過（107ms）：全長saturated body跨過75% generic高度上限後，direct route已先自行取回完整158px rails，不能重現live anchor仍138px的情況。v65b改用失飽和的上段與末端200px saturated core，讓generic完整core持續存在，保留當前已有的core幾何優先路徑；白rails、80px淡金染色、同ID／158px width／全深度／單Down期望不變。兩例尚未實戰，等待舊source是否真正重現。
+
+v65b舊observer26確實失敗（106ms）：染色後只剩color core，width144取代158、height200取代完整>480，outline證據未成立；所有失敗日誌保留。v66 observer27只為原held rail路徑失敗且近期fill有效的情況，加入當前頭後128／192px白色paired section校正；各section最多16白band，原half width+20px搜尋，pair寬0.8–1.2、中心±16px、5／7當前藍灰fill，校正後再驗front fill與原染色／paired rails全部條件。當前白rail成功不受此fallback影響，新leading edge／過期依據／Contact期限不放寬。等待Release完整回歸，尚未實戰。
+
+v66 Release104／104通過（7.59秒），漸層／biased width染色正例取回158px完整rails、同ID與單Down contact。v67另補三個section負例：當前兩個白截面內部fill消失、pair過寬、pair中心偏移>16px；寬／位移負例的兩側白band均在搜尋範圍且內部仍有fill，不以搜尋不到或缺fill代替幾何閾值檢查。observer27不再改，等待105項Release／Debug／嚴格ASan驗證後實戰；v65／v65b／v66未實戰。
+
+v67同一source最終Release／Debug／嚴格ASan各105／105通過，CTest總時間10.17／18.41／48.21秒；ASAN_OPTIONS未設定，第三方未插樁／build warnings限制照舊。所有build／test停止後才開始observer27／planner6／diagnostics2／35ms／185秒HD完整驗證；不在遊玩中運行CU擷取或第二capture，PLAY由C++主程式完成。AP尚未達標。

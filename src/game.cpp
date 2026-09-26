@@ -203,6 +203,52 @@ bool hold_fill_at_front(const Frame& f,const NoteCandidate& note) {
     }
     return support>=3;
 }
+std::optional<NoteCandidate> current_held_rail_section(const Frame& f,const NoteCandidate& note) {
+    const Vec2 u=note.tangent,n{-u.y,u.x};
+    std::optional<NoteCandidate> best;double best_cost=1e9;
+    // Only a failed, recent held-body continuation calls this. Re-measure
+    // neutral rails beyond the bounded hit tint, without searching a new head.
+    for(const int depth:{128,192}) {
+        const Vec2 section{note.center.x-n.x*depth,note.center.y-n.y*depth};
+        const int radius=static_cast<int>(std::ceil(note.width*.5))+20;
+        std::vector<double> bands;bands.reserve(16);std::optional<int> begin;
+        const auto pixel=[&](double along)->const std::uint8_t* {
+            const int x=static_cast<int>(std::lround(section.x+u.x*along)),
+                      y=static_cast<int>(std::lround(section.y+u.y*along));
+            if(x<0||x>=f.width||y<f.height*.10||y>=f.height) return nullptr;
+            return f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+        };
+        for(int offset=-radius;offset<=radius+1;++offset) {
+            const auto* p=offset<=radius?pixel(offset):nullptr;
+            const bool white=p&&std::min({p[0],p[1],p[2]})>170&&
+                std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<30;
+            if(white) {if(!begin) begin=offset;}
+            else if(begin) {
+                if(offset-*begin<=12) {
+                    if(bands.size()==16) return {};
+                    bands.push_back((*begin+offset-1)/2.0);
+                }
+                begin.reset();
+            }
+        }
+        for(std::size_t a=0;a<bands.size();++a) for(std::size_t b=a+1;b<bands.size();++b) {
+            const double width=bands[b]-bands[a],middle=(bands[b]+bands[a])/2;
+            if(bands[a]>=0||bands[b]<=0||width<note.width*.8||width>note.width*1.2||std::abs(middle)>16) continue;
+            int fill=0;
+            for(int k=-3;k<=3;++k) {
+                const auto* p=pixel(middle+k*width*.115);
+                if(p&&p[2]>145&&p[1]>130&&p[2]>p[0]+8) ++fill;
+            }
+            if(fill<5) continue;
+            const double cost=std::abs(width-note.width)+2*std::abs(middle);
+            if(cost>=best_cost) continue;
+            auto current=note;current.width=width;
+            current.center={note.center.x+u.x*middle,note.center.y+u.y*middle};
+            best=current;best_cost=cost;
+        }
+    }
+    return best;
+}
 // Reconstruct a body from this frame, before tracking. The seed may be only
 // one saturated fragment; neither its width nor a past body defines the rails.
 std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& seed,
@@ -736,6 +782,12 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             note.tangent=line->tangent;
             const bool held_fill=recent_rails&&hold_fill_near_head(f,note);
             rails=visible_hold_rails(f,note,16,held_fill?32:12,16,false,held_fill,held_fill);
+            if(!rails&&held_fill) {
+                if(const auto current=current_held_rail_section(f,note);current&&hold_fill_near_head(f,*current)) {
+                    rails=visible_hold_rails(f,*current,16,32,16,false,true,true);
+                    if(rails) note=*current;
+                }
+            }
             if(!rails) continue;
             note.head_on_line=true;
         }

@@ -566,6 +566,59 @@ TEST(GameObserver, WarmRailsRequireRecentAnchorCurrentFillAndBothNeutralSections
     }
 }
 
+TEST(GameObserver, WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t id=0;
+    for(int i=0;i<18;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=std::min(575,500+i*10);
+        // A desaturated upper body leaves only a shorter saturated core.
+        // Its complete core geometry is retained before the hit overlay.
+        rect(f,403,0,144,head,{160,175,185});
+        rect(f,403,head-200,144,200,{40,190,255});
+        rect(f,396,0,2,head,{245,245,245});rect(f,554,0,2,head,{245,245,245});
+        if(i>=9) {rect(f,396,495,2,80,{210,197,146});rect(f,554,495,2,80,{246,231,169});}
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        const auto h=std::find_if(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.kind==NoteKind::hold;});
+        ASSERT_NE(h,s.targets.end())<<"frame "<<i<<" "<<decision_json(s).dump();
+        if(!id) id=h->note_id;EXPECT_EQ(h->note_id,id);
+        EXPECT_NEAR(h->note.center.x,475,4);EXPECT_NEAR(h->note.center.y,head-4,5);
+        if(i>=9) {EXPECT_TRUE(h->note.outline_evidence);EXPECT_NEAR(h->note.width,158,3);EXPECT_GT(h->note.height,480);}
+        owner.accept(s);owner.poll();if(i>=7) EXPECT_EQ(touch.contacts().size(),1);
+    }
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),1);
+}
+
+TEST(GameObserver, WarmSectionCannotUseEmptyOrMismatchedWhitePair) {
+    for(int failure=0;failure<3;++failure) {
+        FakeClock clock;GameObserver observer(clock);
+        for(int i=0;i<9;++i) {
+            auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+            const int head=std::min(575,500+i*10);
+            rect(f,403,0,144,head,{160,175,185});rect(f,403,head-200,144,200,{40,190,255});
+            rect(f,396,0,2,head,{245,245,245});rect(f,554,0,2,head,{245,245,245});
+            clock.set(f.capture_complete_ns);observer.process(f);
+        }
+        auto f=image(10,180'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,403,0,144,575,{160,175,185});rect(f,403,375,144,200,{40,190,255});
+        rect(f,396,0,2,575,{245,245,245});rect(f,554,0,2,575,{245,245,245});
+        rect(f,396,495,2,80,{210,197,146});rect(f,554,495,2,80,{246,231,169});
+        if(failure==0) for(const int y:{384,448}) rect(f,403,y-6,144,12,{0,0,0});
+        else {
+            rect(f,396,0,2,495,{0,0,0});rect(f,554,0,2,495,{0,0,0});
+            // Both are inside the bounded search and have fill. One pair is
+            // too wide; the other is shifted beyond the allowed center change.
+            rect(f,failure==1?386:426,0,2,495,{245,245,245});
+            rect(f,564,0,2,495,{245,245,245});
+        }
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        EXPECT_TRUE(std::none_of(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.outline_evidence;}))
+            <<"failure "<<failure<<" "<<decision_json(s).dump();
+    }
+}
+
 TEST(GameObserver, ClippedBlueColumnWithoutBothRailsCannotBecomeANewHold) {
     for(int rails=0;rails<2;++rails) {
         FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
