@@ -1,5 +1,6 @@
 #include "pas/native_capture.hpp"
 #include "pas/scrcpy_capture.hpp"
+#include "pas/bench.hpp"
 
 #include <gtest/gtest.h>
 
@@ -22,6 +23,56 @@ TEST(NativeGeometry, MapsNegativeDesktopOriginAndRejectsCrossMonitorCrop) {
               (std::pair<int, int>{120, 100}));
     EXPECT_THROW(pas::map_desktop_crop(-300, 100, 1280, 720, -1920, 0, 0, 1080),
                  std::runtime_error);
+}
+
+TEST(NativeGeometry, CropMustFitTheEntireClientBeyondVisibilitySamplePoints) {
+    EXPECT_NO_THROW(pas::validate_client_crop(0, 0, 1280, 720, 1280, 720));
+    EXPECT_THROW(pas::validate_client_crop(1, 0, 1280, 720, 1280, 720), std::runtime_error);
+    EXPECT_THROW(pas::validate_client_crop(0, 1, 1280, 720, 1280, 720), std::runtime_error);
+    EXPECT_THROW(pas::validate_client_crop(-1, 0, 1280, 720, 1280, 720), std::runtime_error);
+}
+
+TEST(FixtureIdentity, FourIdenticalXorChipsCannotOverrideIndependentBinaryTruth) {
+    pas::Frame frame;
+    frame.width = 1280; frame.height = 720; frame.stride = 3840;
+    frame.rgb.resize(static_cast<std::size_t>(frame.stride) * frame.height);
+    const auto pixel = [&](int x, int y, std::uint32_t value) {
+        const auto offset = static_cast<std::size_t>(y) * frame.stride + x * 3;
+        frame.rgb[offset] = static_cast<std::uint8_t>(value >> 16);
+        frame.rgb[offset+1] = static_cast<std::uint8_t>(value >> 8);
+        frame.rgb[offset+2] = static_cast<std::uint8_t>(value);
+    };
+    constexpr std::uint32_t binary_truth = 23904, wrong_chip = 484957;
+    for (int row = 0; row < 2; ++row) {
+        const int y = 96 + row * 26;
+        pixel(16, y, 0xFF0000); pixel(206, y, 0xFF0000);
+        for (int bit = 0; bit < 12; ++bit)
+            pixel(36 + bit * 14, y, binary_truth & (1u << (row * 12 + bit)) ? 0xFFFFFF : 0);
+    }
+    for (int corner = 0; corner < 4; ++corner) {
+        const int x = corner % 2 ? 1190 : 65, y = corner / 2 ? 630 : 55;
+        pixel(x+12, y+10, wrong_chip);
+        pixel(x+37, y+10, wrong_chip ^ 0xA5C37E);
+    }
+    const auto decoded = pas::decode_capture_fixture_counter(frame);
+    ASSERT_TRUE(decoded);
+    EXPECT_EQ(decoded->value, binary_truth);
+    EXPECT_STREQ(decoded->schema, "native_v2_lossy_validated");
+    EXPECT_EQ(decoded->binary_value, binary_truth);
+    EXPECT_EQ(decoded->exact_colour_value, wrong_chip);
+    EXPECT_GT(decoded->max_color_error, 0);
+    EXPECT_LE(decoded->max_color_error, 32);
+    for (int corner = 0; corner < 4; ++corner) {
+        const int x = corner % 2 ? 1190 : 65, y = corner / 2 ? 630 : 55;
+        pixel(x+12, y+10, binary_truth);
+        pixel(x+37, y+10, binary_truth ^ 0xA5C37E);
+    }
+    const auto exact = pas::decode_capture_fixture_counter(frame);
+    ASSERT_TRUE(exact);
+    EXPECT_STREQ(exact->schema, "native_v2_four_region");
+    EXPECT_EQ(exact->value, binary_truth);
+    pixel(16, 96, 0);
+    EXPECT_FALSE(pas::decode_capture_fixture_counter(frame));
 }
 
 TEST(NativeTiming, RejectsQueuedPauseFrameThenAcceptsCurrentAndClockRegressionFails) {

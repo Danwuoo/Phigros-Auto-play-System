@@ -370,6 +370,8 @@ void stream_dxgi(const Clock& clock, const NativeCaptureOptions& options, HWND h
                 throw std::runtime_error("DXGI client size or DPI changed; crop profile invalidated");
             if (GetAncestor(GetForegroundWindow(), GA_ROOT) != GetAncestor(hwnd, GA_ROOT))
                 throw std::runtime_error("DXGI target is no longer the foreground window");
+            validate_client_crop(options.crop_x, options.crop_y, options.width, options.height,
+                                 client.right - client.left, client.bottom - client.top);
             POINT origin{};
             if (!ClientToScreen(hwnd, &origin)) throw std::runtime_error("window client origin unavailable");
             const auto left = origin.x + options.crop_x;
@@ -497,6 +499,14 @@ std::pair<int, int> map_desktop_crop(int screen_x, int screen_y, int width, int 
     return {screen_x - desktop_left, screen_y - desktop_top};
 }
 
+void validate_client_crop(int crop_x, int crop_y, int width, int height,
+                          int client_width, int client_height) {
+    if (crop_x < 0 || crop_y < 0 || width <= 0 || height <= 0 ||
+        static_cast<std::int64_t>(crop_x) + width > client_width ||
+        static_cast<std::int64_t>(crop_y) + height > client_height)
+        throw std::runtime_error("DXGI crop exceeds selected window client pixels");
+}
+
 std::string enumerate_capture_windows_json() {
     const auto previous_dpi = SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     if (!previous_dpi) throw std::runtime_error("per-monitor DPI awareness unavailable for window enumeration");
@@ -534,7 +544,7 @@ std::string capture_host_environment_json(const std::string& window_hwnd) {
     report["selected_window_dpi"] = window_hwnd.empty() ? nlohmann::json(nullptr) :
         nlohmann::json(GetDpiForWindow(selected_window(window_hwnd)));
     report["gpu_engine_samples"] = nullptr;
-    report["gpu_engine_missing_reason"] = "GPU engine performance counters not yet collected";
+    report["gpu_engine_missing_reason"] = "Static environment probe does not sample engines; bench resource events contain dynamic PDH samples when available";
     com_ptr<IDXGIFactory1> factory;
     check(CreateDXGIFactory1(winrt::guid_of<IDXGIFactory1>(), factory.put_void()),
           "environment CreateDXGIFactory1");

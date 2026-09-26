@@ -136,7 +136,7 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
         publish_cost, capture_to_publish, fixture_color_error;
     Samples fixture_line_displacement, fixture_line_width, fixture_line_contrast,
         fixture_square_width, fixture_square_left_error, fixture_square_right_error, fixture_low_contrast;
-    std::uint64_t position_truth_missing = 0;
+    std::uint64_t position_truth_missing = 0, colour_binary_disagreements = 0;
     std::uint64_t square_missing = 0;
     std::optional<json> resource_start, resource_end;
     std::map<std::uint64_t, std::uint64_t> related_rss_peak;
@@ -282,6 +282,10 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             const auto time = integer(event, "capture_complete_ns");
             if (time < *start || time >= *end) return;
             fixture_schemas.insert(event.value("fixture_schema", "legacy_unspecified"));
+            if (event.contains("binary_counter") && event.at("binary_counter").is_number_integer() &&
+                event.contains("exact_colour_identity") && event.at("exact_colour_identity").is_number_integer() &&
+                integer(event, "binary_counter") != integer(event, "exact_colour_identity"))
+                ++colour_binary_disagreements;
             if (event.contains("max_color_error") && event.at("max_color_error").is_number_integer())
                 fixture_color_error.add(event.at("max_color_error").get<double>());
             if (event.contains("line_peak_y") && event.at("line_peak_y").is_number_integer() &&
@@ -440,6 +444,7 @@ json analyze_capture_jsonl(const std::filesystem::path& path) {
             {"fixture_decoded_fraction", capture_count ? double(counter_count) / capture_count : 0.0},
             {"fixture_decoded_consumer_fraction", consumer_count ? double(counter_count) / consumer_count : 0.0},
             {"fixture_schemas", schema_names},
+            {"fixture_colour_binary_disagreements", colour_binary_disagreements},
             {"fixture_max_color_error", fixture_color_error.result()},
             {"fixture_line_displacement_px", fixture_line_displacement.result()},
             {"fixture_line_width_px", fixture_line_width.result()},

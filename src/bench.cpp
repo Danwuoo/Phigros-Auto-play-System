@@ -58,12 +58,6 @@ std::optional<int> legacy_fixture_counter(const Frame& frame) {
     return counter;
 }
 
-struct FixtureCounter {
-    int value = 0;
-    const char* schema = "";
-    int max_color_error = 0;
-};
-
 struct FixtureQuality {
     int line_expected_y = -1;
     int line_peak_y = -1;
@@ -152,9 +146,15 @@ std::optional<FixtureCounter> fixture_counter(const Frame& frame) {
         }
         identity = part;
     }
-    if (native_valid && identity)
-        return FixtureCounter{static_cast<int>(*identity), "native_v2_four_region", 0};
-    if (const auto legacy = legacy_fixture_counter(frame)) {
+    // Lossy RGB errors can be identical in all four corners and can even
+    // accidentally preserve XOR. Always cross-check the independent binary
+    // encoding before accepting an exact colour-chip identity.
+    const auto legacy = legacy_fixture_counter(frame);
+    const auto exact_colour = native_valid && identity ?
+        std::optional<int>(static_cast<int>(*identity)) : std::nullopt;
+    if (native_valid && identity && legacy && *identity == static_cast<std::uint32_t>(*legacy))
+        return FixtureCounter{static_cast<int>(*identity), "native_v2_four_region", 0, legacy, exact_colour};
+    if (legacy) {
         int max_error = 0;
         for (int corner = 0; corner < 4; ++corner) {
             const int x = corner % 2 ? frame.width - 90 : 65;
@@ -172,8 +172,8 @@ std::optional<FixtureCounter> fixture_counter(const Frame& frame) {
             }
         }
         if (max_error <= 32)
-            return FixtureCounter{*legacy, "native_v2_lossy_validated", max_error};
-        return FixtureCounter{*legacy, "legacy_counter", max_error};
+            return FixtureCounter{*legacy, "native_v2_lossy_validated", max_error, legacy, exact_colour};
+        return FixtureCounter{*legacy, "legacy_counter", max_error, legacy, exact_colour};
     }
     return {};
 }
@@ -331,6 +331,10 @@ void save_diagnostic_png(const std::filesystem::path& path, const Frame& frame) 
         FAILED(bitmap->Commit()) || FAILED(encoder->Commit()))
         throw std::runtime_error("PNG pixel encoding failed");
 }
+}
+
+std::optional<FixtureCounter> decode_capture_fixture_counter(const Frame& frame) {
+    return fixture_counter(frame);
 }
 
 void run_capture_bench(const CaptureBenchOptions& options) {
@@ -775,6 +779,8 @@ void run_capture_bench(const CaptureBenchOptions& options) {
                         {"capture_complete_ns", frame->capture_complete_ns},
                         {"counter", counter->value}, {"fixture_schema", counter->schema},
                         {"max_color_error", counter->max_color_error},
+                        {"binary_counter", counter->binary_value ? json(*counter->binary_value) : json(nullptr)},
+                        {"exact_colour_identity", counter->exact_colour_value ? json(*counter->exact_colour_value) : json(nullptr)},
                         {"line_peak_y", quality.line_peak_y},
                         {"line_expected_y", quality.line_expected_y},
                         {"line_width_px", quality.line_width_px},

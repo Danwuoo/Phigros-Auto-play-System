@@ -55,3 +55,15 @@
 暫停／靜止恢復有獨立 ADB pixels reference，包含呼叫前後 QPC bracket；分析尋找第一張消費 counter 不早於該 reference 的圖。該指標包含診斷呼叫等待，不稱為精確的來源年齡或瞬時恢復下限。靜止的兩個 reference counter 必須相同，恢復 reference 必須更新。
 
 開發回歸：Release／CTest **27/27**；WGC 暫停短測丟棄一張、gRPC 丟棄三張，所有消費圖可解碼；WGC／gRPC 靜止測試的兩個獨立 reference 相同、恢復更新；WGC GPU＋preview 開發測試完成 570 dispatch、9 個 GPU 採樣，280/280 消費圖可解碼。DXGI preview 開發短測 133/133，移動左右誤差 0；scrcpy 短測 124/124，左邊緣誤差 0–1 px、右邊緣 0 px。上述短測不作性能排名。接續新 revision 完整重測及依選型規則的主用／備用三十分鐘驗證。
+
+## 第三版色彩 identity 異常與交叉核對
+
+`five_formal_20260926_r3` 凍結 `4913edc24ebdeac928ba6949d119583ee7d52f00`。完成 11/96 批後主動終止，85 批中包含一個被中斷的 active run；`termination.json` 保留原因，未完成批次不算成功。`normal-40-r2-scrcpy` 的已生成 summary 記 2377/2377 可解碼但 counter order 無效：frame 654 為 23903，frame 655 色彩四區／XOR 接受 484957，frame 656 回到 23905；該批沒有 PTS 重同步事件。原 raw 未保存該時刻完整 RGB 或 binary 的數值，所以不能聲稱已從原圖重解碼 frame 655 的真值；受影響資料不可改寫。
+
+此紀錄加上解析器審查顯示：四區相同色彩誤差可能碰巧維持 XOR，舊程式會在此路徑提前接受色彩 identity，跳過獨立黑白 binary counter。新增合成對抗圖明示 binary=23904、四區 colour=484957 且各自 XOR 相符；舊規則會接受錯值，新規則必須交叉核對兩個編碼，再由 binary 與四區色差容限取得 lossy validated 結果。這是解析器回歸，不能當作未保存的實機原圖。
+
+每張 native-v2 Fixture 現在先讀 binary counter，再接受與其相符的四區 exact identity；不同則使用既有四區最大 colour error ≤32 的 lossy 分支，後端 schema 門控不變。raw 同時記 `binary_counter`／`exact_colour_identity`，重算報告分開計數碰巧通過 exact 四區但與 binary 不同的情形。不使用歷史 counter 強制修正或推算下一值。
+
+另外 DXGI crop 現在在擷取前後都檢查整個矩形位於 HWND client 內；九個可見取樣點不足以排除邊緣超出一個 pixel。新增越界一個 pixel／負 origin 回歸。static host probe 的 GPU missing 說明也明確指向 bench 的動態 PDH resource events。Release／CTest **29/29** 通過；同一新版 APK、encoder、解析度與日程保持固定，第四版將整組重測。
+
+交叉核對後開發短測：scrcpy 188/188、gRPC 70/70、WGC 70/70 可解碼，counter order 有效且位置真值皆可讀；短測未出現色彩／binary collision，不把合成回歸稱作新的實機 collision。DXGI `crop_x=1,width=1280` 在 1280-pixel client 被明確拒絕，raw 只有 CONNECTING，沒有發布污染圖；[拒絕紀錄](../measurements/r4_dxgi_client_overshoot_01_stderr.log)。

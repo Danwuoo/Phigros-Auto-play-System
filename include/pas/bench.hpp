@@ -7,6 +7,16 @@
 
 namespace pas {
 
+struct Frame;
+struct FixtureCounter {
+    int value = 0;
+    const char* schema = "";
+    int max_color_error = 0;
+    std::optional<int> binary_value;
+    std::optional<int> exact_colour_value;
+};
+std::optional<FixtureCounter> decode_capture_fixture_counter(const Frame& frame);
+
 struct CaptureBenchOptions {
     std::string serial;
     std::string backend = "emulator-grpc";

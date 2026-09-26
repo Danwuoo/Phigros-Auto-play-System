@@ -42,6 +42,8 @@ void copy_bgra_rows_to_rgb24(const std::uint8_t* source, std::size_t source_byte
 std::pair<int, int> map_desktop_crop(int screen_x, int screen_y, int width, int height,
                                      int desktop_left, int desktop_top,
                                      int desktop_right, int desktop_bottom);
+void validate_client_crop(int crop_x, int crop_y, int width, int height,
+                          int client_width, int client_height);
 
 class NativeCapture final {
 public:

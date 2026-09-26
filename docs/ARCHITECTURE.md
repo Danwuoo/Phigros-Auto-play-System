@@ -2,6 +2,8 @@
 
 ## T6 擷取候選開發契約（2026-09-26）
 
+Native Fixture counter 驗證需要色彩四區與獨立黑白 binary 交叉核對；相同的壓縮色差可能碰巧保留 XOR，不能只憑四區 byte 一致就接受。raw 保留兩個解碼值；lossy 分支只供 scrcpy 的正式 schema，其他後端仍要求 exact 格式。這些真值只供測試／離線分析，沒有進入遊戲決策。DXGI 整個 crop 必須位於 client 內，並位於選定 monitor 內，不能以九個內部可見點代替完整邊界檢查。
+
 WGC frame pool 容量二，每次回呼最多取兩張並 Close 被替換圖；以主機／SystemRelativeTime 的 elapsed 差監控相對積壓，預設 250 ms 上限，舊圖先丟棄再進 GPU readback。時戳倒退終止來源；stream 重建時另建 guard。該時間不是 Android render age。停止時 shared callback state 先 closing 並排空正在執行的回呼，後撤銷事件、Close session/pool；本機 Windows 的 `GraphicsCapture.dll_unloaded` 崩潰以僅常駐 System32 模組修正，session/frame/GPU 資源照常回收。證據與完整重測見 [就緒紀錄](CAPTURE_READINESS_20260926.md)。
 
 bench 的來源靜止、GPU 負載和預覽都是診斷選項。靜止只操作原生擷取 Fixture 的 property，控制 thread 確保恢復；ADB reference 的讀取前後都記 QPC。GPU 負載同程序、單 dispatch 在途、二秒完成期限；資源採樣收錄 PDH GPU Engine 的獨立 instance 百分比，不假設加總等於整卡百分比。預覽用 CPU RGB24 做 D3D11 上傳，common capture endpoint 保持相同；明示的本機 preview placement 不得當跨機器通用座標。所有新後端仍只在 bench，pixels-only 的遊戲觀察契約不變。
