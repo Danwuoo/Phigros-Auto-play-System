@@ -1,5 +1,6 @@
 #include "pas/analysis.hpp"
 #include "pas/config.hpp"
+#include "pas/game.hpp"
 
 #include <gtest/gtest.h>
 
@@ -74,6 +75,24 @@ TEST(ConfigMigration, ExplicitProcessToThreadAndStrictSchema) {
     }
     EXPECT_THROW(migrate_config(old.path(), converted), std::runtime_error);
     std::filesystem::remove(converted);
+}
+
+TEST(GameConfig, ExplicitTypeSubsetAndCalibrationCannotSilentlyExpand) {
+    auto profile=nlohmann::json::parse(R"({"schema":2,"name":"test","serial":"emulator-5554",
+        "capture":{"kind":"fake","execution":"thread","transport":"payload","image_format":"rgb888",
+        "row_order":"top-down","width":1280,"height":720,"source_rotation":1},
+        "touch":{"kind":"none","timeout_ms":100,"max_contacts":2},
+        "scheduler":{"max_plans":128,"max_steps":16,"horizon_ms":350,"evidence_max_age_ms":100},
+        "preview":{"hz":0},"log_dir":"test-output",
+        "game":{"enabled_types":["tap","hold"],"lead_ms":8,"uncertainty_ms":30}})");
+    const TempJson good(profile.dump()); EXPECT_EQ(load_config(good.path()).game_type_mask,3);
+    for(const auto& types:{nlohmann::json::array(),nlohmann::json::array({"tap","tap"}),
+                           nlohmann::json::array({"chart"})}) {
+        auto bad=profile; bad["game"]["enabled_types"]=types; const TempJson input(bad.dump());
+        EXPECT_THROW(load_config(input.path()),std::invalid_argument);
+    }
+    profile["game"]["lead_ms"]=61; const TempJson too_far(profile.dump());
+    EXPECT_THROW(load_config(too_far.path()),std::invalid_argument);
 }
 
 TEST(AnalysisWindow, HalfOpenCaptureAndConsumerBoundary) {
@@ -158,4 +177,54 @@ TEST(AnalysisPause, NativeTimestampWithNullSourceSequenceRemainsAnalyzable) {
     const auto& point = result.at("first_second_after_end").at(0);
     EXPECT_TRUE(point.at("source_sequence").is_null());
     EXPECT_DOUBLE_EQ(point.at("extra_relative_lag_ms").get<double>(), 0.0);
+}
+
+TEST(GameAnalysis, FutureWaitAndAlreadyLateDecisionAreDifferentDistributions) {
+    const TempJson raw(R"({"event":"game_plan_accepted","intent_id":1,"basis":"tap","accepted_ns":0,"steps":[{"phase":0,"due_ns":20000000}]}
+{"event":"game_touch_receipt","intent_id":1,"phase":0,"scheduled_ns":20000000,"injection_start_ns":21000000,"injection_return_ns":22000000}
+{"event":"game_touch_receipt","intent_id":1,"phase":2,"scheduled_ns":40000000,"injection_start_ns":40000000,"injection_return_ns":41000000}
+{"event":"game_plan_accepted","intent_id":2,"basis":"hold","accepted_ns":50000000,"steps":[{"phase":0,"due_ns":40000000}]}
+{"event":"game_touch_receipt","intent_id":2,"phase":0,"scheduled_ns":40000000,"injection_start_ns":52000000,"injection_return_ns":53000000}
+{"event":"game_touch_receipt","intent_id":3,"phase":0,"scheduled_ns":60000000,"injection_start_ns":62000000,"injection_return_ns":63000000}
+)");
+    const auto result=analyze_game_jsonl(raw.path());
+    EXPECT_EQ(result.at("future_at_accept_down_lateness_ms").at("n"),1);
+    EXPECT_DOUBLE_EQ(result.at("future_at_accept_down_lateness_ms").at("p50").get<double>(),1);
+    EXPECT_EQ(result.at("already_past_at_accept_down_lateness_ms").at("n"),1);
+    EXPECT_DOUBLE_EQ(result.at("already_past_at_accept_down_lateness_ms").at("p50").get<double>(),12);
+    EXPECT_EQ(result.at("unclassified_down_deadlines"),1);
+    EXPECT_DOUBLE_EQ(result.at("contact_duration_ms_by_basis").at("tap").at("p50").get<double>(),19);
+    EXPECT_EQ(result.at("real_downs_by_basis").at("unknown"),1);
+}
+TEST(GameAnalysis, PlayingEvidenceExcludesResultCoverCandidates) {
+    const TempJson raw(R"({"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"lines":[],"capture_complete_ns":1000000,"recognition_start_ns":1000000,"recognition_end_ns":2000000,"targets":[{"kind":"tap","reason":"line_unobservable","crossing_ns":null}]}
+{"event":"game_decision","decision_schema":1,"ui":"UNKNOWN","playing_gate":false,"lines":[],"capture_complete_ns":3000000,"recognition_start_ns":3000000,"recognition_end_ns":4000000,"targets":[{"kind":"flick","reason":"line_unobservable","crossing_ns":null}]}
+)");
+    const auto result=analyze_game_jsonl(raw.path());
+    EXPECT_EQ(result.at("playing_no_line_frames"),1);
+    EXPECT_EQ(result.at("playing_note_candidate_occurrences").at("tap"),1);
+    EXPECT_FALSE(result.at("playing_note_candidate_occurrences").contains("flick"));
+    EXPECT_EQ(result.at("playing_target_reason_occurrences").at("line_unobservable"),1);
+    EXPECT_EQ(result.at("target_reason_occurrences").at("line_unobservable"),2);
+}
+TEST(GameAnalysis, TrackOutcomesDistinguishMissingPredictionAndCanceledAcceptedIntent) {
+    using nlohmann::json;
+    const auto target=[](int id,json crossing,int uncertainty) {
+        return json{{"note_id",id},{"kind","tap"},{"reason",crossing.is_null()?"line_unobservable":"prediction_observe_only"},
+            {"crossing_ns",crossing},{"uncertainty_ns",uncertainty},{"residual_px",0}};
+    };
+    const json frame={{"event","game_decision"},{"decision_schema",2},{"ui","PLAYING"},{"playing_gate",true},
+        {"lines",json::array()},{"capture_complete_ns",0},{"recognition_start_ns",0},{"recognition_end_ns",1},
+        {"targets",json::array({target(1,nullptr,0),target(2,300000000,1000000),target(3,20000000,1000000),
+            target(4,20000000,1000000),target(5,20000000,1000000)})}};
+    std::string log=frame.dump()+"\n";
+    for(int id:{4,5}) log+=json{{"event","game_plan_accepted"},{"intent_id",id},{"note_id",id},
+        {"basis","tap"},{"steps",json::array()}}.dump()+"\n";
+    log+=json{{"event","game_touch_receipt"},{"intent_id",5},{"phase",0},
+        {"scheduled_ns",20000000},{"injection_start_ns",21000000},{"injection_return_ns",22000000}}.dump()+"\n";
+    const TempJson raw(log);const auto result=analyze_game_jsonl(raw.path());
+    const auto& outcomes=result.at("observed_track_outcomes_by_kind").at("tap");
+    for(const auto* key:{"never_predicted","prediction_never_near","near_prediction_not_accepted",
+        "accepted_without_down","actual_down"}) EXPECT_EQ(outcomes.at(key),1);
+    EXPECT_EQ(result.at("observed_track_evictions"),0);
 }

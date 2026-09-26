@@ -192,6 +192,9 @@ struct ContactPlan {
     std::uint64_t generation = 0;
     std::uint64_t geometry_version = 0;
     std::uint64_t note_id = 0;
+    // Active revisions may compact old executed steps, retaining at least the
+    // last executed step for position/phase verification and release duty.
+    std::uint64_t prefix_offset = 0;
 };
 
 struct TouchCommand {
@@ -269,6 +272,7 @@ public:
     bool submit(ContactPlan plan);
     std::vector<TouchReceipt> cancel_intent(std::uint64_t intent_id);
     std::vector<SchedulerNotice> take_notices();
+    std::optional<std::uint64_t> executed_steps(std::uint64_t intent_id) const;
     std::optional<Nanoseconds> next_due_ns() const;
     std::vector<TouchReceipt> run_due();
     // May be called by the supervisor. Linearizes against each injection;

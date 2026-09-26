@@ -10,7 +10,15 @@
 
 動態線預測使用 Note 與線的相對法向距離及局部運動，不固定螢幕 Y。以主機接收時間擬合的是表觀撞線估計；絕對 source age 仍 unknown，綜合提前量需實機校準且不能當作某段真實延遲。遊戲判定回饋無法唯一配對時標 unknown，不以結算反推逐 Note 時間真值。
 
-`src/runtime.cpp` 已接 capture／perception／單一 action owner／supervisor；`src/game.cpp` 提供有界 UI／線／Note 候選、短期追蹤／預測與 dry planner。observe 不建立真實 input。auto-start 經能力指紋與即時 MENU 證據只發一次 PLAY down/up，之後曲中仍 dry；未開放 assist。MENU／PLAYING 為開發分類，PAUSED／RESULT 等仍 UNKNOWN。完整契約、停止、容量及驗收方式以主程式計畫為準。
+`src/runtime.cpp` 已接 capture／perception／單一 action owner／supervisor；`src/game.cpp` 提供有界 UI／線／Note 候選、短期追蹤／預測與 planner。observe 不建立真實 input；auto-start 經能力指紋與即時 MENU 證據只發一次 PLAY down/up，曲中仍 dry。assist 經同一指紋核對使用共用 GrpcTouch，只有 action thread 可執行 UI 或 Note 計畫；離開 MENU 後只撤銷 UI scheduler 一次，避免其釋放曲中接觸。MENU／PLAYING 為開發分類，PAUSED／RESULT 等仍 UNKNOWN，UNKNOWN 撤銷 gate。完整契約、停止、容量及驗收方式以主程式計畫為準。
+
+assist profile 的可選 `game` 物件嚴格限制 `enabled_types`（1–4 個不重複的 tap／hold／drag／flick）、`lead_ms`（整數 −60 至 60）及 `uncertainty_ms`（整數 1 至 60）；省略時預設 Tap／8 ms／30 ms。Hold 可由新 pixels 修改未執行的 move／up，已執行 prefix 不可改；`prefix_offset` 允許丟棄舊已執行步驟但必須保留最後一步，防止長 Hold 的 plan 無限增長。每次觸控 receipt 記錄 QPC scheduled／start／return、source frame、intent；RPC success 不代表遊戲 Perfect。
+
+decision schema 2 明列 Note anchor 語義（Tap／Flick 芯中心、Hold leading edge）及 color core／近期 Hold 與當幀 parallel rails 的觀測依據。後者只在新鮮 PLAYING gate、最近 100 ms 身分、當幀支持充分的線與兩側輪廓同時成立時續接；裁切 tail 仍 unknown，不能由舊 body 長度計時維持。歷史 schema 1 可由 C++ 分析器重算，不能回填新觀測依據。計畫記錄 `accepted_ns`，分析分開 future-at-accept 與 already-past-at-accept 的 down lateness；缺此舊欄位時列為 unclassified。
+
+少量候選漏辨的容忍仍受像素證據期限約束：Tap／Drag 40 ms、Hold 60 ms、Flick 75 ms；超過時取消個別意圖，UNKNOWN UI／source 失效則立即取消全部。不由 tombstone 重啟已完成意圖。離線分析另保留最多 512 個近期觀測身分，按是否形成近線預測、計畫接受及實際 down 列結果；像素身分可能碎裂，這些數量不能當作真實譜面個數或逐 Note 判定。
+
+action owner 以 QPC deadline 計算相對等待時間，用 Win32 高解析度 waitable timer 與 auto-reset wake event 等待；最新決策、撤銷或停止可立即喚醒，無跨時域絕對定時。效能需看各 run 實測分布。Console Ctrl-C／Break 只設定停止旗標，由 supervisor 通知 owner 釋放接觸，不在 OS handler 中呼叫 RPC。
 
 ## gRPC Windows 接收區塊
 
@@ -71,7 +79,7 @@ simple target pixels → detector → tracker → line-crossing predictor
 
 `ContactScheduler` 由單一 owner 依 monotonic deadline dispatch。gate 與各 plan 的證據分開到期；`now >= deadline` 即撤銷並釋放接觸點。每個 epoch 使用單調 birth ID watermark 防止完成意圖被晚到 revision 復活；已送出的 down 保留 contact ID 與釋放責任。`request_stop()` 對注入臨界區線性化。RPC 返回仍不證明 Android 已執行觸控，因此能力報告需核對 native Touch Fixture v2 的逐指像素事件；未知結果使 input faulted，後續 move 不執行。
 
-observe／Session 不建立遊戲觸控後端，`assist` 明確拒絕。觸控測試僅限前景 `org.pas.touchfixture.cpp` 加可見 schema 雙檢查。Native Capture Fixture v2 的四區可見 identity 供來源新鮮度與 tearing 診斷；目標 40／48／57 Hz 與實際可見更新分開記錄。Emulator MMAP 未有 producer 同步證據，仍只可診斷。AVD、ABI、解析度、方向、實際核心／記憶體、Fixture APK hash 及工具鏈記入 manifest／驗收報告。詳細逐項狀態見 [遷移矩陣](CPP_PARITY_MATRIX.md)。
+2026-09-25 遷移驗收時，observe／Session 不建立遊戲觸控後端，`assist` 明確拒絕，觸控測試僅限前景 `org.pas.touchfixture.cpp` 加可見 schema 雙檢查；後續遊戲 assist 的現行路徑見本文開頭。Native Capture Fixture v2 的四區可見 identity 供來源新鮮度與 tearing 診斷；目標 40／48／57 Hz 與實際可見更新分開記錄。Emulator MMAP 未有 producer 同步證據，仍只可診斷。AVD、ABI、解析度、方向、實際核心／記憶體、Fixture APK hash 及工具鏈記入 manifest／驗收報告。詳細逐項狀態見 [遷移矩陣](CPP_PARITY_MATRIX.md)。
 
 首批 5 vCPU／8 GB AVD 的三批 60 秒 Release 基線採 gRPC RGB888 payload，實際來源 43.5–44.6 Hz、來源跟隨約 99.9%；其可見 freshness 與分布比診斷 ADB PNG 的短測更適合作為目前 observe 擷取基線。RGBA payload 可運作但多出轉換成本；MMAP 在相同 Fixture 上可取得畫面，仍因 producer 同步未證明而限診斷。這是現階段的測試選擇，不代表已證明絕對來源年齡或遊戲端到端延遲。原始窗口、樣本數、尾端分布、觸控與工具鏈限制見 [C++ 驗收紀錄](CPP_ACCEPTANCE_20260925.md)。
 

@@ -308,12 +308,15 @@ bool ContactScheduler::set_context(std::uint64_t epoch, std::uint64_t generation
 
 bool ContactScheduler::submit(ContactPlan plan) {
     const auto now = clock_.now_ns();
+    auto old = pending_.find(plan.intent_id);
     if (!fault_.empty() || !armed_ || plan.epoch != epoch_ ||
         plan.generation != generation_ || plan.geometry_version != geometry_version_ || plan.intent_id == 0 ||
         plan.basis.empty() || plan.steps.size() < 2 || plan.steps.size() > static_cast<std::size_t>(max_steps_) ||
-        plan.steps.front().phase != Phase::down || plan.steps.back().phase != Phase::up ||
+        ((old==pending_.end()||!old->second.active||!plan.prefix_offset) &&
+         plan.steps.front().phase != Phase::down) || plan.steps.back().phase != Phase::up ||
         plan.evidence_ns > now || now - plan.evidence_ns >= evidence_max_age_ns_ ||
-        plan.steps.front().due_ns > now + horizon_ns_ || plan.valid_until_ns < now)
+        plan.steps.front().due_ns > now + horizon_ns_ ||
+        (plan.valid_until_ns < now && (old==pending_.end()||!old->second.active)))
         return false;
     for (std::size_t i = 0; i < plan.steps.size(); ++i) {
         const auto& step = plan.steps[i];
@@ -321,7 +324,6 @@ bool ContactScheduler::submit(ContactPlan plan) {
             (i > 0 && step.due_ns < plan.steps[i-1].due_ns) ||
             (i > 0 && i + 1 < plan.steps.size() && step.phase != Phase::move)) return false;
     }
-    auto old = pending_.find(plan.intent_id);
     if (old != pending_.end()) {
         if (plan.revision <= old->second.plan.revision) return false;
         if (old->second.active && plan.steps.back().due_ns < now) return false;
@@ -329,17 +331,22 @@ bool ContactScheduler::submit(ContactPlan plan) {
             plan.source_frame_sequence < old->second.plan.source_frame_sequence) return false;
         // Revisions contain the immutable executed prefix plus replacement
         // future steps. Preserve contact and progress; never replay a move.
-        if (plan.steps.size() <= old->second.next_step) return false;
-        for (std::size_t i = 0; i < old->second.next_step; ++i) {
+        if(plan.prefix_offset<old->second.plan.prefix_offset) return false;
+        const auto removed=plan.prefix_offset-old->second.plan.prefix_offset;
+        if(removed && (!old->second.active||removed>=old->second.next_step)) return false;
+        if (plan.steps.size() <= old->second.next_step-removed) return false;
+        for (std::size_t i = static_cast<std::size_t>(removed); i < old->second.next_step; ++i) {
             const auto& a = old->second.plan.steps[i];
-            const auto& b = plan.steps[i];
+            const auto& b = plan.steps[i-static_cast<std::size_t>(removed)];
             if (a.phase != b.phase || a.x != b.x || a.y != b.y || a.due_ns != b.due_ns) return false;
         }
+        old->second.next_step-=static_cast<std::size_t>(removed);
         old->second.plan = std::move(plan);
         return true;
     }
     // A monotonic birth ID is an unbounded-lifetime dedupe watermark using
     // constant memory. Late revisions and evicted tombstones can never revive.
+    if(plan.prefix_offset) return false;
     if (plan.intent_id <= accepted_high_watermark_) return false;
     if (pending_.size() >= static_cast<std::size_t>(max_plans_)) { fail("plan_capacity"); return false; }
     accepted_high_watermark_ = plan.intent_id;
@@ -393,6 +400,11 @@ std::vector<TouchReceipt> ContactScheduler::cancel_intent(std::uint64_t id) {
     pending_.erase(found);
     return receipts;
 }
+std::optional<std::uint64_t> ContactScheduler::executed_steps(std::uint64_t id) const {
+    const auto p=pending_.find(id);
+    if(p==pending_.end()) return {};
+    return p->second.plan.prefix_offset+p->second.next_step;
+}
 
 void ContactScheduler::fail(const std::string& reason) {
     fault_ = reason;
@@ -421,7 +433,12 @@ std::vector<TouchReceipt> ContactScheduler::run_due() {
         const auto now = clock_.now_ns();
         // Expiry is checked even when no command is due. The <= boundary is
         // intentional: exactly at the deadline evidence is no longer valid.
-        if (evidence_expired(now)) { fail("evidence_expired"); break; }
+        if (evidence_expired(now)) {
+            // Missing pixels revoke permission, not transport health. Drop all
+            // plans and release now; only a later fresh gate can re-arm.
+            if(notice(0,"gate_evidence_expired")) cancel("gate_evidence_expired");
+            break;
+        }
         auto expired = pending_.end();
         for (auto it = pending_.begin(); it != pending_.end(); ++it) {
             if (now - it->second.plan.evidence_ns >= evidence_max_age_ns_ ||

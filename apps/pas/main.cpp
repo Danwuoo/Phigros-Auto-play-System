@@ -367,10 +367,10 @@ int main(int argc, char** argv) {
     double run_duration_s = 30;
     double run_stale_ms = 100;
     bool no_preview = false;
-    auto* run_cmd = app.add_subcommand("run", "Observe live pixels, candidates and dry plans; assist is disabled");
+    auto* run_cmd = app.add_subcommand("run", "Pixels-only observe, automatic PLAY, or gated real assist");
     run_cmd->add_option("--config", config_path)->required();
     run_cmd->add_option("--mode", run_mode);
-    run_cmd->add_option("--capability", run_capability, "Historical touch report required for auto-start mode");
+    run_cmd->add_option("--capability", run_capability, "Historical touch report required for auto-start or assist");
     run_cmd->add_option("--duration-s", run_duration_s)->check(CLI::PositiveNumber);
     run_cmd->add_option("--stale-ms", run_stale_ms)->check(CLI::PositiveNumber);
     run_cmd->add_flag("--no-preview", no_preview);
@@ -540,6 +540,8 @@ int main(int argc, char** argv) {
     auto* analyze_cmd = app.add_subcommand("analyze", "Recompute old or new JSONL without Python");
     auto* capture_analysis = analyze_cmd->add_subcommand("capture", "Capture window and distribution");
     auto* game_analysis = analyze_cmd->add_subcommand("game", "Recompute candidate, prediction and dry-run evidence");
+    auto* game_image_analysis = analyze_cmd->add_subcommand("game-image", "Offline single PNG geometry diagnostics; no input or timing prediction");
+    game_image_analysis->add_option("path",analysis_path)->required();
     game_analysis->add_option("path", analysis_path)->required();
     capture_analysis->add_option("path", analysis_path)->required();
     auto* pause_analysis = analyze_cmd->add_subcommand("pause", "Receiver pause relative lag");
@@ -566,14 +568,22 @@ int main(int argc, char** argv) {
             if (run_mode == "observe") run_observe(config_path, run_duration_s, no_preview, "", run_stale_ms);
             else if (run_mode == "auto-start" && !run_capability.empty())
                 run_auto_start(config_path, run_capability, run_duration_s, no_preview);
-            else throw std::invalid_argument("auto-start requires --capability; assist is disabled pending game and gate acceptance");
+            else if(run_mode=="assist"&&!run_capability.empty())
+                run_assist(config_path,run_capability,run_duration_s,no_preview);
+            else throw std::invalid_argument("choose observe, auto-start, or assist; input modes require --capability");
         } else if (*preflight_cmd) {
             std::cout << game_preflight(preflight_config, preflight_capability).dump(2) << '\n';
         } else if (*config_cmd) {
             if (*migrate_cmd) migrate_config(migrate_source, migrate_target);
             else throw std::invalid_argument("choose a config subcommand");
         } else if (*analyze_cmd) {
-            if (*game_analysis) std::cout << analyze_game_jsonl(analysis_path).dump(2) << '\n';
+            if (*game_image_analysis) {
+                FakeClock clock; GameObserver observer(clock);
+                auto result=decision_json(observer.process(load_diagnostic_png(analysis_path)));
+                result["offline_only"]=true; result["input_created"]=false;
+                result["diagnostic_png_sha256"]=sha256_file(analysis_path);
+                std::cout<<result.dump(2)<<'\n';
+            } else if (*game_analysis) std::cout << analyze_game_jsonl(analysis_path).dump(2) << '\n';
             else if (*capture_analysis) std::cout << analyze_capture_jsonl(analysis_path).dump(2) << '\n';
             else if (*pause_analysis) std::cout << analyze_pause_jsonl(analysis_path).dump(2) << '\n';
             else if (*campaign_analysis) std::cout << analyze_capture_campaign(analysis_path).dump(2) << '\n';

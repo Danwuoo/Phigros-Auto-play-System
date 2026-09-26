@@ -11,4 +11,6 @@ void run_observe(const std::string& config_path, double duration_s, bool no_prev
                  const std::string& launch_package = "", double stale_ms = 100);
 void run_auto_start(const std::string& config_path, const std::string& capability_path,
                     double duration_s, bool no_preview);
+void run_assist(const std::string& config_path, const std::string& capability_path,
+                double duration_s, bool no_preview);
 }

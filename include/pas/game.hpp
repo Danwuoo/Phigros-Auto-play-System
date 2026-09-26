@@ -25,6 +25,9 @@ struct NoteCandidate {
     Vec2 center;
     NoteKind kind = NoteKind::ambiguous;
     double width = 0, height = 0, confidence = 0;
+    std::optional<Vec2> tail;
+    Vec2 tangent{1,0};
+    bool outline_evidence = false;
 };
 struct GameTarget {
     std::uint64_t note_id = 0, revision = 0;
@@ -36,6 +39,7 @@ struct GameTarget {
     double distance = 0, velocity = 0, residual = 0;
     std::string reason;
     int samples = 0;
+    std::optional<Nanoseconds> tail_crossing_ns;
 };
 struct DecisionSnapshot {
     std::uint64_t sequence = 0;
@@ -50,8 +54,7 @@ struct DecisionSnapshot {
 };
 
 // All thresholds are development hypotheses. The observer supplies pixel
-// evidence without injecting input. Gameplay remains dry in this runtime;
-// only explicit auto-start consumes MENU evidence for one UI PLAY attempt.
+// evidence without injecting input. The runtime chooses dry or real transport.
 // History has <=128 tracks, <=8 points each, no retained frames.
 class GameObserver final {
 public:
@@ -59,13 +62,14 @@ public:
     DecisionSnapshot process(const Frame& frame);
     void reset();
 private:
-    struct Point { Nanoseconds t; Vec2 p; LineCandidate line; };
+    struct Point { Nanoseconds t; Vec2 p; LineCandidate line; std::optional<Vec2> tail; };
     struct History {
         std::uint64_t id = 0, revision = 0;
         NoteKind kind;
         Vec2 last;
         Nanoseconds observed = 0;
         std::deque<Point> points;
+        NoteCandidate appearance;
     };
     const Clock& clock_;
     SceneContext previous_;
@@ -78,22 +82,31 @@ private:
 // Single-thread owner. Note identity is distinct from monotonically assigned
 // submission identity; snapshots are complete sets so skipped snapshots do
 // not lose cancellations. No real backend is constructed by observe runtime.
+struct GameActionOptions {
+    int enabled_types=1;
+    Nanoseconds lead_ns=8'000'000, uncertainty_ns=30'000'000;
+};
 class GamePlanOwner final {
 public:
-    GamePlanOwner(const Clock& clock, TouchBackend& backend, int contacts = 2);
+    GamePlanOwner(const Clock& clock, TouchBackend& backend, int contacts = 2,
+                  GameActionOptions options = {});
     std::vector<TouchReceipt> accept(const DecisionSnapshot& snapshot);
     std::vector<TouchReceipt> poll();
     void stop();
     ContactScheduler& scheduler() { return scheduler_; }
     const std::string& last_rejection() const { return last_rejection_; }
+    std::vector<ContactPlan> take_accepted_plans();
 private:
-    struct Identity { std::uint64_t intent, revision; Nanoseconds expires; bool submitted = false; };
+    struct Identity { std::uint64_t intent, revision; Nanoseconds expires; bool submitted = false;
+        NoteKind kind=NoteKind::ambiguous; ContactPlan plan; };
     const Clock& clock_;
     ContactScheduler scheduler_;
     std::map<std::uint64_t, Identity> identities_;
     std::uint64_t next_intent_ = 0, last_snapshot_ = 0, epoch_ = 0;
     SceneContext context_;
     std::string last_rejection_;
+    GameActionOptions options_;
+    std::vector<ContactPlan> accepted_plans_;
 };
 
 class PlayButtonPlanner final {

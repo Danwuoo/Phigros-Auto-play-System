@@ -40,7 +40,7 @@ json read(const std::filesystem::path& path) {
 
 RuntimeConfig load_config(const std::filesystem::path& path) {
     auto raw = read(path);
-    fields(raw, {"schema", "name", "serial", "capture", "touch", "scheduler", "preview", "log_dir"},
+    fields(raw, {"schema", "name", "serial", "capture", "touch", "scheduler", "preview", "log_dir", "game"},
            {"schema", "name", "serial", "capture", "touch", "scheduler", "preview", "log_dir"}, "profile");
     if (integer(raw.at("schema"), 2, 2, "schema") != 2)
         throw std::invalid_argument("use 'pas config migrate' for schema 1");
@@ -98,6 +98,21 @@ RuntimeConfig load_config(const std::filesystem::path& path) {
     config.max_steps = integer(s.at("max_steps"), 2, 1024, "step limit");
     config.horizon_ms = integer(s.at("horizon_ms"), 1, 5000, "horizon");
     config.evidence_max_age_ms = integer(s.at("evidence_max_age_ms"), 1, 1000, "evidence age");
+    if(raw.contains("game")) {
+        const auto& g=raw.at("game");
+        fields(g,{"enabled_types","lead_ms","uncertainty_ms"},{"enabled_types","lead_ms","uncertainty_ms"},"game");
+        if(!g.at("enabled_types").is_array()||g.at("enabled_types").empty()||g.at("enabled_types").size()>4)
+            throw std::invalid_argument("game enabled_types must contain 1..4 types");
+        config.game_type_mask=0;
+        for(const auto& type:g.at("enabled_types")) {
+            const auto value=string(type,"game type");
+            const int bit=value=="tap"?1:value=="hold"?2:value=="drag"?4:value=="flick"?8:0;
+            if(!bit||(config.game_type_mask&bit)) throw std::invalid_argument("unknown or duplicate game type");
+            config.game_type_mask|=bit;
+        }
+        config.game_lead_ms=integer(g.at("lead_ms"),-60,60,"game lead ms");
+        config.game_uncertainty_ms=integer(g.at("uncertainty_ms"),1,60,"game uncertainty ms");
+    }
     if (!p.at("hz").is_number() || !std::isfinite(p.at("hz").get<double>()) ||
         p.at("hz").get<double>() < 0 || p.at("hz").get<double>() > 10)
         throw std::invalid_argument("preview Hz out of range");

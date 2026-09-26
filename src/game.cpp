@@ -74,6 +74,86 @@ bool same_geometry(const SceneContext& a,const SceneContext& b) {
     return a.epoch==b.epoch&&a.generation==b.generation&&a.geometry==b.geometry&&
         a.width==b.width&&a.height==b.height&&a.rotation==b.rotation;
 }
+struct HoldRails {double depth=0;std::optional<Vec2> tail;};
+std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& note,double minimum_depth) {
+    const Vec2 normal{-note.tangent.y,note.tangent.x};
+    std::array<int,2> extent{};
+    for(int side=0;side<2;++side) {
+        int last=-1,gaps=0;
+        for(int depth=0;depth<std::hypot(f.width,f.height);depth+=2) {
+            const double cx=note.center.x-normal.x*depth+(side?1:-1)*note.width*.5*note.tangent.x;
+            const double cy=note.center.y-normal.y*depth+(side?1:-1)*note.width*.5*note.tangent.y;
+            if(cy<f.height*.10||cy>=f.height||cx<0||cx>=f.width) break;
+            bool found=false;
+            for(int offset=-16;offset<=16&&!found;offset+=2) {
+                const int x=static_cast<int>(std::lround(cx+offset*note.tangent.x)),
+                          y=static_cast<int>(std::lround(cy+offset*note.tangent.y));
+                if(x<0||y<0||x>=f.width||y>=f.height) continue;
+                const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+                found=std::min({p[0],p[1],p[2]})>170 &&
+                    std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<30;
+            }
+            if(found) {last=depth;gaps=0;}
+            else if(last>=0&&(gaps+=2)>12) break;
+        }
+        extent[side]=last;
+    }
+    if(std::min(extent[0],extent[1])<minimum_depth||std::abs(extent[0]-extent[1])>20) return {};
+    const double depth=(extent[0]+extent[1])/2.0;
+    Vec2 tail{note.center.x-normal.x*depth,note.center.y-normal.y*depth};
+    return HoldRails{depth,tail.y>f.height*.11?std::optional<Vec2>{tail}:std::nullopt};
+}
+std::optional<Vec2> visible_hold_tail(const Frame& f,const NoteCandidate& note) {
+    const auto rails=visible_hold_rails(f,note,note.width*.65);
+    return rails?rails->tail:std::nullopt;
+}
+std::optional<LineCandidate> spanning_line(const Frame& f) {
+    struct Column {int x; std::vector<double> y;};
+    std::array<Column,9> columns;
+    const auto bright=[&](int x,int y) {
+        if(x<0||x>=f.width||y<0||y>=f.height) return false;
+        const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+        const int color=classify(p);
+        return color==4||color==2||color==1;
+    };
+    for(int k=0;k<9;++k) {
+        auto& column=columns[k]; column.x=static_cast<int>(f.width*(.02+k*.12));
+        int begin=-1;
+        for(int y=static_cast<int>(f.height*.12);y<static_cast<int>(f.height*.95);++y) {
+            if(bright(column.x,y)) {if(begin<0) begin=y;}
+            else if(begin>=0) {
+                if(y-begin<=f.height*.02&&column.y.size()<16) column.y.push_back((begin+y-1)/2.0);
+                begin=-1;
+            }
+        }
+    }
+    int best_count=0; double best_slope=0,best_intercept=0;
+    for(int a=0;a<4;++a) for(int b=a+5;b<9;++b)
+        for(const double ya:columns[a].y) for(const double yb:columns[b].y) {
+            const double slope=(yb-ya)/(columns[b].x-columns[a].x);
+            if(std::abs(slope)>.8) continue;
+            const double intercept=ya-slope*columns[a].x;
+            int count=0; double sx=0,sy=0,xx=0,xy=0;
+            for(int k=0;k<48;++k) {
+                const int x=static_cast<int>(f.width*(.02+k*.96/47));
+                const int expected=static_cast<int>(std::lround(intercept+slope*x));
+                int found=0; bool seen=false;
+                for(int d=0;d<=4&&!seen;++d) for(const int sign:{-1,1}) {
+                    const int y=expected+sign*d;
+                    if(y>=f.height*.12&&y<f.height*.95&&bright(x,y)) {found=y;seen=true;break;}
+                }
+                if(seen) {++count; sx+=x;sy+=found;xx+=static_cast<double>(x)*x;xy+=static_cast<double>(x)*found;}
+            }
+            if(count>best_count&&count>=38) {
+                const double den=count*xx-sx*sx;
+                if(den>0) {best_slope=(count*xy-sx*sy)/den;best_intercept=(sy-best_slope*sx)/count;best_count=count;}
+            }
+        }
+    if(best_count<38) return {};
+    const double norm=std::hypot(1.0,best_slope);
+    return LineCandidate{{f.width/2.0,best_intercept+best_slope*f.width/2.0},
+        {1/norm,best_slope/norm},f.width*norm,4,.85};
+}
 std::optional<Vec2> song_play_button(const Frame& f) {
     const auto white=[&](int x,int y) {
         if(x<0||y<0||x>=f.width||y>=f.height) return false;
@@ -139,7 +219,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         };
         for(int x=0;x<f.width;++x) {
             const int color=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3);
-            if(color==4||color==2) {if(begin<0) begin=x; last=x; gaps=0;}
+            if(color==4||color==2||color==1) {if(begin<0) begin=x; last=x; gaps=0;}
             else if(begin>=0 && ++gaps>4) {finish(); begin=-1; last=-1; gaps=0;}
         }
         finish();
@@ -159,6 +239,12 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                 {1,0},static_cast<double>(right-left),thickness,.65});
         i=j;
     }
+    if(const auto spanning=spanning_line(f)) {
+        std::erase_if(out.lines,[&](const LineCandidate& line) {
+            return std::abs(normal_distance(line.center,*spanning))<16;
+        });
+        out.lines.push_back(*spanning);
+    }
     for(const auto& c:all) {
         const double w=c.x1-c.x0+2.0,h=c.y1-c.y0+2.0;
         const Vec2 center{c.sx/c.count,c.sy/c.count};
@@ -172,7 +258,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         const double spread=std::hypot(xx-yy,2*xy);
         const double major=std::sqrt(std::max(0.0,(xx+yy+spread)/2)),
                      minor=std::sqrt(std::max(0.0,(xx+yy-spread)/2));
-        if((c.color==4||c.color==2) && major>f.width*.07 &&
+        if((c.color==4||c.color==2||c.color==1) && major>f.width*.07 &&
            major>12*std::max(1.0,minor) && center.y>f.height*.12 &&
            center.y<f.height*.95) {
             int adjacent_note_samples=0;
@@ -191,7 +277,8 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             }
             if(adjacent_note_samples>=3) continue; // Hold outline, not independent line evidence.
             const bool existing=std::any_of(out.lines.begin(),out.lines.end(),[&](const LineCandidate& l) {
-                return std::abs(normal_distance(center,l))<8 && std::abs(std::sin(theta))<.03;
+                return std::abs(normal_distance(center,l))<8 &&
+                    std::abs(l.tangent.x*std::cos(theta)+l.tangent.y*std::sin(theta))>.995;
             });
             if(!existing) {
                 if(out.lines.size()==16) {out.capacity_valid=false; continue;}
@@ -200,13 +287,86 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             }
             continue;
         }
-        if(c.color==4||center.y<f.height*.10 || w<f.width*.018||w>f.width*.20||
+        const double minimum_width=f.width*(c.color==3?.018:.04);
+        if(c.color==2&&major<5*std::max(1.0,minor)) continue; // Rings/body borders are not Drag ribbons.
+        if(c.color==4||center.y<f.height*.10 || w<minimum_width||w>f.width*.20||
            h<4 || h>f.height*.75 || c.count*4<w*h*.13) continue;
         if(notes.size()==128) {out.capacity_valid=false; continue;}
         NoteKind kind=c.color==2?NoteKind::drag:c.color==3?NoteKind::flick:
             h>w*.65?NoteKind::hold:NoteKind::tap;
-        notes.push_back({center,kind,w,h,.55});
+        if(kind==NoteKind::tap&&major<5*std::max(1.0,minor)) continue;
+        NoteCandidate candidate{{(c.x0+c.x1)/2.0,(c.y0+c.y1)/2.0},kind,w,h,.55};
+        candidate.tangent={std::cos(theta),std::sin(theta)};
+        if(kind==NoteKind::hold) {
+            Vec2 axis{std::cos(theta),std::sin(theta)};
+            const LineCandidate* main=nullptr;
+            for(const auto& line:out.lines) if(line.confidence>=.8&&line.length>=f.width*.8&&
+                (!main||line.confidence>main->confidence)) main=&line;
+            if(main) {
+                const Vec2 minor{-axis.y,axis.x},normal{-main->tangent.y,main->tangent.x};
+                if(std::abs(minor.x*normal.x+minor.y*normal.y)>
+                   std::abs(axis.x*normal.x+axis.y*normal.y)) axis=minor;
+            }
+            if(axis.y<0) {axis.x=-axis.x;axis.y=-axis.y;}
+            candidate.tangent={axis.y,-axis.x};
+            const double den=std::abs(candidate.tangent.x*axis.y)-std::abs(candidate.tangent.y*axis.x);
+            if(den>.2) {
+                const double length=(h*std::abs(candidate.tangent.x)-w*std::abs(candidate.tangent.y))/den;
+                candidate.width=std::max(8.0,(w*std::abs(axis.y)-h*std::abs(axis.x))/den);
+                candidate.center.x+=axis.x*(length/2-2); candidate.center.y+=axis.y*(length/2-2);
+            } else candidate.center.y=c.y1-2;
+            candidate.tail=visible_hold_tail(f,candidate);
+            if(candidate.tail) candidate.height=candidate.center.y-candidate.tail->y;
+        }
+        notes.push_back(candidate);
     }
+    // A white/yellow Flick arrow interrupts its red ribbon into two cores.
+    // Require that visible central vertical marker before joining fragments.
+    for(std::size_t i=0;i<notes.size();++i) for(std::size_t j=i+1;j<notes.size();) {
+        auto& a=notes[i]; const auto& b=notes[j];
+        const double gap=std::abs(a.center.x-b.center.x)-(a.width+b.width)/2;
+        bool marker=false;
+        if(a.kind==NoteKind::flick&&b.kind==NoteKind::flick&&
+           std::max(a.height,b.height)<=20&&std::abs(a.center.y-b.center.y)<8&&
+           gap>=10&&gap<=f.width*.04&&std::abs(a.width-b.width)<12&&
+           a.width+b.width+gap<=f.width*.18) {
+            const int x=static_cast<int>(std::lround((a.center.x+b.center.x)/2));
+            const int y=static_cast<int>(std::lround((a.center.y+b.center.y)/2));
+            int support=0;
+            for(int dy=-12;dy<=12;dy+=2) if(x>=0&&x<f.width&&y+dy>=0&&y+dy<f.height) {
+                const auto color=classify(f.rgb.data()+static_cast<std::size_t>(y+dy)*f.stride+x*3);
+                if(color==4||color==2) ++support;
+            }
+            marker=support>=8;
+        }
+        if(marker) {
+            const double left=std::min(a.center.x-a.width/2,b.center.x-b.width/2),
+                         right=std::max(a.center.x+a.width/2,b.center.x+b.width/2);
+            a.center={(left+right)/2,(a.center.y+b.center.y)/2}; a.width=right-left;
+            a.height=std::max(a.height,b.height); a.confidence=.65;
+            notes.erase(notes.begin()+static_cast<std::ptrdiff_t>(j));
+        } else ++j;
+    }
+    // A simultaneous-note highlight is a yellow outline around a blue/red
+    // core. Its thin edge fragments must not create extra Drag identities.
+    std::erase_if(notes,[&](const NoteCandidate& yellow) {
+        if(yellow.kind!=NoteKind::drag||yellow.height>24) return false;
+        for(const auto& core:notes) {
+            if(core.kind!=NoteKind::tap&&core.kind!=NoteKind::hold&&core.kind!=NoteKind::flick) continue;
+            if(std::abs(yellow.center.y-core.center.y)>16) continue;
+            const double gap=std::abs(yellow.center.x-core.center.x)-(yellow.width+core.width)/2;
+            if(gap>12||yellow.width>core.width*1.35) continue;
+            for(const double fraction:{-.25,0.0,.25}) {
+                const int x=static_cast<int>(std::lround(core.center.x+fraction*core.width*core.tangent.x)),
+                          y=static_cast<int>(std::lround(core.center.y+fraction*core.width*core.tangent.y));
+                if(x>=0&&y>=0&&x<f.width&&y<f.height) {
+                    const int colour=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3);
+                    if(colour==1||colour==3) return true;
+                }
+            }
+        }
+        return false;
+    });
     // Independent HUD evidence: line/note presence never arms gameplay.
     // Non-playing classes require live evidence before templates are enabled.
     const bool hud=pause_bars>=2&&score_glyphs>=4;
@@ -225,6 +385,35 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     }
     const auto now=f.capture_complete_ns;
     std::erase_if(tracks_,[&](const History& t){return now-t.observed>=100'000'000;});
+    // A judged Hold can lose its saturated core. Continue only a recent Hold
+    // whose same-frame parallel rails still attach to an observable line.
+    if(out.playing_gate) for(const auto& track:tracks_) {
+        if(track.kind!=NoteKind::hold||track.points.empty()||track.appearance.width<f.width*.04) continue;
+        const LineCandidate* line=nullptr;
+        for(const auto& candidate:out.lines) if(candidate.confidence>=.8&&candidate.length>=f.width*.8&&
+            std::abs(candidate.tangent.x*track.appearance.tangent.x+
+                     candidate.tangent.y*track.appearance.tangent.y)>.95) {
+            if(!line||candidate.confidence>line->confidence) line=&candidate;
+        }
+        if(!line||std::abs(normal_distance(track.last,*line))>40) continue;
+        auto note=track.appearance;
+        const double d=normal_distance(track.last,*line);
+        note.center={track.last.x+d*line->tangent.y,track.last.y-d*line->tangent.x};
+        note.tangent=line->tangent;note.outline_evidence=true;note.confidence=.7;
+        const bool colored=std::any_of(notes.begin(),notes.end(),[&](const NoteCandidate& incoming) {
+            if(incoming.kind!=NoteKind::hold&&incoming.kind!=NoteKind::tap) return false;
+            if(incoming.kind==NoteKind::tap&&incoming.height<12) return false;
+            return std::abs((incoming.center.x-note.center.x)*note.tangent.x+
+                            (incoming.center.y-note.center.y)*note.tangent.y)<note.width*.4&&
+                   distance(incoming.center,note.center)<std::max(30.0,incoming.height/2+8);
+        });
+        if(colored) continue;
+        const auto rails=visible_hold_rails(f,note,16);
+        if(!rails) continue;
+        note.tail=rails->tail;note.height=rails->depth;
+        if(notes.size()==128) {out.capacity_valid=false;out.playing_gate=false;out.ui=GameUi::unknown;break;}
+        notes.push_back(note);
+    }
     // Merge complementary nested color ribbons only when one is distinctly
     // narrower and enclosed by the other. Equal-width overlapping candidates
     // retain separate identities; proximity alone is not merge evidence.
@@ -240,12 +429,30 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             notes.erase(notes.begin()+static_cast<std::ptrdiff_t>(j));
         } else ++j;
     }
+    std::vector<std::optional<NoteCandidate>> shortened_holds(notes.size());
+    for(std::size_t i=0;i<notes.size();++i) {
+        const auto& n=notes[i];if(n.kind!=NoteKind::tap) continue;
+        const Vec2 axis{-n.tangent.y,n.tangent.x};
+        const double den=std::abs(n.tangent.x*axis.y)-std::abs(n.tangent.y*axis.x);
+        if(den<=.2) continue;
+        const double length=(n.height*std::abs(n.tangent.x)-n.width*std::abs(n.tangent.y))/den;
+        if(length<12) continue; // A thin new Tap must never inherit a completed Hold.
+        auto h=n;h.kind=NoteKind::hold;
+        h.center.x+=axis.x*(length/2-2);h.center.y+=axis.y*(length/2-2);
+        h.tail=visible_hold_tail(f,h);shortened_holds[i]=h;
+    }
     struct Pair { std::size_t note, track; double cost; };
     std::vector<Pair> pairs; pairs.reserve(notes.size()*tracks_.size());
     for(std::size_t ni=0;ni<notes.size();++ni) {
         const auto& n=notes[ni];
         for(std::size_t ti=0;ti<tracks_.size();++ti) {
-            const auto& t=tracks_[ti]; if(t.kind!=n.kind) continue;
+            const auto& t=tracks_[ti];
+            Vec2 point=n.center;
+            if(t.kind!=n.kind) {
+                if(t.kind!=NoteKind::hold||!shortened_holds[ni]||
+                   distance(shortened_holds[ni]->center,t.last)>=40) continue;
+                point=shortened_holds[ni]->center;
+            }
             Vec2 expected=t.last;
             if(t.points.size()>=2) {
                 const auto& a=t.points[t.points.size()>3?t.points.size()-4:0]; const auto& b=t.points.back();
@@ -253,7 +460,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                 if(dt>0) {const double future=(now-b.t)/1e9;
                     expected.x+=(b.p.x-a.p.x)/dt*future; expected.y+=(b.p.y-a.p.y)/dt*future;}
             }
-            const double d=distance(expected,n.center);
+            const double d=distance(expected,point);
             if(d<f.width*.08) pairs.push_back({ni,ti,d});
         }
     }
@@ -278,16 +485,34 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         const bool ambiguous=uncertain[ni];
         if(!match) {
             if(tracks_.size()==128) {out.capacity_valid=false; continue;}
-            tracks_.push_back({++next_id_,0,n.kind,n.center,now,{}}); match=&tracks_.back();
+            tracks_.push_back({++next_id_,0,n.kind,n.center,now,{},n}); match=&tracks_.back();
         }
-        match->last=n.center; match->observed=now;
+        match->observed=now;
         GameTarget target; target.note_id=match->id; target.revision=++match->revision;
-        target.note=n; target.evidence_ns=now; target.expires_ns=now+100'000'000;
+        target.note=n;
+        if(match->kind==NoteKind::hold&&n.kind==NoteKind::tap) {
+            target.note=*shortened_holds[ni];
+        }
+        match->last=target.note.center;
+        match->appearance=target.note;
+        target.evidence_ns=now; target.expires_ns=now+100'000'000;
         target.reason=ambiguous?"association_ambiguous":"line_unobservable";
-        if(out.lines.size()==1&&!ambiguous) {
-            const auto& l=out.lines.front();
-            match->points.push_back({now,n.center,l});
-            if(match->points.size()>8) match->points.pop_front();
+        const LineCandidate* selected=nullptr;
+        for(const auto& line:out.lines) {
+            if(std::abs(line.tangent.x*n.tangent.x+line.tangent.y*n.tangent.y)<.95||line.length<f.width*.32) continue;
+            if(std::abs(n.center.x-line.center.x)>line.length/2+n.width) continue;
+            if(!selected||line.confidence>selected->confidence||
+               (line.confidence==selected->confidence&&line.length>selected->length)) selected=&line;
+        }
+        if(!selected&&out.lines.size()==1) selected=&out.lines.front();
+        if(selected&&!ambiguous) {
+            const auto& l=*selected;
+            const auto latest_distance=normal_distance(target.note.center,l);
+            target.hit={target.note.center.x+latest_distance*l.tangent.y,
+                        target.note.center.y-latest_distance*l.tangent.x};
+            match->points.push_back({now,target.note.center,l,target.note.tail});
+            while(match->points.size()>6 || (match->points.size()>3&&now-match->points.front().t>90'000'000))
+                match->points.pop_front();
             target.samples=static_cast<int>(match->points.size());
             target.reason="insufficient_history";
             if(match->points.size()>=3) {
@@ -307,14 +532,32 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                     const double tau=std::abs(v)>5?-d/v:-1;
                     target.reason=std::abs(v)<=5?"relative_velocity_small":
                         tau<0?"root_past":tau>.35?"outside_short_horizon":
-                        residual>5?"nonlinear_or_mismatch":"prediction_observe_only";
-                    if(tau>=0&&tau<=.35&&residual<=5) {
+                        residual>8?"nonlinear_or_mismatch":"prediction_observe_only";
+                    if(tau>=-.04&&tau<=.35&&residual<=8&&std::abs(v)>5) {
+                        target.reason="prediction_observe_only";
                         target.crossing_ns=now+static_cast<Nanoseconds>(std::llround(tau*1e9));
                         target.uncertainty_ns=static_cast<Nanoseconds>(std::llround(
                             std::max(2.0,residual)/std::abs(v)*1e9));
                         // Projection at the observed line is diagnostic only;
                         // rotating/moving-line hit regions require validation.
-                        target.hit={n.center.x+d*l.tangent.y,n.center.y-d*l.tangent.x};
+                        target.hit={target.note.center.x+d*l.tangent.y,target.note.center.y-d*l.tangent.x};
+                    }
+                    if(target.note.kind==NoteKind::hold&&target.note.tail) {
+                        double tt=0,td=0,tail_den=0,tail_num=0; int count=0;
+                        for(const auto& p:match->points) if(p.tail) {tt+=(p.t-now)/1e9;
+                            td+=normal_distance(*p.tail,p.line); ++count;}
+                        if(count>=3) {
+                            tt/=count; td/=count;
+                            for(const auto& p:match->points) if(p.tail) {
+                                const double x=(p.t-now)/1e9-tt;
+                                tail_den+=x*x; tail_num+=x*(normal_distance(*p.tail,p.line)-td);
+                            }
+                            const double tail_v=tail_den>0?tail_num/tail_den:0;
+                            const double tail_d=td-tail_v*tt;
+                            const double tail_tau=std::abs(tail_v)>5?-tail_d/tail_v:-1;
+                            if(tail_tau>=-.05&&tail_tau<3)
+                                target.tail_crossing_ns=now+static_cast<Nanoseconds>(std::llround(tail_tau*1e9));
+                        }
                     }
                 }
             }
@@ -326,8 +569,11 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     return out;
 }
 
-GamePlanOwner::GamePlanOwner(const Clock& clock, TouchBackend& backend, int contacts)
-    : clock_(clock),scheduler_(clock,backend,contacts,128,16,350'000'000,100'000'000) {}
+GamePlanOwner::GamePlanOwner(const Clock& clock, TouchBackend& backend, int contacts,GameActionOptions options)
+    : clock_(clock),scheduler_(clock,backend,contacts,128,16,350'000'000,100'000'000),options_(options) {}
+std::vector<ContactPlan> GamePlanOwner::take_accepted_plans() {
+    auto result=std::move(accepted_plans_); accepted_plans_.clear(); return result;
+}
 std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     std::vector<TouchReceipt> receipts;
     if(s.sequence<=last_snapshot_) {last_rejection_="snapshot_order"; return receipts;}
@@ -348,6 +594,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     std::set<std::uint64_t> visible;
     for(const auto& t:s.targets) visible.insert(t.note_id);
     for(auto& [id,identity]:identities_) if(!visible.contains(id)) {
+        const auto grace=identity.kind==NoteKind::hold?60'000'000:identity.kind==NoteKind::flick?75'000'000:40'000'000;
+        if(clock_.now_ns()-identity.plan.evidence_ns<grace) continue;
         auto canceled=scheduler_.cancel_intent(identity.intent);
         receipts.insert(receipts.end(),canceled.begin(),canceled.end());
     }
@@ -363,26 +611,86 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         }
         auto& id=found->second; id.expires=t.expires_ns+250'000'000;
         if(id.submitted) {
-            if(!t.crossing_ns||t.reason!="prediction_observe_only"||t.expires_ns<=clock_.now_ns()) {
+            const auto cursor=scheduler_.executed_steps(id.intent);
+            if(!cursor) continue;
+            if(t.expires_ns<=clock_.now_ns()||t.reason=="association_ambiguous"||
+               t.evidence_ns<id.plan.evidence_ns||t.samples==0) {
                 auto canceled=scheduler_.cancel_intent(id.intent);
                 receipts.insert(receipts.end(),canceled.begin(),canceled.end());
+                continue;
             }
-            continue; // First limited version: immutable Tap, no repeat.
+            auto plan=id.plan; plan.revision=std::max(t.revision,plan.revision+1);
+            plan.evidence_ns=t.evidence_ns; plan.source_frame_sequence=s.context.frame;
+            if(*cursor==0&&t.crossing_ns&&t.reason=="prediction_observe_only"&&
+               t.uncertainty_ns<=options_.uncertainty_ns&&
+               t.hit.x>=0&&t.hit.x<s.context.width&&t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height) {
+                const auto due=*t.crossing_ns-options_.lead_ns;
+                if(due-clock_.now_ns()>=-20'000'000&&due-clock_.now_ns()<=60'000'000) {
+                    const auto down=due-(id.kind==NoteKind::drag?15'000'000:0);
+                    const auto shift=down-plan.steps.front().due_ns;
+                    const double dx=t.hit.x-plan.steps.front().x,dy=t.hit.y-plan.steps.front().y;
+                    for(auto& step:plan.steps) {
+                        step.due_ns+=shift;step.x+=dx;
+                        step.y=std::min(s.context.height*.94,step.y+dy);
+                    }
+                    plan.valid_until_ns=due+30'000'000;
+                }
+            }
+            if(id.kind==NoteKind::hold&&*cursor>plan.prefix_offset) {
+                const auto executed=static_cast<std::size_t>(*cursor-plan.prefix_offset);
+                plan.steps.resize(executed);
+                const auto last=plan.steps.back();
+                if(std::hypot(t.hit.x-last.x,t.hit.y-last.y)>2&&t.samples>0&&
+                   t.hit.x>=0&&t.hit.x<s.context.width&&t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height)
+                    plan.steps.push_back({Phase::move,t.hit.x,t.hit.y,clock_.now_ns()});
+                const auto release=t.tail_crossing_ns?*t.tail_crossing_ns+20'000'000:clock_.now_ns()+70'000'000;
+                const auto due=std::clamp(release,clock_.now_ns(),clock_.now_ns()+70'000'000);
+                const auto at=plan.steps.back(); plan.steps.push_back({Phase::up,at.x,at.y,due});
+                if(executed>1) {
+                    plan.steps.erase(plan.steps.begin(),plan.steps.begin()+static_cast<std::ptrdiff_t>(executed-1));
+                    plan.prefix_offset+=executed-1;
+                }
+            }
+            if(scheduler_.submit(plan)) {
+                id.plan=plan;
+                if(accepted_plans_.size()>=256) throw std::runtime_error("accepted plan diagnostic capacity");
+                accepted_plans_.push_back(std::move(plan));
+            }
+            continue;
         }
-        if(!t.crossing_ns||t.reason!="prediction_observe_only"||t.note.kind!=NoteKind::tap||
-           t.uncertainty_ns>20'000'000||t.expires_ns<=clock_.now_ns()) continue;
-        const auto remaining=*t.crossing_ns-clock_.now_ns();
-        if(remaining<0||remaining>40'000'000) continue; // Near-dispatch submission only.
+        const int bit=t.note.kind==NoteKind::tap?1:t.note.kind==NoteKind::hold?2:
+                      t.note.kind==NoteKind::drag?4:t.note.kind==NoteKind::flick?8:0;
+        if(!(options_.enabled_types&bit)||!t.crossing_ns||t.reason!="prediction_observe_only"||
+           t.uncertainty_ns>options_.uncertainty_ns||t.expires_ns<=clock_.now_ns()) continue;
+        const auto due=*t.crossing_ns-options_.lead_ns;
+        const auto remaining=due-clock_.now_ns();
+        if(remaining< -20'000'000||remaining>60'000'000) continue;
         if(t.hit.x<0||t.hit.y<s.context.height*.12||t.hit.x>=s.context.width||t.hit.y>=s.context.height) {
             last_rejection_="unsafe_region"; continue;
         }
         id.intent=++next_intent_; id.revision=t.revision;
-        ContactPlan plan{epoch_,id.intent,t.revision,t.evidence_ns,*t.crossing_ns+20'000'000,
-            s.context.frame,"live_pixels_short_linear_fit",
-            {{Phase::down,t.hit.x,t.hit.y,*t.crossing_ns},
-             {Phase::up,t.hit.x,t.hit.y,*t.crossing_ns+15'000'000}}};
+        ContactPlan plan{epoch_,id.intent,t.revision,t.evidence_ns,due+30'000'000,
+            s.context.frame,std::string("live_pixels_short_linear_fit_")+name(t.note.kind),
+            {{Phase::down,t.hit.x,t.hit.y,due},
+             {Phase::up,t.hit.x,t.hit.y,due+18'000'000}}};
+        if(t.note.kind==NoteKind::hold) {
+            const auto release=t.tail_crossing_ns?*t.tail_crossing_ns+20'000'000:due+70'000'000;
+            plan.steps.back().due_ns=std::max(due+20'000'000,std::min(release,due+70'000'000));
+        } else if(t.note.kind==NoteKind::drag) {
+            plan.steps.front().due_ns=due-15'000'000;
+            plan.steps.back().due_ns=due+35'000'000;
+        } else if(t.note.kind==NoteKind::flick) {
+            plan.steps.pop_back();
+            for(int k=1;k<=4;++k) plan.steps.push_back({Phase::move,t.hit.x,
+                std::min(s.context.height*.94,t.hit.y+k*20),due+k*12'000'000});
+            const auto last=plan.steps.back(); plan.steps.push_back({Phase::up,last.x,last.y,due+52'000'000});
+        }
         plan.note_id=t.note_id; plan.generation=s.context.generation; plan.geometry_version=s.context.geometry;
-        id.submitted=scheduler_.submit(std::move(plan));
+        id.submitted=scheduler_.submit(plan); id.kind=t.note.kind; id.plan=plan;
+        if(id.submitted) {
+            if(accepted_plans_.size()>=256) throw std::runtime_error("accepted plan diagnostic capacity");
+            accepted_plans_.push_back(std::move(plan));
+        }
         if(!id.submitted) last_rejection_="scheduler_rejected";
     }
     return receipts;
@@ -414,9 +722,13 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"width",t.note.width},{"height",t.note.height},{"evidence_ns",t.evidence_ns},
         {"expires_ns",t.expires_ns},{"crossing_ns",t.crossing_ns?json(*t.crossing_ns):json(nullptr)},
         {"uncertainty_ns",t.uncertainty_ns},{"hit_x",t.hit.x},{"hit_y",t.hit.y},
+        {"tail_crossing_ns",t.tail_crossing_ns?json(*t.tail_crossing_ns):json(nullptr)},
+        {"tail_x",t.note.tail?json(t.note.tail->x):json(nullptr)},{"tail_y",t.note.tail?json(t.note.tail->y):json(nullptr)},
+        {"observation_basis",t.note.outline_evidence?"hold_parallel_rails_and_recent_identity":"color_core"},
         {"relative_distance_px",t.distance},{"relative_velocity_px_s",t.velocity},
         {"residual_px",t.residual},{"samples",t.samples},{"reason",t.reason}});
-    return {{"event","game_decision"},{"decision_schema",1},{"sequence",s.sequence},
+    return {{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
+        {"note_anchor_semantics","tap_flick_core_center_hold_leading_edge"},
         {"epoch",s.context.epoch},{"generation",s.context.generation},{"geometry_version",s.context.geometry},
         {"frame_sequence",s.context.frame},{"capture_complete_ns",s.context.capture_ns},
         {"recognition_start_ns",s.recognition_start_ns},{"recognition_end_ns",s.recognition_end_ns},
@@ -429,35 +741,93 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
 nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     using nlohmann::json;
     std::ifstream file(path); if(!file) throw std::runtime_error("cannot open game journal");
-    std::uint64_t frames=0,predictions=0,dry=0,revokes=0,rejections=0,gate_frames=0,multi_line=0;
-    std::map<std::string,std::uint64_t> kinds,reasons,uis;
+    std::uint64_t frames=0,predictions=0,dry=0,real=0,revokes=0,rejections=0,gate_frames=0,multi_line=0;
+    std::uint64_t playing_no_line=0;
+    std::map<std::string,std::uint64_t> kinds,reasons,uis,accepted_kinds,real_phases,rejection_reasons,revoke_reasons;
+    std::map<std::string,std::uint64_t> playing_kinds,playing_reasons;
+    struct IntentEvidence {std::string kind; std::optional<Nanoseconds> down; std::optional<bool> planned_future;
+        std::uint64_t note=0;};
+    struct TrackEvidence {std::string kind;Nanoseconds last=0;bool predicted=false,near=false,accepted=false,down=false;};
+    std::map<std::uint64_t,TrackEvidence> observed_tracks;
+    std::map<std::string,std::map<std::string,std::uint64_t>> track_outcomes;
+    std::uint64_t track_evictions=0;
+    std::map<std::uint64_t,IntentEvidence> intent_evidence;
+    std::map<std::string,std::uint64_t> actual_down_kinds;
+    std::map<std::string,std::vector<double>> contact_durations,down_lateness;
+    std::uint64_t intent_evidence_evictions=0;
+    std::uint64_t latest_intent=0;
     std::vector<double> processing,uncertainty,residual,intervals,down_skew;
+    std::vector<double> actual_lateness,rpc_duration;
+    std::vector<double> future_down_lateness,already_past_down_lateness;
+    std::uint64_t unclassified_down_deadlines=0;
     Nanoseconds previous=0,last_down_due=-1,last_down_start=0;
     const auto sample=[](std::vector<double>& values,double value) {if(values.size()<100'000) values.push_back(value);};
     const auto count=[](auto& counts,const std::string& key) {
         if(!counts.contains(key)&&counts.size()>=64) throw std::runtime_error("game analyzer key capacity");
         ++counts[key];
     };
+    const auto finish_track=[&](const TrackEvidence& evidence) {
+        const std::string outcome=evidence.down?"actual_down":evidence.accepted?"accepted_without_down":
+            evidence.near?"near_prediction_not_accepted":evidence.predicted?"prediction_never_near":"never_predicted";
+        count(track_outcomes[evidence.kind],outcome);
+    };
     std::string line;
     while(std::getline(file,line)) {
         if(line.empty()) continue;
         const auto e=json::parse(line); const auto event=e.value("event","");
         if(event=="game_decision") {
-            if(e.value("decision_schema",0)!=1) throw std::runtime_error("unknown game decision schema");
+            const auto schema=e.value("decision_schema",0);
+            if(schema!=1&&schema!=2) throw std::runtime_error("unknown game decision schema");
             ++frames; count(uis,e.at("ui").get<std::string>());
-            if(e.at("playing_gate").get<bool>()) ++gate_frames;
+            const bool playing=e.at("playing_gate").get<bool>();
+            if(playing) {++gate_frames;if(e.at("lines").empty()) ++playing_no_line;}
             if(e.at("lines").size()>1) ++multi_line;
             const auto t=e.at("capture_complete_ns").get<Nanoseconds>();
+            for(auto it=observed_tracks.begin();it!=observed_tracks.end();) {
+                if(t-it->second.last>200'000'000) {finish_track(it->second);it=observed_tracks.erase(it);}
+                else ++it;
+            }
             if(previous&&t>previous) sample(intervals,(t-previous)/1e6); previous=t;
             sample(processing,(e.at("recognition_end_ns").get<Nanoseconds>()-
                                e.at("recognition_start_ns").get<Nanoseconds>())/1e6);
             for(const auto& target:e.at("targets")) {
                 count(kinds,target.at("kind").get<std::string>());
                 count(reasons,target.at("reason").get<std::string>());
+                if(playing) {
+                    count(playing_kinds,target.at("kind").get<std::string>());
+                    count(playing_reasons,target.at("reason").get<std::string>());
+                    const auto note=target.value("note_id",std::uint64_t{0});
+                    if(note) {
+                        if(!observed_tracks.contains(note)&&observed_tracks.size()>=512) {
+                            finish_track(observed_tracks.begin()->second);observed_tracks.erase(observed_tracks.begin());++track_evictions;
+                        }
+                        auto& evidence=observed_tracks[note];evidence.kind=target.at("kind").get<std::string>();evidence.last=t;
+                        if(!target.at("crossing_ns").is_null()) {
+                            evidence.predicted=true;
+                            const auto gap=target.at("crossing_ns").get<Nanoseconds>()-t;
+                            evidence.near=evidence.near||(gap>=-40'000'000&&gap<=100'000'000&&
+                                target.at("uncertainty_ns").get<Nanoseconds>()<=30'000'000);
+                        }
+                    }
+                }
                 if(!target.at("crossing_ns").is_null()) {
                     ++predictions; sample(uncertainty,target.at("uncertainty_ns").get<Nanoseconds>()/1e6);
                     sample(residual,target.at("residual_px").get<double>());
                 }
+            }
+        } else if(event=="game_plan_accepted") {
+            const auto intent=e.at("intent_id").get<std::uint64_t>();
+            if(!intent_evidence.contains(intent)) {
+                if(intent_evidence.size()>=256) {intent_evidence.erase(intent_evidence.begin());++intent_evidence_evictions;}
+                intent_evidence.emplace(intent,IntentEvidence{e.value("basis","unknown"),{}, {},e.value("note_id",std::uint64_t{0})});
+            }
+            auto& evidence=intent_evidence.at(intent);
+            if(auto track=observed_tracks.find(evidence.note);track!=observed_tracks.end()) track->second.accepted=true;
+            if(!evidence.down&&e.contains("accepted_ns")&&!e.at("steps").empty()&&e.at("steps").front().at("phase")==0)
+                evidence.planned_future=e.at("steps").front().at("due_ns").get<Nanoseconds>()>e.at("accepted_ns").get<Nanoseconds>();
+            if(intent>latest_intent) {
+                latest_intent=intent;
+                count(accepted_kinds,e.value("basis","unknown"));
             }
         } else if(event=="dry_touch_receipt") {
             ++dry;
@@ -466,13 +836,52 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                 if(due==last_down_due) sample(down_skew,(start-last_down_start)/1e6);
                 last_down_due=due; last_down_start=start;
             }
-        } else if(event=="runtime_revoke") ++revokes;
-        else if(event=="scheduler_rejection") ++rejections;
+        } else if(event=="game_touch_receipt") {
+            ++real;
+            count(real_phases,std::to_string(e.at("phase").get<int>()));
+            const auto start=e.at("injection_start_ns").get<Nanoseconds>();
+            sample(actual_lateness,(start-e.at("scheduled_ns").get<Nanoseconds>())/1e6);
+            sample(rpc_duration,(e.at("injection_return_ns").get<Nanoseconds>()-start)/1e6);
+            const auto found=intent_evidence.find(e.at("intent_id").get<std::uint64_t>());
+            const std::string kind=found==intent_evidence.end()?"unknown":found->second.kind;
+            if(e.at("phase")==0) {
+                count(actual_down_kinds,kind);
+                sample(down_lateness[kind],(start-e.at("scheduled_ns").get<Nanoseconds>())/1e6);
+                if(found!=intent_evidence.end()) {
+                    found->second.down=start;
+                    if(auto track=observed_tracks.find(found->second.note);track!=observed_tracks.end()) track->second.down=true;
+                    if(found->second.planned_future) sample(*found->second.planned_future?future_down_lateness:
+                        already_past_down_lateness,(start-e.at("scheduled_ns").get<Nanoseconds>())/1e6);
+                    else ++unclassified_down_deadlines;
+                } else ++unclassified_down_deadlines;
+            } else if(e.at("phase")==2&&found!=intent_evidence.end()) {
+                if(found->second.down) sample(contact_durations[kind],(start-*found->second.down)/1e6);
+                intent_evidence.erase(found);
+            }
+        } else if(event=="runtime_revoke") {++revokes; count(revoke_reasons,e.value("reason","unknown"));}
+        else if(event=="scheduler_rejection") {++rejections; count(rejection_reasons,e.value("reason","unknown"));}
     }
+    for(const auto& [id,evidence]:observed_tracks) finish_track(evidence);
+    json durations=json::object(),lateness_by_kind=json::object();
+    for(const auto& [kind,values]:contact_durations) durations[kind]=distribution(values);
+    for(const auto& [kind,values]:down_lateness) lateness_by_kind[kind]=distribution(values);
     return {{"schema_version",1},{"frames",frames},{"playing_gate_frames",gate_frames},
         {"ui_occurrences",uis},{"note_candidate_occurrences",kinds},{"target_reason_occurrences",reasons},
+        {"playing_no_line_frames",playing_no_line},{"playing_note_candidate_occurrences",playing_kinds},
+        {"playing_target_reason_occurrences",playing_reasons},
+        {"observed_track_outcomes_by_kind",track_outcomes},{"observed_track_evictions",track_evictions},
+        {"track_outcome_semantics","pixels identities, not chart notes; near means crossing relative to capture [-40,100]ms and uncertainty<=30ms"},
         {"prediction_occurrences",predictions},{"multi_line_frames",multi_line},
         {"dry_command_count",dry},{"runtime_revokes",revokes},{"scheduler_rejections",rejections},
+        {"real_command_count",real},{"real_schedule_lateness_ms",distribution(actual_lateness)},
+        {"accepted_intents_by_basis",accepted_kinds},{"real_commands_by_phase",real_phases},
+        {"real_downs_by_basis",actual_down_kinds},{"contact_duration_ms_by_basis",durations},
+        {"down_lateness_ms_by_basis",lateness_by_kind},{"intent_evidence_evictions",intent_evidence_evictions},
+        {"future_at_accept_down_lateness_ms",distribution(future_down_lateness)},
+        {"already_past_at_accept_down_lateness_ms",distribution(already_past_down_lateness)},
+        {"unclassified_down_deadlines",unclassified_down_deadlines},
+        {"scheduler_rejections_by_reason",rejection_reasons},{"runtime_revokes_by_reason",revoke_reasons},
+        {"game_rpc_duration_ms",distribution(rpc_duration)},
         {"capture_interval_ms",distribution(intervals)},{"recognition_duration_ms",distribution(processing)},
         {"prediction_uncertainty_ms",distribution(uncertainty)},{"prediction_residual_px",distribution(residual)},
         {"dry_equal_deadline_down_skew_ms",distribution(down_skew)},

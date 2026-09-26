@@ -236,6 +236,19 @@ Frame capture_adb_png(const Clock& clock, const std::filesystem::path& adb,
     return frame;
 }
 
+Frame load_diagnostic_png(const std::filesystem::path& path) {
+    const auto size=std::filesystem::file_size(path);
+    if(size>16*1024*1024) throw std::invalid_argument("diagnostic PNG exceeds capacity");
+    std::ifstream file(path,std::ios::binary);
+    if(!file) throw std::runtime_error("cannot read diagnostic PNG");
+    std::vector<std::uint8_t> png(static_cast<std::size_t>(size));
+    if(!file.read(reinterpret_cast<char*>(png.data()),static_cast<std::streamsize>(size)))
+        throw std::runtime_error("incomplete diagnostic PNG");
+    auto [width,height,rgb]=decode_png(png);
+    Frame frame; frame.sequence=1; frame.width=width; frame.height=height; frame.stride=width*3;
+    frame.rgb=std::move(rgb); return frame;
+}
+
 void launch_android_package(const std::filesystem::path& adb, const std::string& serial,
                             const std::string& package) {
     if (package.empty() || !std::all_of(package.begin(), package.end(), [](unsigned char c) {

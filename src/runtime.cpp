@@ -81,6 +81,47 @@ json game_preflight(const std::string& config_path,const std::string& capability
     return result;
 }
 namespace {
+std::atomic<bool> console_stop_requested=false;
+BOOL WINAPI runtime_console_handler(DWORD event) {
+    if(event==CTRL_C_EVENT||event==CTRL_BREAK_EVENT||event==CTRL_CLOSE_EVENT||event==CTRL_SHUTDOWN_EVENT) {
+        console_stop_requested=true; return TRUE;
+    }
+    return FALSE;
+}
+class ConsoleStopGuard {
+public:
+    ConsoleStopGuard() {console_stop_requested=false;
+        if(!SetConsoleCtrlHandler(runtime_console_handler,TRUE)) throw std::runtime_error("cannot register runtime stop handler");}
+    ~ConsoleStopGuard() {SetConsoleCtrlHandler(runtime_console_handler,FALSE);}
+};
+// One action owner waits; latest-only producers coalesce wakeups into one event.
+// Relative timer durations are derived from QPC deadlines, never UTC deadlines.
+class ActionWake {
+public:
+    ActionWake() {
+        event_=CreateEventW(nullptr,FALSE,FALSE,nullptr);
+        if(!event_) throw std::runtime_error("cannot create action wake event");
+        timer_=CreateWaitableTimerExW(nullptr,nullptr,CREATE_WAITABLE_TIMER_HIGH_RESOLUTION,
+                                     TIMER_MODIFY_STATE|SYNCHRONIZE);
+        if(!timer_) {CloseHandle(event_); throw std::runtime_error("cannot create high resolution action timer");}
+    }
+    ~ActionWake() {CancelWaitableTimer(timer_); CloseHandle(timer_); CloseHandle(event_);}
+    ActionWake(const ActionWake&)=delete;
+    ActionWake& operator=(const ActionWake&)=delete;
+    void notify_all() noexcept {SetEvent(event_);}
+    void wait_for(Nanoseconds delay) {
+        if(delay<=0) return;
+        LARGE_INTEGER due{}; due.QuadPart=-((delay+99)/100);
+        if(!SetWaitableTimerEx(timer_,&due,0,nullptr,nullptr,nullptr,0))
+            throw std::runtime_error("cannot arm action timer");
+        const HANDLE handles[]{event_,timer_};
+        const auto result=WaitForMultipleObjects(2,handles,FALSE,INFINITE);
+        if(result!=WAIT_OBJECT_0&&result!=WAIT_OBJECT_0+1)
+            throw std::runtime_error("action wait failed");
+    }
+private:
+    HANDLE event_{},timer_{};
+};
 // Dry execution holds no unbounded receipt history and has no transport.
 class DryTouch final : public TouchBackend {
 public:
@@ -103,11 +144,12 @@ private:
 }
 static void run_runtime(const std::string& config_path,double duration_s,bool no_preview,
                  const std::string& launch_package,double stale_ms,bool auto_play,
-                 const std::string& capability_path) {
+                 const std::string& capability_path,bool assist=false) {
     if(!std::isfinite(duration_s)||duration_s<=0||duration_s>3600 ||
        !std::isfinite(stale_ms)||stale_ms<5||stale_ms>5000)
         throw std::invalid_argument("invalid duration or stale-ms");
     const auto config=load_config(config_path);
+    ConsoleStopGuard console_stop_guard;
     json capability=nullptr;
     if(auto_play) {
         if(config.touch_kind!="emulator-grpc") throw std::invalid_argument("auto-start requires explicit touch profile");
@@ -126,10 +168,14 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     if(!executable_size||executable_size==32768) throw std::runtime_error("cannot identify runtime executable");
     {
         std::ofstream file(run_dir/"manifest.json");
-        file<<json{{"schema_version",3},{"mode",auto_play?"auto-start":"observe"},{"config",config.public_json},
+        file<<json{{"schema_version",3},{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"config",config.public_json},
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
-            {"input_created",false},{"input_policy",auto_play?"one_pixels_confirmed_PLAY_only":"none"},
-            {"dry_owner",true},{"game_observer_version",3},{"executable_sha256",sha256_file(executable)},
+            {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
+            {"dry_owner",!assist},{"game_observer_version",8},{"executable_sha256",sha256_file(executable)},
+            {"game_planner_version",2},
+            {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},
+            {"game_uncertainty_ms",config.game_uncertainty_ms},
+            {"action_wait","win32_high_resolution_relative_timer_and_event"},
             {"capability_preflight",capability},
             {"source_absolute_age",nullptr},{"diagnostic_image_retention","none"},
             {"config_sha256",sha256_file(config_path)},
@@ -164,10 +210,11 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     if(!no_preview&&config.preview_hz>0) preview=std::make_unique<PreviewWindow>(config.width,config.height);
     std::atomic<bool> stopping=false, capture_done=false;
     std::atomic<std::uint64_t> epoch=1, revoke=0, consumed=0, dry_commands=0;
+    std::atomic<std::uint64_t> gameplay_commands=0;
     std::atomic<Nanoseconds> last_capture=0;
     std::atomic<bool> real_input_created=false, play_requested=false, playing_seen=false;
     std::mutex fault_mutex, decision_mutex;
-    std::condition_variable action_wakeup;
+    ActionWake action_wakeup;
     std::exception_ptr worker_fault;
     std::shared_ptr<const DecisionSnapshot> decision;
     std::shared_ptr<const Frame> preview_frame;
@@ -253,7 +300,15 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         std::unique_ptr<ContactScheduler> start_scheduler;
         try {
             DryTouch backend(clock);
-            GamePlanOwner owner(clock,backend,config.max_contacts);
+            if(assist) {
+                start_input=std::make_unique<GrpcTouch>(clock,*input_endpoint,
+                    PixelCoordinateMap(config.width,config.height,config.touch_width,config.touch_height,config.touch_rotation),
+                    config.touch_width,config.touch_height,config.max_contacts,std::chrono::milliseconds(config.touch_timeout_ms));
+                real_input_created=true;
+            }
+            TouchBackend& game_backend=assist?static_cast<TouchBackend&>(*start_input):static_cast<TouchBackend&>(backend);
+            GamePlanOwner owner(clock,game_backend,config.max_contacts,
+                {config.game_type_mask,config.game_lead_ms*Nanoseconds{1'000'000},config.game_uncertainty_ms*Nanoseconds{1'000'000}});
             PlayButtonPlanner play_planner;
             std::uint64_t seen=0, rev=0;
             std::uint64_t dispatch_epoch=0;
@@ -264,11 +319,12 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             });
             const auto receipts=[&](const std::vector<TouchReceipt>& events) {
                 for(const auto& r:events) {
-                    ++dry_commands;
-                    record({{"event","dry_touch_receipt"},{"intent_id",r.command.intent_id},
+                    if(assist) ++gameplay_commands; else ++dry_commands;
+                    record({{"event",assist?"game_touch_receipt":"dry_touch_receipt"},{"intent_id",r.command.intent_id},
                         {"contact_id",r.command.contact_id},{"phase",static_cast<int>(r.command.phase)},
                         {"scheduled_ns",r.command.scheduled_ns},{"injection_start_ns",r.injection_start_ns},
-                        {"injection_return_ns",r.injection_return_ns},{"real_input",false},
+                        {"source_frame",r.command.source_frame_sequence},
+                        {"injection_return_ns",r.injection_return_ns},{"real_input",assist},
                         {"success",r.success},{"reason",r.reason}});
                 }
             };
@@ -279,17 +335,29 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                     rev=revoke.load(); owner.scheduler().cancel("supervisor_revoke");
                     if(start_scheduler) start_scheduler->cancel("supervisor_revoke");
                     record({{"event","owner_revoked"},{"revision",rev},{"ack_ns",clock.now_ns()},
-                            {"real_input",false}});
+                            {"real_input",assist}});
                 }
                 if(current&&current->sequence>seen) {
                     seen=current->sequence;
                     if(current->context.epoch==epoch.load()) {
-                        dispatch_epoch=current->context.epoch; receipts(owner.accept(*current));
+                        dispatch_epoch=current->context.epoch;
+                        if(!assist||!start_scheduler||start_scheduler->pending_count()==0)
+                            receipts(owner.accept(*current));
+                        for(const auto& plan:owner.take_accepted_plans()) {
+                            json steps=json::array(); for(const auto& step:plan.steps)
+                                steps.push_back({{"phase",static_cast<int>(step.phase)},{"x",step.x},{"y",step.y},{"due_ns",step.due_ns}});
+                            record({{"event","game_plan_accepted"},{"intent_id",plan.intent_id},{"note_id",plan.note_id},
+                                {"epoch",plan.epoch},{"generation",plan.generation},{"geometry_version",plan.geometry_version},
+                                {"revision",plan.revision},{"prefix_offset",plan.prefix_offset},{"evidence_ns",plan.evidence_ns},
+                                {"accepted_ns",clock.now_ns()},
+                                {"valid_until_ns",plan.valid_until_ns},{"source_frame",plan.source_frame_sequence},
+                                {"steps",steps},{"basis",plan.basis},{"real_input",assist}});
+                        }
                         if(current->playing_gate) playing_seen=true;
                         const auto play_plan=auto_play?play_planner.take(*current,clock.now_ns()):std::nullopt;
                         if(play_plan) {
                             play_requested=true; // One attempt. Unknown outcomes never retry down.
-                            start_input=std::make_unique<GrpcTouch>(clock,*input_endpoint,
+                            if(!start_input) start_input=std::make_unique<GrpcTouch>(clock,*input_endpoint,
                                 PixelCoordinateMap(config.width,config.height,config.touch_width,
                                     config.touch_height,config.touch_rotation),
                                 config.touch_width,config.touch_height,config.max_contacts,
@@ -309,14 +377,23 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                             record({{"event","auto_play_requested"},{"source_frame",current->context.frame},
                                 {"epoch",current->context.epoch},{"x",p.x},{"y",p.y},{"monotonic_ns",due}});
                         }
-                        if(start_scheduler && current->ui!=GameUi::menu)
+                        if(start_scheduler && current->ui!=GameUi::menu) {
                             start_scheduler->cancel("PLAY_page_left");
-                        else if(start_scheduler)
+                            const auto release=start_scheduler->last_release();
+                            record({{"event","UI_play_release_report"},{"requested_ids",release.requested_ids},
+                                {"failed_ids",release.failed_ids},{"unknown_ids",release.unknown_ids},
+                                {"start_ns",release.start_ns},{"return_ns",release.return_ns},{"effect_verified",false}});
+                            if(!release.failed_ids.empty()||!release.unknown_ids.empty())
+                                throw std::runtime_error("UI PLAY release unknown");
+                            start_scheduler.reset(); // Never let UI cancellation release gameplay contacts later.
+                        } else if(start_scheduler)
                             start_scheduler->set_context(current->context.epoch,current->context.generation,
                                 current->context.geometry,true,current->context.capture_ns);
                     }
                 }
                 receipts(owner.poll());
+                if(assist&&!owner.scheduler().fault().empty())
+                    throw std::runtime_error("gameplay input fault: "+owner.scheduler().fault());
                 if(start_scheduler) {
                     for(const auto& r:start_scheduler->run_due())
                         record({{"event","UI_play_touch_receipt"},{"source_frame",r.command.source_frame_sequence},
@@ -334,15 +411,19 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                 for(const auto& notice:owner.scheduler().take_notices())
                     record({{"event","scheduler_rejection"},{"intent_id",notice.intent_id},
                             {"reason",notice.reason},{"monotonic_ns",notice.monotonic_ns}});
-                const auto due=owner.scheduler().next_due_ns();
+                auto due=owner.scheduler().next_due_ns();
+                if(start_scheduler) {
+                    const auto ui_due=start_scheduler->next_due_ns();
+                    if(ui_due&&(!due||*ui_due<*due)) due=ui_due;
+                }
                 const auto delay=due?std::clamp(*due-clock.now_ns(),Nanoseconds{0},Nanoseconds{10'000'000}):10'000'000;
-                std::unique_lock lock(decision_mutex);
-                action_wakeup.wait_for(lock,std::chrono::nanoseconds(delay),[&] {
-                    return stopping.load()||stop.stop_requested()||revoke.load()!=rev||
-                        (decision&&decision->sequence>seen);
-                });
+                action_wakeup.wait_for(delay);
             }
             owner.stop();
+            const auto game_release=owner.scheduler().last_release();
+            record({{"event","game_release_report"},{"real_input",assist},{"requested_ids",game_release.requested_ids},
+                {"failed_ids",game_release.failed_ids},{"unknown_ids",game_release.unknown_ids},
+                {"start_ns",game_release.start_ns},{"return_ns",game_release.return_ns}});
             if(start_scheduler) {
                 start_scheduler->cancel("runtime_stop");
                 const auto r=start_scheduler->last_release();
@@ -370,7 +451,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     std::exception_ptr main_fault;
     try {
         record({{"event","session_state"},{"state","OBSERVING"},{"monotonic_ns",start}});
-        while(clock.now_ns()<end&&!stopping&&!capture_done) {
+        while(clock.now_ns()<end&&!stopping&&!capture_done&&!console_stop_requested) {
             if(preview&&!preview->pump()) {stopping=true; break;}
             if(capture) {
                 const auto stats=capture->stats();
@@ -394,7 +475,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                     preview->draw(*frame);
                     if(current) preview->title(std::string(auto_play?"PAS auto-start / ":"PAS observe / ")+name(current->ui)+
                         " / notes="+std::to_string(current->targets.size())+" lines="+
-                        std::to_string(current->lines.size())+(auto_play?" / PLAY only; gameplay dry":" / no real input"));
+                        std::to_string(current->lines.size())+(assist?" / REAL gameplay":auto_play?" / PLAY only; gameplay dry":" / no real input"));
                     ++draws; preview_at=now;
                 }
             }
@@ -408,11 +489,13 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     std::exception_ptr fault;
     {std::lock_guard lock(fault_mutex); fault=worker_fault;}
     const auto counts=latest.counters();
-    json summary={{"mode",auto_play?"auto-start":"observe"},{"state",fault||main_fault?"FAULT":"STOPPED"},
+    json summary={{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"state",fault||main_fault?"FAULT":"STOPPED"},
         {"input_created",real_input_created.load()},{"auto_play_requested",play_requested.load()},
-        {"playing_seen",playing_seen.load()},{"gameplay_input_enabled",false},{"frames_consumed",consumed.load()},
+        {"playing_seen",playing_seen.load()},{"gameplay_input_enabled",assist},{"frames_consumed",consumed.load()},
         {"published",counts.published},{"overwritten",counts.overwritten},{"pool_drops",counts.pool_drops},
         {"consumer_skips",counts.consumer_skips},{"preview_draws",draws},{"dry_commands",dry_commands.load()},
+        {"gameplay_commands",gameplay_commands.load()},
+        {"stop_reason",console_stop_requested?"console_stop":clock.now_ns()>=end?"duration":"preview_or_fault"},
         {"revocations",revoke.load()},{"relative_stale_drops",lag_drops},
         {"capture_interval_ms",distribution(intervals)},{"host_residency_ms",distribution(residency)},
         {"recognition_duration_ms",distribution(recognition)},{"source_absolute_age",nullptr},
@@ -435,5 +518,8 @@ void run_observe(const std::string& config_path,double duration_s,bool no_previe
 void run_auto_start(const std::string& config_path,const std::string& capability_path,
                     double duration_s,bool no_preview) {
     run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path);
+}
+void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview) {
+    run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path,true);
 }
 }
