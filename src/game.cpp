@@ -68,6 +68,38 @@ std::vector<Component> components(const Frame& f, bool& capacity) {
     }
     return output;
 }
+int combo_digit_shapes(const Frame& f) {
+    // Clip before segmentation: a decorative rail may connect to a digit
+    // outside this region. This is a diagnostic shape count, not OCR.
+    constexpr int scale=2;
+    const int x0=static_cast<int>(f.width*.43),y0=static_cast<int>(f.height*.017),
+        w=static_cast<int>(f.width*.14)/scale,h=static_cast<int>(f.height*.066)/scale;
+    if(w<=0||h<=0||static_cast<std::size_t>(w)*h>65'536) return 0;
+    std::vector<std::uint8_t> mask(static_cast<std::size_t>(w)*h);
+    for(int y=0;y<h;++y) for(int x=0;x<w;++x) mask[static_cast<std::size_t>(y)*w+x]=
+        classify(f.rgb.data()+static_cast<std::size_t>(y0+y*scale)*f.stride+(x0+x*scale)*3)==4;
+    std::vector<int> queue;queue.reserve(mask.size());int count=0;
+    for(int y=0;y<h;++y) for(int x=0;x<w;++x) {
+        const int index=y*w+x;if(!mask[index]) continue;
+        queue.clear();queue.push_back(index);mask[index]=0;
+        int left=x,right=x,top=y,bottom=y;
+        for(std::size_t i=0;i<queue.size();++i) {
+            const int px=queue[i]%w,py=queue[i]/w;
+            left=std::min(left,px);right=std::max(right,px);
+            top=std::min(top,py);bottom=std::max(bottom,py);
+            for(const auto [dx,dy]:{std::pair{-1,0},{1,0},{0,-1},{0,1}}) {
+                const int nx=px+dx,ny=py+dy;
+                if(nx<0||ny<0||nx>=w||ny>=h) continue;
+                const int next=ny*w+nx;
+                if(mask[next]) {mask[next]=0;queue.push_back(next);}
+            }
+        }
+        const int width=(right-left+1)*scale,height=(bottom-top+1)*scale;
+        if(height>=f.height*.025&&width>=f.width*.005&&width<=f.width*.05)
+            count=std::min(16,count+1);
+    }
+    return count;
+}
 double distance(Vec2 a, Vec2 b) {return std::hypot(a.x-b.x,a.y-b.y);}
 double normal_distance(Vec2 p, const LineCandidate& l) {
     return (p.x-l.center.x)*(-l.tangent.y)+(p.y-l.center.y)*l.tangent.x;
@@ -344,6 +376,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     const bool distinct=f.sequence>previous_.frame;
     previous_=out.context;
     const auto all=components(f,out.capacity_valid);
+    out.combo_digit_glyphs=combo_digit_shapes(f);
     std::vector<NoteCandidate> notes;
     int pause_bars=0, score_glyphs=0;
     // Live HD exposed a one-pixel horizontal line joined to Hold borders.
@@ -392,10 +425,6 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
            h>f.height*.013 && h>1.4*w && w<f.width*.02) ++pause_bars;
         if(c.color==4 && c.x0>f.width*.78 && c.y1<f.height*.12 &&
            h>f.height*.01 && h<f.height*.07 && w<f.width*.035) ++score_glyphs;
-        if(c.color==4&&c.x0>f.width*.43&&c.x1<f.width*.57&&
-           c.y0>f.height*.015&&c.y1<f.height*.085&&h>=f.height*.025&&
-           w>=f.width*.005&&w<=f.width*.05)
-            out.combo_digit_glyphs=std::min(16,out.combo_digit_glyphs+1);
         const double xx=c.xx/c.count-center.x*center.x,
                      yy=c.yy/c.count-center.y*center.y, xy=c.xy/c.count-center.x*center.y;
         const double theta=.5*std::atan2(2*xy,xx-yy);

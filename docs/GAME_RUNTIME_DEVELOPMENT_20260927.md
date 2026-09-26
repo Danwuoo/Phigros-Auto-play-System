@@ -289,3 +289,11 @@ v55 run `cpp-observe-17904611692364172`，35ms、185秒STOPPED、9,394消費fram
 既有近線history failure常在命中特效附近觸發，缺少失敗關聯。observer23只增加中央HUD白色數字形狀計數（上限16），排除上方進度／長rail／較低COMBO字樣；不做數字OCR，不作觸控決策或逐Note判定。獨立read-only latch以兩張當前存在的字形arm，至少兩張且跨12ms的消失觸發；250ms內同物理幾何／遞增QPC及frame的觀察才連續，UI未知／容量失效／長間隔／重播／幾何變化清空。第一個消失畫面取代第二診斷slot，最多兩張、decision發布後copy、input停止後PNG編碼、預設不保留。每次消失的journal事件只列unknown per-note feedback，不反饋排程。三項短回歸核對字形區域、閃爍／突發／重新arm及不連續負例，等待Release驗證。
 
 v56 Release93／93通過（6.49秒）。observer23／planner6／35ms、兩指與輸入期限不變，開始一輪完整HD診斷；合成字形符合不代表所有真實字體／遮擋已驗證，combo消失仍不唯一對應Miss或某顆Note。
+
+v56 run `cpp-observe-17904615370888702`，35ms、185秒STOPPED，9,399消費frames／987真實命令。結算797,265分、Perfect341／Good5／Bad0／Miss47、max combo35、accuracy87.60%、Early0／Late5，未AP。raw SHA-256 `6db4467bd338d34f5590945366ea2c5b01d74553df5d9c4cd52d1cc643864edd`、manual結果／PNG、兩張診斷圖與分析保存。down Tap137／Hold89／Drag110／Flick6，1 coverage／3 conflict，runtime4 source／1 UI revoke。首個消失事件frame878／QPC151433493800200的PNG仍清楚顯示combo3：一條當前白色垂直裝飾線連上數字，full-frame連通區的高度超過字形限制，被誤列0；因此不能拿這張圖推定Miss。下一步只將診斷白色連通區的分割限制在中央HUD區域，並加連接裝飾線的短回歸，遊玩邏輯不改。
+
+v57 observer24只修正診斷分割：中央HUD ROI內先裁切、再建立半解析度白色連通區，mask／queue最多65,536格、計數仍≤16；窄裝飾線本身不符合寬度，與字形相連則保留可見字形。新增六幀先独立／後連接完整垂直線的三筆畫，要求不誤報消失；随后刪除字形、只留直線，仍須兩幀實際觸發。等待Release及當前Debug／嚴格ASan回歸；v27的73項舊驗證不能代替新source。
+
+v57 Release四項GameDiagnostics短回歸通過（101ms），原v56 frame878 PNG單幀重算 `assist-v56-combo-observer24-v57.json` 正確輸出1字形；PNG SHA-256 `dde3f198dbf710f044810ba43208453311f0e4545144263d50fba4e5d3d9a5a8`。這只核對該張圖，不把離線影像回饋input，也不宣告其他所有消失事件已消除。Debug與ASan正在建置，期間沒有遊玩／capture stream。
+
+v57同一份source的Release／Debug／嚴格預設ASan各94／94通過，CTest總時間12.69／12.07／30.99秒。ASAN_OPTIONS未設定，沿用v27的BuildTools14.51與Community14.50 sanitizer支援；pinned第三方vcpkg二進位仍未插樁。build／test日誌均保存，沒有與遊玩／capture stream併行。開始observer24／planner6／35ms的下一輪完整HD診斷，AP仍未達標。

@@ -199,6 +199,25 @@ TEST(GameDiagnostics, ComboDisappearanceRequiresFreshSustainedAbsenceAndRearms) 
     EXPECT_FALSE(observe(15,260'000'001,0));EXPECT_TRUE(observe(16,280'000'001,0));
 }
 
+TEST(GameDiagnostics, DecorativeRailConnectedToDigitDoesNotReportDisappearance) {
+    FakeClock clock;GameObserver observer(clock);ComboVisibilityDiagnostic diagnostic;
+    for(int i=0;i<6;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);
+        if(i>=3) rect(f,638,0,4,575,{255,255,255});
+        // A digit-like three connected strokes, crossed by a full-height rail.
+        for(const int y:{18,34,50}) rect(f,628,y,24,4,{255,255,255});
+        rect(f,648,18,4,36,{255,255,255});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        EXPECT_EQ(s.combo_digit_glyphs,1)<<"frame "<<i;
+        EXPECT_FALSE(diagnostic.observe(s));
+    }
+    auto blank=image(7,120'000'000);hud(blank);rect(blank,638,0,4,575,{255,255,255});
+    clock.set(blank.capture_complete_ns);auto s=observer.process(blank);
+    EXPECT_EQ(s.combo_digit_glyphs,0);EXPECT_FALSE(diagnostic.observe(s));
+    blank.sequence=8;blank.capture_complete_ns=140'000'000;clock.set(blank.capture_complete_ns);
+    s=observer.process(blank);EXPECT_EQ(s.combo_digit_glyphs,0);EXPECT_TRUE(diagnostic.observe(s));
+}
+
 TEST(GameDiagnostics, ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange) {
     for(int discontinuity=0;discontinuity<4;++discontinuity) {
         ComboVisibilityDiagnostic diagnostic;
