@@ -313,3 +313,13 @@ v60 run `cpp-observe-17904630843405836`，35ms／185秒STOPPED，9,676消費fram
 v61只補diagnostics version2，遊玩仍observer25／planner6／35ms。第一slot改存首次近線長Hold幾何消失，latch只保存上一張最多16份坐標／幾何摘要，當前主線／PLAYING有效且同epoch／幾何、≤100ms遞增來源才比较；已近尾端／短body不觸發。兼容新pixel identity仍視為可見，窄碎片不能充完整body，未知UI／長間隔／replay等負例均不延續。附prior frame／Note／QPC，未讀input內部狀態，故不稱active接觸或Miss。第二combo診斷接受與細白邊相連的寬cluster，但額外要求有局部高白ink columns；純橫邊框加窄直線為負例。兩個slot仍write once／總共≤2，先發布decision、後copy、input停止後編碼，預設不運行latch／不存圖；等待100+短回歸。
 
 v61 Release101／101通過（6.70秒），原v60 frame1107 PNG單張重算為1個可見字形cluster；SHA-256 `52e7fabbe4c68cea111eee2b05d9c58104aaaeea1ba7925f0eee80713c3d7db9` 與 `assist-v60-combo-diagnostics2-v61.json` 保留，不代表OCR11或即時逐Note判定。開始相同35ms的完整HD，無同時build／第二capture；AP未達標。
+
+v61 run `cpp-observe-17904636008676799`，35ms／185秒STOPPED exit0，8,866消費frames／1,012真實命令。结算784,351分、Perfect328／Good10／Bad0／Miss55、max combo72、accuracy85.11%、Early1／Late9，未AP；raw SHA-256 `ff8d3aa0e5ee57ff61ff6b95c2fa5e4b9dae550aae7f25581fed7241d30fae1f`，manual结果、结算与两张诊断PNG保存。down Tap137／Hold92／Drag109／Flick6，2 coverage／0 conflict／3 gate expiry，runtime8 source／1 UI revoke；capture interval n8,865，p50／p95／p99／max=19.2107／43.68354／59.205652／558.1463ms。首次Hold诊断frame376：同Note8从前张head(423.99,576)、width141.93／depth504变成当张color_core head(427.78,495.76)、width134.39／depth416，非完全没有候选。PNG显示亮蓝body仍到判定线，白rails从y500左右到576被淡金色特效覆盖；左x348样本(210,197,146)既非中性白、也未满足b<g−55黄类。当前front fill与近期anchor仍有，32px rail gap不足跨越约76px的染色；原完整on-line geometry路径未成功，内部分片继续匹配同ID并刷新input。此图没有单独证明Miss成因或逐Note判定；v62先加入合成连续染色轮廓＋owner测试，针对保留当前paired rails的近期续接验证，来源100ms／anchor90ms／Hold grace60ms不放宽。
+
+v62合成18幀測試在observer25確實於第8幀缺失Hold，舊source短測失敗日誌保留（61ms）。observer26只為近期held fill有效的續接加入原rail±4px、頭後≤96px的淡金染色，仍须每側至少三個當前中性白樣本。新增無anchor、101ms過期、無當前fill、左側全染色無白段、單側輪廓五個負例；正例同ID／幾何／owner全程單一down持續接觸，最後stop釋放。等待完整Release驗證，不能以修正測試當作實戰AP。
+
+v62 Release102／103通過（7.09秒）；染色正例仍失敗於i8，因上一張頭部尚在566px、距線10px，走approaching leading-edge路徑，尚沒有已到線的anchor。這次live frame376的prior head明確是576px，因此v63補一張未染色的到線畫面，從i9再開始相同80px染色；期望同ID／幾何／單Down接觸、所有五負例與實作期限均未放寬。v62未進實戰，失敗日誌保留，等待完整重跑。
+
+v63 Release103／103（7.27秒）、Debug103／103（18.31秒）通過。檢查負例fixture後發現其前置亦尚未到線，因此v64替六個負例補足到線anchor（無anchor例除外），過期例改為最後160ms→261ms仍101ms間隔；另補200px染色超出96px辨識範圍加32px缺口，不能連接更遠白rail的負例。正例与production observer26不改；等待Release／Debug／嚴格ASan當前fixture驗證，v63未進實戰。
+
+v63嚴格ASan103／103亦通過（38.88秒）。v64最終fixture與observer26／planner6／diagnostics2，Release／Debug／嚴格ASan各103／103通過，CTest總時間8.29／16.81／44.52秒；ASAN_OPTIONS未設定、pinned第三方DLL未插樁，build warnings保留。全部build／test停止後才開始35ms／185秒HD；v62／v63沒有實戰。當前六負例確實先建立到線anchor再破壞必要當前證據，正例全程只一Down；不以合成成功宣稱AP。

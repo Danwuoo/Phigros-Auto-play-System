@@ -516,6 +516,56 @@ TEST(GameObserver, ClippedTopHoldCanValidateCurrentLeadingEdgeWithoutPriorAnchor
     EXPECT_TRUE(s.playing_gate);
 }
 
+TEST(GameObserver, RecentHeldRailsRemainVisibleThroughWarmHitTint) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t id=0;
+    for(int i=0;i<18;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=std::min(575,500+i*10);
+        rect(f,403,0,144,head,{40,190,255});
+        rect(f,400,0,2,head,{245,245,245});rect(f,550,0,2,head,{245,245,245});
+        if(i>=9) {
+            // Live hit tint covers ~76 px of the near-line rails. The left
+            // rail is neither neutral white nor saturated yellow.
+            rect(f,400,495,2,80,{210,197,146});rect(f,550,495,2,80,{246,231,169});
+        }
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        const auto h=std::find_if(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.kind==NoteKind::hold;});
+        ASSERT_NE(h,s.targets.end())<<"frame "<<i<<" "<<decision_json(s).dump();
+        if(!id) id=h->note_id;EXPECT_EQ(h->note_id,id);
+        EXPECT_NEAR(h->note.center.x,475,4);EXPECT_NEAR(h->note.center.y,head-4,5);
+        if(i>=9) {EXPECT_TRUE(h->note.outline_evidence);EXPECT_GT(h->note.height,480);}
+        owner.accept(s);owner.poll();if(i>=7) EXPECT_EQ(touch.contacts().size(),1);
+    }
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),1);
+}
+
+TEST(GameObserver, WarmRailsRequireRecentAnchorCurrentFillAndBothNeutralSections) {
+    for(int failure=0;failure<6;++failure) {
+        FakeClock clock;GameObserver observer(clock);
+        if(failure!=0) for(int i=0;i<9;++i) {
+            auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+            const int head=std::min(575,500+i*10);
+            rect(f,403,0,144,head,{40,190,255});
+            rect(f,400,0,2,head,{245,245,245});rect(f,550,0,2,head,{245,245,245});
+            clock.set(f.capture_complete_ns);observer.process(f);
+        }
+        auto f=image(10,failure==1?261'000'000:180'000'000);hud(f);
+        rect(f,0,575,1280,2,{255,255,255});
+        rect(f,403,0,144,575,failure==2?std::array<std::uint8_t,3>{100,110,120}:
+            std::array<std::uint8_t,3>{40,190,255});
+        rect(f,400,0,2,575,{245,245,245});rect(f,550,0,2,575,{245,245,245});
+        rect(f,400,failure==3?0:495,2,failure==3?575:80,{210,197,146});
+        rect(f,550,495,2,80,{246,231,169});
+        if(failure==4) rect(f,400,0,2,575,{0,0,0});
+        if(failure==5) rect(f,400,375,2,200,{210,197,146});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        EXPECT_TRUE(s.targets.empty())<<"failure "<<failure<<" "<<decision_json(s).dump();
+    }
+}
+
 TEST(GameObserver, ClippedBlueColumnWithoutBothRailsCannotBecomeANewHold) {
     for(int rails=0;rails<2;++rails) {
         FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);

@@ -125,11 +125,11 @@ bool same_geometry(const SceneContext& a,const SceneContext& b) {
 struct HoldRails {double depth=0;std::optional<Vec2> tail;};
 std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& note,double minimum_depth,
                                           int maximum_gap=12,int lateral_radius=16,bool bound_by_fill=false,
-                                          bool allow_yellow=false) {
+                                          bool allow_yellow=false,bool allow_warm_tint=false) {
     const Vec2 normal{-note.tangent.y,note.tangent.x};
     std::array<int,2> extent{};
     for(int side=0;side<2;++side) {
-        int last=-1,gaps=0;
+        int last=-1,gaps=0,neutral_support=0;
         for(int depth=0;depth<std::hypot(f.width,f.height);depth+=2) {
             if(bound_by_fill&&depth>=minimum_depth) {
                 int support=0;
@@ -147,19 +147,28 @@ std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& 
             const double cx=note.center.x-normal.x*depth+(side?1:-1)*note.width*.5*note.tangent.x;
             const double cy=note.center.y-normal.y*depth+(side?1:-1)*note.width*.5*note.tangent.y;
             if(cy<f.height*.10||cy>=f.height||cx<0||cx>=f.width) break;
-            bool found=false;
+            bool found=false,neutral=false;
             for(int offset=-lateral_radius;offset<=lateral_radius&&!found;offset+=2) {
                 const int x=static_cast<int>(std::lround(cx+offset*note.tangent.x)),
                           y=static_cast<int>(std::lround(cy+offset*note.tangent.y));
                 if(x<0||y<0||x>=f.width||y>=f.height) continue;
                 const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
-                found=(std::min({p[0],p[1],p[2]})>170 &&
-                    std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<30)||
-                    (allow_yellow&&classify(p)==2);
+                neutral=std::min({p[0],p[1],p[2]})>170 &&
+                    std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<30;
+                // A translucent hit effect tints an established rail warm
+                // without making it saturated yellow. Keep this narrow
+                // corridor exclusive to current-fill-validated held bodies.
+                const bool warm=allow_warm_tint&&depth<=96&&std::abs(offset)<=4&&p[0]>180&&p[1]>160&&
+                    p[2]>125&&p[0]>=p[1]&&p[0]-p[1]<35&&p[1]-p[2]>25&&p[0]-p[2]<=110;
+                found=neutral||(allow_yellow&&classify(p)==2)||warm;
             }
+            if(neutral&&depth>=16) ++neutral_support;
             if(found) {last=depth;gaps=0;}
             else if((last>=0&&(gaps+=2)>maximum_gap)||(last<0&&depth>=maximum_gap)) break;
         }
+        // Both rails must reconnect to several actual white samples in this
+        // frame. Warm outlines by themselves cannot extend an old identity.
+        if(allow_warm_tint&&neutral_support<3) return {};
         extent[side]=last;
     }
     if(std::min(extent[0],extent[1])<minimum_depth||std::abs(extent[0]-extent[1])>20) return {};
@@ -726,7 +735,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             note.center={note.center.x+d*line->tangent.y,note.center.y-d*line->tangent.x};
             note.tangent=line->tangent;
             const bool held_fill=recent_rails&&hold_fill_near_head(f,note);
-            rails=visible_hold_rails(f,note,16,held_fill?32:12,16,false,held_fill);
+            rails=visible_hold_rails(f,note,16,held_fill?32:12,16,false,held_fill,held_fill);
             if(!rails) continue;
             note.head_on_line=true;
         }
