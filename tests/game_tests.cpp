@@ -260,6 +260,25 @@ TEST(GameObserver, HeldTiltedBodyPreservesAnIndependentThinTapInsideItsRails) {
     const auto thin=std::find_if(result.targets.begin(),result.targets.end(),[](const auto& t){return t.note.kind==NoteKind::tap;});
     ASSERT_TRUE(thin->crossing_ns);EXPECT_NEAR(thin->velocity,500,20);
 }
+TEST(GameObserver, RecentHeldRegionRejectsEnclosedSideFragmentsWithoutRefreshingMissingRails) {
+    FakeClock clock;GameObserver observer(clock);
+    for(int i=0;i<3;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,778,375,2,201,{245,245,245});rect(f,932,375,2,201,{245,245,245});
+        rect(f,783,375,144,200,{40,190,255});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);ASSERT_EQ(s.targets.size(),1);
+    }
+    auto f=image(4,60'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+    // Current full rails have disappeared. Mixed hit-overlay pixels alone
+    // cannot refresh the original contact or move it to a side fragment.
+    rect(f,783,375,144,200,{200,170,135});
+    for(const int left:{872}) {
+        rect(f,left,474,2,36,{245,245,245});rect(f,left+64,474,2,36,{245,245,245});
+        rect(f,left+3,476,58,32,{40,190,255});
+    }
+    clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+    EXPECT_TRUE(s.targets.empty())<<decision_json(s).dump();
+}
 TEST(GameObserver, ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsCore) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;DecisionSnapshot result;
     for(int i=0;i<7;++i) {

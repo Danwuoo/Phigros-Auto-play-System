@@ -512,7 +512,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                 const Vec2 delta{body->center.x-held.center.x,body->center.y-held.center.y};
                 const double along=delta.x*main->tangent.x+delta.y*main->tangent.y,
                     depth=normal_distance(body->center,*main);
-                return std::abs(along)<held.width*.3&&body->width<=held.width*1.2&&
+                return std::abs(along)+body->width*.5<=held.width*.5+16&&body->width<=held.width*1.2&&
                     depth<=12&&depth>=-held.height-16;
             })) continue;
             if(std::any_of(bodies.begin(),bodies.end(),[&](const auto& other) {
