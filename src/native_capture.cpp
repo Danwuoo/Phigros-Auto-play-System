@@ -6,6 +6,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <sstream>
 #include <stdexcept>
@@ -187,11 +188,29 @@ void check_window(HWND hwnd) {
         throw std::runtime_error("selected capture window hidden, minimized, or destroyed");
 }
 
+void retain_wgc_module() {
+    // This Windows build can return from Close before its internal worker exits.
+    // RoUninitialize then unloads GraphicsCapture.dll under that worker (WER:
+    // GraphicsCapture.dll_unloaded / c0000005). Keep only the system module pinned
+    // for process lifetime; sessions, textures and apartments still close normally.
+    static std::once_flag once;
+    std::call_once(once, [] {
+        const auto loaded = LoadLibraryExW(L"GraphicsCapture.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+        if (!loaded) throw std::runtime_error("cannot load system GraphicsCapture.dll");
+        HMODULE pinned = nullptr;
+        const auto success = GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN |
+            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCWSTR>(loaded), &pinned);
+        FreeLibrary(loaded);
+        if (!success) throw std::runtime_error("cannot retain GraphicsCapture.dll for safe worker shutdown");
+    });
+}
+
 void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hwnd,
                 std::stop_token stop, const std::atomic<bool>& cancelled,
                 const std::function<void(Frame&&)>& on_frame,
                 const std::function<void(std::string_view, Nanoseconds)>& on_signal,
                 std::uint64_t& sequence, std::uint64_t generation) {
+    retain_wgc_module();
     winrt::init_apartment(winrt::apartment_type::multi_threaded);
     struct ApartmentScope { ~ApartmentScope() { winrt::uninit_apartment(); } } apartment_scope;
     check_window(hwnd);
@@ -215,12 +234,18 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
         2, initial_size);
     auto session = pool.CreateCaptureSession(item);
     session.IsCursorCaptureEnabled(false);
-    std::mutex callback_mutex;
-    std::exception_ptr failure;
-    std::optional<std::uint64_t> last_hash;
-    auto token = pool.FrameArrived([&](auto const& sender, auto const&) {
-        std::lock_guard lock(callback_mutex);
-        if (failure || stop.stop_requested() || cancelled.load()) return;
+    struct CallbackState {
+        std::mutex mutex;
+        std::exception_ptr failure;
+        std::optional<std::uint64_t> last_hash;
+        bool closing = false;
+    };
+    const auto state = std::make_shared<CallbackState>();
+    auto token = pool.FrameArrived([&, state](auto const& sender, auto const&) {
+        std::lock_guard lock(state->mutex);
+        // A queued callback may outlive event revocation. Its shared state stays
+        // alive, and closing is checked before any stack reference is accessed.
+        if (state->closing || state->failure || stop.stop_requested() || cancelled.load()) return;
         try {
             auto frame = sender.TryGetNextFrame();
             if (!frame) return;
@@ -241,15 +266,19 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
                 std::nullopt, ++sequence, generation);
             normalized.source_system_relative_100ns = frame.SystemRelativeTime().count();
             const auto hash = fingerprint(normalized.rgb);
-            if (last_hash && *last_hash == hash) {
+            if (state->last_hash && *state->last_hash == hash) {
                 if (on_signal) on_signal("duplicate_pixels", received);
                 return;
             }
-            last_hash = hash;
+            state->last_hash = hash;
             on_frame(std::move(normalized));
-        } catch (...) { failure = std::current_exception(); }
+        } catch (...) { state->failure = std::current_exception(); }
     });
     const auto close_capture = [&] {
+        {
+            std::lock_guard lock(state->mutex);
+            state->closing = true; // Drain active callback and prevent further stack use.
+        }
         pool.FrameArrived(token);
         session.Close();
         pool.Close();
@@ -258,8 +287,8 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
         session.StartCapture();
         while (!stop.stop_requested() && !cancelled.load()) {
             {
-                std::lock_guard lock(callback_mutex);
-                if (failure) break;
+                std::lock_guard lock(state->mutex);
+                if (state->failure) break;
             }
             check_window(hwnd);
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -269,8 +298,8 @@ void stream_wgc(const Clock& clock, const NativeCaptureOptions& options, HWND hw
         throw;
     }
     close_capture();
-    std::lock_guard lock(callback_mutex);
-    if (failure) std::rethrow_exception(failure);
+    std::lock_guard lock(state->mutex);
+    if (state->failure) std::rethrow_exception(state->failure);
 }
 
 void stream_dxgi(const Clock& clock, const NativeCaptureOptions& options, HWND hwnd,

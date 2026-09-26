@@ -29,3 +29,13 @@
 正式開始前需凍結 source revision／diff hash、Release EXE、FFmpeg 版本、server、APK、顯示形式與裁切座標。若某候選不符合安全或幾何條件，應記為 `unsupported-with-evidence` 或 `failed-with-reproduction`，不要以缺失批次冒充成功。完整故障情境仍需在候選基本正確性通過後依 [計畫](CAPTURE_FIVE_BACKENDS_PLAN_20260926.md) 執行；未實測項目不得稱為通過。
 
 首輪開始前固定補測規則：至多一輪正常場景配對補測，僅在環境／幾何門控失敗、像素品質異常，或同目標場景候選間可見來源率差超過 10% 時觸發。保留首輪全數原始資料與觸發原因；配置或程式修正另記 revision，重跑所有受影響的候選配對，不挑選最佳批次替換原資料。
+
+## 首輪停止故障與修正
+
+`measurements/five_formal_20260926_r1` 固定 `3f5671e` 後完成前兩批 gRPC；第一批 WGC 的 raw 已到 `STOPPING`，關閉時程序崩潰，未生成該批 summary，後續 73 批未執行。Windows Application Error 1000／WER 1001 記錄 `GraphicsCapture.dll_unloaded`、`c0000005`，Report ID `2e9b6647-aecf-4b94-a70d-cb8dacf70286`；原始 WER 與退出索引保留在該 campaign。首輪不得作完整候選排名。
+
+修正以共享回呼狀態及 mutex 設定 closing，排空執行中回呼，讓撤銷後的已排定回呼先檢查 closing 才能存取 stack；關閉 session／pool 並平衡 apartment。另從 System32 載入並以 [GetModuleHandleExW PIN](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulehandleexw) 將單一系統 GraphicsCapture.dll 保留至程序退出，避免這個 Windows build 的內部 worker 在模組卸載後執行。這不保留擷取 session／texture／Frame，模組常駐成本會納入 WGC 使用過的程序資源。相同卸載問題的 [原始重現報告](https://github.com/robmikh/Win32CaptureSample/issues/99) 僅為背景，實機依據為本機 WER。
+
+此停止故障觸發已預定的整組重測；先完成同程序反覆啟停驗證，再以新 source revision 重跑完整五路徑日程。原資料保留。
+
+修正後 Release／CTest 25/25 通過；[同程序 WGC 啟停驗證](../measurements/wgc_stop_start_20260926_01/campaign-results.json) 完成 20 次（每次暖機 1 秒、量測 2 秒），再完成暖機 1 秒＋量測 60 秒，21/21 成功。這是停止故障的開發回歸，不能替代正式三批或十分鐘穩定性。
