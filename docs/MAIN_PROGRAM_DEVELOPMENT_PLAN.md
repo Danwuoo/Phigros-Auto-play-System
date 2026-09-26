@@ -136,7 +136,7 @@ s(t) = dot(p(t) - c(t), u(t))     沿線位置
 contact 狀態為 `free → reserved → down → maintaining/moving → release_pending → free`。注入不確定則轉 `unknown`，停用新動作並處理釋放，不自動重送 down。
 
 - Note ID 不等於 contact ID；占用區間由 down 到 up。先保護 active contacts 的維持／釋放，再安排新 down；同時事件依期限與可行性採確定性規則。
-- 初版各進行中動作獨立分指，不做 Hold 換指／共用覆蓋；max contacts 以當前已驗能力決定，不採協定理論上限。
+- 初版各進行中動作獨立分指；2026-09-27 planner6另允許新鮮可靠、同位置≤2px且時間重疊的Drag沿用已active的Drag接觸，原down／停止責任不重播。pending down及Tap／Hold／Flick仍獨立，不做Hold換指；max contacts以當前已驗能力決定，不採協定理論上限。詳細契約與回歸見[開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 - 未來意圖留在有界集合，只提交近期可執行部分，不預排整首歌或長段軌跡。revision 不累積舊 heap。
 - 多押以有界 group 表達共同截止區間；batch 或逐筆策略留下實測偏差。部分結果未知時保留所有可能 active ID 的釋放責任。
 - 拒絕原因明列證據不足、預告不足、能力未啟用、contact 衝突、容量或過期，不偷偷忽略而宣稱整首全支援。
