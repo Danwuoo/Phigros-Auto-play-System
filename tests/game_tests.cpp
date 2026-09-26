@@ -363,6 +363,18 @@ TEST(GameObserver, CurrentHoldReconstructionRejectsLongRailGapDespiteBodyFill) {
     rect(f,400,414,2,44,{0,0,0});
     clock.set(1);const auto s=observer.process(f);EXPECT_TRUE(s.targets.empty())<<decision_json(s).dump();
 }
+TEST(GameObserver, HoldRailsCannotExpandToDecorationWithFillMissingOnOneSide) {
+    FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
+    rect(f,0,575,1280,2,{255,255,255});
+    rect(f,400,250,2,250,{245,245,245});rect(f,550,250,2,250,{245,245,245});
+    rect(f,403,250,144,250,{40,190,255});
+    // A long decorative line can satisfy the loose paired-rail extent.
+    // It cannot widen the body: its adjacent inner side has no current fill.
+    rect(f,600,100,2,550,{245,245,245});
+    clock.set(1);const auto s=observer.process(f);ASSERT_EQ(s.targets.size(),1)<<decision_json(s).dump();
+    EXPECT_NEAR(s.targets[0].note.width,144,10)<<decision_json(s).dump();
+    EXPECT_NEAR(s.targets[0].note.center.x,475,3);
+}
 TEST(GameObserver, ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;int frame=0;
     for(const int height:{160,120,100,80,60,40,20}) {

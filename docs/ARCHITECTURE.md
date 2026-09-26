@@ -2,6 +2,8 @@
 
 ## 主程式設計與開發接線（2026-09-27）
 
+observer20 的新Hold前緣兩排填色除7／9之外，兩側外部取樣群各須至少一點支持，避免一側完整body加另一側裝飾線擴大寬度。opt-in第二診斷槽僅保留近線association ambiguous或有≥30ms跨度、尚未到線的nonlinear mismatch；初始insufficient history及已到線的停止不單獨觸發。這是診斷訊號，不是逐Note判定真值。
+
 observer19 的短期點保留最多六點／90ms，每身分10ms的QPC bucket只保留最新坐標；bucket起點固定直到新增下一點。速度外推／相對撞線擬合／接近rail搜尋均要求至少30ms跨度，沒有足夠跨度列等待，不用低殘差單獨接受短擷取突發。每幀的即時辨識與當前輪廓核對仍執行；`history_span_ns` 為schema2的可選診斷欄位，舊紀錄缺欄位不反推真實來源時間。
 
 observer18 的 simultaneous highlight 過濾以黄色候選的法向厚度核對可見藍／紅芯寬度（上限為 max(24 px,25% core width)），並保留原位置、寬度與當前芯像素支持要求；獨立 Drag 不因高度變大而一律刪除。decision schema2 可附 `rails_geometry`／`head_on_line` 診斷欄位，舊紀錄缺欄位視為 unknown。離線 C++ conflict 分析最多保留64筆摘要、16個成功 RPC 本機接觸、128個最新 targets、每計畫16步；成功 receipt 與 owner reset 只能重建本機歷史，不證明遊戲效果或三押需求。

@@ -160,14 +160,16 @@ std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& s
         return f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
     };
     const auto fill=[&](Vec2 center,double width,int depth,bool include_occlusion=false) {
-        int support=0;
+        int support=0;bool left=false,right=false;
         for(int k=-4;k<=4;++k) {
             const double along=k*width*.09;
             const auto* p=pixel({center.x-n.x*depth+u.x*along,center.y-n.y*depth+u.y*along});
             if(p&&((p[2]>145&&p[1]>130&&p[2]>p[0]+8)||
-                (include_occlusion&&((p[2]>110&&p[1]>100&&p[2]>p[0]+5)||classify(p)==2)))) ++support;
+                (include_occlusion&&((p[2]>110&&p[1]>100&&p[2]>p[0]+5)||classify(p)==2)))) {
+                ++support;left=left||k<=-3;right=right||k>=3;
+            }
         }
-        return support>=7;
+        return support>=7&&left&&right;
     };
     std::optional<NoteCandidate> best;
     // Two bounded cross sections cover both a short head and a longer body.

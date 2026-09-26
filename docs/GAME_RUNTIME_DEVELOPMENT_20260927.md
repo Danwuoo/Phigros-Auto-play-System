@@ -253,3 +253,13 @@ v46 frame3169／QPC148051508178600 的 note334，位置約(423,256)，離線約3
 observer19 對相對運動擬合、追蹤速度外推及接近中rail anchor搜尋要求至少30ms時間跨度。近期點以各身分10ms host-QPC bucket保留最新坐標，bucket起點不隨替換推進，避免連續快幀永遠只剩一點；最多六點並嚴格移除90ms以前的點。每幀仍辨識／更新當前evidence，不以降頻代替來源期限，active Hold 的當前輪廓核對不依賴新crossing。schema2追加可選 `history_span_ns`，記錄实际預測跨度；絕對source age仍unknown，30ms為待實測的估計政策，不是遊戲判定時窗。等待回歸與實機驗證。
 
 v48 Release 80／81，只有上述穩定段誤設crossing的assertion失敗；短突發拒絕已成立，其餘既有回歸皆通過。v49依該段實際距離核對 `outside_short_horizon` 與500px/s，另新增25張／4ms連續快幀，要求最多六點、跨度≤90ms、至少30ms的實際crossing與500px/s（±20）預測。Release 82／82通過（5.68秒）；只修正正例的錯誤horizon期待，未放寬原負例或速度要求。v47／v48未進實戰，下一輪仍35ms／兩指。
+
+v49 run `cpp-observe-17904587762096256`，35ms、185秒STOPPED、9,836消費frames／1,212真實命令。結算811,807分，Perfect347／Good4／Bad0／Miss42、max combo44、accuracy88.96%、Early0／Late4，未AP；Good減少但Miss未改善，不能宣告受控性能改善。raw SHA-256 `f91d865868590f197a0d4f4eab6b855cd8bd0a5dc8a962694e1e855ab26ada4e`、manual結果／PNG、两張異常圖及 `assist-lead35-v49-analysis.json` 保存，沒有中途第二gRPC stream。down Tap134／Hold91／Drag114／Flick6，5 conflict／1 gate expiry；runtime5 UI／5 source revoke。80ms跨度下同列Drag仍可能被擬合成約2460px/s，不能把所有錯配歸因於短突發。
+
+## 裝飾線擴大 Hold 的反例（build v50–v51）
+
+v46 的衝突226包含已到線的約135px Hold與同位置附近的新200.5px短Hold。v50新增一個144px藍色body、雙側真rails加右側獨立白裝飾線的合成反例；單項確實失敗，重建將body擴成200px、中心偏移25.5px。原先兩排7／9填色允許缺少同一側的兩點，裝飾線又能滿足長度／末端條件，造成較寬候選優先。
+
+observer20 保留兩排7／9要求，另要求兩側外部取樣群各至少一點有當前填色；前方續接檢查亦保持同一幾何規則。只靠一側body加白裝飾線不能擴寬，內部裝飾切開、漸層、黄色覆蓋、短rail gap与短Hold等既有正／負例不放寬。v51 Release83／83通過（5.62秒）。純單幀重算v46 frame5949仍含碎片／部分head，只有當前畫面且無近期identity，不能宣告其持續觸控已解決。
+
+opt-in第二個診斷槽不再由預期的stationary Hold初始insufficient history觸發；只記近線association ambiguous，或至少30ms跨度、尚未到線的nonlinear mismatch。兩槽容量、停止後編碼、預設不存圖與不回饋input原則不變。此變更只改善诊斷選取，不代表所有被保留畫面都是Miss；v50未進實戰，v51待全曲。
