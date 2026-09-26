@@ -14,7 +14,7 @@
 
 ## 實作順序
 
-依 [docs/ROADMAP.md](docs/ROADMAP.md) 推進。先驗證擷取、觸控能力與計時，完成簡單目標的畫面到觸控閉環，最後才實作 Phigros 專用辨識。不要為了提早展示遊戲操作而跳過閉環量測。
+依 [docs/ROADMAP.md](docs/ROADMAP.md) 與 [主程式新計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md) 推進。2026-09-26 使用者改採遊戲實戰研究：擷取器已固定，直接以 Chapter Legacy 的 Glaciaxion HD 建立觀察、預測、觸控與畫面回饋閉環，首次 All Perfect 後進 IN。不另開大型簡單目標 Fixture 階段；既有能力核對與時間／排程的短小合成回歸仍保留。這取代舊「先獨立 Fixture 閉環再研究 Phigros」順序，不取消閉環量測或 pixels-only 原則。新計畫屬待實作規格，不代表遊戲能力已驗收。
 
 ## 程式與驗證
 
@@ -26,4 +26,4 @@
 
 ## 尚未決定的技術選擇
 
-不要假定特定模擬器、擷取 API、OpenCV 模型或觸控注入方式已獲確認。先做能力與延遲測試，再把選擇和理由記入架構文件。
+擷取主用已固定為 gRPC payload fast／256 KiB，以最後驗收為準，不重開選型。既有 gRPC 觸控能力只在已驗證的裝置／映射指紋範圍沿用；遊戲動作語義、視覺方法／模型與時序參數仍依實機證據決定，不把 Fixture 通過視為 Phigros 通過。選擇與理由記入架構文件。

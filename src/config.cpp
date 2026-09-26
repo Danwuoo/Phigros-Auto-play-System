@@ -49,7 +49,7 @@ RuntimeConfig load_config(const std::filesystem::path& path) {
     const auto& s = raw.at("scheduler");
     const auto& p = raw.at("preview");
     fields(c, {"kind", "execution", "transport", "image_format", "row_order", "width", "height",
-               "source_rotation", "endpoint", "token_file", "grpc_read_chunk_kib"},
+               "source_rotation", "endpoint", "token_file", "grpc_read_chunk_kib", "max_relative_lag_ms"},
            {"kind", "execution", "transport", "image_format", "row_order", "width", "height", "source_rotation"}, "capture");
     fields(t, {"kind", "timeout_ms", "max_contacts", "width", "height", "rotation_deg"},
            {"kind", "timeout_ms", "max_contacts"}, "touch");
@@ -80,6 +80,8 @@ RuntimeConfig load_config(const std::filesystem::path& path) {
         config.grpc_read_chunk_kib != 256)
         throw std::invalid_argument("gRPC read chunk must be 8, 64 or 256 KiB");
     config.endpoint = c.contains("endpoint") ? string(c.at("endpoint"), "endpoint") : "";
+    config.max_relative_lag_ms = integer(c.value("max_relative_lag_ms", json(250)),
+                                         1, 1000, "max relative lag ms");
     config.token_file = c.contains("token_file") ? string(c.at("token_file"), "token_file") : "";
     if (config.endpoint.empty() != config.token_file.empty())
         throw std::invalid_argument("endpoint and token_file must be paired");
@@ -103,6 +105,7 @@ RuntimeConfig load_config(const std::filesystem::path& path) {
     config.log_dir = string(raw.at("log_dir"), "log directory");
     config.public_json = raw;
     config.public_json["capture"]["grpc_read_chunk_kib"] = config.grpc_read_chunk_kib;
+    config.public_json["capture"]["max_relative_lag_ms"] = config.max_relative_lag_ms;
     if (config.public_json.at("capture").contains("token_file"))
         config.public_json.at("capture")["token_file"] = "<redacted>";
     return config;

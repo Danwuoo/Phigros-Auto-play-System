@@ -43,14 +43,14 @@ add_library(pas_proto STATIC ${PROTO_OUT}/emulator_controller.pb.cc
 target_include_directories(pas_proto PUBLIC ${PROTO_OUT})
 target_link_libraries(pas_proto PUBLIC protobuf::libprotobuf gRPC::grpc++)
 
-add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp)
+add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp)
 target_include_directories(pas_core PUBLIC include)
 target_link_libraries(pas_core PUBLIC nlohmann_json::nlohmann_json bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32)
 if(MSVC)
   target_compile_options(pas_core PRIVATE /W4 /permissive- /EHsc)
 endif()
 
-add_library(pas_emulator STATIC src/emulator.cpp src/grpc_transport.cpp)
+add_library(pas_emulator STATIC src/emulator.cpp src/grpc_transport.cpp src/runtime.cpp)
 target_include_directories(pas_emulator PUBLIC include)
 target_link_libraries(pas_emulator PUBLIC pas_core pas_proto)
 if(MSVC)
@@ -85,7 +85,7 @@ endif()
 add_executable(pas_tests tests/core_tests.cpp tests/grpc_loopback_tests.cpp
                          tests/grpc_transport_tests.cpp
                          tests/config_analysis_tests.cpp tests/cli_tests.cpp
-                         tests/capture_backend_tests.cpp)
+                         tests/capture_backend_tests.cpp tests/game_tests.cpp)
 target_link_libraries(pas_tests PRIVATE pas_bench pas_emulator pas_core GTest::gtest_main)
 add_dependencies(pas_tests pas)
 if(MSVC)

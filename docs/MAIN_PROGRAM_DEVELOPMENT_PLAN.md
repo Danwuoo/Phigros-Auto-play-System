@@ -1,255 +1,231 @@
-# 主程式完整開發計畫
+# 主程式邏輯與實戰開發計畫
 
-## C++20 現行入口
+原規劃日期：2026-09-26。2026-09-27 已開始 G0／G1 開發與 UI-only 自動 PLAY；完整遊戲驗收／assist 尚未完成。現況及證據見文末與 [開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)，下列未落地的設計仍不能當作已有 API。
 
-T0–T5 的正式實作、逐項驗收與新數值門檻分別見 [C++ 遷移計畫](CPP_MIGRATION_PLAN.md)、[驗收矩陣](CPP_PARITY_MATRIX.md) 與 [路線圖](ROADMAP.md)。目前的 C++ observe 先擷取並只顯示診斷畫面；獨立 native Fixture 負責觸控能力測試。M3 真實簡單目標閉環與 Phigros 遊玩辨識仍屬後續工作。以下原 M0–M7 分期與 Python／process 實作敘述保留為歷史需求及來源，不應當作現行 C++ 程式已驗收的功能清單。
+依使用者最新方向，以 **Chapter Legacy → Glaciaxion HD → 首次 All Perfect → Glaciaxion IN** 推進。主程式直接用正版遊戲即時畫面研究，不另開大型簡單目標 Fixture 開發／量測階段。短小合成回歸與必要的既有觸控能力核對仍保留。
 
-## 歷史 M0–M7 計畫
+本計畫取代舊 M3–M7 的順序、三首歌曲前置要求、獨立 Fixture 閉環門檻及「AP 不在目標內」的範圍。原文保存於 [歷史計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN_LEGACY_20260925.md)。[擷取最後驗收](CAPTURE_FINAL_ACCEPTANCE_20260926.md)的歷史結果不改寫；其主程式接線缺口併入 G0。以下類別、參數與介面均為設計，不是現有 API 或已通過能力。
 
-> 2026-09-25 後續決策已變更：使用者選定全自有 C++20、單程序多執行緒，先遷移與五種擷取技術評估，再繼續新主程式功能。本文的 Python 沿用／process 固定／後端探索前提屬舊計畫，不再約束新開發；M3–M7 功能需求與 pixels-only 原則仍保留。以 [C++ 遷移計畫](CPP_MIGRATION_PLAN.md) 為新工作入口。
+## 1. 目標與界線
 
-> 2026-09-25 獨立驗收修正：M0–M2 未全數通過；M1 有 3 個可重現排程問題、M2 需補逐 pointer／反向軌跡驗證。以 [驗收報告](ACCEPTANCE_20260925.md) 的修正清單為下一步；文末先前實作狀態表不代表完整通過。
+- 第一目標：Glaciaxion HD 整首由主程式依即時 pixels 操作，結算確認全 Perfect；首次成功即可轉 IN。連續三次 AP 僅為穩定性建議，不是新增的進階門檻。
+- 第二目標：同一套邏輯研究 Glaciaxion IN，繼續以 AP 為目標；IN 改善需回歸 HD，不拆成兩套歌曲腳本。
+- 曲名、章節及難度只作 run 標籤與結果核對，不輸入逐音符決策。不能讀譜面、遊戲記憶體、內部狀態、預錄按鍵，或以歌曲時間、BPM／節拍表、音訊補足操作。
+- 使用者手動登入、選曲、選難度及重新開始；主程式從畫面辨認遊玩與結算。自動導覽、解鎖、課題模式、完整 GUI 不在本輪範圍。
+- 2026-09-27 使用者新增要求：選曲後保留 PLAY，由程式啟動後依即時 pixels 自動點一次 PLAY，不使用 computer-use；此 UI-only 入口不擴大為自動導覽或曲中遊玩能力。
+- 自有正式邏輯採 C++20、單程序多執行緒、CLI＋Win32／D3D11 診斷預覽。先建立可解釋的幾何視覺方法，沒有逐音符 LLM 或歌曲記憶。
+- 尚未觀察本機 HD／IN 的完整遊玩畫面，不預設音符構成、線運動或可觀測性。未見的能力標為未驗證；AP 是研究目標，規劃不等於證明 pixels-only 必然可達。
 
-日期：2026-09-25。狀態：M0–M2 核心已實作並完成下述 Fixture 驗證；M3–M7 仍是目標設計。各項未測試內容以第 12 節為準。
+## 2. 現有程式盤點
 
-依據：`AGENTS.md`、[架構](ARCHITECTURE.md)、[路線圖](ROADMAP.md)、[量測](MEASUREMENTS.md)、[Phigros 機制研究](PHIGROS_MECHANICS_RESEARCH.md)。遊戲機制的來源與尚未驗證的說法沿用研究文件，不重複將網路摘要當成實測規格。
+已讀 `apps/pas/main.cpp`、`include/pas/core.hpp`、`src/core.cpp`、`include/pas/emulator.hpp`、`include/pas/config.hpp` 及現有 profiles。下表是程式盤點，不是重新執行實機驗收。
 
-## 1. 已決定的範圍
-
-- 使用者指定：完成計畫後交給 **GPT-6 Sol，reasoning effort = xhigh** 開發。
-- 使用者已選擇 **CLI＋即時診斷預覽**。完整桌面 GUI 後置。
-- 主程式開發擷取基線固定為 **Android Emulator gRPC、獨立 process、payload、RGB888、top-down**。尺寸與方向啟動時確認，預期本機 1280×720；不同設定需建立對應 profile。
-- 此選擇以已有功能與隔離需求為依據，不宣稱 process 比 thread 快，或已符合全部遊戲判定窗。現有 benchmark 的 thread 預設不必一起修改；新 runtime profile 明確使用 process。MMAP 不進主程式，ADB 單張截圖僅診斷。只有閉環證明擷取是阻塞瓶頸時才重開選型。
-- 第一版是程式化追蹤、幾何預測、接觸狀態機及排程。視覺介面預留小模型替換；沒有 LLM 逐音符決策、強化學習或歌曲記憶。
-- 第一版由使用者手動登入、選曲、選難度與處理遊戲選單；程式從畫面確認遊玩後接手。APK Fixture 安裝、啟動、觸控能力測試屬開發驗證，可直接進行；不要操作帳號、購買或修改遊戲存檔。
-- 所有遊玩決策只用當前 pixels 與有限近期追蹤。外部資料僅供研究、標註、離線評估及通用模型訓練。
-
-第一個實作交付是 M0–M2 的執行核心及觸控能力工具；第一個真實閉環里程碑是 M3；第一個遊戲里程碑是 M5 的有限場景 Tap。完整 v1 須完成 M0–M7 並明列支援範圍。不得把第一批交付稱為完整自動遊玩。
-
-## 2. 現況與需補的缺口
-
-| 現有元件 | 處理方式 |
+| 現有元件 | 新階段處理 |
 | --- | --- |
-| `capture_grpc.py`、`capture_process.py`、`CaptureWorker`、`LatestFrame` | 沿用；修整合所需問題，不重寫擷取 |
-| `SessionController` | 沿用擷取先就緒與健康語義；抽出可供 runtime 使用的非阻塞狀態快照，避免重複啟動兩個 capture worker |
-| 單點 `Observation`、`VelocityTracker`、固定線 Predictor | 保留為既有合成基線；遊戲契約新增，不把舊測試改成不同含義 |
-| `Scheduler` | 現在只有 Tap 展開、contact ID 綁 track ID；新增一般動作排程，保留 Tap adapter |
-| `FakeTouchBackend` | 保留；新增有 timeout、有限狀態與釋放結果的真實後端 |
-| `Telemetry` | 現有同步寫檔與無檔時保留無限 events 不直接用於長時間 runtime；增加有限 runtime sink |
-| CLI | 舊命令繼續可用；新命令委派給小型模組，避免把整個 runtime 塞進 `cli.py` |
-| Android capture Fixture | 保留原能力；新增獨立 touch／closed-loop Fixture package，避免破壞擷取基準 |
+| `GrpcCapture`、`LatestFrame` | 沿用 payload fast／RGB888／top-down／256 KiB、三個物理 buffer／一個邏輯最新槽；不重開擷取選型 |
+| `run_observe()` | 現在只有擷取、健康探測及預覽；抽出 runtime，新增遊戲分析但保持 observe 無真實輸入 |
+| `RuntimeConfig` | 尚無相對 lag 欄位；新增嚴格配置、有效值 manifest 及實際傳遞回歸 |
+| `GreenTargetDetector`、`VelocityTracker`、固定線 predictor | 保留合成測試意義；遊戲另增多音符／多線契約，不把單綠點類別改名當遊戲辨識 |
+| `ContactScheduler` | 保留單 owner、epoch、期限、取消／釋放原則；補 live owner 接線及遊戲規劃能力 |
+| `GrpcTouch`、`PixelCoordinateMap` | 沿用獨立 channel／未知結果語義；核對當前畫面與觸控映射及能力指紋 |
+| `Journal`、分析器、預覽 | 沿用有界寫入；新增決策事件、結果核對、錯誤分類與只讀疊圖 |
 
-## 3. 執行架構與資源所有權
+排程整合不能直接把每個偵測結果轉成完整 ContactPlan，須處理五個具體缺口：
+
+1. **手指配置太早。** 現在 `submit()` 就占用 contact ID；較遠音符可能占滿手指。由 planner 保留有界未來意圖、檢查接觸占用區間，接近可執行時才提交。若仍需更改 scheduler 配置時機，獨立改契約與回歸。
+2. **ID 順序限制。** scheduler 的新 intent ID 必須大於 high watermark。Track／Note ID 與提交 ID 分離，owner 按首次接受順序配置 intent ID，revision 沿用同 ID；避免亂序到達而永久拒絕合法 Note。同時防止已完成 Note 重新辨識後取得新 ID 再次觸發。
+3. **active revision 進度。** 現在 active plan 更新將 step index 重設為 1。遊戲版只替換未執行的未來部分，保留已 down 的 contact、已執行進度與 up 責任，不重播 Hold／Flick 的舊 move。
+4. **目標與全局失效。** 現在任一 plan 過期會使整個 scheduler fault。新契約區分單目標失效與全局 gate／input 失效：前者撤銷並釋放該目標，後者撤銷全部。共享接觸暫不啟用，責任保持可分離。
+5. **batch 尚未接入共通排程。** `GrpcTouch` 有 batch 方法，但一般 `TouchBackend`／scheduler 仍逐筆注入。先量測多押送出偏差；需要 batch 時補共通介面、逐命令 receipt 和部分未知結果語義，不假稱已完整支援。
+
+## 3. 每一幀的決策流程
 
 ```text
-Capture process（既有）
-  → capacity-1 RGB handoff
-  → Perception worker → Tracker → Predictor
-  → 有上限且可替換的意圖集合
-  → ActionPlanner / ContactAllocator
-  → Scheduler / TouchBackend（唯一觸控 owner）
-  → Emulator → 新 pixels
+gRPC capture worker → 最新有效 Frame
+                         ↓
+               Perception worker
+       UI 識別 → 線／Note 候選 → 跨幀追蹤
+                         ↓
+       相對運動預測：撞線區間、觸控區域、證據期限
+                         ↓
+                有界 DecisionSnapshot
+                         ↓
+         單一 action／scheduler／touch owner
+      接觸規劃 → deadline 執行 → receipts／釋放責任
+                         ↓
+                     遊戲新畫面
 
-Runtime / Session gate → epoch、arm、stop、fault
-Telemetry writer / preview ← 有限診斷快照，不反向產生觸控
+Runtime supervisor → epoch、全局撤銷、停止
+Preview／Journal／Result analyzer ← 只讀快照與事件
 ```
 
-第一個核心版本：Capture 是既有 spawn process；Perception 在獨立 worker；排程、接觸配置及注入由單一專用執行緒擁有。跨執行緒只交 immutable messages，不讓兩個執行緒同時修改排程 heap 或 contacts。辨識先使用向量化像素處理；不得在遊戲熱路徑逐 RGB byte 跑 Python 迴圈。
+1. 讀最新 frame，核對 run／epoch／generation／geometry；落後就跳幀，不補辨識舊圖。
+2. 辨認 UI；遊玩畫面與目標可觀測性分開。沒有音符或暫時看不到線，不能直接推成選單。
+3. 找線／Note 候選與不確定度，不一開始強行完成所有配對。
+4. 用有限近期觀察更新線姿態、Note 身分、種類、線關聯與運動；保存小型座標／特徵歷史，不持有長串原始 frames。
+5. 為證據足夠的 Note 預測短期撞線區間與觸控區域；其餘標等待、不可觀測、過晚或拒絕。
+6. 發布最新的完整有界決策快照，列出可執行、短期延續及撤銷狀態。owner 對照完整集合取消已消失的未執行意圖；跳過中間快照也不能漏掉取消責任。
+7. owner 根據現有接觸狀態規劃動作。每次 dispatch 重查 gate、版本、目標證據、revision 與輸入健康。
+8. 下一張圖修正預測；可見判定及結算另供診斷。Note 消失、RPC OK 或分數增加均不能獨自證明某顆命中。
 
-這個 thread 配置不保證免於 GIL jitter。M3 要對辨識負載與排程尾端作配對測試；若辨識影響送出期限，移到獨立 perception process，沿用容量 1 交接和相同契約，再驗證 IPC 成本。不要把「獨立 thread」寫成實時保證。
+### 執行緒與容量
 
-各邊界均指定容量：frame slot=1、preview slot=1、意圖按 key 替換並有總量與時間範圍上限、排程只保留近期可執行命令。已完成 key 以 epoch／有限 TTL 回收；舊 generation 的 heap 項目需壓縮，不能在反覆修正時無限積累。
+- 主執行緒處理啟停與 preview message loop；supervisor 撤銷不可等待視覺、預覽或日誌。停止／fault 必須能直接喚醒 owner。
+- capture worker 沿用現有有界 buffer，不在 callback 辨識或同步存檔。
+- perception worker 依序對同一 frame 做 UI、偵測、追蹤及預測；第一版不為每層各開 thread。
+- action／scheduler owner 是唯一能修改 plans／contacts 及注入的執行緒；等候新快照、停止或最近期限。無新 frame 時仍喚醒處理過期及 release。
+- Journal writer 維持有界；preview 使用低頻快照並及時放掉 frame lease，不讓預覽占滿 capture pool。
+- 最新 frame／decision snapshot 各一個；tracks、歷史點數、線關聯候選、plans、steps、preview bytes 及 journal 都配置硬上限。超量有明確原因，不無限擴充或靜默丟掉 up。
+- 健康 probe 只作診斷，不能阻塞 owner 到期撤銷；static probe 成功不延長遊玩證據期限。
 
-停止流程：撤銷 arm／遞增 epoch → owner 拒收新動作 → 取消未送命令 → 有期限地 release contacts → 關閉 backend → 停止 perception/capture → flush 診斷並回收資源。每步記錄結果；只清本 run 建立的資源。
+## 4. 視覺與追蹤
 
-## 4. 契約與識別
+### UI 與場景
 
-沿用 host `time.monotonic_ns()`，來源 Unix metadata 不與之直接相減。schema 明確 version；以下名稱可以依現有結構微調，語義不可省略。
+輸出 `MENU / LOADING / PLAYING / PAUSED / RESULT / UNKNOWN`，附 frame、時間與可見依據。先在 observe 確認開局、空拍、暫停、恢復及結算。進 PLAYING 需多張不同來源 frame 的一致證據，確認窗口在 G1 固定；重複讀同一張圖不算多次確認。
+
+第一版選單由使用者操作；畫面不明時停用，不以「按 PLAY 後等固定秒數」接手。曲名／難度標籤與遊玩 gate 分離。
+
+### 線與 Note 候選
+
+先以色彩、形狀、邊緣及幀間連續性建立基線，不能只用單一顏色或固定螢幕 Y 座標。線候選含中心、方向、可見範圍與信心；Note 候選含輪廓、種類候選、朝向、中心、Hold 頭／身／尾證據。以運動與配對證據排除背景／裝飾線。
+
+先全畫面找候選，再以追蹤區域加速；定期全域重找，避免 ROI 永久漏新目標。縮放、裁切及觸控映射有明確版本。配線結合朝向、相對運動、歷史一致性及可見性，不只取最近線。重疊候選不能因中心接近就合成一顆。
+
+第一版不預先引入新模型依賴。若證據顯示主要瓶頸是視覺混淆，再以固定樣本比較 C++ OpenCV 方法／小型模型的誤差與尾端耗時；若失敗來自排程，不以更大模型掩蓋。
+
+### 近期身分與遮擋
+
+track 狀態為 `tentative / confirmed / temporarily_unobserved / retired`；動作進度分開記，不以已送 down 替代視覺成功。
+
+類型／線關聯有歧義時保留候選，新觀察只修正未執行部分。短暫遮擋只延續到已核定期限，不能用另一顆 Note 或新 UI frame 刷新該目標證據。跳變、重新開局與幾何改變清空 track epoch。已完成 Note 的短期去重資料有界，不靠無限 tombstone 保存整首歌。
+
+## 5. 預測與時間模型
+
+以線中心 `c(t)`、切向 `u(t)`、法向 `n(t)`、Note 判定錨點 `p(t)` 定義本專案的幾何模型：
+
+```text
+d(t) = dot(p(t) - c(t), n(t))     相對線的法向距離
+s(t) = dot(p(t) - c(t), u(t))     沿線位置
+估計短期 d(t + τ) = 0 的根，並估計該時候的觸控區域。
+```
+
+這不是遊戲內部公式；Note 錨點及有效區域需由實機畫面／結果校準，不能把可見寬度當完整可觸控寬度。線旋轉時法向改變也影響距離導數，不能只相減螢幕 Y 速度。
+
+第一版對有限近期樣本作局部線性擬合，輸出殘差及時間／位置不確定度；只有線性模型持續留下可解釋誤差才加更複雜運動模型。相對速度近零、反向、跳變、配線不明、預告不足或根在短期範圍外時，不硬算觸控時間。
+
+- host 一律用同一 QPC monotonic domain；分別記擷取完成、pixels ready、辨識／預測完成、plan 接受、預定注入、注入開始／返回、首次可見回饋。
+- 以 `capture_complete_ns` 擬合只得到主機到達時域的表觀撞線估計；畫面產生時刻仍 unknown，不能稱為真實遊戲判定時刻。
+- 注入期限可寫作「表觀撞線估計 − 校準的綜合提前量」。此量包含未分離的顯示／傳輸／輸入偏差，不宣稱等於任何單段延遲；RPC 返回耗時也不等於觸控生效延遲。
+- 第一版校準在局與局之間做，固定 profile、版本及範圍，保留所有嘗試。不由 AP／Miss 反推精確毫秒，不在局內依總分盲調。
+- 預測區間、動作窗口與證據期限分開。未經本機驗證的 Perfect 時窗、Hold 寬限、Flick 速度等不寫成常數。250 ms 相對 lag guard 不等於允許 250 ms 舊圖觸控；現有 150 ms evidence／2000 ms horizon 也不是已驗證遊戲設定。
+- G2 前由 G1 到達／處理分布及合成回歸固定保守試驗參數、依據與環境；後續變更版本化，不事後改門檻把失敗變通過。
+
+## 6. 動作規劃與手指管理
+
+預測層回答 Note 的時間、區域及動作需求；planner 再將其轉成觸控。以下為待實機核對的保守策略，[機制研究](PHIGROS_MECHANICS_RESEARCH.md)只提供歷史假說，不作本機已驗規格。
+
+| 類型 | 規劃策略 | 必須辨認的失敗 |
+| --- | --- | --- |
+| Tap | 預測窗口內新 down，短接觸後 up；同 Note 不重觸 | 重複 down、相鄰 Note 誤觸、偏早／偏晚 |
+| Hold | 頭部觸發後維持獨立接觸；新證據更新位置與剩餘計畫，尾部證據支持才正常結束 | 頭漏失、持續偏離、提早釋放、過期未放開 |
+| Drag | 安排窗口內覆蓋候選區域的接觸，按需移動 | 未覆蓋、額外 down 干擾別的 Note |
+| Flick | 有持續時間、多個採樣點的滑動；速度／位移／方向／重置由實機確認 | 位移不足、滑動未生效、連續觸發未重置 |
+
+contact 狀態為 `free → reserved → down → maintaining/moving → release_pending → free`。注入不確定則轉 `unknown`，停用新動作並處理釋放，不自動重送 down。
+
+- Note ID 不等於 contact ID；占用區間由 down 到 up。先保護 active contacts 的維持／釋放，再安排新 down；同時事件依期限與可行性採確定性規則。
+- 初版各進行中動作獨立分指，不做 Hold 換指／共用覆蓋；max contacts 以當前已驗能力決定，不採協定理論上限。
+- 未來意圖留在有界集合，只提交近期可執行部分，不預排整首歌或長段軌跡。revision 不累積舊 heap。
+- 多押以有界 group 表達共同截止區間；batch 或逐筆策略留下實測偏差。部分結果未知時保留所有可能 active ID 的釋放責任。
+- 拒絕原因明列證據不足、預告不足、能力未啟用、contact 衝突、容量或過期，不偷偷忽略而宣稱整首全支援。
+- 觸控區域排除可見 UI 控件與不可用邊界，再用單一版本化映射轉 Android 座標；超界拒絕，不硬裁到邊緣掩蓋錯誤。
+
+## 7. Session 與停止
+
+UI 觀察與控制狀態分開。控制流程為 `CAPTURING → OBSERVING → READY → ACTIVE → RESULT`；任何階段可到 `SUSPENDED / STOPPED / FAULT`。
+
+| 條件 | 動作 |
+| --- | --- |
+| observe | 辨識、預測及模擬規劃；不建立真實 touch backend |
+| assist 進場 | 核對主用 profile、觸控能力、幾何、校準及 G0／G1 證據；G2 的針對性回歸通過後，只在有效 PLAYING gate 下執行受限能力 |
+| 新一局／暫停後恢復 | 新 epoch、清舊 Note／意圖、重取視覺證據；不補舊動作 |
+| 單目標失效 | 撤銷該目標，已按住則釋放；其他有效目標可繼續 |
+| UI UNKNOWN／PAUSED／RESULT、畫面停滯／積壓、幾何失效 | 優先撤銷全局 gate，取消未送 down 並釋放，不等健康 probe |
+| input 未知／逾時、關鍵日誌丟失、容量完整性失效 | fault，禁止新 down，記錄釋放結果，不默默重新 arm |
+| 使用者停止 | 喚醒 owner，禁止新動作，有限時間內嘗試 release，再取消 capture／收束 workers 與 journal |
+
+撤銷時間須量測；in-flight RPC 必須有界，stop／dispatch 排序須回歸。不能承諾取消 Android 已接受動作，或宣稱程序崩潰後一定釋放；release RPC 成功仍與可見零接觸證據分開。
+
+## 8. 新資料契約
+
+保留合成契約，新增遊戲契約，以小型值資料跨執行緒，不傳無上限像素引用。
 
 | 契約 | 必要資料 |
 | --- | --- |
-| `RuntimeConfig` | profile/schema、serial、capture、touch、座標映射、期限、容量、啟用能力、預覽／日誌設定 |
-| `FrameContext` | run/epoch、frame sequence、capture generation、尺寸／方向／transform version、capture_complete/pixels_ready/published 時間 |
-| `SceneObservation` | context、recognition_start/end、UI 狀態與證據、多個 Note／line 候選、類型與朝向／位置／可見度 |
-| `TrackSet` | 物件 ID、近期運動、線關聯候選、最後觀察時間、殘差與不確定度、存在／遮擋狀態 |
-| `ActionIntent` | key/revision、來源 context、Note 類型、預測撞線時間、有效／到期範圍、可觸控區域、持續或滑動需求、可解釋依據 |
-| `ContactPlan` | intent revisions、epoch、有限接觸 ID、down/move/up/batch、每步 deadline、取消／失敗策略、維持期限 |
-| `TouchReceipt` | command ID、scheduled、call start/return、RPC 結果／不確定狀態；不把 RPC OK 當作 Android 已生效 |
-| `ReleaseReport` | 各 contact 釋放請求結果、未知／失敗列表、開始／結束時間 |
-| `CapabilityReport` | 後端／裝置／映射 fingerprint、宣稱與實測能力、contact 上限、測量設定、證據路徑 |
+| `FrameContext` | run／epoch／generation／sequence／geometry、host 時間；來源時間分域保存 |
+| `SceneObservation` | context、UI／可見依據、線／Note 候選、辨識起訖、不確定度 |
+| `TrackedScene` | Note／line IDs、有限運動歷史、關聯候選、最後真實觀察時間、遮擋／退役 |
+| `HitPrediction` | Note ID／revision、表觀撞線區間、觸控區域、種類需求、證據到期、校準及幾何依據 |
+| `DecisionSnapshot` | 單調 sequence、context、UI gate evidence、完整有界目標集合與狀態；失效目標不隱性續命 |
+| `ContactPlan` 擴充 | intent／Note 對應、revision、context、執行進度、未來 steps、占用區間／group、期限與 release owner |
+| `TouchReceipt`／`ReleaseReport` | 身分、預定／呼叫起訖、結果／unknown IDs；batch 保留每項對應 |
+| `ResultObservation` | 結算 frame、可見曲名／難度／判定統計、信心及人工核對；不供下一 Note 排程 |
 
-跨局／重新連線使用新的 runtime epoch，不依賴目前固定為 0 的 `stream_generation`。尺寸、方向、座標映射變更均停用並建立新 epoch。舊 epoch 結果即使稍後完成也不可執行。
+gate 新鮮度、目標證據期限及來源有效性獨立驗證。資料改動升 schema，保留舊 JSONL 語義。新 profile 欄位列明單位、範圍、預設／必填，拒絕未知欄位及未通過能力。
 
-UI PLAYING 與「這顆 Note 是否可預測」分離。看不到某條線不直接判為 MENU；但 UI UNKNOWN、來源不新鮮或傳輸錯誤必須撤銷所有遊玩資格。
+## 9. 工作包與完成條件
 
-## 5. 排程與觸控的關鍵規則
+G0–G6 為新階段，不回填舊 M3 Fixture 的通過狀態。各包一起交付可執行流程、針對性回歸與文件，不先建大量空殼。
 
-1. dispatch 前重新檢查 epoch、UI gate、證據年齡、有效期限、revision 與 backend 健康。只做 submit 時檢查不足。
-2. 同一意圖的新 revision 取代尚未執行部分；已 down 的 Hold 不可被一次新預測直接刪掉其 up／釋放責任。
-3. 過期 down 不補按；失敗的 down 不產生後續正常 move。up／故障釋放不可因原意圖過期被丟棄。
-4. ContactAllocator 使用有限 ID pool，與 Note ID 分開；第一版保守分指，不依賴未實測的共用接觸技巧。
-5. 同時命令可組 batch，但先驗證實際 Android 接觸回饋；一個 RPC 內有多個 Touch 不等於已證實同時生效。
-6. 指令容量滿、辨識停滯、RPC 逾時或不可恢復錯誤時，進入明確 fault；不靜默丟 up 或繼續猜測接觸狀態。
-7. 所有預測 deadline 來自畫面相對運動。不同音符種類的時窗獨立設定；未知的遊戲判定窗不得用 Tap 的 ±80 ms 一概代替。
-8. 補償以測得的閉環偏差與分布為依據，保存校準版本。未知來源年齡保留 unknown；不得把 capture_complete 當 produced 或從 FPS 推算絕對延遲。
-
-## 6. 首選觸控候選：Emulator gRPC sendTouch
-
-依倉庫安裝版 proto：座標是顯示座標，identifier 持續識別接觸，pressure 非零維持／0 放開；proto 提到最多 10 個同時接觸，但實際支援數須以 Fixture 驗證。`sendTouch` 非同步排入 emulator main looper，RPC 返回僅是呼叫結果。
-
-- 重用本機 discovery 與認證方式；獨立 input channel，不跟 screenshot RPC 生命周期綁死；不記錄 token。
-- 座標映射只在一處進行，整數端點必須落在 `[0,width-1] × [0,height-1]`。目前 `CoordinateTransform` 的矩形端點語義須檢查，不能把 width/height 當有效最後一個像素。
-- 以非對稱角落／格點與多指可見路徑驗證旋轉、裁切、縮放。先用 2 指，再增加到需要的數量；未通過不宣稱 10 指可用。
-- RPC timeout 後將接觸狀態標為未知，不盲目重送 down。嘗試釋放所有可能 active 的 ID，回報結果；重新開始前重建已知狀態。
-- 不使用 NEVER_EXPIRE 作預設；proto 的預設過期長達 120 秒，也不能當作緊急停止保證。測試 runtime 終止／失聯的最佳可行釋放，清楚記錄未能保證的情況。
-- `inject`、`inject_batch`、`release_all` 的實作需保持單一 owner。測試 fake server 只證明協定編碼，Android Fixture 才證明實際能力。
-
-## 7. CLI、設定與診斷預覽
-
-設定檔採 JSON（相容現有 Python >=3.10，不為設定格式引入依賴）。提供有說明的 sample profiles，拒絕未知欄位、NaN/Infinity、負值、互斥組合與不合理容量；啟動前驗證，日誌保存去敏後有效設定與雜湊。
-
-規劃命令（下列是待開發介面，不是目前可執行承諾）：
-
-```text
-pas run --config configs/avd-observe.json --mode observe
-pas touch-bench --config configs/avd-fixture.json
-pas closed-loop --config configs/avd-fixture.json --duration-s 60
-pas run --config configs/avd-phigros.json --mode assist
-```
-
-- `observe` 不建立可注入的 backend；可顯示「原本會做的動作」，不呼叫 sendTouch。`assist` 仍需能力報告匹配和 PLAYING gate，不能用命令列強制略過 UNKNOWN。
-- Ctrl+C 撤銷排程並觸發停止；preview 可提供 stop，但不作唯一停止管道。未完成能力驗證的玩法開關拒絕啟用或明示不支援。
-- 預覽預設最多 10 Hz，可關閉／調整。顯示來源 frame/epoch、主機駐留時間（非來源 age）、UI 狀態、Note/line IDs、候選區域、預測倒數、contacts、拒絕／故障原因。
-- 預覽是 host 視窗，不在 emulator 內畫 overlay；其快照不作 detector 輸入。GUI event loop 不阻塞 scheduler，縮放座標與演算法座標分離。
-- 新增 `vision` 可選依賴（例如 numpy/OpenCV）時保持 probe／基礎測試的無 extras 路徑；版本以本機安裝測試結果記錄，不在計畫中臆測最新版。
-
-## 8. 分期工作包與完成條件
-
-### M0 — 固定基線與執行設定
-
-交付：runtime config/schema、profiles、run 目錄與 manifest、capture factory、CLI 骨架、能力介面。記錄 Git revision/dirty、Python／OS／AVD、解析度／方向／設定、後端、實測與未驗證欄位。
-
-完成：舊測試與 CLI 保持可用；無效設定在任何觸控前失敗；observe 可啟停並保留捕捉來源；程序資源能回收。先用 fake source，實機 smoke 再驗證。
-
-### M1 — 接觸計畫、排程與真實後端
-
-交付：ContactPlan／allocator、可替換且有容量的 scheduler owner、gRPC input、release report、fake-server 測試。Scheduler 可在無新 frame 時準時喚醒，但不得越過最後證據的期限。
-
-完成：可重現軌跡與虛擬時鐘驗證更新、過期、取消、同時事件、Hold 維持／移動／結束、Flick 軌跡；包括 dispatch/stop 競態、RPC 失敗／逾時、部分 batch 不確定性、舊 epoch 與長時間容量上限。主機時間測試獨立報告，不把虛擬 clock 的零誤差當性能。
-
-### M2 — Android 觸控能力 Fixture 與即時預覽
-
-交付：獨立 Android Fixture、可重現 build/install 說明、touch-bench、能力報告、預覽。Fixture 顯示各 Android pointer ID、位置／路徑、down/up 計數及取消；Android pointer ID 不假設等於 emulator identifier。
-
-測試包含：Tap／長按、按住 A 同時點 B、A 移動而 B 不動、交錯放開、兩指同時、Flick 多段移動與反向、取消及錯誤恢復、座標格點。短暫事件在畫面留下持續證據，避免低擷取率看不到中間狀態。
-
-最低採樣：每種主要動作至少 30 次，雙指交錯至少 30 組；座標至少 9 個覆蓋畫面的點，端點與旋轉另測。報告失敗數、座標誤差、注入耗時、效果可見延遲。樣本不足只標 smoke，p99 在小樣本下不得誇大。
-
-完成：每個宣稱能力有可見回饋證據；沒有非預期合指或殘留接觸，不能只靠 RPC OK 通關。沒有全數通過的能力維持 disabled。觸控能力測試可用固定測試序列；這是隔離的 Fixture 測試，不得拿來操作遊戲。
-
-### M3 — 真實 pixels-to-touch-to-pixels 閉環
-
-交付：Fixture 移動目標模式、向量化 detector、短期 tracker/predictor、接 runtime 的 closed-loop runner、離線摘要重算器。目標速度／方向／出現間隔由 Fixture 控制，runtime 不讀 seed、進度或目標真值；只用 pixels 找目標和判定線。
-
-畫面用有限持續回饋顯示命中／漏失與觸控位置。可見計數／marker 僅用觀測配對及離線量測，不編碼下一次操作。Fixture 的 Android clock 與 host monotonic 分開保存，未校準不能相減；可用 Android 端相對撞線誤差作離線結果，主機端保留觀察→注入→回饋時間。
-
-標準批次：暖機 10 秒後三批各至少 60 秒且各至少 100 個目標；未達樣本數延長窗口。正常、受控辨識延遲、主機負載分開；慢 consumer、恢復與 500 ms 擷取停頓另做故障批次。記錄 source 實際可見更新率而非只記設定 FPS。
-
-進入 M4 的工程門檻：在事先固定的簡單場景中三批正常命中率各 >=99%、0 非目標誤點、0 gate 關閉後新 down、0 停止後未解釋 active contacts；主機排程絕對誤差 p99 研究目標 <=10 ms，Fixture 撞線絕對誤差 p99 研究目標 <=40 ms。這些是本專案簡單閉環的初始門檻，不是 Phigros 判定常數，測試前寫入 manifest，不能看完結果才改。未達標先定位捕捉／視覺／排程／注入瓶頸。
-
-故障批次不要求相同命中率，但必須停止補按、限制記憶體、可靠取消及可解釋恢復。若實際來源更新率不足，報告測試前提不成立並保留資料；不得以跳過差批次替代通過。
-
-### M4 — Phigros 只觀察與標註基線
-
-依賴 M3 通過。交付：UI classifier、多 Note／多線 Observation、旋轉形狀特徵、關聯追蹤、疊圖與離線評估。由使用者手動進入可用歌曲收集畫面；缺資料時請求一次具體操作，其餘離線工作繼續。
-
-標註：四種 Note、Hold 頭／身／尾、線姿態／可見性、重疊／遮擋、UI 狀態、可觀測／不可觀測、人工事件時間區間。不同歌曲與視覺主題切分，不能隨機拆相鄰 frames；保留未參與調參的歌曲。
-
-首次 baseline 至少三首可用歌曲、每種 Note 至少 100 個人工確認實例；無該類型不得填零錯誤。量測 precision/recall、類型混淆、line 姿態誤差、ID switch、事件計數及時間誤差；不只報 frame accuracy。
-
-完成：每種支援候選有實際標註成績；不支持的場景能拒絕。從此才開發／評估遊戲專用幾何，不能用一張選單截圖宣稱已完成辨識。
-
-### M5 — 有限場景 Tap 自動接手
-
-依賴 M2 Tap 通過、M3 通過、M4 適用場景通過。先限普通模式、可見判定線、可追蹤速度、單 Tap 到獨立多 Tap，未啟用種類明列不支援。
-
-交付：PLAYING 確認、空拍維持、暫停／結算／UNKNOWN 停止、session epoch、動態線局部座標與區域預測、畫面結果分析。啟用前在獨立驗證資料上先確認 UI false arm 為 0、啟用範圍內 Tap precision >=99%、recall >=95%；這是進場門檻，不是泛化保證。
-
-實機至少三個已可用簡單譜面片段／歌曲各三次；記錄可見配置、接手與停止延遲、誤點／漏點、判定統計與獨立錯誤審查。不以曲名載入觸控序列。第一顆來不及接手須明列漏接，不先盲目 arm。
-
-### M6 — Hold／Drag／Flick、多線與複雜運動
-
-依序啟用 Drag → Hold → Flick，再做混合與多指衝突（可依資料調整順序，但不可略過個別能力驗證）。每類動作有自己的 evidence、期限與狀態機：Hold 不因一次漏辨立即當結束；短期延續只在有界可解釋證據內，逾期釋放；Flick 測速度、方向反轉與重新觸發；Drag 避免多餘 down 誤觸 Tap。
-
-擴充多線／旋轉／反向／變速、重疊與可短期預測的遮擋。接觸共用／換指為通過專項測試後的優化。完全不可觀測、演出混淆或未校準模式維持不支援。
-
-完成：每一啟用能力有獨立遊戲證據與混合場景回歸；ContactPlan 可以解釋每根手指為何存在／移動／放開。報告每類的錯誤，不以總 ACC 掩蓋失敗類型。
-
-### M7 — v1 整合與交付
-
-交付：單一 CLI 流程、profiles、預覽、故障排查、已驗證能力與已知限制、可重算報告、資料 manifest。普通支援場景持續運作至少 30 分鐘，檢查記憶體與隊列上限；主機正常與負載條件分開報告。
-
-測試退出、perception 停滯、capture child crash、input timeout、journal 寫入失敗、AVD 中斷、解析度／方向變化、暫停／恢復與重新開局。恢復必須新 epoch、fresh evidence、重新確認狀態；不能補放舊動作。
-
-v1 完成的定義：支援範圍內可重現的畫面到操作閉環、可靠停止、每次操作可追溯。全曲 AP、全難度、課題模式、解謎解鎖、自動導覽與完整 GUI 不屬於本版承諾。
-
-## 9. 機器學習的決策點
-
-M4 有標註基線後才決定是否加入小型偵測／分割模型。若失敗主要是特效、背景、形狀泛化且幾何／觸控已穩定，開一個限定實驗；若失敗是錯時或指令狀態，不用模型掩蓋。
-
-模型只替換 perception。比較未見歌曲的 event precision/recall、UI 誤接手、姿態誤差、推論 p50/p95/p99/max 與完整閉環結果；在固定硬體與同樣像素輸入下比較。訓練與評估分割、標註、權重及設定保存雜湊；不要讓歌名／時間查表洩漏進決策。模型與 runtime dependency 可選，規則基線仍可重現。
-
-訓練資料不足時提供收集與標註工具，不隨便訓練一個模型宣稱泛化。外部付費算力或上傳私人畫面不是本次預設工作；本機小型實驗可按證據推進。
-
-## 10. 日誌、驗證與性能報告
-
-每個 run 目錄：去敏 config、環境／revision manifest、JSONL、summary、可選診斷 PNG／限額故障片段。設定磁碟／記憶體上限；熱路徑不逐張同步存 PNG。
-
-Telemetry 使用有上限的 writer queue。關鍵控制／觸控事件不能靜默丟失：容量不足時停止新的 assist，保留 drop/fault 計數與緊急停止能力，flush 有期限。debug 級逐 frame 明細可抽樣，但摘要明示樣本截斷。worker 不因 logger 持鎖卡住釋放。
-
-時間線至少包含：capture_complete、pixels_ready、perception start/end、prediction complete、plan accepted、scheduled、inject start/return、effect first observed、gate revoked、release start/return。預測誤差、喚醒／排程誤差、呼叫耗時、畫面回饋延遲分開報告。
-
-所有分布保存 n、p50/p95/p99/max、失敗與丟棄；jitter 明確採用排程誤差的 p95−p5，另附絕對誤差。三批不可只挑最佳批，暖機／正式窗口分開，同一條 host 時間線；p99 小樣本限制明列。Fixture Android 真值只作離線對照，不滲入 runtime。
-
-測試層次：純狀態／虛擬時間 → 假 RPC 整合 → 真主機時間 → Android 可見回饋 → 真實閉環 → 遊戲有限場景。回歸優先測 invariant 和真實故障，不為薄 wrapper 堆鏡像測試。
-
-## 11. 建議檔案布局與變更批次
-
-```text
-src/pas/config.py                  設定與 profile 驗證
-src/pas/runtime.py                 執行與資源所有權
-src/pas/runtime_contracts.py       新契約（或合理拆分）
-src/pas/input_grpc.py              gRPC 注入、有限接觸狀態
-src/pas/action_planner.py          意圖到接觸計畫
-src/pas/contact_scheduler.py       單一 owner、deadline、gate/epoch
-src/pas/preview.py                 降頻診斷視窗
-src/pas/perception/                Fixture／後續遊戲辨識
-src/pas/tracking.py                多目標／線關聯
-src/pas/prediction.py              動態線與區域預測
-configs/                          JSON sample profiles
-fixtures/touch_android/            獨立測試 APK
-scripts/build_touch_fixture.py    重現本機 SDK build
-tests/test_runtime*.py             生命週期／門控／設定
-tests/test_input_grpc.py           協定、失敗、timeout
-tests/test_contact_scheduler.py    動作與競態／容量 invariant
-```
-
-檔名是分工建議，不要求空殼檔案先全部建立。每批實作、測試、文件一起落地；已有未提交的研究文件屬本次工作，保留，不回退或覆蓋其他變更。需要建立 branch 時用 `codex/` 前綴，不自動推送或建立外部發布。
-
-## 12. 交接指示與狀態追蹤
-
-指定開發者先讀本計畫與 AGENTS 所需文件，然後實作 **M0–M2 的第一批核心**。其中 M2 實機通過前，不啟用 Phigros 觸控；可直接建置與安裝自己的 Fixture 做驗證。先讓可測最小垂直流程工作，再補已列故障處理，不先寫完整框架空殼。
-
-遇到參數／技術細節依本計畫與量測做合理決定並記錄。只有缺少必要使用者操作、未解鎖資料或明確外部限制才提出具體問題；已授權的離線實作、測試和 Fixture 驗證繼續。每批回報實作、命令、樣本與限制；不得把 skipped 當 passed。第一批完成後按 M3→M7 門檻繼續安排工作包。
-
-| 階段 | 規劃時狀態 | 完成證據 |
+| 階段 | 交付 | 完成條件 |
 | --- | --- | --- |
-| M0 | 已實作／驗證 | 嚴格 JSON profiles、去敏 run manifest、process/payload capture factory、`run --mode observe`、降頻主機預覽；fake 21 frames／0.5 s、實機靜態畫面 smoke、程序正常回收。2026-09-25 另發現 emulator gRPC 曾在同尺寸回傳倒轉畫面，因此 profile 增加來源方向檢查；恢復記錄見量測文件。`assist` 明確拒絕。舊 CLI 語義保留。 |
-| M1 | 已實作／驗證核心，實際失聯仍需持續故障測試 | 有限 ContactPlan、ID allocator、可替換 revision、單 owner 排程、epoch／證據／遲到檢查、gRPC `sendTouch`、逾時後鎖定、release report、緊急全 ID 釋放。虛擬時鐘與假 gRPC server 故障回歸；本次 69 tests 全通過。實機 owner 計時與釋放數據見量測紀錄。 |
-| M2 | Fixture 主要能力已達最低樣本；其他旋轉／真實 RPC deadline 逾時未驗 | 獨立 APK；Tap／Hold／Move／反向 Flick／交錯雙指／近同時雙指各 30 組，取消 30 組，單 RPC 雙指 batch 30 組，全部由 Android 可見計數驗證且零殘留；九點覆蓋、四角各一次 smoke、90° 映射。真實 channel 斷線後一組緊急釋放可見成功；真實 RPC deadline 逾時嘗試未重現，fake server 逾時已驗。其他裝置、解析度、旋轉和程序猝死後釋放未驗。 |
-| M3 | 等待 M2 | 待真實 Fixture 閉環驗收 |
-| M4 | 等待 M3 | 待遊戲畫面與標註資料 |
-| M5–M6 | 等待相應視覺／觸控門檻 | 待有限場景及每類音符實測 |
-| M7 | 等待支援能力整合 | 待長時間及故障回歸 |
+| G0 執行接線 | runtime 抽離、profile 相對 lag、owner／撤銷通路、當前幾何與能力核對 | observe 無輸入；配置確實到 capture；版本／過期／停止回歸通過；映射與能力有證據 |
+| G1 HD 即時觀察 | UI、線／Note、多目標追蹤、短期預測、疊圖與拒絕原因 | 至少完整觀察一輪 HD，盤點實際類型／歧義；核對開局、空拍、暫停／恢復、結算；人工核對預測樣本，尚不宣稱命中 |
+| G2 HD 有限觸控 | 意圖／手指生命週期、遊戲 gate、從可靠目標開始的 pixels→touch→pixels | 短合成及停止／過期回歸後進場；固定試驗配置，真實觸控與可見結果可對照；未支援類型明列 |
+| G3 HD 全曲能力 | 補 HD 實際需要的類型、重疊、多押與線運動 | 整首無人工遊玩觸控介入，結算可核對；按類型報錯誤／unknown，所需能力均有證據 |
+| G4 HD AP 收斂 | 按失敗類型改辨識／預測／動作／時序，固定版本重跑 | 一次有效完整 run 的可見結算確認全 Perfect、無 Good／Bad／Miss；保存版本、配置、所有嘗試及核對方式，達標轉 IN |
+| G5 IN 擴充 | 同一邏輯觀察 IN、補新增場景及實戰 | 先列與 HD 的實際差異，改動附 HD 回歸；IN AP 為目標，未達時報瓶頸，不能以 HD 結果代替 |
+| G6 整理交付 | CLI／profiles、摘要、已驗能力與限制 | 區分已達 AP、可重現程度、未支援場景及故障結果；不新增強制長測或泛化宣告 |
 
-進入 M3 前還需把簡單移動目標 Fixture、只讀 pixels 的向量化 detector／短期 tracker／幾何 predictor 接到 observe runtime，建立 PLAYING 以外的 Fixture gate 與新 epoch、注入結果回讀配對、固定三批測試 manifest 和離線重算器。M2 的 `getScreenshot` 輪詢只能證明觸控能力與可見延遲；正式 M3 應使用已選定的 process＋payload 容量 1 串流。沒有上述閉環及受控負載／停頓批次前，不宣稱觸控已適用 Phigros，也不啟用 `assist`。
+G0 與 G1 的只觀察工作可交錯推進；G2 觸控必須先有必要接線及對應視覺／動作證據。能力依實際 HD 需要逐項加入，不強迫先完成所有 IN 複雜場景。
+
+第一批範圍為 **G0＋G1**：即時預覽能看見程式辨認內容、預測區間及拒絕原因，再接 G2。2026-09-26 原規劃任務沒有實作或遊戲操作；2026-09-27 開發與新增 UI-only 自動 PLAY 的進度另記於文末，不回填原任務驗收。
+
+## 10. 驗證、診斷與 AP 證據
+
+### 最小自動回歸
+
+- 合成 pixels／軌跡＋fake clock：水平／移動／旋轉線、變速／跳變、遮擋、同時 Note，檢查預測修正與拒絕。真值只在測試端。
+- 狀態／排程：epoch、亂序 revision、Note 去重、提交 ID 順序、contact 容量、active 更新、恰好到期、stop／dispatch、未知輸入與釋放。
+- 整合：perception 停滯、舊快照晚到、跳過中間撤銷、journal 滿、無新圖時到期、batch 部分未知。不為薄 wrapper 寫鏡像測試。
+- 既有 Fixture 能力只在裝置／版本／映射等指紋相符時沿用；觸控語義、映射或 batch 改動才做針對性既有 Fixture 核對，不重開大型 campaign。
+
+### 遊戲研究
+
+每次先寫問題、改動與預期證據，再保留全部結果。錯誤分類包括 UI、漏／誤辨、類型混淆、配線、ID 切換、預測不穩、排程遲到、contact 衝突、input 未知及不可觀測／預告不足。
+
+遊戲回饋無法唯一配對 Note 時標 unknown。總分、combo 與結算不冒充逐 Note 真值；沒有精確判定時間就不報精確遊戲撞線誤差，可報人工標註畫面區間或表觀估計並附不確定性。
+
+HD AP 以同一次完整 run 的結算中可辨識 Perfect／Good／Bad／Miss 或等價完整資訊交叉核對；單一線色、評級符號、預測命中數不足。自動讀取不可靠時可人工核對同一次結果並記方法，不以 OCR 完整化阻塞研究；unknown 欄位不得用預測數補填。
+
+性能摘要保留 n、p50／p95／p99／max、失敗／拒絕／丟棄；排程 jitter 定義為 signed schedule error 的 p95−p5，另報絕對誤差。小樣本不誇大 p99；遊戲無可見 counter 就不報來源跟隨真值。
+
+### 記錄與儲存
+
+- 每 run 保存去敏配置、Git revision／dirty、遊戲／AVD／工具鏈版本、尺寸／方向／縮放、可見遊戲設定、capture/input/校準版本、QPC 時域、停止原因與判定摘要。
+- 預設不逐幀存圖；處理後釋放引用重用，保存有界記憶體狀態及必要 JSONL。故障影像／結算截圖須明確開啟限量模式，記錄上限及保留數，不恢復全程錄影。
+- 預覽顯示 frame、UI、Note／line IDs、預測區間、contacts、拒絕原因及主機耗時；降頻只影響預覽。
+- 離線圖像、標註、舊操作只供診斷／回歸；正式 assist 只接受即時 capture，不提供回放到真實 touch 的路徑。
+
+## 11. 模組落點與待量測參數
+
+依需要在 `include/pas/`／`src/` 新增 runtime、game_contracts、game_perception、game_tracking、game_prediction、action_planner、scheduler_owner、game_results；小模組可合理合併，不先搭空框架。
+
+`apps/pas/main.cpp` 保留 CLI 委派；共通 clock／frame／合成工具保留語義；capture/input 不知道歌曲及音符。遊戲規則止於 perception、prediction、planner，scheduler 執行有版本、有期限、有釋放責任的計畫。
+
+未來 `run --mode observe` 可選遊戲分析且無輸入；`run --mode assist` 等 G2 才開放。新 profile/schema 附遷移說明，不把今天的設定檔說成已有新欄位。曲名／難度不作按鍵索引。
+
+待實機決定：特徵／模型選擇、UI 確認窗口、每類證據期限／預測 horizon、綜合提前量、動作時長／位移／速度、contact 數與 batch 策略。由 G1–G3 固定試驗、量測、版本化；普通命名與拆檔由開發自行處理。
+
+2026-09-27 進度：G0 runtime／scheduler 接線、指紋核對與 G1 開發版 observer／短期預測／dry 排程已實作；使用者另要求啟動後自動 PLAY，已新增 pixels 確認選曲頁的一次 UI down/up 路徑，不使用 computer-use。完整 G1 與 G2–G6 尚未完成，沒有 Glaciaxion 遊玩閉環或 AP 證據。實機批次、回歸與未驗項見 [開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)；擷取研究不重開，歷史 C++ 核心／Fixture 驗收保持原範圍。

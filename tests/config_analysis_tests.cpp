@@ -46,6 +46,18 @@ TEST(ConfigMigration, ExplicitProcessToThreadAndStrictSchema) {
     EXPECT_EQ(config.public_json.at("capture").at("execution"), "thread");
     EXPECT_EQ(config.width, 64);
     EXPECT_EQ(config.grpc_read_chunk_kib, 256);
+    EXPECT_EQ(config.max_relative_lag_ms, 250);
+    EXPECT_EQ(config.public_json["capture"]["max_relative_lag_ms"], 250);
+    for (const auto& lag : {nlohmann::json(1), nlohmann::json(250), nlohmann::json(1000),
+                          nlohmann::json(0), nlohmann::json(1001), nlohmann::json(nullptr),
+                          nlohmann::json(1.5), nlohmann::json("250")}) {
+        auto edited = config.public_json;
+        edited["capture"]["max_relative_lag_ms"] = lag;
+        const TempJson input(edited.dump());
+        if (lag.is_number_integer() && lag.get<int>() >= 1 && lag.get<int>() <= 1000)
+            EXPECT_EQ(load_config(input.path()).max_relative_lag_ms, lag.get<int>());
+        else EXPECT_THROW(load_config(input.path()), std::invalid_argument);
+    }
     for (int kib : {8, 64, 256, 128}) {
         auto edited = config.public_json;
         edited["capture"]["grpc_read_chunk_kib"] = kib;

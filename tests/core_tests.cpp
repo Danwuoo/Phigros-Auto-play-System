@@ -80,7 +80,9 @@ TEST(SchedulerP1, FreshGateDoesNotRefreshOldPlanAtDispatch) {
     clock.set(150'000'000);
     EXPECT_TRUE(owner.run_due().empty());
     EXPECT_TRUE(touch.receipts().empty());
-    EXPECT_EQ(owner.fault(), "evidence_expired");
+    EXPECT_TRUE(owner.fault().empty());
+    EXPECT_TRUE(owner.armed());
+    EXPECT_EQ(owner.pending_count(), 0);
 }
 
 TEST(SchedulerP1, RevisionCannotReviveCompletedOrEvictedIntent) {

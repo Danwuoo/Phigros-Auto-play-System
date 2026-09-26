@@ -1,5 +1,17 @@
 # 架構與資料契約
 
+## 主程式設計與開發接線（2026-09-27）
+
+使用者改採 Glaciaxion HD 直接實戰研究、首次 AP 後進 IN；[主程式計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN.md) 定義新 G0–G6 與資料契約，取代獨立 M3 Fixture 閉環前置順序，不改寫歷史結果。
+
+單程序 C++20：既有 capture worker／LatestFrame → perception worker（UI、線／Note、追蹤、相對運動預測）→ 最新完整有界 DecisionSnapshot → 唯一 action／scheduler／touch owner。supervisor 可獨立撤銷；preview、journal、結果分析只讀，曲名／難度只作記錄。
+
+遊戲開發版已分離 Note 身分、單調提交 intent ID 及 contact ID；未來意圖與近期可執行計畫分開，contact 在 down 時分配。active revision 保留已執行 prefix、進度與釋放責任。目標證據失效撤銷單目標；全局 UI／來源／輸入失效撤銷全部。共通 scheduler 尚未接多點 batch；相關實作與驗證界線見 [開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)。
+
+動態線預測使用 Note 與線的相對法向距離及局部運動，不固定螢幕 Y。以主機接收時間擬合的是表觀撞線估計；絕對 source age 仍 unknown，綜合提前量需實機校準且不能當作某段真實延遲。遊戲判定回饋無法唯一配對時標 unknown，不以結算反推逐 Note 時間真值。
+
+`src/runtime.cpp` 已接 capture／perception／單一 action owner／supervisor；`src/game.cpp` 提供有界 UI／線／Note 候選、短期追蹤／預測與 dry planner。observe 不建立真實 input。auto-start 經能力指紋與即時 MENU 證據只發一次 PLAY down/up，之後曲中仍 dry；未開放 assist。MENU／PLAYING 為開發分類，PAUSED／RESULT 等仍 UNKNOWN。完整契約、停止、容量及驗收方式以主程式計畫為準。
+
 ## gRPC Windows 接收區塊
 
 正式 dependency 由 vcpkg manifest 的本地 overlay 固定為 gRPC 1.81.1、port revision 2。補丁在 Connect 呼叫時複製 channel argument `pas.grpc.windows_read_chunk_bytes` 的整數值，交由 Windows EventEngine 非同步建立的接收端使用，不延後存取設定參照。`GrpcCapture` 預設 256 KiB；profile 的 `capture.grpc_read_chunk_kib` 與 capture bench 的 `--grpc-read-chunk-kib` 僅允許 8／64／256。未指定的 channel（包含 touch）維持 8 KiB；HTTP/2、BDP 及 frame pool 策略未改。
@@ -16,7 +28,7 @@
 
 依[擷取器終態與最後驗收](CAPTURE_FINAL_ACCEPTANCE_20260926.md)，本輪五路徑研究與 gRPC 接收層正式化已完成。主用為 gRPC payload fast（RGB888、top-down、顯式尺寸／方向、256 KiB 接收區塊）。WGC 僅為 bench 備援候選，正式備用暫缺；DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 維持診斷，沒有自動切換。
 
-gRPC revision 2 的 Release 34／34 回歸與 18 批短測、正式擷取／暫停恢復／observe 已完成。bench 的 250 ms 相對 lag guard 尚未由 `run_observe()`／profile 傳遞，故該接線、證據撤銷與簡單目標觸控閉環是下一階段 M3 前置工作。擷取器研究結案不代表 runtime 已具相同保護，也不代表絕對 source age、長期性能或遊戲時序已驗收。舊 raw 性能與完整矩陣通過旗標保持原值；不再自動續跑取消的矩陣／長測。
+gRPC revision 2 的歷史 Release 34／34 回歸與 18 批短測、正式擷取／暫停恢復／observe 已完成。2026-09-27 新增 profile 的 `capture.max_relative_lag_ms`（1–1000，預設 250），`runtime_capture_options()` 真正傳遞至 gRPC，public config／manifest 記錄有效值；相對 lag drop 撤銷當前 epoch。遊戲閉環依 G1–G4 推進；絕對 source age、長期性能及遊戲時序尚未驗收。舊 raw 性能與完整矩陣通過旗標保持原值；不再自動續跑取消的矩陣／長測。
 
 ## T6 擷取候選開發契約（2026-09-26）
 

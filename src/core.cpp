@@ -295,9 +295,21 @@ bool ContactScheduler::set_gate(std::uint64_t epoch, bool armed, Nanoseconds evi
     return true;
 }
 
+bool ContactScheduler::set_context(std::uint64_t epoch, std::uint64_t generation,
+        std::uint64_t geometry_version, bool armed, Nanoseconds evidence_ns) {
+    if (epoch < epoch_ || (epoch == epoch_ &&
+        (generation < generation_ || geometry_version < geometry_version_))) return false;
+    if (generation != generation_ || geometry_version != geometry_version_)
+        cancel("context_changed");
+    generation_ = generation;
+    geometry_version_ = geometry_version;
+    return set_gate(epoch, armed, evidence_ns);
+}
+
 bool ContactScheduler::submit(ContactPlan plan) {
     const auto now = clock_.now_ns();
-    if (!fault_.empty() || !armed_ || plan.epoch != epoch_ || plan.intent_id == 0 ||
+    if (!fault_.empty() || !armed_ || plan.epoch != epoch_ ||
+        plan.generation != generation_ || plan.geometry_version != geometry_version_ || plan.intent_id == 0 ||
         plan.basis.empty() || plan.steps.size() < 2 || plan.steps.size() > static_cast<std::size_t>(max_steps_) ||
         plan.steps.front().phase != Phase::down || plan.steps.back().phase != Phase::up ||
         plan.evidence_ns > now || now - plan.evidence_ns >= evidence_max_age_ns_ ||
@@ -313,7 +325,16 @@ bool ContactScheduler::submit(ContactPlan plan) {
     if (old != pending_.end()) {
         if (plan.revision <= old->second.plan.revision) return false;
         if (old->second.active && plan.steps.back().due_ns < now) return false;
-        old->second.next_step = old->second.active ? 1 : 0;
+        if (plan.evidence_ns < old->second.plan.evidence_ns ||
+            plan.source_frame_sequence < old->second.plan.source_frame_sequence) return false;
+        // Revisions contain the immutable executed prefix plus replacement
+        // future steps. Preserve contact and progress; never replay a move.
+        if (plan.steps.size() <= old->second.next_step) return false;
+        for (std::size_t i = 0; i < old->second.next_step; ++i) {
+            const auto& a = old->second.plan.steps[i];
+            const auto& b = plan.steps[i];
+            if (a.phase != b.phase || a.x != b.x || a.y != b.y || a.due_ns != b.due_ns) return false;
+        }
         old->second.plan = std::move(plan);
         return true;
     }
@@ -321,21 +342,14 @@ bool ContactScheduler::submit(ContactPlan plan) {
     // constant memory. Late revisions and evicted tombstones can never revive.
     if (plan.intent_id <= accepted_high_watermark_) return false;
     if (pending_.size() >= static_cast<std::size_t>(max_plans_)) { fail("plan_capacity"); return false; }
-    std::vector<bool> used(static_cast<std::size_t>(max_contacts_));
-    for (const auto& [_, p] : pending_) used[static_cast<std::size_t>(p.contact_id)] = true;
-    int contact = 0;
-    while (contact < max_contacts_ && used[static_cast<std::size_t>(contact)]) ++contact;
-    if (contact == max_contacts_) { fail("contact_capacity"); return false; }
     accepted_high_watermark_ = plan.intent_id;
-    pending_.emplace(plan.intent_id, Pending{std::move(plan), contact});
+    pending_.emplace(plan.intent_id, Pending{std::move(plan)});
     return true;
 }
 
 bool ContactScheduler::evidence_expired(Nanoseconds now) const {
     if (!armed_) return false;
     if (now - gate_evidence_ns_ >= evidence_max_age_ns_) return true;
-    for (const auto& [_, pending] : pending_)
-        if (now - pending.plan.evidence_ns >= evidence_max_age_ns_) return true;
     return false;
 }
 
@@ -344,9 +358,40 @@ std::optional<Nanoseconds> ContactScheduler::next_due_ns() const {
     std::optional<Nanoseconds> due = gate_evidence_ns_ + evidence_max_age_ns_;
     for (const auto& [_, pending] : pending_) {
         due = std::min(*due, pending.plan.evidence_ns + evidence_max_age_ns_);
+        if (!pending.active) due = std::min(*due, pending.plan.valid_until_ns);
         due = std::min(*due, pending.plan.steps[pending.next_step].due_ns);
     }
     return due;
+}
+
+bool ContactScheduler::notice(std::uint64_t intent, const std::string& reason) {
+    if (notices_.size() == 256) { fail("notice_capacity"); return false; }
+    notices_.push_back({intent, clock_.now_ns(), reason});
+    return true;
+}
+std::vector<SchedulerNotice> ContactScheduler::take_notices() {
+    auto result = std::move(notices_);
+    notices_.clear();
+    return result;
+}
+
+std::vector<TouchReceipt> ContactScheduler::cancel_intent(std::uint64_t id) {
+    std::vector<TouchReceipt> receipts;
+    const auto found = pending_.find(id);
+    if (found == pending_.end()) return receipts;
+    auto& p = found->second;
+    if (p.active) {
+        const auto& position = p.plan.steps[p.next_step - 1];
+        TouchCommand up{id, p.contact_id, Phase::up, position.x, position.y,
+                        clock_.now_ns(), p.plan.source_frame_sequence};
+        {
+            std::lock_guard lock(dispatch_mutex_);
+            receipts.push_back(backend_.inject(up));
+        }
+        if (!receipts.back().success) { fail("input_result_unknown"); return receipts; }
+    }
+    pending_.erase(found);
+    return receipts;
 }
 
 void ContactScheduler::fail(const std::string& reason) {
@@ -371,34 +416,64 @@ std::vector<TouchReceipt> ContactScheduler::run_due() {
     while (armed_ && fault_.empty()) {
         {
             std::lock_guard lock(dispatch_mutex_);
-            if (stop_requested_) { cancel("supervisor_stop"); break; }
+            if (stop_requested_ || (dispatch_guard_ && !dispatch_guard_())) { cancel("supervisor_stop"); break; }
         }
         const auto now = clock_.now_ns();
         // Expiry is checked even when no command is due. The <= boundary is
         // intentional: exactly at the deadline evidence is no longer valid.
         if (evidence_expired(now)) { fail("evidence_expired"); break; }
+        auto expired = pending_.end();
+        for (auto it = pending_.begin(); it != pending_.end(); ++it) {
+            if (now - it->second.plan.evidence_ns >= evidence_max_age_ns_ ||
+                (!it->second.active && now >= it->second.plan.valid_until_ns)) {
+                expired = it; break;
+            }
+        }
+        if (expired != pending_.end()) {
+            if (!notice(expired->first, "target_evidence_or_window_expired")) break;
+            auto released = cancel_intent(expired->first);
+            receipts.insert(receipts.end(), released.begin(), released.end());
+            continue;
+        }
         auto selected = pending_.end();
-        for (auto it = pending_.begin(); it != pending_.end(); ++it)
-            if (selected == pending_.end() || it->second.plan.steps[it->second.next_step].due_ns <
-                                             selected->second.plan.steps[selected->second.next_step].due_ns)
+        const auto priority = [](Phase p) { return p == Phase::up ? 0 : p == Phase::move ? 1 : 2; };
+        for (auto it = pending_.begin(); it != pending_.end(); ++it) {
+            const auto& a = it->second.plan.steps[it->second.next_step];
+            if (selected == pending_.end()) { selected = it; continue; }
+            const auto& b = selected->second.plan.steps[selected->second.next_step];
+            if (a.due_ns < b.due_ns || (a.due_ns == b.due_ns && priority(a.phase) < priority(b.phase)))
                 selected = it;
+        }
         if (selected == pending_.end()) break;
         auto& pending = selected->second;
         const auto step = pending.plan.steps[pending.next_step];
         if (step.due_ns > now) break;
         // Gate and plan are separate. A fresh gate never revives old target
         // pixels, and an active hold remains subject to both expiries.
-        if (now - gate_evidence_ns_ >= evidence_max_age_ns_ ||
-            now - pending.plan.evidence_ns >= evidence_max_age_ns_ ||
-            (step.phase == Phase::down && (now > pending.plan.valid_until_ns || now - step.due_ns > max_late_ns_))) {
-            fail("stale_expired_or_late_step"); break;
+        if (step.phase == Phase::down && now - step.due_ns > max_late_ns_) {
+            if (!notice(selected->first, "down_too_late")) break;
+            pending_.erase(selected); continue;
+        }
+        if (step.phase == Phase::down) {
+            std::vector<bool> used(static_cast<std::size_t>(max_contacts_));
+            for (const auto& [_, p] : pending_)
+                if (p.active) used[static_cast<std::size_t>(p.contact_id)] = true;
+            int contact = 0;
+            while (contact < max_contacts_ && used[static_cast<std::size_t>(contact)]) ++contact;
+            // A conflict drops only the new target. Active up responsibility
+            // survives and unrelated valid targets keep running.
+            if (contact == max_contacts_) {
+                if (!notice(selected->first, "contact_conflict")) break;
+                pending_.erase(selected); continue;
+            }
+            pending.contact_id = contact;
         }
         TouchCommand command{selected->first, pending.contact_id, step.phase, step.x, step.y,
                              step.due_ns, pending.plan.source_frame_sequence};
         std::optional<TouchReceipt> receipt;
         {
             std::lock_guard lock(dispatch_mutex_);
-            if (stop_requested_) { cancel("supervisor_stop"); break; }
+            if (stop_requested_ || (dispatch_guard_ && !dispatch_guard_())) { cancel("supervisor_stop"); break; }
             receipt = backend_.inject(command);
         }
         receipts.push_back(*receipt);
