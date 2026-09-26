@@ -236,6 +236,46 @@ Frame capture_adb_png(const Clock& clock, const std::filesystem::path& adb,
     return frame;
 }
 
+void write_diagnostic_png(const std::filesystem::path& path, const Frame& frame) {
+    if(std::filesystem::exists(path)) throw std::runtime_error("diagnostic image already exists; refusing to overwrite");
+    if (frame.width <= 0 || frame.height <= 0 || frame.stride != frame.width * 3 ||
+        frame.rgb.size() != static_cast<std::size_t>(frame.stride) * frame.height)
+        throw std::invalid_argument("diagnostic image is not tightly packed RGB24");
+    const auto co = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    if (FAILED(co) && co != RPC_E_CHANGED_MODE)
+        throw std::runtime_error("COM initialization for PNG failed");
+    struct CoScope { HRESULT result; ~CoScope() { if (SUCCEEDED(result)) CoUninitialize(); } } scope{co};
+    using Microsoft::WRL::ComPtr;
+    ComPtr<IWICImagingFactory> factory;
+    if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
+                                IID_PPV_ARGS(&factory))))
+        throw std::runtime_error("PNG imaging factory failed");
+    ComPtr<IWICStream> stream;
+    if (FAILED(factory->CreateStream(&stream)) ||
+        FAILED(stream->InitializeFromFilename(path.c_str(), GENERIC_WRITE)))
+        throw std::runtime_error("PNG output stream failed");
+    ComPtr<IWICBitmapEncoder> encoder;
+    if (FAILED(factory->CreateEncoder(GUID_ContainerFormatPng, nullptr, &encoder)) ||
+        FAILED(encoder->Initialize(stream.Get(), WICBitmapEncoderNoCache)))
+        throw std::runtime_error("PNG encoder initialization failed");
+    ComPtr<IWICBitmapFrameEncode> bitmap;
+    ComPtr<IPropertyBag2> properties;
+    if (FAILED(encoder->CreateNewFrame(&bitmap, &properties)) ||
+        FAILED(bitmap->Initialize(properties.Get())) ||
+        FAILED(bitmap->SetSize(frame.width, frame.height)))
+        throw std::runtime_error("PNG frame initialization failed");
+    std::vector<std::uint8_t> bgr = frame.rgb;
+    for (std::size_t pixel = 0; pixel < bgr.size(); pixel += 3)
+        std::swap(bgr[pixel], bgr[pixel + 2]);
+    GUID pixel_format = GUID_WICPixelFormat24bppBGR;
+    if (FAILED(bitmap->SetPixelFormat(&pixel_format)) ||
+        !InlineIsEqualGUID(pixel_format, GUID_WICPixelFormat24bppBGR) ||
+        FAILED(bitmap->WritePixels(frame.height, frame.stride,
+                                   static_cast<UINT>(bgr.size()), bgr.data())) ||
+        FAILED(bitmap->Commit()) || FAILED(encoder->Commit()))
+        throw std::runtime_error("PNG pixel encoding failed");
+}
+
 Frame load_diagnostic_png(const std::filesystem::path& path) {
     const auto size=std::filesystem::file_size(path);
     if(size>16*1024*1024) throw std::invalid_argument("diagnostic PNG exceeds capacity");

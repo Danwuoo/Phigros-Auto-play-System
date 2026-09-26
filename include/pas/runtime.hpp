@@ -12,5 +12,5 @@ void run_observe(const std::string& config_path, double duration_s, bool no_prev
 void run_auto_start(const std::string& config_path, const std::string& capability_path,
                     double duration_s, bool no_preview);
 void run_assist(const std::string& config_path, const std::string& capability_path,
-                double duration_s, bool no_preview);
+                double duration_s, bool no_preview,bool keep_diagnostic_anomalies=false);
 }

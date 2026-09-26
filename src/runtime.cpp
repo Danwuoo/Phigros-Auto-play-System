@@ -5,6 +5,7 @@
 #include "pas/journal.hpp"
 #include "pas/preview.hpp"
 #include <atomic>
+#include <array>
 #include <chrono>
 #include <cmath>
 #include <fstream>
@@ -144,7 +145,7 @@ private:
 }
 static void run_runtime(const std::string& config_path,double duration_s,bool no_preview,
                  const std::string& launch_package,double stale_ms,bool auto_play,
-                 const std::string& capability_path,bool assist=false) {
+                 const std::string& capability_path,bool assist=false,bool keep_diagnostic_anomalies=false) {
     if(!std::isfinite(duration_s)||duration_s<=0||duration_s>3600 ||
        !std::isfinite(stale_ms)||stale_ms<5||stale_ms>5000)
         throw std::invalid_argument("invalid duration or stale-ms");
@@ -172,12 +173,13 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
             {"dry_owner",!assist},{"game_observer_version",8},{"executable_sha256",sha256_file(executable)},
-            {"game_planner_version",4},{"drag_planned_contact_ms",90},{"late_prediction_recovery_limit_ms",60},
+            {"game_planner_version",5},{"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
             {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},
             {"game_uncertainty_ms",config.game_uncertainty_ms},
             {"action_wait","win32_high_resolution_relative_timer_and_event"},
             {"capability_preflight",capability},
-            {"source_absolute_age",nullptr},{"diagnostic_image_retention","none"},
+            {"source_absolute_age",nullptr},{"diagnostic_image_retention",keep_diagnostic_anomalies?
+                "at_most_two_anomaly_frames_encoded_after_input_stop":"none"},
             {"config_sha256",sha256_file(config_path)},
             {"grpc_transport",config.capture_kind=="emulator-grpc"?
                 grpc_transport_manifest(options.grpc_read_chunk_kib):json(nullptr)},
@@ -217,6 +219,8 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     ActionWake action_wakeup;
     std::exception_ptr worker_fault;
     std::shared_ptr<const DecisionSnapshot> decision;
+    // Explicit diagnostics only: two fixed slots, never fed back into play.
+    std::array<std::shared_ptr<const Frame>,2> anomaly_frames;
     std::shared_ptr<const Frame> preview_frame;
     std::shared_ptr<const DecisionSnapshot> preview_scene;
     std::vector<double> intervals,residency,recognition;
@@ -288,10 +292,42 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                     display=std::make_shared<Frame>(*f);
                     draw_game_overlay(*display,*s); preview_time=processed;
                 }
-                f.reset(); // Release capture lease before publishing diagnostics.
                 if(display) {std::lock_guard lock(decision_mutex); preview_frame=std::move(display); preview_scene=s;}
-                {std::lock_guard lock(decision_mutex); decision=std::move(s);}
+                {std::lock_guard lock(decision_mutex); decision=s;}
                 action_wakeup.notify_all();
+                if(keep_diagnostic_anomalies&&(!anomaly_frames[0]||!anomaly_frames[1])&&s->playing_gate&&s->capacity_valid) {
+                    const LineCandidate* main_line=nullptr;
+                    for(const auto& line:s->lines) if(line.confidence>=.8&&line.length>=config.width*.8&&
+                        (!main_line||line.confidence>main_line->confidence)) main_line=&line;
+                    if(main_line) {
+                        const auto near_line=[&](const NoteCandidate& n,double limit) {
+                            return std::abs(-(n.center.x-main_line->center.x)*main_line->tangent.y+
+                                (n.center.y-main_line->center.y)*main_line->tangent.x)<=limit;
+                        };
+                        bool fragments=false,history_failure=false;
+                        for(std::size_t a=0;a<s->targets.size();++a) {
+                            const auto& target=s->targets[a];const auto& note=target.note;
+                            if(note.width>=config.width*.08&&near_line(note,30)&&!target.crossing_ns&&
+                                (target.reason=="association_ambiguous"||target.reason=="nonlinear_or_mismatch"||
+                                 target.reason=="insufficient_history")) history_failure=true;
+                            if(note.kind!=NoteKind::hold||note.width>=config.width*.08||!near_line(note,80)) continue;
+                            for(std::size_t b=a+1;b<s->targets.size();++b) {
+                                const auto& other=s->targets[b].note;
+                                const double gap=std::abs(note.center.x-other.center.x);
+                                if(other.kind==NoteKind::hold&&other.width<config.width*.08&&near_line(other,80)&&
+                                    std::abs(note.center.y-other.center.y)<20&&gap>20&&gap<config.width*.11)
+                                    fragments=true;
+                            }
+                        }
+                        for(int slot=0;slot<2;++slot) if(!anomaly_frames[slot]&&(slot?history_failure:fragments)) {
+                            anomaly_frames[slot]=std::make_shared<Frame>(*f);
+                            record({{"event","diagnostic_frame_retained"},{"slot",slot},{"source_frame",s->context.frame},
+                                {"reason",slot?"near_line_history_failure":"hold_fragment_pair"},
+                                {"capture_complete_ns",s->context.capture_ns},{"diagnostic_copy_used_for_input",false}});
+                        }
+                    }
+                }
+                f.reset(); // Diagnostic copies never hold capture-pool leases.
             }
         } catch(...) {failure();}
     });
@@ -488,6 +524,18 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     action_worker.request_stop(); perception_worker.request_stop(); capture_worker.request_stop();
     latest.close(); if(capture) capture->cancel();
     action_worker.join(); perception_worker.join(); capture_worker.join();
+    std::uint64_t diagnostic_saved=0;
+    for(int slot=0;slot<2;++slot) if(anomaly_frames[slot]) {
+        const auto path=run_dir/(slot?"diagnostic-near-line-history.png":"diagnostic-hold-fragments.png");
+        try {
+            write_diagnostic_png(path,*anomaly_frames[slot]);++diagnostic_saved;
+            record({{"event","diagnostic_frame_saved"},{"source_frame",anomaly_frames[slot]->sequence},
+                {"path",path.string()},{"sha256",sha256_file(path)},{"diagnostic_copy_used_for_input",false}});
+        } catch(const std::exception& error) {
+            record({{"event","diagnostic_frame_save_failed"},{"source_frame",anomaly_frames[slot]->sequence},{"reason",error.what()}});
+        }
+        anomaly_frames[slot].reset();
+    }
     std::exception_ptr fault;
     {std::lock_guard lock(fault_mutex); fault=worker_fault;}
     const auto counts=latest.counters();
@@ -497,6 +545,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         {"published",counts.published},{"overwritten",counts.overwritten},{"pool_drops",counts.pool_drops},
         {"consumer_skips",counts.consumer_skips},{"preview_draws",draws},{"dry_commands",dry_commands.load()},
         {"gameplay_commands",gameplay_commands.load()},
+        {"diagnostic_images_saved",diagnostic_saved},
         {"stop_reason",console_stop_requested?"console_stop":clock.now_ns()>=end?"duration":"preview_or_fault"},
         {"revocations",revoke.load()},{"relative_stale_drops",lag_drops},
         {"capture_interval_ms",distribution(intervals)},{"host_residency_ms",distribution(residency)},
@@ -521,7 +570,7 @@ void run_auto_start(const std::string& config_path,const std::string& capability
                     double duration_s,bool no_preview) {
     run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path);
 }
-void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview) {
-    run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path,true);
+void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview,bool keep_diagnostic_anomalies) {
+    run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path,true,keep_diagnostic_anomalies);
 }
 }

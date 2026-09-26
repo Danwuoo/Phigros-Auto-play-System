@@ -388,6 +388,11 @@ TEST(GameOwner, BoundedLatePredictionRecoversNowButOldEvidenceAndExecutedDownCan
     auto s=snapshot(1,0);s.targets={target(1,0,-41'000'000)};owner.accept(s);EXPECT_TRUE(owner.poll().empty());
     clock.set(100'000'000);s=snapshot(2,0);s.targets={target(2,0,100'000'000)};owner.accept(s);
     EXPECT_TRUE(owner.poll().empty());EXPECT_TRUE(touch.contacts().empty());
+    FakeClock lead_clock;FakeTouchBackend lead_touch(lead_clock);GamePlanOwner lead_owner(lead_clock,lead_touch,2,{1,35'000'000,30'000'000});
+    s=snapshot(1,0);s.targets={target(1,0,-30'000'000)};lead_owner.accept(s);
+    const auto plans=lead_owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);
+    ASSERT_TRUE(plans.front().predicted_down_ns);EXPECT_EQ(*plans.front().predicted_down_ns,-65'000'000);
+    ASSERT_EQ(lead_owner.poll().size(),1);lead_owner.stop();EXPECT_TRUE(lead_touch.contacts().empty());
 }
 TEST(GameRuntime, ActualCaptureOptionsUseEffectiveProfileGuard) {
     RuntimeConfig c; c.width=1280; c.height=720; c.source_rotation=1;

@@ -18,7 +18,9 @@ decision schema 2 明列 Note anchor 語義（Tap／Flick 芯中心、Hold leadi
 
 少量候選漏辨的容忍仍受像素證據期限約束：Tap／Drag 40 ms、Hold 60 ms、Flick 75 ms；超過時取消個別意圖，UNKNOWN UI／source 失效則立即取消全部。不由 tombstone 重啟已完成意圖。離線分析另保留最多 512 個近期觀測身分，按是否形成近線預測、計畫接受及實際 down 列結果；像素身分可能碎裂，這些數量不能當作真實譜面個數或逐 Note 判定。
 
-planner version 4 允許可靠預測的校準後 due 已過不超過 60 ms 時，將尚未執行的 down 改為立即排程；原 100 ms 證據與 UI gate 仍必要，已執行 down 不重播。`ContactPlan.predicted_down_ns` 保存原始預測下壓期限，scheduler 只依 `steps[].due_ns` 執行。分析分開原預測期限的晚到量、實际排程晚到量與刻意 clamp 次數；舊 log 缺預測下壓期限列 unknown，不將立即补接解釋成新計時性能改善。Drag 名義接觸 90 ms，實际接觸亦可能因證據／gate／漏辨撤銷提前結束。
+planner version 5 以預估 crossing 到現在不超過 40 ms 為晚預測補接下限，與校準提前量分開；尚未執行的 down 可改為立即排程。原 100 ms 證據與 UI gate 仍必要，已執行 down 不重播。`ContactPlan.predicted_down_ns` 保存原始預測下壓期限，scheduler 只依 `steps[].due_ns` 執行。分析分開原預測期限的晚到量、實际排程晚到量與刻意 clamp 次數；舊 log 缺預測下壓期限列 unknown，不將立即补接解釋成新計時性能改善。Drag 名義接觸 90 ms，實际接觸亦可能因證據／gate／漏辨撤銷提前結束。
+
+assist 的可選 `--keep-diagnostic-anomalies` 僅保留最多兩張與決策配對的原始 frame（近線窄 Hold 對、近線 history／association／fit 失敗）。兩個固定 slot 各只寫一次，copy 在 decision 發布後產生，不佔 capture pool lease；input owner 停止並釋放後才 PNG 編碼／hash，記來源 frame 與保存結果。這些副本與檔案不回饋遊玩；預設不保留任何 frame。開啟診斷 copy 的 run 不作為無診斷的性能驗收。
 
 action owner 以 QPC deadline 計算相對等待時間，用 Win32 高解析度 waitable timer 與 auto-reset wake event 等待；最新決策、撤銷或停止可立即喚醒，無跨時域絕對定時。效能需看各 run 實測分布。Console Ctrl-C／Break 只設定停止旗標，由 supervisor 通知 owner 釋放接觸，不在 OS handler 中呼叫 RPC。
 

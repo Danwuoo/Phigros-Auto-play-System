@@ -625,7 +625,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
                t.uncertainty_ns<=options_.uncertainty_ns&&
                t.hit.x>=0&&t.hit.x<s.context.width&&t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height) {
                 const auto due=*t.crossing_ns-options_.lead_ns;
-                if(due-clock_.now_ns()>=-60'000'000&&due-clock_.now_ns()<=60'000'000) {
+                if(*t.crossing_ns-clock_.now_ns()>=-40'000'000&&due-clock_.now_ns()<=60'000'000) {
                     const auto down=std::max(clock_.now_ns(),due-(id.kind==NoteKind::drag?15'000'000:0));
                     plan.predicted_down_ns=due-(id.kind==NoteKind::drag?15'000'000:0);
                     const auto shift=down-plan.steps.front().due_ns;
@@ -666,7 +666,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         const auto predicted_due=*t.crossing_ns-options_.lead_ns;
         const auto now=clock_.now_ns();
         const auto remaining=predicted_due-now;
-        if(remaining< -60'000'000||remaining>60'000'000) continue;
+        if(*t.crossing_ns-now< -40'000'000||remaining>60'000'000) continue;
         // Late but bounded live evidence may still be recoverable. Dispatch
         // immediately; retain the original prediction separately in the journal.
         const auto due=std::max(predicted_due,now+(t.note.kind==NoteKind::drag?15'000'000:0));

@@ -1,6 +1,6 @@
 # 遊戲 runtime 開發與實測紀錄（2026-09-27）
 
-狀態：第一批 runtime／scheduler、遊戲 observer 與自動 PLAY 已接入；後續 G2 assist 有真實命中，四類完整試驗最高分結算 Perfect 317／Good 6／Bad 0／Miss 70。G1 全項、G3 所需能力與 HD／IN AP 尚未驗收。下列每批的版本、故障與結果分開保留，不以新修正回填舊 run。
+狀態：第一批 runtime／scheduler、遊戲 observer 與自動 PLAY 已接入；後續 G2 assist 有真實命中，四類完整試驗最高分結算 Perfect 335／Good 6／Bad 0／Miss 52。G1 全項、G3 所需能力與 HD／IN AP 尚未驗收。下列每批的版本、故障與結果分開保留，不以新修正回填舊 run。
 
 ## 規劃與工作區
 
@@ -162,4 +162,16 @@ planner version 4 將接受下限從校準後 due 已過 20 ms 改為不超過 6
 
 `ContactPlan` 附加可選 `predicted_down_ns`（host QPC），只供診斷，不替代 scheduler 的步驟期限。初始／真正使用的新 pending 預測保存原下壓期限；active 已下壓時保留。計畫 journal 同步輸出，C++ 分開 real schedule lateness、predicted deadline lateness、intentionally clamped downs 與缺歷史欄位的 unknown。補接當下約 1 ms 的 schedule lateness 不能掩蓋原預測晚到 31 ms；短回歸明確核對兩者。
 
-build v19 的 `ctest-assist-v19.log` 70／70 通過，包含四類有界晚預測立即 down、原預測期限保存、超限／來源過期拒絕、active down 不重播及兩組晚到量分開核對。此版本先用 20 ms profile 開完整實戰，結果尚待結算。
+build v19 的 `ctest-assist-v19.log` 70／70 通過，包含四類有界晚預測立即 down、原預測期限保存、超限／來源過期拒絕、active down 不重播及兩組晚到量分開核對。
+
+run `cpp-observe-17904488972403215`，20 ms、185 秒 STOPPED，9,535 消費 frames、1,383 真實命令。結算 759,695 分、Perfect 315／Good 16／Bad 0／Miss 62、max combo 57、accuracy 82.80%、Early 0／Late 16，未 AP。一次 1 秒額外 live 診斷 stream，不能宣稱受控性能比較。raw SHA-256 `00ee8b8bc8dbde05099afc0258ebfe47d4e596e7742814a78e8ae0388e1c03b8`；down Tap 138／Hold 96／Drag 123／Flick 6，刻意 clamp 103 次、預測期限 unknown 0；5 contact conflict、1 gate expiry。`assist-all-v19-analysis.json`、result PNG／manual JSON 均保存。
+
+## 補接時限與校準量分離（build v20）
+
+planner version 5 改以 estimated crossing 已過不超過 40 ms 為下限，校準後 future due 仍不超過 60 ms；不讓增加 lead 隱含縮短補接窗口。原始 predicted down 仍保存，clamp 後立即觸控不重播。新增 35 ms lead／crossing 已過 30 ms 的回歸：原預測 down = −65 ms，實际排程 0，active／停止責任維持。`ctest-assist-v20.log` 70／70 通過。
+
+run `cpp-observe-17904493232314195`，35 ms、185 秒 STOPPED、10,052 消費 frames、1,464 真實命令。結算 789,084 分、Perfect 335／Good 6／Bad 0／Miss 52、max combo 51、accuracy 86.23%、Early 2／Late 4；未 AP。沒有中途第二 stream。`assist-lead35-v20-analysis.json` raw SHA-256 `0f015158705cd140469e882ed15c73420c458bac00f661e2f23e943f8e651cef`，down Tap 139／Hold 89／Drag 124／Flick 6、刻意 clamp 127／unknown 0，2 contact conflict、1 gate expiry。結果 PNG／manual JSON 保存。
+
+後續可選 `--keep-diagnostic-anomalies` 在同一即時 frame 的近線窄 Hold 對或近線 history／association／fit 失敗時，各只保留第一張，最多兩張。以固定兩槽副本保存，輸入停止／釋放後才編碼；預設 none，不讀檔案回饋 Note 操作。共用既有 WIC PNG writer 到 core（與讀取 helper 相同模組），不從 runtime 反向依賴 bench。這是為精確對上 raw 決策而保留的有限診斷，不擴大為長期錄影或 frame 佇列。
+
+build v21 保留 Windows `near` 巨集名稱衝突的編譯失敗；改用 `near_line` 後 build v22 成功，70／70 短回歸通過。`fake-observe-v22.json` 的 fake run 正常 STOPPED、input_created=false、diagnostic_images_saved=0，目錄只有 manifest／events／summary；非 assist 使用診斷旗標明確拒絕（`diagnostic-invalid-mode-v22.log`）。observer 8／planner 5 的實際識別／遊玩政策保留，另開 35 ms 有限診斷 run，PNG 留待輸入停止後核對。

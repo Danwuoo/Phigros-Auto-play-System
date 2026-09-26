@@ -367,6 +367,7 @@ int main(int argc, char** argv) {
     double run_duration_s = 30;
     double run_stale_ms = 100;
     bool no_preview = false;
+    bool keep_diagnostic_anomalies = false;
     auto* run_cmd = app.add_subcommand("run", "Pixels-only observe, automatic PLAY, or gated real assist");
     run_cmd->add_option("--config", config_path)->required();
     run_cmd->add_option("--mode", run_mode);
@@ -374,6 +375,8 @@ int main(int argc, char** argv) {
     run_cmd->add_option("--duration-s", run_duration_s)->check(CLI::PositiveNumber);
     run_cmd->add_option("--stale-ms", run_stale_ms)->check(CLI::PositiveNumber);
     run_cmd->add_flag("--no-preview", no_preview);
+    run_cmd->add_flag("--keep-diagnostic-anomalies",keep_diagnostic_anomalies,
+        "Assist only: retain at most two anomaly frames; encode after input stops");
     std::string preflight_config, preflight_capability;
     auto* preflight_cmd = app.add_subcommand("game-preflight", "Read-only live geometry and historical touch fingerprint check");
     preflight_cmd->add_option("--config", preflight_config)->required();
@@ -565,11 +568,13 @@ int main(int argc, char** argv) {
                 64, 64, buffer_consumer_delay_ms, false, buffer_log,
                 "buffer_bench_native").dump(2) << '\n';
         else if (*run_cmd) {
+            if(keep_diagnostic_anomalies&&run_mode!="assist")
+                throw std::invalid_argument("diagnostic anomalies require assist mode");
             if (run_mode == "observe") run_observe(config_path, run_duration_s, no_preview, "", run_stale_ms);
             else if (run_mode == "auto-start" && !run_capability.empty())
                 run_auto_start(config_path, run_capability, run_duration_s, no_preview);
             else if(run_mode=="assist"&&!run_capability.empty())
-                run_assist(config_path,run_capability,run_duration_s,no_preview);
+                run_assist(config_path,run_capability,run_duration_s,no_preview,keep_diagnostic_anomalies);
             else throw std::invalid_argument("choose observe, auto-start, or assist; input modes require --capability");
         } else if (*preflight_cmd) {
             std::cout << game_preflight(preflight_config, preflight_capability).dump(2) << '\n';
