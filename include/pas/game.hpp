@@ -31,6 +31,7 @@ struct NoteCandidate {
     std::uint64_t recent_identity = 0; // Current rails validated against a bounded recent anchor.
     bool rails_geometry = false;
     bool head_on_line = false;
+    bool direct_rails_evidence = false;
 };
 struct GameTarget {
     std::uint64_t note_id = 0, revision = 0;

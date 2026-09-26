@@ -203,3 +203,13 @@ build v26–v27 observer 12 將當前完整彩色 Hold 的雙側 rails 支持也
 v27 build／73 項 Release 測試通過。run `cpp-observe-17904522950572565`，35 ms、185 秒 STOPPED，9,926 消費 frames／1,312 真實命令。結算 807,405 分、Perfect 344／Good 6／Bad 0／Miss 43、max combo 42、accuracy 88.52%、Early 0／Late 6；較 v25 退步、未 AP。`assist-lead35-v27-analysis.json` raw SHA-256 `7b713398dd184cd94a0e4c56eecfd91dba779d5324297590ba640d1c56de7523`，結果與兩張同幀診斷圖保留，無中途第二 stream。down Tap 134／Hold 94／Drag 129／Flick 6，4 contact conflict；這些像素身分數量仍非譜面個數。
 
 frame 5995 與 v25 frame 6064 是相同幾何類型的有限診斷，仍輸出兩個窄 Hold（其中寬度約 34 px）而非完整可見 body。只靠舊 anchor 的接近恢復未解決此例，不能因合成測試通過而宣稱已修正；下一步需要從當前外輪廓直接取得完整幾何，保留 v25 最高分基線與全部退步紀錄。
+
+v27 同一份原始碼另經 Debug 與嚴格預設 AddressSanitizer 回歸，各 73／73 通過，CTest 總時間分別 9.50／21.97 秒；日誌 `test-game-debug-v27.log`、`test-game-asan-v27.log` 及 configure／build 紀錄均保留。ASan 使用 BuildTools 14.51 編譯器與 Community 14.50 sanitizer header/runtime；第三方 pinned vcpkg 二進位本身未插樁，不能將通過結果擴稱為其內部驗證，也不代表遊戲辨識或 AP 通過。正式遊玩只使用 Release。
+
+## 當幀外輪廓重建（build v28–v33）
+
+observer 13 從當幀藍色 body 碎片、跨畫面主線及兩側窄白輪廓重建完整幾何，不要求之前曾有完整核心。容量與像素支持規則見架構契約；新的觀測依據 `hold_current_parallel_rails_and_fill` 不冒充近期身分續接。對傾斜的獨立薄 Tap，按相對主線的正常方向厚度保護；已有完整色芯且雙側 rails 驗證成功時保留原候選。新的合成序列涵蓋第一幀即為斜向、灰／藍漸層、被垂直裝飾切開的 Hold，並核對頭／尾、身分與 500 px/s 表觀預測；短 50 px Hold、12 px 邊框閃光、空輪廓及相鄰兩條短 Hold 分開驗證。
+
+v28 的 70／73、v29 的 74／75、v31 的 74／75、v32 的 73／75 失敗紀錄均保留；v30 的診斷 assertion 呼叫錯函式名造成编譯失敗亦保留，未進實戰。修正包含不讓新幾何遮掉已到線身分、不沿與裝飾線相連的輪廓越過 body 填色尾端、完整當前前緣不另做歷史搜尋、逐像素前緣定位以避免 2 px 二次量化的速度偏差，以及保留完整色芯的已知 tail。原幾何／預測數值要求未放寬；舊裝飾線測試的觀測依據容許新增當幀證據，仍驗證完整身分、位置及速度。
+
+v33 Release build／75 項回歸全部通過（CTest 5.42 秒）。有限離線重算 v25 frame 6064 與 v27 frame 5995，均得到一條完整 Hold 與另一獨立 Tap；早先失敗重算檔案保留。v27 重算約為 width 153 px、head y=546、tail y=240，而非兩個窄 Hold。`analyze game-image` 只有單幀、無 input、無撞線預測，不把歷史 PNG 餵給 runtime。忽略的 `hold-rails-diagnostic.cpp` 為自有 C++ 單張 WIC 診斷，包含現行幾何 helper 的離線快照及 probe 輸出；初次 NOMINMAX 建置失敗與修正紀錄亦保留。這些只證實該畫面的幾何，不能替代完整實測或 AP。

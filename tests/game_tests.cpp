@@ -20,6 +20,17 @@ void hud(Frame& f) {
     rect(f,20,20,6,22,{255,255,255}); rect(f,34,20,6,22,{255,255,255});
     for(int i=0;i<6;++i) rect(f,1020+i*24,20,12,20,{255,255,255});
 }
+void oriented_box(Frame& f,Vec2 center,Vec2 u,double width,double height,std::array<std::uint8_t,3> color) {
+    const Vec2 n{-u.y,u.x};
+    const int rx=static_cast<int>(std::ceil((std::abs(u.x)*width+std::abs(n.x)*height)/2))+1,
+              ry=static_cast<int>(std::ceil((std::abs(u.y)*width+std::abs(n.y)*height)/2))+1;
+    for(int y=std::max(0,static_cast<int>(center.y)-ry);y<std::min(f.height,static_cast<int>(center.y)+ry+1);++y)
+        for(int x=std::max(0,static_cast<int>(center.x)-rx);x<std::min(f.width,static_cast<int>(center.x)+rx+1);++x) {
+            const double dx=x-center.x,dy=y-center.y;
+            if(std::abs(dx*u.x+dy*u.y)<=width/2&&std::abs(dx*n.x+dy*n.y)<=height/2)
+                rect(f,x,y,1,1,color);
+        }
+}
 ContactPlan tap(std::uint64_t id,Nanoseconds evidence,Nanoseconds due) {
     return {1,id,1,evidence,due+30'000'000,1,"pixels",
         {{Phase::down,20,30,due},{Phase::up,20,30,due+5'000'000}}};
@@ -229,10 +240,64 @@ TEST(GameObserver, ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsC
         if(!identity) identity=result.targets[0].note_id;
         EXPECT_EQ(result.targets[0].note_id,identity);EXPECT_GT(result.targets[0].note.width,135);
         EXPECT_NEAR(result.targets[0].note.center.y,head-4,3);
-        if(i>=3) EXPECT_TRUE(result.targets[0].note.outline_evidence);
+        if(i>=3) EXPECT_TRUE(result.targets[0].note.outline_evidence||result.targets[0].note.direct_rails_evidence);
     }
     ASSERT_TRUE(result.targets[0].crossing_ns);EXPECT_NEAR(result.targets[0].velocity,500,20);
     EXPECT_LT(result.targets[0].residual,2);
+}
+TEST(GameObserver, CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot result;std::uint64_t id=0;
+    const Vec2 u{.9987523389,-.04993761694},n{-u.y,u.x};
+    for(int i=0;i<5;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);
+        oriented_box(f,{640,600},u,1300,2,{255,255,255});
+        const Vec2 head{530+n.x*i*10,510+n.y*i*10};
+        const Vec2 body{head.x-n.x*150,head.y-n.y*150};
+        oriented_box(f,body,u,146,300,{135,145,150});
+        oriented_box(f,{head.x-n.x*35,head.y-n.y*35},u,146,70,{140,210,240});
+        for(const int side:{-1,1}) oriented_box(f,
+            {body.x+side*u.x*76,body.y+side*u.y*76},u,2,300,{245,245,245});
+        rect(f,594,80,4,560,{255,255,255}); // Internal decoration extends past both ends.
+        oriented_box(f,{960,540},u,140,8,{40,190,255});
+        clock.set(f.capture_complete_ns);result=observer.process(f);
+        ASSERT_EQ(result.targets.size(),2)<<"frame "<<i<<" "<<decision_json(result).dump();
+        const auto held=std::find_if(result.targets.begin(),result.targets.end(),[](const auto& t){return t.note.kind==NoteKind::hold;});
+        ASSERT_NE(held,result.targets.end());EXPECT_NEAR(held->note.width,152,5);
+        EXPECT_NEAR(held->note.center.x,head.x,4);EXPECT_NEAR(held->note.center.y,head.y-3,4);
+        ASSERT_TRUE(held->note.tail);EXPECT_NEAR(held->note.tail->y,head.y-n.y*300,5);
+        if(!id) id=held->note_id;EXPECT_EQ(held->note_id,id);
+        if(i==0) EXPECT_TRUE(held->note.direct_rails_evidence);
+    }
+    const auto held=std::find_if(result.targets.begin(),result.targets.end(),[](const auto& t){return t.note.kind==NoteKind::hold;});
+    ASSERT_TRUE(held->crossing_ns);EXPECT_NEAR(held->velocity,500,20);
+}
+TEST(GameObserver, ShortWideCurrentRailsNeedDepthAndCannotJoinAdjacentBodiesOrEmptyBorders) {
+    FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
+    rect(f,0,575,1280,2,{255,255,255});
+    // A 50 px Hold is too thick for a Tap, but shorter than the old aspect gate.
+    rect(f,400,450,2,50,{245,245,245});rect(f,544,450,2,50,{245,245,245});
+    rect(f,403,450,138,50,{40,190,255});
+    // A thin ribbon with short white edge flashes must stay a Tap.
+    rect(f,780,490,2,12,{245,245,245});rect(f,924,490,2,12,{245,245,245});
+    rect(f,783,492,138,8,{40,190,255});
+    // Empty long borders and a decoration do not make an unseen body.
+    rect(f,100,200,2,300,{245,245,245});rect(f,244,200,2,300,{245,245,245});
+    rect(f,320,100,2,550,{245,245,245});
+    clock.set(1);const auto s=observer.process(f);ASSERT_EQ(s.targets.size(),2);
+    const auto held=std::find_if(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.kind==NoteKind::hold;});
+    ASSERT_NE(held,s.targets.end());EXPECT_TRUE(held->note.direct_rails_evidence);
+    EXPECT_NEAR(held->note.center.y,496,3);EXPECT_NEAR(held->note.width,144,3);
+    EXPECT_EQ(std::count_if(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.kind==NoteKind::tap;}),1);
+    auto adjacent=image(2,200'000'000);hud(adjacent);rect(adjacent,0,575,1280,2,{255,255,255});
+    for(const int left:{600,740}) {
+        rect(adjacent,left,350,2,50,{245,245,245});rect(adjacent,left+80,350,2,50,{245,245,245});
+        rect(adjacent,left+3,350,74,50,{40,190,255});
+    }
+    clock.set(adjacent.capture_complete_ns);const auto separate=observer.process(adjacent);
+    ASSERT_EQ(separate.targets.size(),2);
+    EXPECT_TRUE(std::all_of(separate.targets.begin(),separate.targets.end(),[](const auto& t) {
+        return t.note.kind==NoteKind::hold&&t.note.width<90&&t.note.direct_rails_evidence;
+    }));
 }
 TEST(GameObserver, ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;int frame=0;

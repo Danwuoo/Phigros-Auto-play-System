@@ -76,17 +76,30 @@ bool same_geometry(const SceneContext& a,const SceneContext& b) {
 }
 struct HoldRails {double depth=0;std::optional<Vec2> tail;};
 std::optional<HoldRails> visible_hold_rails(const Frame& f,const NoteCandidate& note,double minimum_depth,
-                                          int maximum_gap=12) {
+                                          int maximum_gap=12,int lateral_radius=16,bool bound_by_fill=false) {
     const Vec2 normal{-note.tangent.y,note.tangent.x};
     std::array<int,2> extent{};
     for(int side=0;side<2;++side) {
         int last=-1,gaps=0;
         for(int depth=0;depth<std::hypot(f.width,f.height);depth+=2) {
+            if(bound_by_fill&&depth>=minimum_depth) {
+                int support=0;
+                for(int k=-3;k<=3;++k) {
+                    const int x=static_cast<int>(std::lround(note.center.x-normal.x*depth+k*note.width*.115*note.tangent.x)),
+                              y=static_cast<int>(std::lround(note.center.y-normal.y*depth+k*note.width*.115*note.tangent.y));
+                    if(x<0||x>=f.width||y<f.height*.10||y>=f.height) continue;
+                    const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+                    if(p[2]>110&&p[1]>100&&p[2]>p[0]+5) ++support;
+                }
+                // A rail crossing an unrelated white decoration must end
+                // with the body fill, rather than follow that decoration.
+                if(support<5) break;
+            }
             const double cx=note.center.x-normal.x*depth+(side?1:-1)*note.width*.5*note.tangent.x;
             const double cy=note.center.y-normal.y*depth+(side?1:-1)*note.width*.5*note.tangent.y;
             if(cy<f.height*.10||cy>=f.height||cx<0||cx>=f.width) break;
             bool found=false;
-            for(int offset=-16;offset<=16&&!found;offset+=2) {
+            for(int offset=-lateral_radius;offset<=lateral_radius&&!found;offset+=2) {
                 const int x=static_cast<int>(std::lround(cx+offset*note.tangent.x)),
                           y=static_cast<int>(std::lround(cy+offset*note.tangent.y));
                 if(x<0||y<0||x>=f.width||y>=f.height) continue;
@@ -130,6 +143,64 @@ bool hold_fill_at_front(const Frame& f,const NoteCandidate& note) {
         if(p[2]>145&&p[1]>130&&p[2]>p[0]+8) ++support;
     }
     return support>=3;
+}
+// Reconstruct a body from this frame, before tracking. The seed may be only
+// one saturated fragment; neither its width nor a past body defines the rails.
+std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& seed,
+                                              const LineCandidate& line) {
+    const Vec2 u=line.tangent,n{-u.y,u.x};
+    const Vec2 head{(seed.x0+seed.x1)/2.0,seed.y1-2.0};
+    const auto pixel=[&](Vec2 p)->const std::uint8_t* {
+        const int x=static_cast<int>(std::lround(p.x)),y=static_cast<int>(std::lround(p.y));
+        if(x<0||x>=f.width||y<f.height*.10||y>=f.height) return nullptr;
+        return f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+    };
+    const auto fill=[&](Vec2 center,double width,int depth) {
+        int support=0;
+        for(int k=-4;k<=4;++k) {
+            const double along=k*width*.09;
+            const auto* p=pixel({center.x-n.x*depth+u.x*along,center.y-n.y*depth+u.y*along});
+            if(p&&p[2]>145&&p[1]>130&&p[2]>p[0]+8) ++support;
+        }
+        return support>=7;
+    };
+    std::optional<NoteCandidate> best;
+    // Two bounded cross sections cover both a short head and a longer body.
+    for(const int behind:{24,64}) {
+        std::vector<double> bands;bands.reserve(16);
+        std::optional<int> begin;
+        const int radius=static_cast<int>(f.width*.18);
+        for(int offset=-radius;offset<=radius+1;++offset) {
+            const auto* p=pixel({head.x-n.x*behind+u.x*offset,head.y-n.y*behind+u.y*offset});
+            const bool white=offset<=radius&&p&&std::min({p[0],p[1],p[2]})>170&&
+                std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<30;
+            if(white) {if(!begin) begin=offset;}
+            else if(begin) {
+                if(offset-*begin<=12&&bands.size()<16) bands.push_back((*begin+offset-1)/2.0);
+                begin.reset();
+            }
+        }
+        for(std::size_t a=0;a<bands.size();++a) for(std::size_t b=a+1;b<bands.size();++b) {
+            const double width=bands[b]-bands[a],middle=(bands[a]+bands[b])/2;
+            if(width<f.width*.04||width>f.width*.20||bands[a]>0||bands[b]<0||
+               (best&&width<best->width-4)) continue;
+            NoteCandidate candidate;candidate.kind=NoteKind::hold;candidate.width=width;
+            candidate.tangent=u;candidate.confidence=.7;candidate.direct_rails_evidence=true;
+            const Vec2 base{head.x+u.x*middle,head.y+u.y*middle};
+            for(int forward=96;forward>=-32;--forward) {
+                const Vec2 probe{base.x+n.x*forward,base.y+n.y*forward};
+                if(!fill(probe,width,4)||!fill(probe,width,24)) continue;
+                candidate.center={probe.x-n.x*6,probe.y-n.y*6};
+                const auto rails=visible_hold_rails(f,candidate,std::max(24.0,width*.25),12,4,true);
+                if(!rails) continue;
+                candidate.tail=rails->tail;candidate.height=rails->depth;candidate.rails_geometry=true;
+                candidate.head_on_line=std::abs(normal_distance(candidate.center,line))<=8;
+                if(!best||width>best->width||candidate.center.y>best->center.y) best=candidate;
+                break;
+            }
+        }
+    }
+    return best;
 }
 std::optional<LineCandidate> spanning_line(const Frame& f) {
     struct Column {int x; std::vector<double> y;};
@@ -411,6 +482,48 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     }
     const auto now=f.capture_complete_ns;
     std::erase_if(tracks_,[&](const History& t){return now-t.observed>=100'000'000;});
+    if(f.source_valid&&out.capacity_valid) {
+        const LineCandidate* main=nullptr;
+        for(const auto& line:out.lines) if(line.confidence>=.8&&line.length>=f.width*.8&&
+            (!main||line.confidence>main->confidence)) main=&line;
+        std::vector<NoteCandidate> bodies;bodies.reserve(128);
+        std::size_t seeds=0;
+        if(main) for(const auto& c:all) {
+            const double w=c.x1-c.x0+2.0,h=c.y1-c.y0+2.0;
+            if(c.color!=1||w<16||w>f.width*.20||h<18||h>f.height*.75||
+               c.y0<f.height*.10||c.count*4<w*h*.13) continue;
+            if(++seeds>128) {out.capacity_valid=false;break;}
+            const auto body=current_hold_body(f,c,*main);if(!body) continue;
+            if(std::any_of(bodies.begin(),bodies.end(),[&](const auto& other) {
+                return distance(body->center,other.center)<8&&std::abs(body->width-other.width)<8;
+            })) continue;
+            bodies.push_back(*body);
+        }
+        for(const auto& body:bodies) {
+            // Preserve an already complete color head with its validated
+            // rails. Reconstruction supplies missing geometry, rather than
+            // truncating that head's tail to its saturated color patch.
+            if(std::any_of(notes.begin(),notes.end(),[&](const auto& current) {
+                return current.kind==NoteKind::hold&&current.rails_geometry&&
+                    std::abs(current.width-body.width)<20&&distance(current.center,body.center)<8;
+            })) continue;
+            std::erase_if(notes,[&](const NoteCandidate& incoming) {
+                if(incoming.kind!=NoteKind::hold&&incoming.kind!=NoteKind::tap) return false;
+                // A tilted thin ribbon has a taller bounding box. Preserve
+                // its thickness along the line normal, not screen Y alone.
+                if(incoming.kind==NoteKind::tap&&
+                   incoming.height<12+std::abs(body.tangent.y)*incoming.width) return false;
+                const Vec2 delta{incoming.center.x-body.center.x,incoming.center.y-body.center.y};
+                const double along=delta.x*body.tangent.x+delta.y*body.tangent.y,
+                             across=-delta.x*body.tangent.y+delta.y*body.tangent.x;
+                return std::abs(along)+incoming.width*.5<=body.width*.5+16&&
+                    across>=-body.height-8&&across<=12;
+            });
+            if(notes.size()==128) {out.capacity_valid=false;break;}
+            notes.push_back(body);
+        }
+        if(!out.capacity_valid) {out.playing_gate=false;out.ui=GameUi::unknown;}
+    }
     // A judged Hold can lose or fragment its saturated core. Same-frame
     // parallel rails take precedence over those enclosed fragments; otherwise
     // a partial core moves the identity away from the still-visible head.
@@ -428,6 +541,13 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         if(!line) continue;
         const bool approaching=recent_rails&&!note.head_on_line&&
             std::abs(normal_distance(note.center,*line))>8;
+        // A complete current front supplies its own position. Re-fitting a
+        // past front and quantizing a second search would add artificial
+        // motion jitter. Already-held heads still use the on-line path.
+        if(approaching&&std::any_of(notes.begin(),notes.end(),[&](const auto& current) {
+            return current.direct_rails_evidence&&distance(current.center,note.center)<f.width*.08&&
+                std::abs(current.width-note.width)<20;
+        })) continue;
         std::optional<HoldRails> rails;
         if(approaching) {
             // Fit only recent, rail-validated heads. A decorative line can
@@ -466,7 +586,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             if(!rails) continue;
             note.head_on_line=true;
         }
-        note.outline_evidence=true;note.rails_geometry=true;note.confidence=.7;
+        note.outline_evidence=true;note.rails_geometry=true;note.direct_rails_evidence=false;note.confidence=.7;
         // The hit effect briefly covers a rail after it has been confirmed.
         // Bridge at most 32 px only with current blue/gray fill at the head;
         // a new body separated from the line cannot refresh this identity.
@@ -812,7 +932,8 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"uncertainty_ns",t.uncertainty_ns},{"hit_x",t.hit.x},{"hit_y",t.hit.y},
         {"tail_crossing_ns",t.tail_crossing_ns?json(*t.tail_crossing_ns):json(nullptr)},
         {"tail_x",t.note.tail?json(t.note.tail->x):json(nullptr)},{"tail_y",t.note.tail?json(t.note.tail->y):json(nullptr)},
-        {"observation_basis",t.note.outline_evidence?"hold_parallel_rails_and_recent_identity":"color_core"},
+        {"observation_basis",t.note.direct_rails_evidence?"hold_current_parallel_rails_and_fill":
+            t.note.outline_evidence?"hold_parallel_rails_and_recent_identity":"color_core"},
         {"relative_distance_px",t.distance},{"relative_velocity_px_s",t.velocity},
         {"residual_px",t.residual},{"samples",t.samples},{"reason",t.reason}});
     return {{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
