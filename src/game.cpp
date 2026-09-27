@@ -822,13 +822,22 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         auto note=recent_rails?*track.rail_anchor:track.appearance;
         if(note.width<f.width*.04) continue;
         const LineCandidate* outline_line=nullptr;
-        if(recent_rails&&note.head_on_line) for(const auto& current:out.lines) {
+        if(recent_rails) for(const auto& current:out.lines) {
             if(!current.association_valid||std::abs(current.tangent.x*note.tangent.x+
-               current.tangent.y*note.tangent.y)<.95)continue;
+               current.tangent.y*note.tangent.y)<.95||
+               (!note.head_on_line&&std::abs(normal_distance(note.center,current))>48))continue;
             const bool prior_line=!track.points.empty()&&track.points.back().line.track_id==current.track_id;
             if(!outline_line||prior_line)outline_line=&current;
             if(prior_line)break;
         }
+        if(outline_line&&!note.head_on_line&&std::any_of(notes.begin(),notes.end(),[&](const auto& front){
+            if(front.kind!=NoteKind::hold||!front.rails_geometry||front.recent_identity||
+               std::abs(front.width-note.width)>=20) return false;
+            const double along=(front.center.x-note.center.x)*outline_line->tangent.x+
+                (front.center.y-note.center.y)*outline_line->tangent.y;
+            const double current_distance=normal_distance(front.center,*outline_line);
+            return std::abs(along)<=20&&current_distance>=-48&&current_distance<=8;
+        }))outline_line=nullptr; // preserve a complete currently measured front
         if(outline_line) if(auto outer=observe_held_outline(f,note,*outline_line)) {
             // A current physical pair is evidence for exactly one identity.
             // Otherwise several old anchors can each refresh themselves from

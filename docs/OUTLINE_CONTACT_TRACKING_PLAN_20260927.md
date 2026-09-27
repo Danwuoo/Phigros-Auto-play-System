@@ -28,7 +28,15 @@ conflict事件顯示同一x約639／y576位置有五個不同Hold intent持續�
 - 新增 `game_contact_cancelled`、`game_contact_up`、`game_hold_contact_reassociated` 診斷，分析另計尾端確認與釋放原因；均只表示本機觀测／執行，不代表遊戲判定。
 - 原始失敗、建置與回歸保留 `measurements/outline-contact-20260927/`。合成回歸新增灰色雙框／單側負例、短尾／內部封口負例、平移旋轉、多線重排、同指 Drag 跟隨、Hold 換候選不換手指與完成不復活；未將舊圖 proposed mask 當真值。
 
-## 本輪停止點與確定缺口
+## 歷史停止點與後續實戰
+
+### 自主迭代補充：第五輪與接線過渡（2026-09-27）
+
+第五輪 source `5a8fe34`／observer30／planner12／diagnostics4，run `cpp-observe-17905069580837787`，185秒 STOPPED／exit0。Computer Use 結算353 Perfect／4 Good／0 Bad／36 Miss、825,038分、max combo42、accuracy90.48%、Late4；未AP。contact conflict0、Hold Down112、重關聯33、tail確認0；Hold missing取消98／geometry8／ambiguous5。raw SHA256 `7634176a0cebe773e0a3b1edfd14ca1ad9c973fb2908ab3e934c6cd61ec372cc`。本輪另開有界dataset：18 clips／136 native ROI、首2048候選bank、无shadow／模型、停止後WIC編碼，不能把分數差全歸planner12。copy n10614 p50／p95／p99／max=.22465／.3175／.409387／1.5115ms；辨識4.61515／6.65461／7.960794／19.6307ms。playing capture interval n9440=16.70585／32.563705／44.882484／102.3034ms，source expiry2、UI lost1；global capture max322.3705ms含非playing區域。停止後結算PNG及讀值另存raw root。
+
+frame725–728 的另一個提前Up可重現：Hold99／intent13已Down，舊前端受特效影響從542回退到524／527／549px，仍被當approaching；728多描述競爭令samples0，取消contact。ROI中的白外框仍接到線，後續gray body存在。observer31允許90ms內最近成對rails、前端距當前線≤48px但尚未head_on_line的anchor搜尋當前外框；首次接線兩側必須在距線2–4px都有實際ridge，純投影不供證據。已有完整當前前端則保留其幾何，避免拉到線上破壞速度及讓內框寬度變成外框anchor。既有held路徑與所有期限不變。
+
+最初完整Release156項有7失敗，收緊首次接線後剩1（完整前端被覆寫、偏寬anchor容許錯pair）；保留完整當前前端後156／156通過。保存frame727 ROI以C++ WIC probe核對：當時anchor x353.089566／y548.9625／width139.04745／非online，当前量測x350.09／y576／width152／height240；tail未知，crop以上不作真值。新增pixels＋fake-clock整合回歸確認同contact只有一Down、gray持續8幀、真正missing按60ms釋放；分離前端與遠於48px anchor負例仍拒絕。最終Release／Debug／無suppressions ASan各156／156通過，11.35／29.78／67.73秒；binary 58bafae6f5917a4239cdf4f4f6249ba3b8b4f8665fafca2ae89952a238bac505，實戰待續。
 
 第一輪已完成185秒、STOPPED／exit0／playing_seen=true，run `cpp-observe-17905001386033080`；9293消費frames／999 gameplay commands。使用者隨後停止測試，第二輪未開始，当前沒有pas程序。結算擷取命令在建立capture前因無效options退出，沒有結算PNG／人工判定；不能填分數、Miss或宣稱改善。原始資料與C++分析保留於 `measurements/game-semantics-20260927/live-two/` 及原run。
 

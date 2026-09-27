@@ -1,6 +1,6 @@
 # Phigros Auto-play System
 
-最新狀態：使用者已恢復自主開發與遊戲操作授權。observer30 已實作當前灰階雙側外框、短尾端、Hold 接觸重關聯、Drag 同指 Move 與獨立判定線身分；目前最好 HD 結算358 Perfect／4 Good／31 Miss、840,560分，仍未AP。planner11實戰暴露無條件別名會取消有效原手指；planner12已改為逐張核對／原支持優先／完成不復活，Release／Debug／ASan各154／154通過，實戰續測。追蹤使用當前局部邊緣搜尋，尚未加入光流或模型。依最新要求，HD 至少同版本連續三次 AP 才進 IN，HD／IN AP 尚未達成。詳見[外框與持續接觸追蹤方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。
+最新狀態：使用者已恢復自主開發與遊戲操作授權。已實作當前灰階雙側外框、短尾端、Hold 接觸重關聯、Drag 同指 Move 與獨立判定線身分；目前最好 HD 結算358 Perfect／4 Good／31 Miss、840,560分，仍未AP。planner12實戰353／4／0／36；observer31補上前端被特效切碎的首次接線過渡，保留完整可見前端，Release／Debug／ASan各156／156通過，實戰續測。追蹤使用當前局部邊緣搜尋，尚未加入光流或模型。依最新要求，HD 至少同版本連續三次 AP 才進 IN，HD／IN AP 尚未達成。詳見[外框與持續接觸追蹤方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。
 
 2026-09-27 使用者補充四／五指與持續接觸語義後，source `59c92bf`／planner9已加入五指profile、實測容量門控、Hold當前尾端過線才正常Up，以及連續Drag區域覆蓋續接。四／五指各30次及五指全部取消30次通過；Release／Debug／嚴格ASan各142／142通過，詳見[動作語義紀錄](docs/GAME_ACTION_SEMANTICS_20260927.md)。舊三輪皆兩指／planner8，結果不能當成新策略驗收；新版本尚未進遊戲。
 
@@ -8,7 +8,7 @@
 
 同版本三輪HD採樣已停止：結算Perfect／Good／Bad／Miss為345／6／0／42、348／3／0／42、336／6／0／51，皆未AP。54clips／408 native ROI／3run、跨run C++QA通過；5張proposed masks、human0、2064對近似候選需覆核，全部development／training_ready=false。採樣完成不代表200–400經核對ROI已達標，詳見資料報告。
 
-**主程式主線：Chapter Legacy → Glaciaxion HD → 首次 All Perfect → IN。** 依使用者 2026-09-26 新方向，直接以遊戲建立觀察、預測、觸控與畫面回饋閉環，不另開大型簡單目標 Fixture 階段；必要的短合成回歸與既有觸控能力核對保留。2026-09-27 已實作 G0 runtime 接線、G1 開發版 observer／預測與 pixels 自動 PLAY，並依新增授權接入 G2 真實 assist。首輪有限 Tap 有可見命中；全曲能力、HD／IN AP 尚未驗收。模組與 G0–G6 完成條件見 [主程式計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)，實作、失敗與實機證據見 [開發紀錄](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
+**主程式主線：Chapter Legacy → Glaciaxion HD → 同版本連續三次 All Perfect → IN。** 依使用者 2026-09-26 新方向，直接以遊戲建立觀察、預測、觸控與畫面回饋閉環，不另開大型簡單目標 Fixture 階段；必要的短合成回歸與既有觸控能力核對保留。2026-09-27 已實作 G0 runtime 接線、G1 開發版 observer／預測與 pixels 自動 PLAY，並依新增授權接入 G2 真實 assist。首輪有限 Tap 有可見命中；全曲能力、HD／IN AP 尚未驗收。模組與 G0–G6 完成條件見 [主程式計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)，實作、失敗與實機證據見 [開發紀錄](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 
 **擷取器本輪已結案：五路徑選型與 gRPC 接收層優化均完成，主用為 gRPC payload fast／256 KiB，正式備用暫缺。** WGC 保留 bench 備援候選、DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 僅診斷。完整終態與驗收界線以[最後驗收與選型](docs/CAPTURE_FINAL_ACCEPTANCE_20260926.md)為準；不再自動續跑原矩陣或長測。
 

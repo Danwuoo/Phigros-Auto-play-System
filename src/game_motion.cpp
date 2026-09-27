@@ -69,7 +69,11 @@ void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContex
     }
 }
 std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandidate& anchor,const LineCandidate& line) {
-    if(!anchor.rails_geometry||!anchor.head_on_line||!line.association_valid||
+    const double anchor_distance=dot(sub(anchor.center,line.center),{-line.tangent.y,line.tangent.x});
+    // A recent approaching front can be clipped by the hit effect before its
+    // descriptor reaches the line. It may search the current attached rails,
+    // but a separated body still fails the same-frame attachment checks.
+    if(!anchor.rails_geometry||(!anchor.head_on_line&&std::abs(anchor_distance)>48)||!line.association_valid||
        anchor.width<f.width*.035||anchor.width>f.width*.22||
        std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
     const Vec2 u=line.tangent,n{-u.y,u.x};
@@ -100,7 +104,7 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
             if(below<2||above>0){valid=false;break;}
         }
         if(valid) {
-            auto note=anchor;note.tangent=u;note.tail=tail;note.height=last;
+            auto note=anchor;note.tangent=u;note.tail=tail;note.height=last;note.head_on_line=true;
             note.center={tail.x+n.x*last,tail.y+n.y*last};
             note.outline_evidence=true;note.direct_rails_evidence=false;return note;
         }
@@ -136,13 +140,18 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
     if(consistent<2)return {};
     for(const double along:{paired.left,paired.right}) {
         bool attached=false;
-        for(const int depth:{6,10,14})for(int offset=-3;offset<=3&&!attached;++offset)
+        // Before the first observed on-line head, distant rails at 10/14px
+        // are insufficient: they would pull a still-visible approaching
+        // front onto the line and corrupt its crossing velocity.
+        const std::array<int,3> depths=anchor.head_on_line?std::array<int,3>{6,10,14}:
+            std::array<int,3>{2,3,4};
+        for(const int depth:depths)for(int offset=-3;offset<=3&&!attached;++offset)
             attached=ridge(f,{projected.x+u.x*(along+offset)-n.x*depth,
                               projected.y+u.y*(along+offset)-n.y*depth},u);
         if(!attached)return {};
     }
     NoteCandidate note=anchor;note.tangent=u;note.center={projected.x+u.x*paired.center,projected.y+u.y*paired.center};
-    note.width=paired.right-paired.left;note.outline_evidence=true;note.direct_rails_evidence=false;note.tail.reset();
+    note.width=paired.right-paired.left;note.head_on_line=true;note.outline_evidence=true;note.direct_rails_evidence=false;note.tail.reset();
     std::array<int,2> ends{};bool clipped=false;
     for(int side=0;side<2;++side) {
         int last=0,gap=0,support=0;

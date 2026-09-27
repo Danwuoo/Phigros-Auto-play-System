@@ -1254,6 +1254,51 @@ TEST(GameObserver, OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFrag
         EXPECT_TRUE(s.targets.front().note.rails_geometry);EXPECT_TRUE(s.targets.front().note.head_on_line);
     }
 }
+TEST(GameMotion, ApproachingAnchorNeedsCurrentRailsAttachedToTheLine) {
+    NoteCandidate anchor;anchor.kind=NoteKind::hold;anchor.center={500,548};anchor.tangent={1,0};
+    anchor.width=136;anchor.height=300;anchor.rails_geometry=true;anchor.head_on_line=false;
+    LineCandidate line{{640,576},{1,0},1280,2,.9};
+    auto f=image(1,0);
+    rect(f,423,200,3,374,{170,170,170});rect(f,575,200,3,374,{170,170,170});
+    const auto supported=observe_held_outline(f,anchor,line);ASSERT_TRUE(supported);
+    EXPECT_TRUE(supported->head_on_line);EXPECT_NEAR(supported->center.y,576,1);
+    EXPECT_NEAR(supported->width,152,4);EXPECT_FALSE(supported->tail);
+    // A real approaching body with its leading edge still 22px above the
+    // line must not inherit the projected head or keep a contact alive.
+    rect(f,423,554,3,20,{0,0,0});rect(f,575,554,3,20,{0,0,0});
+    EXPECT_FALSE(observe_held_outline(f,anchor,line));
+    rect(f,423,554,3,20,{170,170,170});rect(f,575,554,3,20,{170,170,170});
+    anchor.center.y=527;EXPECT_FALSE(observe_held_outline(f,anchor,line));
+}
+TEST(GameObserver, CurrentAttachedGrayRailsRetainFrontClippedBeforeOnlineClassification) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t identity=0;
+    for(int i=0;i<4;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=506+i*16;
+        rect(f,432,head-240,136,240,{40,190,255});
+        rect(f,423,head-240,3,240,{245,245,245});rect(f,575,head-240,3,240,{245,245,245});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1);identity=s.targets.front().note_id;
+        EXPECT_FALSE(s.targets.front().note.head_on_line);
+        owner.accept(s);owner.poll();
+    }
+    for(int i=0;i<8;++i) {
+        auto f=image(i+5,(i+4)*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,426,200,149,375,{90,100,110});
+        rect(f,423,200,3,375,{170,170,170});rect(f,575,200,3,375,{170,170,170});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1)<<i;EXPECT_EQ(s.targets.front().note_id,identity);
+        EXPECT_TRUE(s.targets.front().note.head_on_line);EXPECT_GT(s.targets.front().samples,0);
+        EXPECT_EQ(s.targets.front().evidence_ns,f.capture_complete_ns);
+        owner.accept(s);owner.poll();EXPECT_EQ(touch.contacts().size(),1)<<i;
+    }
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),1);
+    auto missing=image(13,280'000'000);hud(missing);rect(missing,0,575,1280,2,{255,255,255});
+    clock.set(missing.capture_complete_ns);owner.accept(observer.process(missing));owner.poll();
+    EXPECT_TRUE(touch.contacts().empty());owner.stop();
+}
 TEST(GameMotion, ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash) {
     NoteCandidate anchor;anchor.kind=NoteKind::hold;anchor.center={500,560};anchor.tangent={1,0};
     anchor.width=120;anchor.height=200;anchor.rails_geometry=true;anchor.head_on_line=true;
