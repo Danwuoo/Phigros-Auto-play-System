@@ -259,7 +259,7 @@ namespace {
 DecisionSnapshot diagnostic_hold_scene(std::uint64_t frame,Nanoseconds time) {
     auto s=snapshot(frame,time);s.lines.push_back({{640,575},{1,0},1280,2,.85});
     auto h=target(17,time,time+60'000'000);h.note.kind=NoteKind::hold;
-    h.note.center={850,530};h.note.width=144;h.note.height=300;h.note.rails_geometry=true;
+    h.note.center={850,575};h.note.width=144;h.note.height=300;h.note.rails_geometry=true;h.note.head_on_line=true;
     s.targets.push_back(h);return s;
 }
 }
@@ -279,7 +279,7 @@ TEST(GameDiagnostics, HoldDiagnosticKeepsVisibleNewIdentityButRejectsNarrowFragm
     HoldVisibilityDiagnostic diagnostic;auto s=diagnostic_hold_scene(1,1);
     EXPECT_FALSE(diagnostic.observe(s));
     s.context.frame=2;s.context.capture_ns=20'000'001;s.targets[0].note_id=18;
-    s.targets[0].note.center.y=550;EXPECT_FALSE(diagnostic.observe(s));
+    s.targets[0].note.center.y=574;EXPECT_FALSE(diagnostic.observe(s));
     s.context.frame=3;s.context.capture_ns=40'000'001;s.targets[0].note.width=50;
     const auto loss=diagnostic.observe(s);ASSERT_TRUE(loss);EXPECT_EQ(loss->note_id,18);
 }
@@ -309,6 +309,13 @@ TEST(GameObserver, NestedRibbonsMergeButEqualWidthOverlapsRemainDistinct) {
     EXPECT_EQ(std::count_if(s.targets.begin(),s.targets.end(),[](const GameTarget& t) {
         return t.note.center.x<500;
     }),1);
+}
+TEST(GameDiagnostics, ApproachingBodyCannotConsumeTheHeldDisappearanceWindow) {
+    HoldVisibilityDiagnostic diagnostic;auto s=diagnostic_hold_scene(1,1);
+    s.targets.front().note.center.y=530;s.targets.front().note.head_on_line=false;
+    EXPECT_FALSE(diagnostic.observe(s));s.context.frame=2;s.context.capture_ns=20'000'001;s.targets.clear();
+    EXPECT_FALSE(diagnostic.observe(s));s=diagnostic_hold_scene(3,40'000'001);EXPECT_FALSE(diagnostic.observe(s));
+    s.context.frame=4;s.context.capture_ns=60'000'001;s.targets.clear();EXPECT_TRUE(diagnostic.observe(s));
 }
 TEST(GameObserver, YellowOutlineDoesNotDuplicateBlueCoreAndHoldHasLeadingEdgeAndTail) {
     FakeClock clock; GameObserver observer(clock); auto f=image(1,1); hud(f);
@@ -1166,6 +1173,26 @@ TEST(GameMotion, IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSig
     EXPECT_EQ(ls[0].track_id,second);EXPECT_EQ(ls[1].track_id,first);EXPECT_GT(ls[0].tangent.x,0);
     EXPECT_NEAR(ls[1].velocity.y,300,0.01);
     s.context.capture_ns+=20'000'000;s.context.epoch++;tracker.update(ls,s.context);EXPECT_NE(ls[1].track_id,first);
+}
+TEST(GameOwner, PreviouslySeenUnsubmittedHoldDescriptionCanRetainStartedContact) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
+    auto held=target(1,0,10'000'000);held.note.kind=NoteKind::hold;held.note.center=held.hit;
+    held.note.width=152;held.note.height=310;held.note.rails_geometry=true;held.note.head_on_line=true;
+    held.samples=4;held.line_id=1;auto s=snapshot(1,0);s.targets={held};owner.accept(s);
+    clock.set(10'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    auto fragment=held;fragment.note_id=42;fragment.note.center={held.note.center.x,held.note.center.y-90};
+    fragment.note.head_on_line=false;fragment.crossing_ns.reset();fragment.reason="outside_short_horizon";
+    clock.set(20'000'000);held.evidence_ns=fragment.evidence_ns=clock.now_ns();
+    held.expires_ns=fragment.expires_ns=clock.now_ns()+100'000'000;s=snapshot(2,clock.now_ns());s.targets={held,fragment};owner.accept(s);
+    clock.set(40'000'000);fragment.note.center=held.note.center;fragment.note.head_on_line=true;
+    fragment.note.height=298;fragment.evidence_ns=clock.now_ns();fragment.expires_ns=clock.now_ns()+100'000'000;
+    fragment.reason="root_past";s=snapshot(3,clock.now_ns());s.targets={fragment};owner.accept(s);owner.poll();
+    const auto updates=owner.take_coverage_updates();ASSERT_EQ(updates.size(),1);
+    EXPECT_EQ(updates.front().at("candidate_note_id"),42);EXPECT_EQ(updates.front().at("note_id"),1);
+    clock.set(80'000'000);fragment.evidence_ns=clock.now_ns();fragment.expires_ns=clock.now_ns()+100'000'000;
+    s=snapshot(4,clock.now_ns());s.targets={fragment};owner.accept(s);owner.poll();EXPECT_EQ(touch.contacts().size(),1);
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
 }
 TEST(GameObserver, OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFragments) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;

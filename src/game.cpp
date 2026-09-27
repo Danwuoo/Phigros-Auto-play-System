@@ -483,8 +483,8 @@ std::optional<HoldDisappearance> HoldVisibilityDiagnostic::observe(const Decisio
     }
     previous_count_=0;previous_=s.context;
     for(const auto& t:s.targets) {
-        if(t.note.kind!=NoteKind::hold||!t.note.rails_geometry||t.note.width<s.context.width*.08||
-           t.note.height<std::max(128.0,t.note.width*.8)||std::abs(normal_distance(t.note.center,*line))>80) continue;
+        if(t.note.kind!=NoteKind::hold||!t.note.rails_geometry||!t.note.head_on_line||t.note.width<s.context.width*.08||
+           t.note.height<std::max(128.0,t.note.width*.8)||std::abs(normal_distance(t.note.center,*line))>8) continue;
         if(previous_count_==previous_holds_.size()) {previous_count_=0;return {};}
         previous_holds_[previous_count_++]={s.context.frame,t.note_id,s.context.capture_ns,
             t.note.center,t.note.width,t.note.height};
@@ -1017,7 +1017,9 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         if(const auto alias=contact_aliases_.find(t.note_id);alias!=contact_aliases_.end()) {
             t.note_id=alias->second;claimed.insert(t.note_id);continue;
         }
-        if(identities_.contains(t.note_id)||t.note.kind!=NoteKind::hold||!t.note.rails_geometry||
+        const auto prior_candidate=identities_.find(t.note_id);
+        const bool submitted_candidate=prior_candidate!=identities_.end()&&prior_candidate->second.submitted;
+        if(submitted_candidate||t.note.kind!=NoteKind::hold||!t.note.rails_geometry||
            !t.note.head_on_line||t.samples<=0||t.evidence_ns!=s.context.capture_ns||
            t.reason=="association_ambiguous"||t.reason=="line_unobservable"||
            t.reason=="multiple_line_association_unvalidated") continue;
@@ -1040,7 +1042,11 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             if(contact_aliases_.size()>=128||coverage_updates_.size()>=128) {
                 last_rejection_="contact_alias_capacity";continue;
             }
-            const auto candidate=t.note_id;contact_aliases_[candidate]=sole;t.note_id=sole;claimed.insert(sole);
+            const auto candidate=t.note_id;
+            // Previously observed but unsubmitted candidates have no finger
+            // to preserve. They can become a new description of this contact.
+            identities_.erase(candidate);
+            contact_aliases_[candidate]=sole;t.note_id=sole;claimed.insert(sole);
             coverage_updates_.push_back({{"event","game_hold_contact_reassociated"},{"note_id",sole},
                 {"candidate_note_id",candidate},{"source_frame",s.context.frame},
                 {"evidence_ns",t.evidence_ns},{"basis","unique_current_outer_body"},{"game_effect","unknown"}});

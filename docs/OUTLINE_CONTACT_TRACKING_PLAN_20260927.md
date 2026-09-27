@@ -6,6 +6,10 @@
 
 ### 首輪實戰與後續修正
 
+第二／三輪source `2807f2e`／binary `9b3036c0...`：診斷輪 `cpp-observe-17905045465138818` 啟動晚於重試，324／0／0／69、757,252分，排除穩定性與直接分數比較；完整重跑 `cpp-observe-17905047888987862` 的 Computer Use 結算358／4／0／31、840,560分、Late4／max combo58，未AP。兩輪均STOPPED／exit0、185秒、相同五指與取樣配置、contact conflict0；完整輪139 Hold Down、Hold missing取消124／geometry7／ambiguous3、tail確認1、重關聯0、local Drag coverage10。完整輪raw SHA256 `55b3510e5302c1222f886598ead880b2ed7d571acef0ee0c2c15bd73b9c27db9`，辨識n10663 p50／p95／p99／max=4.9125／6.96306／8.25246／19.2555ms，source expiry1。少12 Miss只是兩個完整run的結果，不是多輪稳定改善結論。
+
+完整輪frame344–355暴露owner準入缺口：原Hold32／intent7在line上仍有310px body，候選42早先已出現但未注入；352起以同位置152px rails取代32，owner因`identities_.contains(42)`跳過重關聯，354便missing取消原contact，363仍可見160px gray body。下一版planner11允許未submitted的占位候選接回唯一active Hold，移除無手指占位，不復活submitted／completed或過期contact。附現有占位／RootPast／持續同指及停止回歸。diagnostics4只收head_on_line且距線≤8px的長Hold，避免frame119距線30px的短暫approach gap先花掉有限held-loss窗口；這是只讀取樣篩選，不改觸控期限。
+
 source `fe0c85e`／binary `e2cab0ac...`，五指／lead35、185秒、單擷取、無preview／shadow／dataset、2個診斷clip共8 native ROI：run `cpp-observe-17905036167552410`，STOPPED／exit0。Computer Use 結算核對350 Perfect／0 Good／0 Bad／43 Miss、817,048分、max combo61，未AP。停止後另存結算PNG；raw SHA256 `146c9d650b8bbb553c69fd04654d13c679bd2bab8fec5594db934a0a477cdfe9`。
 
 C++分析10720 frames，辨識時長n10720 p50／p95／p99／max =4.7794／6.999555／8.526006／22.7867ms；capture間隔n10719 =16.5907／32.83405／46.153474／266.6157ms，source expiry2。真實401 Down／518 Move／401 Up，6個contact conflict；Hold down148、missing取消140、ambiguous3／geometry3，tail確認0／contact重關聯0，Drag已知local coverage9。這些是本機身份與注入統計，不是393個譜面音符真值；不能把Hold missing取消全部視為提前Up。測試環境及固定參數見metadata。
