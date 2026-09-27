@@ -44,7 +44,9 @@ nlohmann::json match_touch_capability(const RuntimeConfig& c,const json& report,
          capture.value("source_rotation",-1)==c.source_rotation,"capture_geometry");
     test(touch.value("kind","")=="emulator-grpc"&&touch.value("width",0)==c.touch_width&&
          touch.value("height",0)==c.touch_height&&touch.value("rotation_deg",-1)==c.touch_rotation&&
-         touch.value("max_contacts",0)>=c.max_contacts,"touch_mapping_or_capacity");
+         touch.value("max_contacts",0)>=c.max_contacts&&
+         report.value("max_contacts_verified",std::min(2,touch.value("max_contacts",0)))>=c.max_contacts,
+         "touch_mapping_or_capacity");
     const auto historical=report.value("device_report",json::object());
     for(const auto* key:{"android_release","android_sdk","cpu_abi","model","wm_size","wm_density"}) {
         if(!historical.contains(key)||!device.contains(key)||historical.at(key)!=device.at(key))
@@ -191,7 +193,9 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
             {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
             {"executable_sha256",sha256_file(executable)},
-            {"game_planner_version",8},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
+            {"game_planner_version",9},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
+            {"hold_normal_release_basis","current_visible_tail_crossed_line"},
+            {"drag_coverage_position_basis","current_note_region_30_percent_half_width_cap48px"},
             {"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
             {"drag_shared_contact","fresh_colocated_drag_extends_existing_active_contact_only"},
             {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},

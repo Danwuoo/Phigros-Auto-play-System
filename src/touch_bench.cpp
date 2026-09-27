@@ -82,6 +82,19 @@ std::vector<std::vector<Point>> case_paths(const std::string& kind, int index, i
         const int x2 = std::min(width-30,x+140), y2 = std::min(height-25,y+30);
         return {{{1,x,y,0},{3,x,y,ns(180)}},{{1,x2,y2,0},{3,x2,y2,ns(180)}}};
     }
+    if(kind=="four"||kind=="five") {
+        const int count=kind=="four"?4:5,moving=index%count;
+        std::vector<std::vector<Point>> paths;
+        for(int id=0;id<count;++id) {
+            const int px=static_cast<int>(std::lround(width*(.15+id*.16))),
+                      py=static_cast<int>(std::lround(height*(.45+(id%2)*.12)));
+            std::vector<Point> path{{1,px,py,0}};
+            if(id==moving) path.push_back({2,px+30,py+12,ns(70)});
+            path.push_back({3,px+(id==moving?30:0),py+(id==moving?12:0),ns(130+id*20)});
+            paths.push_back(std::move(path));
+        }
+        return paths;
+    }
     if (kind == "edge") {
         static constexpr int corners[4][2] = {{0,0},{1,0},{0,1},{1,1}};
         const int ex = corners[index % 4][0] ? width-1 : 0;
@@ -131,7 +144,9 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
     if (config.touch_kind != "emulator-grpc" || config.capture_kind != "emulator-grpc" ||
         config.capture_transport != "payload" || repetitions < 1 || repetitions > 1000 ||
         kinds.empty()) throw std::invalid_argument("touch benchmark requires valid native gRPC Fixture profile");
-    for (const auto& kind : kinds) (void)case_paths(kind, 0, config.width, config.height);
+    for (const auto& kind : kinds)
+        if(case_paths(kind,0,config.width,config.height).size()>static_cast<std::size_t>(config.max_contacts))
+            throw std::invalid_argument("touch case exceeds configured contact capacity");
     const auto adb = find_adb();
     foreground(adb, config.serial);
     const auto device_report = probe_adb(adb, config.serial);
@@ -191,6 +206,8 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
                 if (!scheduler.submit(std::move(plan))) throw std::runtime_error("Fixture touch plan rejected");
             }
             int receipts = 0;
+            const bool multi=kind=="four"||kind=="five";
+            bool parallel_visible=false;
             while (scheduler.pending_count() && clock.now_ns() < start + 1'500'000'000) {
                 for (const auto& receipt : scheduler.run_due()) {
                     ++receipts;
@@ -206,6 +223,12 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
                     if (!receipt.success) throw std::runtime_error("touch RPC result unknown");
                 }
                 if (!scheduler.fault().empty()) throw std::runtime_error(scheduler.fault());
+                if(multi&&!parallel_visible&&receipts>=static_cast<int>(paths.size())) {
+                    const auto frame=reader.snapshot(std::chrono::milliseconds(1000));
+                    const auto middle=decode_touch_evidence(frame,before.sequence);
+                    parallel_visible=middle.complete&&middle.active==paths.size()&&
+                        middle.downs-before.downs==paths.size();
+                }
                 if (const auto due = scheduler.next_due_ns()) {
                     const auto remaining = *due - clock.now_ns();
                     if (remaining > 0)
@@ -232,11 +255,13 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
             std::vector<int> stationary;
             if (kind == "hold") stationary.push_back(0);
             if (kind == "pair") stationary.push_back(1);
+            if(multi) for(int id=0;id<static_cast<int>(paths.size());++id)
+                if(id!=index%static_cast<int>(paths.size())) stationary.push_back(id);
             const auto path = verify_touch_path(after, expected, 4, 0, stationary);
             const bool counters_match = after.downs - before.downs == paths.size() &&
                 after.ups - before.ups == paths.size() && after.cancels == before.cancels;
             const bool rpc_match = receipts == static_cast<int>(expected.size());
-            const bool passed = counters_match && rpc_match && path.passed;
+            const bool passed = counters_match && rpc_match && path.passed&&(!multi||parallel_visible);
             json case_result = {{"kind", kind}, {"index", index}, {"passed", passed},
                 {"path_reason", path.reason}, {"rpc_receipts", receipts},
                 {"expected_receipts", expected.size()}, {"before_sequence", before.sequence},
@@ -244,6 +269,8 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
                 {"android_down_delta", after.downs - before.downs},
                 {"android_up_delta", after.ups - before.ups},
                 {"final_active", after.active}, {"evidence_overflow_total", after.overflow_total}};
+            case_result["parallel_active_visible"]=multi?json(parallel_visible):json(nullptr);
+            case_result["expected_parallel_contacts"]=multi?json(paths.size()):json(nullptr);
             raw << json{{"event", "touch_case"}, {"result", case_result},
                         {"observed_trace", observed_trace(after)},
                         {"expected_trace", expected_trace(expected)}}.dump() << '\n';
@@ -261,35 +288,42 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
             const auto down_due = baseline + 80'000'000;
             const int x = config.width / 2;
             const int y = config.height * 55 / 100;
+            const int cancel_contacts=config.max_contacts>=4?config.max_contacts:1;
+            std::vector<ExpectedPointer> cancel_expected;
             ContactScheduler scheduler(clock, touch, config.max_contacts, config.max_plans,
                 config.max_steps, static_cast<Nanoseconds>(config.horizon_ms)*1'000'000,
                 2'000'000'000, 200'000'000);
             if (!scheduler.set_gate(++epoch, true, baseline))
                 throw std::runtime_error("Fixture cancellation gate rejected");
-            ContactPlan plan;
-            plan.epoch = epoch; plan.intent_id = 1; plan.revision = 1;
-            plan.evidence_ns = baseline; plan.valid_until_ns = down_due + 250'000'000;
-            plan.source_frame_sequence = before_frame.sequence;
-            plan.basis = "isolated_native_fixture_cancel";
-            plan.steps = {{Phase::down, static_cast<double>(x), static_cast<double>(y), down_due},
-                          {Phase::up, static_cast<double>(x), static_cast<double>(y),
-                           down_due + 1'000'000'000}};
-            if (!scheduler.submit(std::move(plan)))
-                throw std::runtime_error("Fixture cancellation plan rejected");
+            for(int id=0;id<cancel_contacts;++id) {
+                const int px=cancel_contacts==1?x:config.width*(id+1)/(cancel_contacts+1);
+                ContactPlan plan;
+                plan.epoch = epoch; plan.intent_id = id+1; plan.revision = 1;
+                plan.evidence_ns = baseline; plan.valid_until_ns = down_due + 250'000'000;
+                plan.source_frame_sequence = before_frame.sequence;
+                plan.basis = "isolated_native_fixture_cancel";
+                plan.steps = {{Phase::down, static_cast<double>(px), static_cast<double>(y), down_due},
+                              {Phase::up, static_cast<double>(px), static_cast<double>(y),down_due+1'000'000'000}};
+                if (!scheduler.submit(std::move(plan))) throw std::runtime_error("Fixture cancellation plan rejected");
+                cancel_expected.push_back({1,id,px,y});
+            }
+            for(int id=0;id<cancel_contacts;++id)
+                cancel_expected.push_back({3,id,cancel_contacts==1?x:config.width*(id+1)/(cancel_contacts+1),y});
             std::vector<TouchReceipt> downs;
-            while (clock.now_ns() < down_due + 120'000'000 && downs.empty()) {
-                downs = scheduler.run_due();
+            while (clock.now_ns() < down_due + 120'000'000 && downs.size()<static_cast<std::size_t>(cancel_contacts)) {
+                const auto part=scheduler.run_due();downs.insert(downs.end(),part.begin(),part.end());
                 if (downs.empty()) std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
-            if (downs.size() != 1 || !downs.front().success ||
-                downs.front().command.phase != Phase::down)
+            if (downs.size()!=static_cast<std::size_t>(cancel_contacts)||
+                !std::all_of(downs.begin(),downs.end(),[](const auto& r){return r.success&&r.command.phase==Phase::down;}))
                 throw std::runtime_error("Fixture cancellation down was not injected");
             bool saw_active = false;
             const auto active_deadline = clock.now_ns() + 700'000'000;
             while (clock.now_ns() < active_deadline) {
                 const auto frame = reader.snapshot(std::chrono::milliseconds(1000));
                 const auto middle = decode_touch_evidence(frame, before.sequence);
-                if (middle.complete && middle.active == 1 && middle.downs == before.downs + 1) {
+                if (middle.complete && middle.active == static_cast<std::uint32_t>(cancel_contacts) &&
+                    middle.downs == before.downs+cancel_contacts) {
                     saw_active = true; break;
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -304,15 +338,15 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
                 const auto frame = reader.snapshot(std::chrono::milliseconds(1000));
                 after = decode_touch_evidence(frame, before.sequence);
                 if (after.complete && after.active == 0 &&
-                    after.downs == before.downs + 1 && after.ups == before.ups + 1) break;
+                    after.downs == before.downs+cancel_contacts && after.ups == before.ups+cancel_contacts) break;
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            const auto path = verify_touch_path(after, {{1, 0, x, y}, {3, 0, x, y}}, 4, 0);
+            const auto path = verify_touch_path(after,cancel_expected,4,0);
             const bool passed = saw_active && path.passed &&
-                after.downs == before.downs + 1 && after.ups == before.ups + 1 &&
+                after.downs == before.downs+cancel_contacts && after.ups == before.ups+cancel_contacts &&
                 after.cancels == before.cancels;
             json result = {{"index", index}, {"passed", passed},
-                {"saw_active", saw_active}, {"path_reason", path.reason},
+                {"saw_active", saw_active}, {"expected_active",cancel_contacts},{"path_reason", path.reason},
                 {"before_sequence", before.sequence}, {"after_sequence", after.sequence},
                 {"android_down_delta", after.downs - before.downs},
                 {"android_up_delta", after.ups - before.ups},
@@ -321,7 +355,7 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
                 {"release_start_ns", release.start_ns}, {"release_return_ns", release.return_ns}};
             raw << json{{"event", "touch_cancel_case"}, {"result", result},
                         {"observed_trace", observed_trace(after)},
-                        {"expected_trace", expected_trace({{1, 0, x, y}, {3, 0, x, y}})}}.dump() << '\n';
+                        {"expected_trace", expected_trace(cancel_expected)}}.dump() << '\n';
             cancel_cases.push_back(result);
             if (!passed) throw std::runtime_error("visible cancellation evidence failed");
         }
@@ -338,6 +372,12 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
         "tap", "hold", "move", "flick", "pair", "simultaneous"};
     const bool all_core_kinds = std::all_of(required_kinds.begin(), required_kinds.end(),
         [&](const char* kind) { return selected.contains(kind); });
+    int verified_contacts=0;
+    if(failure.empty()&&repetitions>=30&&all_core_kinds) {
+        verified_contacts=2;
+        if(selected.contains("four")) verified_contacts=4;
+        if(selected.contains("five")) verified_contacts=5;
+    }
     json summary = {{"schema_version", 2}, {"fixture_schema", "native_touch_v2"},
         {"serial", config.serial}, {"config", config.public_json},
         {"device_report", device_report},
@@ -347,6 +387,7 @@ void run_touch_bench(const std::filesystem::path& config_path, int repetitions,
         {"cancel_cases", cancel_cases}, {"cancel_case_count", cancel_cases.size()},
         {"case_count", cases.size()}, {"rpc_call_ms", distribution(call_ms)},
         {"schedule_error_ms", distribution(schedule_ms)},
+        {"max_contacts_verified",verified_contacts},
         {"failure", failure.empty() ? json(nullptr) : json(failure)},
         {"capability_verified", failure.empty() && !local_hash.empty() &&
                                 local_hash == installed_hash && repetitions >= 30 && all_core_kinds &&

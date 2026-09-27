@@ -947,8 +947,29 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     if(!scheduler_.set_context(epoch_,s.context.generation,s.context.geometry,
         s.playing_gate&&s.capacity_valid&&fresh,s.context.capture_ns)) return receipts;
     if(!s.playing_gate||!s.capacity_valid||!fresh) {last_rejection_="gate_invalid"; return receipts;}
+    const auto visible_tail_passed=[&](const GameTarget& t) {
+        if(t.note.kind!=NoteKind::hold||!t.note.tail||!t.note.rails_geometry||t.samples<=0||
+           t.evidence_ns!=s.context.capture_ns||t.reason=="association_ambiguous"||
+           t.reason=="line_unobservable"||t.reason=="multiple_line_association_unvalidated") return false;
+        const auto tail=*t.note.tail;
+        if(!std::isfinite(tail.x)||!std::isfinite(tail.y)||tail.x<0||tail.x>=s.context.width||
+           tail.y<0||tail.y>=s.context.height) return false;
+        for(const auto& line:s.lines) {
+            const double norm=std::hypot(line.tangent.x,line.tangent.y);
+            if(norm<.99||norm>1.01||
+               std::abs(line.tangent.x*t.note.tangent.x+line.tangent.y*t.note.tangent.y)<.95||
+               std::abs(normal_distance(t.hit,line))>3) continue;
+            Vec2 normal{-line.tangent.y,line.tangent.x};
+            const double depth=(t.note.center.x-tail.x)*normal.x+(t.note.center.y-tail.y)*normal.y;
+            if(std::abs(depth)<2) continue;
+            if(depth<0) {normal.x=-normal.x;normal.y=-normal.y;}
+            if((tail.x-t.hit.x)*normal.x+(tail.y-t.hit.y)*normal.y>=0) return true;
+        }
+        return false;
+    };
     const auto current_drag=[&](const GameTarget& t) {
         return t.note.kind==NoteKind::drag&&t.samples>0&&t.reason!="association_ambiguous"&&
+            t.evidence_ns==s.context.capture_ns&&
             t.evidence_ns<=clock_.now_ns()&&clock_.now_ns()-t.evidence_ns<100'000'000&&
             t.expires_ns>clock_.now_ns()&&t.hit.x>=0&&t.hit.x<s.context.width&&
             t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height;
@@ -960,14 +981,27 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
            *t.crossing_ns-options_.lead_ns-now>60'000'000) return {};
         return std::max(*t.crossing_ns-options_.lead_ns,now+15'000'000)+75'000'000;
     };
-    const auto refresh_drag=[&](Identity& leader,const GameTarget& t,bool attach) {
+    const auto drag_can_cover=[&](const Identity& leader,const GameTarget& t) {
         const auto cursor=scheduler_.executed_steps(leader.intent);
         if(!cursor||*cursor<=leader.plan.prefix_offset||!current_drag(t)||
            t.evidence_ns<leader.plan.evidence_ns||leader.plan.steps.back().due_ns<=clock_.now_ns()) return false;
         const auto executed=static_cast<std::size_t>(*cursor-leader.plan.prefix_offset);
         const auto& at=leader.plan.steps.at(executed-1);
-        if(std::hypot(t.hit.x-at.x,t.hit.y-at.y)>2) return false;
+        // A stationary contact can cover the next currently observed yellow
+        // core. Use its conservative region, never a whole future lane.
+        const double tangent_norm=std::hypot(t.note.tangent.x,t.note.tangent.y);
+        if(tangent_norm<.99||tangent_norm>1.01||!std::isfinite(t.note.width)||t.note.width<0) return false;
+        const double dx=t.hit.x-at.x,dy=t.hit.y-at.y;
+        const double along=std::abs(dx*t.note.tangent.x+dy*t.note.tangent.y);
+        const double across=std::abs(-dx*t.note.tangent.y+dy*t.note.tangent.x);
+        const double half_region=std::max(2.0,std::min(48.0,t.note.width*.30));
+        if(along>half_region||across>2) return false;
+        return true;
+    };
+    const auto refresh_drag=[&](Identity& leader,const GameTarget& t,bool attach) {
+        if(!drag_can_cover(leader,t)) return false;
         const auto release=drag_release(t);if(attach&&!release) return false;
+        if(attach&&*release-90'000'000>leader.plan.steps.back().due_ns) return false;
         auto plan=leader.plan;plan.revision++;plan.evidence_ns=t.evidence_ns;
         plan.source_frame_sequence=s.context.frame;
         if(release) plan.steps.back().due_ns=std::max(plan.steps.back().due_ns,*release);
@@ -985,6 +1019,19 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         group_seen.insert(leader_id);
         const auto leader=identities_.find(leader_id);
         if(leader!=identities_.end()&&refresh_drag(leader->second,t,false)) group_alive.insert(leader_id);
+    }
+    // Match a fresh successor before declaring the old member missing. No
+    // pixels or non-overlapping windows means no extension of this contact.
+    for(const auto& t:s.targets) if(!identities_.contains(t.note_id)&&drag_release(t)) {
+        Identity* sole=nullptr;std::uint64_t leader_id=0;bool multiple=false;
+        for(auto& [id,leader]:identities_) if(!leader.drag_leader&&leader.submitted&&
+            leader.kind==NoteKind::drag&&drag_can_cover(leader,t)&&
+            *drag_release(t)-90'000'000<=leader.plan.steps.back().due_ns) {
+            if(sole) {multiple=true;break;} sole=&leader;leader_id=id;
+        }
+        if(sole&&!multiple&&refresh_drag(*sole,t,true)) {
+            sole->shared_drag=true;group_alive.insert(leader_id);
+        }
     }
     std::set<std::uint64_t> visible;
     for(const auto& t:s.targets) visible.insert(t.note_id);
@@ -1062,7 +1109,15 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
                    t.hit.x>=0&&t.hit.x<s.context.width&&t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height)
                     plan.steps.push_back({Phase::move,t.hit.x,t.hit.y,clock_.now_ns()});
                 const auto limit=t.evidence_ns+100'000'000;
-                const auto release=t.tail_crossing_ns?*t.tail_crossing_ns+20'000'000:limit;
+                if(!id.hold_tail_release_ns&&visible_tail_passed(t)) {
+                    id.hold_tail_release_ns=t.evidence_ns+20'000'000;
+                    if(coverage_updates_.size()>=128) throw std::runtime_error("hold tail diagnostic capacity");
+                    coverage_updates_.push_back({{"event","game_hold_tail_confirmed"},{"note_id",t.note_id},
+                        {"intent_id",id.intent},{"source_frame",s.context.frame},{"evidence_ns",t.evidence_ns},
+                        {"release_ns",*id.hold_tail_release_ns},{"basis","current_visible_tail_crossed_line"},
+                        {"game_effect","unknown"}});
+                }
+                const auto release=id.hold_tail_release_ns.value_or(limit);
                 const auto due=std::max(clock_.now_ns(),std::min(release,limit));
                 const auto at=plan.steps.back(); plan.steps.push_back({Phase::up,at.x,at.y,due});
                 if(executed>1) {
@@ -1093,23 +1148,27 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         }
         if(t.note.kind==NoteKind::drag) {
             bool covered=false;
+            Identity* sole=nullptr;std::uint64_t sole_note=0;bool multiple=false;
             for(auto& [leader_note,leader]:identities_) {
                 if(leader_note==t.note_id||leader.drag_leader||!leader.submitted||leader.kind!=NoteKind::drag||
-                   due-15'000'000>leader.plan.steps.back().due_ns) continue;
-                if(!refresh_drag(leader,t,true)) continue;
-                leader.shared_drag=true;id.drag_leader=leader_note;id.intent=leader.intent;
+                   due-15'000'000>leader.plan.steps.back().due_ns||!drag_can_cover(leader,t)) continue;
+                if(sole) {multiple=true;break;} sole=&leader;sole_note=leader_note;
+            }
+            if(sole&&!multiple&&refresh_drag(*sole,t,true)) {
+                auto& leader=*sole;
+                leader.shared_drag=true;id.drag_leader=sole_note;id.intent=leader.intent;
                 id.submitted=true;id.kind=NoteKind::drag;id.plan=leader.plan;covered=true;
                 if(coverage_updates_.size()>=128) throw std::runtime_error("drag coverage diagnostic capacity");
                 coverage_updates_.push_back({{"event","game_drag_coverage"},{"note_id",t.note_id},
-                    {"leader_note_id",leader_note},{"intent_id",leader.intent},{"source_frame",s.context.frame},
+                    {"leader_note_id",sole_note},{"intent_id",leader.intent},{"source_frame",s.context.frame},
                     {"evidence_ns",t.evidence_ns},{"accepted_ns",clock_.now_ns()},
                     {"crossing_ns",*t.crossing_ns},{"release_ns",leader.plan.steps.back().due_ns},
-                    {"basis","fresh_colocated_drag_on_active_contact"},{"game_effect","unknown"}});
-                break;
+                    {"basis","fresh_drag_region_covers_active_contact"},{"game_effect","unknown"}});
             }
             if(covered) continue;
         }
         if(t.note.kind==NoteKind::hold&&due>=t.evidence_ns+100'000'000) continue;
+        if(t.note.kind==NoteKind::hold&&visible_tail_passed(t)) {last_rejection_="hold_tail_already_passed";continue;}
         id.intent=++next_intent_; id.revision=t.revision;
         ContactPlan plan{epoch_,id.intent,t.revision,t.evidence_ns,due+30'000'000,
             s.context.frame,std::string("live_pixels_short_linear_fit_")+name(t.note.kind),
@@ -1117,8 +1176,9 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
              {Phase::up,t.hit.x,t.hit.y,due+18'000'000}}};
         if(t.note.kind==NoteKind::hold) {
             const auto limit=t.evidence_ns+100'000'000;
-            const auto release=t.tail_crossing_ns?*t.tail_crossing_ns+20'000'000:limit;
-            plan.steps.back().due_ns=std::min(limit,std::max(due+20'000'000,release));
+            // Tail predictions remain diagnostic. Fresh body evidence renews
+            // the bounded lease; normal Up needs an actually visible tail.
+            plan.steps.back().due_ns=limit;
         } else if(t.note.kind==NoteKind::drag) {
             plan.steps.front().due_ns=due-15'000'000;
             plan.steps.back().due_ns=due+75'000'000;

@@ -1063,6 +1063,79 @@ TEST(GameOwner, HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact) {
     clock.set(clock.now_ns()+60'000'000); s=snapshot(40,clock.now_ns()); owner.accept(s);
     EXPECT_TRUE(backend.contacts().empty()); EXPECT_TRUE(owner.scheduler().fault().empty());
 }
+TEST(GameOwner, FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,5,{2,0,30'000'000});
+    auto s=snapshot(1,0);s.lines={{{640,500},{1,0},1280,2,1}};
+    for(int id=0;id<5;++id) {
+        auto h=target(id+1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=4;
+        h.hit={100.0+id*220,500};h.note.center=h.hit;h.note.width=100;h.note.height=300;
+        h.note.tail=Vec2{h.hit.x,200};h.note.rails_geometry=true;h.tail_crossing_ns=30'000'000;
+        s.targets.push_back(h);
+    }
+    owner.accept(s);owner.take_accepted_plans();clock.set(10'000'000);owner.poll();
+    ASSERT_EQ(touch.contacts().size(),5);
+    for(int i=1;i<=7;++i) {
+        clock.set(10'000'000+i*20'000'000);s.sequence++;s.context.frame++;s.context.capture_ns=clock.now_ns();
+        for(auto& h:s.targets) {
+            h.evidence_ns=clock.now_ns();h.expires_ns=clock.now_ns()+100'000'000;h.revision++;
+            h.tail_crossing_ns=clock.now_ns()-10'000'000; // misleading fit must not release early
+        }
+        owner.accept(s);owner.poll();owner.take_accepted_plans();EXPECT_EQ(touch.contacts().size(),5);
+    }
+    clock.set(160'000'000);s.sequence++;s.context.frame++;s.context.capture_ns=clock.now_ns();
+    for(auto& h:s.targets) {h.evidence_ns=clock.now_ns();h.expires_ns=clock.now_ns()+100'000'000;h.revision++;
+        h.note.tail=Vec2{h.hit.x,502};h.note.center={h.hit.x,520};}
+    owner.accept(s);owner.take_accepted_plans();
+    const auto ends=owner.take_coverage_updates();ASSERT_EQ(ends.size(),5);
+    for(const auto& e:ends) EXPECT_EQ(e.at("release_ns"),180'000'000);
+    clock.set(170'000'000);s.sequence++;s.context.frame++;s.context.capture_ns=clock.now_ns();
+    for(auto& h:s.targets) {h.evidence_ns=clock.now_ns();h.expires_ns=clock.now_ns()+100'000'000;h.revision++;}
+    owner.accept(s);owner.poll();EXPECT_EQ(touch.contacts().size(),5);
+    clock.set(180'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),5);
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::up;}),5);
+    owner.accept(snapshot(20,180'000'000));owner.stop();EXPECT_TRUE(owner.scheduler().fault().empty());
+}
+TEST(GameOwner, TailPredictionWithoutCurrentVisibleTailDoesNotEndHoldOrExtendExpiry) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
+    auto h=target(1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=3;h.tail_crossing_ns=0;
+    auto s=snapshot(1,0);s.targets={h};owner.accept(s);owner.take_accepted_plans();
+    clock.set(10'000'000);owner.poll();clock.set(50'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    clock.set(100'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+}
+TEST(GameOwner, FreshYellowRegionsBridgeSuccessiveIdsWithoutRepeatingDown) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{4,0,30'000'000});
+    auto t=target(1,0,30'000'000);t.note.kind=NoteKind::drag;t.note.width=100;t.samples=4;
+    auto s=snapshot(1,0);s.targets={t};owner.accept(s);owner.take_accepted_plans();
+    clock.set(15'000'000);owner.poll();
+    for(int i=1;i<=8;++i) {
+        clock.set(i*60'000'000);t=target(i+1,clock.now_ns(),clock.now_ns()+20'000'000);
+        t.note.kind=NoteKind::drag;t.note.width=100;t.samples=4;t.hit.x=400+(i%2?20:-20);
+        s=snapshot(i+1,clock.now_ns());s.targets={t};owner.accept(s);owner.poll();owner.take_accepted_plans();
+        ASSERT_EQ(touch.contacts().size(),1);EXPECT_TRUE(owner.scheduler().fault().empty());
+    }
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    EXPECT_EQ(owner.take_coverage_updates().size(),8);
+    clock.set(520'000'000);owner.accept(snapshot(20,clock.now_ns()));
+    EXPECT_TRUE(touch.contacts().empty());owner.stop();
+}
+TEST(GameOwner, YellowRegionSharingRejectsAcrossLineAndAmbiguousActiveCoverage) {
+    for(const bool ambiguous:{false,true}) {
+        FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,3,{4,0,30'000'000});
+        auto a=target(1,0,30'000'000);a.note.kind=NoteKind::drag;a.note.width=100;a.samples=4;
+        auto b=a;b.note_id=2;b.hit.x=440;auto s=snapshot(1,0);s.targets={a};
+        if(ambiguous)s.targets.push_back(b);
+        owner.accept(s);owner.take_accepted_plans();clock.set(15'000'000);owner.poll();
+        clock.set(20'000'000);auto c=target(3,clock.now_ns(),50'000'000);
+        c.note.kind=NoteKind::drag;c.note.width=100;c.samples=4;c.hit.x=420;
+        if(!ambiguous)c.hit.y+=3;
+        a.evidence_ns=clock.now_ns();a.expires_ns=clock.now_ns()+100'000'000;a.revision++;
+        b.evidence_ns=clock.now_ns();b.expires_ns=clock.now_ns()+100'000'000;b.revision++;
+        s=snapshot(2,clock.now_ns());s.targets={a,c};if(ambiguous)s.targets.push_back(b);
+        owner.accept(s);owner.take_accepted_plans();clock.set(35'000'000);owner.poll();
+        EXPECT_EQ(touch.contacts().size(),ambiguous?3:2);EXPECT_TRUE(owner.take_coverage_updates().empty());owner.stop();
+    }
+}
 TEST(GameOwner, LongHoldBridgesFreshSparseFramesButStopsAtActualEvidenceExpiry) {
     for(const bool refresh_before_gap:{false,true}) {
         FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{2,0,30'000'000});
@@ -1316,6 +1389,12 @@ TEST(GameRuntime, HistoricalFingerprintRejectsMappingDeviceAndUnverifiedReports)
     auto changed=device; changed["wm_density"]="480";
     EXPECT_FALSE(match_touch_capability(c,report,changed,"hash")["fingerprint_matches"].get<bool>());
     EXPECT_FALSE(match_touch_capability(c,report,device,"different")["fingerprint_matches"].get<bool>());
+    c.max_contacts=5;report["config"]["touch"]["max_contacts"]=5;
+    EXPECT_FALSE(match_touch_capability(c,report,device,"hash")["fingerprint_matches"].get<bool>());
+    report["max_contacts_verified"]=4;
+    EXPECT_FALSE(match_touch_capability(c,report,device,"hash")["fingerprint_matches"].get<bool>());
+    report["max_contacts_verified"]=5;
+    EXPECT_TRUE(match_touch_capability(c,report,device,"hash")["fingerprint_matches"].get<bool>());
 }
 
 TEST(AutoPlay, PixelsConfirmSelectionAndOneAttemptNeverBecomesGameplayInput) {

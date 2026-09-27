@@ -167,7 +167,8 @@ public:
 private:
     struct Identity { std::uint64_t intent, revision; Nanoseconds expires; bool submitted = false;
         NoteKind kind=NoteKind::ambiguous; ContactPlan plan;
-        std::uint64_t drag_leader=0;bool shared_drag=false; };
+        std::uint64_t drag_leader=0;bool shared_drag=false;
+        std::optional<Nanoseconds> hold_tail_release_ns; };
     const Clock& clock_;
     ContactScheduler scheduler_;
     std::map<std::uint64_t, Identity> identities_;
