@@ -130,3 +130,9 @@ observer34／planner14／source7687584，cpp-observe-17905118952553270：361／1
 planner15在cursor0的Hold revision重新設定Up=最新evidence+100ms，與active body lease一致；Down预测與原valid_until仍獨立更新，tail預測不作提早Up。無更長source／target／missing期限，無重播已完成Down。C++ fake-clock回歸以兩次提前Down deadline重現舊Up=70ms，再延遲下一frame至80ms；接觸須仍在，最新capture74ms更新Up174ms，最遲174ms釋放，证明不是now+100ms。observer34與body契約不變；完整回歸／實戰續測。
 
 planner15最终三配置各169／169：Release13.93s／Debug27.36s／ASan66.48s、無suppressions。binary 0ee882ae3ee14826c954f34969c7e1a76a51981bfd617b333def723e4d16e5eb；第十一輪HD續測。
+
+第十一輪observer34／planner15，source ac375a6，cpp-observe-17905129001142547：361／0／0／32，838,677分，maxcombo47、ACC91.86%、Early0／Late0，185秒STOPPED／exit0。raw SHA256 5f85c4a442521a999257d0b93c7e983f93c18fd6e1ceb00b93153c9bc4d8920f。18clips／136ROI，無partial／truncated；recognition n10829 p50／p95／p99／max=4.8498／7.65434／9.434284／20.4639ms，playing interval n9641=16.5734／32.5069／45.1418／69.1985ms。Hold沒有contact_window_completed Up，已修正的提前Up在此輪未重現，但總成績未改善、不能宣稱AP或穩定。
+
+planner16開發：離線C++關聯已成功Down／Drag coverage／Hold alias後，第十一輪有8個Drag ID曾在当前line附近且至少兩個樣本，但沒有已提交接觸；第九輪為7個。這是診斷候選，不是逐音符Miss真值。新增current_drag_overlap只供Drag：目前完整snapshot中的同ID、同capture判定線，association_valid、confidence≥.8、length≥畫面寬*.5、單位tangent與core對齊≥.95；彩色core至少兩樣本且跨度10ms、width為畫面寬5–22%、height4px至width*.35、confidence≥.5，禁止outline／rails／held body。用当前幾何而非fitted distance核對法向距離≤min(8px,height/2+2px)，Hit需距当前投影≤2px且落在線段內。通過則立即Down、Up=最新capture+100ms，basis=live_pixels_current_drag_overlap，predicted_down_ns=null；沒有偽造crossing。尚未Down的舊Drag fit可改為此当前接觸；已完成Down不復活。相鄰黃鍵沿用唯一相容手指及既有Move／40ms missing期限，coverage的crossing可null。Tap／Hold／Flick維持預測排程。四個C++回歸覆蓋移動line／非線性fit／單樣本拒絕、15種無效幾何／時序、pending轉換／不能重播、無crossing的連續黃鍵同指。尚待完整測試與HD實戰。
+
+planner16最终Release／Debug／ASan各173／173：23.86／51.72／120.58秒，三配置並行測試、各自編譯完成後執行、無遊戲重疊、無suppressions。Drag專項11／11；binary 4fb6800d8f9212505fbea1174cb44d7daa637bd59b6694e7a77f05326183c216。第十二輪改由使用者按PLAY。

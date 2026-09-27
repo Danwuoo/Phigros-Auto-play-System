@@ -1826,6 +1826,85 @@ TEST(AutoPlay, PixelsConfirmSelectionAndOneAttemptNeverBecomesGameplayInput) {
     menu.ui=GameUi::playing; menu.playing_gate=true;
     PlayButtonPlanner another; EXPECT_FALSE(another.take(menu,clock.now_ns()));
 }
+namespace {
+DecisionSnapshot overlapping_drag(std::uint64_t sequence,Nanoseconds time,std::uint64_t id=1) {
+    auto s=snapshot(sequence,time);auto t=target(id,time,time);
+    t.note={{400,577},NoteKind::drag,128,12,.55};t.hit={400,576};
+    t.samples=2;t.history_span_ns=24'000'000;t.line_id=7;
+    t.crossing_ns.reset();t.reason="nonlinear_or_mismatch";t.distance=-41;t.residual=32;
+    s.targets={t};s.lines={{{640,576},{1,0},1280,2,.9,7,time}};return s;
+}
+}
+TEST(GameOwner, CurrentDragOverlapStartsWithoutInventingARootAndTracksMovingLine) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{4,35'000'000,30'000'000});
+    auto s=overlapping_drag(1,0);s.targets[0].samples=1;s.targets[0].history_span_ns=0;
+    owner.accept(s);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    clock.set(20'000'000);s=overlapping_drag(2,clock.now_ns());owner.accept(s);
+    const auto plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);
+    EXPECT_EQ(plans[0].basis,"live_pixels_current_drag_overlap");EXPECT_FALSE(plans[0].predicted_down_ns);
+    EXPECT_EQ(plans[0].steps.front().due_ns,20'000'000);EXPECT_EQ(plans[0].steps.back().due_ns,120'000'000);
+    owner.poll();ASSERT_EQ(touch.contacts().size(),1);const auto finger=touch.contacts().begin()->first;
+    for(int i=1;i<=8;++i) {
+        clock.set(20'000'000+i*20'000'000);s=overlapping_drag(i+2,clock.now_ns());
+        s.lines[0].center.y+=i*3;s.targets[0].note.center.x+=i*12;
+        s.targets[0].note.center.y+=i*3;s.targets[0].hit={s.targets[0].note.center.x,s.lines[0].center.y};
+        owner.accept(s);owner.poll();owner.take_accepted_plans();
+        ASSERT_EQ(touch.contacts().size(),1);EXPECT_EQ(touch.contacts().begin()->first,finger);
+        EXPECT_NEAR(touch.contacts().begin()->second[1],s.lines[0].center.y,0.01);
+    }
+    clock.set(219'000'000);owner.accept(snapshot(20,clock.now_ns()));EXPECT_EQ(touch.contacts().size(),1);
+    clock.set(220'000'000);owner.accept(snapshot(21,clock.now_ns()));EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    owner.stop();
+}
+TEST(GameOwner, DragOverlapRejectsMissingStaleAmbiguousAndNonCoreGeometry) {
+    for(int rejection=0;rejection<15;++rejection) {
+        SCOPED_TRACE(rejection);FakeClock clock;FakeTouchBackend touch(clock);
+        GamePlanOwner owner(clock,touch,1,{4,35'000'000,30'000'000});auto s=overlapping_drag(1,0);auto& t=s.targets[0];
+        switch(rejection) {
+        case 0:s.lines.clear();break;
+        case 1:s.lines[0].observed_ns=-1;break;
+        case 2:s.lines[0].association_valid=false;break;
+        case 3:s.lines[0].track_id=8;break;
+        case 4:t.reason="association_ambiguous";break;
+        case 5:t.reason="multiple_line_association_unvalidated";break;
+        case 6:t.note.center.y=590;break;
+        case 7:t.hit.x+=30;break;
+        case 8:t.note.height=70;break;
+        case 9:t.note.rails_geometry=true;break;
+        case 10:t.note.tangent={0,1};break;
+        case 11:t.expires_ns=0;break;
+        case 12:t.history_span_ns=1'000'000;break;
+        case 13:clock.set(100'000'000);break;
+        case 14:t.note.confidence=.3;break;
+        }
+        owner.accept(s);owner.poll();EXPECT_TRUE(touch.receipts().empty());EXPECT_TRUE(owner.take_accepted_plans().empty());
+    }
+}
+TEST(GameOwner, PendingDragPredictionCanBecomeACurrentSpatialContactExactlyOnce) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{4,35'000'000,30'000'000});
+    auto s=overlapping_drag(1,0);auto& t=s.targets[0];t.note.center.y=510;t.hit={400,576};
+    t.reason="prediction_observe_only";t.crossing_ns=100'000'000;owner.accept(s);owner.take_accepted_plans();
+    clock.set(20'000'000);s=overlapping_drag(2,clock.now_ns());owner.accept(s);
+    const auto plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);
+    EXPECT_EQ(plans[0].basis,"live_pixels_current_drag_overlap");EXPECT_FALSE(plans[0].predicted_down_ns);
+    EXPECT_TRUE(owner.take_plan_cancellations().empty());owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    clock.set(60'000'000);owner.accept(snapshot(3,clock.now_ns()));EXPECT_TRUE(touch.contacts().empty());
+    clock.set(70'000'000);s=overlapping_drag(4,clock.now_ns());owner.accept(s);owner.poll();
+    EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+}
+TEST(GameOwner, ConsecutiveSpatialDragCoresShareTheStartedFingerWithoutAnyCrossing) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{4,35'000'000,30'000'000});
+    auto s=overlapping_drag(1,0);owner.accept(s);owner.poll();owner.take_accepted_plans();
+    ASSERT_EQ(touch.contacts().size(),1);const auto finger=touch.contacts().begin()->first;
+    clock.set(30'000'000);s=overlapping_drag(2,clock.now_ns(),2);s.targets[0].note.center.x+=10;s.targets[0].hit.x+=10;
+    owner.accept(s);owner.poll();ASSERT_EQ(touch.contacts().size(),1);EXPECT_EQ(touch.contacts().begin()->first,finger);
+    const auto updates=owner.take_coverage_updates();ASSERT_EQ(updates.size(),1);
+    EXPECT_EQ(updates[0].at("event"),"game_drag_coverage");EXPECT_TRUE(updates[0].at("crossing_ns").is_null());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+}
 TEST(AutoPlay, UnknownStaleOutOfFrameAndContradictoryScenesCannotStart) {
     auto s=snapshot(1,0); s.ui=GameUi::menu; s.playing_gate=false; s.play_button=Vec2{1200,630};
     PlayButtonPlanner planner;

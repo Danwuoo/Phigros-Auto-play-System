@@ -1,6 +1,6 @@
 # Phigros Auto-play System
 
-最新狀態：自主開發與實戰持續。第九輪observer33為369／2／0／22；第十輪observer34／planner14為361／1／0／31，仍未AP。已定位pending Hold Down改時會誤平移Up、提前釋放的錯誤；planner15以最新capture+100ms更新原有期限，回歸及續測中。灰階外框、前端遮擋時的當前body觸點、Drag Move与line ID已實作；光流／模型未接入。HD需同版本至少連續三輪AP才進IN。詳見[外框方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。
+最新狀態：自主開發與實戰持續。第九輪最佳369／2／0／22；第十一輪observer34／planner15為361／0／0／32，仍未AP。pending Hold Down改時誤平移Up的錯誤已修正，三配置各169／169，該輪無Hold contact_window_completed Up。planner16新增目前Drag核心與判定線重疊時的接觸路徑，回歸與續測中。灰階外框、前端遮擋時的當前body觸點、Drag Move与line ID已實作；光流／模型未接入。HD需同版本至少連續三輪AP才進IN。詳見[外框方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。
 
 2026-09-27 使用者補充四／五指與持續接觸語義後，source `59c92bf`／planner9已加入五指profile、實測容量門控、Hold當前尾端過線才正常Up，以及連續Drag區域覆蓋續接。四／五指各30次及五指全部取消30次通過；Release／Debug／嚴格ASan各142／142通過，詳見[動作語義紀錄](docs/GAME_ACTION_SEMANTICS_20260927.md)。舊三輪皆兩指／planner8，結果不能當成新策略驗收；新版本尚未進遊戲。
 

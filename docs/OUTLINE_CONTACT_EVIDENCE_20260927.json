@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "observer34_planner15_pending_hold_lease_regression_passed_live_pending",
+  "status": "observer34_planner16_current_drag_overlap_173_regressions_live_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -212,6 +212,30 @@
       "dataset_roi_saved": 136,
       "sampling_fault": "",
       "raw_sha256": "25aacd2ff8c50831f4da738cdef046303ede30fd415bcec1f12ff434b9680d6c"
+    },
+    {
+      "run_id": "cpp-observe-17905129001142547",
+      "source_commit": "ac375a6",
+      "binary_sha256": "0ee882ae3ee14826c954f34969c7e1a76a51981bfd617b333def723e4d16e5eb",
+      "difficulty": "HD6",
+      "score": 838677,
+      "perfect": 361,
+      "good": 0,
+      "bad": 0,
+      "miss": 32,
+      "max_combo": 47,
+      "accuracy_percent": 91.86,
+      "early": 0,
+      "late": 0,
+      "ap": false,
+      "read_basis": "Computer Use native settlement screenshot after STOPPED, then independent after-stop capture diagnostic.png",
+      "duration_s": 185,
+      "exit_code": 0,
+      "dataset_sampling": true,
+      "dataset_roi_saved": 136,
+      "sampling_fault": "",
+      "hold_contact_window_completed_up_events": 0,
+      "raw_sha256": "5f85c4a442521a999257d0b93c7e983f93c18fd6e1ceb00b93153c9bc4d8920f"
     }
   ],
   "followup_regression": {
@@ -422,5 +446,33 @@
     },
     "basis": "pending Hold Up renewed to latest capture evidence +100ms after Down deadline revision; no longer shifts old Up",
     "focused_debug_passed": 1
+  },
+  "current_drag_overlap_followup": {
+    "observer": 34,
+    "planner": 16,
+    "diagnostics": 6,
+    "binary_sha256": "4fb6800d8f9212505fbea1174cb44d7daa637bd59b6694e7a77f05326183c216",
+    "release": {
+      "total": 173,
+      "passed": 173,
+      "seconds": 23.86
+    },
+    "debug": {
+      "total": 173,
+      "passed": 173,
+      "seconds": 51.72
+    },
+    "asan": {
+      "total": 173,
+      "passed": 173,
+      "suppressions": false,
+      "seconds": 120.58
+    },
+    "focused_drag": {
+      "total": 11,
+      "passed": 11
+    },
+    "basis": "current colored Drag core + current same-capture line geometry; no invented crossing; latest capture +100ms lease, 40ms missing",
+    "test_execution": "three independent configurations tested concurrently after all respective builds completed; no gameplay overlap"
   }
 }

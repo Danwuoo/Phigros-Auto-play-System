@@ -1,6 +1,6 @@
 # 開發路線圖
 
-自主開發與實戰持續。HD最佳22 Miss，第十輪31 Miss，未AP。observer34的外框／body續接保留；planner15修正pending Down改時將Hold Up提前的錯誤，期限仍依最新capture+100ms。先達同一凍結版本至少連續三次HD AP，再挑戰IN AP；取代下方歷史首次AP即進IN門檻，尚未達標。
+自主開發與實戰持續。HD最佳22 Miss，第十一輪32 Miss，未AP。observer34的外框／body續接保留；planner15修正pending Down改時將Hold Up提前的錯誤，期限仍依最新capture+100ms。planner16加入由当前Drag核心／line幾何證實的重疊接觸，不偽造crossing；合成回歸與實戰續測。先達同一凍結版本至少連續三次HD AP，再挑戰IN AP；取代下方歷史首次AP即進IN門檻，尚未達標。
 
 使用者後續補充遊戲可四／五指、Hold須整條結束、連續黃色Drag可持續接觸。source `59c92bf` 的planner9與5-contact profile已實作；後端能力核對及測試見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。這是另有使用者依據的動作修正，沒有採用T1／T2或模型；新遊戲策略仍待實戰，HD AP未完成。
 
