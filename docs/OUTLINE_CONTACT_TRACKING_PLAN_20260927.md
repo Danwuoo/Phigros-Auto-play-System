@@ -174,3 +174,15 @@ recognition n8761 p50／p95／p99／max=5.6308／9.843／13.50184／29.5653ms；
 只讀C++ line_pose_audit以保存的line候選幾何重做關聯，不產生input或runtime replay。可比單線pair限制同epoch／geometry、正序且間隔<90ms、orientation>.9、normal displacement<64px、length ratio>.45。第十四輪6919對原ID改變3次、有界refit為0；第十五輪6857對原ID與refit皆0。這是近似幾何連續性指標，沒有line身份真值，不能把3次都視為遊戲錯誤或解釋Good／Miss。第十五輪8712個line observations中有效fit8107，abs(uy)>.03的傾斜線2063次中有效1711；startup／不足跨度／非線性照原門檻拒絕。離線未處理近線候選Drag2／Hold19／Tap3，不是結算判定真值；兩個Drag首次近線normal距離−8.046／−6px、fit失配，仍需核對當前region／線重疊及後續frames，不能從單一日誌點直接放寬門控。
 
 線身分的這個診斷指標改善，但AP與穩定性未達成。下一步核對歪斜／移動線上的Hold外框續接、Drag当前區域與触点位置；先準備下一輪PLAY，再續同版本／逐層實戰比較，不進IN。
+
+### 時間誤差門控及第十六輪
+
+第十五輪Tap284／285在2257已有pending計畫，2258因RMS8.826px取消；2261重建，2262因9.275／9.794px再次取消，2263近線後仍無Down。確認了未注入序列，但沒有逐音符結算真值。observer36以寬度有界的空間門檻clamp(width*.125,8,16)px，同時核對RMS與當前點對fit偏差；uncertainty=max(2,RMS,current deviation)/abs(v)，owner原30ms保持。planner17對尚未Down但最新不確定性超限的計畫取消，記timing_uncertainty_exceeds_limit；當前spatial Drag獨立。hit仍在當前line，沒有改lead／missing／source期限。
+
+source457db83，binary22c4a3428f7e0de852501426d6ee3a6c2d21f64266e163e390761c304b6ba70f；新增三項pixels／fake-clock驗證高速抖動可預測、慢速同殘差拒絕、當前幾何大跳拒絕，以及pending不確定性取消後只能新intent重建一次。Release／Debug／嚴格ASan各187／187，19.88／42.29／99.80秒，三配置建置完成後並行測試，無遊戲重疊、無suppressions。
+
+第十六輪cpp-observe-17905195761017275，observer36／planner17，五指35ms、預設自動PLAY，185s STOPPED／exit0。原生畫面確認PLAY；CU截到其他前景視窗，排除該圖，实际emulator前景未證明。曲中沒有build／test／額外capture。完整393個結算346／19／0／28，835407分、maxcombo58、ACC91.18%、Early0／Late19。Miss同上一輪28、Good增加5，未改善／未AP。raw bc8ff0faed52ee346e99349cd3b11e5bea3c9c0494da8857ba75ffc21f7fae7e；原生結算PNG e6055a1efd1fe48ee8efea80f207859421c8c514317bae674e78c8405eaebaf3。18clips136ROI、partial=false、failure空。
+
+recognition n8111 p50／p95／p99／max=5.6231／9.5098／12.2039／23.4988ms；playing interval n7405=19.9293／47.11734／65.343184／226.6533ms。playing7407幀中no-line191；source expired8／UI lost2，local contact conflicts0。pending nonlinear4／outside horizon7／root past3，沒有timing uncertainty取消；Hold missing98／geometry8／held-region-unsupported4／ambiguous6。空間門控與畫面分布都不同，不能從單輪把取消減少視為因果改善。6504可比單線pair的原ID／refit改變均0，仍不是身份真值。未處理近線Drag2／Hold16／Tap3僅診斷，Hold60在577其實與有當前rails支持的活動Hold59重疊，不能當新Miss。
+
+離線只讀C++ note_timeline發現Tap1082／intent312：6495修訂Down48174527421819；6496於48174521555700按missing40ms取消，executed_steps=0、contact_started=false。6499音符返回，6501当前QPC48174620431000、crossing48174614233066、uncertainty4.663914ms均有界，但沒有新plan或Down。cancel_contact保留submitted=true；scheduler已無該intent，返回像素只遇到無cursor後continue。這是可重現的生命週期缺口，不是未知注入結果，下一版只對已知0步取消重建資格；活動／完成／未知Down保持不能重播。

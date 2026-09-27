@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "observer35_184_regressions_passed_hd15_351_14_0_28_no_ap",
+  "status": "observer36_187_regressions_passed_hd16_346_19_0_28_no_ap",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -516,6 +516,128 @@
         "tilted_refit_valid": 1711
       },
       "environment_note": "Before run native gRPC image confirmed Glaciaxion HD PLAY. Computer Use screenshot occluded by a different foreground app, excluded; actual emulator foreground during gameplay not proven. No build/test/additional captures during gameplay. Full settlement verified by native capture after STOPPED."
+    },
+    {
+      "run_id": "cpp-observe-17905195761017275",
+      "source_commit": "457db83",
+      "observer": 36,
+      "planner": 17,
+      "diagnostics": 6,
+      "binary_sha256": "22c4a3428f7e0de852501426d6ee3a6c2d21f64266e163e390761c304b6ba70f",
+      "perfect": 346,
+      "good": 19,
+      "bad": 0,
+      "miss": 28,
+      "score": 835407,
+      "max_combo": 58,
+      "accuracy": 91.18,
+      "early": 0,
+      "late": 19,
+      "ap": false,
+      "state": "STOPPED",
+      "exit_code": 0,
+      "automatic_play_enabled": true,
+      "auto_play_requested": true,
+      "duration_s": 185,
+      "stability_eligible": true,
+      "raw_sha256": "bc8ff0faed52ee346e99349cd3b11e5bea3c9c0494da8857ba75ffc21f7fae7e",
+      "result_image_sha256": "e6055a1efd1fe48ee8efea80f207859421c8c514317bae674e78c8405eaebaf3",
+      "diagnostic_roi_frames": 136,
+      "diagnostic_partial": false,
+      "sampling_fault": "",
+      "recognition_ms": {
+        "absolute_deviation_p95": 3.8873000000000006,
+        "jitter_p95_minus_p5": 5.4955,
+        "jitter_p95_minus_p50": 3.8867000000000003,
+        "max": 23.4988,
+        "mean": 6.09107034890888,
+        "min": 2.1588,
+        "n": 8111,
+        "p5": 4.0143,
+        "p50": 5.6231,
+        "p95": 9.5098,
+        "p99": 12.203899999999999
+      },
+      "playing_capture_interval_ms": {
+        "absolute_deviation_p95": 27.193899999999996,
+        "jitter_p95_minus_p5": 44.28717999999997,
+        "jitter_p95_minus_p50": 27.18803999999997,
+        "max": 226.6533,
+        "mean": 22.288167724510505,
+        "min": 1.1946,
+        "n": 7405,
+        "p5": 2.8301600000000002,
+        "p50": 19.9293,
+        "p95": 47.11733999999997,
+        "p99": 65.34318400000001
+      },
+      "playing_no_line_frames": 191,
+      "playing_gate_frames": 7407,
+      "runtime_revokes_by_reason": {
+        "UI_gate_lost": 2,
+        "source_evidence_expired": 8
+      },
+      "accepted_intents_by_basis": {
+        "live_pixels_current_drag_overlap": 13,
+        "live_pixels_short_linear_fit_drag": 99,
+        "live_pixels_short_linear_fit_flick": 6,
+        "live_pixels_short_linear_fit_hold": 132,
+        "live_pixels_short_linear_fit_tap": 140
+      },
+      "pending_prediction_cancellations_by_reason": {
+        "nonlinear_or_mismatch": 4,
+        "outside_short_horizon": 7,
+        "root_past": 3
+      },
+      "contact_cancellations_by_kind_and_reason": {
+        "drag": {
+          "current_geometry_unsupported": 2,
+          "current_object_missing_or_region_lost": 93,
+          "identity_ambiguous": 2
+        },
+        "hold": {
+          "current_geometry_unsupported": 8,
+          "current_held_region_unsupported": 4,
+          "current_object_missing_or_region_lost": 98,
+          "identity_ambiguous": 6
+        },
+        "tap": {
+          "current_object_missing_or_region_lost": 1,
+          "identity_ambiguous": 1
+        }
+      },
+      "contact_conflicts": [],
+      "unhandled_nearline_candidates": {
+        "handled": 380,
+        "not_ground_truth": true,
+        "unique_unhandled_nearline": {
+          "drag": 2,
+          "hold": 16,
+          "tap": 3
+        }
+      },
+      "line_pose_audit": {
+        "comparable_single_line_pairs": 6504,
+        "dimensions": [
+          1280,
+          720
+        ],
+        "largest_recorded_speed_px_s": 752.1675307734674,
+        "largest_valid_refit_omega_rad_s": 0.9551639530915516,
+        "largest_valid_refit_speed_px_s": 752.1675307734674,
+        "line_observations": 8052,
+        "original_id_changes_in_comparable_pairs": 0,
+        "playing_frames": 7407,
+        "raw": "measurements/game-assist/cpp-observe-17905195761017275/events.jsonl",
+        "refit_ambiguous": 0,
+        "refit_id_changes_in_comparable_pairs": 0,
+        "refit_valid": 7323,
+        "schema": 1,
+        "semantics": "offline re-association of saved measured line candidates only; not runtime replay, not identity ground truth or per-note judgments",
+        "tilted_observations_abs_uy_gt_003": 1796,
+        "tilted_refit_valid": 1412
+      },
+      "environment_note": "Native capture confirmed Glaciaxion HD PLAY. CU snapshot showed a different foreground window and is excluded; emulator foreground not proven. All builds/tests complete before run; no build/test/extra capture during gameplay. Full settlement verified after STOPPED."
     }
   ],
   "followup_regression": {
@@ -912,5 +1034,28 @@
     "causal_score_improvement_proven": false,
     "optical_flow": false,
     "ml_model": false
+  },
+  "current_timing_uncertainty_followup": {
+    "observer": 36,
+    "planner": 17,
+    "source_commit": "457db83",
+    "binary_sha256": "22c4a3428f7e0de852501426d6ee3a6c2d21f64266e163e390761c304b6ba70f",
+    "spatial_limit_px": "clamp(note.width*.125,8,16)",
+    "prediction_error_px": "max(2,RMS,abs(current_distance-fitted_distance))",
+    "timing_limit_ms": 30,
+    "pending_uncertainty_cancellation": true,
+    "tests_per_configuration": 187,
+    "release_seconds": 19.88,
+    "debug_seconds": 42.29,
+    "asan_seconds": 99.8,
+    "suppressions": false,
+    "focused_tests": 3,
+    "new_tests": 3,
+    "live_ap": false,
+    "score_improvement_proven": false,
+    "raw_root": "measurements/outline-contact-20260927",
+    "unchanged": "lead35ms/source100ms/target100ms/Hold missing60ms/Drag missing40ms",
+    "environment": "Windows x64 MSVC19.51 C++20; three configurations tested in parallel after each build completed, no gameplay overlap",
+    "diagnostic_note": "HD16 Tap1082 frame6496 pending missing cancellation executed_steps0, no Down; valid returned fit at6501 rejected by submitted identity. Fix still pending. Unhandled counts are not judgment ground truth; Hold60 at577 overlaps independently supported active Hold59."
   }
 }

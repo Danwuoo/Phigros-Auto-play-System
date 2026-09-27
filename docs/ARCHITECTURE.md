@@ -1,5 +1,7 @@
 # 架構與資料契約
 
+observer36／planner17 將撞線擬合的空間誤差與時間不確定性分開：RMS 與當前實測距離對擬合距離的偏差均須不超過 clamp(note.width×.125, 8, 16)px；prediction_error_px=max(2px, RMS, 當前偏差)，uncertainty_ns=prediction_error_px/abs(relative_velocity) 換算為主機時間。owner 的原 30ms 不確定性上限保持；尚未 Down 的計畫若收到超限不確定性，取消並記 timing_uncertainty_exceeds_limit，後續新有效像素可建立新 intent，活動或完成 Down 不重播。當前 spatial Drag overlap 維持獨立語義。decision targets 新增 prediction_error_px／fit_residual_limit_px，CandidateBatch extractor36 可讀29–36，quality版本不變。未改線的當前幾何、35ms lead、source／target100ms、Hold missing60ms、Drag missing40ms；不是以音符寬度延長接觸期限。合成回歸與實機證據見外框方案。
+
 `run --mode assist --manual-play`只停用自動PLAY，真實遊玩仍須通過原本能力指紋核對、獨立gRPC觸控端及playing gate。manifest記錄input_policy=manual_PLAY_and_gated_gameplay、automatic_play_enabled=false；summary亦記錄automatic_play_enabled。未指定時保留既有一次pixels PLAY預設，observe／auto-start不接受--manual-play。這是使用者回來後改為手動點擊的明確入口，沒有改動音符策略或證據期限。
 
 手動PLAY的session生命週期另有GameRunBudget：--wait-play-s預設60秒、有效(0,60]，待機無playing時到期停止；action owner第一次處理像素確認的playing_gate時以同一QPC記錄first_playing_ns，supervisor只arm一次，duration自該時刻開始。重複playing／epoch／UI gate變動不能延期或重設已arm預算。非manual的duration仍自session_start起算。manifest／summary記duration_origin、wait_play_s與duration_s，summary另記budget_origin_ns／budget_deadline_ns；game_run_budget_armed事件保留依據。預算只管理session停止，不輸入逐音符決策，不能當歌曲時鐘或譜面。等待超時reason=waiting_for_play_timeout；此時不會取得遊戲時間預算。

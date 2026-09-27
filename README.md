@@ -1,5 +1,7 @@
 # Phigros Auto-play System
 
+observer36／planner17 將空間殘差與時間不確定性分開，保留30ms門檻；三配置各187／187。第十六輪HD完整346／19／0／28、835407分，Miss與上一輪相同、Good更多，未改善／未AP。另確認尚未Down的計畫因missing取消後，返回的有效像素被已提交狀態擋住，續修狀態生命週期。歷史最佳22 Miss，穩定HD／IN AP仍未完成。
+
 最新狀態：observer35已加入歪斜／移動判定線的有界運動關聯、當前斜線片段支持與斜Drag局部像素尺寸，Release／Debug／ASan各184／184。第十五輪完整HD為351／14／0／28，835,598分，未改善上一輪27 Miss，也未AP；歷史最佳仍是第九輪22 Miss。線身分診斷改善不代表漏鍵修復，仍需核對斜線上的音符續接。第十三輪曲尾提前停止，排除完整成績比較。預設assist自動PLAY；光流／模型未接入。HD需同版本至少連續三輪AP才進IN。詳見[外框方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。
 
 2026-09-27 使用者補充四／五指與持續接觸語義後，source `59c92bf`／planner9已加入五指profile、實測容量門控、Hold當前尾端過線才正常Up，以及連續Drag區域覆蓋續接。四／五指各30次及五指全部取消30次通過；Release／Debug／嚴格ASan各142／142通過，詳見[動作語義紀錄](docs/GAME_ACTION_SEMANTICS_20260927.md)。舊三輪皆兩指／planner8，結果不能當成新策略驗收；新版本尚未進遊戲。
