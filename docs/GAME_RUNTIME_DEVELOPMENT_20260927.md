@@ -409,3 +409,9 @@ shadow processed10,018／skip0／fault空、沒有backend或Frame lease；bank�
 實作0897e21、最終source59c92bf32992e02d0cb61c97dec5e96b66f0e0f2；同一Release SHA256 `8e1d3ce7dd74a49ab893640a7b432880e83686f73a1292cc7845e8e5e18fb669`。新增4項及擴充能力門控，最終Release／Debug／嚴格ASan各142／142，10.57／27.52／68.70秒；ASAN_OPTIONS／suppressions未設定，第三方DLL未插樁。相關回歸曾揭露舊Drag成員會取消新續接的leader，修正後通過；最後覆核修正兩次讀clock跨窗口邊界可能重取空optional，三配置由最終source重跑，早版logs另存。
 
 Native Fixture八類各30次、240／240，包括四／五指各30；五指全部取消另30／30，各Down／Up delta5且final active0。capability max_contacts_verified5、當前五指game-preflight指紋相符；舊兩指報告與五指profile則拒絕。首次bench未待Fixture到前景即安全退出，foreground確認後重試才成功，沒有向遊戲輸入。完成後已帶回Phigros前景，未按PLAY，新策略尚未實戰；不能將後端／合成通過當作HD命中或AP。完整環境、分布、設定與raw hash見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)／[metadata](GAME_ACTION_EVIDENCE_20260927.json)，本機原始資料 `measurements/game-semantics-20260927/` 保留，沒有push／merge或跨task回報。
+
+## 五指第一輪完成後停止測試，改討論追蹤方案
+
+使用者授權兩輪HD、PLAY已就緒後，當前五指capability及映射預檢通過，同59c92bf executable／lead35／五指／185秒／no-preview，關閉dataset／diagnostics／shadow。第一輪 `cpp-observe-17905001386033080` STOPPED／exit0／playing_seen=true，9293消費frames／999 gameplay commands；曲中無其他擷取／build／test／分析。結算capture CLI在建立capture前因無效options退出，沒有PNG或核對分數；隨後使用者要求停止，第二輪未開始，沒有pas程序或進一步遊戲操作。stop-record及首輪C++分析在 `measurements/game-semantics-20260927/live-two/`。
+
+使用者仍觀察到Drag漏接、Hold提前Up、線／Note移動不跟隨，要求Hold以外框、Drag持續接觸並提出追蹤方法。核對確認現有Hold rails仍依賴填色／anchor、contact綁Note ID，active Drag coverage沒有Move，line没有獨立穩定ID；首輪C++分析沒有contact conflict、Drag coverage9、source expiry6、UI revoke1、target evidence/window拒絕4、逐Note判定unknown。未記錄tail confirmed，不能斷定每次Up原因。raw SHA256 `47602f32d9f25c2359b582dacfbeaf6c437b81c2dce81172b2a8cd16718838e5`。具體修正順序／外框與contact關聯／line局部座標／有界光流及驗證見[新方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)，本次只完成設計，沒有新runtime修正／测试／光流依賴安裝或恢復遊戲測試。

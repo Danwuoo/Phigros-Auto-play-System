@@ -1,5 +1,7 @@
 # Phigros Auto-play System
 
+最新狀態：五指planner9第一輪HD已完成並停止，結算未核對；使用者停止兩輪測試，第二輪未開始。Drag漏接／Hold提前Up／移動跟隨仍待改善，已核對程式並整理[外框與持續接觸追蹤方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)，尚未實作新方案或恢復遊戲測試。
+
 2026-09-27 使用者補充四／五指與持續接觸語義後，source `59c92bf`／planner9已加入五指profile、實測容量門控、Hold當前尾端過線才正常Up，以及連續Drag區域覆蓋續接。四／五指各30次及五指全部取消30次通過；Release／Debug／嚴格ASan各142／142通過，詳見[動作語義紀錄](docs/GAME_ACTION_SEMANTICS_20260927.md)。舊三輪皆兩指／planner8，結果不能當成新策略驗收；新版本尚未進遊戲。
 
 2026-09-27 已實作 [追蹤對照](docs/TRACKING_COMPARISON_20260927.md) 與 [原生分割資料工具](docs/VISION_DATASET_20260927.md)：共享候選上的 T0／ByteTrack／OC-SORT 思路離線比較、容量1影子追蹤、同源 ROI 採樣、polygon mask／QA／export。Release／Debug／嚴格 ASan 各138／138通過；真實觸控保持 observer29 的 T0，尚未取得替換資格，未訓練或接入模型。完整 pipeline、獨立 line tracking、人工覆核與 HD AP 仍未完成。
