@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "manual_budget_176_regressions_passed_live_validation_pending",
+  "status": "176_regressions_and_bounded_wait_passed_user_requests_automatic_play_hd14_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -625,7 +625,21 @@
       "seconds": 90.81
     },
     "basis": "manual PLAY wait (0,60] seconds; full duration begins once at first pixels-confirmed playing QPC timestamp; no gate reset",
-    "live_wait_timeout_verified": false,
+    "live_wait_timeout_verified": true,
     "full_manual_live_verified": false
+  },
+  "manual_wait_timeout_smoke": {
+    "run_id": "cpp-observe-17905157648887396",
+    "source": "4824734",
+    "state": "STOPPED",
+    "wait_play_s": 3,
+    "duration_s": 185,
+    "stop_reason": "waiting_for_play_timeout",
+    "budget_origin_ns": null,
+    "gameplay_commands": 0,
+    "auto_play_requested": false,
+    "scene": "nonplaying settlement; not a PLAY-menu test",
+    "stdout_log_empty": true,
+    "verification_source": "saved summary.json plus journal summary and release report, process exit0"
   }
 }
