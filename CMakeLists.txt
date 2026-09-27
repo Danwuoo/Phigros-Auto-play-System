@@ -43,7 +43,7 @@ add_library(pas_proto STATIC ${PROTO_OUT}/emulator_controller.pb.cc
 target_include_directories(pas_proto PUBLIC ${PROTO_OUT})
 target_link_libraries(pas_proto PUBLIC protobuf::libprotobuf gRPC::grpc++)
 
-add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp)
+add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp src/game_tracking.cpp src/game_tracking_methods.cpp src/game_tracking_analysis.cpp src/game_tracking_shadow.cpp src/game_dataset.cpp src/game_dataset_tools.cpp)
 target_include_directories(pas_core PUBLIC include)
 target_link_libraries(pas_core PUBLIC nlohmann_json::nlohmann_json bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32)
 if(MSVC)
@@ -85,7 +85,7 @@ endif()
 add_executable(pas_tests tests/core_tests.cpp tests/grpc_loopback_tests.cpp
                          tests/grpc_transport_tests.cpp
                          tests/config_analysis_tests.cpp tests/cli_tests.cpp
-                         tests/capture_backend_tests.cpp tests/game_tests.cpp)
+                         tests/capture_backend_tests.cpp tests/game_tests.cpp tests/game_tracking_tests.cpp tests/game_dataset_tests.cpp)
 target_link_libraries(pas_tests PRIVATE pas_bench pas_emulator pas_core GTest::gtest_main)
 add_dependencies(pas_tests pas)
 if(MSVC)

@@ -2,6 +2,8 @@
 #include "pas/adb.hpp"
 #include "pas/analysis.hpp"
 #include "pas/game.hpp"
+#include "pas/game_dataset.hpp"
+#include "pas/game_tracking_shadow.hpp"
 #include "pas/journal.hpp"
 #include "pas/preview.hpp"
 #include <atomic>
@@ -145,11 +147,14 @@ private:
 }
 static void run_runtime(const std::string& config_path,double duration_s,bool no_preview,
                  const std::string& launch_package,double stale_ms,bool auto_play,
-                 const std::string& capability_path,bool assist=false,bool keep_diagnostic_anomalies=false) {
+                 const std::string& capability_path,bool assist=false,bool keep_diagnostic_anomalies=false,
+                 bool keep_vision_dataset=false,const std::string& tracking_shadow="") {
     if(!std::isfinite(duration_s)||duration_s<=0||duration_s>3600 ||
        !std::isfinite(stale_ms)||stale_ms<5||stale_ms>5000)
         throw std::invalid_argument("invalid duration or stale-ms");
     const auto config=load_config(config_path);
+    if(!tracking_shadow.empty()&&tracking_shadow!="byte_association"&&tracking_shadow!="oc_observation")
+        throw std::invalid_argument("tracking shadow requires byte_association or oc_observation");
     ConsoleStopGuard console_stop_guard;
     json capability=nullptr;
     if(auto_play) {
@@ -167,12 +172,24 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     wchar_t executable[32768]{};
     const auto executable_size=GetModuleFileNameW(nullptr,executable,32768);
     if(!executable_size||executable_size==32768) throw std::runtime_error("cannot identify runtime executable");
+    const json provenance={{"binary_sha256",sha256_file(executable)},{"config_sha256",sha256_file(config_path)},
+        {"capture_source","same consumed live frame"},{"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()}};
+    std::unique_ptr<GamePixelSampler> sampler;
+    if(keep_diagnostic_anomalies||keep_vision_dataset)sampler=std::make_unique<GamePixelSampler>(config.width,config.height,DatasetSamplingOptions{keep_diagnostic_anomalies,keep_vision_dataset});
+    std::unique_ptr<TrackingShadow> shadow;
+    if(!tracking_shadow.empty())shadow=std::make_unique<TrackingShadow>(tracking_shadow);
+    std::unique_ptr<TrackingBankRecorder> tracking_bank;
+    if(keep_vision_dataset||shadow)tracking_bank=std::make_unique<TrackingBankRecorder>();
+    const auto added_memory_upper=(sampler?sampler->allocated_raw_bytes():0)+(tracking_bank?16ULL*1024*1024:0)+(shadow?2ULL*1024*1024:0)+6ULL*1024*1024;
+    if(added_memory_upper>128ULL*1024*1024)throw std::invalid_argument("combined sampling/shadow/bank 128MiB budget");
     {
         std::ofstream file(run_dir/"manifest.json");
         file<<json{{"schema_version",3},{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"config",config.public_json},
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
-            {"dry_owner",!assist},{"game_observer_version",29},{"game_diagnostics_version",2},
+            {"dry_owner",!assist},{"game_observer_version",29},{"game_diagnostics_version",3},
+            {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
+            {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
             {"executable_sha256",sha256_file(executable)},
             {"game_planner_version",8},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
             {"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
@@ -182,7 +199,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"action_wait","win32_high_resolution_relative_timer_and_event"},
             {"capability_preflight",capability},
             {"source_absolute_age",nullptr},{"diagnostic_image_retention",keep_diagnostic_anomalies?
-                "at_most_two_anomaly_frames_encoded_after_input_stop":"none"},
+                "at_most_two_events_four_native_ROI_frames_each_encoded_after_input_stop":"none"},
             {"config_sha256",sha256_file(config_path)},
             {"grpc_transport",config.capture_kind=="emulator-grpc"?
                 grpc_transport_manifest(options.grpc_read_chunk_kib):json(nullptr)},
@@ -222,11 +239,11 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     ActionWake action_wakeup;
     std::exception_ptr worker_fault;
     std::shared_ptr<const DecisionSnapshot> decision;
-    // Explicit diagnostics only: two fixed slots, never fed back into play.
-    std::array<std::shared_ptr<const Frame>,2> anomaly_frames;
     std::shared_ptr<const Frame> preview_frame;
     std::shared_ptr<const DecisionSnapshot> preview_scene;
-    std::vector<double> intervals,residency,recognition;
+    std::vector<double> intervals,residency,recognition,sampling_copy,shadow_publication,bank_copy;
+    sampling_copy.reserve(100000);shadow_publication.reserve(100000);bank_copy.reserve(100000);
+    std::string sampling_fault;
     const auto failure=[&] {
         {std::lock_guard lock(fault_mutex); if(!worker_fault) worker_fault=std::current_exception();}
         stopping=true; ++revoke; action_wakeup.notify_all(); latest.close();
@@ -302,31 +319,26 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                 action_wakeup.notify_all();
                 // Observation only, after decision publication. The first
                 // visible combo disappearance is not attributed to a Note.
-                if(keep_diagnostic_anomalies&&combo_diagnostic.observe(*s)) {
+                const bool diagnostic_enabled=keep_diagnostic_anomalies||keep_vision_dataset;
+                const bool combo_missing=diagnostic_enabled&&combo_diagnostic.observe(*s);
+                const auto hold_missing=diagnostic_enabled?hold_diagnostic.observe(*s):std::optional<HoldDisappearance>{};
+                if(combo_missing) {
                     record({{"event","diagnostic_combo_disappearance"},{"source_frame",s->context.frame},
                         {"capture_complete_ns",s->context.capture_ns},{"per_note_feedback","unknown"},
                         {"diagnostic_used_for_input",false}});
-                    if(!anomaly_frames[1]) {
-                        anomaly_frames[1]=std::make_shared<Frame>(*f);
-                        record({{"event","diagnostic_frame_retained"},{"slot",1},{"source_frame",s->context.frame},
-                            {"reason","observed_combo_disappearance"},{"capture_complete_ns",s->context.capture_ns},
-                            {"diagnostic_copy_used_for_input",false}});
-                    }
                 }
-                if(keep_diagnostic_anomalies) if(const auto missing=hold_diagnostic.observe(*s)) {
+                if(const auto missing=hold_missing) {
                     record({{"event","diagnostic_hold_disappearance"},{"source_frame",s->context.frame},
                         {"capture_complete_ns",s->context.capture_ns},{"prior_source_frame",missing->source_frame},
                         {"prior_note_id",missing->note_id},{"prior_capture_ns",missing->capture_ns},
                         {"prior_head_x",missing->head.x},{"prior_head_y",missing->head.y},
                         {"prior_width",missing->width},{"prior_height",missing->height},
                         {"per_note_feedback","unknown"},{"diagnostic_used_for_input",false}});
-                    if(!anomaly_frames[0]) {
-                        anomaly_frames[0]=std::make_shared<Frame>(*f);
-                        record({{"event","diagnostic_frame_retained"},{"slot",0},{"source_frame",s->context.frame},
-                            {"reason","near_line_long_hold_disappearance"},
-                            {"capture_complete_ns",s->context.capture_ns},{"diagnostic_copy_used_for_input",false}});
-                    }
                 }
+                if(sampler){const auto start=clock.now_ns();try{sampler->consume(*f,*s,hold_missing,combo_missing);}catch(const std::exception& error){sampling_fault=error.what();sampler.reset();record({{"event","sampling_disabled"},{"reason",sampling_fault},{"diagnostic_raw_lost",true}});}
+                    if(sampling_copy.size()<100000)sampling_copy.push_back((clock.now_ns()-start)/1e6);}
+                if(shadow){const auto start=clock.now_ns();shadow->submit(observer.candidate_batch());if(shadow_publication.size()<100000)shadow_publication.push_back((clock.now_ns()-start)/1e6);}
+                if(tracking_bank){const auto start=clock.now_ns();tracking_bank->append(observer.candidate_batch());if(bank_copy.size()<100000)bank_copy.push_back((clock.now_ns()-start)/1e6);}
                 f.reset(); // Diagnostic copies never hold capture-pool leases.
             }
         } catch(...) {failure();}
@@ -526,18 +538,20 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     action_worker.request_stop(); perception_worker.request_stop(); capture_worker.request_stop();
     latest.close(); if(capture) capture->cancel();
     action_worker.join(); perception_worker.join(); capture_worker.join();
+    if(shadow)shadow->stop();
     std::uint64_t diagnostic_saved=0;
-    for(int slot=0;slot<2;++slot) if(anomaly_frames[slot]) {
-        const auto path=run_dir/(slot?"diagnostic-combo-disappearance.png":"diagnostic-hold-disappearance.png");
+    json sampled_manifest=nullptr;
+    std::string sampled_path;
+    if(sampler) {
+        const auto path=std::filesystem::path(config.log_dir).parent_path()/"vision-dataset-20260927"/run_dir.filename();sampled_path=std::filesystem::absolute(path).string();
         try {
-            write_diagnostic_png(path,*anomaly_frames[slot]);++diagnostic_saved;
-            record({{"event","diagnostic_frame_saved"},{"source_frame",anomaly_frames[slot]->sequence},
-                {"path",path.string()},{"sha256",sha256_file(path)},{"diagnostic_copy_used_for_input",false}});
+            sampled_manifest=sampler->flush(path,provenance,clock);diagnostic_saved=sampled_manifest.at("samples").size();
+            record({{"event","pixel_samples_saved"},{"path",sampled_path},{"count",diagnostic_saved},{"manifest_sha256",sha256_file(path/"manifest.json")},{"input_already_stopped",true}});
         } catch(const std::exception& error) {
-            record({{"event","diagnostic_frame_save_failed"},{"source_frame",anomaly_frames[slot]->sequence},{"reason",error.what()}});
+            sampling_fault=error.what();record({{"event","pixel_samples_save_failed"},{"reason",sampling_fault},{"input_already_stopped",true}});
         }
-        anomaly_frames[slot].reset();
     }
+    if(tracking_bank)try{tracking_bank->save(run_dir/"tracking-bank.json",provenance);}catch(const std::exception& error){record({{"event","tracking_bank_save_failed"},{"reason",error.what()}});}
     std::exception_ptr fault;
     {std::lock_guard lock(fault_mutex); fault=worker_fault;}
     const auto counts=latest.counters();
@@ -548,6 +562,9 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         {"consumer_skips",counts.consumer_skips},{"preview_draws",draws},{"dry_commands",dry_commands.load()},
         {"gameplay_commands",gameplay_commands.load()},
         {"diagnostic_images_saved",diagnostic_saved},
+        {"vision_dataset_path",sampled_path},{"sampling_manifest",sampled_manifest},{"sampling_fault",sampling_fault},
+        {"sampling_copy_ms",distribution(sampling_copy)},{"shadow_publication_ms",distribution(shadow_publication)},{"tracking_bank_copy_ms",distribution(bank_copy)},
+        {"tracking_shadow",shadow?shadow->stats():json(nullptr)},{"tracking_bank",tracking_bank?tracking_bank->stats():json(nullptr)},
         {"stop_reason",console_stop_requested?"console_stop":clock.now_ns()>=end?"duration":"preview_or_fault"},
         {"revocations",revoke.load()},{"relative_stale_drops",lag_drops},
         {"capture_interval_ms",distribution(intervals)},{"host_residency_ms",distribution(residency)},
@@ -572,7 +589,7 @@ void run_auto_start(const std::string& config_path,const std::string& capability
                     double duration_s,bool no_preview) {
     run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path);
 }
-void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview,bool keep_diagnostic_anomalies) {
-    run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path,true,keep_diagnostic_anomalies);
+void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview,bool keep_diagnostic_anomalies,bool keep_vision_dataset,const std::string& tracking_shadow) {
+    run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path,true,keep_diagnostic_anomalies,keep_vision_dataset,tracking_shadow);
 }
 }

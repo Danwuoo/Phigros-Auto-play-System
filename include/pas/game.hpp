@@ -60,6 +60,43 @@ struct DecisionSnapshot {
     std::vector<GameTarget> targets;
 };
 
+// Shared bounded baseline state. The detector may read current rail anchors;
+// comparison batches explicitly identify that source of candidate bias.
+struct GameTrackPoint { Nanoseconds t; Vec2 p; LineCandidate line; std::optional<Vec2> tail; bool rails=false; };
+struct GameTrackHistory {
+    std::uint64_t id=0,revision=0;
+    NoteKind kind=NoteKind::ambiguous;
+    Vec2 last;
+    Nanoseconds observed=0;
+    std::deque<GameTrackPoint> points;
+    NoteCandidate appearance;
+    std::optional<NoteCandidate> rail_anchor;
+    Nanoseconds rail_observed=0,point_bucket_ns=0;
+    std::uint64_t rail_frame=0;
+};
+enum class ObservationQuality { strong_current, weak_current, rejected };
+struct TrackingCandidate {
+    std::uint64_t candidate_id=0;
+    NoteCandidate note;
+    std::optional<NoteCandidate> shortened_hold;
+    ObservationQuality quality=ObservationQuality::rejected;
+    bool head_visible=true,body_visible=false,left_rail=false,right_rail=false;
+    bool action_support=false;
+    std::uint64_t hint_source_frame=0;
+    Nanoseconds hint_age_ns=0;
+    std::string origin="color_core";
+};
+struct CandidateBatch {
+    int schema=1,extractor_version=29,quality_version=1;
+    SceneContext context;
+    Nanoseconds extraction_start_ns=0,extraction_end_ns=0;
+    GameUi ui=GameUi::unknown;
+    bool playing_gate=false,capacity_valid=true,source_valid=true;
+    std::string history_source="baseline_guided";
+    std::vector<LineCandidate> lines;
+    std::vector<TrackingCandidate> candidates;
+};
+
 // Read-only diagnostic trigger. Never supplied to the planner or scheduler.
 // Two current positive frames arm; two missing frames over >=12 ms trigger.
 class ComboVisibilityDiagnostic final {
@@ -95,26 +132,17 @@ class GameObserver final {
 public:
     explicit GameObserver(const Clock& clock) : clock_(clock) {}
     DecisionSnapshot process(const Frame& frame);
+    const CandidateBatch& candidate_batch() const { return candidate_batch_; }
     void reset();
 private:
-    struct Point { Nanoseconds t; Vec2 p; LineCandidate line; std::optional<Vec2> tail; bool rails = false; };
-    struct History {
-        std::uint64_t id = 0, revision = 0;
-        NoteKind kind;
-        Vec2 last;
-        Nanoseconds observed = 0;
-        std::deque<Point> points;
-        NoteCandidate appearance;
-        std::optional<NoteCandidate> rail_anchor;
-        Nanoseconds rail_observed = 0;
-        Nanoseconds point_bucket_ns = 0;
-    };
+    using History=GameTrackHistory;
     const Clock& clock_;
     SceneContext previous_;
     std::vector<History> tracks_;
     std::uint64_t next_id_ = 0, sequence_ = 0;
     int playing_confirmations_ = 0;
     int menu_confirmations_ = 0;
+    CandidateBatch candidate_batch_;
 };
 
 // Single-thread owner. Note identity is distinct from monotonically assigned

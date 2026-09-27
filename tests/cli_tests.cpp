@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <filesystem>
 #include <string>
+#include <chrono>
 #define NOMINMAX
 #include <windows.h>
 
@@ -17,6 +18,16 @@ nlohmann::json run_pas(const std::vector<std::string>& arguments) {
     const auto output = pas::adb_call(executable, arguments, 10'000);
     return nlohmann::json::parse(output.begin(), output.end());
 }
+}
+
+TEST(CliAcceptance, TrackingComparisonUsesFakeBackendAndWritesNoLiveInput){
+ const auto path=std::filesystem::temp_directory_path()/("pas-tracking-cli-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())+".json");
+ const auto generated=run_pas({"dataset","tracking-challenge","--output",path.string()});EXPECT_FALSE(generated.at("input_created").get<bool>());
+ const auto report=run_pas({"analyze","tracking",path.string(),"--methods","legacy,byte_association,oc_observation","--updates","10"});
+ EXPECT_TRUE(report.at("offline_only").get<bool>());EXPECT_EQ(report.at("touch_backend"),"FakeTouchBackend");EXPECT_FALSE(report.at("real_input_created").get<bool>());EXPECT_EQ(report.at("methods").size(),3);
+ EXPECT_EQ(report.at("methods").at("byte_association").at("correctness").at("fake_duplicate_down"),0);
+ EXPECT_GT(report.at("methods").at("byte_association").at("correctness").at("fake_instances_with_down").get<int>(),0);
+ std::error_code ignored;std::filesystem::remove(path,ignored);
 }
 
 TEST(CliAcceptance, TinyFrameCaptureRemainsWithinAllocatedPixels) {

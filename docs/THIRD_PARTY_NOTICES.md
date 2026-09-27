@@ -22,7 +22,11 @@
 | zlib | 1.3.2 | [zlib](third_party/zlib.txt) |
 | scrcpy server | v4.1 tag `49c9501fb26f456bbf4a341dd68879f670c67452`, SHA-256 `deacb991ed2509715160ffdc7907e47b4160eb30d1566217e9047fd5b8850cae` | [scrcpy](third_party/scrcpy.txt) |
 | Android native_app_glue | NDK 30.0.16248370 | [AOSP NOTICE](third_party/android-native-app-glue.txt) |
+| ByteTrack，僅演算法思路參考 | `d1bf0191adff59bc8fcfeaa0b33d3d1642552a99` | [上游 MIT 原文](third_party/tracking/ByteTrack-LICENSE.txt) |
+| OC-SORT，僅演算法思路參考 | `8462e7e729a93ccd3bd995c0a79a890336cb3a0b` | [上游 MIT 原文](third_party/tracking/OC-SORT-LICENSE.txt) |
 
 NDK glue 的 Apache 2.0 完整授權亦見 [Abseil 授權副本](third_party/abseil.txt)。Windows／MSVC／SDK／JBR／NDK 工具本身由既有安裝提供；此倉庫沒有重新散布它們。未來製作正式二進位發行包時，須隨實際打包內容一併提供相應 notices。
 
 scrcpy server 原版檔案僅存於忽略的本機量測依賴目錄，程式啟動時驗證上述 SHA-256；倉庫沒有納入 server 二進位。FFmpeg 9.0.2 由 vcpkg baseline 建置 `avcodec`、`avutil`、`swscale` 動態庫；本次配置停用外部 x264／x265、GPL 與非自由元件。附上的 vcpkg 原版 `copyright` 保留 LGPL 2.1 授權全文與檔案授權說明。二進位交付時須隨實際 DLL 與 codec 配置再核對授權。
+
+2026-09-27 的 `byte_association`／`oc_observation` 是本專案 C++ 適配實作，參考強弱兩階段關聯、觀測方向與遮擋後修正，改用實際 QPC 間隔與有界狀態；不是上游完整 tracker，也未重現 MOT benchmark。assignment 為本專案自行實作；未複製 FilterPy／LAP 實作，未加入 Python、YOLOX、ReID、TensorRT 或 ncnn 依賴。閱讀的14個選取來源及 hash 見 [來源索引](TRACKING_REFERENCE_SOURCES_20260927.json)，兩repo MIT 原文保留 copyright。

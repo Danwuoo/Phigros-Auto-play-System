@@ -1,4 +1,5 @@
 #include "pas/game.hpp"
+#include "pas/game_tracking.hpp"
 #include "pas/analysis.hpp"
 #include <algorithm>
 #include <cmath>
@@ -910,148 +911,9 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         h.center.x+=axis.x*(length/2-2);h.center.y+=axis.y*(length/2-2);
         h.tail=visible_hold_tail(f,h);shortened_holds[i]=h;
     }
-    struct Pair { std::size_t note, track; double cost; };
-    std::vector<Pair> pairs; pairs.reserve(notes.size()*tracks_.size());
-    std::set<std::uint64_t> rail_claims;
-    for(const auto& note:notes) if(note.recent_identity) rail_claims.insert(note.recent_identity);
-    for(std::size_t ni=0;ni<notes.size();++ni) {
-        const auto& n=notes[ni];
-        for(std::size_t ti=0;ti<tracks_.size();++ti) {
-            const auto& t=tracks_[ti];
-            if(n.recent_identity) {
-                if(n.recent_identity==t.id) pairs.push_back({ni,ti,0});
-                continue;
-            }
-            if(rail_claims.contains(t.id)) continue;
-            Vec2 point=n.center;
-            if(t.kind!=n.kind) {
-                if(t.kind!=NoteKind::hold||!shortened_holds[ni]||
-                   distance(shortened_holds[ni]->center,t.last)>=40) continue;
-                point=shortened_holds[ni]->center;
-            }
-            Vec2 expected=t.last;
-            if(t.points.size()>=2&&t.points.back().t-t.points.front().t>=minimum_fit_span_ns) {
-                const auto& a=t.points[t.points.size()>3?t.points.size()-4:0]; const auto& b=t.points.back();
-                const double dt=(b.t-a.t)/1e9;
-                if(dt>0) {const double future=(now-b.t)/1e9;
-                    expected.x+=(b.p.x-a.p.x)/dt*future; expected.y+=(b.p.y-a.p.y)/dt*future;}
-            }
-            const double d=distance(expected,point);
-            if(d<f.width*.08) pairs.push_back({ni,ti,d});
-        }
-    }
-    std::sort(pairs.begin(),pairs.end(),[](const Pair& a,const Pair& b) {
-        if(a.cost!=b.cost) return a.cost<b.cost;
-        if(a.note!=b.note) return a.note<b.note; return a.track<b.track;
-    });
-    std::vector<int> assigned(notes.size(),-1);
-    std::vector<bool> track_used(tracks_.size()), uncertain(notes.size());
-    for(const auto& pair:pairs) {
-        if(assigned[pair.note]>=0||track_used[pair.track]) continue;
-        assigned[pair.note]=static_cast<int>(pair.track); track_used[pair.track]=true;
-        for(const auto& alternative:pairs) {
-            if(alternative.cost>pair.cost+8) break;
-            if((alternative.note==pair.note&&alternative.track!=pair.track)||
-               (alternative.track==pair.track&&alternative.note!=pair.note)) uncertain[pair.note]=true;
-        }
-    }
-    for(std::size_t ni=0;ni<notes.size();++ni) {
-        const auto& n=notes[ni];
-        History* match=assigned[ni]>=0?&tracks_[static_cast<std::size_t>(assigned[ni])]:nullptr;
-        const bool ambiguous=uncertain[ni];
-        if(!match) {
-            if(tracks_.size()==128) {out.capacity_valid=false; continue;}
-            tracks_.push_back({++next_id_,0,n.kind,n.center,now,{},n}); match=&tracks_.back();
-        }
-        match->observed=now;
-        GameTarget target; target.note_id=match->id; target.revision=++match->revision;
-        target.note=n;
-        if(match->kind==NoteKind::hold&&n.kind==NoteKind::tap) {
-            target.note=*shortened_holds[ni];
-        }
-        match->last=target.note.center;
-        match->appearance=target.note;
-        const bool held_anchor=match->rail_anchor&&match->rail_anchor->head_on_line&&now-match->rail_observed<=90'000'000;
-        if(target.note.rails_geometry&&!ambiguous&&(!held_anchor||target.note.head_on_line)) {
-            match->rail_anchor=target.note;match->rail_observed=now;
-        }
-        target.evidence_ns=now; target.expires_ns=now+100'000'000;
-        target.reason=ambiguous?"association_ambiguous":"line_unobservable";
-        const LineCandidate* selected=nullptr;
-        for(const auto& line:out.lines) {
-            if(std::abs(line.tangent.x*n.tangent.x+line.tangent.y*n.tangent.y)<.95||line.length<f.width*.32) continue;
-            if(std::abs(n.center.x-line.center.x)>line.length/2+n.width) continue;
-            if(!selected||line.confidence>selected->confidence||
-               (line.confidence==selected->confidence&&line.length>selected->length)) selected=&line;
-        }
-        if(!selected&&out.lines.size()==1) selected=&out.lines.front();
-        if(selected&&!ambiguous) {
-            const auto& l=*selected;
-            const auto latest_distance=normal_distance(target.note.center,l);
-            target.hit={target.note.center.x+latest_distance*l.tangent.y,
-                        target.note.center.y-latest_distance*l.tangent.x};
-            const Point point{now,target.note.center,l,target.note.tail,target.note.rails_geometry};
-            // A delivery burst must not evict the complete temporal baseline.
-            // Keep the newest point in each bounded, host-clock 10 ms bucket.
-            if(!match->points.empty()&&now-match->point_bucket_ns<history_bucket_ns)
-                match->points.back()=point;
-            else {match->points.push_back(point);match->point_bucket_ns=now;}
-            while(match->points.size()>6 || (!match->points.empty()&&now-match->points.front().t>90'000'000))
-                match->points.pop_front();
-            target.samples=static_cast<int>(match->points.size());
-            target.history_span_ns=match->points.back().t-match->points.front().t;
-            target.reason="insufficient_history";
-            if(match->points.size()>=3&&target.history_span_ns<minimum_fit_span_ns)
-                target.reason="insufficient_temporal_span";
-            if(match->points.size()>=3&&target.history_span_ns>=minimum_fit_span_ns) {
-                double mt=0,md=0,denom=0,numerator=0;
-                for(const auto& p:match->points) {mt+=(p.t-now)/1e9; md+=normal_distance(p.p,p.line);}
-                mt/=match->points.size(); md/=match->points.size();
-                for(const auto& p:match->points) {const double t=(p.t-now)/1e9-mt;
-                    denom+=t*t; numerator+=t*(normal_distance(p.p,p.line)-md);}
-                if(denom>0) {
-                    const double v=numerator/denom, d=md-v*mt; double residual=0;
-                    for(const auto& p:match->points) {
-                        const double error=normal_distance(p.p,p.line)-(d+v*(p.t-now)/1e9);
-                        residual+=error*error;
-                    }
-                    residual=std::sqrt(residual/match->points.size());
-                    target.distance=d; target.velocity=v; target.residual=residual;
-                    const double tau=std::abs(v)>5?-d/v:-1;
-                    target.reason=std::abs(v)<=5?"relative_velocity_small":
-                        tau<0?"root_past":tau>.35?"outside_short_horizon":
-                        residual>8?"nonlinear_or_mismatch":"prediction_observe_only";
-                    if(tau>=-.04&&tau<=.35&&residual<=8&&std::abs(v)>5) {
-                        target.reason="prediction_observe_only";
-                        target.crossing_ns=now+static_cast<Nanoseconds>(std::llround(tau*1e9));
-                        target.uncertainty_ns=static_cast<Nanoseconds>(std::llround(
-                            std::max(2.0,residual)/std::abs(v)*1e9));
-                        // Timing uses the fitted distance. The hit point stays
-                        // on the independently observed current line; fit
-                        // residual must not displace it in the normal axis.
-                    }
-                    if(target.note.kind==NoteKind::hold&&target.note.tail) {
-                        double tt=0,td=0,tail_den=0,tail_num=0; int count=0;
-                        for(const auto& p:match->points) if(p.tail) {tt+=(p.t-now)/1e9;
-                            td+=normal_distance(*p.tail,p.line); ++count;}
-                        if(count>=3) {
-                            tt/=count; td/=count;
-                            for(const auto& p:match->points) if(p.tail) {
-                                const double x=(p.t-now)/1e9-tt;
-                                tail_den+=x*x; tail_num+=x*(normal_distance(*p.tail,p.line)-td);
-                            }
-                            const double tail_v=tail_den>0?tail_num/tail_den:0;
-                            const double tail_d=td-tail_v*tt;
-                            const double tail_tau=std::abs(tail_v)>5?-tail_d/tail_v:-1;
-                            if(tail_tau>=-.05&&tail_tau<3)
-                                target.tail_crossing_ns=now+static_cast<Nanoseconds>(std::llround(tail_tau*1e9));
-                        }
-                    }
-                }
-            }
-        } else if(out.lines.size()>1) target.reason="multiple_line_association_unvalidated";
-        out.targets.push_back(std::move(target));
-    }
+    candidate_batch_=make_candidate_batch(out,f,notes,shortened_holds,tracks_);
+    candidate_batch_.extraction_end_ns=clock_.now_ns();
+    track_legacy_batch(out,notes,shortened_holds,tracks_,next_id_);
     if(!out.capacity_valid) {out.playing_gate=false; out.ui=GameUi::unknown;}
     out.recognition_end_ns=clock_.now_ns();
     return out;

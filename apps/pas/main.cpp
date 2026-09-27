@@ -1,6 +1,8 @@
 #include "pas/core.hpp"
 #include "pas/runtime.hpp"
 #include "pas/game.hpp"
+#include "pas/game_tracking.hpp"
+#include "pas/game_dataset.hpp"
 #include "pas/config.hpp"
 #include "pas/emulator.hpp"
 #include "pas/analysis.hpp"
@@ -368,6 +370,8 @@ int main(int argc, char** argv) {
     double run_stale_ms = 100;
     bool no_preview = false;
     bool keep_diagnostic_anomalies = false;
+    bool keep_vision_dataset=false;
+    std::string tracking_shadow;
     auto* run_cmd = app.add_subcommand("run", "Pixels-only observe, automatic PLAY, or gated real assist");
     run_cmd->add_option("--config", config_path)->required();
     run_cmd->add_option("--mode", run_mode);
@@ -376,7 +380,11 @@ int main(int argc, char** argv) {
     run_cmd->add_option("--stale-ms", run_stale_ms)->check(CLI::PositiveNumber);
     run_cmd->add_flag("--no-preview", no_preview);
     run_cmd->add_flag("--keep-diagnostic-anomalies",keep_diagnostic_anomalies,
-        "Assist only: retain at most two anomaly frames; encode after input stops");
+        "Assist only: at most two events x four native ROI frames, encoded after input stops");
+    run_cmd->add_flag("--keep-vision-dataset",keep_vision_dataset,
+        "Assist only: opt-in 16 clips / 128 native ROI frames, encoded after input stops");
+    run_cmd->add_option("--tracking-shadow",tracking_shadow,
+        "Assist only: one dry latest-only byte_association or oc_observation worker");
     std::string preflight_config, preflight_capability;
     auto* preflight_cmd = app.add_subcommand("game-preflight", "Read-only live geometry and historical touch fingerprint check");
     preflight_cmd->add_option("--config", preflight_config)->required();
@@ -551,6 +559,26 @@ int main(int argc, char** argv) {
     pause_analysis->add_option("path", analysis_path)->required();
     auto* campaign_analysis = analyze_cmd->add_subcommand("campaign", "Recompute every campaign raw file and verify hashes");
     campaign_analysis->add_option("path", analysis_path)->required();
+    std::vector<std::string> tracking_methods{"legacy","byte_association","oc_observation"};int tracking_updates=10000;bool tracking_reupdate=false;
+    auto* tracking_analysis=analyze_cmd->add_subcommand("tracking","Offline paired candidate bank comparison; FakeTouchBackend only");
+    tracking_analysis->add_option("path",analysis_path)->required();
+    tracking_analysis->add_option("--methods",tracking_methods)->delimiter(',');
+    tracking_analysis->add_option("--updates",tracking_updates)->check(CLI::Range(1,100000));
+    tracking_analysis->add_flag("--oc-reupdate",tracking_reupdate);
+    std::string dataset_path,dataset_output;
+    auto* dataset_cmd=app.add_subcommand("dataset","Local pixel dataset preparation; no model training or upload");
+    auto* dataset_validate=dataset_cmd->add_subcommand("validate","Check hashes, native ROI, masks, objects and split leakage");
+    dataset_validate->add_option("root",dataset_path)->required();
+    auto* dataset_export=dataset_cmd->add_subcommand("export","Write a validated local index");
+    dataset_export->add_option("root",dataset_path)->required();dataset_export->add_option("--output",dataset_output)->required();
+    auto* dataset_pilot=dataset_cmd->add_subcommand("pilot-v75","Create two proposed single-frame annotations from verified v75 PNGs");
+    dataset_pilot->add_option("source",dataset_path)->required();dataset_pilot->add_option("--output",dataset_output)->required();
+    auto* dataset_rasterize=dataset_cmd->add_subcommand("rasterize","Create semantic/instance masks and overlay from sample annotation.json");
+    dataset_rasterize->add_option("sample",dataset_path)->required();
+    auto* tracking_challenge=dataset_cmd->add_subcommand("tracking-challenge","Write short deterministic geometric candidate cases; not real pixels");
+    tracking_challenge->add_option("--output",dataset_output)->required();
+    int copy_updates=10000;auto* dataset_copy_bench=dataset_cmd->add_subcommand("copy-bench","Offline bounded sampler memory copy A/B; synthetic pixels only");
+    dataset_copy_bench->add_option("--updates",copy_updates)->check(CLI::Range(1,100000));
     try {
         app.parse(argc, argv);
         if (*synthetic_cmd) synthetic(count, fps, recognition_delay_ms, log_path);
@@ -568,14 +596,22 @@ int main(int argc, char** argv) {
                 64, 64, buffer_consumer_delay_ms, false, buffer_log,
                 "buffer_bench_native").dump(2) << '\n';
         else if (*run_cmd) {
-            if(keep_diagnostic_anomalies&&run_mode!="assist")
-                throw std::invalid_argument("diagnostic anomalies require assist mode");
+            if((keep_diagnostic_anomalies||keep_vision_dataset||!tracking_shadow.empty())&&run_mode!="assist")
+                throw std::invalid_argument("diagnostics, dataset and tracking shadow require assist mode");
             if (run_mode == "observe") run_observe(config_path, run_duration_s, no_preview, "", run_stale_ms);
             else if (run_mode == "auto-start" && !run_capability.empty())
                 run_auto_start(config_path, run_capability, run_duration_s, no_preview);
             else if(run_mode=="assist"&&!run_capability.empty())
-                run_assist(config_path,run_capability,run_duration_s,no_preview,keep_diagnostic_anomalies);
+                run_assist(config_path,run_capability,run_duration_s,no_preview,keep_diagnostic_anomalies,keep_vision_dataset,tracking_shadow);
             else throw std::invalid_argument("choose observe, auto-start, or assist; input modes require --capability");
+        } else if (*dataset_cmd) {
+            if(*dataset_validate) {const auto result=validate_vision_dataset(dataset_path);std::cout<<result.dump(2)<<'\n';if(!result.at("valid").get<bool>())return 1;}
+            else if(*dataset_export)std::cout<<export_vision_dataset(dataset_path,dataset_output).dump(2)<<'\n';
+            else if(*dataset_pilot)std::cout<<create_v75_dataset_pilot(dataset_path,dataset_output).dump(2)<<'\n';
+            else if(*dataset_rasterize){const auto file=std::filesystem::path(dataset_path)/"annotation.json";if(std::filesystem::file_size(file)>16*1024*1024)throw std::invalid_argument("annotation capacity");std::ifstream in(file);rasterize_annotation(dataset_path,json::parse(in));std::cout<<json{{"rasterized",true},{"input_created",false}}.dump()<<'\n';}
+            else if(*tracking_challenge){write_tracking_challenge(dataset_output);std::cout<<json{{"output",dataset_output},{"input_created",false},{"synthetic",true}}.dump()<<'\n';}
+            else if(*dataset_copy_bench)std::cout<<benchmark_sampling_copy(copy_updates).dump(2)<<'\n';
+            else throw std::invalid_argument("choose a dataset subcommand");
         } else if (*preflight_cmd) {
             std::cout << game_preflight(preflight_config, preflight_capability).dump(2) << '\n';
         } else if (*config_cmd) {
@@ -588,7 +624,9 @@ int main(int argc, char** argv) {
                 result["offline_only"]=true; result["input_created"]=false;
                 result["diagnostic_png_sha256"]=sha256_file(analysis_path);
                 std::cout<<result.dump(2)<<'\n';
-            } else if (*game_analysis) std::cout << analyze_game_jsonl(analysis_path).dump(2) << '\n';
+            } else if (*tracking_analysis){if(tracking_reupdate&&std::find(tracking_methods.begin(),tracking_methods.end(),"oc_observation")==tracking_methods.end())throw std::invalid_argument("--oc-reupdate requires oc_observation");
+                auto result=analyze_tracking_bank(analysis_path,tracking_methods,tracking_updates,tracking_reupdate);wchar_t module[32768]{};if(GetModuleFileNameW(nullptr,module,32768))result["binary_sha256"]=sha256_file(module);std::cout<<result.dump(2)<<'\n';}
+            else if (*game_analysis) std::cout << analyze_game_jsonl(analysis_path).dump(2) << '\n';
             else if (*capture_analysis) std::cout << analyze_capture_jsonl(analysis_path).dump(2) << '\n';
             else if (*pause_analysis) std::cout << analyze_pause_jsonl(analysis_path).dump(2) << '\n';
             else if (*campaign_analysis) std::cout << analyze_capture_campaign(analysis_path).dump(2) << '\n';
