@@ -1,0 +1,4 @@
+#pragma once
+inline constexpr auto pas_session_build_commit="@PAS_BUILD_COMMIT@";
+inline constexpr bool pas_session_build_dirty=@PAS_BUILD_DIRTY_JSON@;
+inline constexpr auto pas_session_source_hashes=R"json(@PAS_BUILD_HASH_JSON@)json";

@@ -43,16 +43,42 @@ add_library(pas_proto STATIC ${PROTO_OUT}/emulator_controller.pb.cc
 target_include_directories(pas_proto PUBLIC ${PROTO_OUT})
 target_link_libraries(pas_proto PUBLIC protobuf::libprotobuf gRPC::grpc++)
 
-add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp src/game_tracking_analysis.cpp src/game_tracking_shadow.cpp src/game_dataset.cpp src/game_dataset_tools.cpp)
+add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp src/game_tracking_analysis.cpp src/game_tracking_shadow.cpp src/game_dataset.cpp src/game_dataset_tools.cpp src/game_session.cpp src/session_archive.cpp)
 target_include_directories(pas_core PUBLIC include)
 target_link_libraries(pas_core PUBLIC nlohmann_json::nlohmann_json bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32)
 if(MSVC)
   target_compile_options(pas_core PRIVATE /W4 /permissive- /EHsc)
 endif()
 
-add_library(pas_emulator STATIC src/emulator.cpp src/grpc_transport.cpp src/runtime.cpp)
+add_library(pas_emulator STATIC src/emulator.cpp src/grpc_transport.cpp src/runtime.cpp src/manual_session.cpp)
 target_include_directories(pas_emulator PUBLIC include)
 target_link_libraries(pas_emulator PUBLIC pas_core pas_proto)
+execute_process(COMMAND git rev-parse HEAD WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+                OUTPUT_VARIABLE PAS_BUILD_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND git status --porcelain WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+                OUTPUT_VARIABLE PAS_BUILD_DIRTY OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(PAS_BUILD_DIRTY)
+  set(PAS_BUILD_DIRTY_JSON true)
+else()
+  set(PAS_BUILD_DIRTY_JSON false)
+endif()
+set(PAS_BUILD_HASH_JSON "{")
+foreach(PAS_BUILD_FILE src/game.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp
+    src/core.cpp src/emulator.cpp src/config.cpp include/pas/core.hpp include/pas/game.hpp src/game_session.cpp src/manual_session.cpp src/session_archive.cpp
+    include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp apps/pas/main.cpp)
+  file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/${PAS_BUILD_FILE}" PAS_BUILD_HASH)
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${PAS_BUILD_FILE}")
+  string(APPEND PAS_BUILD_HASH_JSON "\"${PAS_BUILD_FILE}\":\"${PAS_BUILD_HASH}\",")
+endforeach()
+string(REGEX REPLACE ",$" "}" PAS_BUILD_HASH_JSON "${PAS_BUILD_HASH_JSON}")
+configure_file(cmake/session_build_provenance.hpp.in generated/session_build_provenance.hpp @ONLY)
+target_include_directories(pas_emulator PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated")
+if(PAS_HD9_TRACE_BASELINE_LIBRARY)
+  add_executable(pas_hd9_original_trace tests/hd9_trace_main.cpp src/game_session.cpp)
+  target_include_directories(pas_hd9_original_trace PRIVATE include)
+  target_link_libraries(pas_hd9_original_trace PRIVATE "${PAS_HD9_TRACE_BASELINE_LIBRARY}"
+      nlohmann_json::nlohmann_json bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32)
+endif()
 if(MSVC)
   target_compile_options(pas_emulator PRIVATE /W4 /permissive- /EHsc)
 endif()
@@ -86,6 +112,8 @@ add_executable(pas_tests tests/core_tests.cpp tests/grpc_loopback_tests.cpp
                          tests/grpc_transport_tests.cpp
                          tests/config_analysis_tests.cpp tests/cli_tests.cpp
                          tests/capture_backend_tests.cpp tests/game_tests.cpp tests/game_tracking_tests.cpp tests/game_dataset_tests.cpp)
+target_sources(pas_tests PRIVATE tests/game_session_tests.cpp)
+target_compile_definitions(pas_tests PRIVATE PAS_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(pas_tests PRIVATE pas_bench pas_emulator pas_core GTest::gtest_main)
 add_dependencies(pas_tests pas)
 if(MSVC)
