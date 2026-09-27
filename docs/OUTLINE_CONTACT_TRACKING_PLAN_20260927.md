@@ -4,6 +4,14 @@
 
 ## 已實作資料契約
 
+### 首輪實戰與後續修正
+
+source `fe0c85e`／binary `e2cab0ac...`，五指／lead35、185秒、單擷取、無preview／shadow／dataset、2個診斷clip共8 native ROI：run `cpp-observe-17905036167552410`，STOPPED／exit0。Computer Use 結算核對350 Perfect／0 Good／0 Bad／43 Miss、817,048分、max combo61，未AP。停止後另存結算PNG；raw SHA256 `146c9d650b8bbb553c69fd04654d13c679bd2bab8fec5594db934a0a477cdfe9`。
+
+C++分析10720 frames，辨識時長n10720 p50／p95／p99／max =4.7794／6.999555／8.526006／22.7867ms；capture間隔n10719 =16.5907／32.83405／46.153474／266.6157ms，source expiry2。真實401 Down／518 Move／401 Up，6個contact conflict；Hold down148、missing取消140、ambiguous3／geometry3，tail確認0／contact重關聯0，Drag已知local coverage9。這些是本機身份與注入統計，不是393個譜面音符真值；不能把Hold missing取消全部視為提前Up。測試環境及固定參數見metadata。
+
+conflict事件顯示同一x約639／y576位置有五個不同Hold intent持續刷新；新外框路徑可能讓多個舊anchor借同一當前rail刷新。後續改為每組當前相同外框只能支持一個身分，附40幀改變內部core的持續回歸。另保存第一個灰化失聯frame540 ROI：舊anchor core寬136.7604px、當前外框153px，原10%寬差門檻拒絕。當前成對寬差改為最多20%，保留雙側／近線連接／多截面一致與相鄰負例；離線C++ WIC probe僅讀保存pixels及當時anchor，舊source回傳no_current_outline，新source回傳x350.062／y576／width153／height233／tail未知。crop以上仍未知，不以補黑區域創造支持；此局部A／B不是遊戲命中驗收。原始probe source／log／settlement／分析保留於raw root。
+
 首次凍結版本的 Release／Debug／無 suppressions ASan 各149／149通過，時長11.76／31.32／59.90秒；build、所有失敗與修正回歸原始紀錄已保留。五指 preflight fingerprint_matches=true。[驗證 metadata](OUTLINE_CONTACT_EVIDENCE_20260927.json)記錄環境、設定及 binary SHA256；實戰仍待測，不能據此宣稱性能改善或 AP。
 
 - `src/game_motion.cpp` 的 line tracker 上限16，90ms 歷史、100ms／場景切換清空，方向反轉正規化；近似競爭不強配。實際當前幾何不低通，只有法向平移可從無紋理線段識別。CandidateBatch extractor30 新增 line_id、observed_ns、velocity、angular_velocity、association_valid；讀取仍相容29。

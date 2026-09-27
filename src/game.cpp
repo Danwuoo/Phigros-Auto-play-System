@@ -814,6 +814,8 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     // A judged Hold can lose or fragment its saturated core. Same-frame
     // parallel rails take precedence over those enclosed fragments; otherwise
     // a partial core moves the identity away from the still-visible head.
+    std::vector<NoteCandidate> claimed_outlines;
+    claimed_outlines.reserve(128);
     if(out.playing_gate) for(const auto& track:tracks_) {
         if(track.kind!=NoteKind::hold||track.points.empty()) continue;
         const bool recent_rails=track.rail_anchor&&now-track.rail_observed<=90'000'000;
@@ -828,9 +830,16 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             if(prior_line)break;
         }
         if(outline_line) if(auto outer=observe_held_outline(f,note,*outline_line)) {
+            // A current physical pair is evidence for exactly one identity.
+            // Otherwise several old anchors can each refresh themselves from
+            // the same rails forever and consume all five contacts.
+            if(std::any_of(claimed_outlines.begin(),claimed_outlines.end(),[&](const auto& used){
+                return std::abs(used.width-outer->width)<=4&&distance(used.center,outer->center)<=12&&
+                    std::abs(used.height-outer->height)<=16;
+            }))continue;
+            claimed_outlines.push_back(*outer);
             outer->recent_identity=track.id;
             std::erase_if(notes,[&](const NoteCandidate& other){
-                if(other.recent_identity&&other.recent_identity!=track.id)return false;
                 if(other.kind==NoteKind::hold)
                     return std::abs(other.width-outer->width)<20&&distance(other.center,outer->center)<48;
                 if(other.kind!=NoteKind::tap||other.height<12+std::abs(outer->tangent.y)*other.width)return false;
@@ -1410,6 +1419,7 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::uint64_t pending_prediction_cancellations=0;
     std::map<std::string,std::uint64_t> pending_cancellation_reasons;
     std::map<std::string,std::uint64_t> contact_cancellations,contact_ups;
+    std::map<std::string,std::map<std::string,std::uint64_t>> contact_cancellations_by_kind;
     std::uint64_t hold_tail_confirmations=0,hold_contact_reassociations=0;
     const auto describe_intent=[&](std::uint64_t intent) {
         json result={{"intent_id",intent},{"plan",nullptr},{"current_target",nullptr},
@@ -1527,6 +1537,7 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             }
         } else if(event=="game_contact_cancelled") {
             count(contact_cancellations,e.value("reason","unknown"));
+            count(contact_cancellations_by_kind[e.value("kind","unknown")],e.value("reason","unknown"));
         } else if(event=="game_contact_up") {
             count(contact_ups,e.value("reason","unknown"));
         } else if(event=="game_hold_tail_confirmed") {
@@ -1621,6 +1632,7 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         {"pending_prediction_cancellations",pending_prediction_cancellations},
         {"pending_prediction_cancellations_by_reason",pending_cancellation_reasons},
         {"contact_cancellations_by_reason",contact_cancellations},
+        {"contact_cancellations_by_kind_and_reason",contact_cancellations_by_kind},
         {"contact_ups_by_reason",contact_ups},
         {"hold_tail_confirmations",hold_tail_confirmations},
         {"hold_contact_reassociations",hold_contact_reassociations},

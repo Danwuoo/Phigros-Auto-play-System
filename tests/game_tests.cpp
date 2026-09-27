@@ -1152,6 +1152,8 @@ TEST(GameMotion, CurrentGrayOutlineTracksTranslationButRejectsSingleRailAndMissi
     auto f=image(1,0);rect(f,454,200,4,360,{160,160,160});rect(f,574,200,4,360,{160,160,160});
     auto body=observe_held_outline(f,anchor,line);ASSERT_TRUE(body);EXPECT_NEAR(body->center.x,516,3);
     EXPECT_NEAR(body->center.y,570,1);EXPECT_FALSE(body->tail); // no visible transverse closing edge
+    auto core_anchor=anchor;core_anchor.width=106; // 13% narrower birth core than outer rails
+    body=observe_held_outline(f,core_anchor,line);ASSERT_TRUE(body);EXPECT_NEAR(body->width,120,4);
     rect(f,454,200,124,4,{160,160,160});body=observe_held_outline(f,anchor,line);ASSERT_TRUE(body);ASSERT_TRUE(body->tail);
     rect(f,574,200,4,360,{0,0,0});EXPECT_FALSE(observe_held_outline(f,anchor,line));
 }
@@ -1164,6 +1166,28 @@ TEST(GameMotion, IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSig
     EXPECT_EQ(ls[0].track_id,second);EXPECT_EQ(ls[1].track_id,first);EXPECT_GT(ls[0].tangent.x,0);
     EXPECT_NEAR(ls[1].velocity.y,300,0.01);
     s.context.capture_ns+=20'000'000;s.context.epoch++;tracker.update(ls,s.context);EXPECT_NE(ls[1].track_id,first);
+}
+TEST(GameObserver, OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFragments) {
+    FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;
+    for(int i=0;i<4;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=510+i*22;
+        rect(f,432,head-200,136,200,{40,190,255});
+        rect(f,423,head-200,3,200,{245,245,245});rect(f,575,head-200,3,200,{245,245,245});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1);identity=s.targets.front().note_id;
+    }
+    for(int i=0;i<40;++i) {
+        auto f=image(i+5,(i+4)*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        rect(f,426,150,149,425,{90,100,110});
+        rect(f,423,150,3,425,{170,170,170});rect(f,575,150,3,425,{170,170,170});
+        // A short blue core is a changing description inside the same pair.
+        const int core_top=460+(i%3)*20;
+        rect(f,432,core_top,136,570-core_top,{40,190,255});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1)<<i;EXPECT_EQ(s.targets.front().note_id,identity)<<i;
+        EXPECT_TRUE(s.targets.front().note.rails_geometry);EXPECT_TRUE(s.targets.front().note.head_on_line);
+    }
 }
 TEST(GameMotion, ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash) {
     NoteCandidate anchor;anchor.kind=NoteKind::hold;anchor.center={500,560};anchor.tangent={1,0};

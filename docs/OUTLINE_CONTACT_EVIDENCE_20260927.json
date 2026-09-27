@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "initial_implementation_live_pending",
+  "status": "first_live_failed_followup_live_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -19,7 +19,8 @@
   "clock": "host QPC monotonic ns",
   "raw_root": "measurements/outline-contact-20260927",
   "iterations": {"release_failures": [8, 2, 1, 2, 4, 0, 0], "final_tests": 149},
-  "live_runs": [],
+  "live_runs": [{"run_id":"cpp-observe-17905036167552410","source_commit":"fe0c85e","score":817048,"perfect":350,"good":0,"bad":0,"miss":43,"ap":false,"exit_code":0,"state":"STOPPED","diagnostic_roi_frames":8,"raw_sha256":"146c9d650b8bbb553c69fd04654d13c679bd2bab8fec5594db934a0a477cdfe9"}],
+  "followup_regression": {"binary_sha256":"9b3036c0a7359ea04447ab91b4c891e3c54617c942aa14688bbe48e0fb31ef4c","release":{"passed":150,"total":150,"seconds":15.76},"debug":{"passed":150,"total":150,"seconds":25.40},"asan":{"passed":150,"total":150,"seconds":61.52,"suppressions":false},"current_gray_roi_outline":"153px current paired rails, tail unknown; former source rejects same pixels"},
   "stable_hd_ap": false,
   "stable_in_ap": false,
   "stability_criterion": "at least three consecutive AP settlements on one frozen version before advancing from HD to IN",

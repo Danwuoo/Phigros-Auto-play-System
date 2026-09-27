@@ -120,7 +120,9 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
         std::optional<Section> best;double score=1e9;bool ambiguous=false;
         for(std::size_t a=0;a<edges.size();++a)for(std::size_t b=a+1;b<edges.size();++b) {
             const double w=edges[b]-edges[a],middle=(edges[a]+edges[b])/2;
-            if(std::abs(w-anchor.width)>std::max(5.0,anchor.width*.10)||std::abs(middle)>48)continue;
+            // The birth descriptor measures the colored core; held pixels
+            // expose the outer rails instead (live 136px core / 154px rails).
+            if(std::abs(w-anchor.width)>std::max(8.0,anchor.width*.20)||std::abs(middle)>48)continue;
             const double cost=std::abs(w-anchor.width)+std::abs(middle)*.25;
             if(cost<score-1){best=Section{edges[a],edges[b],middle};score=cost;ambiguous=false;}
             else if(std::abs(cost-score)<=1)ambiguous=true;
