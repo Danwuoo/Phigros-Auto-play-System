@@ -1,5 +1,7 @@
 # 視覺分割資料準備（2026-09-27）
 
+使用者已在第十八輪後暫停goal；本資料根目前保留20run，達既定20run上限。第十八輪136原生ROI、partial=false／failure空。沒有刪除舊資料或改root繞過額度，人工標註／training_ready仍未完成；暫停總結見[最佳三次與技術發現](GOAL_PAUSE_SUMMARY_20260927.md)。
+
 軟體 source `b32517d`。本輪交付原生ROI採樣、標註／mask rasterizer、validator、export與v75格式pilot；不啟動模型訓練、下載權重或上傳圖片。**training_ready=false**；200–400張經核對ROI／至少3獨立run仍是目標，不是已完成數量。
 
 ## 同源採樣

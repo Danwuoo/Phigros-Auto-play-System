@@ -1,6 +1,6 @@
 # 外框追蹤與持續接觸方案（2026-09-27）
 
-最新狀態：自主開發與Computer Use實戰持續，HD同版本至少連續三次AP後進IN。observer33第九輪369／2／0／22、868,880分，仍未AP。observer34／planner14修正前端被觸控特效遮擋時的body續接與色塊錯誤投影Move；diagnostics6有界採樣。已有灰階雙側外框、短尾端、接觸重新關聯、Drag同指Move及獨立line ID；光流／模型未接入。
+最新狀態：使用者已要求暫停，goal=paused，不再自動開發或測試。最佳分數為第九輪868880／第七輪862583／第六輪852341；第十八輪同observer36／planner18為348／19／0／26、839224分。最新三配置各190／190，HD AP與IN尚未完成；光流／模型未接入。[最佳三次與技術發現](GOAL_PAUSE_SUMMARY_20260927.md)是目前暫停總結，下方續測描述皆為歷史。
 
 ## 已實作資料契約
 
@@ -198,3 +198,11 @@ recognition n6490 p50／p95／p99／max=6.1287／10.405475／13.42322／22.6047m
 只讀C++ pending_retry_audit核對6個已知0步取消，3個在當前新證據返回後建立新intent，3個都成功Down：note735／196→197／4107→4109、note1010／282→283／5251→5256、note1144／324→325／5519→5520。重建未Down數0；不是3個遊戲Miss被救回的證明。修正有合成及live生命週期證據，但遊戲改善／AP仍未成立。下一步優先分開核對畫面交付／處理間隔與source過期，再續歪斜／移動線上Hold外框／Drag区域支援，維持pixels-only及當前期限。
 
 另核對已有runtime summary：HD16 published8142／consumed8111、consumer skips31／overwritten31、pool drops0；HD17 published6503／consumed6490、skips12／overwritten12、pool drops0。擷取完成至辨識完成的host residency，HD16 n8111 p50／p95／p99／max=7.0203／12.037／16.09591／27.3643ms；HD17 n6490=7.48755／12.97327／17.34977／29.2701ms。採樣copy p99各.4636／.518522ms、max1.3957／1.7181ms。這些有限發布／消費差與有界residency不支持辨識端大量積壓的解釋，但未記所有來源callback間隔／OS排程／其他應用CPU，不能確定來源停頓原因。source_evidence_expired由runtime supervisor核對capture callback更新的last_capture，不是單憑遊戲分數推論。下輪保留相同binary／planner18，比較使用者準備的HD18條件；不重開擷取選型、不調期限，前景／負載仍需實際證據。使用者負載問題與HD18 PLAY準備訊息已送出，尚未取得回覆。
+
+### 第十八輪與使用者要求暫停
+
+使用者準備PLAY後，以完全相同source609600f／observer36／planner18／binaryd7ce474576a0283711b046b82720f9c10e8de0bb92203eb999a6c8decc157162開始cpp-observe-17905210508063699；185s STOPPED／exit0、預設auto PLAY、五指35ms。原生畫面確認Glaciaxion HD PLAY；CU截到遮擋聊天內容，排除，實際前景／其他應用負載仍未證明。曲中無build／test／額外capture。完整393個結算348／19／0／26、839224分、maxcombo55、ACC91.69%、Early2／Late17；較同版本HD17的56 Miss減少，但未超過最佳22 Miss、未AP。raw bdf80a15785b58ce1579655deeb588df32c1f4acd4ddac64cf1cbb537e4c0b46；原生結算PNGf34269ba00efd28ba3514d717510b37b317c244766335b8d20f6e01522272d61。
+
+recognition n8687 p50／p95／p99／max=5.1684／10.07501／14.536126／29.4625ms；playing interval n7798=19.0841／44.167815／59.803561／193.4422ms。playing7799幀中no-line217，source expired9／UI lost1，summary revocations11（包含停止）、1296gameplay commands、0本地contact conflicts。published8704／consumed8687、consumer skips17／overwritten17／pool drops0；host residency n8687 p50／p95／p99／max=6.4593／12.77464／17.501732／31.1284ms。pending nonlinear4／outside horizon3／root past4；Hold missing95／geometry10／held-region-unsupported6／ambiguous6。6802可比單線pair原ID／refit改變皆0；未處理近線Drag1／Hold25／Tap2，仍非真值。5個0步取消中2次新intent重建且都成功Down（1104／315→316／6947→6948，1236／363→365／7307→7310），不代表救回2個Miss。
+
+18clips136ROI、partial=false／failure空，資料根已保留20run達既定上限；未刪除或換root。使用者在本輪後要求「先停下goal，記錄最好的三次嘗試與技術發現」，goal立即設paused，不再執行開發／測試。本次僅完成紀錄整理，沒有新建置或新遊玩程序；後續需使用者明確恢復。完整分數前三為HD9／7／6；低Miss前三為HD9／6／18（同Miss以分數排序），原hash已重核對。[暫停總結](GOAL_PAUSE_SUMMARY_20260927.md)為目前入口。

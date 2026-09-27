@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "observer36_planner18_190_regressions_passed_hd17_304_33_0_56_no_ap",
+  "status": "paused_by_user_after_hd18_no_ap",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -792,6 +792,173 @@
         "semantics": "offline journal lifecycle audit; not game judgment ground truth or runtime replay"
       },
       "environment_note": "Native capture confirmed Glaciaxion HD PLAY. CU snapshot showed a different foreground window and is excluded; emulator foreground not proven. All builds/tests complete before run; no build/test/extra capture during gameplay. Full settlement verified after STOPPED. Other foreground application workload was not measured; do not attribute regression to it."
+    },
+    {
+      "run_id": "cpp-observe-17905210508063699",
+      "source_commit": "609600f",
+      "observer": 36,
+      "planner": 18,
+      "diagnostics": 6,
+      "binary_sha256": "d7ce474576a0283711b046b82720f9c10e8de0bb92203eb999a6c8decc157162",
+      "perfect": 348,
+      "good": 19,
+      "bad": 0,
+      "miss": 26,
+      "score": 839224,
+      "max_combo": 55,
+      "accuracy": 91.69,
+      "early": 2,
+      "late": 17,
+      "ap": false,
+      "state": "STOPPED",
+      "exit_code": 0,
+      "automatic_play_enabled": true,
+      "auto_play_requested": true,
+      "duration_s": 185,
+      "stability_eligible": true,
+      "raw_sha256": "bdf80a15785b58ce1579655deeb588df32c1f4acd4ddac64cf1cbb537e4c0b46",
+      "result_image_sha256": "f34269ba00efd28ba3514d717510b37b317c244766335b8d20f6e01522272d61",
+      "diagnostic_roi_frames": 136,
+      "diagnostic_partial": false,
+      "sampling_fault": "",
+      "recognition_ms": {
+        "absolute_deviation_p95": 4.906700000000001,
+        "jitter_p95_minus_p5": 7.07619,
+        "jitter_p95_minus_p50": 4.906610000000001,
+        "max": 29.4625,
+        "mean": 5.722132554391615,
+        "min": 2.0566,
+        "n": 8687,
+        "p5": 2.99882,
+        "p50": 5.1684,
+        "p95": 10.07501,
+        "p99": 14.53612599999993
+      },
+      "playing_capture_interval_ms": {
+        "absolute_deviation_p95": 25.087200000000003,
+        "jitter_p95_minus_p5": 41.92765,
+        "jitter_p95_minus_p50": 25.083714999999998,
+        "max": 193.4422,
+        "mean": 21.1877551936394,
+        "min": 1.2369,
+        "n": 7798,
+        "p5": 2.240165,
+        "p50": 19.0841,
+        "p95": 44.167815,
+        "p99": 59.80356099999993
+      },
+      "playing_no_line_frames": 217,
+      "playing_gate_frames": 7799,
+      "summary_revocations": 11,
+      "runtime_revokes_by_reason": {
+        "UI_gate_lost": 1,
+        "source_evidence_expired": 9
+      },
+      "accepted_intents_by_basis": {
+        "live_pixels_current_drag_overlap": 14,
+        "live_pixels_short_linear_fit_drag": 97,
+        "live_pixels_short_linear_fit_flick": 6,
+        "live_pixels_short_linear_fit_hold": 132,
+        "live_pixels_short_linear_fit_tap": 139
+      },
+      "pending_prediction_cancellations_by_reason": {
+        "nonlinear_or_mismatch": 4,
+        "outside_short_horizon": 3,
+        "root_past": 4
+      },
+      "contact_cancellations_by_kind_and_reason": {
+        "drag": {
+          "current_object_missing_or_region_lost": 95,
+          "identity_ambiguous": 6
+        },
+        "hold": {
+          "current_geometry_unsupported": 10,
+          "current_held_region_unsupported": 6,
+          "current_object_missing_or_region_lost": 95,
+          "identity_ambiguous": 6
+        },
+        "tap": {
+          "current_object_missing_or_region_lost": 1
+        }
+      },
+      "contact_conflicts": [],
+      "unhandled_nearline_candidates": {
+        "handled": 389,
+        "not_ground_truth": true,
+        "unique_unhandled_nearline": {
+          "drag": 1,
+          "hold": 25,
+          "tap": 2
+        }
+      },
+      "line_pose_audit": {
+        "comparable_single_line_pairs": 6802,
+        "dimensions": [
+          1280,
+          720
+        ],
+        "largest_recorded_speed_px_s": 351.46157019877853,
+        "largest_valid_refit_omega_rad_s": 1.2555418155089462,
+        "largest_valid_refit_speed_px_s": 351.46157019877853,
+        "line_observations": 8483,
+        "original_id_changes_in_comparable_pairs": 0,
+        "playing_frames": 7799,
+        "raw": "measurements/game-assist/cpp-observe-17905210508063699/events.jsonl",
+        "refit_ambiguous": 0,
+        "refit_id_changes_in_comparable_pairs": 0,
+        "refit_valid": 7886,
+        "schema": 1,
+        "semantics": "offline re-association of saved measured line candidates only; not runtime replay, not identity ground truth or per-note judgments",
+        "tilted_observations_abs_uy_gt_003": 2010,
+        "tilted_refit_valid": 1706
+      },
+      "pending_retry_audit": {
+        "cases": [
+          {
+            "cancel_frame": 6947,
+            "cancel_reason": "current_object_missing_or_region_lost",
+            "new_intent": 316,
+            "note_id": 1104,
+            "old_intent": 315,
+            "rebuilt_frame": 6948
+          },
+          {
+            "cancel_frame": 7307,
+            "cancel_reason": "current_object_missing_or_region_lost",
+            "new_intent": 365,
+            "note_id": 1236,
+            "old_intent": 363,
+            "rebuilt_frame": 7310
+          }
+        ],
+        "counts": {
+          "known_zero_cursor_cancellations": 5,
+          "rebuilt_new_intents": 2,
+          "successful_down_after_rebuild": 2
+        },
+        "rebuilt_without_successful_down": 0,
+        "schema": 1,
+        "semantics": "offline journal lifecycle audit; not game judgment ground truth or runtime replay"
+      },
+      "host_residency_ms": {
+        "absolute_deviation_p95": 6.3175,
+        "jitter_p95_minus_p5": 8.67813999999999,
+        "jitter_p95_minus_p50": 6.315339999999991,
+        "max": 31.1284,
+        "mean": 7.202146759525731,
+        "min": 2.9879,
+        "n": 8687,
+        "p5": 4.096500000000001,
+        "p50": 6.4593,
+        "p95": 12.774639999999991,
+        "p99": 17.501731999999993
+      },
+      "published": 8704,
+      "frames_consumed": 8687,
+      "consumer_skips": 17,
+      "overwritten": 17,
+      "pool_drops": 0,
+      "environment_note": "Same frozen binary/settings as HD17. Native capture confirmed Glaciaxion HD PLAY. CU snapshot showed an occluding window and is excluded; foreground/workload not proven. No builds/tests/extra capture during gameplay. Full settlement verified after STOPPED; user paused goal after this result."
     }
   ],
   "followup_regression": {
@@ -1339,7 +1506,119 @@
       }
     },
     "inference": "Small publication/consumption difference and sub100ms host residency do not suggest a large perception queue. Cause of capture cadence regression unknown; foreground/workload not measured.",
-    "next": "Compare the same frozen planner18 binary on user-prepared HD18 with emulator foreground if possible; do not change fixed capture backend or evidence deadlines",
-    "external_workload": "unknown; optional user question pending"
-  }
+    "next": "No automatic follow-up: user paused goal after HD18. Same-version HD17/18 comparison saved, cause still unknown.",
+    "external_workload": "unknown; optional question unanswered, no further work awaiting it during paused goal"
+  },
+  "goal_status": "paused",
+  "pause_summary": "docs/GOAL_PAUSE_SUMMARY_20260927.md",
+  "pause_record": {
+    "user_requested": true,
+    "goal_status": "paused",
+    "recorded_at_utc": "2026-09-27 15:03:14 UTC",
+    "goal_pause_updated_at_unix": 1790521332,
+    "last_run": "cpp-observe-17905210508063699",
+    "current_source_commit": "609600f",
+    "current_binary_sha256": "d7ce474576a0283711b046b82720f9c10e8de0bb92203eb999a6c8decc157162",
+    "automatic_development_and_game_tests": false,
+    "next_game_run_scheduled": false,
+    "historical_best_restored": false,
+    "dataset_runs_retained": 20,
+    "dataset_run_limit": 20,
+    "dataset_root_changed": false,
+    "stable_hd_ap": false,
+    "stable_in_ap": false,
+    "ranking_rule": "Complete nonexcluded HD settlements ranked by score descending; best low-Miss alternatives separately documented",
+    "best_rounds_by_score": [
+      9,
+      7,
+      6
+    ],
+    "best_rounds_by_miss_with_score_tiebreak": [
+      9,
+      6,
+      18
+    ],
+    "excluded_rounds": [
+      2,
+      13
+    ],
+    "pending_load_or_play_questions_do_not_authorize_resuming_goal": true
+  },
+  "best_three_complete_attempts": [
+    {
+      "rank": 1,
+      "round": 9,
+      "run": {
+        "run_id": "cpp-observe-17905107612608769",
+        "source_commit": "1636519",
+        "binary_sha256": "f25d4774cc29c3c8fef029ed1f92535801f946879f800070c1e1fbebbbea0ca4",
+        "difficulty": "HD6",
+        "score": 868880,
+        "perfect": 369,
+        "good": 2,
+        "bad": 0,
+        "miss": 22,
+        "max_combo": 82,
+        "accuracy_percent": 94.22,
+        "early": 0,
+        "late": 2,
+        "ap": false,
+        "read_basis": "Computer Use native settlement screenshot after STOPPED, then independent after-stop capture diagnostic.png",
+        "duration_s": 185,
+        "exit_code": 0,
+        "dataset_sampling": true,
+        "dataset_roi_saved": 136,
+        "sampling_fault": "",
+        "raw_sha256": "fad0a66fad967173b1dd91650208391a46d40ce5d312684e9b99c958fc45a5cf"
+      },
+      "observer": 33,
+      "planner": 13,
+      "binary_sha256": "f25d4774cc29c3c8fef029ed1f92535801f946879f800070c1e1fbebbbea0ca4",
+      "raw_hash_reverified": true
+    },
+    {
+      "rank": 2,
+      "round": 7,
+      "run": {
+        "run_id": "cpp-observe-17905082616018716",
+        "source_commit": "5f1c710",
+        "score": 862583,
+        "perfect": 359,
+        "good": 7,
+        "bad": 0,
+        "miss": 27,
+        "ap": false,
+        "max_combo": 118,
+        "dataset_sampling": true,
+        "raw_sha256": "5090389ba59b8e6d1ed6211347daaa005d545fba93550a92f0e7d63c483263e3"
+      },
+      "observer": 31,
+      "planner": 12,
+      "binary_sha256": "58bafae6f5917a4239cdf4f4f6249ba3b8b4f8665fafca2ae89952a238bac505",
+      "raw_hash_reverified": true
+    },
+    {
+      "rank": 3,
+      "round": 6,
+      "run": {
+        "run_id": "cpp-observe-17905079704324840",
+        "source_commit": "5f1c710",
+        "score": 852341,
+        "perfect": 365,
+        "good": 2,
+        "bad": 0,
+        "miss": 26,
+        "ap": false,
+        "contact_conflicts": 0,
+        "hold_contact_reassociations": 10,
+        "hold_tail_confirmations": 0,
+        "dataset_sampling": true,
+        "raw_sha256": "796399baa4104e6b4142aa1cc4d14c09e70bdf95bee65d23c1bc5b2a3a74535c"
+      },
+      "observer": 31,
+      "planner": 12,
+      "binary_sha256": "58bafae6f5917a4239cdf4f4f6249ba3b8b4f8665fafca2ae89952a238bac505",
+      "raw_hash_reverified": true
+    }
+  ]
 }
