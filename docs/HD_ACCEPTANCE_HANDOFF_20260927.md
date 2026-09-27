@@ -1,5 +1,13 @@
 # Glaciaxion HD 階段驗收與新 task 交接
 
+## 桌面 main 續作（v75，2026-09-27）
+
+使用者已恢復開發，舊暫停與禁止合併 main 限制已由新授權取代。main 起點為合併提交 `09dc0d0`，本次程式修改在 `C:/Users/wurre/Desktop/Phigros-Auto-play-System`。observer29／planner8／diagnostics2 修正與新增三項回歸見開發紀錄 v75。固定35ms／兩指；再次實戰前仍需完成當前三配置回歸並由使用者手動準備 Glaciaxion HD 選曲頁，保留 PLAY。
+
+v75三配置已完成：Release／Debug／嚴格ASan各113／113，6.67／13.29／33.03秒，日誌在桌面`measurements/hold-transition-20260927/`。目前`emulator-5554`未以device狀態連線，無輸入preflight已失敗，未啟動assist；新的HD實戰及效果仍待驗證。啟動後先重新核對capability，再以`configs/phigros-hd-assist-lead35.json`／185秒／`--no-preview --keep-diagnostic-anomalies`進行一輪；PLAY與Note仍由C++即時pixels，不操作登入／選曲／重試導覽。
+
+歷史資料異常：本次開始時確實讀到原 `C:/Users/wurre/.codex/worktrees/4c3c/Phigros-Auto-play-System` 的 v73 events／manifest／診斷PNG，隨後該專案路徑消失，`git worktree list` 亦不再列出它。此 task 沒有呼叫封存、移動或刪除工具。已向使用者詢問歷史 measurements 的新位置；尚不知是否另有備份，不能假稱全部證據仍可讀。後面以該路徑記載的歷史資料不可直接視為現存。桌面的 `measurements/touch-cpp-full-run3/summary.json` 仍存在，SHA256 `315d738cf2917da84fdbf60afbc2e6afe7e69615c2055c9f01c56d74fb7246da` 與 v73 capability 一致；仍須啟動時核對當前裝置指紋。
+
 ## 續作停止點（v73 實戰後，使用者重啟電腦）
 
 2026-09-27 使用者要求「跑完這輪之後先休息，我要重啟電腦」。目前已停止，沒有下一輪 assist、capture 或 build/test。模擬器導覽改由使用者自行操作；恢復後請由使用者準備 Glaciaxion HD 選曲頁並保留 PLAY，主程式再自動 PLAY。不要自行恢復 computer-use 導覽。

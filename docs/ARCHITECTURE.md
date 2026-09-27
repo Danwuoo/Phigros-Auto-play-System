@@ -2,6 +2,10 @@
 
 ## 主程式設計與開發接線（2026-09-27）
 
+observer29 在完整 color Hold 與內部重建前緣並存時，先核對當前雙側白輪廓是否為同一組（沿線中心及寬度差各≤4px）、完整頭部仍有當前 fill、內部前緣位於完整頭後8–96px，且兩側各有一條藍灰 band 連續跨過內部前緣前後8px。近期輪廓點還須在90ms內至少三點、跨度≥30ms，局部擬合支持完整頭部（偏差≤16px）；任一條件不足均不以接近為由消重。這只抑制同一當前 body 的內部描述，不產生新的觸控證據；原近期輪廓路徑仍須再驗當前畫面。重建前緣另在原4／24px兩排檢查兩條輪廓內側的填色，避免跨空隙借用相鄰 Hold 的 rail。內側取樣距 rail 為 max(6px,4%width)，保留窄 Hold 的邊框／抗鋸齒空間。全部搜尋與狀態仍有既有上限。
+
+此修正不改 planner8、association 歧義、100ms source／target、90ms anchor、60ms missing grace、completed intent 與未知輸入／停止 release 契約。新增 pixels＋fake-clock 回歸重現同類重複候選及提前 Up，驗證兩個獨立 Hold contacts 與其內部薄 Tap；並保留單側 band 中斷、无歷史、過期與近期點不足的負例。合成成功不能視為已修正 v73 的逐幀實戰或 HD AP；最新驗證及資料位置見開發紀錄。
+
 planner8 在最新畫面明確否定預測（`nonlinear_or_mismatch`、
 `outside_short_horizon`、`root_past`）且 scheduler cursor 仍為 0 時，
 取消尚未注入 Down 的 intent。後續有效即時預測可建立新 intent；已開始或

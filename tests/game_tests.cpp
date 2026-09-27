@@ -31,6 +31,14 @@ void oriented_box(Frame& f,Vec2 center,Vec2 u,double width,double height,std::ar
                 rect(f,x,y,1,1,color);
         }
 }
+void enclosed_hold_patch(Frame& f,int head,int shift=0) {
+    rect(f,425+shift,36,142,head-36,{40,190,255});
+    rect(f,418+shift,0,4,head,{245,245,245});rect(f,570+shift,0,4,head,{245,245,245});
+    rect(f,428+shift,head-80,136,3,{210,197,146});
+    rect(f,428+shift,head-80,3,80,{210,197,146});
+    rect(f,561+shift,head-80,3,80,{210,197,146});
+    rect(f,431+shift,head-38,130,24,{210,197,146});
+}
 ContactPlan tap(std::uint64_t id,Nanoseconds evidence,Nanoseconds due) {
     return {1,id,1,evidence,due+30'000'000,1,"pixels",
         {{Phase::down,20,30,due},{Phase::up,20,30,due+5'000'000}}};
@@ -492,6 +500,99 @@ TEST(GameObserver, ApproachingConnectedHoldWithInteriorHitTintKeepsOneIdentity) 
     }
     owner.stop();EXPECT_TRUE(touch.contacts().empty());
     EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    }
+}
+
+TEST(GameObserver, ApproachingHoldWithEnclosedHitPatchKeepsOneIdentityAcrossSparseFrames) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t identity=0;
+    const std::array<Nanoseconds,9> times{0,20'000'000,40'000'000,60'000'000,80'000'000,
+        100'000'000,118'639'000,169'611'600,179'744'200};
+    const std::array<int,9> heads{448,462,476,490,504,518,532,568,578};
+    for(std::size_t i=0;i<times.size();++i) {
+        auto f=image(i+1,times[i]);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=std::min(575,heads[i]);
+        // Outer saturated strips remain connected. The warm frame encloses
+        // a separate blue seed: a rectangle across the center alone cannot
+        // reproduce the two descriptions of the same physical rail pair.
+        rect(f,425,36,142,head-36,{40,190,255});
+        rect(f,418,0,4,head,{245,245,245});rect(f,570,0,4,head,{245,245,245});
+        if(i>=7) enclosed_hold_patch(f,head);
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        EXPECT_EQ(s.targets.size(),1)<<"frame "<<i<<" "<<decision_json(s).dump();
+        if(!identity&&!s.targets.empty()) identity=s.targets[0].note_id;
+        const auto held=std::find_if(s.targets.begin(),s.targets.end(),[&](const auto& t){return t.note_id==identity;});
+        EXPECT_NE(held,s.targets.end())<<"frame "<<i;
+        if(held!=s.targets.end()) {
+            EXPECT_GT(held->samples,0);EXPECT_NE(held->reason,"association_ambiguous");
+            EXPECT_NEAR(held->note.center.y,head-4,6);
+        }
+        owner.accept(s);owner.poll();owner.take_accepted_plans();
+        if(i==6) {clock.set(155'000'000);owner.poll();}
+        if(i>=6) EXPECT_EQ(touch.contacts().size(),1)<<"frame "<<i;
+    }
+    EXPECT_TRUE(std::none_of(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::up;}));
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),1);
+}
+
+TEST(GameObserver, InteriorHoldDescriptionDedupPreservesThinTapAndAdjacentHold) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t first=0,second=0;
+    for(int i=0;i<9;++i) {
+        const Nanoseconds time=i<6?i*20'000'000:i==6?118'639'000:169'611'600+(i-7)*10'132'600;
+        auto f=image(i+1,time);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=i<7?448+i*14:std::min(575,568+(i-7)*7);
+        for(const int shift:{0,170}) {
+            rect(f,425+shift,36,142,head-36,{40,190,255});
+            rect(f,418+shift,0,4,head,{245,245,245});rect(f,570+shift,0,4,head,{245,245,245});
+            if(i>=7) enclosed_hold_patch(f,head,shift);
+        }
+        // A separate thin ribbon is visible within the warm overlay. Its
+        // own pixels must survive even while the enclosed body is deduped.
+        if(i>=7) rect(f,455,head-34,80,8,{40,190,255});
+        clock.set(time);const auto s=observer.process(f);
+        EXPECT_EQ(s.targets.size(),i<7?2:3)<<decision_json(s).dump();
+        const auto a=std::find_if(s.targets.begin(),s.targets.end(),[](const auto& t){
+            return t.note.kind==NoteKind::hold&&t.note.center.x<580;});
+        const auto b=std::find_if(s.targets.begin(),s.targets.end(),[](const auto& t){
+            return t.note.kind==NoteKind::hold&&t.note.center.x>580;});
+        ASSERT_NE(a,s.targets.end());ASSERT_NE(b,s.targets.end());
+        if(i==0) {first=a->note_id;second=b->note_id;}
+        EXPECT_EQ(a->note_id,first);EXPECT_EQ(b->note_id,second);EXPECT_NE(first,second);
+        EXPECT_GT(a->samples,0);EXPECT_GT(b->samples,0);
+        if(i>=7) EXPECT_EQ(std::count_if(s.targets.begin(),s.targets.end(),[](const auto& t){
+            return t.note.kind==NoteKind::tap&&t.note.height<12;}),1);
+        owner.accept(s);owner.poll();owner.take_accepted_plans();
+        if(i==6) {clock.set(155'000'000);owner.poll();}
+        if(i>=6) EXPECT_EQ(touch.contacts().size(),2);
+    }
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),2);
+}
+
+TEST(GameObserver, InteriorHoldDescriptionNeedsBothCurrentSideBandsAndRecentFront) {
+    for(const int missing:{0,1,2,3,4}) {
+        FakeClock clock;GameObserver observer(clock);
+        if(missing!=0) for(int i=0;i<7;++i) {
+            auto f=image(i+1,i==6&&missing!=4?118'639'000:i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+            const int head=448+i*14;
+            rect(f,425,36,142,head-36,{40,190,255});
+            rect(f,418,0,4,head,{245,245,245});rect(f,570,0,4,head,{245,245,245});
+            clock.set(f.capture_complete_ns);observer.process(f);
+        }
+        auto f=image(8,missing==3?221'000'000:missing==4?171'000'000:169'611'600);hud(f);
+        rect(f,0,575,1280,2,{255,255,255});enclosed_hold_patch(f,568);
+        // Break continuation eight pixels FORWARD of the reconstructed
+        // inner front, while retaining its existing 4/24 px fill probes.
+        if(missing==1) rect(f,425,532,3,2,{210,197,146});
+        if(missing==2) rect(f,564,532,3,2,{210,197,146});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        EXPECT_GE(std::count_if(s.targets.begin(),s.targets.end(),[](const auto& t){
+            return t.note.kind==NoteKind::hold;}),2)<<"missing "<<missing<<" "<<decision_json(s).dump();
     }
 }
 

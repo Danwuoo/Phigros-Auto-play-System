@@ -206,8 +206,8 @@ bool hold_fill_at_front(const Frame& f,const NoteCandidate& note) {
 std::optional<NoteCandidate> current_held_rail_section(const Frame& f,const NoteCandidate& note) {
     const Vec2 u=note.tangent,n{-u.y,u.x};
     std::optional<NoteCandidate> best;double best_cost=1e9;
-    // Only a failed, recent held-body continuation calls this. Re-measure
-    // neutral rails beyond the bounded hit tint, without searching a new head.
+    // Re-measure neutral rails behind a known body front. This does not
+    // search a new head or supply evidence for a missing front.
     for(const int depth:{128,192}) {
         const Vec2 section{note.center.x-n.x*depth,note.center.y-n.y*depth};
         const int radius=static_cast<int>(std::ceil(note.width*.5))+20;
@@ -249,6 +249,29 @@ std::optional<NoteCandidate> current_held_rail_section(const Frame& f,const Note
     }
     return best;
 }
+bool fill_crosses_hold_front(const Frame& f,const NoteCandidate& note) {
+    const Vec2 u=note.tangent,n{-u.y,u.x};
+    // A real leading edge ends the fill. An interior effect can interrupt
+    // the center while the same narrow blue side bands cross that edge.
+    // Require a continuous current band on BOTH sides, rather than nearby
+    // centers, white rails alone, or a warm particle in the middle.
+    for(const int side:{-1,1}) {
+        bool continuous=false;
+        for(const double fraction:{.38,.40,.42,.44,.46,.48}) {
+            bool supported=true;
+            for(const int depth:{-8,-4,0,4,8}) {
+                const int x=static_cast<int>(std::lround(note.center.x+side*fraction*note.width*u.x-depth*n.x)),
+                          y=static_cast<int>(std::lround(note.center.y+side*fraction*note.width*u.y-depth*n.y));
+                if(x<0||x>=f.width||y<0||y>=f.height) {supported=false;break;}
+                const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+                if(!(p[2]>145&&p[1]>130&&p[2]>p[0]+8)) {supported=false;break;}
+            }
+            continuous=continuous||supported;
+        }
+        if(!continuous) return false;
+    }
+    return true;
+}
 // Reconstruct a body from this frame, before tracking. The seed may be only
 // one saturated fragment; neither its width nor a past body defines the rails.
 std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& seed,
@@ -271,6 +294,15 @@ std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& s
             }
         }
         return support>=7&&left&&right;
+    };
+    const auto inner_sides_filled=[&](Vec2 center,double width,int depth) {
+        for(const int side:{-1,1}) {
+            const double inset=width*.5-std::max(6.0,width*.04);
+            const auto* p=pixel({center.x-n.x*depth+u.x*side*inset,
+                                 center.y-n.y*depth+u.y*side*inset});
+            if(!p||!(p[2]>145&&p[1]>130&&p[2]>p[0]+8)) return false;
+        }
+        return true;
     };
     std::optional<NoteCandidate> best;
     // Two bounded cross sections cover both a short head and a longer body.
@@ -298,6 +330,10 @@ std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& s
             for(int forward=96;forward>=-32;--forward) {
                 const Vec2 probe{base.x+n.x*forward,base.y+n.y*forward};
                 if(!fill(probe,width,4)||!fill(probe,width,24)) continue;
+                // The wider pair must not borrow a neighboring Hold rail
+                // across an empty gap. Check fill immediately inside BOTH
+                // rails, where the central nine samples cannot see that gap.
+                if(!inner_sides_filled(probe,width,4)||!inner_sides_filled(probe,width,24)) continue;
                 // It must be a visible leading edge. After a long rail gap,
                 // an arbitrary interior cross section cannot become a head.
                 if(fill(probe,width,-4,true)) continue;
@@ -699,6 +735,42 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             bodies.push_back(*body);
         }
         for(const auto& body:bodies) {
+            // A connected outer color body and its enclosed effect seed can
+            // describe different fronts of the SAME current rail pair. Only
+            // discard the interior description when a recent rail history
+            // supports the full front, its current head fill is present,
+            // re-measured rails agree, and both blue side bands visibly
+            // continue across the supposed interior edge.
+            if(std::any_of(notes.begin(),notes.end(),[&](const auto& current) {
+                if(current.kind!=NoteKind::hold||!current.rails_geometry||current.direct_rails_evidence||
+                   std::abs(current.width-body.width)>=20||
+                   std::abs(current.tangent.x*body.tangent.x+current.tangent.y*body.tangent.y)<.995) return false;
+                const Vec2 delta{current.center.x-body.center.x,current.center.y-body.center.y};
+                const double ahead=-delta.x*body.tangent.y+delta.y*body.tangent.x;
+                if(ahead<=8||ahead>std::min(96.0,current.height)||!hold_fill_near_head(f,current)) return false;
+                const auto pair=current_held_rail_section(f,current);
+                if(!pair||std::abs(pair->width-body.width)>4||
+                   std::abs((pair->center.x-body.center.x)*body.tangent.x+
+                            (pair->center.y-body.center.y)*body.tangent.y)>4||!fill_crosses_hold_front(f,body)) return false;
+                return std::any_of(tracks_.begin(),tracks_.end(),[&](const History& track) {
+                    if(track.kind!=NoteKind::hold||!track.rail_anchor||now-track.rail_observed>90'000'000||
+                       std::abs(track.rail_anchor->width-current.width)>=20) return false;
+                    double mt=0,mx=0,my=0,den=0,nx=0,ny=0;int count=0;
+                    Nanoseconds first=now,last=0;
+                    for(const auto& p:track.points) if(p.rails&&now-p.t<=90'000'000) {
+                        mt+=(p.t-now)/1e9;mx+=p.p.x;my+=p.p.y;++count;
+                        first=std::min(first,p.t);last=std::max(last,p.t);
+                    }
+                    if(count<3||last-first<minimum_fit_span_ns) return false;
+                    mt/=count;mx/=count;my/=count;
+                    for(const auto& p:track.points) if(p.rails&&now-p.t<=90'000'000) {
+                        const double dt=(p.t-now)/1e9-mt;den+=dt*dt;nx+=dt*(p.p.x-mx);ny+=dt*(p.p.y-my);
+                    }
+                    if(den<=0) return false;
+                    const Vec2 expected{mx-nx/den*mt,my-ny/den*mt};
+                    return distance(expected,current.center)<=16&&std::abs(track.rail_anchor->width-current.width)<20;
+                });
+            })) continue;
             // Preserve an already complete color head with its validated
             // rails. Reconstruction supplies missing geometry, rather than
             // truncating that head's tail to its saturated color patch.
