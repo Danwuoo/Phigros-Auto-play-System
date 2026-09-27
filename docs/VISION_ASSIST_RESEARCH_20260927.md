@@ -1,8 +1,8 @@
 # 視覺輔助與時間追蹤研究（2026-09-27）
 
-後續決策：使用者已授權先做 ByteTrack／OC-SORT 思路追蹤對照，並同步準備小型分割資料。完整可執行規格、固定上游版本、採樣／標註與驗收見[開發計畫](TRACKING_SEGMENTATION_PLAN_20260927.md)。這是下一輪授權，不代表新 tracker 或模型已實作。
+後續實作：source `b32517d` 已建立 ByteTrack／OC-SORT 思路離線及shadow對照、同源ROI與分割標註工具；[追蹤結果](TRACKING_COMPARISON_20260927.md)／[資料QA](VISION_DATASET_20260927.md) 記錄實測。真實觸控仍為T0，沒有新視覺模型／光流；完整pipeline與獨立line tracking未完成。規格及上游來源見[開發計畫](TRACKING_SEGMENTATION_PLAN_20260927.md)。
 
-狀態：研究與下一步規格，尚未接入新的追蹤器、光流或學習模型。正式程式仍為 observer29／planner8／diagnostics2。使用者在 v75 實戰中指出判定線抖動等情況容易斷 Hold，希望加入輔助技術；本文件依當輪 pixels、日誌及現有實作區分已知證據與待驗假設。
+以下保留 v75 研究與當時 observer29／planner8／diagnostics2 的證據，不能當成新方法驗收。使用者指出判定線抖動等情況容易斷 Hold，希望加入輔助技術；本文件依當輪 pixels、日誌及現有實作區分已知證據與待驗假設。現行 diagnostics3 的連續圖已供離線分析，尚未取得新tracker正式替換資格。
 
 ## 當輪證據
 

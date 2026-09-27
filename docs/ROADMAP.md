@@ -1,6 +1,6 @@
 # 開發路線圖
 
-2026-09-27 使用者已授權下一輪[追蹤對照與分割資料準備](TRACKING_SEGMENTATION_PLAN_20260927.md)：現行基線與 ByteTrack／OC-SORT 思路對照，同步建立有界 ROI 採樣、標註／去重切分與首批資料。此為待開發工作，保留現行證據期限與 HD 主線；模型訓練及推論接入不在此輪。
+2026-09-27 [追蹤對照](TRACKING_COMPARISON_20260927.md) 與 [資料準備](VISION_DATASET_20260927.md) 已完成 P1／P2 工具及138項三配置回歸，P3 已有原生連續 ROI 與少量 proposed masks，P4 已取得同候選合成／實戰 bank 分布。缺獨立標註真值，保持 T0；完整pipeline／line identity／人工覆核及足量有效資料仍 pending。模型訓練／推論不在本輪，HD AP未達成，不能把採樣／shadow視為遊戲能力驗收。
 
 ## 主程式新路線（2026-09-26）
 

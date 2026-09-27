@@ -1,0 +1,140 @@
+{
+  "release_executable_sha256": "d6fb2f7f4ac620782bd4aa85085123386609616561705c26ba2e4c89b7a94ff1",
+  "local_raw_root": "C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/tracking-segmentation-20260927",
+  "source_commit": "b32517d74d27433728f6e15bc613661868cc021b",
+  "schema": 1,
+  "live_runs": [
+    {
+      "reviewed_human": 0,
+      "miss": 42,
+      "score": 811985,
+      "dataset_samples": 136,
+      "truth": "unknown",
+      "accuracy_percent": 88.78,
+      "late": 6,
+      "result_source": "manual visible inspection of post-stop C++ result capture",
+      "perfect": 345,
+      "all_perfect": false,
+      "good": 6,
+      "early": 0,
+      "run_id": "cpp-observe-17904941035800460",
+      "bad": 0,
+      "max_combo": 51,
+      "input_method": "legacy",
+      "proposed_samples": 5,
+      "bank_sha256": "5267f0a5c27577850a3cfdbd565ca97b013c9357ba12fb4b60e2120590016baf"
+    }
+  ],
+  "files": [
+    {
+      "sha256": "252613923ac306be96e92dccf9e5e96de94c9282b1826791f47f1f5e21b34e61",
+      "bytes": 768,
+      "relative_path": "environment.json"
+    },
+    {
+      "sha256": "21124700c332ebdef4983bb50ca07e766d7af30d25f338edeed73cea8b1c864e",
+      "bytes": 3450,
+      "relative_path": "p0-evidence.json"
+    },
+    {
+      "sha256": "09ccbd311bb3ee4f13a757e135e2c5f0c2f67d2557c180a99b2d9109801e982c",
+      "bytes": 178,
+      "relative_path": "pixel-differential.json"
+    },
+    {
+      "sha256": "72a9455c0d47c47cf3a451381316eb9ada4209c373b0ba41e670e30212866ce1",
+      "bytes": 30291,
+      "relative_path": "test-final-release.log"
+    },
+    {
+      "sha256": "cbfd51ad603aca6b87f16d1628e74e6508e60c609913944144b7083ea3e1f40f",
+      "bytes": 30289,
+      "relative_path": "test-final-windows-debug.log"
+    },
+    {
+      "sha256": "2391ed99c98b8f85f8bd84f234b3503ab57c7a2002f9b7558b18cf69a68e54d2",
+      "bytes": 30299,
+      "relative_path": "test-final-windows-asan.log"
+    },
+    {
+      "sha256": "1065a0c14a6bc231c895c00b056208623af5fb77e8a808b4411739fb38147d6e",
+      "bytes": 359103,
+      "relative_path": "challenge-final.json"
+    },
+    {
+      "sha256": "482fbf9600ba92012f8f3e9969d031b7b354a4613c13e77506aa66ea4624f979",
+      "bytes": 19070,
+      "relative_path": "comparison-final.json"
+    },
+    {
+      "sha256": "0822964cb44e0746597da751609ed3f223e1085d00fbe58d34ff669b23e13d99",
+      "bytes": 6953,
+      "relative_path": "comparison-oru-final.json"
+    },
+    {
+      "sha256": "5aa0fa486db500c2a2ee79f4bde252fc9baeb07c3976ca2c5e760eb76b0e3044",
+      "bytes": 6219,
+      "relative_path": "copy-bench-final.json"
+    },
+    {
+      "sha256": "44082fd414a2369a4cfd0ba2fe6e8c4c612d0560bd0da1ec7da05abe00461336",
+      "bytes": 844,
+      "relative_path": "pilot-qa.json"
+    },
+    {
+      "sha256": "d39aac17d34c1e9df278d2cf046b8ffd5e9becd02601c48134472485f1eb5623",
+      "bytes": 2243,
+      "relative_path": "v75-pilot-index.json"
+    },
+    {
+      "sha256": "5543716e5292bcbf9e542ac268ff7729357e73a966b46e28abf475fad7924ed6",
+      "bytes": 4291,
+      "relative_path": "live-preflight.json"
+    },
+    {
+      "sha256": "cdbc00a2cf2769081875ea24054230173902e2c9c686431f13da18f0b688c384",
+      "bytes": 10055,
+      "relative_path": "live-tracking-comparison.json"
+    },
+    {
+      "sha256": "97a90000b7ff26957d351e064ea1550a4e8e344281ce74df50a92fdaee67a54e",
+      "bytes": 19804,
+      "relative_path": "live-game-analysis.json"
+    },
+    {
+      "sha256": "df8deac8dd5c1be9d1a6928c1fc12ede53cc9e7f27371c317f0556f8248be744",
+      "bytes": 11830,
+      "relative_path": "live-dataset-qa-final.json"
+    },
+    {
+      "sha256": "072b17c09b4d490f93c97ef2759de302f9f5e8c6b0e609db1cc0d7d0f7c88886",
+      "bytes": 16033,
+      "relative_path": "live-dataset-index-final.json"
+    },
+    {
+      "sha256": "9f42c609e3e80757ac234b6ce5aa8daf4ede7250cc86583fe37005c41a9b4339",
+      "bytes": 561705,
+      "relative_path": "live-result/diagnostic.png"
+    }
+  ],
+  "tests": {
+    "strict_asan": {
+      "passed": 138,
+      "asan_options": null,
+      "third_party_instrumented": false,
+      "elapsed_s": 58.91,
+      "failed": 0
+    },
+    "release": {
+      "passed": 138,
+      "elapsed_s": 14.09,
+      "failed": 0
+    },
+    "debug": {
+      "passed": 138,
+      "elapsed_s": 22.7,
+      "failed": 0
+    }
+  },
+  "raw_backup": "single copy; this index contains no raw images"
+}

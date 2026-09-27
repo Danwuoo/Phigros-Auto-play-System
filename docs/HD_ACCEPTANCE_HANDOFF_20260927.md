@@ -1,5 +1,11 @@
 # Glaciaxion HD 階段驗收與新 task 交接
 
+## 追蹤／資料開發續作（source b32517d）
+
+本輪在桌面 `codex/tracking-segmentation-pilot` 完成共享候選T0/T1/T2比較、單worker shadow與有界原生ROI／mask／QA／export；Release／Debug／嚴格ASan各138／138通過。真實input仍為T0／observer29／planner8，diagnostics3，不接模型。完整pipeline／line tracking與正式替換資格未完成；結果與限制見[追蹤報告](TRACKING_COMPARISON_20260927.md)／[資料報告](VISION_DATASET_20260927.md)。不merge／push，未恢復4c3c，未宣稱舊ignored資料已恢復。
+
+第一輪 `cpp-observe-17904941035800460` 完成185秒、STOPPED／exit0；結算345／6／0／42，811,985分、88.78%、MaxCombo51，未AP。shadow無backend／skip0／fault空，18clips136ROI已保存，5 proposed masks／human review0。source cadence有795ms最大空窗，分數不是新tracker成效證據。使用者已允許再準備兩輪HD；每輪仍需使用者選曲PLAY就緒才啟動，不自行導覽重試。後續測試與優化留在本task，不再向原討論task來回回報或自動導航。
+
 ## 桌面 main 續作（v75，2026-09-27）
 
 使用者已恢復開發，舊暫停與禁止合併 main 限制已由新授權取代。main 起點為合併提交 `09dc0d0`，本次程式修改在 `C:/Users/wurre/Desktop/Phigros-Auto-play-System`。observer29／planner8／diagnostics2 修正與新增三項回歸見開發紀錄 v75。固定35ms／兩指；再次實戰前仍需完成當前三配置回歸並由使用者手動準備 Glaciaxion HD 選曲頁，保留 PLAY。

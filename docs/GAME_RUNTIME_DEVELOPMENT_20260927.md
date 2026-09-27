@@ -380,4 +380,16 @@ raw SHA256 `d9533f1c244a78448994c9f60d48e8ed4cee40aed7908bd25149bb1a4201345b`。
 
 使用者在曲中指出判定線抖動等情況易斷Hold，希望加入輔助技術。離線窗口顯示1025主線y576／Note61缺一幀但1026恢復，intent7沒有立刻Up。1191–1196中央Note87／92交替，1193主線y574.43687、次幀回576；1194起另有x715垂直線候選。Note87最後有效1192，Down後約29.06ms Up，最後證據到Up62.32ms；Note92最後有效1195，到Up63.24ms，符合missing60ms取消而非100ms source。兩個Down相距8.23ms、位於同一位置，但沒有連續原圖，不能斷言同一Hold或全部Miss成因。PNG1208仍可見灰色Hold與暖色特效，單張當前observer重算只有主線、零targets。這支持補辨識／身份追蹤，不單純拉長grace。
 
-研究規格見 [視覺輔助與時間追蹤](VISION_ASSIST_RESEARCH_20260927.md)：下一個實作點是同一capture、有界多幀ROI／身份診斷，再評估獨立線track、當前Hold body／rails支持的時序追蹤與小型分割模型shadow對照。OpenCV／ONNX Runtime C++官方能力已查核；尚未安裝新依賴、訓練模型或修改tracker。固定擷取、pixels-only、來源期限及C++單程序不變；本輪後沒有自行操作重試或啟動新assist。
+研究規格見 [視覺輔助與時間追蹤](VISION_ASSIST_RESEARCH_20260927.md)：下一個實作點是同一capture、有界多幀ROI／身份診斷，再評估獨立線track、當前Hold body／rails支持的時序追蹤與小型分割模型shadow對照。OpenCV／ONNX Runtime C++官方能力已查核；當時尚未安裝新依賴、訓練模型或修改tracker。固定擷取、pixels-only、來源期限及C++單程序不變；v75後沒有自行操作重試或啟動新assist。
+
+## 有界追蹤對照與原生分割資料工具（b32517d）
+
+使用者後續授權按[計畫](TRACKING_SEGMENTATION_PLAN_20260927.md)開發，桌面同checkout建立 `codex/tracking-segmentation-pilot`。source `b32517d74d27433728f6e15bc613661868cc021b`；Release SHA256 `d6fb2f7f4ac620782bd4aa85085123386609616561705c26ba2e4c89b7a94ff1`。共享legacy fitter／CandidateBatch、ByteTrack／OC-SORT思路隔離對照、FakeTouch runner、容量1 shadow、128MiB新增診斷／bank預算、停止後PNG編碼、C++polygon rasterizer／QA／export已落地。25新增測試，Release／Debug／嚴格ASan138／138、14.09／22.70／58.91秒，同source不設定ASAN_OPTIONS／suppressions；第三方DLL未插樁。舊新binary對v75兩圖離線JSON一致。MIT上游來源與license原文已保留，沒有下載模型或啟動訓練。
+
+唯一幾何challenge144frames／12clips，T0／T1／T2 switch各2、fragment各2、merge／duplicate各0；已知弱假候選續接12→0、fake負例Down1→0，但新方法拒絕更多出生，不能當作recall／實戰ID改善。ORU未帶来這組身份指標改善，保留T0。正式3批×10,000更新／方法的輪換分布與3批copy A/B見[追蹤報告](TRACKING_COMPARISON_20260927.md)／[資料報告](VISION_DATASET_20260927.md)，不以重播次數擴充實戰分母。
+
+使用者HD已就緒授權後，同binary／lead35／兩指／185秒、dataset＋diagnostics＋T1shadow：`cpp-observe-17904941035800460` STOPPED／exit0。10,018消費frames、1,015遊戲commands，345／6／0／42、811,985分、88.78%、MaxCombo51、Early0／Late6，未AP。所有真實touch仍T0；曲中只有主程式capture，無build/test／第二capture／重分析。擷取n10,017 p50／p95／p99／max=16.9658／37.1968／50.56524／795.0122ms；辨識n10,018=5.17925／7.343095／9.937592／17.0635ms；scheduler n1015=.062887／.58818／1.210101／4.1061ms，RPC=.7257／1.03211／1.311566／2.2548ms。來源最大空窗與5次source revoke，不把分數變化歸因tracker或copy。
+
+shadow processed10,018／skip0／fault空、沒有backend或Frame lease；bank首2048約40.35秒／drop7970，truth unknown／baseline_guided。同bank離線fake Down46／43／43，ID品質指標null；完整pipeline pending。停止後寫18clips136ROI（2diagnostic／8hard／4normal／4background）、8,971,945bytes、2.115秒，partial=false／truncated0。C++QA通過；五張visible-only proposed masks（clip0四圖＋clip15 gray body）／human0，其餘unannotated，training_ready=false。frame368有可見Hold但零candidate，369重複Hold描述、370effect附近Drag候選，仍支持優先補觀測。工具通過不代表gray Hold補辨或AP。
+
+本機原始資料在 `C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/game-assist/cpp-observe-17904941035800460/`、`measurements/vision-dataset-20260927/cpp-observe-17904941035800460/`；analysis／result／logs／環境在 `measurements/tracking-segmentation-20260927/`。每圖PNG SHA與context／ROI／binary／config provenance保留；raw圖為本機單份，未push／merge或清理。使用者允許再準備兩輪，等待各輪PLAY就緒後啟動，測試與優化留在本task。

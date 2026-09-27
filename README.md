@@ -1,6 +1,6 @@
 # Phigros Auto-play System
 
-2026-09-27 下一輪已授權：[ByteTrack／OC-SORT 追蹤對照與小型分割資料準備計畫](docs/TRACKING_SEGMENTATION_PLAN_20260927.md)。先保留 observer29 基線，建立有界追蹤對照、同源 ROI 採樣與標註資料；新 tracker／資料集尚未驗收，本輪不啟動模型訓練。
+2026-09-27 已實作 [追蹤對照](docs/TRACKING_COMPARISON_20260927.md) 與 [原生分割資料工具](docs/VISION_DATASET_20260927.md)：共享候選上的 T0／ByteTrack／OC-SORT 思路離線比較、容量1影子追蹤、同源 ROI 採樣、polygon mask／QA／export。Release／Debug／嚴格 ASan 各138／138通過；真實觸控保持 observer29 的 T0，尚未取得替換資格，未訓練或接入模型。完整 pipeline、獨立 line tracking、人工覆核與 HD AP 仍未完成。
 
 **主程式主線：Chapter Legacy → Glaciaxion HD → 首次 All Perfect → IN。** 依使用者 2026-09-26 新方向，直接以遊戲建立觀察、預測、觸控與畫面回饋閉環，不另開大型簡單目標 Fixture 階段；必要的短合成回歸與既有觸控能力核對保留。2026-09-27 已實作 G0 runtime 接線、G1 開發版 observer／預測與 pixels 自動 PLAY，並依新增授權接入 G2 真實 assist。首輪有限 Tap 有可見命中；全曲能力、HD／IN AP 尚未驗收。模組與 G0–G6 完成條件見 [主程式計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)，實作、失敗與實機證據見 [開發紀錄](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 
@@ -63,7 +63,7 @@ out/release-v145/Release/pas.exe touch-batch-bench --config configs/avd-fixture.
 
 目前在桌面 main 續作，observer29／planner8 修正同一 Hold 的內部重建描述，並保留相鄰 Hold 與薄 Tap。v75 HD實戰結算356 Perfect／1 Good／0 Bad／36 Miss，833,295分、90.75%，尚未AP；下一步研究[視覺輔助與時間追蹤](docs/VISION_ASSIST_RESEARCH_20260927.md)，新模型／tracker尚未接入。登入、選曲、難度及重試由使用者操作並保留 PLAY，再由 C++ pixels 自動 PLAY。實戰仍固定35ms／兩指，驗證紀錄見 [開發紀錄 v75](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 
-assist 可選 `--keep-diagnostic-anomalies`，一輪最多保留兩張原始 PNG（近線長 Hold 候選消失、首次觀察到 combo 字形消失），輸入停止後才編碼並寫入 run 目錄；預設不保留畫面，診斷檔案不回饋遊玩。候選／字形消失只供診斷，不代表逐音符判定。`analyze game-image <PNG>` 僅供離線幾何檢查。
+assist 可選 `--keep-diagnostic-anomalies`，diagnostics3 一輪最多2事件×4原生 ROI（前1／current／後2）；另可選 `--keep-vision-dataset`，最多16 clips×8 ROI（前2／current／後5）。固定crop／1:1／最多640×384，原始間隔與不足張數保留。兩者由同一已消費Frame於decision發布後複製，輸入停止後才編碼至 `measurements/vision-dataset-20260927/<run-id>/`；預設不存圖。`--tracking-shadow byte_association|oc_observation` 的獨立worker無input backend；候選bank有界保留首2048批，僅供離線。候選／字形消失不代表逐音符判定，所有診斷都不回饋遊玩。資料與記憶體上限見資料報告；`analyze game-image <PNG>` 僅供離線幾何檢查。
 
 ```powershell
 out/release-v145/Release/pas.exe game-preflight --config configs/phigros-hd-auto-start.json `

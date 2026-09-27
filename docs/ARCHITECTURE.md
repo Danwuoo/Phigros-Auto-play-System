@@ -1,6 +1,6 @@
 # 架構與資料契約
 
-2026-09-27 已授權的下一輪架構規格見[追蹤對照與分割資料準備計畫](TRACKING_SEGMENTATION_PLAN_20260927.md)：候選提取、追蹤身分、action evidence 與既有 owner 分界；強／弱當前觀測與純預測分開；追蹤比較先隔離候選輸入，再檢查歷史引導提取的完整 pipeline。現行實作仍為 observer29／planner8／diagnostics2，文件中的新介面、採樣額度與模型資料契約尚未落地。
+2026-09-27 source `b32517d` 已落地 CandidateBatch schema1／extractor29／quality1、共用 T0 fitter、T1／T2 有界關聯、offline FakeTouch、容量1 shadow、diagnostics3 與 native ROI／mask／QA／export。真實owner仍採 observer29 的 T0／planner8；新方法無真實backend。強出生／弱續接／當前action支持／純預測分開，ORU虛擬點不進action fitter，原60／90／100ms期限保留。128 tracks／candidates、16 lines、首2048 bank、128MiB新增記憶體預算與停止後編碼的契約見[追蹤報告](TRACKING_COMPARISON_20260927.md)／[資料報告](VISION_DATASET_20260927.md)。候選仍使用T0 rail歷史，比較明示 baseline_guided；獨立line、完整pipeline與模型推論尚未接入。
 
 ## 主程式設計與開發接線（2026-09-27）
 
