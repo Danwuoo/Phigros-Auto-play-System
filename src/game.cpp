@@ -1067,10 +1067,16 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                 {"intent_id",id.intent},{"kind",name(id.kind)},{"reason",reason},
                 {"source_frame",s.context.frame},{"cancel_ns",clock_.now_ns()},
                 {"last_evidence_ns",id.plan.evidence_ns},{"executed_steps",*cursor},
-                {"contact_started",*cursor>id.plan.prefix_offset},{"game_effect","unknown"}});
+                {"contact_started",*cursor>id.plan.prefix_offset},
+                {"retry_without_prior_down",*cursor==0},{"game_effect","unknown"}});
         }
         auto canceled=scheduler_.cancel_intent(id.intent);
         receipts.insert(receipts.end(),canceled.begin(),canceled.end());
+        // Missing or invalid current pixels can cancel before the first Down.
+        // Only a known zero cursor permits a later new intent. An absent
+        // cursor may mean completion or unknown injection, so retain its
+        // retirement guard. Rebuilding still requires all fresh-pixel gates.
+        if(cursor&&*cursor==0) id.submitted=false;
     };
     // Unique current outer-body support can retain a finger across candidate
     // ID churn. Completed contacts can never be revived by this association.

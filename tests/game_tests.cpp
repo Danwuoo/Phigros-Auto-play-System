@@ -1802,6 +1802,61 @@ TEST(GameOwner, SingleMissingDragFrameKeepsFutureDownButGraceExpiryCancelsIt) {
             clock.set(50'000'000);EXPECT_TRUE(owner.poll().empty());EXPECT_TRUE(touch.contacts().empty());}
     }
 }
+TEST(GameOwner, MissingPendingTapAndDragRetryWithCurrentEvidenceExactlyOnce) {
+    for(const auto kind:{NoteKind::tap,NoteKind::drag}) {
+        SCOPED_TRACE(name(kind));FakeClock clock;FakeTouchBackend touch(clock);
+        GamePlanOwner owner(clock,touch,2,{15,0,30'000'000});
+        auto s=snapshot(1,0);auto t=target(9,0,60'000'000);t.note.kind=kind;t.samples=4;s.targets={t};
+        owner.accept(s);const auto original=owner.take_accepted_plans();ASSERT_EQ(original.size(),1);
+        clock.set(40'000'000);owner.accept(snapshot(2,clock.now_ns()));owner.poll();
+        const auto canceled=owner.take_plan_cancellations();ASSERT_EQ(canceled.size(),1);
+        EXPECT_EQ(canceled[0].at("executed_steps"),0);EXPECT_TRUE(canceled[0].at("retry_without_prior_down"));
+        EXPECT_EQ(owner.scheduler().pending_count(),0);EXPECT_TRUE(touch.receipts().empty());
+        clock.set(60'000'000);s=snapshot(3,clock.now_ns());t.evidence_ns=clock.now_ns();
+        t.expires_ns=clock.now_ns()+100'000'000;t.revision++;t.crossing_ns=80'000'000;s.targets={t};
+        owner.accept(s);const auto rebuilt=owner.take_accepted_plans();ASSERT_EQ(rebuilt.size(),1);
+        EXPECT_NE(rebuilt[0].intent_id,original[0].intent_id);EXPECT_EQ(rebuilt[0].source_frame_sequence,3);
+        owner.poll();EXPECT_TRUE(touch.contacts().empty());clock.set(80'000'000);owner.poll();
+        EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+        ASSERT_EQ(touch.contacts().size(),1);owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    }
+}
+TEST(GameOwner, InvalidPendingGeometryCanRetryOnlyFromFreshValidPrediction) {
+    for(const auto kind:{NoteKind::tap,NoteKind::hold,NoteKind::drag,NoteKind::flick}) {
+        SCOPED_TRACE(name(kind));FakeClock clock;FakeTouchBackend touch(clock);
+        GamePlanOwner owner(clock,touch,2,{15,0,30'000'000});
+        auto s=snapshot(1,0);auto t=target(1,0,60'000'000);t.note.kind=kind;t.samples=4;s.targets={t};
+        owner.accept(s);owner.take_accepted_plans();clock.set(20'000'000);
+        s=snapshot(2,clock.now_ns());t.evidence_ns=clock.now_ns();t.expires_ns=clock.now_ns()+100'000'000;
+        t.revision++;t.samples=0;s.targets={t};owner.accept(s);
+        const auto canceled=owner.take_plan_cancellations();ASSERT_EQ(canceled.size(),1);
+        EXPECT_EQ(canceled[0].at("reason"),"current_geometry_unsupported");EXPECT_TRUE(canceled[0].at("retry_without_prior_down"));
+        clock.set(30'000'000);s=snapshot(3,clock.now_ns());t.evidence_ns=clock.now_ns();
+        t.revision++;t.samples=4;t.uncertainty_ns=45'000'000;s.targets={t};owner.accept(s);
+        EXPECT_TRUE(owner.take_accepted_plans().empty());owner.poll();EXPECT_TRUE(touch.receipts().empty());
+        clock.set(40'000'000);s=snapshot(4,clock.now_ns());t.evidence_ns=clock.now_ns();
+        t.expires_ns=clock.now_ns()+100'000'000;t.revision++;t.uncertainty_ns=2'000'000;s.targets={t};
+        owner.accept(s);const auto rebuilt=owner.take_accepted_plans();ASSERT_EQ(rebuilt.size(),1);
+        EXPECT_EQ(rebuilt[0].source_frame_sequence,4);clock.set(60'000'000);owner.poll();
+        EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+        owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    }
+}
+TEST(GameOwner, MissingAfterStartedOrCompletedDownCannotRetryReturnedPixels) {
+    for(const auto kind:{NoteKind::tap,NoteKind::hold,NoteKind::drag,NoteKind::flick}) {
+        SCOPED_TRACE(name(kind));FakeClock clock;FakeTouchBackend touch(clock);
+        GamePlanOwner owner(clock,touch,2,{15,0,30'000'000});
+        auto s=snapshot(1,0);auto t=target(1,0,20'000'000);t.note.kind=kind;t.samples=4;s.targets={t};
+        owner.accept(s);owner.take_accepted_plans();clock.set(20'000'000);owner.poll();
+        ASSERT_FALSE(touch.contacts().empty());clock.set(90'000'000);owner.accept(snapshot(2,clock.now_ns()));owner.poll();
+        EXPECT_TRUE(touch.contacts().empty());
+        for(const auto& canceled:owner.take_plan_cancellations())EXPECT_FALSE(canceled.at("retry_without_prior_down"));
+        clock.set(95'000'000);s=snapshot(3,clock.now_ns());t.evidence_ns=clock.now_ns();
+        t.expires_ns=clock.now_ns()+100'000'000;t.revision++;t.crossing_ns=110'000'000;s.targets={t};owner.accept(s);
+        EXPECT_TRUE(owner.take_accepted_plans().empty());clock.set(110'000'000);owner.poll();
+        EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    }
+}
 TEST(GameOwner, DragCoverageSurvivesLateCrossingWithoutReplayingDown) {
     FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{4,0,30'000'000});
     auto t=target(1,0,30'000'000);t.note.kind=NoteKind::drag;t.samples=4;
