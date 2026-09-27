@@ -1022,11 +1022,14 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     }
     // Match a fresh successor before declaring the old member missing. No
     // pixels or non-overlapping windows means no extension of this contact.
-    for(const auto& t:s.targets) if(!identities_.contains(t.note_id)&&drag_release(t)) {
+    for(const auto& t:s.targets) {
+        if(identities_.contains(t.note_id)) continue;
+        const auto candidate_release=drag_release(t);
+        if(!candidate_release) continue;
         Identity* sole=nullptr;std::uint64_t leader_id=0;bool multiple=false;
         for(auto& [id,leader]:identities_) if(!leader.drag_leader&&leader.submitted&&
             leader.kind==NoteKind::drag&&drag_can_cover(leader,t)&&
-            *drag_release(t)-90'000'000<=leader.plan.steps.back().due_ns) {
+            *candidate_release-90'000'000<=leader.plan.steps.back().due_ns) {
             if(sole) {multiple=true;break;} sole=&leader;leader_id=id;
         }
         if(sole&&!multiple&&refresh_drag(*sole,t,true)) {
