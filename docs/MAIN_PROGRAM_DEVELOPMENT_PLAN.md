@@ -1,5 +1,7 @@
 # 主程式邏輯與實戰開發計畫
 
+2026-09-27 最新明確授權已改為：暫停學習式模型，凍結最高分HD9 observer33／planner13，實作多輪手動待命，再有限驗證其他HD。此範圍不恢復無限AP goal、不使用自動PLAY／選曲導航、不進IN；取代下方本輪的自主導航與「HD AP才准其他譜面」停止點。實作及驗證見[HD9待命紀錄](HD9_MANUAL_SESSION_20260927.md)；main上的暫停紀錄見[原暫停總結](GOAL_PAUSE_SUMMARY_20260927.md)。
+
 原規劃日期：2026-09-26。2026-09-27 已開始 G0／G1 開發、UI-only 自動 PLAY，並依後续授權接入 G2 真實 assist；全曲能力及 AP 尚未驗收。現況及證據見文末與 [開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)，下列未落地的設計仍不能當作已有 API。
 
 依使用者最新方向，以 **Chapter Legacy → Glaciaxion HD 同版本至少連續三次 All Perfect → Glaciaxion IN 穩定 AP** 推進。使用者已授權自主實作、測試、除錯與 Computer Use 遊戲導航，不需每輪等候手動準備。主程式直接用正版遊戲即時畫面研究，不另開大型簡單目標 Fixture 開發／量測階段。短小合成回歸與必要的既有觸控能力核對仍保留。

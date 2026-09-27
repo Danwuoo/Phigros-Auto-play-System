@@ -1,5 +1,17 @@
 # Phigros Auto-play System
 
+2026-09-27 新授權：暫停學習式模型，以最高分第九輪 `1636519` 的 observer33／planner13、五指／35ms／30ms 驗證其他 HD。此分支加入 **HD9 音符策略＋新待命流程**，沒有恢復無限追求 Glaciaxion AP 的舊 goal；不訓練模型、不按成績調參、不進 IN。main 的 observer36／planner18 與歷史量測完整保留。下方舊自主開發與 AP 順序是歷史。
+
+使用單一入口；啟動後手動選任意 HD、按 Play，程式由即時 HUD 接手，確認結算後釋放觸控並繼續待命。程式不按 Play／選曲／重試／結算按鈕，待命沒有 60 秒上限，歌曲不綁 185 秒。Escape 或 Ctrl+C 可隨時停止。結算介面目前限已核對的 1280×720 英文布局；未知結算會保持禁止觸控，不能當成正常完成。
+
+```powershell
+out/hd9-session-release/Release/pas.exe manual-session `
+  --config configs/phigros-hd-assist-five-lead35.json `
+  --capability measurements/game-semantics-20260927/touch-five/summary.json --no-preview
+```
+
+可加 `--round-watchdog-s` 限制異常單輪；預設 0 停用，到期記 aborted／FAULT，不能當作曲尾。各輪資料在新的 `manual-session-* / round-*` 目錄，結算 PNG 来自同一 capture、停止注入後由獨立 writer 編碼，不採集訓練 ROI。詳見 [待命流程與比較證據](docs/HD9_MANUAL_SESSION_20260927.md)。
+
 最新狀態：自主開發與實戰持續。灰階外框、Hold同指續接、Drag Move及獨立line ID已實作；observer31兩輪26／27 Miss，observer32第八輪35 Miss，尚未AP。observer33修正特效框線造成移動前端回退，planner13／diagnostics6，完整配置回歸及續測中。未加入光流或模型。HD需同版本至少連續三輪AP才進IN。詳見[外框方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。
 
 2026-09-27 使用者補充四／五指與持續接觸語義後，source `59c92bf`／planner9已加入五指profile、實測容量門控、Hold當前尾端過線才正常Up，以及連續Drag區域覆蓋續接。四／五指各30次及五指全部取消30次通過；Release／Debug／嚴格ASan各142／142通過，詳見[動作語義紀錄](docs/GAME_ACTION_SEMANTICS_20260927.md)。舊三輪皆兩指／planner8，結果不能當成新策略驗收；新版本尚未進遊戲。

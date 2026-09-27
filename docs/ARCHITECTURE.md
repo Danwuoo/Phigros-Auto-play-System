@@ -1,5 +1,11 @@
 # 架構與資料契約
 
+2026-09-27 本比較分支採 **HD9 observer33／planner13＋獨立手動待命 lifecycle1**，後續 observer／planner 修正沒有帶入。`manual-session` 使用 capture worker → SessionPerception／容量1完整 snapshot → 唯一 SessionGameOwner → 原 gRPC backend，另有有界 SessionArchive writer。STANDBY→STARTING→PLAYING→RESULT→STANDBY；當前 HUD 與原 observer gate 才允許注入；固定六個結算 UI 文字須三個不同新鮮 frame、跨度至少60ms，首個結算證據即關閉 Down。無音符、黑屏、HUD消失、暫停不算 RESULT。
+
+真正新一輪 reset observer／建立新 GamePlanOwner；曲中 source／HUD 撤銷只 cancel scheduler，保留本輪完成 identity，不增 epoch 或重建 backend。geometry／generation 變動或未知 input／release 結果均 FAULT。finalize 以 request_stop＋一次 cancel 保存首份 release report，是生命周期修正，沒有改音符排程。
+
+capture仍gRPC payload fast／RGB888 top-down／256KiB、容量1／三物理buffer。archive mailbox≤8192事件且serialized bytes≤16MiB，另最多一張待編碼結算圖；各輪events每段16MiB、最多32段，超額FAULT。待命只記state／60秒health，1MiB×4輪替；各輪摘要與hash落盤，不保留歷史round vector。每輪四個統計vector各最多100000筆，來源時間domain保持分離。完整範圍、已知HD9 bug與測試見[本次證據](HD9_MANUAL_SESSION_20260927.md)。下文為1636519當時架構，main的新策略不由此分支取代。
+
 最新observer33／planner13／diagnostics6契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。CandidateBatch extractor33讀取29–32；held_body_evidence與head_on_line獨立，既有Hold憑當前成對rail／前端同指Move。離線前端重新接line需當前body內部支持，特效框線不夠；前方rail須同時有body fill才否定前端。觸點以當前亮度終止邊量測，放在內側3px；近線12px原路徑、48px步進／90ms anchor／60ms missing／100ms evidence不變，tail未見保持未知。純歷史／光流不供action。採樣最多20run／2560images、2GiB根額度／256MiB每輪及停止後編碼，stats記錄額度。HD最佳26 Miss，穩定AP未驗收；下述planner9為歷史。
 
 現行動作層source `59c92bf`／planner9依使用者補充加入5-contact profile、`max_contacts_verified`門控與current-tail正常Hold release。`tail_crossing_ns`仍為預測診斷，不單獨提前Up；當前有效body更新100ms期限，可見tail／rails與當前線一致且已過線才鎖定terminal release。連續Drag用當前候選的保守沿線區域覆蓋active contact，窗口須重疊、法向≤2px、多leader匹配拒絕共用；原missing／anchor／source與stop契約保持。實作、四／五指驗證與局限見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。以下b325／planner8與v75內容為追蹤／歷史契約，不能取代最新動作層版本。
