@@ -4,7 +4,7 @@
 
 手動PLAY的session生命週期另有GameRunBudget：--wait-play-s預設60秒、有效(0,60]，待機無playing時到期停止；action owner第一次處理像素確認的playing_gate時以同一QPC記錄first_playing_ns，supervisor只arm一次，duration自該時刻開始。重複playing／epoch／UI gate變動不能延期或重設已arm預算。非manual的duration仍自session_start起算。manifest／summary記duration_origin、wait_play_s與duration_s，summary另記budget_origin_ns／budget_deadline_ns；game_run_budget_armed事件保留依據。預算只管理session停止，不輸入逐音符決策，不能當歌曲時鐘或譜面。等待超時reason=waiting_for_play_timeout；此時不會取得遊戲時間預算。
 
-最新observer34／planner16／diagnostics6契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。Drag新增live_pixels_current_drag_overlap：至少兩樣本／10ms，当前彩色核心與同capture的可靠line幾何重疊才立即Down，predicted_down_ns=null；不得以fitted distance代替当前重疊，接觸租期仍為最新capture+100ms、missing40ms。coverage crossing_ns允許null，其他音符仍按預測排程。尚未注入Down的Hold每次deadline修訂後，Up重設為最新capture evidence+100ms，不能隨Down平移舊Up；source／target期限不延長。CandidateBatch extractor34讀取29–33，held_body_patch表示當前外框內可見觸點、前端／尾端未知，僅近期已接線anchor可用。patch不產生crossing／tail prediction或新Down；一般色塊不能將既有moving body触点投影回line或刷新evidence。四個成對截面含觸點位置、三排fill及雙側96px支持。近線12px原路徑、48px步進／90ms anchor／60ms missing／100ms evidence不變。採樣20run／2560images、2GiB／每輪256MiB、停止後編碼。HD最佳22 Miss，AP未驗收；下述planner9為歷史。
+observer34／planner16／diagnostics6前一輪契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。Drag新增live_pixels_current_drag_overlap：至少兩樣本／10ms，当前彩色核心與同capture的可靠line幾何重疊才立即Down，predicted_down_ns=null；不得以fitted distance代替当前重疊，接觸租期仍為最新capture+100ms、missing40ms。coverage crossing_ns允許null，其他音符仍按預測排程。尚未注入Down的Hold每次deadline修訂後，Up重設為最新capture evidence+100ms，不能隨Down平移舊Up；source／target期限不延長。CandidateBatch extractor34讀取29–33，held_body_patch表示當前外框內可見觸點、前端／尾端未知，僅近期已接線anchor可用。patch不產生crossing／tail prediction或新Down；一般色塊不能將既有moving body触点投影回line或刷新evidence。四個成對截面含觸點位置、三排fill及雙側96px支持。近線12px原路徑、48px步進／90ms anchor／60ms missing／100ms evidence不變。採樣20run／2560images、2GiB／每輪256MiB、停止後編碼。HD最佳22 Miss，AP未驗收；下述planner9為歷史。
 
 現行動作層source `59c92bf`／planner9依使用者補充加入5-contact profile、`max_contacts_verified`門控與current-tail正常Hold release。`tail_crossing_ns`仍為預測診斷，不單獨提前Up；當前有效body更新100ms期限，可見tail／rails與當前線一致且已過線才鎖定terminal release。連續Drag用當前候選的保守沿線區域覆蓋active contact，窗口須重疊、法向≤2px、多leader匹配拒絕共用；原missing／anchor／source與stop契約保持。實作、四／五指驗證與局限見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。以下b325／planner8與v75內容為追蹤／歷史契約，不能取代最新動作層版本。
 
@@ -242,3 +242,11 @@ Capture 只維護容量為 1 的共享緩衝區。新 frame 覆蓋尚未處理�
 - `GreenTargetDetector`、`VelocityTracker`、`LineCrossingPredictor` 是簡單目標研究用，從當下 RGB pixels 取得位置，使用至多 8 筆追蹤狀態線性估速，計算判定線交會時間。`Scheduler` 可更新未送出的預測、拒絕過期／重複意圖、取消排程，依 monotonic 截止時間注入並記錄收據。
 - `FakeTouchBackend` 驗證獨立接觸點的 down／move／up 狀態機和取消釋放；它不證明 Android 多指能力。`CoordinateTransform` 統一處理裁切、黑邊映射及四種直角旋轉。尚無任何已通過模擬器實測的觸控注入後端；`adb shell input tap` 僅列為單點能力候選，未宣稱支援 Hold／Move／Flick／多指。
 - 合成 world 的目標出現及撞線真值只供測試 fixture 和離線摘要。執行中的 detector、tracker、predictor、scheduler 不讀真值。合成閉環與主機排程實際分布、限制見 [量測紀錄](MEASUREMENTS.md)。
+
+## observer35：斜線與移動線的有界當前幾何
+
+GameLineTracker每條線最多6個實測pose／90ms，以10ms bucket取最新pose，至少3點／30ms才擬合。將各歷史線方程投影至當前reference center，擬合法向offset與方向角；裁切造成的沿線center漂移不是物質點速度。最大offset殘差2px、角殘差.015rad、法向速度2000px/s、角速度12rad/s；失敗時velocity／angular_velocity歸零、motion_valid=false。只在下一個當前線候選的關聯成本中用有效速度預測方向／位置；published center／tangent／observed_ns仍是当幀實測，缺line不產生虛擬candidate，90ms／epoch／geometry／100ms gap清理不延長。
+
+PCA長薄線在保留Hold鄰近色彩排除後，以該當前方向作一次有界4px沿線掃描、法向±2px搜尋雙側ridge。只用當前實際支持的端點，允許最多22%畫面寬的中斷，所選span必須包含seed且至少半個畫面寬；再於九個分布位置檢查雙側亮度對比，至少七個通過才confidence=.85，否則保持原.6。搜尋限於畫面及遊玩Y區，並拒絕厚度>6px；不從歷史伸長不可見線。可獨立完整驗證的原PCA幾何也使用同一九點核對。abs(tangent.y)>.2的Drag aligned ribbon，採該connected component當前像素沿PCA主／次軸的實測extrema及中點，不以variance假定均勻fill；近水平保留原screen geometry與高亮去重，避免U形端帽或亞像素中心變動造成退步。先完成當前line候選再分類Note，避免component順序造成斜Drag尺寸失效。
+
+CandidateBatch extractor35仍接受29–34，新增line motion_valid／motion_samples／motion_span_ns／motion_residual_px／angular_residual_rad；舊資料缺字段預設false／0，parser檢查容量、跨度、有限非負殘差及有效fit最低樣本。decision journal同樣記錄fit依據。planner16、source／target100ms、Hold missing60ms、Drag missing40ms與recent anchor90ms保持。光流／模型尚未接入，synthetic通過不代表HD AP或旋轉全曲能力。

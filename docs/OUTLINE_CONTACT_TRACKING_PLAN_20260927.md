@@ -146,3 +146,31 @@ manual PLAY菜單5秒實機通過：cpp-observe-17905150604712466 STOPPED／exit
 GameRunBudget修正manual lifetime：最多60秒等待，action第一次像素playing_gate記QPC first_playing_ns，supervisor只arm一次；duration由該時刻起算，反覆gate／epoch不能重設，未開始reason=waiting_for_play_timeout。預算不傳入Note planner。CLI --wait-play-s只允許manual，(0,60]；舊nonmanual仍從session_start起算。兩個fake-clock回歸以44s遲按PLAY保留185s至229s、重複gate不重置、待機60s到期／太晚不能arm、非manual期限不變與容量負例。Release／Debug／ASan各176／176，19.95／41.01／90.81秒，無suppressions，binary 724759af9e76b5d2055b5413150f0f4a5fc7bcbc72cfcde5836ac3c4f7d24e8e。實機等待與完整HD續測。
 
 實機wait3秒測試cpp-observe-17905157648887396：STOPPED／exit0，waiting_for_play_timeout，budget_origin=null，auto_play_requested=false／gameplay_commands0，release report failed／unknown皆空。其原生畫面仍是前輪結算，不能稱為PLAY菜單測試。stdout重導檔空，改核對saved summary／journal，不捏造stdout證據。使用者随后询问為何不如以前隨程式自動PLAY，按偏好恢復既有auto PLAY，保留已驗證manual選項作可選入口；第十四輪在真正選曲PLAY頁就緒後以預設assist開始。
+
+### 第十四輪完整 HD 與判定線歪斜／移動重點
+
+source4824734／docs HEAD a161296，observer34／planner16／diagnostics6，binary724759af9e76b5d2055b5413150f0f4a5fc7bcbc72cfcde5836ac3c4f7d24e8e，cpp-observe-17905159109272076。預設自動PLAY，185秒STOPPED／exit0，完整結算359／7／0／27、846043分、maxcombo53、ACC92.51%、Early0／Late7；未AP，歷史最佳22 Miss不變。raw SHA256804db103a4051e1ef82ae49a965cef38f4941bee64e05f54ee1cda6cec388387；原生結算PNG0f87268c689c27f50ebc845184d7d99c0031eff0af1be5cce262aa4febf2490e。136原生ROI、partial=false、sampling_fault空；停止後CU畫面被Codex遮擋，排除該截圖，以只讀gRPC原生PNG核對。
+
+recognition n8736 p50／p95／p99／max=5.548／9.364475／11.8498／25.0155ms；playing capture interval n7931=18.9939／42.76225／56.54251／164.8481ms。playing gate7932幀中205幀沒有line，runtime revocations19，local contact conflicts0。17個初始spatial Drag intents；離線未處理近線候選Drag0／Hold24／Tap4／Flick1，不是逐音符真值，也不能對應27 Miss。其他遊戲已由使用者停止，遊玩時實際前景未證明；曲中無build／test／額外capture，條件與舊最佳仍有分布差異，不能單輪歸因。
+
+使用者要求接下來注意判定線歪斜與移動。程式核對發現兩個缺口：line速度僅由相鄰幀求差，關聯未使用角速度；PCA斜線固定confidence .6，不能供嚴格當前Drag重疊門控使用。改以有界實測線方程歷史估計關聯運動，以及分布於當前線上的雙側亮度ridge核對，保持當前幾何與觸控證據期限；開發驗證另記，不能稱已修復遊戲Miss。
+
+observer35實作採線方程history至多6點／90ms／10ms bucket，3點且跨度30ms才估法向速度和角速度；殘差上限2px／.015rad、速度上限2000px/s／12rad/s，只作下一幀候選關聯的初值。actual center／tangent不平滑或外推，沒有line時不輸出虛擬線，舊evidence期限保持。當前PCA薄線加分布式雙側ridge核對，且沿該方向有界搜尋目前可見兩側片段，處理黃鍵截斷斜線。先完成所有當前line候選，再分類Note，消除component出現順序對斜Drag尺寸的影響；aligned Drag用局部主／次軸寬高。
+
+新增回歸重現46–57度線平移與旋轉、Drag遮斷線、沒有有效crossing的當前接觸，同note／line／finger只有一次Down並有Move，觸點須保持在黃鍵安全內部，消失後按原期限釋放。初版專項15／15，但新整合測試發現斜Drag外接框94×100且線信心.6，無接觸；補當前片段搜尋及局部尺寸後仍受component順序影響，改先line後note。後續原序列只一次Move、觸點仍在core內，證明中心誤差不是漏鍵真值；測試改核對實際區域，另增較大法向平移序列要求多次Move，不降低原接觸期限或放寬負例。完整三配置回歸續跑，效能／實戰另測，不能宣稱HD改善。
+
+首次完整三配置均182／184，兩項失敗為CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore及TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag，未進遊戲。根因是用PCA variance乘sqrt(12)假定Drag核心均勻填滿，U形黃色高亮的寬度由實際148膨脹到178.47px，破壞與藍色core／Hold的去重。改在原connected-component有界queue上量測當前像素沿主／次軸的min／max及其幾何中心，保留外框端帽的實際尺寸；不掃入別的component、不猜uniform fill，僅黃色薄ribbon做此第二次點運算。既有兩項負例保持原expected targets，不調整成允許誤辨。新版完整回歸續測。
+
+投影extrema修正後，TallSimultaneousHighlight回歸已通過，但弱傾角漸層Hold的overlay中心仍因換座標產生亞像素位移，觸發舊16px高亮去重邊界。將局部Drag尺寸轉換限定到abs(tangent.y)>.2（約11.5度以上），近水平部分保留既有screen geometry／highlight語義；嚴重傾斜的外接框誤判仍走當前projected extrema。額外逐點計算也限定於這些當前黃色薄ribbon；Hold及Tap尺寸語義不改，沒有放寬高亮去重。此角度是開發參數，尚待實戰覆核。
+
+### observer35 凍結驗證及第十五輪
+
+source6ff0c78，binary37ff451bb409d08295d6900b34ae7f37c9825d326b21e584c46d844ab531fe76；Release／Debug／嚴格ASan各184／184，19.83／42.06／98.43秒，三配置各自建置完成後並行測試、無遊戲重疊、無suppressions。包含退步案例的17項專項全過；首次182／184結果保留且排除驗收。沒有光流／模型或更長missing／evidence期限。
+
+cpp-observe-17905180808669817，observer35／planner16／diagnostics6，五指35ms、預設自動PLAY、185s STOPPED／exit0。當前原生畫面先確認Glaciaxion HD PLAY，再由C++當前pixels自動開始；CU截到遮擋的前景應用，該圖排除，實際emulator前景未證明。曲中無build／test／額外capture。完整393個結算為351／14／0／28，835598分，maxcombo43、ACC91.63%、Early0／Late14；未AP，未改善上一輪27 Miss，最佳22 Miss不變。raw0324b662b597e4ffe14748f799320fe647eac289408e66a754f19916235aa50f；原生結算PNG8696922c3f8edc067f070faa70e3124247f99fc9b434409fe05e48f1753a0597。18clips136ROI、partial=false、sampling_fault空。
+
+recognition n8761 p50／p95／p99／max=5.6308／9.843／13.50184／29.5653ms；playing interval n7908=18.7138／43.75774／58.057339／126.2469ms。playing7909幀中no-line205，與前輪205相同；summary revocations8（包含停止），journal分類source expired6／UI lost1。0本地contact conflicts；spatial Drag初始13，Hold missing78／geometry5／held-region-unsupported10／ambiguous5，Drag missing91／ambiguous5。單輪不能宣稱延遲或遊戲能力改善，取消次數不是逐音符Miss。
+
+只讀C++ line_pose_audit以保存的line候選幾何重做關聯，不產生input或runtime replay。可比單線pair限制同epoch／geometry、正序且間隔<90ms、orientation>.9、normal displacement<64px、length ratio>.45。第十四輪6919對原ID改變3次、有界refit為0；第十五輪6857對原ID與refit皆0。這是近似幾何連續性指標，沒有line身份真值，不能把3次都視為遊戲錯誤或解釋Good／Miss。第十五輪8712個line observations中有效fit8107，abs(uy)>.03的傾斜線2063次中有效1711；startup／不足跨度／非線性照原門檻拒絕。離線未處理近線候選Drag2／Hold19／Tap3，不是結算判定真值；兩個Drag首次近線normal距離−8.046／−6px、fit失配，仍需核對當前region／線重疊及後續frames，不能從單一日誌點直接放寬門控。
+
+線身分的這個診斷指標改善，但AP與穩定性未達成。下一步核對歪斜／移動線上的Hold外框續接、Drag当前區域與触点位置；先準備下一輪PLAY，再續同版本／逐層實戰比較，不進IN。

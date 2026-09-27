@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "176_regressions_and_bounded_wait_passed_user_requests_automatic_play_hd14_pending",
+  "status": "observer35_184_regressions_passed_hd15_351_14_0_28_no_ap",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -327,6 +327,195 @@
       },
       "local_contact_conflicts": 0,
       "ap": false
+    },
+    {
+      "run_id": "cpp-observe-17905159109272076",
+      "source_commit": "4824734",
+      "docs_head": "a161296",
+      "observer": 34,
+      "planner": 16,
+      "diagnostics": 6,
+      "binary_sha256": "724759af9e76b5d2055b5413150f0f4a5fc7bcbc72cfcde5836ac3c4f7d24e8e",
+      "perfect": 359,
+      "good": 7,
+      "bad": 0,
+      "miss": 27,
+      "score": 846043,
+      "max_combo": 53,
+      "accuracy": 92.51,
+      "early": 0,
+      "late": 7,
+      "ap": false,
+      "state": "STOPPED",
+      "exit_code": 0,
+      "automatic_play_enabled": true,
+      "auto_play_requested": true,
+      "duration_s": 185,
+      "stability_eligible": true,
+      "raw_sha256": "804db103a4051e1ef82ae49a965cef38f4941bee64e05f54ee1cda6cec388387",
+      "result_image_sha256": "0f87268c689c27f50ebc845184d7d99c0031eff0af1be5cce262aa4febf2490e",
+      "diagnostic_roi_frames": 136,
+      "diagnostic_partial": false,
+      "sampling_fault": "",
+      "recognition_ms": {
+        "absolute_deviation_p95": 3.8206000000000007,
+        "jitter_p95_minus_p5": 5.476574999999999,
+        "jitter_p95_minus_p50": 3.8164749999999987,
+        "max": 25.0155,
+        "mean": 5.9827532509157555,
+        "min": 2.2146,
+        "n": 8736,
+        "p5": 3.8879,
+        "p50": 5.548,
+        "p95": 9.364474999999999,
+        "p99": 11.849799999999991
+      },
+      "playing_capture_interval_ms": {
+        "absolute_deviation_p95": 23.770500000000002,
+        "jitter_p95_minus_p5": 40.3551,
+        "jitter_p95_minus_p50": 23.76835,
+        "max": 164.8481,
+        "mean": 20.82466387592991,
+        "min": 1.2239,
+        "n": 7931,
+        "p5": 2.40715,
+        "p50": 18.9939,
+        "p95": 42.76225,
+        "p99": 56.54250999999992
+      },
+      "playing_no_line_frames": 205,
+      "playing_gate_frames": 7932,
+      "runtime_revokes_by_reason": {
+        "UI_gate_lost": 1,
+        "source_evidence_expired": 17
+      },
+      "current_spatial_drag_intents": 17,
+      "unhandled_nearline_candidates": {
+        "drag": 0,
+        "hold": 24,
+        "tap": 4,
+        "flick": 1,
+        "ground_truth": false
+      },
+      "environment_note": "User stopped other game before HD13; actual foreground during gameplay not proven. Post-stop Computer Use screenshot occluded by Codex and excluded. Native gRPC settlement image used. No build/test/additional captures during gameplay."
+    },
+    {
+      "run_id": "cpp-observe-17905180808669817",
+      "source_commit": "6ff0c78",
+      "observer": 35,
+      "planner": 16,
+      "diagnostics": 6,
+      "binary_sha256": "37ff451bb409d08295d6900b34ae7f37c9825d326b21e584c46d844ab531fe76",
+      "perfect": 351,
+      "good": 14,
+      "bad": 0,
+      "miss": 28,
+      "score": 835598,
+      "max_combo": 43,
+      "accuracy": 91.63,
+      "early": 0,
+      "late": 14,
+      "ap": false,
+      "state": "STOPPED",
+      "exit_code": 0,
+      "automatic_play_enabled": true,
+      "auto_play_requested": true,
+      "duration_s": 185,
+      "stability_eligible": true,
+      "raw_sha256": "0324b662b597e4ffe14748f799320fe647eac289408e66a754f19916235aa50f",
+      "result_image_sha256": "8696922c3f8edc067f070faa70e3124247f99fc9b434409fe05e48f1753a0597",
+      "diagnostic_roi_frames": 136,
+      "diagnostic_partial": false,
+      "sampling_fault": "",
+      "recognition_ms": {
+        "absolute_deviation_p95": 4.2122,
+        "jitter_p95_minus_p5": 5.7639,
+        "jitter_p95_minus_p50": 4.2122,
+        "max": 29.5653,
+        "mean": 6.1771937906631695,
+        "min": 2.4125,
+        "n": 8761,
+        "p5": 4.0791,
+        "p50": 5.6308,
+        "p95": 9.843,
+        "p99": 13.501839999999994
+      },
+      "playing_capture_interval_ms": {
+        "absolute_deviation_p95": 25.0501,
+        "jitter_p95_minus_p5": 40.63698499999999,
+        "jitter_p95_minus_p50": 25.043939999999992,
+        "max": 126.2469,
+        "mean": 20.89596268335851,
+        "min": 1.2805,
+        "n": 7908,
+        "p5": 3.120755,
+        "p50": 18.7138,
+        "p95": 43.75773999999999,
+        "p99": 58.05733900000003
+      },
+      "playing_no_line_frames": 205,
+      "playing_gate_frames": 7909,
+      "summary_revocations": 8,
+      "runtime_revokes_by_reason": {
+        "UI_gate_lost": 1,
+        "source_evidence_expired": 6
+      },
+      "accepted_intents_by_basis": {
+        "live_pixels_current_drag_overlap": 13,
+        "live_pixels_short_linear_fit_drag": 99,
+        "live_pixels_short_linear_fit_flick": 6,
+        "live_pixels_short_linear_fit_hold": 105,
+        "live_pixels_short_linear_fit_tap": 141
+      },
+      "contact_cancellations_by_kind_and_reason": {
+        "drag": {
+          "current_object_missing_or_region_lost": 91,
+          "identity_ambiguous": 5
+        },
+        "hold": {
+          "current_geometry_unsupported": 5,
+          "current_held_region_unsupported": 10,
+          "current_object_missing_or_region_lost": 78,
+          "identity_ambiguous": 5
+        },
+        "tap": {
+          "current_geometry_unsupported": 1,
+          "current_object_missing_or_region_lost": 1,
+          "identity_ambiguous": 1
+        }
+      },
+      "contact_conflicts": [],
+      "unhandled_nearline_candidates": {
+        "handled": 369,
+        "not_ground_truth": true,
+        "unique_unhandled_nearline": {
+          "drag": 2,
+          "hold": 19,
+          "tap": 3
+        }
+      },
+      "line_pose_audit": {
+        "comparable_single_line_pairs": 6857,
+        "dimensions": [
+          1280,
+          720
+        ],
+        "largest_recorded_speed_px_s": 550.0924406783453,
+        "largest_valid_refit_omega_rad_s": 1.1494021659310178,
+        "largest_valid_refit_speed_px_s": 550.0924406783453,
+        "line_observations": 8712,
+        "original_id_changes_in_comparable_pairs": 0,
+        "playing_frames": 7909,
+        "raw": "measurements/game-assist/cpp-observe-17905180808669817/events.jsonl",
+        "refit_ambiguous": 0,
+        "refit_id_changes_in_comparable_pairs": 0,
+        "refit_valid": 8107,
+        "schema": 1,
+        "semantics": "offline re-association of saved measured line candidates only; not runtime replay, not identity ground truth or per-note judgments",
+        "tilted_observations_abs_uy_gt_003": 2063,
+        "tilted_refit_valid": 1711
+      },
+      "environment_note": "Before run native gRPC image confirmed Glaciaxion HD PLAY. Computer Use screenshot occluded by a different foreground app, excluded; actual emulator foreground during gameplay not proven. No build/test/additional captures during gameplay. Full settlement verified by native capture after STOPPED."
     }
   ],
   "followup_regression": {
@@ -641,5 +830,87 @@
     "scene": "nonplaying settlement; not a PLAY-menu test",
     "stdout_log_empty": true,
     "verification_source": "saved summary.json plus journal summary and release report, process exit0"
+  },
+  "current_line_pose_followup": {
+    "source_commit": "6ff0c78",
+    "observer": 35,
+    "planner": 16,
+    "diagnostics": 6,
+    "binary_sha256": "37ff451bb409d08295d6900b34ae7f37c9825d326b21e584c46d844ab531fe76",
+    "release": {
+      "passed": 184,
+      "total": 184,
+      "seconds": 19.83
+    },
+    "debug": {
+      "passed": 184,
+      "total": 184,
+      "seconds": 42.06
+    },
+    "asan": {
+      "passed": 184,
+      "total": 184,
+      "seconds": 98.43,
+      "suppressions": false
+    },
+    "focused_passed": 17,
+    "tests_parallel_after_build_complete": true,
+    "gameplay_overlap": false,
+    "initial_full_regressions": {
+      "passed": 182,
+      "total": 184,
+      "failed": [
+        "CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore",
+        "TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag"
+      ],
+      "excluded": true
+    },
+    "contract": "bounded measured line equations, <=6 poses / 90ms / 10ms bucket, >=3 samples / 30ms, motion used for current-candidate association only; actual line geometry unchanged; current fragmented-line ridges; measured tilted Drag pixel extrema when abs(uy)>.2; planner expiry unchanged",
+    "old_line_candidate_audit": {
+      "comparable_single_line_pairs": 6919,
+      "dimensions": [
+        1280,
+        720
+      ],
+      "largest_recorded_speed_px_s": 7442.807716480011,
+      "largest_valid_refit_omega_rad_s": 1.068235372933705,
+      "largest_valid_refit_speed_px_s": 569.5237538703866,
+      "line_observations": 8682,
+      "original_id_changes_in_comparable_pairs": 3,
+      "playing_frames": 7932,
+      "raw": "measurements/game-assist/cpp-observe-17905159109272076/events.jsonl",
+      "refit_ambiguous": 24,
+      "refit_id_changes_in_comparable_pairs": 0,
+      "refit_valid": 8082,
+      "schema": 1,
+      "semantics": "offline re-association of saved measured line candidates only; not runtime replay, not identity ground truth or per-note judgments",
+      "tilted_observations_abs_uy_gt_003": 2050,
+      "tilted_refit_valid": 1693
+    },
+    "new_line_candidate_audit": {
+      "comparable_single_line_pairs": 6857,
+      "dimensions": [
+        1280,
+        720
+      ],
+      "largest_recorded_speed_px_s": 550.0924406783453,
+      "largest_valid_refit_omega_rad_s": 1.1494021659310178,
+      "largest_valid_refit_speed_px_s": 550.0924406783453,
+      "line_observations": 8712,
+      "original_id_changes_in_comparable_pairs": 0,
+      "playing_frames": 7909,
+      "raw": "measurements/game-assist/cpp-observe-17905180808669817/events.jsonl",
+      "refit_ambiguous": 0,
+      "refit_id_changes_in_comparable_pairs": 0,
+      "refit_valid": 8107,
+      "schema": 1,
+      "semantics": "offline re-association of saved measured line candidates only; not runtime replay, not identity ground truth or per-note judgments",
+      "tilted_observations_abs_uy_gt_003": 2063,
+      "tilted_refit_valid": 1711
+    },
+    "live_ap": false,
+    "causal_score_improvement_proven": false,
+    "optical_flow": false,
+    "ml_model": false
   }
 }
