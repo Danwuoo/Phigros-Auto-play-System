@@ -153,15 +153,23 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
                     }
                     residual=std::sqrt(residual/match->points.size());
                     target.distance=d; target.velocity=v; target.residual=residual;
+                    // Spatial error is not a fixed timing error: 9 px at
+                    // 750 px/s is 12 ms, at 100 px/s it is 90 ms. Keep a
+                    // bounded geometry gate separate from timing uncertainty.
+                    const double spatial_limit=std::clamp(target.note.width*.125,8.0,16.0);
+                    const double prediction_error=std::max({2.0,residual,std::abs(latest_distance-d)});
+                    target.prediction_error_px=prediction_error;target.fit_residual_limit_px=spatial_limit;
                     const double tau=std::abs(v)>5?-d/v:-1;
                     target.reason=std::abs(v)<=5?"relative_velocity_small":
                         tau<0?"root_past":tau>.35?"outside_short_horizon":
-                        residual>8?"nonlinear_or_mismatch":"prediction_observe_only";
-                    if(tau>=-.04&&tau<=.35&&residual<=8&&std::abs(v)>5) {
+                        residual>spatial_limit||std::abs(latest_distance-d)>spatial_limit?
+                            "nonlinear_or_mismatch":"prediction_observe_only";
+                    if(tau>=-.04&&tau<=.35&&residual<=spatial_limit&&
+                       std::abs(latest_distance-d)<=spatial_limit&&std::abs(v)>5) {
                         target.reason="prediction_observe_only";
                         target.crossing_ns=now+static_cast<Nanoseconds>(std::llround(tau*1e9));
                         target.uncertainty_ns=static_cast<Nanoseconds>(std::llround(
-                            std::max(2.0,residual)/std::abs(v)*1e9));
+                            prediction_error/std::abs(v)*1e9));
                         // Timing uses the fitted distance. The hit point stays
                         // on the independently observed current line; fit
                         // residual must not displace it in the normal axis.
@@ -196,7 +204,7 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
 CandidateBatch make_candidate_batch(const DecisionSnapshot& s,const Frame& f,
  const std::vector<NoteCandidate>& notes,const std::vector<std::optional<NoteCandidate>>& shortened,
  const std::vector<GameTrackHistory>& history) {
- CandidateBatch b;b.extractor_version=35;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
+ CandidateBatch b;b.extractor_version=36;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
  b.capacity_valid=s.capacity_valid;b.source_valid=f.source_valid;
  b.extraction_start_ns=s.recognition_start_ns;b.lines=s.lines;
  for(std::size_t i=0;i<notes.size();++i) {
@@ -256,7 +264,7 @@ CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("sc
  const auto& c=j.at("context");b.context={c.at("epoch"),c.at("generation"),c.at("geometry"),c.at("frame"),c.at("capture_ns"),c.at("width"),c.at("height"),c.at("rotation")};
  if(b.context.width<2||b.context.height<2||b.context.width>4096||b.context.height>4096||b.context.capture_ns<0||b.context.rotation<0||b.context.rotation>3)throw std::invalid_argument("candidate context");
  b.extractor_version=j.at("extractor_version");b.quality_version=j.at("quality_version");b.history_source=j.at("history_source");
- if((b.extractor_version<29||b.extractor_version>35)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
+ if((b.extractor_version<29||b.extractor_version>36)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
  b.extraction_start_ns=j.at("extraction_start_ns");b.extraction_end_ns=j.at("extraction_end_ns");
  if(b.extraction_start_ns<0||b.extraction_end_ns<b.extraction_start_ns)throw std::invalid_argument("extraction time order");
  const auto ui=j.at("ui").get<std::string>();bool found=false;for(auto u:{GameUi::unknown,GameUi::menu,GameUi::loading,GameUi::playing,GameUi::paused,GameUi::result})if(ui==name(u)){b.ui=u;found=true;}

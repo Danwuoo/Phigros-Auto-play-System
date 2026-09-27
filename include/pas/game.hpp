@@ -53,6 +53,7 @@ struct GameTarget {
     Nanoseconds uncertainty_ns = 0;
     Vec2 hit;
     double distance = 0, velocity = 0, residual = 0;
+    double prediction_error_px = 0, fit_residual_limit_px = 0;
     std::string reason;
     int samples = 0;
     std::optional<Nanoseconds> tail_crossing_ns;

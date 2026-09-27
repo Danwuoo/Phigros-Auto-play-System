@@ -1329,8 +1329,9 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             // contradicted by newer pixels. A later valid fit can retry with
             // a new intent; active or completed contacts never replay Down.
             const bool spatial_drag=*cursor==0&&id.kind==NoteKind::drag&&current_drag_overlap(t);
+            const bool timing_uncertain=t.crossing_ns&&t.uncertainty_ns>options_.uncertainty_ns;
             if(*cursor==0&&!spatial_drag&&(t.reason=="nonlinear_or_mismatch"||
-               t.reason=="outside_short_horizon"||t.reason=="root_past")) {
+               t.reason=="outside_short_horizon"||t.reason=="root_past"||timing_uncertain)) {
                 auto canceled=scheduler_.cancel_intent(id.intent);
                 receipts.insert(receipts.end(),canceled.begin(),canceled.end());
                 if(plan_cancellations_.size()>=128) throw std::runtime_error("pending cancellation diagnostic capacity");
@@ -1338,7 +1339,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                     {"note_id",t.note_id},{"intent_id",id.intent},{"kind",name(id.kind)},
                     {"source_frame",s.context.frame},{"evidence_ns",t.evidence_ns},
                     {"prior_source_frame",id.plan.source_frame_sequence},{"prior_evidence_ns",id.plan.evidence_ns},
-                    {"cancel_ns",clock_.now_ns()},{"reason",t.reason},
+                    {"cancel_ns",clock_.now_ns()},{"reason",timing_uncertain?"timing_uncertainty_exceeds_limit":t.reason},
                     {"prior_predicted_down_ns",id.plan.predicted_down_ns? nlohmann::json(*id.plan.predicted_down_ns):nlohmann::json(nullptr)},
                     {"distance_px",t.distance},{"velocity_px_per_s",t.velocity},{"residual_px",t.residual},
                     {"no_down_injected",true},{"game_effect","unknown"}});
@@ -1539,7 +1540,9 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"held_body_evidence",t.note.held_body_evidence},
         {"held_body_patch",t.note.held_body_patch},
         {"relative_distance_px",t.distance},{"relative_velocity_px_s",t.velocity},
-        {"residual_px",t.residual},{"samples",t.samples},{"history_span_ns",t.history_span_ns},{"reason",t.reason}});
+        {"residual_px",t.residual},{"prediction_error_px",t.prediction_error_px},
+        {"fit_residual_limit_px",t.fit_residual_limit_px},{"samples",t.samples},
+        {"history_span_ns",t.history_span_ns},{"reason",t.reason}});
     return {{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
         {"note_anchor_semantics","tap_flick_core_center_hold_leading_edge"},
         {"epoch",s.context.epoch},{"generation",s.context.generation},{"geometry_version",s.context.geometry},

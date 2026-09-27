@@ -965,6 +965,58 @@ TEST(GameObserver, ContinuousFastFramesKeepEnoughTemporalHistoryToPredict) {
     ASSERT_TRUE(result.targets[0].crossing_ns);EXPECT_GE(result.targets[0].history_span_ns,30'000'000);
     EXPECT_NEAR(result.targets[0].velocity,500,20);
 }
+TEST(GameObserver, TimingUncertaintySeparatesFastCaptureJitterFromSlowAmbiguousMotion) {
+    for(const double speed:{800.0,100.0}) {
+        SCOPED_TRACE(speed);FakeClock clock;GameObserver observer(clock);DecisionSnapshot scene;
+        const std::array<int,6> jitter{0,12,-12,-12,12,0};
+        for(int i=0;i<6;++i) {
+            auto f=image(i+1,1'000'000+i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+            const double base=speed==800?455:560;
+            const int y=static_cast<int>(std::lround(base+speed*i*.02+jitter[i]));
+            rect(f,336,y-4,128,8,{40,190,255});clock.set(f.capture_complete_ns);scene=observer.process(f);
+        }
+        ASSERT_EQ(scene.targets.size(),1);const auto& t=scene.targets[0];ASSERT_TRUE(t.crossing_ns);
+        EXPECT_GT(t.residual,8);EXPECT_LE(t.residual,16);EXPECT_EQ(t.fit_residual_limit_px,16);
+        EXPECT_GE(t.prediction_error_px,t.residual);EXPECT_EQ(t.reason,"prediction_observe_only");
+        EXPECT_NEAR(t.velocity,speed,2);EXPECT_EQ(t.hit.y,576);
+        FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{1,35'000'000,30'000'000});
+        owner.accept(scene);const auto plans=owner.take_accepted_plans();
+        if(speed==800) {
+            EXPECT_LT(t.uncertainty_ns,30'000'000);ASSERT_EQ(plans.size(),1);
+            clock.set(plans[0].steps[0].due_ns);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+        } else {EXPECT_GT(t.uncertainty_ns,30'000'000);EXPECT_TRUE(plans.empty());EXPECT_TRUE(touch.contacts().empty());}
+        owner.stop();
+    }
+}
+TEST(GameObserver, CurrentPointMismatchAndLargeGeometryJumpsRemainRejectedAtHighSpeed) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot scene;
+    for(int i=0;i<6;++i) {
+        auto f=image(i+1,1'000'000+i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int y=330+i*16+(i==5?64:0);rect(f,336,y-4,128,8,{40,190,255});
+        clock.set(f.capture_complete_ns);scene=observer.process(f);
+    }
+    ASSERT_EQ(scene.targets.size(),1);const auto& t=scene.targets[0];
+    EXPECT_FALSE(t.crossing_ns);EXPECT_EQ(t.reason,"nonlinear_or_mismatch");
+    EXPECT_GT(t.prediction_error_px,t.fit_residual_limit_px);
+    FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{1,35'000'000,30'000'000});
+    owner.accept(scene);EXPECT_TRUE(owner.take_accepted_plans().empty());owner.poll();EXPECT_TRUE(touch.contacts().empty());
+}
+TEST(GameOwner, NewTimingUncertaintyCancelsPendingDownAndFreshEvidenceCanRetryExactlyOnce) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{1,0,30'000'000});
+    auto s=snapshot(1,0);auto t=target(1,0,50'000'000);t.samples=3;s.targets={t};
+    owner.accept(s);ASSERT_EQ(owner.take_accepted_plans().size(),1);
+    clock.set(20'000'000);s=snapshot(2,clock.now_ns());t.revision++;t.evidence_ns=clock.now_ns();
+    t.expires_ns=clock.now_ns()+100'000'000;t.crossing_ns=60'000'000;t.uncertainty_ns=45'000'000;s.targets={t};
+    owner.accept(s);owner.poll();const auto canceled=owner.take_plan_cancellations();ASSERT_EQ(canceled.size(),1);
+    EXPECT_EQ(canceled[0].at("reason"),"timing_uncertainty_exceeds_limit");EXPECT_TRUE(touch.receipts().empty());
+    clock.set(40'000'000);s=snapshot(3,clock.now_ns());t.revision++;t.evidence_ns=clock.now_ns();
+    t.expires_ns=clock.now_ns()+100'000'000;t.crossing_ns=70'000'000;t.uncertainty_ns=2'000'000;s.targets={t};
+    owner.accept(s);ASSERT_EQ(owner.take_accepted_plans().size(),1);
+    clock.set(50'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    clock.set(70'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+}
 TEST(GameObserver, FitResidualDoesNotDisplaceTheHitPointFromTheObservedLine) {
     FakeClock clock;GameObserver observer(clock);DecisionSnapshot result;
     constexpr int jitter[]{0,4,-4,4,-4,4};
