@@ -117,7 +117,7 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
         if(valid) {
             auto note=anchor;note.tangent=u;note.tail=tail;note.height=last;note.head_on_line=true;
             note.center={tail.x+n.x*last,tail.y+n.y*last};
-            note.outline_evidence=true;note.direct_rails_evidence=false;return note;
+            note.outline_evidence=true;note.direct_rails_evidence=false;note.held_body_patch=false;return note;
         }
     }
     struct Section{double left,right,center;};std::vector<Section> sections;
@@ -162,7 +162,7 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
         if(!attached)return {};
     }
     NoteCandidate note=anchor;note.tangent=u;note.center={projected.x+u.x*paired.center,projected.y+u.y*paired.center};
-    note.width=paired.right-paired.left;note.head_on_line=true;note.outline_evidence=true;note.direct_rails_evidence=false;note.tail.reset();
+    note.width=paired.right-paired.left;note.head_on_line=true;note.outline_evidence=true;note.direct_rails_evidence=false;note.held_body_patch=false;note.tail.reset();
     std::array<int,2> ends{};bool clipped=false;
     for(int side=0;side<2;++side) {
         int last=0,gap=0,support=0;
@@ -291,7 +291,7 @@ std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const Note
                                            front.y+u.y*middle+n.y*(edge_offset-3)};
         current.width=paired.right-paired.left;
         current.tangent=u;current.height=(ends[0]+ends[1])/2.0-4;
-        current.tail.reset();current.head_on_line=false;current.held_body_evidence=true;
+        current.tail.reset();current.head_on_line=false;current.held_body_evidence=true;current.held_body_patch=false;
         current.outline_evidence=true;current.direct_rails_evidence=false;
         if(best&&cost>=best_cost-1) {
             if(std::hypot(current.center.x-best->center.x,current.center.y-best->center.y)>8)ambiguous=true;
@@ -300,5 +300,71 @@ std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const Note
         best=current;best_cost=cost;ambiguous=false;
     }
     return ambiguous?std::nullopt:best;
+}
+std::optional<NoteCandidate> observe_held_body_patch(const Frame& f,const NoteCandidate& anchor,const LineCandidate& line) {
+    if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence)||
+       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22||
+       std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
+    const Vec2 u=line.tangent,n{-u.y,u.x};
+    std::optional<NoteCandidate> best;double best_cost=1e9;
+    // An already held body can remain visible while its front is hidden by
+    // the finger effect. Pick only a currently filled interior inside both
+    // measured rails. This region is not a head/tail observation or a birth.
+    for(int shift=-32;shift<=32;shift+=2)for(int forward=-48;forward<=16;forward+=4) {
+        const double cost=std::abs(shift)*.5+std::abs(forward)*.3;
+        if(cost>=best_cost)continue;
+        const Vec2 point{anchor.center.x+u.x*shift+n.x*forward,
+                         anchor.center.y+u.y*shift+n.y*forward};
+        if(std::abs(dot(sub(point,line.center),n))<=12)continue;
+        bool filled=true;
+        for(const int depth:{0,8,24}) {
+            int count=0;for(int k=-3;k<=3;++k)
+                count+=gray(f,{point.x+u.x*k*anchor.width*.13-n.x*depth,
+                               point.y+u.y*k*anchor.width*.13-n.y*depth})>=80;
+            filled=filled&&count>=6;
+        }
+        if(!filled)continue;
+        std::array<Vec2,4> pairs{};bool valid=true;int section=0;
+        for(const int depth:{0,8,24,40}) {
+            std::array<double,2> edges{};int index=0;
+            for(const int side:{-1,1}) {
+                bool found=false;
+                for(int radius=0;radius<=16&&!found;++radius)for(const int sign:{-1,1}) {
+                    const double along=side*anchor.width*.5+sign*radius;
+                    if(ridge(f,{point.x+u.x*along-n.x*depth,point.y+u.y*along-n.y*depth},u)) {
+                        edges[index]=along;found=true;break;
+                    }
+                }
+                ++index;if(!found)valid=false;
+            }
+            if(!valid||std::abs(edges[1]-edges[0]-anchor.width)>std::max(8.0,anchor.width*.20)) {valid=false;break;}
+            pairs[section++]={edges[0],edges[1]};
+        }
+        if(!valid)continue;
+        const auto pair=pairs[1];
+        for(const auto& other:pairs)if(std::abs(other.x-pair.x)>4||std::abs(other.y-pair.y)>4)valid=false;
+        if(!valid)continue;
+        std::array<int,2> ends{};
+        for(int side=0;side<2;++side) {
+            int last=0,gap=0,support=0;
+            for(int depth=4;depth<=static_cast<int>(std::hypot(f.width,f.height));depth+=2) {
+                const double edge=side?pair.y:pair.x;
+                const Vec2 p{point.x+u.x*edge-n.x*depth,point.y+u.y*edge-n.y*depth};
+                if(p.x<4||p.x>=f.width-4||p.y<f.height*.10||p.y>=f.height-4)break;
+                bool found=false;for(int offset=-3;offset<=3&&!found;++offset)
+                    found=ridge(f,{p.x+u.x*offset,p.y+u.y*offset},u);
+                if(found){last=depth;gap=0;++support;}else if((gap+=2)>12)break;
+            }
+            if(support<3||last<96){valid=false;break;}ends[side]=last;
+        }
+        if(!valid||std::abs(ends[0]-ends[1])>16)continue;
+        auto current=anchor;const auto middle=(pair.x+pair.y)*.5;
+        current.center={point.x+u.x*middle,point.y+u.y*middle};current.width=pair.y-pair.x;
+        current.tangent=u;current.height=(ends[0]+ends[1])*.5;current.tail.reset();
+        current.rails_geometry=true;current.head_on_line=false;current.held_body_evidence=true;
+        current.held_body_patch=true;current.outline_evidence=true;current.direct_rails_evidence=false;
+        best=current;best_cost=cost;
+    }
+    return best;
 }
 }

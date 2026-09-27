@@ -35,6 +35,23 @@ TEST(GameTracking, MovingHeldBodyEvidenceRoundTripsAndRequiresItsCurrentGeometry
  j=candidate_batch_json(b);j["extractor_version"]=31;j["candidates"][0]["note"].erase("held_body_evidence");
  EXPECT_FALSE(parse_candidate_batch(j).candidates.front().note.held_body_evidence);
 }
+TEST(GameTracking, HeldBodyPatchHasNoHeadOrTailPredictionAndRoundTripsItsEvidence){
+ auto b=batch(1,20'000'000);b.extractor_version=34;auto& n=b.candidates.front().note;
+ n.held_body_evidence=n.held_body_patch=n.outline_evidence=true;n.head_on_line=false;n.tail.reset();
+ auto j=candidate_batch_json(b);EXPECT_TRUE(parse_candidate_batch(j).candidates.front().note.held_body_patch);
+ j["candidates"][0]["note"]["head_on_line"]=true;EXPECT_THROW(parse_candidate_batch(j),std::invalid_argument);
+ j=candidate_batch_json(b);j["candidates"][0]["note"]["tail"]={500,200};EXPECT_THROW(parse_candidate_batch(j),std::invalid_argument);
+ j=candidate_batch_json(b);j["extractor_version"]=33;j["candidates"][0]["note"].erase("held_body_patch");
+ EXPECT_FALSE(parse_candidate_batch(j).candidates.front().note.held_body_patch);
+ std::vector<GameTrackHistory> history;std::uint64_t id=0;
+ for(int i=0;i<4;++i) {
+  auto s=DecisionSnapshot{};s.context=b.context;s.lines=b.lines;s.context.frame=i+1;s.context.capture_ns=i*20'000'000;
+  n.center.y=480+i*6;std::vector<NoteCandidate> notes{n};std::vector<std::optional<NoteCandidate>> shortened(1);
+  track_legacy_batch(s,notes,shortened,history,id);ASSERT_EQ(s.targets.size(),1);
+  EXPECT_FALSE(s.targets.front().crossing_ns);EXPECT_FALSE(s.targets.front().tail_crossing_ns);
+  EXPECT_EQ(s.targets.front().reason,"held_body_touch_only");EXPECT_EQ(s.targets.front().hit.y,n.center.y);
+ }
+}
 TEST(GameTracking, WeakNewCandidatesAndPredictionCannotCreateOrRefreshActions){
  for(const auto* method:{"byte_association","oc_observation"}){GameTrackingComparison tracker(method);auto b=batch(1,10'000'000);b.candidates[0].quality=ObservationQuality::weak_current;
   EXPECT_TRUE(tracker.update(b).observations.empty());b=batch(2,20'000'000);const auto first=tracker.update(b);ASSERT_EQ(first.observations.size(),1);const auto id=first.observations[0].track_id;

@@ -1,6 +1,6 @@
 # Phigros Auto-play System
 
-最新狀態：自主開發與實戰持續。灰階外框、Hold同指續接、Drag Move及獨立line ID已實作；observer31兩輪26／27 Miss，observer32第八輪35 Miss，尚未AP。observer33修正特效框線造成移動前端回退，planner13／diagnostics6，完整配置回歸及續測中。未加入光流或模型。HD需同版本至少連續三輪AP才進IN。詳見[外框方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。
+最新狀態：自主開發與實戰持續。第九輪observer33為369／2／0／22、868,880分，仍未AP；此前最佳26 Miss。observer34／planner14新增前端遮擋時的當前成對body內部觸點，並阻止一般色塊把既有觸點投影回line；diagnostics6，完整回歸及續測中。光流／模型未接入。HD需同版本至少連續三輪AP才進IN。詳見[外框方案](docs/OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。
 
 2026-09-27 使用者補充四／五指與持續接觸語義後，source `59c92bf`／planner9已加入五指profile、實測容量門控、Hold當前尾端過線才正常Up，以及連續Drag區域覆蓋續接。四／五指各30次及五指全部取消30次通過；Release／Debug／嚴格ASan各142／142通過，詳見[動作語義紀錄](docs/GAME_ACTION_SEMANTICS_20260927.md)。舊三輪皆兩指／planner8，結果不能當成新策略驗收；新版本尚未進遊戲。
 

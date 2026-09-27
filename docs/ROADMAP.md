@@ -1,6 +1,6 @@
 # 開發路線圖
 
-自主實作與實戰持續。observer31兩輪26／27 Miss，observer32第八輪35 Miss，未AP；observer33修正移動前端被特效框線拉回line。先達同一凍結版本至少連續三次HD AP，再挑戰IN AP；取代下方歷史首次AP即進IN門檻，尚未達標。
+自主開發與實戰持續。observer33第九輪369／2／0／22，未AP；observer34／planner14修正Hold前端遮擋時的續接與一般色塊錯誤Move。先達同一凍結版本至少連續三次HD AP，再挑戰IN AP；取代下方歷史首次AP即進IN門檻，尚未達標。
 
 使用者後續補充遊戲可四／五指、Hold須整條結束、連續黃色Drag可持續接觸。source `59c92bf` 的planner9與5-contact profile已實作；後端能力核對及測試見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。這是另有使用者依據的動作修正，沒有採用T1／T2或模型；新遊戲策略仍待實戰，HD AP未完成。
 

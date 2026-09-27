@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "observer33_regression_passed_live_pending",
+  "status": "observer34_body_patch_regression_passed_live_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -166,6 +166,29 @@
       "dataset_roi_saved": 0,
       "sampling_fault": "dataset global run/image cap reached",
       "raw_sha256": "25d32a142c763ee073a34ebad8d4b9877e1329dbbfc070a2f9d5f7338694563b"
+    },
+    {
+      "run_id": "cpp-observe-17905107612608769",
+      "source_commit": "1636519",
+      "binary_sha256": "f25d4774cc29c3c8fef029ed1f92535801f946879f800070c1e1fbebbbea0ca4",
+      "difficulty": "HD6",
+      "score": 868880,
+      "perfect": 369,
+      "good": 2,
+      "bad": 0,
+      "miss": 22,
+      "max_combo": 82,
+      "accuracy_percent": 94.22,
+      "early": 0,
+      "late": 2,
+      "ap": false,
+      "read_basis": "Computer Use native settlement screenshot after STOPPED, then independent after-stop capture diagnostic.png",
+      "duration_s": 185,
+      "exit_code": 0,
+      "dataset_sampling": true,
+      "dataset_roi_saved": 136,
+      "sampling_fault": "",
+      "raw_sha256": "fad0a66fad967173b1dd91650208391a46d40ce5d312684e9b99c958fc45a5cf"
     }
   ],
   "followup_regression": {
@@ -324,5 +347,33 @@
     ],
     "dataset_max_runs": 20,
     "dataset_max_images": 2560
+  },
+  "current_body_patch_followup": {
+    "observer": 34,
+    "planner": 14,
+    "diagnostics": 6,
+    "binary_sha256": "428ab1bb4f4afe42582ca38726f2c6d6f5339981d5ff3f205719f9c8a7c7e130",
+    "release": {
+      "seconds": 16.15,
+      "total": 168,
+      "passed": 168
+    },
+    "debug": {
+      "seconds": 25.86,
+      "total": 168,
+      "passed": 168
+    },
+    "asan": {
+      "seconds": 72.57,
+      "suppressions": false,
+      "total": 168,
+      "passed": 168
+    },
+    "focused_failures_before_repair": [
+      1,
+      0
+    ],
+    "excluded_debug_run": "old163-test executable overlapped link; LNK1168; rebuilt before final168-test run",
+    "saved_current_pixels_probe": "clip2-frame1 current body patch x638.5/y494/w152 with188px rails in crop, front/tail unknown"
   }
 }

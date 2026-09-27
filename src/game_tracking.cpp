@@ -186,19 +186,25 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
                 }
             }
         } else if(out.lines.size()>1) target.reason="multiple_line_association_unvalidated";
+        if(target.note.held_body_patch) {
+            target.crossing_ns.reset();target.tail_crossing_ns.reset();
+            if(selected&&!ambiguous)target.reason="held_body_touch_only";
+        }
         out.targets.push_back(std::move(target));if(source_indices)source_indices->push_back(ni);
     }
 }
 CandidateBatch make_candidate_batch(const DecisionSnapshot& s,const Frame& f,
  const std::vector<NoteCandidate>& notes,const std::vector<std::optional<NoteCandidate>>& shortened,
  const std::vector<GameTrackHistory>& history) {
- CandidateBatch b;b.extractor_version=33;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
+ CandidateBatch b;b.extractor_version=34;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
  b.capacity_valid=s.capacity_valid;b.source_valid=f.source_valid;
  b.extraction_start_ns=s.recognition_start_ns;b.lines=s.lines;
  for(std::size_t i=0;i<notes.size();++i) {
   TrackingCandidate c;c.candidate_id=i+1;c.note=notes[i];c.shortened_hold=shortened[i];
   c.body_visible=c.note.kind==NoteKind::hold;c.left_rail=c.right_rail=c.note.rails_geometry;
-  c.origin=c.note.recent_identity?"current_rails_recent_anchor":c.note.direct_rails_evidence?"current_reconstructed_front":"color_core";
+  c.head_visible=!c.note.held_body_patch;
+  c.origin=c.note.held_body_patch?"current_body_patch_recent_anchor":
+      c.note.recent_identity?"current_rails_recent_anchor":c.note.direct_rails_evidence?"current_reconstructed_front":"color_core";
   c.quality=c.note.kind==NoteKind::ambiguous?ObservationQuality::rejected:
       c.note.recent_identity?ObservationQuality::weak_current:ObservationQuality::strong_current;
   c.action_support=c.quality==ObservationQuality::strong_current;
@@ -216,7 +222,7 @@ json vec(Vec2 p){return json::array({p.x,p.y});}
 Vec2 point(const json& j){if(!j.is_array()||j.size()!=2)throw std::invalid_argument("point shape");Vec2 p{j[0].get<double>(),j[1].get<double>()};if(!std::isfinite(p.x)||!std::isfinite(p.y))throw std::invalid_argument("nonfinite point");return p;}
 json note_json(const NoteCandidate& n){return {{"kind",name(n.kind)},{"center",vec(n.center)},{"tangent",vec(n.tangent)},
  {"width",n.width},{"height",n.height},{"confidence_diagnostic_only",n.confidence},{"tail",n.tail?vec(*n.tail):json(nullptr)},
- {"outline",n.outline_evidence},{"rails",n.rails_geometry},{"head_on_line",n.head_on_line},{"held_body_evidence",n.held_body_evidence},{"direct_rails",n.direct_rails_evidence},{"extractor_hint_id",n.recent_identity}};}
+ {"outline",n.outline_evidence},{"rails",n.rails_geometry},{"head_on_line",n.head_on_line},{"held_body_evidence",n.held_body_evidence},{"held_body_patch",n.held_body_patch},{"direct_rails",n.direct_rails_evidence},{"extractor_hint_id",n.recent_identity}};}
 NoteCandidate parse_note(const json& j){NoteCandidate n;const auto k=j.at("kind").get<std::string>();bool found=false;
  for(auto kind:{NoteKind::tap,NoteKind::hold,NoteKind::drag,NoteKind::flick,NoteKind::ambiguous})if(k==name(kind)){n.kind=kind;found=true;}
  if(!found)throw std::invalid_argument("note kind");n.center=point(j.at("center"));n.tangent=point(j.at("tangent"));
@@ -225,6 +231,8 @@ NoteCandidate parse_note(const json& j){NoteCandidate n;const auto k=j.at("kind"
  if(j.contains("tail")&&!j["tail"].is_null())n.tail=point(j["tail"]);
  n.outline_evidence=j.value("outline",false);n.rails_geometry=j.value("rails",false);n.head_on_line=j.value("head_on_line",false);
  n.held_body_evidence=j.value("held_body_evidence",false);
+ n.held_body_patch=j.value("held_body_patch",false);
+ if(n.held_body_patch&&(!n.held_body_evidence||n.head_on_line||n.tail))throw std::invalid_argument("held body patch contract");
  if(n.held_body_evidence&&(!n.outline_evidence||!n.rails_geometry||n.kind!=NoteKind::hold))throw std::invalid_argument("held body evidence contract");
  n.direct_rails_evidence=j.value("direct_rails",false);n.recent_identity=j.value("extractor_hint_id",std::uint64_t{0});return n;}
 }
@@ -246,7 +254,7 @@ CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("sc
  const auto& c=j.at("context");b.context={c.at("epoch"),c.at("generation"),c.at("geometry"),c.at("frame"),c.at("capture_ns"),c.at("width"),c.at("height"),c.at("rotation")};
  if(b.context.width<2||b.context.height<2||b.context.width>4096||b.context.height>4096||b.context.capture_ns<0||b.context.rotation<0||b.context.rotation>3)throw std::invalid_argument("candidate context");
  b.extractor_version=j.at("extractor_version");b.quality_version=j.at("quality_version");b.history_source=j.at("history_source");
- if((b.extractor_version<29||b.extractor_version>33)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
+ if((b.extractor_version<29||b.extractor_version>34)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
  b.extraction_start_ns=j.at("extraction_start_ns");b.extraction_end_ns=j.at("extraction_end_ns");
  if(b.extraction_start_ns<0||b.extraction_end_ns<b.extraction_start_ns)throw std::invalid_argument("extraction time order");
  const auto ui=j.at("ui").get<std::string>();bool found=false;for(auto u:{GameUi::unknown,GameUi::menu,GameUi::loading,GameUi::playing,GameUi::paused,GameUi::result})if(ui==name(u)){b.ui=u;found=true;}

@@ -39,6 +39,7 @@ struct NoteCandidate {
     bool head_on_line = false;
     bool direct_rails_evidence = false;
     bool held_body_evidence = false; // Current paired body/front from a recently on-line Hold.
+    bool held_body_patch = false; // Current interior touch region; the front is occluded/unknown.
 };
 struct GameTarget {
     std::uint64_t note_id = 0, revision = 0;

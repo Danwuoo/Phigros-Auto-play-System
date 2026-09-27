@@ -1,6 +1,6 @@
 # 外框追蹤與持續接觸方案（2026-09-27）
 
-最新狀態：使用者已重新授權自主實作、迭代、Computer Use 遊戲操作與實戰；HD 同版本至少連續三次 AP 後才進 IN。observer31兩輪26／27 Miss；observer32第八輪35 Miss，未AP。observer33修正移動前端被特效框線拉回line的回退條件，planner13不變、diagnostics6記錄有界採樣額度。已有灰階雙側外框、短尾端、接觸重新關聯、Drag同指Move及獨立line ID；光流段仍待評估，未接入。
+最新狀態：自主開發與Computer Use實戰持續，HD同版本至少連續三次AP後進IN。observer33第九輪369／2／0／22、868,880分，仍未AP。observer34／planner14修正前端被觸控特效遮擋時的body續接與色塊錯誤投影Move；diagnostics6有界採樣。已有灰階雙側外框、短尾端、接觸重新關聯、Drag同指Move及獨立line ID；光流／模型未接入。
 
 ## 已實作資料契約
 
@@ -106,3 +106,17 @@ Hold的接觸目標為當前body可見區域與所屬line的交會內部；Drag�
 這份方案已完成程式核對，效果尚未驗證；目前不宣稱修復、Hold全曲維持或HD AP。
 
 observer33最終三配置各163／163通過：Release11.50s／Debug28.07s／ASan65.32s，無suppressions；binary f25d4774cc29c3c8fef029ed1f92535801f946879f800070c1e1fbebbbea0ca4。新版实战待测。
+
+### 第九輪及前端遮擋的當前 body 續接
+
+observer33／source1636519，cpp-observe-17905107612608769：369／2／0／22，868,880分，maxcombo82、ACC94.22%、Early0／Late2，185秒STOPPED／exit0。raw SHA256 fad0a66fad967173b1dd91650208391a46d40ce5d312684e9b99c958fc45a5cf。18clips／136 native ROI已存、無partial／truncated，與第八輪缺ROI分開。recognition n10811，p50／p95／p99／max=4.5795／7.2929／8.7228／18.5836ms；playing interval n9627=16.6027／32.05132／44.62404／76.1829ms。同五指35ms環境，曲中無build／test／额外capture。接觸衝突0、alias4／tail0，Hold missing103／geometry6／ambiguous3。比先前最佳26 Miss少，但單輪不能宣稱穩定改善，更非AP。
+
+846–853同一Hold118／intent17已從539跟到498，沒有此前反覆跳回line；854–856前端被Gold觸控特效覆蓋，current rails辨識退為一般色塊，原owner仍對有samples的同ID更新plan，Hit回到576。clip2四張ROI直接顯示body仍可見，與journal的錯誤Move吻合。
+
+observer34新增observe_held_body_patch，僅近期已接線／已held_body的成對anchor，沿線±32px、法向−48..16px局部搜尋；觸點所在及其後8／24／40px四個截面量測同一雙側ridge，每截面寬度與位置一致；0／8／24px三排各6／7body fill，兩側96px支持，才選當前內部觸點。不要求前端可見、不猜尾端；held_body_patch=true、head_on_line=false、tail=null。一般line reattachment與實際moving front優先，front重現即回原路徑。patch影像body高度只表示觸點後方支持，不表示完整音符長度。未接線、單側rail、空fill及空frame均拒絕；沒有新歷史推算點或更長缺失期限。
+
+extractor34解析29–33缺字段預設false；patch需held_body／outline／rails，且不得有head_on_line或tail。candidate head_visible=false／origin=current_body_patch_recent_anchor；Hit採當前body點，patch清除crossing／tail-crossing、reason=held_body_touch_only。planner14不允許held_body_evidence建立新Down；既有moving body的同ID一般色塊不更新evidence、不Move回line，60ms未回復即取消。alias仍需唯一當前幾何與既有活動手指。
+
+新增pixels整合序列：遮擋兩幀後恢復前端，保持同ID／同finger／單Down與當前body內觸点；owner反例重現一般色塊投影，不產生錯Move，證明60ms仍有效；patch不能新Down及序列化／無新撞線預測測試。首次focused9項1失敗（只檢查觸點後方外框，點本身落入特效遮區），增加觸點所在截面後focused11／11，不放寬預期。clip2-frame1的原生ROI、prior x638.5/y498/w152重跑C++ probe量測current x638.5/y494/w152、crop內rail188px，tail未知、body_patch=true；不宣稱crop外完整長度。Debug建置與測試曾重疊造成LNK1168，該舊163項結果排除，完整重建後才採計新版。
+
+observer34最終Release／Debug／ASan各168／168：16.15／25.86／72.57秒，無suppressions；binary 428ab1bb4f4afe42582ca38726f2c6d6f5339981d5ff3f205719f9c8a7c7e130。实战續測。

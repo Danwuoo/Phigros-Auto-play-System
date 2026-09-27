@@ -1388,6 +1388,85 @@ TEST(GameMotion, MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior) {
     const auto attached=observe_held_outline(f,anchor,line);ASSERT_TRUE(attached);
     EXPECT_TRUE(attached->head_on_line);EXPECT_NEAR(attached->center.y,576,2);
 }
+TEST(GameMotion, OccludedFrontCanUseOnlyAVisiblePairedBodyInterior) {
+    NoteCandidate anchor;anchor.kind=NoteKind::hold;anchor.center={500,498};anchor.tangent={1,0};
+    anchor.width=152;anchor.height=300;anchor.rails_geometry=true;anchor.held_body_evidence=true;
+    LineCandidate line{{640,576},{1,0},1280,2,.9};
+    auto f=image(1,0);rect(f,426,180,149,310,{90,100,110});
+    rect(f,423,180,3,310,{170,170,170});rect(f,575,180,3,310,{170,170,170});
+    rect(f,415,470,172,60,{170,160,110}); // current touch effect hides the leading edge
+    EXPECT_FALSE(observe_moving_held_front(f,anchor,line));
+    const auto patch=observe_held_body_patch(f,anchor,line);ASSERT_TRUE(patch);
+    EXPECT_TRUE(patch->held_body_patch);EXPECT_TRUE(patch->held_body_evidence);
+    EXPECT_FALSE(patch->head_on_line);EXPECT_FALSE(patch->tail);
+    EXPECT_LE(patch->center.y,470);EXPECT_GE(patch->center.y,450);EXPECT_NEAR(patch->center.x,500,4);
+    auto unheld=anchor;unheld.held_body_evidence=false;EXPECT_FALSE(observe_held_body_patch(f,unheld,line));
+    rect(f,575,180,3,290,{0,0,0});EXPECT_FALSE(observe_held_body_patch(f,anchor,line));
+    auto empty=image(2,20'000'000);EXPECT_FALSE(observe_held_body_patch(empty,anchor,line));
+    rect(empty,423,180,3,310,{170,170,170});rect(empty,575,180,3,310,{170,170,170});
+    EXPECT_FALSE(observe_held_body_patch(empty,anchor,line)); // rails without body fill
+}
+TEST(GameOwner, MovingHoldRejectsColorFragmentProjectionAndKeepsTheOriginalMissingGrace) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{2,0,30'000'000});
+    auto h=target(1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=4;
+    h.note.center=h.hit;h.note.width=152;h.note.height=300;h.note.rails_geometry=true;h.note.outline_evidence=true;
+    auto s=snapshot(1,0);s.targets={h};owner.accept(s);clock.set(10'000'000);owner.poll();
+    ASSERT_EQ(touch.contacts().size(),1);const int finger=touch.contacts().begin()->first;
+    const auto update=[&](Nanoseconds t,bool supported,bool patch){
+        clock.set(t);s=snapshot(s.sequence+1,t);h.evidence_ns=t;h.expires_ns=t+100'000'000;h.revision++;
+        h.note.held_body_evidence=supported;h.note.held_body_patch=patch;h.note.rails_geometry=supported;
+        h.note.center={400,supported?(patch?460.:480.):465.};h.hit={400,supported?h.note.center.y:500.};
+        h.crossing_ns.reset();h.reason=patch?"held_body_touch_only":"root_past";
+        s.targets={h};owner.accept(s);owner.poll();
+    };
+    update(20'000'000,true,false);ASSERT_EQ(touch.contacts().size(),1);
+    EXPECT_EQ(touch.contacts().begin()->second[1],480);owner.take_accepted_plans();
+    update(40'000'000,false,false);EXPECT_EQ(touch.contacts().begin()->second[1],480);
+    EXPECT_TRUE(owner.take_accepted_plans().empty());
+    update(60'000'000,true,true);EXPECT_EQ(touch.contacts().begin()->first,finger);
+    EXPECT_EQ(touch.contacts().begin()->second[1],460);
+    update(80'000'000,false,false);EXPECT_EQ(touch.contacts().begin()->second[1],460);
+    update(120'000'000,false,false);EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    owner.stop();
+}
+TEST(GameOwner, HeldBodySupportCannotCreateANewDownEvenWithAFittedCrossing) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{2,0,30'000'000});
+    auto h=target(1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=4;
+    h.note.held_body_evidence=h.note.held_body_patch=h.note.rails_geometry=h.note.outline_evidence=true;
+    auto s=snapshot(1,0);s.targets={h};owner.accept(s);clock.set(10'000'000);owner.poll();
+    EXPECT_TRUE(touch.contacts().empty());EXPECT_TRUE(touch.receipts().empty());owner.stop();
+}
+TEST(GameObserver, HeldBodyKeepsItsFingerThroughAFrontOcclusionAndRecoversCurrentFront) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t identity=0;int finger=-1,patches=0;
+    for(int i=0;i<4;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});const int head=510+i*22;
+        rect(f,432,head-260,136,260,{40,190,255});
+        rect(f,423,head-260,3,260,{245,245,245});rect(f,575,head-260,3,260,{245,245,245});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);ASSERT_EQ(s.targets.size(),1);
+        identity=s.targets.front().note_id;owner.accept(s);owner.poll();
+    }
+    ASSERT_EQ(touch.contacts().size(),1);finger=touch.contacts().begin()->first;
+    for(int i=0;i<8;++i) {
+        auto f=image(i+5,(i+4)*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});const int head=548-i*8;
+        rect(f,426,128,149,head-128,{90,100,110});
+        rect(f,423,128,3,head-128,{170,170,170});rect(f,575,128,3,head-128,{170,170,170});
+        if(i==2||i==3)rect(f,415,head-20,172,60,{170,160,110});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        const auto held=std::find_if(s.targets.begin(),s.targets.end(),[&](const auto& t){return t.note_id==identity;});
+        ASSERT_NE(held,s.targets.end())<<i;EXPECT_TRUE(held->note.held_body_evidence)<<i;
+        EXPECT_FALSE(held->note.head_on_line);EXPECT_FALSE(held->note.tail);
+        EXPECT_LE(held->hit.y,head);EXPECT_GE(held->hit.y,head-48);EXPECT_NEAR(held->hit.x,500,5);
+        if(held->note.held_body_patch) {++patches;EXPECT_FALSE(held->crossing_ns);EXPECT_EQ(held->reason,"held_body_touch_only");}
+        if(i>=4)EXPECT_FALSE(held->note.held_body_patch);
+        owner.accept(s);owner.poll();ASSERT_EQ(touch.contacts().size(),1)<<i;
+        EXPECT_EQ(touch.contacts().begin()->first,finger);EXPECT_NEAR(touch.contacts().begin()->second[1],held->hit.y,2);
+    }
+    EXPECT_GE(patches,2);EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    auto missing=image(13,280'000'000);hud(missing);rect(missing,0,575,1280,2,{255,255,255});
+    clock.set(missing.capture_complete_ns);owner.accept(observer.process(missing));owner.poll();EXPECT_TRUE(touch.contacts().empty());owner.stop();
+}
 TEST(GameObserver, RotatingCurrentLineRetainsIdentityAndFreshLocalHitGeometry) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t line_id=0,note_id=0;
     for(int i=0;i<8;++i) {

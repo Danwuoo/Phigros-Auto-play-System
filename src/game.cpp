@@ -843,6 +843,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         if(outline_line) {
           auto outer=observe_moving_held_front(f,note,*outline_line);
           if(!outer)outer=observe_held_outline(f,note,*outline_line);
+          if(!outer)outer=observe_held_body_patch(f,note,*outline_line);
           if(outer) {
             // A current physical pair is evidence for exactly one identity.
             // Otherwise several old anchors can each refresh themselves from
@@ -867,6 +868,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             notes.push_back(*outer);continue;
           }
         }
+        if(note.held_body_evidence)continue; // a failed current body test cannot reuse its historical flag
         const LineCandidate* line=nullptr;
         for(const auto& candidate:out.lines) if(candidate.confidence>=.8&&candidate.length>=f.width*.8&&
             std::abs(candidate.tangent.x*note.tangent.x+
@@ -1238,6 +1240,15 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                     t.samples==0?"current_geometry_unsupported":"target_evidence_invalid");
                 continue;
             }
+            if(id.kind==NoteKind::hold&&*cursor>id.plan.prefix_offset&&id.last_note.held_body_evidence&&
+               (!held_support(t)||!compatible_body(id,t))) {
+                // A color fragment is not the current held region. Retain the
+                // last touch only within the existing missing grace; never
+                // refresh its evidence or move it back to a line projection.
+                if(clock_.now_ns()-id.plan.evidence_ns>=60'000'000)
+                    cancel_contact(t.note_id,id,"current_held_region_unsupported");
+                continue;
+            }
             // An unexecuted Down must not inherit a deadline explicitly
             // contradicted by newer pixels. A later valid fit can retry with
             // a new intent; active or completed contacts never replay Down.
@@ -1276,7 +1287,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                 }
             }
             if(id.kind==NoteKind::hold&&*cursor>plan.prefix_offset) {
-                if(t.note.held_body_evidence)plan.basis="live_pixels_held_body_continuation";
+                if(t.note.held_body_evidence)plan.basis=t.note.held_body_patch?
+                    "live_pixels_held_body_patch_continuation":"live_pixels_held_body_continuation";
                 const auto executed=static_cast<std::size_t>(*cursor-plan.prefix_offset);
                 plan.steps.resize(executed);
                 const auto last=plan.steps.back();
@@ -1313,7 +1325,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         }
         const int bit=t.note.kind==NoteKind::tap?1:t.note.kind==NoteKind::hold?2:
                       t.note.kind==NoteKind::drag?4:t.note.kind==NoteKind::flick?8:0;
-        if(!(options_.enabled_types&bit)||!t.crossing_ns||t.reason!="prediction_observe_only"||
+        if(t.note.held_body_evidence||!(options_.enabled_types&bit)||!t.crossing_ns||t.reason!="prediction_observe_only"||
            t.uncertainty_ns>options_.uncertainty_ns||t.expires_ns<=clock_.now_ns()) continue;
         const auto predicted_due=*t.crossing_ns-options_.lead_ns;
         const auto now=clock_.now_ns();
@@ -1430,6 +1442,7 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
             t.note.outline_evidence?"hold_parallel_rails_and_recent_identity":"color_core"},
         {"rails_geometry",t.note.rails_geometry},{"head_on_line",t.note.head_on_line},
         {"held_body_evidence",t.note.held_body_evidence},
+        {"held_body_patch",t.note.held_body_patch},
         {"relative_distance_px",t.distance},{"relative_velocity_px_s",t.velocity},
         {"residual_px",t.residual},{"samples",t.samples},{"history_span_ns",t.history_span_ns},{"reason",t.reason}});
     return {{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
