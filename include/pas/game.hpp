@@ -135,6 +135,7 @@ public:
     const std::string& last_rejection() const { return last_rejection_; }
     std::vector<ContactPlan> take_accepted_plans();
     std::vector<nlohmann::json> take_coverage_updates();
+    std::vector<nlohmann::json> take_plan_cancellations();
 private:
     struct Identity { std::uint64_t intent, revision; Nanoseconds expires; bool submitted = false;
         NoteKind kind=NoteKind::ambiguous; ContactPlan plan;
@@ -148,6 +149,7 @@ private:
     GameActionOptions options_;
     std::vector<ContactPlan> accepted_plans_;
     std::vector<nlohmann::json> coverage_updates_;
+    std::vector<nlohmann::json> plan_cancellations_;
 };
 
 class PlayButtonPlanner final {

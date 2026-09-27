@@ -2,6 +2,14 @@
 
 ## 主程式設計與開發接線（2026-09-27）
 
+planner8 在最新畫面明確否定預測（`nonlinear_or_mismatch`、
+`outside_short_horizon`、`root_past`）且 scheduler cursor 仍為 0 時，
+取消尚未注入 Down 的 intent。後續有效即時預測可建立新 intent；已開始或
+已完成的接觸不重播 Down，原來源期限與 Hold／Drag 續接規則保持不變。
+`game_pending_prediction_cancelled` 記錄新舊 frame／evidence、舊期限與原因，
+待取事件上限 128；分析僅計取消次數，不算觸控或遊戲命中。離線驗收與下一步
+見 [HD 階段驗收交接](HD_ACCEPTANCE_HANDOFF_20260927.md)。
+
 observer23的 `combo_digit_glyphs` 是中央HUD白色字形計數（上限16），不做OCR、不代表combo值／逐Note判定。啟用異常圖時，獨立只讀diagnostic以兩張存在／兩張至少12ms消失觸發combo disappearance事件；只在≤250ms且同物理幾何、frame/QPC遞增、當前PLAYING／容量有效時延續。第二slot保存首次消失的live frame（`diagnostic-combo-disappearance.png`），取代舊近線history slot；第一slot仍為窄Hold對，總數≤2，發布後copy、停止後編碼，不回饋input。沒有開啟opt-in時不運行latch、不存圖。
 
 observer24在中央HUD的有限ROI內先裁切再分割白色字形，避免畫面裝飾線在ROI外接到數字，使full-frame連通區被高度限制誤刪。半解析度mask／queue最多65,536格，字形計數上限16；单獨窄直線、進度條與COMBO字樣不計入。這仍是可誤辨的診斷形狀觀察，不修改HUD gameplay gate或Note演算法。

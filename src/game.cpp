@@ -993,6 +993,9 @@ std::vector<ContactPlan> GamePlanOwner::take_accepted_plans() {
 std::vector<nlohmann::json> GamePlanOwner::take_coverage_updates() {
     auto result=std::move(coverage_updates_);coverage_updates_.clear();return result;
 }
+std::vector<nlohmann::json> GamePlanOwner::take_plan_cancellations() {
+    auto result=std::move(plan_cancellations_);plan_cancellations_.clear();return result;
+}
 std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     std::vector<TouchReceipt> receipts;
     if(s.sequence<=last_snapshot_) {last_rejection_="snapshot_order"; return receipts;}
@@ -1078,6 +1081,25 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
                t.evidence_ns<id.plan.evidence_ns||t.samples==0) {
                 auto canceled=scheduler_.cancel_intent(id.intent);
                 receipts.insert(receipts.end(),canceled.begin(),canceled.end());
+                continue;
+            }
+            // An unexecuted Down must not inherit a deadline explicitly
+            // contradicted by newer pixels. A later valid fit can retry with
+            // a new intent; active or completed contacts never replay Down.
+            if(*cursor==0&&(t.reason=="nonlinear_or_mismatch"||
+               t.reason=="outside_short_horizon"||t.reason=="root_past")) {
+                auto canceled=scheduler_.cancel_intent(id.intent);
+                receipts.insert(receipts.end(),canceled.begin(),canceled.end());
+                if(plan_cancellations_.size()>=128) throw std::runtime_error("pending cancellation diagnostic capacity");
+                plan_cancellations_.push_back({{"event","game_pending_prediction_cancelled"},
+                    {"note_id",t.note_id},{"intent_id",id.intent},{"kind",name(id.kind)},
+                    {"source_frame",s.context.frame},{"evidence_ns",t.evidence_ns},
+                    {"prior_source_frame",id.plan.source_frame_sequence},{"prior_evidence_ns",id.plan.evidence_ns},
+                    {"cancel_ns",clock_.now_ns()},{"reason",t.reason},
+                    {"prior_predicted_down_ns",id.plan.predicted_down_ns? nlohmann::json(*id.plan.predicted_down_ns):nlohmann::json(nullptr)},
+                    {"distance_px",t.distance},{"velocity_px_per_s",t.velocity},{"residual_px",t.residual},
+                    {"no_down_injected",true},{"game_effect","unknown"}});
+                id.submitted=false;
                 continue;
             }
             auto plan=id.plan; plan.revision=std::max(t.revision,plan.revision+1);
@@ -1250,6 +1272,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     Nanoseconds latest_capture=0;
     std::uint64_t conflicts_omitted=0,contact_history_resets=0,unknown_contact_receipts=0;
     std::uint64_t drag_coverage_updates=0,drag_coverage_with_known_contact=0;
+    std::uint64_t pending_prediction_cancellations=0;
+    std::map<std::string,std::uint64_t> pending_cancellation_reasons;
     const auto describe_intent=[&](std::uint64_t intent) {
         json result={{"intent_id",intent},{"plan",nullptr},{"current_target",nullptr},
             {"target_capture_ns",latest_capture}};
@@ -1352,6 +1376,9 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                 latest_intent=intent;
                 count(accepted_kinds,e.value("basis","unknown"));
             }
+        } else if(event=="game_pending_prediction_cancelled") {
+            ++pending_prediction_cancellations;
+            count(pending_cancellation_reasons,e.value("reason","unknown"));
         } else if(event=="game_drag_coverage") {
             ++drag_coverage_updates;
             const auto intent=e.at("intent_id").get<std::uint64_t>();
@@ -1446,6 +1473,9 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         {"contact_conflicts",conflicts},{"contact_conflicts_omitted",conflicts_omitted},
         {"contact_history_resets",contact_history_resets},{"unknown_contact_receipts",unknown_contact_receipts},
         {"drag_coverage_updates",drag_coverage_updates},{"drag_coverage_with_known_local_contact",drag_coverage_with_known_contact},
+        {"pending_prediction_cancellations",pending_prediction_cancellations},
+        {"pending_prediction_cancellations_by_reason",pending_cancellation_reasons},
+        {"pending_cancellation_semantics","current pixels explicitly invalidate an unexecuted Down prediction; later valid pixels may retry, game effect remains unknown"},
         {"drag_coverage_semantics","fresh pixels share an already active local Drag contact; successful RPC history supports local coverage only, game judgment remains unknown"},
         {"contact_conflict_semantics","journal-order successful RPC receipts reconstruct local contacts; game effect and true simultaneous note count remain unknown; owner revoke clears local history"},
         {"game_rpc_duration_ms",distribution(rpc_duration)},

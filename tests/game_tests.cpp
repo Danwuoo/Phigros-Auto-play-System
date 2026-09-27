@@ -875,6 +875,53 @@ TEST(GameOwner, FreshPredictionRefinesPendingDeadlineButCannotReplayActiveDown) 
     clock.set(78'000'000);ASSERT_EQ(owner.poll().size(),1);
     EXPECT_EQ(backend.receipts().size(),2);EXPECT_TRUE(backend.contacts().empty());
 }
+TEST(GameOwner, ContradictedPendingPredictionCannotInjectButFreshPredictionCanRetry) {
+    for(const auto kind:{NoteKind::tap,NoteKind::hold,NoteKind::drag,NoteKind::flick})
+    for(const auto* reason:{"nonlinear_or_mismatch","outside_short_horizon","root_past"}) {
+        SCOPED_TRACE(std::string(name(kind))+" "+reason);
+        FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{15,0,30'000'000});
+        auto t=target(1,0,50'000'000);t.note.kind=kind;t.samples=4;
+        auto s=snapshot(1,0);s.targets={t};owner.accept(s);owner.take_accepted_plans();
+        clock.set(20'000'000);s=snapshot(2,clock.now_ns());t.evidence_ns=clock.now_ns();
+        t.expires_ns=clock.now_ns()+100'000'000;t.revision++;t.crossing_ns.reset();t.reason=reason;
+        t.distance=-125;t.velocity=524;t.residual=20;s.targets={t};owner.accept(s);owner.take_accepted_plans();
+        EXPECT_EQ(owner.scheduler().pending_count(),0);
+        const auto canceled=owner.take_plan_cancellations();ASSERT_EQ(canceled.size(),1);
+        EXPECT_EQ(canceled[0].at("reason"),reason);EXPECT_EQ(canceled[0].at("source_frame"),2);
+        EXPECT_EQ(canceled[0].at("prior_source_frame"),1);EXPECT_EQ(canceled[0].at("evidence_ns"),20'000'000);
+        EXPECT_EQ(canceled[0].at("prior_evidence_ns"),0);EXPECT_TRUE(canceled[0].at("no_down_injected").get<bool>());
+        EXPECT_TRUE(owner.take_plan_cancellations().empty());
+        clock.set(60'000'000);owner.poll();EXPECT_TRUE(touch.receipts().empty());
+        clock.set(80'000'000);s=snapshot(3,clock.now_ns());t.evidence_ns=clock.now_ns();
+        t.expires_ns=clock.now_ns()+100'000'000;t.revision++;t.crossing_ns=100'000'000;
+        t.reason="prediction_observe_only";t.distance=-10;t.velocity=500;t.residual=1;
+        s.targets={t};owner.accept(s);owner.take_accepted_plans();
+        clock.set(100'000'000);owner.poll();
+        const auto down=std::find_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;});
+        ASSERT_NE(down,touch.receipts().end());EXPECT_EQ(down->command.source_frame_sequence,3);
+        EXPECT_EQ(down->injection_start_ns,100'000'000);
+        owner.stop();EXPECT_TRUE(touch.contacts().empty());
+        EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    }
+}
+TEST(GameOwner, ContradictionAfterDownCannotReplayOrCancelTheActiveDragWindow) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{4,0,30'000'000});
+    auto t=target(1,0,50'000'000);t.note.kind=NoteKind::drag;t.samples=4;
+    auto s=snapshot(1,0);s.targets={t};owner.accept(s);owner.take_accepted_plans();
+    clock.set(35'000'000);ASSERT_EQ(owner.poll().size(),1);
+    clock.set(45'000'000);s=snapshot(2,clock.now_ns());t.evidence_ns=clock.now_ns();
+    t.expires_ns=clock.now_ns()+100'000'000;t.revision++;t.crossing_ns.reset();
+    t.reason="nonlinear_or_mismatch";s.targets={t};owner.accept(s);owner.take_accepted_plans();
+    EXPECT_TRUE(owner.take_plan_cancellations().empty());
+    EXPECT_EQ(touch.contacts().size(),1);
+    clock.set(124'000'000);owner.poll();EXPECT_EQ(touch.contacts().size(),1);
+    clock.set(125'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    clock.set(130'000'000);s=snapshot(3,clock.now_ns());t.evidence_ns=clock.now_ns();
+    t.expires_ns=clock.now_ns()+100'000'000;t.crossing_ns=140'000'000;t.reason="prediction_observe_only";
+    t.revision++;s.targets={t};owner.accept(s);clock.set(140'000'000);owner.poll();
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    owner.stop();
+}
 TEST(GameOwner, HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact) {
     FakeClock clock; FakeTouchBackend backend(clock); GamePlanOwner owner(clock,backend,2,{3,0,30'000'000});
     auto s=snapshot(1,0); auto h=target(1,0,10'000'000); h.note.kind=NoteKind::hold;

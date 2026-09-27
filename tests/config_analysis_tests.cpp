@@ -272,3 +272,15 @@ TEST(GameAnalysis, SharedDragCoverageNeedsARecordedSuccessfulLocalDown) {
     EXPECT_EQ(result.at("drag_coverage_with_known_local_contact"),1);
     EXPECT_EQ(result.at("real_downs_by_basis").at("drag"),1);
 }
+TEST(GameAnalysis, PendingPredictionCancellationIsNotATouchOrGameJudgment) {
+    const TempJson raw(R"({"event":"game_pending_prediction_cancelled","reason":"nonlinear_or_mismatch","no_down_injected":true,"game_effect":"unknown","real_input":true}
+{"event":"game_pending_prediction_cancelled","reason":"root_past","no_down_injected":true,"game_effect":"unknown","real_input":true}
+{"event":"game_pending_prediction_cancelled","reason":"nonlinear_or_mismatch","no_down_injected":true,"game_effect":"unknown","real_input":true}
+)");
+    const auto result=analyze_game_jsonl(raw.path());
+    EXPECT_EQ(result.at("pending_prediction_cancellations"),3);
+    EXPECT_EQ(result.at("pending_prediction_cancellations_by_reason").at("nonlinear_or_mismatch"),2);
+    EXPECT_EQ(result.at("pending_prediction_cancellations_by_reason").at("root_past"),1);
+    EXPECT_TRUE(result.at("real_downs_by_basis").empty());
+    EXPECT_FALSE(result.at("gameplay_validated").get<bool>());
+}

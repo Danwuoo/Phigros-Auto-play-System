@@ -174,7 +174,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
             {"dry_owner",!assist},{"game_observer_version",28},{"game_diagnostics_version",2},
             {"executable_sha256",sha256_file(executable)},
-            {"game_planner_version",7},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
+            {"game_planner_version",8},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
             {"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
             {"drag_shared_contact","fresh_colocated_drag_extends_existing_active_contact_only"},
             {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},
@@ -380,6 +380,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                         if(!assist||!start_scheduler||start_scheduler->pending_count()==0)
                             receipts(owner.accept(*current));
                         for(auto coverage:owner.take_coverage_updates()) {coverage["real_input"]=assist;record(std::move(coverage));}
+                        for(auto cancellation:owner.take_plan_cancellations()) {cancellation["real_input"]=assist;record(std::move(cancellation));}
                         for(const auto& plan:owner.take_accepted_plans()) {
                             json steps=json::array(); for(const auto& step:plan.steps)
                                 steps.push_back({{"phase",static_cast<int>(step.phase)},{"x",step.x},{"y",step.y},{"due_ns",step.due_ns}});

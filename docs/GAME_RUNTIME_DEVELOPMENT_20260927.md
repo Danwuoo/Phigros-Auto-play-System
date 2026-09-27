@@ -343,3 +343,11 @@ v69 Release／Debug／嚴格ASan各105／105通過，CTest總時間7.71／21.15�
 v70稀疏frame時序在planner6確實失敗：85ms时contact已空，後續同ID也不能重播Down；失敗日誌保留。v71 planner7只將Hold初始／更新未知tail Up上限對齊target evidence+100ms硬freshness；可見tail+20ms仍可較早release、明確missing60ms不變，初始Down不得晚於evidence expiry。新Up不使用接受時間延長evidence，scheduler at100ms仍撤銷；manifest補兩個Hold期限欄位。與observer28的頭部校正一起等待106項完整回歸，v69／v70沒有實戰，不以合成測試宣稱AP或改動單獨的實戰收益。
 
 v71當前observer28／planner7／diagnostics2，Release／Debug／嚴格ASan各106／106通過，CTest總時間8.01／21.32／49.18秒，ASAN_OPTIONS未設定、第三方DLL未插樁，warnings與日誌保留。兩種初始／已更新的85ms來源間隔加5ms處理延遲均只一Down，計畫Up以target evidence而非接收時間計100ms，at99ms維持、at100ms撤銷；原missing60ms、scene/UI/source與未知輸入結果回歸通過。所有build／test停止後開始35ms／185秒HD，AP未達標，仍不在曲中加CU擷取／第二capture。
+
+v71 run `cpp-observe-17904671758582395`，35ms／185秒STOPPED exit0，9,155消費frames／915真實命令。結算802,570分、Perfect339／Good6／Bad0／Miss48、max combo68、accuracy87.25%、Early0／Late6，未AP、總體未改善；raw SHA-256 `fab1de7c3e9ac24beca5114b9fcdbccf030808d0c7af8bd069ca96699da6f782`，manual／結算及兩診斷PNG保存。down Tap135／Hold89／Drag101／Flick6，4 coverage／2 conflict／3 gate expiry／3 target-window expiry，runtime7 source／1 UI revoke；capture interval n9,154，p50／p95／p99／max=18.2566／41.81724／56.890389／334.6102ms。first Hold診斷frame549、Note24已是灰色body且無中央combo，不能單憑色彩宣告Miss時點或放寬rail閾值；first combo事件frame1023又有灰body／大特效。兩個conflict當前被拒目標皆不在latest snapshot，仍不宣稱真實需要第三指。
+
+v72針對另一個可解釋的pending時序缺口補合成回歸。v67原conflict frame2033的兩個Drag當前residual約19／18px、reason=nonlinear_or_mismatch、distance約−126／−125px，卻把current evidence更新到既有pending plan並繼續舊的幾ms後Down；原admission要求的有效預測已不成立。新增四類Note×三個明確否定reason的未Down案例，要求不注入舊期限、後續當前有效預測可重新排程且只一Down；另核對已Down的Drag仍維持原90ms window且完成後不重播。資料不足的history與已執行接觸不當作相同否定，等待舊planner7是否重現；v72尚未實戰。
+
+v72舊planner7兩項短測確實一失敗一通過（4ms）：四類×三種否定仍注入舊Down，已Down的Drag維持／不重播案例原即通過。v73 planner8只在scheduler執行cursor=0且當前reason為nonlinear_or_mismatch／outside_short_horizon／root_past時取消未開始intent；後續可靠當前預測可另建intent，不改active或completed Down、資料不足history、既有alias及source100ms。新增最多128筆待取game_pending_prediction_cancelled記錄，保留新／舊QPC evidence、frame、舊predicted deadline、當前fit、reason及no_down_injected；遊戲效果unknown，不作input反饋。C++分析另外計數，不能算作實際Down或遊戲判定；新分析回歸共109項，當時等待完整驗證。
+
+使用者要求階段驗收與新 task 交接後，已獨立核對 v71 結算 PNG 與 raw hash；339／6／0／48 成立，HD AP 仍未通過。v73 當前 source 重新建置，Release／Debug／嚴格 ASan 各109／109通過（9.79／15.52／46.04秒），ASAN_OPTIONS未設定，第三方未插樁。沒有新增模擬器操作或實戰；v73 遊戲效果仍待下一輪 HD。完整驗收與接續工作見 [交接紀錄](HD_ACCEPTANCE_HANDOFF_20260927.md)。
