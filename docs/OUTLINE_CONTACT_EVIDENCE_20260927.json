@@ -1268,5 +1268,78 @@
     "causal_score_improvement_proven": false,
     "unchanged": "observer36/lead35ms/source100ms/target100ms/Hold missing60ms/Drag missing40ms",
     "raw_root": "measurements/outline-contact-20260927"
+  },
+  "current_cadence_diagnostic": {
+    "schema": 1,
+    "semantics": "offline comparison of already saved host QPC telemetry; no source produced timestamp inference or runtime feedback",
+    "hd16": {
+      "published": 8142,
+      "frames_consumed": 8111,
+      "consumer_skips": 31,
+      "overwritten": 31,
+      "pool_drops": 0,
+      "host_residency_ms": {
+        "absolute_deviation_p95": 5.016900000000001,
+        "jitter_p95_minus_p5": 6.9506,
+        "jitter_p95_minus_p50": 5.016699999999999,
+        "max": 27.3643,
+        "mean": 7.616835975835296,
+        "min": 3.0112,
+        "n": 8111,
+        "p5": 5.086399999999999,
+        "p50": 7.0203,
+        "p95": 12.036999999999999,
+        "p99": 16.095909999999993
+      },
+      "sampling_copy_ms": {
+        "absolute_deviation_p95": 0.2519,
+        "jitter_p95_minus_p5": 0.35825,
+        "jitter_p95_minus_p50": 0.10635,
+        "max": 1.3957,
+        "mean": 0.21283735667611892,
+        "min": 0.0002,
+        "n": 8111,
+        "p5": 0.0005,
+        "p50": 0.2524,
+        "p95": 0.35875,
+        "p99": 0.4636
+      }
+    },
+    "hd17": {
+      "published": 6503,
+      "frames_consumed": 6490,
+      "consumer_skips": 12,
+      "overwritten": 12,
+      "pool_drops": 0,
+      "host_residency_ms": {
+        "absolute_deviation_p95": 5.4872499999999995,
+        "jitter_p95_minus_p5": 7.459049999999998,
+        "jitter_p95_minus_p50": 5.485719999999997,
+        "max": 29.2701,
+        "mean": 8.156261263482262,
+        "min": 3.5032,
+        "n": 6490,
+        "p5": 5.51422,
+        "p50": 7.487550000000001,
+        "p95": 12.973269999999998,
+        "p99": 17.34976999999998
+      },
+      "sampling_copy_ms": {
+        "absolute_deviation_p95": 0.2565,
+        "jitter_p95_minus_p5": 0.37830999999999987,
+        "jitter_p95_minus_p50": 0.12180999999999986,
+        "max": 1.7181,
+        "mean": 0.2200310785824351,
+        "min": 0.0001,
+        "n": 6490,
+        "p5": 0.0006,
+        "p50": 0.2571,
+        "p95": 0.37890999999999986,
+        "p99": 0.5185219999999999
+      }
+    },
+    "inference": "Small publication/consumption difference and sub100ms host residency do not suggest a large perception queue. Cause of capture cadence regression unknown; foreground/workload not measured.",
+    "next": "Compare the same frozen planner18 binary on user-prepared HD18 with emulator foreground if possible; do not change fixed capture backend or evidence deadlines",
+    "external_workload": "unknown; optional user question pending"
   }
 }
