@@ -1,5 +1,17 @@
 # 架構與資料契約
 
+## 主程式下一版設計（2026-09-26，待實作）
+
+使用者改採 Glaciaxion HD 直接實戰研究、首次 AP 後進 IN；[主程式計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN.md) 定義新 G0–G6 與資料契約，取代獨立 M3 Fixture 閉環前置順序，不改寫歷史結果。
+
+單程序 C++20：既有 capture worker／LatestFrame → perception worker（UI、線／Note、追蹤、相對運動預測）→ 最新完整有界 DecisionSnapshot → 唯一 action／scheduler／touch owner。supervisor 可獨立撤銷；preview、journal、結果分析只讀，曲名／難度只作記錄。
+
+新遊戲契約須分離 Note 身分、單調提交 intent ID 及 contact ID；未來意圖與近期可執行計畫分開，避免提早占滿手指。active revision 保留已執行進度與釋放責任。目標證據失效撤銷單目標；全局 UI／來源／輸入失效撤銷全部。這些是新需求，現有 scheduler 尚未具備全部行為。
+
+動態線預測使用 Note 與線的相對法向距離及局部運動，不固定螢幕 Y。以主機接收時間擬合的是表觀撞線估計；絕對 source age 仍 unknown，綜合提前量需實機校準且不能當作某段真實延遲。遊戲判定回饋無法唯一配對時標 unknown，不以結算反推逐 Note 時間真值。
+
+G0 接線完成前，observe 仍只有現有擷取／預覽；本次規劃不開放 assist。完整契約、停止、容量及驗收方式以主程式計畫為準。
+
 ## gRPC Windows 接收區塊
 
 正式 dependency 由 vcpkg manifest 的本地 overlay 固定為 gRPC 1.81.1、port revision 2。補丁在 Connect 呼叫時複製 channel argument `pas.grpc.windows_read_chunk_bytes` 的整數值，交由 Windows EventEngine 非同步建立的接收端使用，不延後存取設定參照。`GrpcCapture` 預設 256 KiB；profile 的 `capture.grpc_read_chunk_kib` 與 capture bench 的 `--grpc-read-chunk-kib` 僅允許 8／64／256。未指定的 channel（包含 touch）維持 8 KiB；HTTP/2、BDP 及 frame pool 策略未改。
@@ -16,7 +28,7 @@
 
 依[擷取器終態與最後驗收](CAPTURE_FINAL_ACCEPTANCE_20260926.md)，本輪五路徑研究與 gRPC 接收層正式化已完成。主用為 gRPC payload fast（RGB888、top-down、顯式尺寸／方向、256 KiB 接收區塊）。WGC 僅為 bench 備援候選，正式備用暫缺；DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 維持診斷，沒有自動切換。
 
-gRPC revision 2 的 Release 34／34 回歸與 18 批短測、正式擷取／暫停恢復／observe 已完成。bench 的 250 ms 相對 lag guard 尚未由 `run_observe()`／profile 傳遞，故該接線、證據撤銷與簡單目標觸控閉環是下一階段 M3 前置工作。擷取器研究結案不代表 runtime 已具相同保護，也不代表絕對 source age、長期性能或遊戲時序已驗收。舊 raw 性能與完整矩陣通過旗標保持原值；不再自動續跑取消的矩陣／長測。
+gRPC revision 2 的 Release 34／34 回歸與 18 批短測、正式擷取／暫停恢復／observe 已完成。bench 的 250 ms 相對 lag guard 尚未由 `run_observe()`／profile 傳遞；該接線及證據撤銷納入新 G0，遊戲閉環依 G1–G4 推進。擷取器研究結案不代表 runtime 已具相同保護，也不代表絕對 source age、長期性能或遊戲時序已驗收。舊 raw 性能與完整矩陣通過旗標保持原值；不再自動續跑取消的矩陣／長測。
 
 ## T6 擷取候選開發契約（2026-09-26）
 

@@ -1,8 +1,10 @@
 # Phigros Auto-play System
 
+**主程式下一階段已重新規劃：Chapter Legacy → Glaciaxion HD → 首次 All Perfect → IN。** 依使用者 2026-09-26 新方向，直接以遊戲建立觀察、預測、觸控與畫面回饋閉環，不另開大型簡單目標 Fixture 階段；必要的短合成回歸與既有觸控能力核對保留。模組、時序、手指管理與 G0–G6 完成條件見 [主程式計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)。目前僅完成規劃，遊戲辨識／assist 尚未實作或驗收。
+
 **擷取器本輪已結案：五路徑選型與 gRPC 接收層優化均完成，主用為 gRPC payload fast／256 KiB，正式備用暫缺。** WGC 保留 bench 備援候選、DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 僅診斷。完整終態與驗收界線以[最後驗收與選型](docs/CAPTURE_FINAL_ACCEPTANCE_20260926.md)為準；不再自動續跑原矩陣或長測。
 
-現行 Release **34／34** 回歸通過，gRPC 正式版本完成 18 批短測及擷取／恢復／observe 驗證。畫面只在有界記憶體中處理重用，預設不存 PNG。尚未完成的 Session 相對積壓保護接線與簡單目標觸控閉環屬下一階段 M3；絕對來源年齡、長期性能與 Phigros 遊玩時序均未通過宣告。
+現行 Release **34／34** 回歸通過，gRPC 正式版本完成 18 批短測及擷取／恢復／observe 驗證。畫面只在有界記憶體中處理重用，預設不存 PNG。尚未完成的 Session 相對積壓保護接線納入新計畫 G0，遊戲閉環依 G1–G4 推進；舊 M3 獨立簡單目標閉環未完成且不再作獨立前置階段。絕對來源年齡、長期性能與 Phigros 遊玩時序均未通過宣告。
 
 2026-09-25 起的正式實作採 **C++20**：Windows x64／MSVC／CMake／vcpkg，單程序多執行緒，Android NativeActivity Fixture 亦由 C++ 編寫。Python、Java 與網頁 Fixture 原始碼已凍結於 [`legacy/`](legacy/README.md)，只供歷史重算與比較。T0–T5 的功能與可執行驗證已完成，正常擷取的性能數值門檻仍待使用者依新基線決定；逐項證據見 [驗收矩陣](docs/CPP_PARITY_MATRIX.md) 與 [驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。T6–T7 五擷取候選的開發及集中測試規格見 [本輪計畫](docs/CAPTURE_FIVE_BACKENDS_PLAN_20260926.md)，正常來源研究範圍為 **40–59 Hz**。程式不向 Phigros 注入遊玩觸控。
 
