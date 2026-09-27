@@ -1,16 +1,68 @@
 # 架構與資料契約
 
-## 主程式下一版設計（2026-09-26，待實作）
+## 主程式設計與開發接線（2026-09-27）
+
+planner8 在最新畫面明確否定預測（`nonlinear_or_mismatch`、
+`outside_short_horizon`、`root_past`）且 scheduler cursor 仍為 0 時，
+取消尚未注入 Down 的 intent。後續有效即時預測可建立新 intent；已開始或
+已完成的接觸不重播 Down，原來源期限與 Hold／Drag 續接規則保持不變。
+`game_pending_prediction_cancelled` 記錄新舊 frame／evidence、舊期限與原因，
+待取事件上限 128；分析僅計取消次數，不算觸控或遊戲命中。離線驗收與下一步
+見 [HD 階段驗收交接](HD_ACCEPTANCE_HANDOFF_20260927.md)。
+
+observer23的 `combo_digit_glyphs` 是中央HUD白色字形計數（上限16），不做OCR、不代表combo值／逐Note判定。啟用異常圖時，獨立只讀diagnostic以兩張存在／兩張至少12ms消失觸發combo disappearance事件；只在≤250ms且同物理幾何、frame/QPC遞增、當前PLAYING／容量有效時延續。第二slot保存首次消失的live frame（`diagnostic-combo-disappearance.png`），取代舊近線history slot；第一slot仍為窄Hold對，總數≤2，發布後copy、停止後編碼，不回饋input。沒有開啟opt-in時不運行latch、不存圖。
+
+observer24在中央HUD的有限ROI內先裁切再分割白色字形，避免畫面裝飾線在ROI外接到數字，使full-frame連通區被高度限制誤刪。半解析度mask／queue最多65,536格，字形計數上限16；单獨窄直線、進度條與COMBO字樣不計入。這仍是可誤辨的診斷形狀觀察，不修改HUD gameplay gate或Note演算法。
+
+observer25的direct Hold route另可使用觸及畫面頂端（y0≤2px）的藍色seed；此seed高度上限為95%畫面、底端須至少達20%畫面。一般seed仍維持原75%高度及10%頂部排除。例外仍只用當前雙側輪廓、兩排前緣填色與可見leading edge建立幾何；裁切tail保持unknown，沒有白色雙側／前緣不能建立Hold。來源期限、近期anchor期限、接觸grace及種類判斷未放寬。
+
+observer26只在已到線、90ms內有rails anchor且當前藍灰front fill有效的續接路徑容許淡金色染色輪廓。染色取樣限各rail原位置±4px、頭部後方≤96px；每側仍须在當前畫面找到至少三個深度≥16px的中性白樣本。純金色輪廓、單側、缺少當前fill、失效anchor不能續接；普通白／黃rail判斷、32px缺口與新Hold當前leading edge路徑保持原限制。這只補命中特效染色的當前幾何，並不延長無畫面的contact／source期限。
+
+observer27在上述近期held fill有效但原輪廓驗證失敗時，另用當前頭後128／192px兩個截面校正paired rail寬度與中心。各截面只搜原half width+20px範圍、最多16個≤12px白band；pair須包含原頭部、width為原0.8–1.2倍、中心偏移≤16px、內部5／7藍灰fill成立。校正不搜尋新leading head，仍位於同一條當前主線；再驗當前front fill、±4px／≤96px染色、每側三個中性白樣本與原paired extent要求後才能續接。不影響原本已成功的白rail路徑，也不延長90／100／60ms期限。
+
+observer28允許上述白色section校正在近期rails有效、舊位置的rail路徑失敗時先運行，不再要求舊width的front fill先成立。校正後的當前front fill仍须原4／8／12px、5／15藍灰樣本，所有section幾何／白樣本／染色／paired extent條件照舊。這處理旧寬度取樣落在中央特效、當前完整輪廓外側仍有藍灰fill的情況；沒有當前頭部fill（例如純黑缺口）仍不能續接，不把深處body或金色特效單獨當成頭部。
+
+planner7將Hold未知tail的初始／更新Up上限改為該target的 `evidence_ns+100ms`，與scheduler既有target／gate freshness硬界線一致；不再額外用接受後70ms提早完成接觸。可見tail仍預測tail crossing+20ms、不能超過evidence硬界線；初始Down须在該界線前，原20ms最短Up偏移僅在剩餘freshness足夠時成立。沒有新frame到達時，scheduler at100ms仍撤銷並釋放；新frame明確缺失該Hold時，既有60ms missing grace仍取消，未知UI／來源／場景改變照舊立即撤銷。這允許80–90ms但仍fresh的稀疏畫面續接單一Down，不能以舊evidence延長接觸。manifest附hold_release_limit_ms=100／hold_missing_grace_ms=60。
+
+diagnostics version2將第一圖槽改為長Hold幾何消失（`diagnostic-hold-disappearance.png`），第二仍為combo字形消失。獨立只讀Hold latch最多存16份上一張的坐標摘要；只有主線充分可見、當前PLAYING／容量有效、同epoch／物理幾何、frame與QPC遞增、間隔≤100ms才比較。上一張近線80px內、寬≥8%畫面且有rails、depth≥max(128px,0.8width)的Hold，下一張沒有兼容位置／寬度的當前Hold時列診斷；短尾結束、source／UI／geometry失效不沿用。幾何消失不代表active contact或Miss，record附prior frame／Note／QPC／頭部／寬高，效果仍unknown，不供input使用。combo分割另容許被細白色ribbon連上的寬字形cluster，但需有局部高白色ink columns；純橫邊框加窄直線不足。計數仍為形狀cluster，非數字OCR。
+
+observer22 分開即時 HUD 分類與 motion history 的連續性。相同 generation／geometry／尺寸／rotation、sequence／QPC 嚴格遞增，且間隔≤250ms時，可以保留三幀分類計數；每張仍必須有當前 pause／score 像素、有效 source 與容量才能開 gate。epoch 改變或間隔>100ms立即清空所有 motion／rail anchor，新目標需重新累積跨度。缺 HUD、無效 source、重播、>250ms間隔或幾何改變皆冷啟動分類；容量失效當幀關閉gate，分類計數在HUD階段容量檢查失效時清空。此上限只屬分類確認政策，不能刷新旧 evidence；scheduler／supervisor 的100ms期限及epoch撤銷不變。
+
+observer21 的hit是實際頭部在當前可見線上的正交投影；擬合distance只估計crossing與uncertainty，不以殘差偏移hit。planner6可讓新鮮可靠、同位置≤2px且覆蓋時間重疊的Drag沿用已active的Drag plan，只延長up、保留原down及prefix。alias／primary仍包含於128 identity上限；仍有支持的成員可維持同一接觸，全部失效或gate撤銷則釋放。pending down、其他Note種類及不同位置不共用；兩指能力與100ms来源期限維持。`game_drag_coverage`最多128筆待取，分析區分physical down與有successful RPC歷史支持的本機共用；遊戲判定仍unknown。
+
+observer20 的新Hold前緣兩排填色除7／9之外，兩側外部取樣群各須至少一點支持，避免一側完整body加另一側裝飾線擴大寬度。opt-in第二診斷槽僅保留近線association ambiguous或有≥30ms跨度、尚未到線的nonlinear mismatch；初始insufficient history及已到線的停止不單獨觸發。這是診斷訊號，不是逐Note判定真值。
+
+observer19 的短期點保留最多六點／90ms，每身分10ms的QPC bucket只保留最新坐標；bucket起點固定直到新增下一點。速度外推／相對撞線擬合／接近rail搜尋均要求至少30ms跨度，沒有足夠跨度列等待，不用低殘差單獨接受短擷取突發。每幀的即時辨識與當前輪廓核對仍執行；`history_span_ns` 為schema2的可選診斷欄位，舊紀錄缺欄位不反推真實來源時間。
+
+observer18 的 simultaneous highlight 過濾以黄色候選的法向厚度核對可見藍／紅芯寬度（上限為 max(24 px,25% core width)），並保留原位置、寬度與當前芯像素支持要求；獨立 Drag 不因高度變大而一律刪除。decision schema2 可附 `rails_geometry`／`head_on_line` 診斷欄位，舊紀錄缺欄位視為 unknown。離線 C++ conflict 分析最多保留64筆摘要、16個成功 RPC 本機接觸、128個最新 targets、每計畫16步；成功 receipt 與 owner reset 只能重建本機歷史，不證明遊戲效果或三押需求。
 
 使用者改採 Glaciaxion HD 直接實戰研究、首次 AP 後進 IN；[主程式計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN.md) 定義新 G0–G6 與資料契約，取代獨立 M3 Fixture 閉環前置順序，不改寫歷史結果。
 
 單程序 C++20：既有 capture worker／LatestFrame → perception worker（UI、線／Note、追蹤、相對運動預測）→ 最新完整有界 DecisionSnapshot → 唯一 action／scheduler／touch owner。supervisor 可獨立撤銷；preview、journal、結果分析只讀，曲名／難度只作記錄。
 
-新遊戲契約須分離 Note 身分、單調提交 intent ID 及 contact ID；未來意圖與近期可執行計畫分開，避免提早占滿手指。active revision 保留已執行進度與釋放責任。目標證據失效撤銷單目標；全局 UI／來源／輸入失效撤銷全部。這些是新需求，現有 scheduler 尚未具備全部行為。
+遊戲開發版已分離 Note 身分、單調提交 intent ID 及 contact ID；未來意圖與近期可執行計畫分開，contact 在 down 時分配。active revision 保留已執行 prefix、進度與釋放責任。目標證據失效撤銷單目標；全局 UI／來源／輸入失效撤銷全部。共通 scheduler 尚未接多點 batch；相關實作與驗證界線見 [開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 
 動態線預測使用 Note 與線的相對法向距離及局部運動，不固定螢幕 Y。以主機接收時間擬合的是表觀撞線估計；絕對 source age 仍 unknown，綜合提前量需實機校準且不能當作某段真實延遲。遊戲判定回饋無法唯一配對時標 unknown，不以結算反推逐 Note 時間真值。
 
-G0 接線完成前，observe 仍只有現有擷取／預覽；本次規劃不開放 assist。完整契約、停止、容量及驗收方式以主程式計畫為準。
+`src/runtime.cpp` 已接 capture／perception／單一 action owner／supervisor；`src/game.cpp` 提供有界 UI／線／Note 候選、短期追蹤／預測與 planner。observe 不建立真實 input；auto-start 經能力指紋與即時 MENU 證據只發一次 PLAY down/up，曲中仍 dry。assist 經同一指紋核對使用共用 GrpcTouch，只有 action thread 可執行 UI 或 Note 計畫；離開 MENU 後只撤銷 UI scheduler 一次，避免其釋放曲中接觸。MENU／PLAYING 為開發分類，PAUSED／RESULT 等仍 UNKNOWN，UNKNOWN 撤銷 gate。完整契約、停止、容量及驗收方式以主程式計畫為準。
+
+assist profile 的可選 `game` 物件嚴格限制 `enabled_types`（1–4 個不重複的 tap／hold／drag／flick）、`lead_ms`（整數 −60 至 60）及 `uncertainty_ms`（整數 1 至 60）；省略時預設 Tap／8 ms／30 ms。Hold 可由新 pixels 修改未執行的 move／up，已執行 prefix 不可改；`prefix_offset` 允許丟棄舊已執行步驟但必須保留最後一步，防止長 Hold 的 plan 無限增長。每次觸控 receipt 記錄 QPC scheduled／start／return、source frame、intent；RPC success 不代表遊戲 Perfect。
+
+decision schema 2 明列 Note anchor 語義（Tap／Flick 芯中心、Hold leading edge）及 color core／近期 Hold 與當幀 parallel rails 的觀測依據。後者只在新鮮 PLAYING gate、最近 100 ms 身分、當幀支持充分的線與兩側輪廓同時成立時續接；裁切 tail 仍 unknown，不能由舊 body 長度計時維持。observer 11 的 rails 一般須在 projected head 12 px 內開始支持，且延續至少 16 px；前一張已確認 rails 且當前 head 仍有藍／灰 body 填色時，才容許最多 32 px 的短邊框遮擋。成立時優先維持完整 Hold 身分並抑制其當前 body 內厚核心碎片，獨立薄 Tap 與其他位置的候選保留。已確認 rail 幾何／QPC 另有每身分一份、90 ms 上限的 anchor；當前核心碎裂不能覆寫它，只有當前 rails 再驗證成功才恢復原身分，不以歷史 anchor 單獨延長觸控。歷史 schema 1 可由 C++ 分析器重算，不能回填新觀測依據。計畫記錄 `accepted_ns`，分析分開 future-at-accept 與 already-past-at-accept 的 down lateness；缺此舊欄位時列為 unclassified。
+
+少量候選漏辨的容忍仍受像素證據期限約束：Tap／Drag 40 ms、Hold 60 ms、Flick 75 ms；超過時取消個別意圖，UNKNOWN UI／source 失效則立即取消全部。不由 tombstone 重啟已完成意圖。離線分析另保留最多 512 個近期觀測身分，按是否形成近線預測、計畫接受及實際 down 列結果；像素身分可能碎裂，這些數量不能當作真實譜面個數或逐 Note 判定。
+
+observer 17 增加無歷史前提的當幀 Hold 外輪廓重建，schema 2 的 `observation_basis=hold_current_parallel_rails_and_fill` 與近期身分續接分開。只在充分可見的跨畫面主線存在時，從當幀藍色 body 碎片搜尋兩條窄中性白輪廓；最多 128 個種子、每截面 16 個窄帶、兩個截面、129 個前緣探針。兩側最多容許 32 px 短遮擋，仍至少延續 `max(24 px, width×0.25)` 且末端相差不超過 20 px，前緣兩排各九點至少七點有藍／灰填色，前方一排須已離開完整填色以排除內部假 head；尾端另受當幀較淡 body 填色約束，避免輪廓接上裝飾線。當前完整前緣不再由舊位置另擬合一次；到線的既有 Hold 仍用原近期身分路徑。辨識可在 UI gate 成立前提供幾何，觸控仍必須通過獨立三幀 PLAYING／新鮮來源門控。傾斜薄 Tap 的正常方向厚度受到保護；無 body、單側輪廓及短閃光不形成新 Hold。
+
+到線的已確認 rail anchor 在 90 ms 內可排除其近期 body 中的新假 head（以完整候選寬度是否落在 body 半寬+16 px 內判斷），但這項排除不產生新的觸控證據；既有 Hold 續接仍驗證當前雙側輪廓。當前未到線的破碎候選不得覆寫到線 anchor。新頭部的前緣仍必須有藍／灰填色；尾端及前方是否延續的檢查另外識別當前黃色覆蓋，避免內部特效造成假 body 邊界。黃色本身不能建立新 Hold。
+
+observer 16 將薄 Tap 的法向厚度保護同步套到近期 Hold 續接路徑，避免傾斜包圍盒較高時刪掉獨立 Tap。當幀重建已具兩排完整藍／灰前緣時，雙側輪廓可接受黃色覆蓋；到線續接則另要求 90 ms rail anchor 與當前 head 填色支持，才開啟黃色輪廓容忍。只有黃色／白色線條或無當前 body 填色時，不能因此續接。
+
+planner version 5 以預估 crossing 到現在不超過 40 ms 為晚預測補接下限，與校準提前量分開；尚未執行的 down 可改為立即排程。原 100 ms 證據與 UI gate 仍必要，已執行 down 不重播。`ContactPlan.predicted_down_ns` 保存原始預測下壓期限，scheduler 只依 `steps[].due_ns` 執行。分析分開原預測期限的晚到量、實际排程晚到量與刻意 clamp 次數；舊 log 缺預測下壓期限列 unknown，不將立即补接解釋成新計時性能改善。Drag 名義接觸 90 ms，實际接觸亦可能因證據／gate／漏辨撤銷提前結束。
+
+assist 的可選 `--keep-diagnostic-anomalies` 僅保留最多兩張與決策配對的原始 frame（近線窄 Hold 對、近線 history／association／fit 失敗）。兩個固定 slot 各只寫一次，copy 在 decision 發布後產生，不佔 capture pool lease；input owner 停止並釋放後才 PNG 編碼／hash，記來源 frame 與保存結果。這些副本與檔案不回饋遊玩；預設不保留任何 frame。開啟診斷 copy 的 run 不作為無診斷的性能驗收。
+
+action owner 以 QPC deadline 計算相對等待時間，用 Win32 高解析度 waitable timer 與 auto-reset wake event 等待；最新決策、撤銷或停止可立即喚醒，無跨時域絕對定時。效能需看各 run 實測分布。Console Ctrl-C／Break 只設定停止旗標，由 supervisor 通知 owner 釋放接觸，不在 OS handler 中呼叫 RPC。
 
 ## gRPC Windows 接收區塊
 
@@ -28,7 +80,7 @@ G0 接線完成前，observe 仍只有現有擷取／預覽；本次規劃不開
 
 依[擷取器終態與最後驗收](CAPTURE_FINAL_ACCEPTANCE_20260926.md)，本輪五路徑研究與 gRPC 接收層正式化已完成。主用為 gRPC payload fast（RGB888、top-down、顯式尺寸／方向、256 KiB 接收區塊）。WGC 僅為 bench 備援候選，正式備用暫缺；DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 維持診斷，沒有自動切換。
 
-gRPC revision 2 的 Release 34／34 回歸與 18 批短測、正式擷取／暫停恢復／observe 已完成。bench 的 250 ms 相對 lag guard 尚未由 `run_observe()`／profile 傳遞；該接線及證據撤銷納入新 G0，遊戲閉環依 G1–G4 推進。擷取器研究結案不代表 runtime 已具相同保護，也不代表絕對 source age、長期性能或遊戲時序已驗收。舊 raw 性能與完整矩陣通過旗標保持原值；不再自動續跑取消的矩陣／長測。
+gRPC revision 2 的歷史 Release 34／34 回歸與 18 批短測、正式擷取／暫停恢復／observe 已完成。2026-09-27 新增 profile 的 `capture.max_relative_lag_ms`（1–1000，預設 250），`runtime_capture_options()` 真正傳遞至 gRPC，public config／manifest 記錄有效值；相對 lag drop 撤銷當前 epoch。遊戲閉環依 G1–G4 推進；絕對 source age、長期性能及遊戲時序尚未驗收。舊 raw 性能與完整矩陣通過旗標保持原值；不再自動續跑取消的矩陣／長測。
 
 ## T6 擷取候選開發契約（2026-09-26）
 
@@ -71,7 +123,7 @@ simple target pixels → detector → tracker → line-crossing predictor
 
 `ContactScheduler` 由單一 owner 依 monotonic deadline dispatch。gate 與各 plan 的證據分開到期；`now >= deadline` 即撤銷並釋放接觸點。每個 epoch 使用單調 birth ID watermark 防止完成意圖被晚到 revision 復活；已送出的 down 保留 contact ID 與釋放責任。`request_stop()` 對注入臨界區線性化。RPC 返回仍不證明 Android 已執行觸控，因此能力報告需核對 native Touch Fixture v2 的逐指像素事件；未知結果使 input faulted，後續 move 不執行。
 
-observe／Session 不建立遊戲觸控後端，`assist` 明確拒絕。觸控測試僅限前景 `org.pas.touchfixture.cpp` 加可見 schema 雙檢查。Native Capture Fixture v2 的四區可見 identity 供來源新鮮度與 tearing 診斷；目標 40／48／57 Hz 與實際可見更新分開記錄。Emulator MMAP 未有 producer 同步證據，仍只可診斷。AVD、ABI、解析度、方向、實際核心／記憶體、Fixture APK hash 及工具鏈記入 manifest／驗收報告。詳細逐項狀態見 [遷移矩陣](CPP_PARITY_MATRIX.md)。
+2026-09-25 遷移驗收時，observe／Session 不建立遊戲觸控後端，`assist` 明確拒絕，觸控測試僅限前景 `org.pas.touchfixture.cpp` 加可見 schema 雙檢查；後續遊戲 assist 的現行路徑見本文開頭。Native Capture Fixture v2 的四區可見 identity 供來源新鮮度與 tearing 診斷；目標 40／48／57 Hz 與實際可見更新分開記錄。Emulator MMAP 未有 producer 同步證據，仍只可診斷。AVD、ABI、解析度、方向、實際核心／記憶體、Fixture APK hash 及工具鏈記入 manifest／驗收報告。詳細逐項狀態見 [遷移矩陣](CPP_PARITY_MATRIX.md)。
 
 首批 5 vCPU／8 GB AVD 的三批 60 秒 Release 基線採 gRPC RGB888 payload，實際來源 43.5–44.6 Hz、來源跟隨約 99.9%；其可見 freshness 與分布比診斷 ADB PNG 的短測更適合作為目前 observe 擷取基線。RGBA payload 可運作但多出轉換成本；MMAP 在相同 Fixture 上可取得畫面，仍因 producer 同步未證明而限診斷。這是現階段的測試選擇，不代表已證明絕對來源年齡或遊戲端到端延遲。原始窗口、樣本數、尾端分布、觸控與工具鏈限制見 [C++ 驗收紀錄](CPP_ACCEPTANCE_20260925.md)。
 

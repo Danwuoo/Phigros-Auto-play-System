@@ -189,6 +189,15 @@ struct ContactPlan {
     std::uint64_t source_frame_sequence = 0;
     std::string basis;
     std::vector<ContactStep> steps;
+    std::uint64_t generation = 0;
+    std::uint64_t geometry_version = 0;
+    std::uint64_t note_id = 0;
+    // Active revisions may compact old executed steps, retaining at least the
+    // last executed step for position/phase verification and release duty.
+    std::uint64_t prefix_offset = 0;
+    // Diagnostic original prediction, before intentional late dispatch clamp.
+    // The scheduler uses steps' QPC deadlines only.
+    std::optional<Nanoseconds> predicted_down_ns;
 };
 
 struct TouchCommand {
@@ -215,6 +224,12 @@ struct ReleaseReport {
     std::vector<int> unknown_ids;
     Nanoseconds start_ns = 0;
     Nanoseconds return_ns = 0;
+};
+
+struct SchedulerNotice {
+    std::uint64_t intent_id = 0;
+    Nanoseconds monotonic_ns = 0;
+    std::string reason;
 };
 
 class TouchBackend {
@@ -255,12 +270,20 @@ public:
                      Nanoseconds evidence_max_age_ns = 150'000'000,
                      Nanoseconds max_late_ns = 30'000'000);
     bool set_gate(std::uint64_t epoch, bool armed, Nanoseconds evidence_ns = 0);
+    bool set_context(std::uint64_t epoch, std::uint64_t generation,
+                     std::uint64_t geometry_version, bool armed, Nanoseconds evidence_ns);
     bool submit(ContactPlan plan);
+    std::vector<TouchReceipt> cancel_intent(std::uint64_t intent_id);
+    std::vector<SchedulerNotice> take_notices();
+    std::optional<std::uint64_t> executed_steps(std::uint64_t intent_id) const;
     std::optional<Nanoseconds> next_due_ns() const;
     std::vector<TouchReceipt> run_due();
     // May be called by the supervisor. Linearizes against each injection;
     // the owner thread performs the actual release in run_due/cancel.
     void request_stop();
+    // Owner installs a nonblocking supervisor validity check. It is evaluated
+    // again at the dispatch linearization point, including no-frame watchdog.
+    void set_dispatch_guard(std::function<bool()> guard) { dispatch_guard_ = std::move(guard); }
     void cancel(const std::string& reason);
     bool armed() const { return armed_; }
     const std::string& fault() const { return fault_; }
@@ -269,8 +292,9 @@ public:
     std::uint64_t accepted_high_watermark() const { return accepted_high_watermark_; }
     ReleaseReport last_release() const { return last_release_; }
 private:
-    struct Pending { ContactPlan plan; int contact_id; std::size_t next_step = 0; bool active = false; };
+    struct Pending { ContactPlan plan; int contact_id = -1; std::size_t next_step = 0; bool active = false; };
     bool evidence_expired(Nanoseconds now) const;
+    bool notice(std::uint64_t intent, const std::string& reason);
     void fail(const std::string& reason);
     const Clock& clock_;
     TouchBackend& backend_;
@@ -278,6 +302,7 @@ private:
     const Nanoseconds horizon_ns_, evidence_max_age_ns_, max_late_ns_;
     std::map<std::uint64_t, Pending> pending_;
     std::uint64_t epoch_ = 0;
+    std::uint64_t generation_ = 0, geometry_version_ = 0;
     std::uint64_t accepted_high_watermark_ = 0;
     bool armed_ = false;
     Nanoseconds gate_evidence_ns_ = 0;
@@ -285,6 +310,8 @@ private:
     ReleaseReport last_release_;
     std::mutex dispatch_mutex_;
     bool stop_requested_ = false;
+    std::function<bool()> dispatch_guard_;
+    std::vector<SchedulerNotice> notices_; // <=256; owner drains every tick.
 };
 
 } // namespace pas

@@ -13,6 +13,7 @@ public:
     PreviewWindow& operator=(const PreviewWindow&) = delete;
     bool pump();
     void draw(const Frame& frame);
+    void title(const std::string& text);
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;

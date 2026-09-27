@@ -1,4 +1,6 @@
 #include "pas/core.hpp"
+#include "pas/runtime.hpp"
+#include "pas/game.hpp"
 #include "pas/config.hpp"
 #include "pas/emulator.hpp"
 #include "pas/analysis.hpp"
@@ -314,195 +316,6 @@ json fake_capture_bench(double duration_s, double warmup_s, double interval_ms,
     return result;
 }
 
-void run_observe(const std::string& config_path, double duration_s, bool no_preview,
-                 const std::string& launch_package = "", double stale_ms = 100) {
-    if (!std::isfinite(duration_s) || duration_s <= 0 || duration_s > 3600)
-        throw std::invalid_argument("duration outside 0..3600s");
-    if (!std::isfinite(stale_ms) || stale_ms < 5 || stale_ms > 5000)
-        throw std::invalid_argument("stale-ms outside 5..5000");
-    const auto config = load_config(config_path);
-    HostClock clock;
-    LatestFrame latest(config.width, config.height, 3, &clock);
-    const auto wall_id = std::chrono::system_clock::now().time_since_epoch().count();
-    const auto run_dir = std::filesystem::path(config.log_dir) /
-        ("cpp-observe-" + std::to_string(wall_id));
-    std::filesystem::create_directories(run_dir);
-    {
-        std::ofstream manifest(run_dir / "manifest.json", std::ios::binary);
-        manifest << json{{"schema_version", 2}, {"mode", "observe"},
-                         {"config", config.public_json}, {"clock_domain", "host_qpc_ns"},
-                         {"qpc_frequency", clock.frequency()}, {"input_created", false},
-                         {"grpc_transport", config.capture_kind == "emulator-grpc" ?
-                             grpc_transport_manifest(config.grpc_read_chunk_kib) : json(nullptr)},
-                         {"preview_requested", !no_preview && config.preview_hz > 0},
-                         {"stale_ms", stale_ms}}.dump(2) << '\n';
-    }
-    Journal log(run_dir / "events.jsonl");
-    const auto record = [&](json value) {
-        if (!log.push(std::move(value))) throw std::runtime_error("observe journal fault or overrun");
-    };
-    std::unique_ptr<PreviewWindow> preview;
-    if (!no_preview && config.preview_hz > 0)
-        preview = std::make_unique<PreviewWindow>(config.width, config.height);
-    std::unique_ptr<GrpcCapture> capture;
-    if (config.capture_kind == "emulator-grpc") {
-        GrpcEndpoint endpoint;
-        if (config.endpoint.empty()) endpoint = discover_endpoint(config.serial);
-        else {
-            std::ifstream file(config.token_file, std::ios::binary);
-            if (!file) throw std::runtime_error("cannot read gRPC token file");
-            std::getline(file, endpoint.token);
-            if (!endpoint.token.empty() && endpoint.token.back() == '\r') endpoint.token.pop_back();
-            if (endpoint.token.empty()) throw std::runtime_error("empty gRPC token file");
-            endpoint.target = config.endpoint;
-            endpoint.instance = "explicit";
-        }
-        CaptureOptions options;
-        options.grpc_read_chunk_kib = config.grpc_read_chunk_kib;
-        options.width = config.width;
-        options.height = config.height;
-        options.source_rotation = config.source_rotation;
-        capture = std::make_unique<GrpcCapture>(clock, std::move(endpoint), options);
-    }
-    std::mutex fault_mutex;
-    std::exception_ptr worker_fault;
-    std::atomic<bool> done = false;
-    std::jthread worker([&](std::stop_token stop) {
-        try {
-            if (capture) {
-                capture->stream(stop, [&](Frame&& frame) {
-                    frame.epoch = 1;
-                    latest.publish(frame.rgb.data(), frame.rgb.size(), frame);
-                });
-            } else {
-                const auto interval = std::chrono::nanoseconds(16'666'667);
-                std::vector<std::uint8_t> pixels(static_cast<std::size_t>(config.width) * config.height * 3);
-                std::uint64_t sequence = 0;
-                while (!stop.stop_requested()) {
-                    Frame frame;
-                    frame.sequence = ++sequence;
-                    frame.epoch = 1;
-                    frame.width = config.width;
-                    frame.height = config.height;
-                    frame.stride = config.width * 3;
-                    frame.source_rotation = config.source_rotation;
-                    frame.capture_complete_ns = clock.now_ns();
-                    frame.pixels_ready_ns = frame.capture_complete_ns;
-                    pixels[(sequence % pixels.size())] = static_cast<std::uint8_t>(sequence & 255);
-                    latest.publish(pixels.data(), pixels.size(), frame);
-                    std::this_thread::sleep_for(interval);
-                }
-            }
-        } catch (...) {
-            std::lock_guard lock(fault_mutex);
-            worker_fault = std::current_exception();
-        }
-        done = true;
-        latest.close();
-    });
-    const auto start = clock.now_ns();
-    const auto end = start + static_cast<Nanoseconds>(std::llround(duration_s * 1e9));
-    std::uint64_t sequence = 0, consumed = 0;
-    std::vector<double> intervals, host_residency;
-    Nanoseconds previous = 0;
-    Nanoseconds previous_preview = 0;
-    std::uint64_t preview_draws = 0;
-    std::string state = "CONNECTING";
-    record({{"event", "session_state"}, {"state", state}, {"monotonic_ns", start}});
-    bool launched = false;
-    while (clock.now_ns() < end && !done) {
-        if (preview && !preview->pump()) preview.reset();
-        auto frame = latest.read_after(sequence,
-            static_cast<Nanoseconds>(std::llround(stale_ms * 1e6)));
-        if (!frame) {
-            if (state == "NAVIGATING") {
-                std::string probe_result = "unavailable";
-                const auto before_probe = sequence;
-                if (capture) {
-                    if (auto last = latest.peek())
-                        probe_result = capture->probe_pixels(*last, std::chrono::milliseconds(500));
-                }
-                // A valid stream frame may arrive while the health probe is in flight.
-                const auto newest = latest.peek();
-                if (done) continue;
-                if (newest && newest->sequence > before_probe) {
-                    record({{"event", "probe_recovered_new_stream_frame"},
-                            {"before_sequence", before_probe},
-                            {"new_sequence", newest->sequence},
-                            {"probe_result", probe_result}, {"monotonic_ns", clock.now_ns()}});
-                    continue;
-                }
-                state = probe_result == "static" ? "DEGRADED_STATIC" : "DEGRADED_STREAM";
-                record({{"event", "session_state"}, {"state", state},
-                           {"probe_result", probe_result}, {"frame_fresh", false},
-                           {"monotonic_ns", clock.now_ns()}});
-            }
-            continue;
-        }
-        if (previous && intervals.size() < 100'000)
-            intervals.push_back((frame->capture_complete_ns - previous) / 1e6);
-        previous = frame->capture_complete_ns;
-        sequence = frame->sequence;
-        ++consumed;
-        if (host_residency.size() < 100'000)
-            host_residency.push_back((clock.now_ns() - frame->capture_complete_ns) / 1e6);
-        if (preview && (!previous_preview || clock.now_ns() - previous_preview >=
-            static_cast<Nanoseconds>(std::llround(1e9 / config.preview_hz)))) {
-            preview->draw(*frame);
-            previous_preview = clock.now_ns();
-            ++preview_draws;
-        }
-        if (!launch_package.empty() && !launched) {
-            state = "LAUNCHING";
-            record({{"event", "session_state"}, {"state", state},
-                       {"monotonic_ns", clock.now_ns()}, {"source_frame", sequence}});
-            launch_android_package(find_adb(), config.serial, launch_package);
-            launched = true;
-            continue;
-        }
-        if (state != "NAVIGATING") {
-            state = "NAVIGATING";
-            record({{"event", "session_state"}, {"state", state},
-                       {"frame_fresh", true}, {"monotonic_ns", clock.now_ns()}});
-        }
-        record({{"event", "frame_consumed"}, {"frame_sequence", sequence},
-                   {"capture_complete_ns", frame->capture_complete_ns},
-                   {"pixels_ready_ns", frame->pixels_ready_ns},
-                   {"published_ns", frame->published_ns},
-                   {"consume_ns", clock.now_ns()}, {"width", frame->width},
-                   {"height", frame->height}, {"source_rotation", frame->source_rotation},
-                   {"source_sequence", frame->source_sequence ? json(*frame->source_sequence) : json(nullptr)},
-                   {"source_timestamp_us", frame->source_timestamp_us ? json(*frame->source_timestamp_us) : json(nullptr)},
-                   {"epoch", frame->epoch}, {"generation", frame->generation},
-                   {"geometry_version", frame->geometry_version}});
-    }
-    const bool worker_ended_early = done && clock.now_ns() < end;
-    worker.request_stop();
-    if (capture) capture->cancel();
-    worker.join();
-    {
-        std::lock_guard lock(fault_mutex);
-        if (worker_fault) std::rethrow_exception(worker_fault);
-    }
-    if (worker_ended_early) throw std::runtime_error("observe capture worker ended before requested duration");
-    const auto counts = latest.counters();
-    if (!consumed) throw std::runtime_error("observe session had no valid frame");
-    json summary = {{"mode", "observe"}, {"state", "STOPPED"}, {"input_created", false},
-                    {"frames_consumed", consumed}, {"published", counts.published},
-                    {"overwritten", counts.overwritten}, {"pool_drops", counts.pool_drops},
-                    {"consumer_skips", counts.consumer_skips},
-                    {"preview_draws", preview_draws},
-                    {"capture_interval_ms", distribution(intervals)},
-                    {"host_residency_ms", distribution(host_residency)},
-                    {"source_absolute_age", nullptr}, {"run_dir", std::filesystem::absolute(run_dir).string()}};
-    record({{"event", "summary"}, {"summary", summary}});
-    log.close();
-    if (log.faulted()) throw std::runtime_error("observe journal failed");
-    std::ofstream output(run_dir / "summary.json", std::ios::binary);
-    output << summary.dump(2) << '\n';
-    std::cout << summary.dump(2) << '\n';
-}
-
 } // namespace
 
 int main(int argc, char** argv) {
@@ -550,15 +363,24 @@ int main(int argc, char** argv) {
     buffer_cmd->add_option("--consumer-delay-ms", buffer_consumer_delay_ms);
     buffer_cmd->add_option("--log", buffer_log);
     std::string config_path, run_mode = "observe";
+    std::string run_capability;
     double run_duration_s = 30;
     double run_stale_ms = 100;
     bool no_preview = false;
-    auto* run_cmd = app.add_subcommand("run", "Run capture-only observation; assist is disabled");
+    bool keep_diagnostic_anomalies = false;
+    auto* run_cmd = app.add_subcommand("run", "Pixels-only observe, automatic PLAY, or gated real assist");
     run_cmd->add_option("--config", config_path)->required();
     run_cmd->add_option("--mode", run_mode);
+    run_cmd->add_option("--capability", run_capability, "Historical touch report required for auto-start or assist");
     run_cmd->add_option("--duration-s", run_duration_s)->check(CLI::PositiveNumber);
     run_cmd->add_option("--stale-ms", run_stale_ms)->check(CLI::PositiveNumber);
     run_cmd->add_flag("--no-preview", no_preview);
+    run_cmd->add_flag("--keep-diagnostic-anomalies",keep_diagnostic_anomalies,
+        "Assist only: retain at most two anomaly frames; encode after input stops");
+    std::string preflight_config, preflight_capability;
+    auto* preflight_cmd = app.add_subcommand("game-preflight", "Read-only live geometry and historical touch fingerprint check");
+    preflight_cmd->add_option("--config", preflight_config)->required();
+    preflight_cmd->add_option("--capability", preflight_capability)->required();
     std::string probe_serial;
     auto* probe_cmd = app.add_subcommand("probe", "Read-only ADB device inventory");
     probe_cmd->add_option("--serial", probe_serial);
@@ -720,6 +542,10 @@ int main(int argc, char** argv) {
     std::string analysis_path;
     auto* analyze_cmd = app.add_subcommand("analyze", "Recompute old or new JSONL without Python");
     auto* capture_analysis = analyze_cmd->add_subcommand("capture", "Capture window and distribution");
+    auto* game_analysis = analyze_cmd->add_subcommand("game", "Recompute candidate, prediction and dry-run evidence");
+    auto* game_image_analysis = analyze_cmd->add_subcommand("game-image", "Offline single PNG geometry diagnostics; no input or timing prediction");
+    game_image_analysis->add_option("path",analysis_path)->required();
+    game_analysis->add_option("path", analysis_path)->required();
     capture_analysis->add_option("path", analysis_path)->required();
     auto* pause_analysis = analyze_cmd->add_subcommand("pause", "Receiver pause relative lag");
     pause_analysis->add_option("path", analysis_path)->required();
@@ -742,13 +568,28 @@ int main(int argc, char** argv) {
                 64, 64, buffer_consumer_delay_ms, false, buffer_log,
                 "buffer_bench_native").dump(2) << '\n';
         else if (*run_cmd) {
-            if (run_mode != "observe") throw std::invalid_argument("assist is disabled pending game and gate acceptance");
-            run_observe(config_path, run_duration_s, no_preview, "", run_stale_ms);
+            if(keep_diagnostic_anomalies&&run_mode!="assist")
+                throw std::invalid_argument("diagnostic anomalies require assist mode");
+            if (run_mode == "observe") run_observe(config_path, run_duration_s, no_preview, "", run_stale_ms);
+            else if (run_mode == "auto-start" && !run_capability.empty())
+                run_auto_start(config_path, run_capability, run_duration_s, no_preview);
+            else if(run_mode=="assist"&&!run_capability.empty())
+                run_assist(config_path,run_capability,run_duration_s,no_preview,keep_diagnostic_anomalies);
+            else throw std::invalid_argument("choose observe, auto-start, or assist; input modes require --capability");
+        } else if (*preflight_cmd) {
+            std::cout << game_preflight(preflight_config, preflight_capability).dump(2) << '\n';
         } else if (*config_cmd) {
             if (*migrate_cmd) migrate_config(migrate_source, migrate_target);
             else throw std::invalid_argument("choose a config subcommand");
         } else if (*analyze_cmd) {
-            if (*capture_analysis) std::cout << analyze_capture_jsonl(analysis_path).dump(2) << '\n';
+            if (*game_image_analysis) {
+                FakeClock clock; GameObserver observer(clock);
+                auto result=decision_json(observer.process(load_diagnostic_png(analysis_path)));
+                result["offline_only"]=true; result["input_created"]=false;
+                result["diagnostic_png_sha256"]=sha256_file(analysis_path);
+                std::cout<<result.dump(2)<<'\n';
+            } else if (*game_analysis) std::cout << analyze_game_jsonl(analysis_path).dump(2) << '\n';
+            else if (*capture_analysis) std::cout << analyze_capture_jsonl(analysis_path).dump(2) << '\n';
             else if (*pause_analysis) std::cout << analyze_pause_jsonl(analysis_path).dump(2) << '\n';
             else if (*campaign_analysis) std::cout << analyze_capture_campaign(analysis_path).dump(2) << '\n';
             else throw std::invalid_argument("choose an analyze subcommand");

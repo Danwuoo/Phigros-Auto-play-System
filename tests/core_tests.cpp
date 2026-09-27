@@ -64,7 +64,15 @@ TEST(SchedulerP1, EvidenceExpiresBeforeNextCommandAndAtBoundary) {
     EXPECT_TRUE(owner.run_due().empty());
     EXPECT_EQ(owner.active_count(), 0);
     EXPECT_FALSE(owner.armed());
-    EXPECT_EQ(owner.fault(), "evidence_expired");
+    EXPECT_TRUE(owner.fault().empty());
+    EXPECT_TRUE(touch.contacts().empty());
+    const auto notices=owner.take_notices(); ASSERT_EQ(notices.size(),1);
+    EXPECT_EQ(notices[0].reason,"gate_evidence_expired");
+    ASSERT_TRUE(owner.set_gate(1,true,150'000'000));
+    EXPECT_EQ(owner.pending_count(),0); // Old plans never resume.
+    ASSERT_TRUE(owner.submit(plan(2,1,150'000'000,160'000'000,170'000'000)));
+    clock.set(160'000'000); ASSERT_EQ(owner.run_due().size(),1);
+    clock.set(170'000'000); ASSERT_EQ(owner.run_due().size(),1);
     EXPECT_TRUE(touch.contacts().empty());
 }
 
@@ -80,7 +88,9 @@ TEST(SchedulerP1, FreshGateDoesNotRefreshOldPlanAtDispatch) {
     clock.set(150'000'000);
     EXPECT_TRUE(owner.run_due().empty());
     EXPECT_TRUE(touch.receipts().empty());
-    EXPECT_EQ(owner.fault(), "evidence_expired");
+    EXPECT_TRUE(owner.fault().empty());
+    EXPECT_TRUE(owner.armed());
+    EXPECT_EQ(owner.pending_count(), 0);
 }
 
 TEST(SchedulerP1, RevisionCannotReviveCompletedOrEvictedIntent) {

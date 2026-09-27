@@ -15,6 +15,7 @@ struct RuntimeConfig {
     int height = 0;
     int source_rotation = 0;
     int grpc_read_chunk_kib = 256;
+    int max_relative_lag_ms = 250;
     std::string touch_kind;
     int touch_width = 0;
     int touch_height = 0;
@@ -25,6 +26,9 @@ struct RuntimeConfig {
     int max_steps = 16;
     int horizon_ms = 2000;
     int evidence_max_age_ms = 150;
+    int game_type_mask = 1;
+    int game_lead_ms = 8;
+    int game_uncertainty_ms = 30;
     double preview_hz = 0;
     std::string log_dir;
     std::string endpoint;

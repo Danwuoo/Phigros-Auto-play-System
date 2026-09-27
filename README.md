@@ -1,12 +1,12 @@
 # Phigros Auto-play System
 
-**主程式下一階段已重新規劃：Chapter Legacy → Glaciaxion HD → 首次 All Perfect → IN。** 依使用者 2026-09-26 新方向，直接以遊戲建立觀察、預測、觸控與畫面回饋閉環，不另開大型簡單目標 Fixture 階段；必要的短合成回歸與既有觸控能力核對保留。模組、時序、手指管理與 G0–G6 完成條件見 [主程式計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)。目前僅完成規劃，遊戲辨識／assist 尚未實作或驗收。
+**主程式主線：Chapter Legacy → Glaciaxion HD → 首次 All Perfect → IN。** 依使用者 2026-09-26 新方向，直接以遊戲建立觀察、預測、觸控與畫面回饋閉環，不另開大型簡單目標 Fixture 階段；必要的短合成回歸與既有觸控能力核對保留。2026-09-27 已實作 G0 runtime 接線、G1 開發版 observer／預測與 pixels 自動 PLAY，並依新增授權接入 G2 真實 assist。首輪有限 Tap 有可見命中；全曲能力、HD／IN AP 尚未驗收。模組與 G0–G6 完成條件見 [主程式計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)，實作、失敗與實機證據見 [開發紀錄](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 
 **擷取器本輪已結案：五路徑選型與 gRPC 接收層優化均完成，主用為 gRPC payload fast／256 KiB，正式備用暫缺。** WGC 保留 bench 備援候選、DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 僅診斷。完整終態與驗收界線以[最後驗收與選型](docs/CAPTURE_FINAL_ACCEPTANCE_20260926.md)為準；不再自動續跑原矩陣或長測。
 
-現行 Release **34／34** 回歸通過，gRPC 正式版本完成 18 批短測及擷取／恢復／observe 驗證。畫面只在有界記憶體中處理重用，預設不存 PNG。尚未完成的 Session 相對積壓保護接線納入新計畫 G0，遊戲閉環依 G1–G4 推進；舊 M3 獨立簡單目標閉環未完成且不再作獨立前置階段。絕對來源年齡、長期性能與 Phigros 遊玩時序均未通過宣告。
+擷取正式版本歷史 Release **34／34** 回歸及 18 批短測、擷取／恢復／observe 驗證均完成；2026-09-27 遊戲開發版另有獨立回歸紀錄。畫面只在有界記憶體中處理重用，預設不存 PNG。Session 相對積壓保護已接入 profile／runtime，遊戲閉環依 G1–G4 推進；舊 M3 獨立簡單目標閉環未完成且不再作獨立前置階段。絕對來源年齡、長期性能與 Phigros 遊玩時序均未通過宣告。
 
-2026-09-25 起的正式實作採 **C++20**：Windows x64／MSVC／CMake／vcpkg，單程序多執行緒，Android NativeActivity Fixture 亦由 C++ 編寫。Python、Java 與網頁 Fixture 原始碼已凍結於 [`legacy/`](legacy/README.md)，只供歷史重算與比較。T0–T5 的功能與可執行驗證已完成，正常擷取的性能數值門檻仍待使用者依新基線決定；逐項證據見 [驗收矩陣](docs/CPP_PARITY_MATRIX.md) 與 [驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。T6–T7 五擷取候選的開發及集中測試規格見 [本輪計畫](docs/CAPTURE_FIVE_BACKENDS_PLAN_20260926.md)，正常來源研究範圍為 **40–59 Hz**。程式不向 Phigros 注入遊玩觸控。
+2026-09-25 起的正式實作採 **C++20**：Windows x64／MSVC／CMake／vcpkg，單程序多執行緒，Android NativeActivity Fixture 亦由 C++ 編寫。Python、Java 與網頁 Fixture 原始碼已凍結於 [`legacy/`](legacy/README.md)，只供歷史重算與比較。T0–T5 的功能與可執行驗證已完成，正常擷取的性能數值門檻仍待使用者依新基線決定；逐項證據見 [驗收矩陣](docs/CPP_PARITY_MATRIX.md) 與 [驗收紀錄](docs/CPP_ACCEPTANCE_20260925.md)。T6–T7 五擷取候選的開發及集中測試規格見 [本輪計畫](docs/CAPTURE_FIVE_BACKENDS_PLAN_20260926.md)，正常來源研究範圍為 **40–59 Hz**。該擷取／遷移階段沒有向 Phigros 注入遊玩觸控；新遊戲 assist 的證據另記。
 
 ## C++ 建置與執行
 
@@ -57,7 +57,22 @@ out/release-v145/Release/pas.exe touch-batch-bench --config configs/avd-fixture.
   --fixture-apk measurements/fixture_cpp_v2/pas-touch-fixture-v2.apk
 ```
 
-`run` 僅提供 observe；未指定 `--no-preview` 時可開啟 Win32/D3D11 診斷預覽。`capture-bench` 的來源可為 gRPC payload 或診斷用 ADB PNG；MMAP 必須明確指定 `--diagnostic-mmap`，且結果不能進入 Session。`start-session` 在擷取就緒後啟動已安裝套件，但不判斷遊玩狀態。觸控命令只會在獨立的 `org.pas.touchfixture.cpp` 前景 Fixture 接受測試，並以其 pixels 的逐指事件驗證。
+`run --mode observe` 觀察即時遊戲 pixels，不建立真實 input；`--mode auto-start` 先核對 `--capability` 歷史觸控指紋，再由即時選曲頁／PLAY 圖形送出一次 UI down/up，曲中仍只做 dry 排程。`--mode assist` 使用同一能力門控及單一 action owner 執行 profile 允許的真實遊玩觸控；目前屬開發試驗，不能當作 AP 能力。`game.enabled_types` 可指定 tap／hold／drag／flick，`lead_ms` 是固定版本的綜合提前量，`uncertainty_ms` 是預測接受上限。未指定 `--no-preview` 時可開啟 Win32/D3D11 診斷預覽。使用者後續授權 computer-use 做重試導覽，Note 決策仍只來自 C++ 即時 pixels。以下為本輪獨立 build 的入口，選好曲目並保留 PLAY：
+
+assist 可選 `--keep-diagnostic-anomalies`，一輪最多保留兩張原始 PNG（近線長 Hold 候選消失、首次觀察到 combo 字形消失），輸入停止後才編碼並寫入 run 目錄；預設不保留畫面，診斷檔案不回饋遊玩。候選／字形消失只供診斷，不代表逐音符判定。`analyze game-image <PNG>` 僅供離線幾何檢查。
+
+```powershell
+out/game-release/Release/pas.exe game-preflight --config configs/phigros-hd-auto-start.json `
+  --capability '<已驗證的 Native Touch Fixture summary.json>'
+out/game-release/Release/pas.exe run --config configs/phigros-hd-auto-start.json --mode auto-start `
+  --capability '<同一份 summary.json>' --duration-s 300
+out/game-release/Release/pas.exe run --config configs/phigros-hd-observe.json --mode observe --duration-s 300
+out/game-release/Release/pas.exe analyze game '<run 目錄>/events.jsonl'
+out/game-release/Release/pas.exe run --config configs/phigros-hd-assist-all.json --mode assist `
+  --capability '<同一份 summary.json>' --duration-s 210 --no-preview
+```
+
+`capture-bench` 的來源可為 gRPC payload 或診斷用 ADB PNG；MMAP 必須明確指定 `--diagnostic-mmap`，且結果不能進入 Session。`start-session` 在擷取就緒後啟動已安裝套件，但不判斷遊玩狀態。其餘 `touch-bench` 等能力命令只在獨立的 `org.pas.touchfixture.cpp` 前景 Fixture 接受測試，並以其 pixels 的逐指事件驗證。
 
 Android Fixture 使用 SDK build-tools 36.0.0、platform android-37、NDK 30.0.16248370 與 Android Studio JBR。CMake 以 `fixtures/android/CMakeLists.txt` 建立 x86_64 native library；`cmake/PackageFixture.cmake` 負責 APK 打包與簽章，輸出新的 package 名稱。Fixture 目標 40／48／57 Hz 可用 `debug.pas.fixture_hz` 選擇；實際畫面更新率仍由可見計數與主機量測決定。目標 AVD 配置為 5 vCPU／8192 MiB，請以量測 manifest 中的 guest 實際值核對。
 
@@ -95,9 +110,9 @@ Note 與判定線追蹤
 虛擬多點觸控 → Android Emulator
 ```
 
-目前的合成測試完整經過畫面 pixels、辨識、追蹤、預測、排程、假觸控與再次觀察畫面。真實模擬器上的觸控能力只在獨立 Fixture 通過下述可見回饋驗證；尚未有 M3 簡單目標真實閉環或 Phigros Note／判定線辨識。
+目前的合成測試完整經過畫面 pixels、辨識、追蹤、預測、排程、假觸控與再次觀察畫面。歷史觸控能力在獨立 Fixture 通過下述可見回饋驗證；2026-09-27 的 C++ 遊戲 assist 已有 Glaciaxion HD 真實命中，完整能力與 AP 仍待驗收，見 [開發紀錄](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 
-## 主程式 M0–M2（Fixture 專用觸控）
+## 歷史 Python 主程式 M0–M2（legacy 對照）
 
 新 runtime 固定使用 `emulator-grpc`＋`process`＋`payload`＋`RGB888`＋`top-down`；`MMAP` 不能進入 Session。profile 指定擷取寬高及 `source_rotation`（目前 AVD 橫向為 1），執行時有任何不符即停止並要求新 epoch/profile。`run --mode observe` 只擷取並顯示主機降頻診斷預覽，UI 維持 `UNKNOWN`，不建立輸入後端。`assist` 明確拒絕，直到後續閉環／遊戲門控驗收。設定為嚴格 JSON；run 目錄保存去敏設定、雜湊、環境、事件與摘要。
 

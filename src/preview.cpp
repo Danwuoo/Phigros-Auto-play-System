@@ -142,6 +142,11 @@ PreviewWindow::PreviewWindow(int width, int height, bool benchmark_placement)
     : impl_(std::make_unique<Impl>(width, height, benchmark_placement)) {}
 PreviewWindow::~PreviewWindow() = default;
 
+void PreviewWindow::title(const std::string& text) {
+    const std::wstring wide(text.begin(), text.end());
+    SetWindowTextW(impl_->window, wide.c_str());
+}
+
 bool PreviewWindow::pump() {
     MSG message{};
     while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
