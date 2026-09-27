@@ -401,3 +401,11 @@ shadow processed10,018／skip0／fault空、沒有backend或Frame lease；bank�
 第二／第三消費frames10,151／9,620、gameplay957／953。capture p50／p95／p99／max=16.9856／35.312095／48.424792／324.6703ms（n10150）、17.5216／39.103590／52.135384／472.1912ms（n9619）；recognition=5.4263／7.47245／9.06985／17.2831ms、5.61335／8.13477／10.713055／21.1730ms。各2次source expiry revoke；shadow skip0／fault空／無backend，bank各首2048批、truth unknown。三方法fake Down第二45／41／41、第三51／43／43，正確性指標仍null；完整pipeline pending，保持T0。
 
 第二／第三各18clips136ROI、无截斷／partial／sampling fault。三輪54clips408ROI（dataset384＋diagnostics24），完整manifest原檔引用不複製圖片。C++validator／export跨run QA valid、errors0、3run；2064對dHash≤4近似候選、256details cap，待獨立group review，全部development。5張新proposed＋2張v75格式pilot、human0、training_ready=false；200–400經核對ROI及有效四類／head／tail覆蓋仍不足。已停止此批遊玩，沒有訓練／下載模型、push／merge或清理。三輪所有分布、raw位置及結果hash見[資料報告](VISION_DATASET_20260927.md)及[metadata](TRACKING_SEGMENTATION_EVIDENCE_20260927.json)。
+
+## 五指與持續接觸動作修正（59c92bf／planner9）
+
+使用者補充四／五指、Hold整條結束才放開、連續黃色Drag可持續接觸後，新增五指game／bench profiles與實測容量門控，不能只用profile宣告取得五指資格。Hold正常Up改以當前可見tail實際過線＋20ms鎖定terminal；誤尾預測不提前釋放、後續frame不延後terminal。連續Drag後繼須以當前區域／窗口支持同一active contact，missing判斷前續接；多leader競爭不任意合併。100ms source／target、90ms anchor、Hold60ms／Drag40ms missing及失效／停止撤銷照舊。observer29仍T0，不採新tracker／模型，灰色漏辨仍待解決。
+
+實作0897e21、最終source59c92bf32992e02d0cb61c97dec5e96b66f0e0f2；同一Release SHA256 `8e1d3ce7dd74a49ab893640a7b432880e83686f73a1292cc7845e8e5e18fb669`。新增4項及擴充能力門控，最終Release／Debug／嚴格ASan各142／142，10.57／27.52／68.70秒；ASAN_OPTIONS／suppressions未設定，第三方DLL未插樁。相關回歸曾揭露舊Drag成員會取消新續接的leader，修正後通過；最後覆核修正兩次讀clock跨窗口邊界可能重取空optional，三配置由最終source重跑，早版logs另存。
+
+Native Fixture八類各30次、240／240，包括四／五指各30；五指全部取消另30／30，各Down／Up delta5且final active0。capability max_contacts_verified5、當前五指game-preflight指紋相符；舊兩指報告與五指profile則拒絕。首次bench未待Fixture到前景即安全退出，foreground確認後重試才成功，沒有向遊戲輸入。完成後已帶回Phigros前景，未按PLAY，新策略尚未實戰；不能將後端／合成通過當作HD命中或AP。完整環境、分布、設定與raw hash見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)／[metadata](GAME_ACTION_EVIDENCE_20260927.json)，本機原始資料 `measurements/game-semantics-20260927/` 保留，沒有push／merge或跨task回報。

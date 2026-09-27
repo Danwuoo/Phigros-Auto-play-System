@@ -124,6 +124,8 @@ s(t) = dot(p(t) - c(t), u(t))     沿線位置
 
 ## 6. 動作規劃與手指管理
 
+2026-09-27 使用者確認四／五指可用、Hold須到整條結束、連續黃色Drag可視作持續接觸。planner9依當前visible tail決定正常Hold結束、以當前Drag覆蓋區域及窗口銜接共用接觸，另實作5-contact profile與實測容量門控；source／界線見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。不把兩指profile當遊戲限制，亦不將無畫面期間或整段未来黃色序列預排成Hold；原失效撤銷條件維持。
+
 預測層回答 Note 的時間、區域及動作需求；planner 再將其轉成觸控。以下為待實機核對的保守策略，[機制研究](PHIGROS_MECHANICS_RESEARCH.md)只提供歷史假說，不作本機已驗規格。
 
 | 類型 | 規劃策略 | 必須辨認的失敗 |

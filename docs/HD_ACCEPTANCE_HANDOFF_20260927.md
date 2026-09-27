@@ -1,5 +1,9 @@
 # Glaciaxion HD 階段驗收與新 task 交接
 
+## 最新動作修正（source59c92bf／planner9）
+
+使用者補充四／五指及持續接觸語義後，新增五指profile、實测容量門控、Hold當前可見尾端過線後正常Up，以及連續Drag覆蓋相同contact。Release／Debug／嚴格ASan各142／142；當前Native Fixture四／五指各30次、五指全部取消30次通過，新capability `max_contacts_verified=5`、五指profile preflight指紋相符。完整設定／hash／分布見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)及[metadata](GAME_ACTION_EVIDENCE_20260927.json)。Phigros已帶回前景，沒有新遊戲輸入；使用者準備PLAY後才啟動下一輪HD。observer29仍T0、不接模型，新Hold／Drag遊戲效果尚待驗證，灰色漏辨／身份重生仍未解決，HD AP未通過。
+
 ## 追蹤／資料開發續作（source b32517d）
 
 本輪在桌面 `codex/tracking-segmentation-pilot` 完成共享候選T0/T1/T2比較、單worker shadow與有界原生ROI／mask／QA／export；Release／Debug／嚴格ASan各138／138通過。真實input仍為T0／observer29／planner8，diagnostics3，不接模型。完整pipeline／line tracking與正式替換資格未完成；結果與限制見[追蹤報告](TRACKING_COMPARISON_20260927.md)／[資料報告](VISION_DATASET_20260927.md)。不merge／push，未恢復4c3c，未宣稱舊ignored資料已恢復。

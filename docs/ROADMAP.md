@@ -1,5 +1,7 @@
 # 開發路線圖
 
+使用者後續補充遊戲可四／五指、Hold須整條結束、連續黃色Drag可持續接觸。source `59c92bf` 的planner9與5-contact profile已實作；後端能力核對及測試見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。這是另有使用者依據的動作修正，沒有採用T1／T2或模型；新遊戲策略仍待實戰，HD AP未完成。
+
 2026-09-27 [追蹤對照](TRACKING_COMPARISON_20260927.md) 與 [資料準備](VISION_DATASET_20260927.md) 已完成 P1／P2 工具及138項三配置回歸，P3 已有原生連續 ROI 與少量 proposed masks，P4 已取得同候選合成／實戰 bank 分布。缺獨立標註真值，保持 T0；完整pipeline／line identity／人工覆核及足量有效資料仍 pending。模型訓練／推論不在本輪，HD AP未達成，不能把採樣／shadow視為遊戲能力驗收。
 
 三輪同版本HD採樣已完成並停止，54clips408ROI／3run、合併QA valid；5張新proposed／human0、2064對跨run近似候選待group review，training_ready=false。P3的200–400經核對ROI與類別覆蓋未完成，P4未取得實戰ID真值，P5不啟用。下一步先獨立覆核及去重困難集；不以更多同曲重打或延長期限代替觀測缺口。

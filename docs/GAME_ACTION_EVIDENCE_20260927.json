@@ -1,0 +1,347 @@
+{
+  "schema": 1,
+  "date": "2026-09-27",
+  "source_commit": "59c92bf32992e02d0cb61c97dec5e96b66f0e0f2",
+  "implementation_commit": "0897e21b9b04568e66bc9a08b590138d6d37db65",
+  "release_executable_sha256": "8e1d3ce7dd74a49ab893640a7b432880e83686f73a1292cc7845e8e5e18fb669",
+  "observer_version": 29,
+  "planner_version": 9,
+  "live_tracker": "T0",
+  "gameplay_performed": false,
+  "gameplay_correctness": "pending; no new HD result",
+  "local_raw_root": "C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/game-semantics-20260927",
+  "clock_domain": "host_qpc_ns",
+  "qpc_frequency": 10000000,
+  "tests": [
+    {
+      "preset": "windows-release",
+      "passed": 142,
+      "total": 142,
+      "ctest_total_seconds": 10.57,
+      "log": "test-frozen-windows-release.log"
+    },
+    {
+      "preset": "windows-debug",
+      "passed": 142,
+      "total": 142,
+      "ctest_total_seconds": 27.52,
+      "log": "test-frozen-windows-debug.log"
+    },
+    {
+      "preset": "windows-asan",
+      "passed": 142,
+      "total": 142,
+      "ctest_total_seconds": 68.7,
+      "log": "test-frozen-windows-asan.log"
+    }
+  ],
+  "asan_options": null,
+  "asan_suppressions": null,
+  "third_party_dll_instrumented": false,
+  "native_touch_capacity": {
+    "capability_verified": true,
+    "max_contacts_verified": 5,
+    "case_count": 240,
+    "all_cases_passed": true,
+    "repetitions_per_kind": 30,
+    "kinds": [
+      "tap",
+      "hold",
+      "move",
+      "flick",
+      "pair",
+      "simultaneous",
+      "four",
+      "five"
+    ],
+    "four_passed": 30,
+    "five_passed": 30,
+    "cancel_case_count": 30,
+    "all_cancel_cases_passed": true,
+    "cancel_contacts_each": 5,
+    "all_cases_final_active_zero": true,
+    "all_cancel_down_up_delta_five": true,
+    "fixture_schema": "native_touch_v2",
+    "fixture_apk_sha256": "b3bfaf4e4e876e7833c9af1bd6149b40cdc9fa46b67646d52ea045dde6705dc6",
+    "installed_apk_sha256": "b3bfaf4e4e876e7833c9af1bd6149b40cdc9fa46b67646d52ea045dde6705dc6",
+    "rpc_call_ms": {
+      "absolute_deviation_p95": 0.5251500000000001,
+      "jitter_p95_minus_p5": 0.8881649999999999,
+      "jitter_p95_minus_p50": 0.5116499999999998,
+      "max": 6.0505,
+      "mean": 0.8683323255813957,
+      "min": 0.232,
+      "n": 1290,
+      "p5": 0.470335,
+      "p50": 0.84685,
+      "p95": 1.3584999999999998,
+      "p99": 1.652888999999998
+    },
+    "schedule_error_ms": {
+      "absolute_deviation_p95": 7.7848500000000005,
+      "jitter_p95_minus_p5": 14.535054999999998,
+      "jitter_p95_minus_p50": 7.777379999999999,
+      "max": 29.7566,
+      "mean": 7.86590643410853,
+      "min": 0.0049,
+      "n": 1290,
+      "p5": 0.861375,
+      "p50": 7.61905,
+      "p95": 15.396429999999999,
+      "p99": 17.80904499999998
+    },
+    "timing_scope": "Native Fixture benchmark polling and pixel verification; not game owner performance or hit correctness",
+    "initial_attempt": "Fixture not foreground; safely exited before backend input; foreground confirmed and retried"
+  },
+  "preflight": {
+    "five_fingerprint_matches": true,
+    "five_mismatches": [],
+    "old_two_report_five_fingerprint_matches": false,
+    "old_two_report_five_mismatches": [
+      "touch_mapping_or_capacity"
+    ],
+    "real_input_created": false,
+    "negative_cli_capacity": "five rejected with two-contact bench config before backend creation"
+  },
+  "environment": {
+    "hardware_reference": "measurements/tracking-segmentation-20260927/environment.json; same host/session",
+    "os": {
+      "Caption": "Microsoft Windows 11 Pro",
+      "Version": "10.0.26200",
+      "BuildNumber": "26200",
+      "TotalVisibleMemorySize": 33239632
+    },
+    "cpu": {
+      "Name": "Intel(R) Core(TM) Ultra 5 125H",
+      "NumberOfCores": 14,
+      "NumberOfLogicalProcessors": 18
+    },
+    "gpu": [
+      {
+        "Name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+        "DriverVersion": "32.0.15.9159"
+      },
+      {
+        "Name": "Intel(R) Arc(TM) Graphics",
+        "DriverVersion": "31.0.101.5125"
+      }
+    ],
+    "toolchain": "MSVC19.51 / Visual Studio18 / CMake windows presets",
+    "device": {
+      "adb_path": "C:\\Users\\wurre\\AppData\\Local\\Android/Sdk\\platform-tools/adb.exe",
+      "android_release": "16\r\n",
+      "android_sdk": "36\r\n",
+      "capture_candidate": "adb exec-out screencap -p (PNG diagnostic)",
+      "cpu_abi": "x86_64\r\n",
+      "devices": [
+        {
+          "serial": "emulator-5554",
+          "state": "device"
+        }
+      ],
+      "model": "sdk_gphone64_x86_64\r\n",
+      "selected_serial": "emulator-5554",
+      "touch_candidates": [
+        "adb shell input tap: single tap only",
+        "gRPC independent contacts: Fixture verification required"
+      ],
+      "wm_density": "Physical density: 320\r\n",
+      "wm_size": "Physical size: 720x1280\r\n"
+    },
+    "emulator_version": "37.1.11",
+    "avd": "phigros",
+    "guest_processors": 5,
+    "guest_ram_mib": 8192,
+    "guest_memtotal_kib": 8130820,
+    "gpu_mode": "host",
+    "window_scale": 0.8,
+    "grpc_endpoint": "127.0.0.1:8554",
+    "benchmark_config": {
+      "capture": {
+        "execution": "thread",
+        "grpc_read_chunk_kib": 256,
+        "height": 720,
+        "image_format": "rgb888",
+        "kind": "emulator-grpc",
+        "max_relative_lag_ms": 250,
+        "row_order": "top-down",
+        "source_rotation": 1,
+        "transport": "payload",
+        "width": 1280
+      },
+      "log_dir": "measurements/runtime",
+      "name": "avd-touch-five",
+      "preview": {
+        "hz": 5
+      },
+      "scheduler": {
+        "evidence_max_age_ms": 150,
+        "horizon_ms": 2000,
+        "max_plans": 64,
+        "max_steps": 16
+      },
+      "schema": 2,
+      "serial": "emulator-5554",
+      "touch": {
+        "height": 1280,
+        "kind": "emulator-grpc",
+        "max_contacts": 5,
+        "rotation_deg": 90,
+        "timeout_ms": 500,
+        "width": 720
+      }
+    },
+    "game_config": {
+      "capture": {
+        "execution": "thread",
+        "grpc_read_chunk_kib": 256,
+        "height": 720,
+        "image_format": "rgb888",
+        "kind": "emulator-grpc",
+        "max_relative_lag_ms": 250,
+        "row_order": "top-down",
+        "source_rotation": 1,
+        "transport": "payload",
+        "width": 1280
+      },
+      "game": {
+        "enabled_types": [
+          "tap",
+          "hold",
+          "drag",
+          "flick"
+        ],
+        "lead_ms": 35,
+        "uncertainty_ms": 30
+      },
+      "log_dir": "measurements/game-assist",
+      "name": "phigros-hd-assist-five-lead35",
+      "preview": {
+        "hz": 5
+      },
+      "scheduler": {
+        "evidence_max_age_ms": 100,
+        "horizon_ms": 350,
+        "max_plans": 128,
+        "max_steps": 16
+      },
+      "schema": 2,
+      "serial": "emulator-5554",
+      "touch": {
+        "height": 1280,
+        "kind": "emulator-grpc",
+        "max_contacts": 5,
+        "rotation_deg": 90,
+        "timeout_ms": 100,
+        "width": 720
+      }
+    },
+    "capture_geometry": {
+      "height": 720,
+      "source_rotation": 1,
+      "width": 1280
+    },
+    "touch_mapping": [
+      {
+        "frame": [
+          0.0,
+          0.0
+        ],
+        "touch": [
+          719,
+          0
+        ]
+      },
+      {
+        "frame": [
+          1279.0,
+          0.0
+        ],
+        "touch": [
+          719,
+          1279
+        ]
+      },
+      {
+        "frame": [
+          0.0,
+          719.0
+        ],
+        "touch": [
+          0,
+          0
+        ]
+      },
+      {
+        "frame": [
+          1279.0,
+          719.0
+        ],
+        "touch": [
+          0,
+          1279
+        ]
+      }
+    ],
+    "concurrent_build_test_or_game_during_bench": false
+  },
+  "contracts": {
+    "hold_normal_release": "current visible tail at/past line +20ms; terminal cannot move later",
+    "hold_prediction_only_normal_release": false,
+    "drag_type": "drag; persistent contact when current successor region and temporal window cover active contact",
+    "drag_region": "along <=max(2px,min(48px,30 percent width)); normal <=2px; unique leader",
+    "region_is_calibrated_game_hitbox": false,
+    "source_target_ms": 100,
+    "anchor_ms": 90,
+    "hold_missing_ms": 60,
+    "drag_missing_ms": 40,
+    "pixels_only": true,
+    "no_runtime_replay": true
+  },
+  "files": [
+    {
+      "relative_path": "out/release-v145/Release/pas.exe",
+      "sha256": "8e1d3ce7dd74a49ab893640a7b432880e83686f73a1292cc7845e8e5e18fb669"
+    },
+    {
+      "relative_path": "configs/phigros-hd-assist-five-lead35.json",
+      "sha256": "d2b5cfdc6be023c715fe402a7124ccd1977f5956b8d9fa74466643a575dbd0e0"
+    },
+    {
+      "relative_path": "configs/avd-touch-five.json",
+      "sha256": "4e60f398d8c20d8d7ca269e6f61e48f0881fa162dd97e2b94ea7fbc17b00e2ec"
+    },
+    {
+      "relative_path": "measurements/game-semantics-20260927/pas-before-semantics.exe",
+      "sha256": "d6fb2f7f4ac620782bd4aa85085123386609616561705c26ba2e4c89b7a94ff1"
+    },
+    {
+      "relative_path": "measurements/game-semantics-20260927/touch-five/summary.json",
+      "sha256": "73dc5c94f1418a1e75bf4488871d27c849e0d6105adc79ec03c167ff672dbcd3"
+    },
+    {
+      "relative_path": "measurements/game-semantics-20260927/touch-five/touch.jsonl",
+      "sha256": "42b17ea8fcddb60102912315e5ef7644993de3bafdce24c70d06a34c4df816ab"
+    },
+    {
+      "relative_path": "measurements/game-semantics-20260927/five-preflight.json",
+      "sha256": "5f80b17827ae8cb3d1e51e87797ca4bada67853f61114658fb2d3d1a7da285ac"
+    },
+    {
+      "relative_path": "measurements/game-semantics-20260927/old-two-capacity-preflight.json",
+      "sha256": "fbf20d709d1692432fd3f2f8d3c402a02c9a723df8a85305e93ae99fb5babd04"
+    },
+    {
+      "relative_path": "measurements/game-semantics-20260927/test-frozen-windows-release.log",
+      "sha256": "3c1d55809a373dcc40942b6d2f0dc03e2088b2f0bce48542e18b919ebccc431c"
+    },
+    {
+      "relative_path": "measurements/game-semantics-20260927/test-frozen-windows-debug.log",
+      "sha256": "23ff9e0186d055c6692b7d26305fb0e0ace0b39506c9dab205d8b65ba0404c53"
+    },
+    {
+      "relative_path": "measurements/game-semantics-20260927/test-frozen-windows-asan.log",
+      "sha256": "03509ce078e69efcc137482317be1f9ee46c702d7c47dc0fd22214bedc8f6b3e"
+    }
+  ]
+}

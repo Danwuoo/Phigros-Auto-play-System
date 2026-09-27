@@ -1,5 +1,7 @@
 # 架構與資料契約
 
+現行動作層source `59c92bf`／planner9依使用者補充加入5-contact profile、`max_contacts_verified`門控與current-tail正常Hold release。`tail_crossing_ns`仍為預測診斷，不單獨提前Up；當前有效body更新100ms期限，可見tail／rails與當前線一致且已過線才鎖定terminal release。連續Drag用當前候選的保守沿線區域覆蓋active contact，窗口須重疊、法向≤2px、多leader匹配拒絕共用；原missing／anchor／source與stop契約保持。實作、四／五指驗證與局限見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。以下b325／planner8與v75內容為追蹤／歷史契約，不能取代最新動作層版本。
+
 2026-09-27 source `b32517d` 已落地 CandidateBatch schema1／extractor29／quality1、共用 T0 fitter、T1／T2 有界關聯、offline FakeTouch、容量1 shadow、diagnostics3 與 native ROI／mask／QA／export。真實owner仍採 observer29 的 T0／planner8；新方法無真實backend。強出生／弱續接／當前action支持／純預測分開，ORU虛擬點不進action fitter，原60／90／100ms期限保留。128 tracks／candidates、16 lines、首2048 bank、128MiB新增記憶體預算與停止後編碼的契約見[追蹤報告](TRACKING_COMPARISON_20260927.md)／[資料報告](VISION_DATASET_20260927.md)。候選仍使用T0 rail歷史，比較明示 baseline_guided；獨立line、完整pipeline與模型推論尚未接入。
 
 ## 主程式設計與開發接線（2026-09-27）
