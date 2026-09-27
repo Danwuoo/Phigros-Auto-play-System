@@ -1437,6 +1437,31 @@ TEST(GameOwner, HeldBodySupportCannotCreateANewDownEvenWithAFittedCrossing) {
     auto s=snapshot(1,0);s.targets={h};owner.accept(s);clock.set(10'000'000);owner.poll();
     EXPECT_TRUE(touch.contacts().empty());EXPECT_TRUE(touch.receipts().empty());owner.stop();
 }
+TEST(GameOwner, PendingHoldDeadlineRevisionsRenewFromCurrentCaptureBeforeTheNextFrameGap) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});
+    auto h=target(1,0,90'000'000);h.note.kind=NoteKind::hold;h.samples=4;
+    h.note.center=h.hit;h.note.width=152;h.note.height=400;h.note.rails_geometry=true;
+    auto s=snapshot(1,0);s.targets={h};owner.accept(s);
+    auto plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);EXPECT_EQ(plans.back().steps.back().due_ns,100'000'000);
+    for(const auto [capture,crossing]:std::array<std::pair<Nanoseconds,Nanoseconds>,2>{{{10'000'000,80'000'000},{20'000'000,60'000'000}}}) {
+        clock.set(capture);s=snapshot(s.sequence+1,capture);h.evidence_ns=capture;h.expires_ns=capture+100'000'000;
+        h.crossing_ns=crossing;h.revision++;s.targets={h};owner.accept(s);
+        plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);
+        EXPECT_EQ(plans.back().steps.back().due_ns,capture+100'000'000);
+        EXPECT_EQ(*plans.back().predicted_down_ns,crossing-35'000'000);
+    }
+    clock.set(25'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    // The next frame is delivered after the old, incorrectly shifted Up=70ms.
+    clock.set(80'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    s=snapshot(4,74'000'000);h.evidence_ns=74'000'000;h.expires_ns=174'000'000;h.crossing_ns.reset();
+    h.reason="relative_velocity_small";h.note.head_on_line=true;s.targets={h};owner.accept(s);owner.poll();
+    ASSERT_EQ(touch.contacts().size(),1);plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);
+    EXPECT_EQ(plans.back().steps.back().due_ns,174'000'000); // capture clock, not recognition/now+100
+    clock.set(173'000'000);owner.poll();EXPECT_EQ(touch.contacts().size(),1);
+    clock.set(174'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    owner.stop();
+}
 TEST(GameObserver, HeldBodyKeepsItsFingerThroughAFrontOcclusionAndRecoversCurrentFront) {
     FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
     GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t identity=0;int finger=-1,patches=0;

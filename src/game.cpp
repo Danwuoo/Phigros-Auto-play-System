@@ -1286,6 +1286,12 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                     plan.valid_until_ns=down+45'000'000;
                 }
             }
+            if(id.kind==NoteKind::hold&&*cursor==0) {
+                // A revised collision deadline can move Down earlier, but
+                // cannot shift the Hold lease from an old frame with it.
+                // Use the same latest evidence +100ms bound as active Holds.
+                plan.steps.back().due_ns=t.evidence_ns+100'000'000;
+            }
             if(id.kind==NoteKind::hold&&*cursor>plan.prefix_offset) {
                 if(t.note.held_body_evidence)plan.basis=t.note.held_body_patch?
                     "live_pixels_held_body_patch_continuation":"live_pixels_held_body_continuation";

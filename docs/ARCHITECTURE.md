@@ -1,6 +1,6 @@
 # 架構與資料契約
 
-最新observer34／planner14／diagnostics6契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。CandidateBatch extractor34讀取29–33，新增held_body_patch：當前外框內可見觸點、前端／尾端未知；四個成對截面含觸點所在截面、三排body fill及雙側96px支持，僅已接線近期anchor可用。patch不產生crossing／tail prediction，也不能建立新Down；已moving body遭一般色塊替代時，不Move到line或更新evidence，仍按60ms缺失處理。held_body_evidence與head_on_line獨立。近線12px原路徑、48px步進／90ms anchor／60ms missing／100ms evidence不變。純歷史／光流不供action。採樣20run／2560images、2GiB根額度／256MiB每輪與停止後編碼。HD最新22 Miss，穩定AP未驗收；下述planner9為歷史。
+最新observer34／planner15／diagnostics6契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。尚未注入Down的Hold每次deadline修訂後，Up重設為最新capture evidence+100ms，不能隨Down平移舊Up；source／target期限不延長。CandidateBatch extractor34讀取29–33，held_body_patch表示當前外框內可見觸點、前端／尾端未知，僅近期已接線anchor可用。patch不產生crossing／tail prediction或新Down；一般色塊不能將既有moving body触点投影回line或刷新evidence。四個成對截面含觸點位置、三排fill及雙側96px支持。近線12px原路徑、48px步進／90ms anchor／60ms missing／100ms evidence不變。採樣20run／2560images、2GiB／每輪256MiB、停止後編碼。HD最佳22 Miss，AP未驗收；下述planner9為歷史。
 
 現行動作層source `59c92bf`／planner9依使用者補充加入5-contact profile、`max_contacts_verified`門控與current-tail正常Hold release。`tail_crossing_ns`仍為預測診斷，不單獨提前Up；當前有效body更新100ms期限，可見tail／rails與當前線一致且已過線才鎖定terminal release。連續Drag用當前候選的保守沿線區域覆蓋active contact，窗口須重疊、法向≤2px、多leader匹配拒絕共用；原missing／anchor／source與stop契約保持。實作、四／五指驗證與局限見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。以下b325／planner8與v75內容為追蹤／歷史契約，不能取代最新動作層版本。
 

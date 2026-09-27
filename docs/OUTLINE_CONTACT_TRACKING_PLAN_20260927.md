@@ -120,3 +120,13 @@ extractor34解析29–33缺字段預設false；patch需held_body／outline／rai
 新增pixels整合序列：遮擋兩幀後恢復前端，保持同ID／同finger／單Down與當前body內觸点；owner反例重現一般色塊投影，不產生錯Move，證明60ms仍有效；patch不能新Down及序列化／無新撞線預測測試。首次focused9項1失敗（只檢查觸點後方外框，點本身落入特效遮區），增加觸點所在截面後focused11／11，不放寬預期。clip2-frame1的原生ROI、prior x638.5/y498/w152重跑C++ probe量測current x638.5/y494/w152、crop內rail188px，tail未知、body_patch=true；不宣稱crop外完整長度。Debug建置與測試曾重疊造成LNK1168，該舊163項結果排除，完整重建後才採計新版。
 
 observer34最終Release／Debug／ASan各168／168：16.15／25.86／72.57秒，無suppressions；binary 428ab1bb4f4afe42582ca38726f2c6d6f5339981d5ff3f205719f9c8a7c7e130。实战續測。
+
+### 第十輪與 pending Hold Up 提前的修正
+
+observer34／planner14／source7687584，cpp-observe-17905118952553270：361／1／0／31，843,982分，maxcombo62、ACC92.02%、Early0／Late1，185秒STOPPED／exit0。raw SHA256 25aacd2ff8c50831f4da738cdef046303ede30fd415bcec1f12ff434b9680d6c。18clips／136ROI，無partial／truncated。recognition n10868，p50／p95／p99／max=4.53555／7.713485／9.868346／21.9077ms；playing interval n9676=16.57005／31.426525／45.010425／78.9958ms。0接觸衝突、alias8／tail0，Hold missing90／geometry4／held-region-unsupported8／ambiguous2。同五指35ms，曲中無build／test／額外capture。退步不能宣稱body patch有效，也不能把8次unsupported取消當成8個遊戲Miss；551的例子已近可見尾端消失，後續只剩膨脹特效框，沒有逐音符真值。
+
+另查到確定的排程bug：842的Hold124／intent13原Up=40361309004700，pending Down連續改早，將舊Up一併移動；845最新capture=40361258011400，但Up竟=40361298733654，只有40.72ms有效區間。Down 40361264463900注入，約34ms後Up；846當前frame於40361297548000擷取、recognition／owner完成時已超過Up，既有完成intent不能復活。當前body一直存在，856才記錄combo消失。不能用此單段推導全部9個額外Miss。
+
+planner15在cursor0的Hold revision重新設定Up=最新evidence+100ms，與active body lease一致；Down预测與原valid_until仍獨立更新，tail預測不作提早Up。無更長source／target／missing期限，無重播已完成Down。C++ fake-clock回歸以兩次提前Down deadline重現舊Up=70ms，再延遲下一frame至80ms；接觸須仍在，最新capture74ms更新Up174ms，最遲174ms釋放，证明不是now+100ms。observer34與body契約不變；完整回歸／實戰續測。
+
+planner15最终三配置各169／169：Release13.93s／Debug27.36s／ASan66.48s、無suppressions。binary 0ee882ae3ee14826c954f34969c7e1a76a51981bfd617b333def723e4d16e5eb；第十一輪HD續測。

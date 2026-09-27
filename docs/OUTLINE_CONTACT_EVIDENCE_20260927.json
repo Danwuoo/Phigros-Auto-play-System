@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "observer34_body_patch_regression_passed_live_pending",
+  "status": "observer34_planner15_pending_hold_lease_regression_passed_live_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -189,6 +189,29 @@
       "dataset_roi_saved": 136,
       "sampling_fault": "",
       "raw_sha256": "fad0a66fad967173b1dd91650208391a46d40ce5d312684e9b99c958fc45a5cf"
+    },
+    {
+      "run_id": "cpp-observe-17905118952553270",
+      "source_commit": "7687584",
+      "binary_sha256": "428ab1bb4f4afe42582ca38726f2c6d6f5339981d5ff3f205719f9c8a7c7e130",
+      "difficulty": "HD6",
+      "score": 843982,
+      "perfect": 361,
+      "good": 1,
+      "bad": 0,
+      "miss": 31,
+      "max_combo": 62,
+      "accuracy_percent": 92.02,
+      "early": 0,
+      "late": 1,
+      "ap": false,
+      "read_basis": "Computer Use native settlement screenshot after STOPPED, then independent after-stop capture diagnostic.png",
+      "duration_s": 185,
+      "exit_code": 0,
+      "dataset_sampling": true,
+      "dataset_roi_saved": 136,
+      "sampling_fault": "",
+      "raw_sha256": "25aacd2ff8c50831f4da738cdef046303ede30fd415bcec1f12ff434b9680d6c"
     }
   ],
   "followup_regression": {
@@ -375,5 +398,29 @@
     ],
     "excluded_debug_run": "old163-test executable overlapped link; LNK1168; rebuilt before final168-test run",
     "saved_current_pixels_probe": "clip2-frame1 current body patch x638.5/y494/w152 with188px rails in crop, front/tail unknown"
+  },
+  "current_pending_hold_lease_followup": {
+    "observer": 34,
+    "planner": 15,
+    "diagnostics": 6,
+    "binary_sha256": "0ee882ae3ee14826c954f34969c7e1a76a51981bfd617b333def723e4d16e5eb",
+    "release": {
+      "passed": 169,
+      "seconds": 13.93,
+      "total": 169
+    },
+    "debug": {
+      "passed": 169,
+      "seconds": 27.36,
+      "total": 169
+    },
+    "asan": {
+      "passed": 169,
+      "suppressions": false,
+      "seconds": 66.48,
+      "total": 169
+    },
+    "basis": "pending Hold Up renewed to latest capture evidence +100ms after Down deadline revision; no longer shifts old Up",
+    "focused_debug_passed": 1
   }
 }
