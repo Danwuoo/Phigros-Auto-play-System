@@ -470,6 +470,31 @@ TEST(GameObserver, ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsC
     EXPECT_LT(result.targets[0].residual,2);
 }
 
+TEST(GameObserver, ApproachingConnectedHoldWithInteriorHitTintKeepsOneIdentity) {
+    for(const int overlay_depth:{38,28,18}) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t identity=0;
+    for(int i=0;i<12;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=std::min(575,490+i*10),top=std::max(0,head-538);
+        rect(f,403,top,144,head-top,{40,190,255});
+        rect(f,400,top,2,head-top,{245,245,245});rect(f,550,top,2,head-top,{245,245,245});
+        // The overlay leaves both side strips connected to the lower head.
+        // Its internal color boundary is not a second physical Hold head.
+        if(i>=7) rect(f,421,head-overlay_depth,108,16,{210,197,146});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1)<<"frame "<<i<<" "<<decision_json(s).dump();
+        const auto& t=s.targets[0];if(!identity) identity=t.note_id;
+        EXPECT_EQ(t.note_id,identity);EXPECT_EQ(t.note.kind,NoteKind::hold);
+        EXPECT_NEAR(t.note.center.y,head-4,6);EXPECT_GT(t.samples,0);
+        owner.accept(s);owner.poll();owner.take_accepted_plans();owner.take_plan_cancellations();
+        if(i>=8) EXPECT_EQ(touch.contacts().size(),1)<<"frame "<<i;
+    }
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    }
+}
+
 TEST(GameObserver, ClippedTopHoldKeepsCurrentRailsAndContactAcrossTheHeightLimit) {
     FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
     GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t id=0;

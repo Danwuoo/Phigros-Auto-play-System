@@ -1,5 +1,16 @@
 # Glaciaxion HD 階段驗收與新 task 交接
 
+## 續作停止點（v73 實戰後，使用者重啟電腦）
+
+2026-09-27 使用者要求「跑完這輪之後先休息，我要重啟電腦」。目前已停止，沒有下一輪 assist、capture 或 build/test。模擬器導覽改由使用者自行操作；恢復後請由使用者準備 Glaciaxion HD 選曲頁並保留 PLAY，主程式再自動 PLAY。不要自行恢復 computer-use 導覽。
+
+- 新實戰 v73（observer28／planner8／diagnostics2）run `measurements/game-assist/cpp-observe-17904707957978302/`，185秒 STOPPED／exit0。結果 **328 Perfect／16 Good／0 Bad／49 Miss**，790,229分、86.11%、MaxCombo60、Early0／Late16；HD AP 未通過。PNG 及 result-manual.json 已核對，不能再以 v71 當最新結果。
+- 分析：`measurements/g0-preflight/live-assist-lead35-v73-analysis.json`；結算 PNG：`measurements/g0-preflight/assist-lead35-v73-result/diagnostic.png`。hash與完整統計見開發紀錄最後 v73 段落。
+- 5個未Down取消中，Note232／859／860／876後續以新intent80／272／273／281由新畫面重排且有一次Down；Note923沒有同ID新接受。這只證明本機排程行為，不證明遊戲命中。
+- 最早combo消失frame565之前，frame554 Note30完整Hold與Note33內部重建前緣重疊，555兩者association_ambiguous，intent5提前Up。兩張診斷PNG與事件時序保留。下一步需重現造成重複候選的當前pixels條件，再最小修正；不要直接放寬歧義、接觸期限或按住時間。
+- v74／v74b／v74c 的連通body＋中央warm矩形合成案例在舊observer28即通過（121／218／309ms），**尚未重現實機失敗，正式邏輯未改**。最後版本保留三個遮擋位置與單身分／單Down的正例；移除臨時stderr列印。110項中的新增短測已通過；原109項三配置驗收照舊，沒有宣稱全套110項已跑過。
+- 再次實戰前不用重開擷取選型，也不要重跑無關矩陣。先解決真正反例；新production修正才做對應回歸及實戰。暫停期間不自行啟動下一局。
+
 日期：2026-09-27。使用者要求核對 Perfect 339／Good 6／Miss 48，
 驗收後換新的 task 繼續。這是 Phigros 專案交接，不涉及 IRIS-X 或 Kaggle。
 
