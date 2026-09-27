@@ -10,7 +10,7 @@
 
 decision發布後從同一已消費Frame复制；2張前置full-frame是独立診斷副本，不供runtime決策，不保存capture lease。診斷與dataset共用預先配置arena；1280×720兩種opt-in共105,799,680 raw bytes。含16MiB候選bank、shadow與metadata allowance的runtime檢查仍≤128MiB。超過geometry預算拒絕配置，不自動擴容。
 
-所有PNG／JSON編碼都在action stop／release與worker join後。每run256MiB、全資料根2GiB、最多10runs／1280 images；不自動刪舊檔。15秒flush deadline，partial manifest及truncated clips分開記；已有檔不覆寫。逐張RGB／WIC明示buffer上界與1ms process working-set採樣另記，sub-ms WIC暫態峰值仍unknown，不把RSS成長誤稱精確WIC allocation。
+所有PNG／JSON編碼都在action stop／release與worker join後。每run256MiB、全資料根2GiB；最初最多10runs／1280 images。observer32的HD8碰到此上限，未保存ROI，不能把預定採樣數當成已存影像。自主除錯續測使用明確有界的20runs／2560 images，亦可設定更小額度；超出上限拒絕，stats記錄實際額度。舊檔保留，不另換root繞過保護。15秒flush deadline，partial manifest及truncated clips分開記；已有檔不覆寫。逐張RGB／WIC明示buffer上界與1ms process working-set採樣另記，sub-ms WIC暫態峰值仍unknown，不把RSS成長誤稱精確WIC allocation。
 
 copy成本有獨立純記憶體A/B `dataset copy-bench`，3批、每種10,000更新、排除500暖機；synthetic uniform pixels只測複製，沒有遊戲真值。開啟sampling的p50／p95／p99／max（ms）逐批為 .12175／.263905／.623603／3.3665、.1065／.196805／.305910／.7997、.1342／.2002／.325111／.7517；關閉時p50為.0001／0／0，p95/p99各.0001，max .0769／.0001／.0001。不能直接以這個純memory差值歸因遊戲分數。實戰sampling與純性能run分開解讀，deadline與missing100／90／60ms不變。
 

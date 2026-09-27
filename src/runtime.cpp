@@ -189,7 +189,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         file<<json{{"schema_version",3},{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"config",config.public_json},
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
-            {"dry_owner",!assist},{"game_observer_version",32},{"game_diagnostics_version",5},
+            {"dry_owner",!assist},{"game_observer_version",33},{"game_diagnostics_version",6},
             {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
             {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
             {"executable_sha256",sha256_file(executable)},

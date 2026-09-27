@@ -1,6 +1,6 @@
 # 開發路線圖
 
-最新使用者要求已恢復自主實作與實戰。observer31同版本兩輪HD為365／2／0／26與359／7／0／27，仍未AP；observer32／planner13正在驗證既有Hold前端離開line時的當前外框續接与同指Move。先達同一凍結版本至少連續三次HD AP，再研究IN AP。這取代下方「首次AP即進IN」與停止等候的舊門檻，單次成功不算穩定；目前尚未達標。
+自主實作與實戰持續。observer31兩輪26／27 Miss，observer32第八輪35 Miss，未AP；observer33修正移動前端被特效框線拉回line。先達同一凍結版本至少連續三次HD AP，再挑戰IN AP；取代下方歷史首次AP即進IN門檻，尚未達標。
 
 使用者後續補充遊戲可四／五指、Hold須整條結束、連續黃色Drag可持續接觸。source `59c92bf` 的planner9與5-contact profile已實作；後端能力核對及測試見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。這是另有使用者依據的動作修正，沒有採用T1／T2或模型；新遊戲策略仍待實戰，HD AP未完成。
 

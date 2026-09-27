@@ -192,7 +192,7 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
 CandidateBatch make_candidate_batch(const DecisionSnapshot& s,const Frame& f,
  const std::vector<NoteCandidate>& notes,const std::vector<std::optional<NoteCandidate>>& shortened,
  const std::vector<GameTrackHistory>& history) {
- CandidateBatch b;b.extractor_version=32;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
+ CandidateBatch b;b.extractor_version=33;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
  b.capacity_valid=s.capacity_valid;b.source_valid=f.source_valid;
  b.extraction_start_ns=s.recognition_start_ns;b.lines=s.lines;
  for(std::size_t i=0;i<notes.size();++i) {
@@ -246,7 +246,7 @@ CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("sc
  const auto& c=j.at("context");b.context={c.at("epoch"),c.at("generation"),c.at("geometry"),c.at("frame"),c.at("capture_ns"),c.at("width"),c.at("height"),c.at("rotation")};
  if(b.context.width<2||b.context.height<2||b.context.width>4096||b.context.height>4096||b.context.capture_ns<0||b.context.rotation<0||b.context.rotation>3)throw std::invalid_argument("candidate context");
  b.extractor_version=j.at("extractor_version");b.quality_version=j.at("quality_version");b.history_source=j.at("history_source");
- if((b.extractor_version<29||b.extractor_version>32)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
+ if((b.extractor_version<29||b.extractor_version>33)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
  b.extraction_start_ns=j.at("extraction_start_ns");b.extraction_end_ns=j.at("extraction_end_ns");
  if(b.extraction_start_ns<0||b.extraction_end_ns<b.extraction_start_ns)throw std::invalid_argument("extraction time order");
  const auto ui=j.at("ui").get<std::string>();bool found=false;for(auto u:{GameUi::unknown,GameUi::menu,GameUi::loading,GameUi::playing,GameUi::paused,GameUi::result})if(ui==name(u)){b.ui=u;found=true;}

@@ -79,6 +79,17 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
     const Vec2 u=line.tangent,n{-u.y,u.x};
     const double d=dot(sub(anchor.center,line.center),n);
     const Vec2 projected{anchor.center.x-n.x*d,anchor.center.y-n.y*d};
+    if(anchor.held_body_evidence&&!anchor.head_on_line) {
+        // A hit-effect box can reconnect old rails to the line after the
+        // actual body front has moved away. Re-entry needs current interior
+        // support across two full rows, not those decorative side edges.
+        for(const int depth:{6,12}) {
+            int interior=0;for(int k=-3;k<=3;++k)
+                interior+=gray(f,{projected.x+u.x*k*anchor.width*.13-n.x*depth,
+                                  projected.y+u.y*k*anchor.width*.13-n.y*depth})>=80;
+            if(interior<5)return {};
+        }
+    }
     // A terminal cap needs two short attached side rails BELOW it and no
     // continuing side rails ABOVE it. This excludes the judgment line and
     // internal hit-effect rectangles, even when their color has changed.
@@ -202,6 +213,22 @@ std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const Note
             closure+=inside>=80&&outside>=0&&outside<65&&inside-outside>=18;
         }
         if(closure<5)continue;
+        // The coarse +/-4 contrast test admits several adjacent rows. Locate
+        // their actual current luminance termination before choosing the touch
+        // point, so the search cost cannot pull the contact deeper each frame.
+        std::array<int,7> edge_offsets{};int edge_count=0;
+        for(int k=-3;k<=3;++k) {
+            const Vec2 p{front.x+u.x*k*anchor.width*.13,front.y+u.y*k*anchor.width*.13};
+            for(int offset=-4;offset<=4;++offset) {
+                const Vec2 q{p.x+n.x*offset,p.y+n.y*offset};
+                if(gray(f,{q.x-n.x,q.y-n.y})>=80&&gray(f,{q.x+n.x,q.y+n.y})<65) {
+                    edge_offsets[edge_count++]=offset;break;
+                }
+            }
+        }
+        if(edge_count<5)continue;
+        std::sort(edge_offsets.begin(),edge_offsets.begin()+edge_count);
+        const int edge_offset=edge_offsets[edge_count/2];
         struct Pair {double left,right;};std::array<Pair,4> sections{};int paired_sections=0;
         for(const int depth:{8,16,32,48}) {
             bool both=true;std::array<double,2> edges{};int index=0;
@@ -237,7 +264,12 @@ std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const Note
             }
             continues=continues||ahead>=2;
         }
-        if(continues)continue; // an internal dark stripe is not a body front
+        if(continues) {
+            int filled_ahead=0;
+            for(int k=-3;k<=3;++k)filled_ahead+=gray(f,{front.x+u.x*k*anchor.width*.13+n.x*24,
+                                                                     front.y+u.y*k*anchor.width*.13+n.y*24})>=80;
+            if(filled_ahead>=5)continue; // internal stripe; effect rails alone are insufficient
+        }
         const double cost=std::abs(shift)*.25+std::abs(forward)*.1;
         if(cost>best_cost+1)continue;
         std::array<int,2> ends{};bool valid=true;
@@ -255,7 +287,8 @@ std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const Note
         }
         if(!valid||std::abs(ends[0]-ends[1])>16)continue;
         const double middle=(paired.left+paired.right)*.5;
-        auto current=anchor;current.center={front.x+u.x*middle-n.x*4,front.y+u.y*middle-n.y*4};
+        auto current=anchor;current.center={front.x+u.x*middle+n.x*(edge_offset-3),
+                                           front.y+u.y*middle+n.y*(edge_offset-3)};
         current.width=paired.right-paired.left;
         current.tangent=u;current.height=(ends[0]+ends[1])/2.0-4;
         current.tail.reset();current.head_on_line=false;current.held_body_evidence=true;

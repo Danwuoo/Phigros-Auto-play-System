@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "observer31_two_hd_runs_26_and_27_miss_observer32_live_pending",
+  "status": "observer33_regression_passed_live_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -9,32 +9,320 @@
   "capability_sha256": "73dc5c94f1418a1e75bf4488871d27c849e0d6105adc79ec03c167ff672dbcd3",
   "fingerprint_matches": true,
   "tests": {
-    "windows-release": {"passed": 149, "total": 149, "seconds": 11.76},
-    "windows-debug": {"passed": 149, "total": 149, "seconds": 31.32},
-    "windows-asan": {"passed": 149, "total": 149, "seconds": 59.90, "suppressions": false}
+    "windows-release": {
+      "passed": 149,
+      "total": 149,
+      "seconds": 11.76
+    },
+    "windows-debug": {
+      "passed": 149,
+      "total": 149,
+      "seconds": 31.32
+    },
+    "windows-asan": {
+      "passed": 149,
+      "total": 149,
+      "seconds": 59.9,
+      "suppressions": false
+    }
   },
   "test_environment": "Windows 11 Pro 26200, Core Ultra 5 125H, 32GB, MSVC 19.51/v145, CMake VS18, x64 C++20; existing pinned vcpkg dependencies, third-party DLLs not ASan-instrumented",
   "capture": "gRPC payload fast-memcpy RGB888 top-down 256KiB 1280x720 source_rotation=1 latest-only",
   "touch": "gRPC 5 contacts 720x1280 rotation=90 timeout=100ms",
   "clock": "host QPC monotonic ns",
   "raw_root": "measurements/outline-contact-20260927",
-  "iterations": {"release_failures": [8, 2, 1, 2, 4, 0, 0], "final_tests": 149},
+  "iterations": {
+    "release_failures": [
+      8,
+      2,
+      1,
+      2,
+      4,
+      0,
+      0
+    ],
+    "final_tests": 149
+  },
   "live_runs": [
-    {"run_id":"cpp-observe-17905036167552410","source_commit":"fe0c85e","score":817048,"perfect":350,"good":0,"bad":0,"miss":43,"ap":false,"exit_code":0,"state":"STOPPED","diagnostic_roi_frames":8,"raw_sha256":"146c9d650b8bbb553c69fd04654d13c679bd2bab8fec5594db934a0a477cdfe9"},
-    {"run_id":"cpp-observe-17905045465138818","source_commit":"2807f2e","score":757252,"perfect":324,"good":0,"bad":0,"miss":69,"ap":false,"late_start":true,"stability_eligible":false,"raw_sha256":"9f7a99a918c41f46a9261fda08616b0255a7070dd35248072e829c129e4d9a75"},
-    {"run_id":"cpp-observe-17905047888987862","source_commit":"2807f2e","score":840560,"perfect":358,"good":4,"bad":0,"miss":31,"ap":false,"late_start":false,"stability_eligible":true,"contact_conflicts":0,"raw_sha256":"55b3510e5302c1222f886598ead880b2ed7d571acef0ee0c2c15bd73b9c27db9"},
-    {"run_id":"cpp-observe-17905056643080469","source_commit":"f0aa05b","score":825585,"perfect":352,"good":3,"bad":0,"miss":38,"ap":false,"late_start":false,"contact_conflicts":0,"hold_contact_reassociations":35,"raw_sha256":"baf9fdb89a347ffb65d12c46b9a1e85386aaf1a042e3386f5c5a633abfecf91e"},
-    {"run_id":"cpp-observe-17905069580837787","source_commit":"5a8fe34","score":825038,"perfect":353,"good":4,"bad":0,"miss":36,"ap":false,"late_start":false,"contact_conflicts":0,"hold_contact_reassociations":33,"hold_tail_confirmations":0,"dataset_sampling":true,"sampling_confounder":true,"raw_sha256":"7634176a0cebe773e0a3b1edfd14ca1ad9c973fb2908ab3e934c6cd61ec372cc"},
-    {"run_id":"cpp-observe-17905079704324840","source_commit":"5f1c710","score":852341,"perfect":365,"good":2,"bad":0,"miss":26,"ap":false,"contact_conflicts":0,"hold_contact_reassociations":10,"hold_tail_confirmations":0,"dataset_sampling":true,"raw_sha256":"796399baa4104e6b4142aa1cc4d14c09e70bdf95bee65d23c1bc5b2a3a74535c"},
-    {"run_id":"cpp-observe-17905082616018716","source_commit":"5f1c710","score":862583,"perfect":359,"good":7,"bad":0,"miss":27,"ap":false,"max_combo":118,"dataset_sampling":true,"raw_sha256":"5090389ba59b8e6d1ed6211347daaa005d545fba93550a92f0e7d63c483263e3"}
+    {
+      "run_id": "cpp-observe-17905036167552410",
+      "source_commit": "fe0c85e",
+      "score": 817048,
+      "perfect": 350,
+      "good": 0,
+      "bad": 0,
+      "miss": 43,
+      "ap": false,
+      "exit_code": 0,
+      "state": "STOPPED",
+      "diagnostic_roi_frames": 8,
+      "raw_sha256": "146c9d650b8bbb553c69fd04654d13c679bd2bab8fec5594db934a0a477cdfe9"
+    },
+    {
+      "run_id": "cpp-observe-17905045465138818",
+      "source_commit": "2807f2e",
+      "score": 757252,
+      "perfect": 324,
+      "good": 0,
+      "bad": 0,
+      "miss": 69,
+      "ap": false,
+      "late_start": true,
+      "stability_eligible": false,
+      "raw_sha256": "9f7a99a918c41f46a9261fda08616b0255a7070dd35248072e829c129e4d9a75"
+    },
+    {
+      "run_id": "cpp-observe-17905047888987862",
+      "source_commit": "2807f2e",
+      "score": 840560,
+      "perfect": 358,
+      "good": 4,
+      "bad": 0,
+      "miss": 31,
+      "ap": false,
+      "late_start": false,
+      "stability_eligible": true,
+      "contact_conflicts": 0,
+      "raw_sha256": "55b3510e5302c1222f886598ead880b2ed7d571acef0ee0c2c15bd73b9c27db9"
+    },
+    {
+      "run_id": "cpp-observe-17905056643080469",
+      "source_commit": "f0aa05b",
+      "score": 825585,
+      "perfect": 352,
+      "good": 3,
+      "bad": 0,
+      "miss": 38,
+      "ap": false,
+      "late_start": false,
+      "contact_conflicts": 0,
+      "hold_contact_reassociations": 35,
+      "raw_sha256": "baf9fdb89a347ffb65d12c46b9a1e85386aaf1a042e3386f5c5a633abfecf91e"
+    },
+    {
+      "run_id": "cpp-observe-17905069580837787",
+      "source_commit": "5a8fe34",
+      "score": 825038,
+      "perfect": 353,
+      "good": 4,
+      "bad": 0,
+      "miss": 36,
+      "ap": false,
+      "late_start": false,
+      "contact_conflicts": 0,
+      "hold_contact_reassociations": 33,
+      "hold_tail_confirmations": 0,
+      "dataset_sampling": true,
+      "sampling_confounder": true,
+      "raw_sha256": "7634176a0cebe773e0a3b1edfd14ca1ad9c973fb2908ab3e934c6cd61ec372cc"
+    },
+    {
+      "run_id": "cpp-observe-17905079704324840",
+      "source_commit": "5f1c710",
+      "score": 852341,
+      "perfect": 365,
+      "good": 2,
+      "bad": 0,
+      "miss": 26,
+      "ap": false,
+      "contact_conflicts": 0,
+      "hold_contact_reassociations": 10,
+      "hold_tail_confirmations": 0,
+      "dataset_sampling": true,
+      "raw_sha256": "796399baa4104e6b4142aa1cc4d14c09e70bdf95bee65d23c1bc5b2a3a74535c"
+    },
+    {
+      "run_id": "cpp-observe-17905082616018716",
+      "source_commit": "5f1c710",
+      "score": 862583,
+      "perfect": 359,
+      "good": 7,
+      "bad": 0,
+      "miss": 27,
+      "ap": false,
+      "max_combo": 118,
+      "dataset_sampling": true,
+      "raw_sha256": "5090389ba59b8e6d1ed6211347daaa005d545fba93550a92f0e7d63c483263e3"
+    },
+    {
+      "run_id": "cpp-observe-17905096397278472",
+      "source_commit": "3747854",
+      "binary_sha256": "aee65d0be78b82cf2febc2c33535da1329e7e02428aa8ac5348f0efa8380a897",
+      "difficulty": "HD6",
+      "score": 829949,
+      "perfect": 356,
+      "good": 2,
+      "bad": 0,
+      "miss": 35,
+      "max_combo": 46,
+      "accuracy_percent": 90.92,
+      "early": 1,
+      "late": 1,
+      "ap": false,
+      "read_basis": "Computer Use native settlement screenshot after STOPPED, then independent after-stop capture diagnostic.png",
+      "duration_s": 185,
+      "exit_code": 0,
+      "dataset_sampling_requested": true,
+      "dataset_roi_saved": 0,
+      "sampling_fault": "dataset global run/image cap reached",
+      "raw_sha256": "25d32a142c763ee073a34ebad8d4b9877e1329dbbfc070a2f9d5f7338694563b"
+    }
   ],
-  "followup_regression": {"binary_sha256":"9b3036c0a7359ea04447ab91b4c891e3c54617c942aa14688bbe48e0fb31ef4c","release":{"passed":150,"total":150,"seconds":15.76},"debug":{"passed":150,"total":150,"seconds":25.40},"asan":{"passed":150,"total":150,"seconds":61.52,"suppressions":false},"current_gray_roi_outline":"153px current paired rails, tail unknown; former source rejects same pixels"},
-  "current_owner_followup": {"observer":30,"planner":11,"diagnostics":4,"binary_sha256":"bf326c14bda58d5890d8a6bb5ae90f9753d06073bfe2c25ac5742e8c22c92b5f","release":{"passed":152,"total":152,"seconds":13.82},"debug":{"passed":152,"total":152,"seconds":29.71},"asan":{"passed":152,"total":152,"seconds":67.68,"suppressions":false},"test_execution":"three independent presets concurrently, no gameplay during tests"},
-  "current_alias_followup": {"observer":30,"planner":12,"diagnostics":4,"binary_sha256":"6ff1d30cdedee60cdf9187d64f1671075eced7ceca20042c8a792eecb461470b","release":{"passed":154,"total":154,"seconds":14.35},"debug":{"passed":154,"total":154,"seconds":28.71},"asan":{"passed":154,"total":154,"seconds":66.93,"suppressions":false},"planned_sampling":"same-frame bounded native ROI and initial 2048 candidate bank, no tracking shadow, no model, no online replay"},
-  "current_front_followup": {"observer":31,"planner":12,"diagnostics":4,"binary_sha256":"58bafae6f5917a4239cdf4f4f6249ba3b8b4f8665fafca2ae89952a238bac505","release":{"passed":156,"total":156,"seconds":11.35},"debug":{"passed":156,"total":156,"seconds":29.78},"asan":{"passed":156,"total":156,"seconds":67.73,"suppressions":false},"full_release_failures_before_repair":[7,1,0],"saved_current_pixels_probe":"frame727 measured x350.09/y576/width152; tail unknown; approaching anchor alone rejected without current attachment"},
-  "current_moving_body_followup": {"observer":32,"planner":13,"diagnostics":5,"binary_sha256":"aee65d0be78b82cf2febc2c33535da1329e7e02428aa8ac5348f0efa8380a897","release":{"passed":160,"total":160,"seconds":11.39},"debug":{"passed":160,"total":160,"seconds":28.58},"asan":{"passed":160,"total":160,"seconds":65.28,"suppressions":false},"focused_failures_before_repair":[1,0],"current_saved_pixels_probe":"frame749 local moving front x638.493/y513/width152, 176px rails within crop; tail unknown; no claim about pixels above crop"},
+  "followup_regression": {
+    "binary_sha256": "9b3036c0a7359ea04447ab91b4c891e3c54617c942aa14688bbe48e0fb31ef4c",
+    "release": {
+      "passed": 150,
+      "total": 150,
+      "seconds": 15.76
+    },
+    "debug": {
+      "passed": 150,
+      "total": 150,
+      "seconds": 25.4
+    },
+    "asan": {
+      "passed": 150,
+      "total": 150,
+      "seconds": 61.52,
+      "suppressions": false
+    },
+    "current_gray_roi_outline": "153px current paired rails, tail unknown; former source rejects same pixels"
+  },
+  "current_owner_followup": {
+    "observer": 30,
+    "planner": 11,
+    "diagnostics": 4,
+    "binary_sha256": "bf326c14bda58d5890d8a6bb5ae90f9753d06073bfe2c25ac5742e8c22c92b5f",
+    "release": {
+      "passed": 152,
+      "total": 152,
+      "seconds": 13.82
+    },
+    "debug": {
+      "passed": 152,
+      "total": 152,
+      "seconds": 29.71
+    },
+    "asan": {
+      "passed": 152,
+      "total": 152,
+      "seconds": 67.68,
+      "suppressions": false
+    },
+    "test_execution": "three independent presets concurrently, no gameplay during tests"
+  },
+  "current_alias_followup": {
+    "observer": 30,
+    "planner": 12,
+    "diagnostics": 4,
+    "binary_sha256": "6ff1d30cdedee60cdf9187d64f1671075eced7ceca20042c8a792eecb461470b",
+    "release": {
+      "passed": 154,
+      "total": 154,
+      "seconds": 14.35
+    },
+    "debug": {
+      "passed": 154,
+      "total": 154,
+      "seconds": 28.71
+    },
+    "asan": {
+      "passed": 154,
+      "total": 154,
+      "seconds": 66.93,
+      "suppressions": false
+    },
+    "planned_sampling": "same-frame bounded native ROI and initial 2048 candidate bank, no tracking shadow, no model, no online replay"
+  },
+  "current_front_followup": {
+    "observer": 31,
+    "planner": 12,
+    "diagnostics": 4,
+    "binary_sha256": "58bafae6f5917a4239cdf4f4f6249ba3b8b4f8665fafca2ae89952a238bac505",
+    "release": {
+      "passed": 156,
+      "total": 156,
+      "seconds": 11.35
+    },
+    "debug": {
+      "passed": 156,
+      "total": 156,
+      "seconds": 29.78
+    },
+    "asan": {
+      "passed": 156,
+      "total": 156,
+      "seconds": 67.73,
+      "suppressions": false
+    },
+    "full_release_failures_before_repair": [
+      7,
+      1,
+      0
+    ],
+    "saved_current_pixels_probe": "frame727 measured x350.09/y576/width152; tail unknown; approaching anchor alone rejected without current attachment"
+  },
+  "current_moving_body_followup": {
+    "observer": 32,
+    "planner": 13,
+    "diagnostics": 5,
+    "binary_sha256": "aee65d0be78b82cf2febc2c33535da1329e7e02428aa8ac5348f0efa8380a897",
+    "release": {
+      "passed": 160,
+      "total": 160,
+      "seconds": 11.39
+    },
+    "debug": {
+      "passed": 160,
+      "total": 160,
+      "seconds": 28.58
+    },
+    "asan": {
+      "passed": 160,
+      "total": 160,
+      "seconds": 65.28,
+      "suppressions": false
+    },
+    "focused_failures_before_repair": [
+      1,
+      0
+    ],
+    "current_saved_pixels_probe": "frame749 local moving front x638.493/y513/width152, 176px rails within crop; tail unknown; no claim about pixels above crop"
+  },
   "stable_hd_ap": false,
   "stable_in_ap": false,
   "stability_criterion": "at least three consecutive AP settlements on one frozen version before advancing from HD to IN",
-  "limitations": ["No optical flow or model yet", "Synthetic regression is not game judgment", "No verified performance gain before live measurement"]
+  "limitations": [
+    "No optical flow or model yet",
+    "Synthetic regression is not game judgment",
+    "No verified performance gain before live measurement"
+  ],
+  "current_effect_guard_followup": {
+    "observer": 33,
+    "planner": 13,
+    "diagnostics": 6,
+    "binary_sha256": "f25d4774cc29c3c8fef029ed1f92535801f946879f800070c1e1fbebbbea0ca4",
+    "release": {
+      "total": 163,
+      "passed": 163,
+      "seconds": 11.5
+    },
+    "debug": {
+      "total": 163,
+      "passed": 163,
+      "seconds": 28.07
+    },
+    "asan": {
+      "suppressions": false,
+      "total": 163,
+      "passed": 163,
+      "seconds": 65.32
+    },
+    "focused_failures_before_repair": [
+      1,
+      0
+    ],
+    "dataset_max_runs": 20,
+    "dataset_max_images": 2560
+  }
 }

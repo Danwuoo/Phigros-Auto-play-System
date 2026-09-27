@@ -874,7 +874,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             if(!line||candidate.confidence>line->confidence) line=&candidate;
         }
         if(!line) continue;
-        const bool approaching=recent_rails&&!note.head_on_line&&
+        const bool approaching=recent_rails&&!note.head_on_line&&!note.held_body_evidence&&
             std::abs(normal_distance(note.center,*line))>8;
         // A complete current front supplies its own position. Re-fitting a
         // past front and quantizing a second search would add artificial

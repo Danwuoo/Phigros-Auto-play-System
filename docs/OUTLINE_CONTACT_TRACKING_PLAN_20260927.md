@@ -1,6 +1,6 @@
 # 外框追蹤與持續接觸方案（2026-09-27）
 
-最新狀態：使用者已重新授權自主實作、迭代、Computer Use 遊戲操作與實戰；HD 同版本至少連續三次 AP 後才進 IN。observer31／planner12同版本兩輪HD分別365／2／0／26與359／7／0／27，尚未AP；observer32／planner13在開發當前Hold前端離線移動續接。已有灰階雙側外框、短尾端、接觸重新關聯、Drag同指Move及獨立line ID；光流段仍是待評估設計，未接入。
+最新狀態：使用者已重新授權自主實作、迭代、Computer Use 遊戲操作與實戰；HD 同版本至少連續三次 AP 後才進 IN。observer31兩輪26／27 Miss；observer32第八輪35 Miss，未AP。observer33修正移動前端被特效框線拉回line的回退條件，planner13不變、diagnostics6記錄有界採樣額度。已有灰階雙側外框、短尾端、接觸重新關聯、Drag同指Move及獨立line ID；光流段仍待評估，未接入。
 
 ## 已實作資料契約
 
@@ -38,7 +38,15 @@ conflict事件顯示同一x約639／y576位置有五個不同Hold intent持續�
 
 NoteCandidate新增`held_body_evidence`，與`head_on_line`分開；GameTrackPoint記錄該current前端是否作實際touch point。Current前端續接可更新90ms rail anchor，Hit／Move採当下量測前端內側，不再投影到原line；owner接觸別名仍需唯一、當前、未完成與≤48px步進。新字段只由專用當前觀測產生，不作新灰色Hold出生或延長60／100ms期限。CandidateBatch extractor32、quality1／schema1不变，讀取29–31缺字段預設false，字段true需Hold／outline／rails同時成立。影子方法仍無真實backend。diagnostics5允許當前moving held body的消失採樣；純approaching未接線仍不消耗held窗口。續接plan basis明示`live_pixels_held_body_continuation`，原首次Down預測仍保留。
 
-新增C++ pixels／fake-clock整合測試：灰色body從line移到上方116px及橫移66px，保持同contact／單Down、每幀Hit是當前body前端，missing仍按60ms釋放；序列化正／負例及新版diagnostic回歸同步加入。最初focused3項有1失敗，原因是136px出生core與152px外rail不一致；改為當前三截面各自量測並核對20%寬度與4px一致性，未放寬預期。修正後focused3／3、完整Release159／159先通過；新增diagnostic後Release／Debug／無suppressions ASan各160／160通過，11.39／28.58／65.28秒。保存frame749 ROI的current moving-front probe定位x638.493／y513／width152，crop內兩側支持176px，tail未知。binary aee65d0be78b82cf2febc2c33535da1329e7e02428aa8ac5348f0efa8380a897；實戰待續。
+新增C++ pixels／fake-clock整合測試：灰色body從line移到上方116px及橫移66px，保持同contact／單Down、每幀Hit是當前body前端，missing仍按60ms釋放；序列化正／負例及新版diagnostic回歸同步加入。最初focused3項有1失敗，原因是136px出生core與152px外rail不一致；改為當前三截面各自量測並核對20%寬度與4px一致性，未放寬預期。修正後focused3／3、完整Release159／159先通過；新增diagnostic後Release／Debug／無suppressions ASan各160／160通過，11.39／28.58／65.28秒。保存frame749 ROI的current moving-front probe定位x638.493／y513／width152，crop內兩側支持176px，tail未知。binary aee65d0be78b82cf2febc2c33535da1329e7e02428aa8ac5348f0efa8380a897。
+
+### 第八輪退步與當前特效回退修正
+
+observer32／source3747854，cpp-observe-17905096397278472：356／2／0／35，829,949分，maxcombo46、ACC90.92%、Early1／Late1，185秒STOPPED／exit0。原始SHA256 25d32a142c763ee073a34ebad8d4b9877e1329dbbfc070a2f9d5f7338694563b。recognition n10824，p50／p95／p99／max=4.8017／7.50175／8.842214／19.2853ms；playing interval n9630=16.56395／32.17922／44.347327／81.2392ms。同環境與五指35ms；曲中無build／test／額外擷取。接觸衝突0、Hold Down107／alias8／tail0，missing96／geometry7／ambiguous3；source expiry1、UI lost1。更差仍需逐段取證，不能把9個額外Miss全歸給單一事件。
+
+829／830的Hold119當前前端548→535；831移動前端失敗後回退舊outline，位置跳回575.9，832／833仍在線上，834改為其他候選，836 missing取消已執行6步的intent15。此輪因全域10run採樣額度已滿，sampling_manifest=null、ROI0；日誌只證明幾何跳回，特效像素原因由先前同類ROI及合成負例核對，未假稱有第八輪ROI。
+
+observer33：若已由current held body離線，重新接回line需line後6／12px兩排各5／7內部亮度支持；只有兩側框線不能接回。moving front的前方rail連續亦須24px外側有5／7body fill才判為內部暗條，保留真正內部暗條負例。粗略±4px亮暗對比先找前端，再以當前±1px終止邊的中位位置量測觸點，放在內側3px；避免cost將位置逐幀拉深。已held_body不走純approaching快捷路徑。新增特效框線正／負回歸，交替延伸外框的整合序列仍要求一個Down／同指Move／60ms缺失釋放。首次focused16項1失敗（觸點深入6px），修正實際终止邊後16／16，不放寬預期。extractor33讀取29–32，字段契約不變。採樣上限有界調為20run／2560 images，另測較小額度的拒寫、partial及舊檔保留；2GiB／256MiB／128MiB與停止後編碼不變。
 
 第五輪 source `5a8fe34`／observer30／planner12／diagnostics4，run `cpp-observe-17905069580837787`，185秒 STOPPED／exit0。Computer Use 結算353 Perfect／4 Good／0 Bad／36 Miss、825,038分、max combo42、accuracy90.48%、Late4；未AP。contact conflict0、Hold Down112、重關聯33、tail確認0；Hold missing取消98／geometry8／ambiguous5。raw SHA256 `7634176a0cebe773e0a3b1edfd14ca1ad9c973fb2908ab3e934c6cd61ec372cc`。本輪另開有界dataset：18 clips／136 native ROI、首2048候選bank、无shadow／模型、停止後WIC編碼，不能把分數差全歸planner12。copy n10614 p50／p95／p99／max=.22465／.3175／.409387／1.5115ms；辨識4.61515／6.65461／7.960794／19.6307ms。playing capture interval n9440=16.70585／32.563705／44.882484／102.3034ms，source expiry2、UI lost1；global capture max322.3705ms含非playing區域。停止後結算PNG及讀值另存raw root。
 
@@ -96,3 +104,5 @@ Hold的接觸目標為當前body可見區域與所屬line的交會內部；Drag�
 5. 短小pixels＋fake-clock回歸涵蓋gray／特效、tail未完、相鄰Hold、薄Tap穿越、Drag間隔／分叉、line平移／旋轉／噪聲、多線、過期及停止。量測區域外接觸時間、ID switch／誤併與錯誤提前Up，並記環境、分母及p95／p99／max；三配置回歸通過後，遊戲實戰須等待使用者另行恢復測試與準備PLAY。
 
 這份方案已完成程式核對，效果尚未驗證；目前不宣稱修復、Hold全曲維持或HD AP。
+
+observer33最終三配置各163／163通過：Release11.50s／Debug28.07s／ASan65.32s，無suppressions；binary f25d4774cc29c3c8fef029ed1f92535801f946879f800070c1e1fbebbbea0ca4。新版实战待测。

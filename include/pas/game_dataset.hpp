@@ -3,7 +3,10 @@
 #include <chrono>
 
 namespace pas {
-struct DatasetSamplingOptions {bool diagnostics=false,dataset=false;};
+struct DatasetSamplingOptions {
+ bool diagnostics=false,dataset=false;
+ std::size_t max_dataset_runs=20,max_dataset_images=2560;
+};
 // Independent bounded copies; no backend, no clock scheduling, no pool lease.
 // consume must run AFTER publishing the normal decision; flush after input stops.
 class GamePixelSampler final {

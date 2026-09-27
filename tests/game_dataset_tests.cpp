@@ -45,6 +45,27 @@ TEST(GameDataset, MemoryImageQuotaAndDetectorIndependentBackgroundAreBounded){
  std::uint64_t seq=0;for(int window=0;window<24;++window)for(int i=0;i<10;++i){auto f=frame(++seq,window*10'000'000'000LL+i*16'000'000);auto s=scene(f);sampler.consume(f,s,{},i==0);}
  const auto stats=sampler.stats();EXPECT_LE(sampler.images_retained(),136);EXPECT_LE(stats.at("diagnostic_clips").get<int>(),2);EXPECT_LE(stats.at("hard_clips").get<int>(),8);EXPECT_EQ(stats.at("background_clips"),4);EXPECT_EQ(stats.at("normal_clips"),0);
 }
+TEST(GameDataset, GlobalRunQuotaPreservesPriorEvidenceAndRejectsBeforeWriting){
+ TempFolder temp;std::filesystem::create_directory(temp.path/"old");save(temp.path/"old/manifest.json",{{"sentinel",17}});
+ GamePixelSampler sampler(1280,720,{true,false,1,2560});FakeClock clock;
+ EXPECT_THROW(sampler.flush(temp.path/"new",json::object(),clock),std::runtime_error);
+ EXPECT_FALSE(std::filesystem::exists(temp.path/"new"));
+ std::ifstream in(temp.path/"old/manifest.json");EXPECT_EQ(json::parse(in).at("sentinel"),17);
+ EXPECT_THROW(GamePixelSampler(1280,720,DatasetSamplingOptions{true,false,21,2560}),std::invalid_argument);
+ EXPECT_THROW(GamePixelSampler(1280,720,DatasetSamplingOptions{true,false,20,2561}),std::invalid_argument);
+}
+TEST(GameDataset, GlobalImageQuotaWritesOnlyAvailableSlotsAndReportsPartial){
+ TempFolder temp;std::filesystem::create_directory(temp.path/"old");
+ auto prior=frame(99,0);write_diagnostic_png(temp.path/"old/image.png",prior);
+ const auto hash=sha256_file(temp.path/"old/image.png");
+ GamePixelSampler sampler(1280,720,{true,false,20,3});
+ for(int i=0;i<3;++i){auto f=frame(i+1,i*16'000'000);sampler.consume(f,scene(f),{},i==0);}
+ ASSERT_EQ(sampler.images_retained(),3);FakeClock clock;const auto report=sampler.flush(temp.path/"new",json::object(),clock);
+ EXPECT_TRUE(report.at("partial").get<bool>());EXPECT_EQ(report.at("samples").size(),2);
+ EXPECT_EQ(report.at("stats").at("max_dataset_images"),3);
+ EXPECT_FALSE(std::filesystem::exists(temp.path/"new/clip-0-frame-2"));
+ EXPECT_EQ(sha256_file(temp.path/"old/image.png"),hash);
+}
 TEST(GameDataset, PolygonLabelsObjectsAndSourceHashesAreCheckedPerPixel){
  TempFolder temp;std::filesystem::create_directory(temp.path/"sample");Frame f;f.width=32;f.height=16;f.stride=96;f.rgb.resize(1536);write_diagnostic_png(temp.path/"sample/image.png",f);
  auto a=annotation(f,temp.path);save(temp.path/"sample/annotation.json",a);rasterize_annotation(temp.path/"sample",a);

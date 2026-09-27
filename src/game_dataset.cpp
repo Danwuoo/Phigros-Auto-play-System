@@ -36,6 +36,8 @@ Ptr<IWICImagingFactory> factory(){Ptr<IWICImagingFactory> f;if(FAILED(CoCreateIn
 }
 GamePixelSampler::GamePixelSampler(int w,int h,DatasetSamplingOptions o):width_(w),height_(h),roi_width_(std::min(w,640)),roi_height_(std::min(h,384)),options_(o){
  if(w<2||h<2||w>4096||h>4096)throw std::invalid_argument("sampler geometry");
+ if(o.max_dataset_runs<1||o.max_dataset_runs>20||o.max_dataset_images<1||o.max_dataset_images>2560)
+  throw std::invalid_argument("sampler global quota exceeds bounded budget");
  if(!o.dataset&&!o.diagnostics)return;
  const std::size_t full=static_cast<std::size_t>(w)*h*3,roi=static_cast<std::size_t>(roi_width_)*roi_height_*3;
  const std::size_t images=(o.dataset?128:0)+(o.diagnostics?8:0);
@@ -90,6 +92,7 @@ void GamePixelSampler::consume(const Frame& f,const DecisionSnapshot& s,const st
  history_[history_cursor_]=ctx;history_cursor_=(history_cursor_+1)%2;history_count_=std::min(std::size_t{2},history_count_+1);
 }
 json GamePixelSampler::stats() const{return {{"schema",1},{"diagnostics_enabled",options_.diagnostics},{"dataset_enabled",options_.dataset},{"allocated_raw_bytes",arena_.size()},
+ {"max_dataset_runs",options_.max_dataset_runs},{"max_dataset_images",options_.max_dataset_images},
  {"combined_memory_budget_bytes",128*MiB},{"metadata_encode_explicit_allowance_bytes",8*MiB},{"images_retained",image_count_},{"diagnostic_clips",diagnostic_count_},{"hard_clips",hard_count_},
  {"normal_clips",normal_count_},{"background_clips",background_count_},{"dropped_triggers",dropped_triggers_},{"rejected_frames",rejected_frames_},{"real_input_created",false}};}
 json GamePixelSampler::flush(const std::filesystem::path& root,const json& provenance,const Clock& clock,Nanoseconds timeout){
@@ -103,12 +106,12 @@ json GamePixelSampler::flush(const std::filesystem::path& root,const json& prove
   for(const auto& entry:std::filesystem::directory_iterator(dataset_root))if(entry.is_directory()&&std::filesystem::exists(entry.path()/"manifest.json"))++runs;
   for(const auto& entry:std::filesystem::recursive_directory_iterator(dataset_root))if(entry.is_regular_file()&&entry.path().filename()=="image.png")++existing_images;
  }
- if(runs>=10||existing_images>=1280)throw std::runtime_error("dataset global run/image cap reached");
+ if(runs>=options_.max_dataset_runs||existing_images>=options_.max_dataset_images)throw std::runtime_error("dataset global run/image cap reached");
  std::filesystem::create_directories(root);const auto begin=clock.now_ns();const auto ws_begin=working_set();auto ws_sampled_peak=ws_begin;json samples=json::array();std::uint64_t written=0;bool partial=false;std::string failure;
  MemoryProbe memory_probe;std::size_t truncated_clips=0;for(const auto& clip:clips_)truncated_clips+=clip.images.size()<clip.wanted;
  for(std::size_t ci=0;ci<clips_.size()&&!partial;++ci){const auto& clip=clips_[ci];for(std::size_t fi=0;fi<clip.images.size();++fi){const auto& image=clip.images[fi];
   const auto safe_reserve=static_cast<std::uint64_t>(image.width)*image.height*6+131072;
-  if(clock.now_ns()-begin>=timeout||written+safe_reserve>256*MiB||existing+written+safe_reserve>2ULL*1024*MiB||existing_images+samples.size()>=1280){partial=true;failure="flush_time_disk_or_image_cap";break;}
+  if(clock.now_ns()-begin>=timeout||written+safe_reserve>256*MiB||existing+written+safe_reserve>2ULL*1024*MiB||existing_images+samples.size()>=options_.max_dataset_images){partial=true;failure="flush_time_disk_or_image_cap";break;}
   const auto folder="clip-"+std::to_string(ci)+"-frame-"+std::to_string(fi);std::filesystem::create_directory(root/folder);
   Frame rgb;rgb.width=image.width;rgb.height=image.height;rgb.stride=rgb.width*3;rgb.rgb.assign(arena_.begin()+static_cast<std::ptrdiff_t>(image.offset),arena_.begin()+static_cast<std::ptrdiff_t>(image.offset+static_cast<std::size_t>(rgb.stride)*rgb.height));
   ws_sampled_peak=std::max(ws_sampled_peak,working_set());

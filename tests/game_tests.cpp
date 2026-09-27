@@ -1357,7 +1357,9 @@ TEST(GameObserver, GrayHeldFrontCanMoveAwayFromTheLineWithTheSameFingerAndCurren
         auto f=image(i+5,(i+4)*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
         const int x=500+i*6,head=548-i*8;
         rect(f,x-74,128,149,head-128,{90,100,110});
-        rect(f,x-77,128,3,head-128,{170,170,170});rect(f,x+75,128,3,head-128,{170,170,170});
+        // Alternating effect rails extend below the true front toward the line.
+        const int rail_end=i%2==0?590:head;
+        rect(f,x-77,128,3,rail_end-128,{170,170,170});rect(f,x+75,128,3,rail_end-128,{170,170,170});
         clock.set(f.capture_complete_ns);const auto s=observer.process(f);
         ASSERT_EQ(s.targets.size(),1)<<i;const auto& t=s.targets.front();EXPECT_EQ(t.note_id,identity)<<i;
         EXPECT_TRUE(t.note.held_body_evidence);EXPECT_FALSE(t.note.head_on_line);EXPECT_FALSE(t.note.tail);
@@ -1370,6 +1372,21 @@ TEST(GameObserver, GrayHeldFrontCanMoveAwayFromTheLineWithTheSameFingerAndCurren
     auto missing=image(17,360'000'000);hud(missing);rect(missing,0,575,1280,2,{255,255,255});
     clock.set(missing.capture_complete_ns);owner.accept(observer.process(missing));owner.poll();
     EXPECT_TRUE(touch.contacts().empty());owner.stop();
+}
+TEST(GameMotion, MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior) {
+    NoteCandidate anchor;anchor.kind=NoteKind::hold;anchor.center={500,535};anchor.tangent={1,0};
+    anchor.width=152;anchor.height=350;anchor.rails_geometry=true;anchor.held_body_evidence=true;
+    LineCandidate line{{640,576},{1,0},1280,2,.9};
+    auto f=image(1,0);rect(f,426,180,149,342,{90,100,110});
+    rect(f,423,180,3,410,{170,170,170});rect(f,575,180,3,410,{170,170,170});
+    rect(f,423,584,155,3,{170,170,170});
+    EXPECT_FALSE(observe_held_outline(f,anchor,line));
+    const auto current=observe_moving_held_front(f,anchor,line);ASSERT_TRUE(current);
+    EXPECT_TRUE(current->held_body_evidence);EXPECT_NEAR(current->center.y,522,5);
+    // Actual body fill returning to the line permits reattachment.
+    rect(f,426,180,149,396,{90,100,110});
+    const auto attached=observe_held_outline(f,anchor,line);ASSERT_TRUE(attached);
+    EXPECT_TRUE(attached->head_on_line);EXPECT_NEAR(attached->center.y,576,2);
 }
 TEST(GameObserver, RotatingCurrentLineRetainsIdentityAndFreshLocalHitGeometry) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t line_id=0,note_id=0;
