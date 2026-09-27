@@ -300,3 +300,15 @@ TEST(GameAnalysis, ContactReleaseDiagnosticsDoNotClaimGameJudgment) {
     EXPECT_TRUE(result.at("real_downs_by_basis").empty());
     EXPECT_FALSE(result.at("gameplay_validated").get<bool>());
 }
+TEST(GameAnalysis, PlayingIntervalsExcludeMenuBoundariesButPreserveSourceGaps) {
+    const TempJson raw(R"({"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"lines":[],"capture_complete_ns":100000000,"recognition_start_ns":100000000,"recognition_end_ns":100000001,"targets":[]}
+{"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"epoch":2,"lines":[],"capture_complete_ns":300000000,"recognition_start_ns":300000000,"recognition_end_ns":300000001,"targets":[]}
+{"event":"game_decision","decision_schema":2,"ui":"UNKNOWN","playing_gate":false,"lines":[],"capture_complete_ns":400000000,"recognition_start_ns":400000000,"recognition_end_ns":400000001,"targets":[]}
+{"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"lines":[],"capture_complete_ns":450000000,"recognition_start_ns":450000000,"recognition_end_ns":450000001,"targets":[]}
+{"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"lines":[],"capture_complete_ns":500000000,"recognition_start_ns":500000000,"recognition_end_ns":500000001,"targets":[]}
+)");
+    const auto result=analyze_game_jsonl(raw.path());
+    EXPECT_EQ(result.at("playing_capture_interval_ms").at("n"),2);
+    EXPECT_EQ(result.at("playing_capture_interval_ms").at("max"),200);
+    EXPECT_EQ(result.at("capture_interval_ms").at("n"),4);
+}

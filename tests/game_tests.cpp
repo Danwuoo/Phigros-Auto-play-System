@@ -1194,6 +1194,44 @@ TEST(GameOwner, PreviouslySeenUnsubmittedHoldDescriptionCanRetainStartedContact)
     EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
     owner.stop();EXPECT_TRUE(touch.contacts().empty());
 }
+TEST(GameOwner, AliasesNeedCurrentSupportAndCannotOverrideOriginalOrReviveExpiredOwner) {
+    for(const bool alias_first:{false,true}) {
+        FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
+        auto original=target(1,0,10'000'000);original.note.kind=NoteKind::hold;original.note.center=original.hit;
+        original.note.width=100;original.note.height=200;original.note.rails_geometry=true;
+        original.note.head_on_line=true;original.samples=4;original.line_id=3;
+        auto s=snapshot(1,0);s.targets={original};owner.accept(s);clock.set(10'000'000);owner.poll();
+        auto alias=original;alias.note_id=2;alias.crossing_ns.reset();alias.reason="root_past";
+        clock.set(30'000'000);alias.evidence_ns=clock.now_ns();alias.expires_ns=clock.now_ns()+100'000'000;
+        s=snapshot(2,clock.now_ns());s.targets={alias};owner.accept(s);owner.poll();
+        ASSERT_EQ(owner.take_coverage_updates().size(),1);
+        auto invalid=alias;invalid.samples=0;invalid.reason="association_ambiguous";
+        invalid.note.head_on_line=false;invalid.note.center.y-=90;
+        clock.set(50'000'000);invalid.evidence_ns=original.evidence_ns=clock.now_ns();
+        invalid.expires_ns=original.expires_ns=clock.now_ns()+100'000'000;
+        s=snapshot(3,clock.now_ns());s.targets=alias_first?std::vector<GameTarget>{invalid,original}:
+            std::vector<GameTarget>{original,invalid};owner.accept(s);owner.poll();
+        ASSERT_EQ(touch.contacts().size(),1);EXPECT_TRUE(owner.take_plan_cancellations().empty());
+        // Conversely, a valid alias supplies current support when the raw
+        // original descriptor is invalid. Snapshot ordering cannot cancel it.
+        clock.set(60'000'000);original.samples=0;original.reason="line_unobservable";
+        alias.evidence_ns=original.evidence_ns=clock.now_ns();alias.expires_ns=original.expires_ns=clock.now_ns()+100'000'000;
+        s=snapshot(4,clock.now_ns());s.targets=alias_first?std::vector<GameTarget>{alias,original}:
+            std::vector<GameTarget>{original,alias};owner.accept(s);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+        EXPECT_TRUE(owner.take_plan_cancellations().empty());
+        clock.set(75'000'000);invalid.evidence_ns=clock.now_ns();invalid.expires_ns=clock.now_ns()+100'000'000;
+        s=snapshot(5,clock.now_ns());s.targets={invalid};owner.accept(s);owner.poll();EXPECT_EQ(touch.contacts().size(),1);
+        clock.set(130'000'000);invalid.evidence_ns=clock.now_ns();invalid.expires_ns=clock.now_ns()+100'000'000;
+        s=snapshot(6,clock.now_ns());s.targets={invalid};owner.accept(s);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+        for(int i=0;i<2;++i) {
+            clock.set(500'000'000+i*20'000'000);alias.evidence_ns=clock.now_ns();alias.expires_ns=clock.now_ns()+100'000'000;
+            alias.crossing_ns=clock.now_ns()+10'000'000;alias.reason="prediction_observe_only";
+            s=snapshot(7+i,clock.now_ns());s.targets={alias};owner.accept(s);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+        }
+        EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+        owner.stop();
+    }
+}
 TEST(GameObserver, OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFragments) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t identity=0;
     for(int i=0;i<4;++i) {

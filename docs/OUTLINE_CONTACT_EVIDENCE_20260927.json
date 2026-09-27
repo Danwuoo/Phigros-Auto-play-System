@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "best_hd_31_miss_planner11_live_pending",
+  "status": "best_hd_31_miss_planner12_live_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -22,10 +22,12 @@
   "live_runs": [
     {"run_id":"cpp-observe-17905036167552410","source_commit":"fe0c85e","score":817048,"perfect":350,"good":0,"bad":0,"miss":43,"ap":false,"exit_code":0,"state":"STOPPED","diagnostic_roi_frames":8,"raw_sha256":"146c9d650b8bbb553c69fd04654d13c679bd2bab8fec5594db934a0a477cdfe9"},
     {"run_id":"cpp-observe-17905045465138818","source_commit":"2807f2e","score":757252,"perfect":324,"good":0,"bad":0,"miss":69,"ap":false,"late_start":true,"stability_eligible":false,"raw_sha256":"9f7a99a918c41f46a9261fda08616b0255a7070dd35248072e829c129e4d9a75"},
-    {"run_id":"cpp-observe-17905047888987862","source_commit":"2807f2e","score":840560,"perfect":358,"good":4,"bad":0,"miss":31,"ap":false,"late_start":false,"stability_eligible":true,"contact_conflicts":0,"raw_sha256":"55b3510e5302c1222f886598ead880b2ed7d571acef0ee0c2c15bd73b9c27db9"}
+    {"run_id":"cpp-observe-17905047888987862","source_commit":"2807f2e","score":840560,"perfect":358,"good":4,"bad":0,"miss":31,"ap":false,"late_start":false,"stability_eligible":true,"contact_conflicts":0,"raw_sha256":"55b3510e5302c1222f886598ead880b2ed7d571acef0ee0c2c15bd73b9c27db9"},
+    {"run_id":"cpp-observe-17905056643080469","source_commit":"f0aa05b","score":825585,"perfect":352,"good":3,"bad":0,"miss":38,"ap":false,"late_start":false,"contact_conflicts":0,"hold_contact_reassociations":35,"raw_sha256":"baf9fdb89a347ffb65d12c46b9a1e85386aaf1a042e3386f5c5a633abfecf91e"}
   ],
   "followup_regression": {"binary_sha256":"9b3036c0a7359ea04447ab91b4c891e3c54617c942aa14688bbe48e0fb31ef4c","release":{"passed":150,"total":150,"seconds":15.76},"debug":{"passed":150,"total":150,"seconds":25.40},"asan":{"passed":150,"total":150,"seconds":61.52,"suppressions":false},"current_gray_roi_outline":"153px current paired rails, tail unknown; former source rejects same pixels"},
   "current_owner_followup": {"observer":30,"planner":11,"diagnostics":4,"binary_sha256":"bf326c14bda58d5890d8a6bb5ae90f9753d06073bfe2c25ac5742e8c22c92b5f","release":{"passed":152,"total":152,"seconds":13.82},"debug":{"passed":152,"total":152,"seconds":29.71},"asan":{"passed":152,"total":152,"seconds":67.68,"suppressions":false},"test_execution":"three independent presets concurrently, no gameplay during tests"},
+  "current_alias_followup": {"observer":30,"planner":12,"diagnostics":4,"binary_sha256":"6ff1d30cdedee60cdf9187d64f1671075eced7ceca20042c8a792eecb461470b","release":{"passed":154,"total":154,"seconds":14.35},"debug":{"passed":154,"total":154,"seconds":28.71},"asan":{"passed":154,"total":154,"seconds":66.93,"suppressions":false},"planned_sampling":"same-frame bounded native ROI and initial 2048 candidate bank, no tracking shadow, no model, no online replay"},
   "stable_hd_ap": false,
   "stable_in_ap": false,
   "stability_criterion": "at least three consecutive AP settlements on one frozen version before advancing from HD to IN",

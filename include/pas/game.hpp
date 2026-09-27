@@ -189,7 +189,8 @@ private:
         std::optional<Nanoseconds> hold_tail_release_ns;
         NoteCandidate last_note; std::uint64_t line_id=0;
         std::optional<Nanoseconds> tail_first_pass_ns; };
-    std::map<std::uint64_t,std::uint64_t> contact_aliases_;
+    struct ContactAlias {std::uint64_t owner=0;Nanoseconds last_seen_ns=0;};
+    std::map<std::uint64_t,ContactAlias> contact_aliases_;
     const Clock& clock_;
     ContactScheduler scheduler_;
     std::map<std::uint64_t, Identity> identities_;

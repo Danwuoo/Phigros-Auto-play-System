@@ -6,6 +6,10 @@
 
 ### 首輪實戰與後續修正
 
+planner11／source `f0aa05b` 第四輪 `cpp-observe-17905056643080469`：352／3／0／38、825,585分、Late3、max combo59，未AP，STOPPED／exit0。35次重關聯、contact conflict0、Hold Down112／missing取消93／geometry13／ambiguous6／tail確認0，source expiry3；raw SHA256 `baf9fdb89a347ffb65d12c46b9a1e85386aaf1a042e3386f5c5a633abfecf91e`。不能把Down减少當成命中改善。
+
+frame410將候選46接回原Hold35／intent6；411原35仍有當前152×314外框，但46變為遠離line的歧義core。舊別名無條件把46重命名為35，先取消同一contact；后續原35不能復活。planner12改為每張驗證外框、samples、當前evidence、line及幾何，優先原身分的有效支持；有效alias可替代失效原描述，無效alias不刷新／取消原手指，也不能成新Down。別名last_seen只作退休抑制，最久無新candidate100ms即清理；目的owner消失／完成但candidate仍出現時只忽略，不能復活。附兩種snapshot排序、反向有效替代、無支持60ms釋放及500ms後仍不復活回歸；此版仍待完整配置／實戰核對。
+
 第二／三輪source `2807f2e`／binary `9b3036c0...`：診斷輪 `cpp-observe-17905045465138818` 啟動晚於重試，324／0／0／69、757,252分，排除穩定性與直接分數比較；完整重跑 `cpp-observe-17905047888987862` 的 Computer Use 結算358／4／0／31、840,560分、Late4／max combo58，未AP。兩輪均STOPPED／exit0、185秒、相同五指與取樣配置、contact conflict0；完整輪139 Hold Down、Hold missing取消124／geometry7／ambiguous3、tail確認1、重關聯0、local Drag coverage10。完整輪raw SHA256 `55b3510e5302c1222f886598ead880b2ed7d571acef0ee0c2c15bd73b9c27db9`，辨識n10663 p50／p95／p99／max=4.9125／6.96306／8.25246／19.2555ms，source expiry1。少12 Miss只是兩個完整run的結果，不是多輪稳定改善結論。
 
 完整輪frame344–355暴露owner準入缺口：原Hold32／intent7在line上仍有310px body，候選42早先已出現但未注入；352起以同位置152px rails取代32，owner因`identities_.contains(42)`跳過重關聯，354便missing取消原contact，363仍可見160px gray body。下一版planner11允許未submitted的占位候選接回唯一active Hold，移除無手指占位，不復活submitted／completed或過期contact。附現有占位／RootPast／持續同指及停止回歸。diagnostics4只收head_on_line且距線≤8px的長Hold，避免frame119距線30px的短暫approach gap先花掉有限held-loss窗口；這是只讀取樣篩選，不改觸控期限。

@@ -193,7 +193,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
             {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
             {"executable_sha256",sha256_file(executable)},
-            {"game_planner_version",11},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
+            {"game_planner_version",12},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
             {"hold_normal_release_basis","consecutive_current_tail_passed_10ms_then_20ms_release"},
             {"drag_coverage_position_basis","current_region_deadzone_and_same_line_contact_move"},
             {"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},

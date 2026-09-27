@@ -1011,31 +1011,52 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
     };
     // Unique current outer-body support can retain a finger across candidate
     // ID churn. Completed contacts can never be revived by this association.
+    const auto held_support=[&](const GameTarget& t) {
+        return t.note.kind==NoteKind::hold&&t.note.rails_geometry&&t.note.head_on_line&&t.samples>0&&
+            t.evidence_ns==s.context.capture_ns&&t.expires_ns>clock_.now_ns()&&
+            t.reason!="association_ambiguous"&&t.reason!="line_unobservable"&&
+            t.reason!="multiple_line_association_unvalidated";
+    };
+    const auto compatible_body=[](const Identity& id,const GameTarget& t) {
+        const auto& prior=id.last_note;
+        const double alignment=std::abs(prior.tangent.x*t.note.tangent.x+prior.tangent.y*t.note.tangent.y);
+        const Vec2 delta{t.note.center.x-prior.center.x,t.note.center.y-prior.center.y};
+        return (!id.line_id||!t.line_id||id.line_id==t.line_id)&&alignment>=.98&&
+            std::abs(prior.width-t.note.width)<=std::max(4.0,prior.width*.12)&&
+            std::abs(delta.x*t.note.tangent.x+delta.y*t.note.tangent.y)<=std::min(48.0,prior.width*.3)&&
+            std::abs(-delta.x*t.note.tangent.y+delta.y*t.note.tangent.x)<=48;
+    };
     std::set<std::uint64_t> claimed;
-    for(const auto& t:s.targets) if(identities_.contains(t.note_id)) claimed.insert(t.note_id);
-    for(auto& t:s.targets) {
+    std::vector<bool> ignored(s.targets.size());
+    for(const auto& t:s.targets) if(identities_.contains(t.note_id)&&held_support(t)) claimed.insert(t.note_id);
+    for(std::size_t ti=0;ti<s.targets.size();++ti) {
+        auto& t=s.targets[ti];
         if(const auto alias=contact_aliases_.find(t.note_id);alias!=contact_aliases_.end()) {
-            t.note_id=alias->second;claimed.insert(t.note_id);continue;
+            alias->second.last_seen_ns=s.context.capture_ns;
+            const auto key=alias->second.owner;const auto owner=identities_.find(key);
+            const auto cursor=owner==identities_.end()?decltype(scheduler_.executed_steps(0)){}:
+                scheduler_.executed_steps(owner->second.intent);
+            // Aliases are identity hints, never a substitute for CURRENT
+            // support. Invalid duplicate descriptions must not cancel the
+            // independently visible owner, nor become a fresh Down.
+            if(owner==identities_.end()||!cursor||*cursor<=owner->second.plan.prefix_offset||
+               claimed.contains(key)||!held_support(t)||!compatible_body(owner->second,t)||
+               clock_.now_ns()-owner->second.plan.evidence_ns>=60'000'000) {
+                ignored[ti]=true;continue;
+            }
+            for(std::size_t oi=0;oi<s.targets.size();++oi)
+                if(oi!=ti&&s.targets[oi].note_id==key&&!held_support(s.targets[oi]))ignored[oi]=true;
+            t.note_id=key;claimed.insert(key);continue;
         }
         const auto prior_candidate=identities_.find(t.note_id);
         const bool submitted_candidate=prior_candidate!=identities_.end()&&prior_candidate->second.submitted;
-        if(submitted_candidate||t.note.kind!=NoteKind::hold||!t.note.rails_geometry||
-           !t.note.head_on_line||t.samples<=0||t.evidence_ns!=s.context.capture_ns||
-           t.reason=="association_ambiguous"||t.reason=="line_unobservable"||
-           t.reason=="multiple_line_association_unvalidated") continue;
+        if(submitted_candidate||!held_support(t)) continue;
         std::uint64_t sole=0;bool ambiguous=false;
         for(const auto& [key,id]:identities_) {
             const auto cursor=scheduler_.executed_steps(id.intent);
             if(claimed.contains(key)||id.kind!=NoteKind::hold||!id.submitted||!cursor||
                *cursor<=id.plan.prefix_offset||id.hold_tail_release_ns||!id.last_note.rails_geometry||
-               clock_.now_ns()-id.plan.evidence_ns>=60'000'000||
-               (id.line_id&&t.line_id&&id.line_id!=t.line_id)) continue;
-            const auto& prior=id.last_note;
-            const double alignment=std::abs(prior.tangent.x*t.note.tangent.x+prior.tangent.y*t.note.tangent.y);
-            const Vec2 delta{t.note.center.x-prior.center.x,t.note.center.y-prior.center.y};
-            if(alignment<.98||std::abs(prior.width-t.note.width)>std::max(4.0,prior.width*.12)||
-               std::abs(delta.x*t.note.tangent.x+delta.y*t.note.tangent.y)>std::min(48.0,prior.width*.3)||
-               std::abs(-delta.x*t.note.tangent.y+delta.y*t.note.tangent.x)>48) continue;
+               clock_.now_ns()-id.plan.evidence_ns>=60'000'000||!compatible_body(id,t)) continue;
             if(sole){ambiguous=true;break;}sole=key;
         }
         if(sole&&!ambiguous) {
@@ -1046,12 +1067,16 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             // Previously observed but unsubmitted candidates have no finger
             // to preserve. They can become a new description of this contact.
             identities_.erase(candidate);
-            contact_aliases_[candidate]=sole;t.note_id=sole;claimed.insert(sole);
+            for(std::size_t oi=0;oi<s.targets.size();++oi)
+                if(oi!=ti&&s.targets[oi].note_id==sole&&!held_support(s.targets[oi]))ignored[oi]=true;
+            contact_aliases_[candidate]={sole,s.context.capture_ns};t.note_id=sole;claimed.insert(sole);
             coverage_updates_.push_back({{"event","game_hold_contact_reassociated"},{"note_id",sole},
                 {"candidate_note_id",candidate},{"source_frame",s.context.frame},
                 {"evidence_ns",t.evidence_ns},{"basis","unique_current_outer_body"},{"game_effect","unknown"}});
         }
     }
+    std::size_t target_index=0;
+    std::erase_if(s.targets,[&](const auto&){return ignored[target_index++];});
     const auto visible_tail_passed=[&](const GameTarget& t) {
         if(t.note.kind!=NoteKind::hold||!t.note.tail||!t.note.rails_geometry||t.samples<=0||
            t.evidence_ns!=s.context.capture_ns||t.reason=="association_ambiguous"||
@@ -1179,7 +1204,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
     std::erase_if(identities_,[&](const auto& e) {
         return !visible.contains(e.first)&&clock_.now_ns()>=e.second.expires;
     });
-    std::erase_if(contact_aliases_,[&](const auto& alias){return !identities_.contains(alias.second);});
+    std::erase_if(contact_aliases_,[&](const auto& alias){return s.context.capture_ns-alias.second.last_seen_ns>=100'000'000;});
     for(const auto& t:s.targets) {
         auto found=identities_.find(t.note_id);
         if(found==identities_.end()) {
@@ -1442,7 +1467,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::map<std::string,std::vector<double>> contact_durations,down_lateness;
     std::uint64_t intent_evidence_evictions=0;
     std::uint64_t latest_intent=0;
-    std::vector<double> processing,uncertainty,residual,intervals,down_skew;
+    std::vector<double> processing,uncertainty,residual,intervals,playing_intervals,down_skew;
+    bool previous_playing=false;
     std::vector<double> actual_lateness,rpc_duration;
     std::vector<double> future_down_lateness,already_past_down_lateness;
     std::vector<double> predicted_deadline_down_lateness;
@@ -1479,7 +1505,11 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                 if(t-it->second.last>200'000'000) {finish_track(it->second);it=observed_tracks.erase(it);}
                 else ++it;
             }
-            if(previous&&t>previous) sample(intervals,(t-previous)/1e6); previous=t;
+            if(previous&&t>previous) {
+                sample(intervals,(t-previous)/1e6);
+                if(previous_playing&&playing)sample(playing_intervals,(t-previous)/1e6);
+            }
+            previous=t;previous_playing=playing;
             sample(processing,(e.at("recognition_end_ns").get<Nanoseconds>()-
                                e.at("recognition_start_ns").get<Nanoseconds>())/1e6);
             for(const auto& target:e.at("targets")) {
@@ -1647,6 +1677,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         {"contact_conflict_semantics","journal-order successful RPC receipts reconstruct local contacts; game effect and true simultaneous note count remain unknown; owner revoke clears local history"},
         {"game_rpc_duration_ms",distribution(rpc_duration)},
         {"capture_interval_ms",distribution(intervals)},{"recognition_duration_ms",distribution(processing)},
+        {"playing_capture_interval_ms",distribution(playing_intervals)},
+        {"playing_interval_scope","consecutive decisions with playing_gate=true; real gaps across epoch are included"},
         {"prediction_uncertainty_ms",distribution(uncertainty)},{"prediction_residual_px",distribution(residual)},
         {"dry_equal_deadline_down_skew_ms",distribution(down_skew)},
         {"distribution_sample_cap",100000},{"per_note_feedback","unknown"},{"gameplay_validated",false},
