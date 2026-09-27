@@ -189,13 +189,13 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         file<<json{{"schema_version",3},{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"config",config.public_json},
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
-            {"dry_owner",!assist},{"game_observer_version",29},{"game_diagnostics_version",3},
+            {"dry_owner",!assist},{"game_observer_version",30},{"game_diagnostics_version",3},
             {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
             {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
             {"executable_sha256",sha256_file(executable)},
-            {"game_planner_version",9},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
-            {"hold_normal_release_basis","current_visible_tail_crossed_line"},
-            {"drag_coverage_position_basis","current_note_region_30_percent_half_width_cap48px"},
+            {"game_planner_version",10},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
+            {"hold_normal_release_basis","consecutive_current_tail_passed_10ms_then_20ms_release"},
+            {"drag_coverage_position_basis","current_region_deadzone_and_same_line_contact_move"},
             {"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},
             {"drag_shared_contact","fresh_colocated_drag_extends_existing_active_contact_only"},
             {"game_enabled_types_mask",config.game_type_mask},{"game_lead_ms",config.game_lead_ms},
@@ -464,6 +464,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                         throw std::runtime_error("auto-start intent rejected: "+notice.reason);
                     }
                 }
+                for(auto event:owner.take_coverage_updates()) {event["real_input"]=assist;record(std::move(event));}
                 for(const auto& notice:owner.scheduler().take_notices())
                     record({{"event","scheduler_rejection"},{"intent_id",notice.intent_id},
                             {"reason",notice.reason},{"monotonic_ns",notice.monotonic_ns}});

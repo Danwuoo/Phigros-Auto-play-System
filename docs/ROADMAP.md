@@ -1,5 +1,7 @@
 # 開發路線圖
 
+最新使用者要求已恢復自主實作與實戰。observer30／planner10 正在驗證外框續接、接觸身份及移動跟隨；先達同一凍結版本至少連續三次 HD AP，再研究 IN AP。這取代下方「首次 AP 即進 IN」與停止等候的舊門檻，單次成功不算穩定；目前尚未達標。
+
 使用者後續補充遊戲可四／五指、Hold須整條結束、連續黃色Drag可持續接觸。source `59c92bf` 的planner9與5-contact profile已實作；後端能力核對及測試見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。這是另有使用者依據的動作修正，沒有採用T1／T2或模型；新遊戲策略仍待實戰，HD AP未完成。
 
 2026-09-27 [追蹤對照](TRACKING_COMPARISON_20260927.md) 與 [資料準備](VISION_DATASET_20260927.md) 已完成 P1／P2 工具及138項三配置回歸，P3 已有原生連續 ROI 與少量 proposed masks，P4 已取得同候選合成／實戰 bank 分布。缺獨立標註真值，保持 T0；完整pipeline／line identity／人工覆核及足量有效資料仍 pending。模型訓練／推論不在本輪，HD AP未達成，不能把採樣／shadow視為遊戲能力驗收。

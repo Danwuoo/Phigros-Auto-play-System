@@ -97,17 +97,31 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
         target.reason=ambiguous?"association_ambiguous":"line_unobservable";
         const LineCandidate* selected=nullptr;
         for(const auto& line:out.lines) {
+            if(!line.association_valid)continue;
             if(std::abs(line.tangent.x*n.tangent.x+line.tangent.y*n.tangent.y)<.95||line.length<out.context.width*.32) continue;
-            if(std::abs(n.center.x-line.center.x)>line.length/2+n.width) continue;
+            if(std::abs((n.center.x-line.center.x)*line.tangent.x+
+                        (n.center.y-line.center.y)*line.tangent.y)>line.length/2+n.width) continue;
+            if(!match->points.empty()&&line.track_id&&match->points.back().line.track_id==line.track_id) {
+                selected=&line;break;
+            }
             if(!selected||line.confidence>selected->confidence||
                (line.confidence==selected->confidence&&line.length>selected->length)) selected=&line;
         }
-        if(!selected&&out.lines.size()==1) selected=&out.lines.front();
+        if(!selected&&out.lines.size()==1&&out.lines.front().association_valid) selected=&out.lines.front();
         if(selected&&!ambiguous) {
             const auto& l=*selected;
             const auto latest_distance=normal_distance(target.note.center,l);
+            target.line_id=l.track_id;target.distance=latest_distance;
             target.hit={target.note.center.x+latest_distance*l.tangent.y,
                         target.note.center.y-latest_distance*l.tangent.x};
+            if(!match->points.empty()) {
+                const auto& prior=match->points.back();const double dt=(now-prior.t)/1e9;
+                if(dt>0&&(!l.track_id||prior.line.track_id==l.track_id)) {
+                    const double old_d=normal_distance(prior.p,prior.line);
+                    const Vec2 old_hit{prior.p.x+old_d*prior.line.tangent.y,prior.p.y-old_d*prior.line.tangent.x};
+                    target.hit_velocity={(target.hit.x-old_hit.x)/dt,(target.hit.y-old_hit.y)/dt};
+                } else match->points.clear();
+            }
             const GameTrackPoint point{now,target.note.center,l,target.note.tail,target.note.rails_geometry};
             // A delivery burst must not evict the complete temporal baseline.
             // Keep the newest point in each bounded, host-clock 10 ms bucket.
@@ -174,7 +188,7 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
 CandidateBatch make_candidate_batch(const DecisionSnapshot& s,const Frame& f,
  const std::vector<NoteCandidate>& notes,const std::vector<std::optional<NoteCandidate>>& shortened,
  const std::vector<GameTrackHistory>& history) {
- CandidateBatch b;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
+ CandidateBatch b;b.extractor_version=30;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
  b.capacity_valid=s.capacity_valid;b.source_valid=f.source_valid;
  b.extraction_start_ns=s.recognition_start_ns;b.lines=s.lines;
  for(std::size_t i=0;i<notes.size();++i) {
@@ -214,7 +228,9 @@ json candidate_batch_json(const CandidateBatch& b){json cs=json::array(),ls=json
   {"quality",c.quality==ObservationQuality::strong_current?"strong_current":c.quality==ObservationQuality::weak_current?"weak_current":"rejected"},
   {"head_visible",c.head_visible},{"body_visible",c.body_visible},{"left_rail",c.left_rail},{"right_rail",c.right_rail},
   {"action_support",c.action_support},{"origin",c.origin},{"hint_source_frame",c.hint_source_frame},{"hint_age_ns",c.hint_age_ns}});
- for(const auto& l:b.lines)ls.push_back({{"center",vec(l.center)},{"tangent",vec(l.tangent)},{"length",l.length},{"thickness",l.thickness},{"confidence",l.confidence}});
+ for(const auto& l:b.lines)ls.push_back({{"center",vec(l.center)},{"tangent",vec(l.tangent)},{"length",l.length},{"thickness",l.thickness},{"confidence",l.confidence},
+   {"line_id",l.track_id},{"observed_ns",l.observed_ns},{"velocity",vec(l.velocity)},
+   {"angular_velocity",l.angular_velocity},{"association_valid",l.association_valid}});
  return {{"schema",1},{"extractor_version",b.extractor_version},{"quality_version",b.quality_version},{"history_source",b.history_source},
  {"context",{{"epoch",b.context.epoch},{"generation",b.context.generation},{"geometry",b.context.geometry},{"frame",b.context.frame},{"capture_ns",b.context.capture_ns},{"width",b.context.width},{"height",b.context.height},{"rotation",b.context.rotation}}},
  {"extraction_start_ns",b.extraction_start_ns},{"extraction_end_ns",b.extraction_end_ns},{"ui",name(b.ui)},
@@ -224,13 +240,17 @@ CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("sc
  const auto& c=j.at("context");b.context={c.at("epoch"),c.at("generation"),c.at("geometry"),c.at("frame"),c.at("capture_ns"),c.at("width"),c.at("height"),c.at("rotation")};
  if(b.context.width<2||b.context.height<2||b.context.width>4096||b.context.height>4096||b.context.capture_ns<0||b.context.rotation<0||b.context.rotation>3)throw std::invalid_argument("candidate context");
  b.extractor_version=j.at("extractor_version");b.quality_version=j.at("quality_version");b.history_source=j.at("history_source");
- if(b.extractor_version!=29||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
+ if((b.extractor_version!=29&&b.extractor_version!=30)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
  b.extraction_start_ns=j.at("extraction_start_ns");b.extraction_end_ns=j.at("extraction_end_ns");
  if(b.extraction_start_ns<0||b.extraction_end_ns<b.extraction_start_ns)throw std::invalid_argument("extraction time order");
  const auto ui=j.at("ui").get<std::string>();bool found=false;for(auto u:{GameUi::unknown,GameUi::menu,GameUi::loading,GameUi::playing,GameUi::paused,GameUi::result})if(ui==name(u)){b.ui=u;found=true;}
  if(!found)throw std::invalid_argument("candidate UI");b.playing_gate=j.at("playing_gate");b.capacity_valid=j.at("capacity_valid");b.source_valid=j.at("source_valid");
  if(j.at("lines").size()>16||j.at("candidates").size()>128)throw std::invalid_argument("candidate capacity");
  for(const auto& l:j.at("lines")){LineCandidate line{point(l.at("center")),point(l.at("tangent")),l.at("length"),l.at("thickness"),l.at("confidence")};
+  line.track_id=l.value("line_id",std::uint64_t{0});line.observed_ns=l.value("observed_ns",Nanoseconds{0});
+  if(l.contains("velocity"))line.velocity=point(l.at("velocity"));
+  line.angular_velocity=l.value("angular_velocity",0.0);line.association_valid=l.value("association_valid",true);
+  if(line.observed_ns<0||!std::isfinite(line.angular_velocity))throw std::invalid_argument("line motion metadata");
   if(!std::isfinite(line.length)||line.length<=0||!std::isfinite(line.thickness)||line.thickness<=0||!std::isfinite(line.confidence)||std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)>.01)throw std::invalid_argument("line geometry");b.lines.push_back(line);}
  std::set<std::uint64_t> ids;for(const auto& v:j.at("candidates")){TrackingCandidate t;t.candidate_id=v.at("candidate_id");
   if(!t.candidate_id||!ids.insert(t.candidate_id).second)throw std::invalid_argument("duplicate candidate id");t.note=parse_note(v.at("note"));

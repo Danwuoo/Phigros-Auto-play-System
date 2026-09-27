@@ -2,13 +2,13 @@
 
 原規劃日期：2026-09-26。2026-09-27 已開始 G0／G1 開發、UI-only 自動 PLAY，並依後续授權接入 G2 真實 assist；全曲能力及 AP 尚未驗收。現況及證據見文末與 [開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)，下列未落地的設計仍不能當作已有 API。
 
-依使用者最新方向，以 **Chapter Legacy → Glaciaxion HD → 首次 All Perfect → Glaciaxion IN** 推進。主程式直接用正版遊戲即時畫面研究，不另開大型簡單目標 Fixture 開發／量測階段。短小合成回歸與必要的既有觸控能力核對仍保留。
+依使用者最新方向，以 **Chapter Legacy → Glaciaxion HD 同版本至少連續三次 All Perfect → Glaciaxion IN 穩定 AP** 推進。使用者已授權自主實作、測試、除錯與 Computer Use 遊戲導航，不需每輪等候手動準備。主程式直接用正版遊戲即時畫面研究，不另開大型簡單目標 Fixture 開發／量測階段。短小合成回歸與必要的既有觸控能力核對仍保留。
 
 本計畫取代舊 M3–M7 的順序、三首歌曲前置要求、獨立 Fixture 閉環門檻及「AP 不在目標內」的範圍。原文保存於 [歷史計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN_LEGACY_20260925.md)。[擷取最後驗收](CAPTURE_FINAL_ACCEPTANCE_20260926.md)的歷史結果不改寫；其主程式接線缺口併入 G0。以下類別、參數與介面均為設計，不是現有 API 或已通過能力。
 
 ## 1. 目標與界線
 
-- 第一目標：Glaciaxion HD 整首由主程式依即時 pixels 操作，結算確認全 Perfect；首次成功即可轉 IN。連續三次 AP 僅為穩定性建議，不是新增的進階門檻。
+- 第一目標：Glaciaxion HD 整首由主程式依即時 pixels 操作，至少同一凍結版本連續三次結算全 Perfect；單次成功不算穩定。
 - 第二目標：同一套邏輯研究 Glaciaxion IN，繼續以 AP 為目標；IN 改善需回歸 HD，不拆成兩套歌曲腳本。
 - 曲名、章節及難度只作 run 標籤與結果核對，不輸入逐音符決策。不能讀譜面、遊戲記憶體、內部狀態、預錄按鍵，或以歌曲時間、BPM／節拍表、音訊補足操作。
 - 使用者手動登入、選曲、選難度及重新開始；主程式從畫面辨認遊玩與結算。自動導覽、解鎖、課題模式、完整 GUI 不在本輪範圍。

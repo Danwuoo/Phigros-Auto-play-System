@@ -1,6 +1,16 @@
 # 外框追蹤與持續接觸方案（2026-09-27）
 
-狀態：使用者停止兩輪測試後的具體設計，尚未修改runtime或啟用光流。使用者指出Drag漏接、Hold未結束即放開、線／Note移動不能跟隨，並建議Hold以外框續接、Drag模擬手指持續放在範圍內。本方案沿用五指、C++20單程序、固定擷取與pixels-only；不再啟動遊戲測試。
+最新狀態：使用者已重新授權自主實作、迭代、Computer Use 遊戲操作與實戰；HD 同版本至少連續三次 AP 後才進 IN。observer30／planner10 已加入當前灰階雙側外框、短尾端、接觸重新關聯、持續 Drag Move 與獨立 line ID；其餘配置回歸與遊戲驗證正在進行，尚未 AP。以下停止點是歷史紀錄，光流段仍為待評估設計，不能視為已接入。
+
+## 已實作資料契約
+
+首次凍結版本的 Release／Debug／無 suppressions ASan 各149／149通過，時長11.76／31.32／59.90秒；build、所有失敗與修正回歸原始紀錄已保留。五指 preflight fingerprint_matches=true。[驗證 metadata](OUTLINE_CONTACT_EVIDENCE_20260927.json)記錄環境、設定及 binary SHA256；實戰仍待測，不能據此宣稱性能改善或 AP。
+
+- `src/game_motion.cpp` 的 line tracker 上限16，90ms 歷史、100ms／場景切換清空，方向反轉正規化；近似競爭不強配。實際當前幾何不低通，只有法向平移可從無紋理線段識別。CandidateBatch extractor30 新增 line_id、observed_ns、velocity、angular_velocity、association_valid；讀取仍相容29。
+- 既有90ms Hold anchor只作搜尋初值；當前成對亮度 ridge、寬度、至少兩截面及近線連接才續接。不要求填色，不以歷史或光流刷新證據。尾端需當前封口，裁切／未見保持未知；短尾需兩側在封口下方延續且上方不延續，排除內部特效封口。兩次當前尾端過線、跨度至少10ms才鎖定20ms正常 release。
+- 既存 Hold 唯一外框匹配可將新候選接回原 contact，不重複 Down、不復活完成手指。Drag 同 line_id 的當前區域可持續接觸與移動；沿線死區最多48px、法向2px，真正離開區域時同 contact Move。新 Down 仍要求預測準入，五指容量與60／40／100ms期限保持。
+- 新增 `game_contact_cancelled`、`game_contact_up`、`game_hold_contact_reassociated` 診斷，分析另計尾端確認與釋放原因；均只表示本機觀测／執行，不代表遊戲判定。
+- 原始失敗、建置與回歸保留 `measurements/outline-contact-20260927/`。合成回歸新增灰色雙框／單側負例、短尾／內部封口負例、平移旋轉、多線重排、同指 Drag 跟隨、Hold 換候選不換手指與完成不復活；未將舊圖 proposed mask 當真值。
 
 ## 本輪停止點與確定缺口
 

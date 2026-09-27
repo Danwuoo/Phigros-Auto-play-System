@@ -1,5 +1,7 @@
 # Glaciaxion HD 階段驗收與新 task 交接
 
+最新授權覆蓋下方的停止／手動準備限制：自主開發与 Computer Use 重試已恢復，observer30／planner10 的外框、接觸身份與移動跟隨正在驗證，詳見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。HD 同版本至少連續三次 AP 才進 IN，目前未達標。
+
 ## 最新動作修正（source59c92bf／planner9）
 
 使用者補充四／五指及持續接觸語義後，新增五指profile、實测容量門控、Hold當前可見尾端過線後正常Up，以及連續Drag覆蓋相同contact。Release／Debug／嚴格ASan各142／142；當前Native Fixture四／五指各30次、五指全部取消30次通過，新capability `max_contacts_verified=5`、五指profile preflight指紋相符。完整設定／hash／分布見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)及[metadata](GAME_ACTION_EVIDENCE_20260927.json)。Phigros已帶回前景，沒有新遊戲輸入；使用者準備PLAY後才啟動下一輪HD。observer29仍T0、不接模型，新Hold／Drag遊戲效果尚待驗證，灰色漏辨／身份重生仍未解決，HD AP未通過。

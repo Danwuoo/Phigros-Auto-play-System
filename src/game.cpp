@@ -1,5 +1,6 @@
 #include "pas/game.hpp"
 #include "pas/game_tracking.hpp"
+#include "pas/game_motion.hpp"
 #include "pas/analysis.hpp"
 #include <algorithm>
 #include <cmath>
@@ -435,7 +436,7 @@ std::optional<Vec2> song_play_button(const Frame& f) {
     return Vec2{sx/count,sy/count};
 }
 }
-void GameObserver::reset() {tracks_.clear(); playing_confirmations_=0; menu_confirmations_=0; previous_={};}
+void GameObserver::reset() {tracks_.clear();line_tracker_.reset(); playing_confirmations_=0; menu_confirmations_=0; previous_={};}
 
 bool ComboVisibilityDiagnostic::observe(const DecisionSnapshot& s) {
     const auto gap=s.context.capture_ns-previous_.capture_ns;
@@ -595,15 +596,28 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             continue;
         }
         const double minimum_width=f.width*(c.color==3?.018:.04);
+        const bool aligned_ribbon=major>5*std::max(1.0,minor)&&
+            std::any_of(out.lines.begin(),out.lines.end(),[&](const auto& l){
+                return (l.confidence>=.8||l.length>=f.width*.5)&&
+                    std::abs(l.tangent.x*std::cos(theta)+l.tangent.y*std::sin(theta))>.95;
+            });
+        const double observed_width=aligned_ribbon?major*std::sqrt(12.0)+2:w;
         if(c.color==2&&major<5*std::max(1.0,minor)) continue; // Rings/body borders are not Drag ribbons.
-        if(c.color==4||center.y<f.height*.10 || w<minimum_width||w>f.width*.20||
+        if(c.color==4||center.y<f.height*.10 || observed_width<minimum_width||observed_width>f.width*.20||
            h<4 || h>f.height*.75 || c.count*4<w*h*.13) continue;
         if(notes.size()==128) {out.capacity_valid=false; continue;}
         NoteKind kind=c.color==2?NoteKind::drag:c.color==3?NoteKind::flick:
             h>w*.65?NoteKind::hold:NoteKind::tap;
+        // A rotated thin blue ribbon has a tall SCREEN bbox. Determine its
+        // local thickness before interpreting that bbox as a Hold body.
+        if(c.color==1&&aligned_ribbon)kind=NoteKind::tap;
         if(kind==NoteKind::tap&&major<5*std::max(1.0,minor)) continue;
         NoteCandidate candidate{{(c.x0+c.x1)/2.0,(c.y0+c.y1)/2.0},kind,w,h,.55};
         candidate.tangent={std::cos(theta),std::sin(theta)};
+        if(kind==NoteKind::tap&&std::abs(candidate.tangent.y)>.4) {
+            candidate.center=center;candidate.width=major*std::sqrt(12.0)+2;
+            candidate.height=minor*std::sqrt(12.0)+2;
+        }
         if(kind==NoteKind::hold) {
             Vec2 axis{std::cos(theta),std::sin(theta)};
             const LineCandidate* main=nullptr;
@@ -629,6 +643,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         }
         notes.push_back(candidate);
     }
+    line_tracker_.update(out.lines,out.context);
     // A white/yellow Flick arrow interrupts its red ribbon into two cores.
     // Require that visible central vertical marker before joining fragments.
     for(std::size_t i=0;i<notes.size();++i) for(std::size_t j=i+1;j<notes.size();) {
@@ -804,6 +819,30 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         const bool recent_rails=track.rail_anchor&&now-track.rail_observed<=90'000'000;
         auto note=recent_rails?*track.rail_anchor:track.appearance;
         if(note.width<f.width*.04) continue;
+        const LineCandidate* outline_line=nullptr;
+        if(recent_rails&&note.head_on_line) for(const auto& current:out.lines) {
+            if(!current.association_valid||std::abs(current.tangent.x*note.tangent.x+
+               current.tangent.y*note.tangent.y)<.95)continue;
+            const bool prior_line=!track.points.empty()&&track.points.back().line.track_id==current.track_id;
+            if(!outline_line||prior_line)outline_line=&current;
+            if(prior_line)break;
+        }
+        if(outline_line) if(auto outer=observe_held_outline(f,note,*outline_line)) {
+            outer->recent_identity=track.id;
+            std::erase_if(notes,[&](const NoteCandidate& other){
+                if(other.recent_identity&&other.recent_identity!=track.id)return false;
+                if(other.kind==NoteKind::hold)
+                    return std::abs(other.width-outer->width)<20&&distance(other.center,outer->center)<48;
+                if(other.kind!=NoteKind::tap||other.height<12+std::abs(outer->tangent.y)*other.width)return false;
+                const Vec2 delta{other.center.x-outer->center.x,other.center.y-outer->center.y};
+                const double along=delta.x*outer->tangent.x+delta.y*outer->tangent.y,
+                    across=-delta.x*outer->tangent.y+delta.y*outer->tangent.x;
+                return std::abs(along)+other.width*.5<=outer->width*.5+16&&
+                    across>=-outer->height-8&&across<=12;
+            });
+            if(notes.size()==128){out.capacity_valid=false;break;}
+            notes.push_back(*outer);continue;
+        }
         const LineCandidate* line=nullptr;
         for(const auto& candidate:out.lines) if(candidate.confidence>=.8&&candidate.length>=f.width*.8&&
             std::abs(candidate.tangent.x*note.tangent.x+
@@ -930,7 +969,8 @@ std::vector<nlohmann::json> GamePlanOwner::take_coverage_updates() {
 std::vector<nlohmann::json> GamePlanOwner::take_plan_cancellations() {
     auto result=std::move(plan_cancellations_);plan_cancellations_.clear();return result;
 }
-std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
+std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming) {
+    auto s=incoming; // <=128 current observations; aliases never change observer history.
     std::vector<TouchReceipt> receipts;
     if(s.sequence<=last_snapshot_) {last_rejection_="snapshot_order"; return receipts;}
     if(s.context.epoch<epoch_ || (s.context.epoch==epoch_&&
@@ -939,7 +979,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     }
     last_snapshot_=s.sequence;
     if(!same_geometry(context_,s.context)) {
-        scheduler_.cancel("scene_context_changed"); identities_.clear();
+        scheduler_.cancel("scene_context_changed"); identities_.clear(); contact_aliases_.clear();
         epoch_=s.context.epoch; context_=s.context;
     }
     const bool fresh=s.context.capture_ns<=clock_.now_ns()&&
@@ -947,6 +987,56 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     if(!scheduler_.set_context(epoch_,s.context.generation,s.context.geometry,
         s.playing_gate&&s.capacity_valid&&fresh,s.context.capture_ns)) return receipts;
     if(!s.playing_gate||!s.capacity_valid||!fresh) {last_rejection_="gate_invalid"; return receipts;}
+    const auto cancel_contact=[&](std::uint64_t note_id,Identity& id,const std::string& reason) {
+        const auto cursor=scheduler_.executed_steps(id.intent);
+        if(cursor) {
+            if(plan_cancellations_.size()>=128) throw std::runtime_error("contact cancellation diagnostic capacity");
+            plan_cancellations_.push_back({{"event","game_contact_cancelled"},{"note_id",note_id},
+                {"intent_id",id.intent},{"kind",name(id.kind)},{"reason",reason},
+                {"source_frame",s.context.frame},{"cancel_ns",clock_.now_ns()},
+                {"last_evidence_ns",id.plan.evidence_ns},{"executed_steps",*cursor},
+                {"contact_started",*cursor>id.plan.prefix_offset},{"game_effect","unknown"}});
+        }
+        auto canceled=scheduler_.cancel_intent(id.intent);
+        receipts.insert(receipts.end(),canceled.begin(),canceled.end());
+    };
+    // Unique current outer-body support can retain a finger across candidate
+    // ID churn. Completed contacts can never be revived by this association.
+    std::set<std::uint64_t> claimed;
+    for(const auto& t:s.targets) if(identities_.contains(t.note_id)) claimed.insert(t.note_id);
+    for(auto& t:s.targets) {
+        if(const auto alias=contact_aliases_.find(t.note_id);alias!=contact_aliases_.end()) {
+            t.note_id=alias->second;claimed.insert(t.note_id);continue;
+        }
+        if(identities_.contains(t.note_id)||t.note.kind!=NoteKind::hold||!t.note.rails_geometry||
+           !t.note.head_on_line||t.samples<=0||t.evidence_ns!=s.context.capture_ns||
+           t.reason=="association_ambiguous"||t.reason=="line_unobservable"||
+           t.reason=="multiple_line_association_unvalidated") continue;
+        std::uint64_t sole=0;bool ambiguous=false;
+        for(const auto& [key,id]:identities_) {
+            const auto cursor=scheduler_.executed_steps(id.intent);
+            if(claimed.contains(key)||id.kind!=NoteKind::hold||!id.submitted||!cursor||
+               *cursor<=id.plan.prefix_offset||id.hold_tail_release_ns||!id.last_note.rails_geometry||
+               clock_.now_ns()-id.plan.evidence_ns>=60'000'000||
+               (id.line_id&&t.line_id&&id.line_id!=t.line_id)) continue;
+            const auto& prior=id.last_note;
+            const double alignment=std::abs(prior.tangent.x*t.note.tangent.x+prior.tangent.y*t.note.tangent.y);
+            const Vec2 delta{t.note.center.x-prior.center.x,t.note.center.y-prior.center.y};
+            if(alignment<.98||std::abs(prior.width-t.note.width)>std::max(4.0,prior.width*.12)||
+               std::abs(delta.x*t.note.tangent.x+delta.y*t.note.tangent.y)>std::min(48.0,prior.width*.3)||
+               std::abs(-delta.x*t.note.tangent.y+delta.y*t.note.tangent.x)>48) continue;
+            if(sole){ambiguous=true;break;}sole=key;
+        }
+        if(sole&&!ambiguous) {
+            if(contact_aliases_.size()>=128||coverage_updates_.size()>=128) {
+                last_rejection_="contact_alias_capacity";continue;
+            }
+            const auto candidate=t.note_id;contact_aliases_[candidate]=sole;t.note_id=sole;claimed.insert(sole);
+            coverage_updates_.push_back({{"event","game_hold_contact_reassociated"},{"note_id",sole},
+                {"candidate_note_id",candidate},{"source_frame",s.context.frame},
+                {"evidence_ns",t.evidence_ns},{"basis","unique_current_outer_body"},{"game_effect","unknown"}});
+        }
+    }
     const auto visible_tail_passed=[&](const GameTarget& t) {
         if(t.note.kind!=NoteKind::hold||!t.note.tail||!t.note.rails_geometry||t.samples<=0||
            t.evidence_ns!=s.context.capture_ns||t.reason=="association_ambiguous"||
@@ -969,6 +1059,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     };
     const auto current_drag=[&](const GameTarget& t) {
         return t.note.kind==NoteKind::drag&&t.samples>0&&t.reason!="association_ambiguous"&&
+            t.reason!="line_unobservable"&&t.reason!="multiple_line_association_unvalidated"&&
             t.evidence_ns==s.context.capture_ns&&
             t.evidence_ns<=clock_.now_ns()&&clock_.now_ns()-t.evidence_ns<100'000'000&&
             t.expires_ns>clock_.now_ns()&&t.hit.x>=0&&t.hit.x<s.context.width&&
@@ -976,7 +1067,10 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     };
     const auto drag_release=[&](const GameTarget& t)->std::optional<Nanoseconds> {
         const auto now=clock_.now_ns();
-        if(!current_drag(t)||!t.crossing_ns||t.reason!="prediction_observe_only"||
+        if(!current_drag(t)) return {};
+        if(t.line_id&&std::abs(t.distance)<=std::max(8.0,t.note.height*.5+4))
+            return t.evidence_ns+100'000'000;
+        if(!t.crossing_ns||t.reason!="prediction_observe_only"||
            t.uncertainty_ns>options_.uncertainty_ns||*t.crossing_ns-now< -40'000'000||
            *t.crossing_ns-options_.lead_ns-now>60'000'000) return {};
         return std::max(*t.crossing_ns-options_.lead_ns,now+15'000'000)+75'000'000;
@@ -995,7 +1089,9 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         const double along=std::abs(dx*t.note.tangent.x+dy*t.note.tangent.y);
         const double across=std::abs(-dx*t.note.tangent.y+dy*t.note.tangent.x);
         const double half_region=std::max(2.0,std::min(48.0,t.note.width*.30));
-        if(along>half_region||across>2) return false;
+        if(along>half_region&&(!t.line_id||leader.line_id!=t.line_id||
+           along>std::max(48.0,t.note.width*.5))) return false;
+        if(across>2&&(!t.line_id||leader.line_id!=t.line_id||across>48)) return false;
         return true;
     };
     const auto refresh_drag=[&](Identity& leader,const GameTarget& t,bool attach) {
@@ -1004,17 +1100,36 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         if(attach&&*release-90'000'000>leader.plan.steps.back().due_ns) return false;
         auto plan=leader.plan;plan.revision++;plan.evidence_ns=t.evidence_ns;
         plan.source_frame_sequence=s.context.frame;
-        if(release) plan.steps.back().due_ns=std::max(plan.steps.back().due_ns,*release);
+        const auto cursor=scheduler_.executed_steps(leader.intent);
+        if(!cursor) return false;
+        const auto executed=static_cast<std::size_t>(*cursor-plan.prefix_offset);
+        const auto at=plan.steps.at(executed-1);
+        const auto release_due=release&&(attach||leader.shared_drag||t.line_id)?
+            std::max(plan.steps.back().due_ns,*release):plan.steps.back().due_ns;
+        const double dx=t.hit.x-at.x,dy=t.hit.y-at.y;
+        const double along=std::abs(dx*t.note.tangent.x+dy*t.note.tangent.y);
+        const double across=std::abs(-dx*t.note.tangent.y+dy*t.note.tangent.x);
+        if(along>std::max(2.0,std::min(48.0,t.note.width*.3))||across>2) {
+            plan.steps.resize(executed);
+            plan.steps.push_back({Phase::move,t.hit.x,t.hit.y,clock_.now_ns()});
+            plan.steps.push_back({Phase::up,t.hit.x,t.hit.y,std::max(clock_.now_ns(),release_due)});
+        } else plan.steps.back().due_ns=release_due;
+        if(executed>1) {
+            plan.steps.erase(plan.steps.begin(),plan.steps.begin()+static_cast<std::ptrdiff_t>(executed-1));
+            plan.prefix_offset+=executed-1;
+        }
         if(!scheduler_.submit(plan)) return false;
-        leader.plan=plan;
+        leader.plan=plan;leader.line_id=t.line_id;leader.last_note=t.note;
         if(accepted_plans_.size()>=256) throw std::runtime_error("accepted plan diagnostic capacity");
         accepted_plans_.push_back(std::move(plan));return true;
     };
     std::set<std::uint64_t> group_seen,group_alive;
     for(const auto& t:s.targets) {
         const auto member=identities_.find(t.note_id);if(member==identities_.end()) continue;
+        const auto progress=scheduler_.executed_steps(member->second.intent);
+        if(!progress||*progress<=member->second.plan.prefix_offset) continue;
         const auto leader_id=member->second.drag_leader?member->second.drag_leader:
-            member->second.shared_drag?t.note_id:0;
+            member->second.kind==NoteKind::drag?t.note_id:0;
         if(!leader_id) continue;
         group_seen.insert(leader_id);
         const auto leader=identities_.find(leader_id);
@@ -1043,13 +1158,13 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         (identity.shared_drag?!group_alive.contains(id):!visible.contains(id))) {
         const auto grace=identity.kind==NoteKind::hold?60'000'000:identity.kind==NoteKind::flick?75'000'000:40'000'000;
         if(!group_seen.contains(id)&&clock_.now_ns()-identity.plan.evidence_ns<grace) continue;
-        auto canceled=scheduler_.cancel_intent(identity.intent);
-        receipts.insert(receipts.end(),canceled.begin(),canceled.end());
+        cancel_contact(id,identity,"current_object_missing_or_region_lost");
     }
     // Keep bounded retirement evidence beyond the observer's occlusion window.
     std::erase_if(identities_,[&](const auto& e) {
         return !visible.contains(e.first)&&clock_.now_ns()>=e.second.expires;
     });
+    std::erase_if(contact_aliases_,[&](const auto& alias){return !identities_.contains(alias.second);});
     for(const auto& t:s.targets) {
         auto found=identities_.find(t.note_id);
         if(found==identities_.end()) {
@@ -1063,8 +1178,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
             if(!cursor) continue;
             if(t.expires_ns<=clock_.now_ns()||t.reason=="association_ambiguous"||
                t.evidence_ns<id.plan.evidence_ns||t.samples==0) {
-                auto canceled=scheduler_.cancel_intent(id.intent);
-                receipts.insert(receipts.end(),canceled.begin(),canceled.end());
+                cancel_contact(t.note_id,id,t.reason=="association_ambiguous"?"identity_ambiguous":
+                    t.samples==0?"current_geometry_unsupported":"target_evidence_invalid");
                 continue;
             }
             // An unexecuted Down must not inherit a deadline explicitly
@@ -1113,6 +1228,10 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
                     plan.steps.push_back({Phase::move,t.hit.x,t.hit.y,clock_.now_ns()});
                 const auto limit=t.evidence_ns+100'000'000;
                 if(!id.hold_tail_release_ns&&visible_tail_passed(t)) {
+                    if(!id.tail_first_pass_ns) id.tail_first_pass_ns=t.evidence_ns;
+                } else if(!id.hold_tail_release_ns) id.tail_first_pass_ns.reset();
+                if(!id.hold_tail_release_ns&&id.tail_first_pass_ns&&
+                   t.evidence_ns-*id.tail_first_pass_ns>=10'000'000) {
                     id.hold_tail_release_ns=t.evidence_ns+20'000'000;
                     if(coverage_updates_.size()>=128) throw std::runtime_error("hold tail diagnostic capacity");
                     coverage_updates_.push_back({{"event","game_hold_tail_confirmed"},{"note_id",t.note_id},
@@ -1129,7 +1248,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
                 }
             }
             if(scheduler_.submit(plan)) {
-                id.plan=plan;
+                id.plan=plan;id.last_note=t.note;id.line_id=t.line_id;
                 if(accepted_plans_.size()>=256) throw std::runtime_error("accepted plan diagnostic capacity");
                 accepted_plans_.push_back(std::move(plan));
             }
@@ -1194,6 +1313,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
         plan.note_id=t.note_id; plan.generation=s.context.generation; plan.geometry_version=s.context.geometry;
         plan.predicted_down_ns=predicted_due-(t.note.kind==NoteKind::drag?15'000'000:0);
         id.submitted=scheduler_.submit(plan); id.kind=t.note.kind; id.plan=plan;
+        id.last_note=t.note;id.line_id=t.line_id;
         if(id.submitted) {
             if(accepted_plans_.size()>=256) throw std::runtime_error("accepted plan diagnostic capacity");
             accepted_plans_.push_back(std::move(plan));
@@ -1202,7 +1322,22 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& s) {
     }
     return receipts;
 }
-std::vector<TouchReceipt> GamePlanOwner::poll() {return scheduler_.run_due();}
+std::vector<TouchReceipt> GamePlanOwner::poll() {
+    auto receipts=scheduler_.run_due();
+    for(const auto& r:receipts) if(r.command.phase==Phase::up) {
+        for(const auto& [note,id]:identities_) if(id.intent==r.command.intent_id&&!id.drag_leader) {
+            if(coverage_updates_.size()>=128)throw std::runtime_error("contact Up diagnostic capacity");
+            const auto reason=clock_.now_ns()-id.plan.evidence_ns>=100'000'000?"target_evidence_expired":
+                id.hold_tail_release_ns&&clock_.now_ns()>=*id.hold_tail_release_ns?"visible_tail_completed":"contact_window_completed";
+            coverage_updates_.push_back({{"event","game_contact_up"},{"note_id",note},{"intent_id",id.intent},
+                {"kind",name(id.kind)},{"reason",reason},{"last_evidence_ns",id.plan.evidence_ns},
+                {"source_frame",r.command.source_frame_sequence},{"scheduled_ns",r.command.scheduled_ns},
+                {"injection_return_ns",r.injection_return_ns},{"success",r.success},{"game_effect","unknown"}});
+            break;
+        }
+    }
+    return receipts;
+}
 void GamePlanOwner::stop() {scheduler_.request_stop(); scheduler_.run_due(); scheduler_.cancel("runtime_stop");}
 
 std::optional<ContactPlan> PlayButtonPlanner::take(const DecisionSnapshot& s,Nanoseconds now) {
@@ -1223,12 +1358,15 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
     using nlohmann::json;
     json lines=json::array(),targets=json::array();
     for(const auto& l:s.lines) lines.push_back({{"x",l.center.x},{"y",l.center.y},
-        {"ux",l.tangent.x},{"uy",l.tangent.y},{"length",l.length},{"confidence",l.confidence}});
+        {"ux",l.tangent.x},{"uy",l.tangent.y},{"length",l.length},{"confidence",l.confidence},
+        {"line_id",l.track_id},{"observed_ns",l.observed_ns},{"association_valid",l.association_valid},
+        {"vx",l.velocity.x},{"vy",l.velocity.y},{"angular_velocity",l.angular_velocity}});
     for(const auto& t:s.targets) targets.push_back({{"note_id",t.note_id},{"revision",t.revision},
         {"kind",name(t.note.kind)},{"x",t.note.center.x},{"y",t.note.center.y},
         {"width",t.note.width},{"height",t.note.height},{"evidence_ns",t.evidence_ns},
         {"expires_ns",t.expires_ns},{"crossing_ns",t.crossing_ns?json(*t.crossing_ns):json(nullptr)},
         {"uncertainty_ns",t.uncertainty_ns},{"hit_x",t.hit.x},{"hit_y",t.hit.y},
+        {"line_id",t.line_id},{"hit_vx",t.hit_velocity.x},{"hit_vy",t.hit_velocity.y},
         {"tail_crossing_ns",t.tail_crossing_ns?json(*t.tail_crossing_ns):json(nullptr)},
         {"tail_x",t.note.tail?json(t.note.tail->x):json(nullptr)},{"tail_y",t.note.tail?json(t.note.tail->y):json(nullptr)},
         {"observation_basis",t.note.direct_rails_evidence?"hold_current_parallel_rails_and_fill":
@@ -1271,6 +1409,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::uint64_t drag_coverage_updates=0,drag_coverage_with_known_contact=0;
     std::uint64_t pending_prediction_cancellations=0;
     std::map<std::string,std::uint64_t> pending_cancellation_reasons;
+    std::map<std::string,std::uint64_t> contact_cancellations,contact_ups;
+    std::uint64_t hold_tail_confirmations=0,hold_contact_reassociations=0;
     const auto describe_intent=[&](std::uint64_t intent) {
         json result={{"intent_id",intent},{"plan",nullptr},{"current_target",nullptr},
             {"target_capture_ns",latest_capture}};
@@ -1385,6 +1525,14 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             if(auto track=observed_tracks.find(e.at("note_id").get<std::uint64_t>());track!=observed_tracks.end()) {
                 track->second.accepted=true;track->second.covered=track->second.covered||known;
             }
+        } else if(event=="game_contact_cancelled") {
+            count(contact_cancellations,e.value("reason","unknown"));
+        } else if(event=="game_contact_up") {
+            count(contact_ups,e.value("reason","unknown"));
+        } else if(event=="game_hold_tail_confirmed") {
+            ++hold_tail_confirmations;
+        } else if(event=="game_hold_contact_reassociated") {
+            ++hold_contact_reassociations;
         } else if(event=="dry_touch_receipt") {
             ++dry;
             if(e.at("phase")==0) {
@@ -1472,6 +1620,10 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         {"drag_coverage_updates",drag_coverage_updates},{"drag_coverage_with_known_local_contact",drag_coverage_with_known_contact},
         {"pending_prediction_cancellations",pending_prediction_cancellations},
         {"pending_prediction_cancellations_by_reason",pending_cancellation_reasons},
+        {"contact_cancellations_by_reason",contact_cancellations},
+        {"contact_ups_by_reason",contact_ups},
+        {"hold_tail_confirmations",hold_tail_confirmations},
+        {"hold_contact_reassociations",hold_contact_reassociations},
         {"pending_cancellation_semantics","current pixels explicitly invalidate an unexecuted Down prediction; later valid pixels may retry, game effect remains unknown"},
         {"drag_coverage_semantics","fresh pixels share an already active local Drag contact; successful RPC history supports local coverage only, game judgment remains unknown"},
         {"contact_conflict_semantics","journal-order successful RPC receipts reconstruct local contacts; game effect and true simultaneous note count remain unknown; owner revoke clears local history"},

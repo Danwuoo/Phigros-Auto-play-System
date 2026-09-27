@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "status": "initial_implementation_live_pending",
+  "observer_version": 30,
+  "planner_version": 10,
+  "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
+  "profile": "configs/phigros-hd-assist-five-lead35.json",
+  "capability": "measurements/game-semantics-20260927/touch-five/summary.json",
+  "capability_sha256": "73dc5c94f1418a1e75bf4488871d27c849e0d6105adc79ec03c167ff672dbcd3",
+  "fingerprint_matches": true,
+  "tests": {
+    "windows-release": {"passed": 149, "total": 149, "seconds": 11.76},
+    "windows-debug": {"passed": 149, "total": 149, "seconds": 31.32},
+    "windows-asan": {"passed": 149, "total": 149, "seconds": 59.90, "suppressions": false}
+  },
+  "test_environment": "Windows 11 Pro 26200, Core Ultra 5 125H, 32GB, MSVC 19.51/v145, CMake VS18, x64 C++20; existing pinned vcpkg dependencies, third-party DLLs not ASan-instrumented",
+  "capture": "gRPC payload fast-memcpy RGB888 top-down 256KiB 1280x720 source_rotation=1 latest-only",
+  "touch": "gRPC 5 contacts 720x1280 rotation=90 timeout=100ms",
+  "clock": "host QPC monotonic ns",
+  "raw_root": "measurements/outline-contact-20260927",
+  "iterations": {"release_failures": [8, 2, 1, 2, 4, 0, 0], "final_tests": 149},
+  "live_runs": [],
+  "stable_hd_ap": false,
+  "stable_in_ap": false,
+  "stability_criterion": "at least three consecutive AP settlements on one frozen version before advancing from HD to IN",
+  "limitations": ["No optical flow or model yet", "Synthetic regression is not game judgment", "No verified performance gain before live measurement"]
+}

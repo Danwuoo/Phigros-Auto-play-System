@@ -21,6 +21,11 @@ struct SceneContext {
 struct LineCandidate {
     Vec2 center, tangent;
     double length = 0, thickness = 0, confidence = 0;
+    std::uint64_t track_id = 0;
+    Nanoseconds observed_ns = 0;
+    Vec2 velocity{};
+    double angular_velocity = 0;
+    bool association_valid = true;
 };
 struct NoteCandidate {
     Vec2 center;
@@ -46,6 +51,8 @@ struct GameTarget {
     int samples = 0;
     std::optional<Nanoseconds> tail_crossing_ns;
     Nanoseconds history_span_ns = 0;
+    std::uint64_t line_id = 0;
+    Vec2 hit_velocity{};
 };
 struct DecisionSnapshot {
     std::uint64_t sequence = 0;
@@ -128,6 +135,16 @@ private:
 // All thresholds are development hypotheses. The observer supplies pixel
 // evidence without injecting input. The runtime chooses dry or real transport.
 // History has <=128 tracks, <=6 points each, no retained frames.
+class GameLineTracker final {
+public:
+    void reset();
+    void update(std::vector<LineCandidate>& lines,const SceneContext& context);
+private:
+    struct Track {LineCandidate line;Nanoseconds time=0;};
+    std::vector<Track> tracks_;
+    SceneContext context_;
+    std::uint64_t next_id_=0;
+};
 class GameObserver final {
 public:
     explicit GameObserver(const Clock& clock) : clock_(clock) {}
@@ -143,6 +160,7 @@ private:
     int playing_confirmations_ = 0;
     int menu_confirmations_ = 0;
     CandidateBatch candidate_batch_;
+    GameLineTracker line_tracker_;
 };
 
 // Single-thread owner. Note identity is distinct from monotonically assigned
@@ -168,7 +186,10 @@ private:
     struct Identity { std::uint64_t intent, revision; Nanoseconds expires; bool submitted = false;
         NoteKind kind=NoteKind::ambiguous; ContactPlan plan;
         std::uint64_t drag_leader=0;bool shared_drag=false;
-        std::optional<Nanoseconds> hold_tail_release_ns; };
+        std::optional<Nanoseconds> hold_tail_release_ns;
+        NoteCandidate last_note; std::uint64_t line_id=0;
+        std::optional<Nanoseconds> tail_first_pass_ns; };
+    std::map<std::uint64_t,std::uint64_t> contact_aliases_;
     const Clock& clock_;
     ContactScheduler scheduler_;
     std::map<std::uint64_t, Identity> identities_;
