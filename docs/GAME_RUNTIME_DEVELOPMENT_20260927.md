@@ -392,4 +392,12 @@ raw SHA256 `d9533f1c244a78448994c9f60d48e8ed4cee40aed7908bd25149bb1a4201345b`。
 
 shadow processed10,018／skip0／fault空、沒有backend或Frame lease；bank首2048約40.35秒／drop7970，truth unknown／baseline_guided。同bank離線fake Down46／43／43，ID品質指標null；完整pipeline pending。停止後寫18clips136ROI（2diagnostic／8hard／4normal／4background）、8,971,945bytes、2.115秒，partial=false／truncated0。C++QA通過；五張visible-only proposed masks（clip0四圖＋clip15 gray body）／human0，其餘unannotated，training_ready=false。frame368有可見Hold但零candidate，369重複Hold描述、370effect附近Drag候選，仍支持優先補觀測。工具通過不代表gray Hold補辨或AP。
 
-本機原始資料在 `C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/game-assist/cpp-observe-17904941035800460/`、`measurements/vision-dataset-20260927/cpp-observe-17904941035800460/`；analysis／result／logs／環境在 `measurements/tracking-segmentation-20260927/`。每圖PNG SHA與context／ROI／binary／config provenance保留；raw圖為本機單份，未push／merge或清理。使用者允許再準備兩輪，等待各輪PLAY就緒後啟動，測試與優化留在本task。
+本機原始資料在 `C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/game-assist/cpp-observe-17904941035800460/`、`measurements/vision-dataset-20260927/cpp-observe-17904941035800460/`；analysis／result／logs／環境在 `measurements/tracking-segmentation-20260927/`。每圖PNG SHA與context／ROI／binary／config provenance保留；raw圖為本機單份，未push／merge或清理。使用者允許再準備兩輪後，逐輪PLAY已就緒才啟動，測試與優化留在本task。
+
+## 同版本第二／第三輪資料採樣完成
+
+`cpp-observe-17904949475779425`／`cpp-observe-17904951892485298` 均185秒、STOPPED／exit0、playing_seen=true；source／binary／lead35／兩指／diagnostics＋dataset＋T1shadow不变，曲中無其他capture／build/test／離線分析。input停止後一秒C++ capture核對第二815,153分、348／3／0／42、ACC89.05%、MaxCombo54、Early0／Late3；第三787,303分、336／6／0／51、ACC86.49%、MaxCombo35、Early0／Late6。皆未AP。來源cadence與每輪差異獨立記錄，不能將同版本波動當tracker效果。
+
+第二／第三消費frames10,151／9,620、gameplay957／953。capture p50／p95／p99／max=16.9856／35.312095／48.424792／324.6703ms（n10150）、17.5216／39.103590／52.135384／472.1912ms（n9619）；recognition=5.4263／7.47245／9.06985／17.2831ms、5.61335／8.13477／10.713055／21.1730ms。各2次source expiry revoke；shadow skip0／fault空／無backend，bank各首2048批、truth unknown。三方法fake Down第二45／41／41、第三51／43／43，正確性指標仍null；完整pipeline pending，保持T0。
+
+第二／第三各18clips136ROI、无截斷／partial／sampling fault。三輪54clips408ROI（dataset384＋diagnostics24），完整manifest原檔引用不複製圖片。C++validator／export跨run QA valid、errors0、3run；2064對dHash≤4近似候選、256details cap，待獨立group review，全部development。5張新proposed＋2張v75格式pilot、human0、training_ready=false；200–400經核對ROI及有效四類／head／tail覆蓋仍不足。已停止此批遊玩，沒有訓練／下載模型、push／merge或清理。三輪所有分布、raw位置及結果hash見[資料報告](VISION_DATASET_20260927.md)及[metadata](TRACKING_SEGMENTATION_EVIDENCE_20260927.json)。

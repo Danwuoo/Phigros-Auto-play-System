@@ -2,6 +2,8 @@
 
 2026-09-27 [追蹤對照](TRACKING_COMPARISON_20260927.md) 與 [資料準備](VISION_DATASET_20260927.md) 已完成 P1／P2 工具及138項三配置回歸，P3 已有原生連續 ROI 與少量 proposed masks，P4 已取得同候選合成／實戰 bank 分布。缺獨立標註真值，保持 T0；完整pipeline／line identity／人工覆核及足量有效資料仍 pending。模型訓練／推論不在本輪，HD AP未達成，不能把採樣／shadow視為遊戲能力驗收。
 
+三輪同版本HD採樣已完成並停止，54clips408ROI／3run、合併QA valid；5張新proposed／human0、2064對跨run近似候選待group review，training_ready=false。P3的200–400經核對ROI與類別覆蓋未完成，P4未取得實戰ID真值，P5不啟用。下一步先獨立覆核及去重困難集；不以更多同曲重打或延長期限代替觀測缺口。
+
 ## 主程式新路線（2026-09-26）
 
 使用者改採遊戲實戰研究：**Chapter Legacy／Glaciaxion HD 首次 All Perfect 後進 IN**。完整規格以 [主程式計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN.md) 為準。2026-09-27 已落地 G0 runtime／scheduler 接線、指紋核對及 G1 開發版 observer／planner，另依使用者要求由 pixels 自動 PLAY；後續已授權 G2 曲中真實 assist，有限 Tap 首輪有可見命中。G1 全項、G3 全曲能力、G4–G6 與 AP 尚未驗收，實機證據與限制見 [開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)。下方舊 M3／階段 0–6 與歷史文件中的獨立簡單目標前置順序由此取代，不回填舊驗收。

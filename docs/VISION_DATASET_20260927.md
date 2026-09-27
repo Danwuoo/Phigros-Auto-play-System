@@ -65,6 +65,33 @@ clip0 frame367–370有連續原圖：367的Hold仍清楚可見，368暖色效�
 
 原圖／sidecar／mask根：`C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/vision-dataset-20260927/cpp-observe-17904941035800460/`。QA、bank對照與停止後結算圖位於 `measurements/tracking-segmentation-20260927/`。PNG hash是lossless ROI檔案hash，不是假稱已保存整張source frame或另一個decoded RGB hash。
 
+## 三輪採樣完成
+
+使用者逐輪手動準備PLAY，第二／第三輪沿用同一source／binary／設定，無曲中build/test／第二capture。三輪均185秒STOPPED／exit0、sampling fault空、partial=false／truncated0；每輪18clips／136 ROI，合計 **54 clips／408 ROI／3獨立實戰run**（dataset384＋diagnostics24）。source沒有在三輪間修改，三配置回歸沿用已凍結版本。觸控已停止，本批不追加遊玩。
+
+| 輪次／run後綴 | 結算分數 | Perfect／Good／Bad／Miss | ACC／MaxCombo | Early／Late | 消費frames／遊戲commands |
+| --- | --- | --- | --- | --- | --- |
+| 1／17904941035800460 | 811985 | 345／6／0／42 | 88.78%／51 | 0／6 | 10018／1015 |
+| 2／17904949475779425 | 815153 | 348／3／0／42 | 89.05%／54 | 0／3 | 10151／957 |
+| 3／17904951892485298 | 787303 | 336／6／0／51 | 86.49%／35 | 0／6 | 9620／953 |
+
+均為Glaciaxion HD Lv.6，完整run ID為 `cpp-observe-<後綴>`；分數由停止後一秒無input C++ capture結果圖目視核對，不是RPC推算。三輪真實input均T0，未AP，不能作新方法與基線的實戰A/B。
+
+第二／第三輪分布，單位ms、各欄p50／p95／p99／max：
+
+| 項目 | 第二輪 | 第三輪 |
+| --- | --- | --- |
+| capture（n10150／9619） | 16.9856／35.312095／48.424792／324.6703 | 17.5216／39.103590／52.135384／472.1912 |
+| recognition（n10151／9620） | 5.4263／7.47245／9.06985／17.2831 | 5.61335／8.13477／10.713055／21.1730 |
+| sampling copy（n10151／9620） | .2347／.31615／.3981／1.0143 | .2339／.3281／.424934／1.2821 |
+| scheduler（n957／953） | .0776／.595348／1.165480／1.447226 | .0630／.666494／1.167224／1.939554 |
+| RPC（n957／953） | .7477／1.15688／1.543216／1.9404 | .7531／1.14122／1.796876／2.8226 |
+| shadow update（n10151／9620） | .0394／.0826／.13295／.6061 | .0405／.081805／.131581／1.1127 |
+
+每輪shadow skip0／fault空／無backend，第二及第三輪各2次source expiry revoke；沒有延長任何deadline。trigger drops第二3／第三2，rejected frames245／224。停止後flush2.651／2.591秒、written10,109,178／10,135,369 bytes；working-set 1ms採樣199／249點，start143,122,432／143,298,560、sampled peak146,862,080／146,579,456、growth3,739,648／3,280,896 bytes。三輪完整QPC／環境／分布及hash見[metadata索引](TRACKING_SEGMENTATION_EVIDENCE_20260927.json)，sub-ms峰值未知。
+
+合併manifest直接引用各run原檔，不複製圖片：`C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/vision-dataset-20260927/manifest.json`。C++跨run QA／export valid、errors0、408samples／3runs、5 proposed／human0。dHash≤4找到2064對跨run近似候選，detail上限256，完整count保留；低紋理圖可能過度匹配，需要獨立group review，不能宣稱2064對皆確定重複或408圖彼此獨立。全部同development split，沒有以run不同做train/test。未刪除／覆寫raw圖片，沒有上傳或訓練。
+
 ## 後續缺口
 
-使用者已允許再取兩輪HD，待各輪PLAY就緒。現有第一輪連續原生ROI仍不足200–400經核對／至少3run目標；不假造1191–1196原圖。資料準備工具通過不等於灰色Hold已補辨，也不等於模型可訓練／AP。下一階段先獨立覆核新片段、補各類與負例、以run分組及去重，再決定模型候選與訓練條件。圖像目前本機單份保存，沒有宣稱舊4c3c ignored資料已恢復。
+已達三個獨立實戰run與384張dataset ROI的原始採樣數；**200–400經核對ROI／有效類別覆蓋仍未達成**，僅5張新圖＋v75兩張有proposed masks，獨立human review0。大量近似重複需分組覆核，不為湊數追加或假造原圖。資料準備工具通過不等於灰色Hold已補辨，也不等於模型可訓練／AP。下一階段先獨立覆核新片段、補各類與負例、以run分組及去重，再決定模型候選與訓練條件。圖像目前本機單份保存，沒有宣稱舊4c3c ignored資料已恢復。

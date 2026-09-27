@@ -4,7 +4,7 @@
 
 本輪在桌面 `codex/tracking-segmentation-pilot` 完成共享候選T0/T1/T2比較、單worker shadow與有界原生ROI／mask／QA／export；Release／Debug／嚴格ASan各138／138通過。真實input仍為T0／observer29／planner8，diagnostics3，不接模型。完整pipeline／line tracking與正式替換資格未完成；結果與限制見[追蹤報告](TRACKING_COMPARISON_20260927.md)／[資料報告](VISION_DATASET_20260927.md)。不merge／push，未恢復4c3c，未宣稱舊ignored資料已恢復。
 
-第一輪 `cpp-observe-17904941035800460` 完成185秒、STOPPED／exit0；結算345／6／0／42，811,985分、88.78%、MaxCombo51，未AP。shadow無backend／skip0／fault空，18clips136ROI已保存，5 proposed masks／human review0。source cadence有795ms最大空窗，分數不是新tracker成效證據。使用者已允許再準備兩輪HD；每輪仍需使用者選曲PLAY就緒才啟動，不自行導覽重試。後續測試與優化留在本task，不再向原討論task來回回報或自動導航。
+三輪由使用者逐輪手動準備PLAY後完成，均185秒STOPPED／exit0，同source／binary／lead35／兩指，真實input均T0。run後綴17904941035800460／17904949475779425／17904951892485298：結算345／6／0／42、348／3／0／42、336／6／0／51，分數811,985／815,153／787,303，未AP。shadow無backend／skip0／fault空，54clips408ROI（dataset384＋diagnostics24）、3run已保存，5 proposed masks／human review0。source最大空窗795.0122／324.6703／472.1912ms，不能將分數差當新tracker效益。合併C++QA通過，但2064對跨run近似候選需group review，全部development／training_ready=false。已停止此批遊玩，下一步為獨立標註／去重及困難例分析；200–400經核對ROI尚未達標。不再向原討論task來回回報或自動導航。
 
 ## 桌面 main 續作（v75，2026-09-27）
 

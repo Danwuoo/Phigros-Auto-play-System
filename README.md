@@ -2,6 +2,8 @@
 
 2026-09-27 已實作 [追蹤對照](docs/TRACKING_COMPARISON_20260927.md) 與 [原生分割資料工具](docs/VISION_DATASET_20260927.md)：共享候選上的 T0／ByteTrack／OC-SORT 思路離線比較、容量1影子追蹤、同源 ROI 採樣、polygon mask／QA／export。Release／Debug／嚴格 ASan 各138／138通過；真實觸控保持 observer29 的 T0，尚未取得替換資格，未訓練或接入模型。完整 pipeline、獨立 line tracking、人工覆核與 HD AP 仍未完成。
 
+同版本三輪HD採樣已停止：結算Perfect／Good／Bad／Miss為345／6／0／42、348／3／0／42、336／6／0／51，皆未AP。54clips／408 native ROI／3run、跨run C++QA通過；5張proposed masks、human0、2064對近似候選需覆核，全部development／training_ready=false。採樣完成不代表200–400經核對ROI已達標，詳見資料報告。
+
 **主程式主線：Chapter Legacy → Glaciaxion HD → 首次 All Perfect → IN。** 依使用者 2026-09-26 新方向，直接以遊戲建立觀察、預測、觸控與畫面回饋閉環，不另開大型簡單目標 Fixture 階段；必要的短合成回歸與既有觸控能力核對保留。2026-09-27 已實作 G0 runtime 接線、G1 開發版 observer／預測與 pixels 自動 PLAY，並依新增授權接入 G2 真實 assist。首輪有限 Tap 有可見命中；全曲能力、HD／IN AP 尚未驗收。模組與 G0–G6 完成條件見 [主程式計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md)，實作、失敗與實機證據見 [開發紀錄](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 
 **擷取器本輪已結案：五路徑選型與 gRPC 接收層優化均完成，主用為 gRPC payload fast／256 KiB，正式備用暫缺。** WGC 保留 bench 備援候選、DXGI 留作受限比較、scrcpy 本次軟體 H.264 配置不列主／備、MMAP 僅診斷。完整終態與驗收界線以[最後驗收與選型](docs/CAPTURE_FINAL_ACCEPTANCE_20260926.md)為準；不再自動續跑原矩陣或長測。

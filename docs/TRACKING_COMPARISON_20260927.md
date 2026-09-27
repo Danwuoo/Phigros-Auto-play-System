@@ -49,7 +49,11 @@ out/release-v145/Release/pas.exe dataset copy-bench --updates 10000
 
 第一輪shadow n10,018／skip0／fault空、無backend／lease；update p50／p95／p99／max=.0384／.0785／.128483／.7414ms，capture-to-shadow=7.0662／11.22371／13.716335／23.1015ms。7300餘prediction-only為診斷輸出，沒有送觸控。真實T0成績345／6／0／42，尚未AP；不同來源空窗不支持方法收益推論。
 
-保留T0。新方法擋住合成弱假候選，但身份switch／fragment沒有改善；缺獨立實戰連續真值，不足以採用。ORU、獨立line與T3未因本輪開發自動啟用。`performance_pass=null`；可行方向是單worker shadow，live update p99約.13ms，但不是已決定的正式性能門檻。正式替換仍須困難集ID改善、無新增危險續接及完整pipeline證據。
+第二／第三輪由使用者逐輪就緒後完成，仍採同binary／T0真實觸控／T1shadow。run `cpp-observe-17904949475779425`／`cpp-observe-17904951892485298`，10,151／9,620 shadow批、skip0／fault空；update p50／p95／p99／max=.0394／.0826／.13295／.6061ms及.0405／.081805／.131581／1.1127ms。分別保留首2048 bank／drop8103、7572。三輪共6144已留唯一批，truth全unknown／baseline_guided，不能以同曲重打或性能重播充當獨立標註。
+
+第二bank fake Down T0／T1／T2=45／41／41；第三=51／43／43。身份switch／fragment／merge／錯誤續接／duplicate皆null，減少Down不等於減少Miss。離線仍每bank三批輪換、每方法每批10,000更新：第二T0 p99=.0060／.0069／.0093、T1=.061102／.0656／.052601、T2=.083807／.075302／.060406ms；第三T0=.0048／.0044／.0062、T1=.035601／.033901／.0368、T2=.051902／.038001／.0310ms。逐批p50／p95／max與bank hash見metadata及 `live-tracking-comparison2.json`／`3.json`，沒有同時build/test或編碼。
+
+保留T0。新方法擋住合成弱假候選，但身份switch／fragment沒有改善；三輪原生clips已補上，仍缺獨立實戰連續真值，不足以採用。ORU、獨立line與T3未因本輪開發自動啟用。`performance_pass=null`；可行方向是單worker shadow，live update p99約.13ms，但不是已決定的正式性能門檻。正式替換仍須困難集ID改善、無新增危險續接及完整pipeline證據。三輪結算及跨run近似去重QA見資料報告；此批遊玩已停止。
 
 ## 證據位置與限制
 

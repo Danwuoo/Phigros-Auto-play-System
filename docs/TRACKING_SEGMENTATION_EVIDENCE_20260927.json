@@ -5,24 +5,1363 @@
   "schema": 1,
   "live_runs": [
     {
-      "reviewed_human": 0,
-      "miss": 42,
-      "score": 811985,
-      "dataset_samples": 136,
-      "truth": "unknown",
-      "accuracy_percent": 88.78,
-      "late": 6,
+      "game_rpc_duration_ms": {
+        "absolute_deviation_p95": 0.3253999999999999,
+        "jitter_p95_minus_p5": 0.4847300000000001,
+        "jitter_p95_minus_p50": 0.30641000000000007,
+        "max": 2.2548,
+        "mean": 0.7505740886699497,
+        "min": 0.3554,
+        "n": 1015,
+        "p5": 0.54738,
+        "p50": 0.7257,
+        "p95": 1.03211,
+        "p99": 1.311566
+      },
+      "real_schedule_lateness_ms": {
+        "absolute_deviation_p95": 0.5292129999999999,
+        "jitter_p95_minus_p5": 0.5867799999999997,
+        "jitter_p95_minus_p50": 0.5252929999999997,
+        "max": 4.1061,
+        "mean": 0.20386464532019702,
+        "min": 0.0006,
+        "n": 1015,
+        "p5": 0.0013999999999999998,
+        "p50": 0.062887,
+        "p95": 0.5881799999999997,
+        "p99": 1.2101014
+      },
+      "shadow_publication_ms": {
+        "absolute_deviation_p95": 0.005300000000000001,
+        "jitter_p95_minus_p5": 0.0078000000000000005,
+        "jitter_p95_minus_p50": 0.005300000000000001,
+        "max": 0.21,
+        "mean": 0.007968277101217728,
+        "min": 0.0024,
+        "n": 10018,
+        "p5": 0.0047,
+        "p50": 0.0072,
+        "p95": 0.0125,
+        "p99": 0.026100000000000005
+      },
       "result_source": "manual visible inspection of post-stop C++ result capture",
-      "perfect": 345,
-      "all_perfect": false,
-      "good": 6,
-      "early": 0,
-      "run_id": "cpp-observe-17904941035800460",
-      "bad": 0,
-      "max_combo": 51,
+      "live_correctness_truth": "unknown",
+      "state": "STOPPED",
+      "tracking_bank_copy_ms": {
+        "absolute_deviation_p95": 0.0008000000000000001,
+        "jitter_p95_minus_p5": 0.0009000000000000001,
+        "jitter_p95_minus_p50": 0.0008000000000000001,
+        "max": 0.0381,
+        "mean": 0.00047061289678576997,
+        "min": 0.0,
+        "n": 10018,
+        "p5": 0.0002,
+        "p50": 0.0003,
+        "p95": 0.0011,
+        "p99": 0.0018
+      },
+      "manual_result": {
+        "miss": 42,
+        "score": 811985,
+        "accuracy_percent": 88.78,
+        "perfect": 345,
+        "good": 6,
+        "early": 0,
+        "bad": 0,
+        "max_combo": 51,
+        "late": 6
+      },
+      "frames_consumed": 10018,
+      "tracking_shadow": {
+        "action_qualified_diagnostic_outputs": 15569,
+        "backend_created": false,
+        "capture_lease_retained": false,
+        "capture_to_shadow_completion_ms": {
+          "absolute_deviation_p95": 4.1587,
+          "jitter_p95_minus_p5": 6.513959999999998,
+          "jitter_p95_minus_p50": 4.1575099999999985,
+          "max": 23.1015,
+          "mean": 7.424891944499909,
+          "min": 3.3374,
+          "n": 10018,
+          "p5": 4.7097500000000005,
+          "p50": 7.0662,
+          "p95": 11.223709999999999,
+          "p99": 13.716335
+        },
+        "fault": "",
+        "full_pipeline_comparison": "pending",
+        "mailbox_capacity": 1,
+        "method": "byte_association",
+        "prediction_only_outputs": 7342,
+        "processed": 10018,
+        "skipped": 0,
+        "submitted": 10018,
+        "tracker_update_ms": {
+          "absolute_deviation_p95": 0.040100000000000004,
+          "jitter_p95_minus_p5": 0.0698,
+          "jitter_p95_minus_p50": 0.040100000000000004,
+          "max": 0.7414,
+          "mean": 0.04228075464164518,
+          "min": 0.0022,
+          "n": 10018,
+          "p5": 0.0087,
+          "p50": 0.0384,
+          "p95": 0.0785,
+          "p99": 0.12848299999999999
+        }
+      },
       "input_method": "legacy",
-      "proposed_samples": 5,
-      "bank_sha256": "5267f0a5c27577850a3cfdbd565ca97b013c9357ba12fb4b60e2120590016baf"
+      "bank_sha256": "5267f0a5c27577850a3cfdbd565ca97b013c9357ba12fb4b60e2120590016baf",
+      "sampling_copy_ms": {
+        "absolute_deviation_p95": 0.22,
+        "jitter_p95_minus_p5": 0.308915,
+        "jitter_p95_minus_p50": 0.088915,
+        "max": 0.9171,
+        "mean": 0.1835648033539632,
+        "min": 0.0001,
+        "n": 10018,
+        "p5": 0.0005,
+        "p50": 0.2205,
+        "p95": 0.309415,
+        "p99": 0.40171499999999993
+      },
+      "recognition_duration_ms": {
+        "absolute_deviation_p95": 2.6207499999999997,
+        "jitter_p95_minus_p5": 4.31077,
+        "jitter_p95_minus_p50": 2.1638449999999994,
+        "max": 17.0635,
+        "mean": 5.287161279696525,
+        "min": 2.0497,
+        "n": 10018,
+        "p5": 3.0323249999999997,
+        "p50": 5.17925,
+        "p95": 7.343094999999999,
+        "p99": 9.937591999999999
+      },
+      "association_offline": {
+        "byte_association": {
+          "correctness": {
+            "ambiguous_rejections": 5,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 2994,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 43,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 43,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 1039,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 9,
+              "context-2-1-1": 191,
+              "context-3-1-1": 1,
+              "context-4-1-1": 1,
+              "context-5-1-1": 1846
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.013399999999999999,
+                "jitter_p95_minus_p5": 0.021704999999999926,
+                "jitter_p95_minus_p50": 0.013404999999999927,
+                "max": 0.1288,
+                "mean": 0.009702209999999942,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.0003,
+                "p50": 0.0086,
+                "p95": 0.022004999999999927,
+                "p99": 0.03300100000000002
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0136,
+                "jitter_p95_minus_p5": 0.0215,
+                "jitter_p95_minus_p50": 0.0136,
+                "max": 0.5014,
+                "mean": 0.010262550000000079,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.0083,
+                "p95": 0.0219,
+                "p99": 0.04220100000000002
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.032,
+                "jitter_p95_minus_p5": 0.043800000000000006,
+                "jitter_p95_minus_p50": 0.032,
+                "max": 1.607,
+                "mean": 0.01769427999999996,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.0122,
+                "p95": 0.0442,
+                "p99": 0.1439140000000003
+              }
+            }
+          ]
+        },
+        "legacy": {
+          "correctness": {
+            "ambiguous_rejections": 7,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 3062,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 46,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 46,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 0,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 9,
+              "context-2-1-1": 191,
+              "context-3-1-1": 1,
+              "context-4-1-1": 1,
+              "context-5-1-1": 1846
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0021999999999999997,
+                "jitter_p95_minus_p5": 0.0031999999999999997,
+                "jitter_p95_minus_p50": 0.0021999999999999997,
+                "max": 0.0168,
+                "mean": 0.0014213699999999978,
+                "min": 0.0001,
+                "n": 10000,
+                "p5": 0.00019999999999999998,
+                "p50": 0.0012,
+                "p95": 0.0034,
+                "p99": 0.0046
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0076,
+                "jitter_p95_minus_p5": 0.009209999999999921,
+                "jitter_p95_minus_p50": 0.007604999999999927,
+                "max": 1.5141,
+                "mean": 0.003248289999999998,
+                "min": 0.0001,
+                "n": 10000,
+                "p5": 0.0002950000000000045,
+                "p50": 0.0019,
+                "p95": 0.009504999999999927,
+                "p99": 0.022002000000000042
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.005299999999999999,
+                "jitter_p95_minus_p5": 0.0073999999999999995,
+                "jitter_p95_minus_p50": 0.005299999999999999,
+                "max": 0.1593,
+                "mean": 0.0032180800000000637,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.0025,
+                "p95": 0.0078,
+                "p99": 0.016902000000000042
+              }
+            }
+          ]
+        },
+        "oc_observation": {
+          "correctness": {
+            "ambiguous_rejections": 8,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 2991,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 43,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 43,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 1040,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 9,
+              "context-2-1-1": 191,
+              "context-3-1-1": 1,
+              "context-4-1-1": 1,
+              "context-5-1-1": 1846
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0209,
+                "jitter_p95_minus_p5": 0.029099999999999997,
+                "jitter_p95_minus_p50": 0.0209,
+                "max": 0.6785,
+                "mean": 0.011910479999999961,
+                "min": 0.0003,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.0086,
+                "p95": 0.0295,
+                "p99": 0.07640200000000004
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.04139999999999999,
+                "jitter_p95_minus_p5": 0.0547,
+                "jitter_p95_minus_p50": 0.04139999999999999,
+                "max": 0.7756,
+                "mean": 0.020646069999999964,
+                "min": 0.0003,
+                "n": 10000,
+                "p5": 0.0009,
+                "p50": 0.0142,
+                "p95": 0.0556,
+                "p99": 0.1414
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.027300000000000005,
+                "jitter_p95_minus_p5": 0.03870999999999986,
+                "jitter_p95_minus_p50": 0.027309999999999862,
+                "max": 1.5456,
+                "mean": 0.016266980000000063,
+                "min": 0.0003,
+                "n": 10000,
+                "p5": 0.0009,
+                "p50": 0.0123,
+                "p95": 0.03960999999999986,
+                "p99": 0.08810100000000003
+              }
+            }
+          ]
+        }
+      },
+      "gameplay_commands": 1015,
+      "stop_reason": "duration",
+      "runtime_revokes_by_reason": {
+        "UI_gate_lost": 1,
+        "source_evidence_expired": 5
+      },
+      "result_image_absolute_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\tracking-segmentation-20260927\\live-result\\diagnostic.png",
+      "all_perfect": false,
+      "capture_interval_ms": {
+        "absolute_deviation_p95": 20.2466,
+        "jitter_p95_minus_p5": 35.040219999999984,
+        "jitter_p95_minus_p50": 20.23099999999998,
+        "max": 795.0122,
+        "mean": 18.46327441349703,
+        "min": 1.1556,
+        "n": 10017,
+        "p5": 2.15658,
+        "p50": 16.9658,
+        "p95": 37.19679999999998,
+        "p99": 50.56524000000001
+      },
+      "run_id": "cpp-observe-17904941035800460",
+      "scheduler_raw_sha256": "0d950c4bbd72707537ddc07830d5f0789a320bf33744ce66c21115efe70defe1",
+      "tracking_bank": {
+        "capacity": 2048,
+        "charged_bytes_upper": 2719464,
+        "dropped_batches": 7970,
+        "history_source": "baseline_guided",
+        "memory_budget_bytes": 16777216,
+        "retained_batches": 2048,
+        "retention": "first bounded batches; subsequent batches dropped",
+        "truth": "unknown"
+      },
+      "result_image_sha256": "9f42c609e3e80757ac234b6ce5aa8daf4ede7250cc86583fe37005c41a9b4339",
+      "reviewed_human": 0,
+      "sampling": {
+        "stats": {
+          "allocated_raw_bytes": 105799680,
+          "background_clips": 4,
+          "combined_memory_budget_bytes": 134217728,
+          "dataset_enabled": true,
+          "diagnostic_clips": 2,
+          "diagnostics_enabled": true,
+          "dropped_triggers": 3,
+          "hard_clips": 8,
+          "images_retained": 136,
+          "metadata_encode_explicit_allowance_bytes": 8388608,
+          "normal_clips": 4,
+          "real_input_created": false,
+          "rejected_frames": 212,
+          "schema": 1
+        },
+        "partial": false,
+        "truncated_clips": 0,
+        "written_bytes": 8971945,
+        "flush_duration_ns": 2115146200,
+        "encoding_memory_probe_interval_ms": 1,
+        "encoding_memory_probe_samples": 210,
+        "encoding_process_working_set_start_bytes": 140541952,
+        "encoding_process_working_set_sampled_peak_bytes": 144887808,
+        "encoding_working_set_sampled_growth_bytes": 4345856,
+        "explicit_encode_scratch_upper_bytes": 1474560
+      }
+    },
+    {
+      "game_rpc_duration_ms": {
+        "absolute_deviation_p95": 0.4183999999999999,
+        "jitter_p95_minus_p5": 0.6175199999999997,
+        "jitter_p95_minus_p50": 0.40917999999999966,
+        "max": 1.9404,
+        "mean": 0.7795901776384541,
+        "min": 0.3228,
+        "n": 957,
+        "p5": 0.53936,
+        "p50": 0.7477,
+        "p95": 1.1568799999999997,
+        "p99": 1.543215999999998
+      },
+      "real_schedule_lateness_ms": {
+        "absolute_deviation_p95": 0.52144,
+        "jitter_p95_minus_p5": 0.5940479999999997,
+        "jitter_p95_minus_p50": 0.5177479999999997,
+        "max": 1.447226,
+        "mean": 0.20300429989550672,
+        "min": 0.0005,
+        "n": 957,
+        "p5": 0.0013,
+        "p50": 0.0776,
+        "p95": 0.5953479999999997,
+        "p99": 1.1654801999999993
+      },
+      "shadow_publication_ms": {
+        "absolute_deviation_p95": 0.0052,
+        "jitter_p95_minus_p5": 0.0079,
+        "jitter_p95_minus_p50": 0.0052,
+        "max": 0.1641,
+        "mean": 0.008098236626933373,
+        "min": 0.0018,
+        "n": 10151,
+        "p5": 0.0047,
+        "p50": 0.0074,
+        "p95": 0.0126,
+        "p99": 0.0245
+      },
+      "result_source": "manual visible inspection of post-stop C++ result capture",
+      "live_correctness_truth": "unknown",
+      "state": "STOPPED",
+      "tracking_bank_copy_ms": {
+        "absolute_deviation_p95": 0.0007000000000000001,
+        "jitter_p95_minus_p5": 0.0008,
+        "jitter_p95_minus_p50": 0.0007000000000000001,
+        "max": 0.052,
+        "mean": 0.0004998620825534295,
+        "min": 0.0,
+        "n": 10151,
+        "p5": 0.0002,
+        "p50": 0.0003,
+        "p95": 0.001,
+        "p99": 0.0018
+      },
+      "manual_result": {
+        "miss": 42,
+        "score": 815153,
+        "accuracy_percent": 89.05,
+        "perfect": 348,
+        "good": 3,
+        "early": 0,
+        "bad": 0,
+        "max_combo": 54,
+        "late": 3
+      },
+      "frames_consumed": 10151,
+      "tracking_shadow": {
+        "action_qualified_diagnostic_outputs": 15637,
+        "backend_created": false,
+        "capture_lease_retained": false,
+        "capture_to_shadow_completion_ms": {
+          "absolute_deviation_p95": 3.802600000000001,
+          "jitter_p95_minus_p5": 5.43055,
+          "jitter_p95_minus_p50": 3.785750000000001,
+          "max": 20.2393,
+          "mean": 7.4292977243621365,
+          "min": 3.0836,
+          "n": 10151,
+          "p5": 5.4205000000000005,
+          "p50": 7.0653,
+          "p95": 10.85105,
+          "p99": 13.21545
+        },
+        "fault": "",
+        "full_pipeline_comparison": "pending",
+        "mailbox_capacity": 1,
+        "method": "byte_association",
+        "prediction_only_outputs": 7572,
+        "processed": 10151,
+        "skipped": 0,
+        "submitted": 10151,
+        "tracker_update_ms": {
+          "absolute_deviation_p95": 0.04320000000000001,
+          "jitter_p95_minus_p5": 0.0737,
+          "jitter_p95_minus_p50": 0.04320000000000001,
+          "max": 0.6061,
+          "mean": 0.043599448330213716,
+          "min": 0.0025,
+          "n": 10151,
+          "p5": 0.0089,
+          "p50": 0.0394,
+          "p95": 0.0826,
+          "p99": 0.13295
+        }
+      },
+      "input_method": "legacy",
+      "bank_sha256": "ca7999205bd75d6273bbbf2b72528758958d3d9a763c08f2259d1fd1e3601192",
+      "sampling_copy_ms": {
+        "absolute_deviation_p95": 0.2342,
+        "jitter_p95_minus_p5": 0.31565,
+        "jitter_p95_minus_p50": 0.08145,
+        "max": 1.0143,
+        "mean": 0.19103157324401537,
+        "min": 0.0001,
+        "n": 10151,
+        "p5": 0.0005,
+        "p50": 0.2347,
+        "p95": 0.31615,
+        "p99": 0.3981
+      },
+      "recognition_duration_ms": {
+        "absolute_deviation_p95": 2.2996,
+        "jitter_p95_minus_p5": 3.5577000000000005,
+        "jitter_p95_minus_p50": 2.04615,
+        "max": 17.2831,
+        "mean": 5.56220722096344,
+        "min": 2.1329,
+        "n": 10151,
+        "p5": 3.9147499999999997,
+        "p50": 5.4263,
+        "p95": 7.47245,
+        "p99": 9.069849999999999
+      },
+      "association_offline": {
+        "byte_association": {
+          "correctness": {
+            "ambiguous_rejections": 2,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 2902,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 41,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 41,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 1058,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 230,
+              "context-2-1-1": 1818
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0169,
+                "jitter_p95_minus_p5": 0.026704999999999923,
+                "jitter_p95_minus_p50": 0.016904999999999924,
+                "max": 0.3672,
+                "mean": 0.012215990000000053,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.0005,
+                "p50": 0.0103,
+                "p95": 0.027204999999999924,
+                "p99": 0.061102000000000045
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.021500000000000002,
+                "jitter_p95_minus_p5": 0.0304,
+                "jitter_p95_minus_p50": 0.021500000000000002,
+                "max": 0.3626,
+                "mean": 0.01252926000000001,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.0093,
+                "p95": 0.0308,
+                "p99": 0.0656
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0197,
+                "jitter_p95_minus_p5": 0.0313,
+                "jitter_p95_minus_p50": 0.0197,
+                "max": 0.2764,
+                "mean": 0.013463870000000034,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.012,
+                "p95": 0.0317,
+                "p99": 0.05260100000000002
+              }
+            }
+          ]
+        },
+        "legacy": {
+          "correctness": {
+            "ambiguous_rejections": 8,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 2965,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 45,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 45,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 0,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 230,
+              "context-2-1-1": 1818
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0026,
+                "jitter_p95_minus_p5": 0.0036999999999999997,
+                "jitter_p95_minus_p50": 0.0026,
+                "max": 0.1139,
+                "mean": 0.0015627499999999936,
+                "min": 0.0001,
+                "n": 10000,
+                "p5": 0.00019999999999999998,
+                "p50": 0.0013,
+                "p95": 0.0039,
+                "p99": 0.006
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0027999999999999995,
+                "jitter_p95_minus_p5": 0.004,
+                "jitter_p95_minus_p50": 0.0027999999999999995,
+                "max": 0.1916,
+                "mean": 0.0017360699999999863,
+                "min": 0.0001,
+                "n": 10000,
+                "p5": 0.00019999999999999998,
+                "p50": 0.0014,
+                "p95": 0.0042,
+                "p99": 0.0069
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0032000000000000006,
+                "jitter_p95_minus_p5": 0.004900000000000001,
+                "jitter_p95_minus_p50": 0.0032000000000000006,
+                "max": 0.1467,
+                "mean": 0.0022566899999999874,
+                "min": 0.0001,
+                "n": 10000,
+                "p5": 0.00019999999999999998,
+                "p50": 0.0019,
+                "p95": 0.0051,
+                "p99": 0.0093
+              }
+            }
+          ]
+        },
+        "oc_observation": {
+          "correctness": {
+            "ambiguous_rejections": 4,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 2901,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 41,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 41,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 1060,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 230,
+              "context-2-1-1": 1818
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0266,
+                "jitter_p95_minus_p5": 0.0365,
+                "jitter_p95_minus_p50": 0.0266,
+                "max": 0.3793,
+                "mean": 0.014520670000000022,
+                "min": 0.0003,
+                "n": 10000,
+                "p5": 0.0006,
+                "p50": 0.0105,
+                "p95": 0.0371,
+                "p99": 0.08380700000000015
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0284,
+                "jitter_p95_minus_p5": 0.0381,
+                "jitter_p95_minus_p50": 0.0284,
+                "max": 0.7075,
+                "mean": 0.014172620000000035,
+                "min": 0.0003,
+                "n": 10000,
+                "p5": 0.0005,
+                "p50": 0.0102,
+                "p95": 0.0386,
+                "p99": 0.07530200000000005
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.021200000000000004,
+                "jitter_p95_minus_p5": 0.03110499999999993,
+                "jitter_p95_minus_p50": 0.021204999999999932,
+                "max": 0.8523,
+                "mean": 0.013005200000000017,
+                "min": 0.0003,
+                "n": 10000,
+                "p5": 0.0005,
+                "p50": 0.0104,
+                "p95": 0.03160499999999993,
+                "p99": 0.06040600000000013
+              }
+            }
+          ]
+        }
+      },
+      "gameplay_commands": 957,
+      "stop_reason": "duration",
+      "runtime_revokes_by_reason": {
+        "UI_gate_lost": 1,
+        "source_evidence_expired": 2
+      },
+      "result_image_absolute_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\tracking-segmentation-20260927\\live-result2\\diagnostic.png",
+      "all_perfect": false,
+      "capture_interval_ms": {
+        "absolute_deviation_p95": 18.3305,
+        "jitter_p95_minus_p5": 32.81797999999999,
+        "jitter_p95_minus_p50": 18.326494999999994,
+        "max": 324.6703,
+        "mean": 18.22240507389164,
+        "min": 1.16,
+        "n": 10150,
+        "p5": 2.494115,
+        "p50": 16.985599999999998,
+        "p95": 35.31209499999999,
+        "p99": 48.42479200000001
+      },
+      "run_id": "cpp-observe-17904949475779425",
+      "scheduler_raw_sha256": "e92806ca14b72a14614a1d32a72dc7b98ae4916bbfbcec33e6fbc9322ef0b884",
+      "tracking_bank": {
+        "capacity": 2048,
+        "charged_bytes_upper": 2663464,
+        "dropped_batches": 8103,
+        "history_source": "baseline_guided",
+        "memory_budget_bytes": 16777216,
+        "retained_batches": 2048,
+        "retention": "first bounded batches; subsequent batches dropped",
+        "truth": "unknown"
+      },
+      "result_image_sha256": "38f5dabdd90dc2e2bec85ce28494ccc20a410cfa3122507240c8f3fa2ce1243b",
+      "reviewed_human": 0,
+      "sampling": {
+        "stats": {
+          "allocated_raw_bytes": 105799680,
+          "background_clips": 4,
+          "combined_memory_budget_bytes": 134217728,
+          "dataset_enabled": true,
+          "diagnostic_clips": 2,
+          "diagnostics_enabled": true,
+          "dropped_triggers": 3,
+          "hard_clips": 8,
+          "images_retained": 136,
+          "metadata_encode_explicit_allowance_bytes": 8388608,
+          "normal_clips": 4,
+          "real_input_created": false,
+          "rejected_frames": 245,
+          "schema": 1
+        },
+        "partial": false,
+        "truncated_clips": 0,
+        "written_bytes": 10109178,
+        "flush_duration_ns": 2651328500,
+        "encoding_memory_probe_interval_ms": 1,
+        "encoding_memory_probe_samples": 199,
+        "encoding_process_working_set_start_bytes": 143122432,
+        "encoding_process_working_set_sampled_peak_bytes": 146862080,
+        "encoding_working_set_sampled_growth_bytes": 3739648,
+        "explicit_encode_scratch_upper_bytes": 1474560
+      }
+    },
+    {
+      "game_rpc_duration_ms": {
+        "absolute_deviation_p95": 0.4024,
+        "jitter_p95_minus_p5": 0.5704799999999995,
+        "jitter_p95_minus_p50": 0.38811999999999947,
+        "max": 2.8226,
+        "mean": 0.7923411332633796,
+        "min": 0.3706,
+        "n": 953,
+        "p5": 0.5707399999999999,
+        "p50": 0.7531,
+        "p95": 1.1412199999999995,
+        "p99": 1.7968760000000004
+      },
+      "real_schedule_lateness_ms": {
+        "absolute_deviation_p95": 0.609896,
+        "jitter_p95_minus_p5": 0.6650939999999997,
+        "jitter_p95_minus_p50": 0.6034939999999998,
+        "max": 1.939554,
+        "mean": 0.1956138226652676,
+        "min": 0.0007,
+        "n": 953,
+        "p5": 0.0014,
+        "p50": 0.063,
+        "p95": 0.6664939999999997,
+        "p99": 1.167224000000001
+      },
+      "shadow_publication_ms": {
+        "absolute_deviation_p95": 0.006500000000000001,
+        "jitter_p95_minus_p5": 0.009300000000000001,
+        "jitter_p95_minus_p50": 0.006500000000000001,
+        "max": 0.7559,
+        "mean": 0.008752234927235132,
+        "min": 0.0021,
+        "n": 9620,
+        "p5": 0.0049,
+        "p50": 0.0077,
+        "p95": 0.0142,
+        "p99": 0.0305
+      },
+      "result_source": "manual visible inspection of post-stop C++ result capture",
+      "live_correctness_truth": "unknown",
+      "state": "STOPPED",
+      "tracking_bank_copy_ms": {
+        "absolute_deviation_p95": 0.0009000000000000001,
+        "jitter_p95_minus_p5": 0.001,
+        "jitter_p95_minus_p50": 0.0009000000000000001,
+        "max": 0.0781,
+        "mean": 0.0005034823284823108,
+        "min": 0.0,
+        "n": 9620,
+        "p5": 9.999999999999999E-05,
+        "p50": 0.0002,
+        "p95": 0.0011,
+        "p99": 0.0025
+      },
+      "manual_result": {
+        "miss": 51,
+        "score": 787303,
+        "accuracy_percent": 86.49,
+        "perfect": 336,
+        "good": 6,
+        "early": 0,
+        "bad": 0,
+        "max_combo": 35,
+        "late": 6
+      },
+      "frames_consumed": 9620,
+      "tracking_shadow": {
+        "action_qualified_diagnostic_outputs": 15034,
+        "backend_created": false,
+        "capture_lease_retained": false,
+        "capture_to_shadow_completion_ms": {
+          "absolute_deviation_p95": 4.516950000000001,
+          "jitter_p95_minus_p5": 6.753384999999999,
+          "jitter_p95_minus_p50": 4.517104999999999,
+          "max": 26.0735,
+          "mean": 7.609318097713113,
+          "min": 3.102,
+          "n": 9620,
+          "p5": 4.9804699999999995,
+          "p50": 7.216749999999999,
+          "p95": 11.733854999999998,
+          "p99": 14.86534699999997
+        },
+        "fault": "",
+        "full_pipeline_comparison": "pending",
+        "mailbox_capacity": 1,
+        "method": "byte_association",
+        "prediction_only_outputs": 6653,
+        "processed": 9620,
+        "skipped": 0,
+        "submitted": 9620,
+        "tracker_update_ms": {
+          "absolute_deviation_p95": 0.041299999999999996,
+          "jitter_p95_minus_p5": 0.07280499999999993,
+          "jitter_p95_minus_p50": 0.04130499999999992,
+          "max": 1.1127,
+          "mean": 0.044449303534303555,
+          "min": 0.0017,
+          "n": 9620,
+          "p5": 0.009,
+          "p50": 0.0405,
+          "p95": 0.08180499999999992,
+          "p99": 0.13158099999999995
+        }
+      },
+      "input_method": "legacy",
+      "bank_sha256": "9a236a7af57b00239eb97343e326312947034d6dfe72348aadd37bd42ff1b86e",
+      "sampling_copy_ms": {
+        "absolute_deviation_p95": 0.2334,
+        "jitter_p95_minus_p5": 0.32760000000000006,
+        "jitter_p95_minus_p50": 0.09420000000000006,
+        "max": 1.2821,
+        "mean": 0.19330608108108158,
+        "min": 0.0001,
+        "n": 9620,
+        "p5": 0.0005,
+        "p50": 0.2339,
+        "p95": 0.32810000000000006,
+        "p99": 0.4249339999999993
+      },
+      "recognition_duration_ms": {
+        "absolute_deviation_p95": 2.9548500000000004,
+        "jitter_p95_minus_p5": 4.598974999999999,
+        "jitter_p95_minus_p50": 2.521419999999999,
+        "max": 21.173,
+        "mean": 5.734261725571732,
+        "min": 2.116,
+        "n": 9620,
+        "p5": 3.5357950000000002,
+        "p50": 5.6133500000000005,
+        "p95": 8.13477,
+        "p99": 10.71305499999999
+      },
+      "association_offline": {
+        "byte_association": {
+          "correctness": {
+            "ambiguous_rejections": 9,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 3008,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 43,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 43,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 1028,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 210,
+              "context-2-1-1": 1838
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.013499999999999998,
+                "jitter_p95_minus_p5": 0.021599999999999998,
+                "jitter_p95_minus_p50": 0.013499999999999998,
+                "max": 0.301,
+                "mean": 0.01003207999999996,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.0085,
+                "p95": 0.022,
+                "p99": 0.03560100000000002
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.012199999999999999,
+                "jitter_p95_minus_p5": 0.0203,
+                "jitter_p95_minus_p50": 0.012199999999999999,
+                "max": 0.2732,
+                "mean": 0.009774780000000056,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.0085,
+                "p95": 0.0207,
+                "p99": 0.03390100000000002
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.013000000000000001,
+                "jitter_p95_minus_p5": 0.0213,
+                "jitter_p95_minus_p50": 0.013000000000000001,
+                "max": 0.1349,
+                "mean": 0.010023110000000003,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.0003,
+                "p50": 0.0086,
+                "p95": 0.0216,
+                "p99": 0.0368
+              }
+            }
+          ]
+        },
+        "legacy": {
+          "correctness": {
+            "ambiguous_rejections": 3,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 3114,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 51,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 51,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 0,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 210,
+              "context-2-1-1": 1838
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0021,
+                "jitter_p95_minus_p5": 0.0031999999999999997,
+                "jitter_p95_minus_p50": 0.0021,
+                "max": 0.0565,
+                "mean": 0.0015240200000000096,
+                "min": 0.0001,
+                "n": 10000,
+                "p5": 0.00019999999999999998,
+                "p50": 0.0013,
+                "p95": 0.0034,
+                "p99": 0.0048
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0018000000000000002,
+                "jitter_p95_minus_p5": 0.003,
+                "jitter_p95_minus_p50": 0.0018000000000000002,
+                "max": 0.0604,
+                "mean": 0.0015367400000000058,
+                "min": 0.0001,
+                "n": 10000,
+                "p5": 0.00019999999999999998,
+                "p50": 0.0014,
+                "p95": 0.0032,
+                "p99": 0.0044
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0026000000000000003,
+                "jitter_p95_minus_p5": 0.0041,
+                "jitter_p95_minus_p50": 0.0026000000000000003,
+                "max": 0.0382,
+                "mean": 0.0020396800000000207,
+                "min": 0.0001,
+                "n": 10000,
+                "p5": 0.0003,
+                "p50": 0.0018,
+                "p95": 0.0044,
+                "p99": 0.0062
+              }
+            }
+          ]
+        },
+        "oc_observation": {
+          "correctness": {
+            "ambiguous_rejections": 9,
+            "candidate_recall": null,
+            "candidate_recall_reason": "requires independent visible-instance annotation, not candidate truth alone",
+            "current_identity_observations": 3013,
+            "definitions": "switch=changed track per labeled instance; fragment=observed after absent; false merge=birth assigned to different labeled instance; metrics exclude unknown truth",
+            "fake_down_calls": 43,
+            "fake_duplicate_down": null,
+            "fake_instances_with_down": 0,
+            "fake_known_negative_down": null,
+            "fake_stop_contacts": 0,
+            "fake_unknown_truth_down_calls": 43,
+            "false_continuations": null,
+            "false_merges": null,
+            "game_judgment": "unknown",
+            "identity_switches": null,
+            "labeled_frames": 0,
+            "per_clip_metrics": null,
+            "prediction_only_outputs": 1023,
+            "synthetic_crossing_error_ms": {
+              "n": 0
+            },
+            "track_fragments_reacquisition": null,
+            "unique_clip_frames": {
+              "context-1-1-1": 210,
+              "context-2-1-1": 1838
+            },
+            "unique_frames": 2048,
+            "unknown_frames": 2048
+          },
+          "observation_reupdate": false,
+          "performance_batches": [
+            {
+              "batch": 0,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0207,
+                "jitter_p95_minus_p5": 0.030604999999999924,
+                "jitter_p95_minus_p50": 0.020704999999999925,
+                "max": 0.2673,
+                "mean": 0.012883960000000022,
+                "min": 0.0002,
+                "n": 10000,
+                "p5": 0.0005,
+                "p50": 0.0104,
+                "p95": 0.031104999999999924,
+                "p99": 0.051902000000000045
+              }
+            },
+            {
+              "batch": 1,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0162,
+                "jitter_p95_minus_p5": 0.0248,
+                "jitter_p95_minus_p50": 0.0162,
+                "max": 0.1379,
+                "mean": 0.01084825,
+                "min": 0.0003,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.009,
+                "p95": 0.0252,
+                "p99": 0.03800100000000002
+              }
+            },
+            {
+              "batch": 2,
+              "tracker_update_ms": {
+                "absolute_deviation_p95": 0.0133,
+                "jitter_p95_minus_p5": 0.022199999999999998,
+                "jitter_p95_minus_p50": 0.0133,
+                "max": 0.15,
+                "mean": 0.010477649999999965,
+                "min": 0.0003,
+                "n": 10000,
+                "p5": 0.00039999999999999996,
+                "p50": 0.0093,
+                "p95": 0.0226,
+                "p99": 0.031
+              }
+            }
+          ]
+        }
+      },
+      "gameplay_commands": 953,
+      "stop_reason": "duration",
+      "runtime_revokes_by_reason": {
+        "UI_gate_lost": 1,
+        "source_evidence_expired": 2
+      },
+      "result_image_absolute_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\tracking-segmentation-20260927\\live-result3\\diagnostic.png",
+      "all_perfect": false,
+      "capture_interval_ms": {
+        "absolute_deviation_p95": 21.5918,
+        "jitter_p95_minus_p5": 36.932990000000004,
+        "jitter_p95_minus_p50": 21.581990000000005,
+        "max": 472.1912,
+        "mean": 19.22622548081923,
+        "min": 1.138,
+        "n": 9619,
+        "p5": 2.1706,
+        "p50": 17.5216,
+        "p95": 39.103590000000004,
+        "p99": 52.135383999999995
+      },
+      "run_id": "cpp-observe-17904951892485298",
+      "scheduler_raw_sha256": "1d01ea676ac11c6467c327ec0f76c003d889fa7048939225f146cd192d7db407",
+      "tracking_bank": {
+        "capacity": 2048,
+        "charged_bytes_upper": 2747464,
+        "dropped_batches": 7572,
+        "history_source": "baseline_guided",
+        "memory_budget_bytes": 16777216,
+        "retained_batches": 2048,
+        "retention": "first bounded batches; subsequent batches dropped",
+        "truth": "unknown"
+      },
+      "result_image_sha256": "9b573f04db83bd49f907dab7e74af354f29a196d88ae4999e51240b0216a570e",
+      "reviewed_human": 0,
+      "sampling": {
+        "stats": {
+          "allocated_raw_bytes": 105799680,
+          "background_clips": 4,
+          "combined_memory_budget_bytes": 134217728,
+          "dataset_enabled": true,
+          "diagnostic_clips": 2,
+          "diagnostics_enabled": true,
+          "dropped_triggers": 2,
+          "hard_clips": 8,
+          "images_retained": 136,
+          "metadata_encode_explicit_allowance_bytes": 8388608,
+          "normal_clips": 4,
+          "real_input_created": false,
+          "rejected_frames": 224,
+          "schema": 1
+        },
+        "partial": false,
+        "truncated_clips": 0,
+        "written_bytes": 10135369,
+        "flush_duration_ns": 2591402900,
+        "encoding_memory_probe_interval_ms": 1,
+        "encoding_memory_probe_samples": 249,
+        "encoding_process_working_set_start_bytes": 143298560,
+        "encoding_process_working_set_sampled_peak_bytes": 146579456,
+        "encoding_working_set_sampled_growth_bytes": 3280896,
+        "explicit_encode_scratch_upper_bytes": 1474560
+      }
     }
   ],
   "files": [
@@ -115,6 +1454,56 @@
       "sha256": "9f42c609e3e80757ac234b6ce5aa8daf4ede7250cc86583fe37005c41a9b4339",
       "bytes": 561705,
       "relative_path": "live-result/diagnostic.png"
+    },
+    {
+      "sha256": "ab68530b04c88eb88d84cf399a7fd6e00689d6c75bebdbb0b8c426316445b06d",
+      "bytes": 9655,
+      "relative_path": "live-tracking-comparison2.json"
+    },
+    {
+      "sha256": "e9f841f60224ba252df9ef4d4cae411bb32bd6f2d2f4e93986fa17b214d269ee",
+      "bytes": 9660,
+      "relative_path": "live-tracking-comparison3.json"
+    },
+    {
+      "sha256": "486fa617a33d077212c2dfe88f6c73249d6c5bd91b49b3e463015d6cd7a35759",
+      "bytes": 26960,
+      "relative_path": "live-game-analysis2.json"
+    },
+    {
+      "sha256": "ac302e1cbfc6f572b106730c7e0deb7b0eb2383564dd40fa6175beda02d24fe0",
+      "bytes": 41567,
+      "relative_path": "live-game-analysis3.json"
+    },
+    {
+      "sha256": "b4b876978dba1b298bf09cf51258eaa0d7c0fb8dcef9cd48a109321d6fcd2fb4",
+      "bytes": 11660,
+      "relative_path": "live-dataset-qa2.json"
+    },
+    {
+      "sha256": "b4b876978dba1b298bf09cf51258eaa0d7c0fb8dcef9cd48a109321d6fcd2fb4",
+      "bytes": 11660,
+      "relative_path": "live-dataset-qa3.json"
+    },
+    {
+      "sha256": "732a62847dab565c009d290a29f4e6ada13c9c86d109545acecebedf0b71cd0a",
+      "bytes": 94363,
+      "relative_path": "three-run-dataset-qa.json"
+    },
+    {
+      "sha256": "4d0c6b40e60eb2b817345c1ab857a8b5a5bc31f6bb47d882c721d08e9fdb244a",
+      "bytes": 103970,
+      "relative_path": "three-run-dataset-index.json"
+    },
+    {
+      "sha256": "38f5dabdd90dc2e2bec85ce28494ccc20a410cfa3122507240c8f3fa2ce1243b",
+      "bytes": 570291,
+      "relative_path": "live-result2/diagnostic.png"
+    },
+    {
+      "sha256": "9b573f04db83bd49f907dab7e74af354f29a196d88ae4999e51240b0216a570e",
+      "bytes": 571493,
+      "relative_path": "live-result3/diagnostic.png"
     }
   ],
   "tests": {
@@ -136,5 +1525,24 @@
       "failed": 0
     }
   },
-  "raw_backup": "single copy; this index contains no raw images"
+  "raw_backup": "single copy; this index contains no raw images",
+  "combined_dataset_qa": {
+    "valid": true,
+    "samples": 408,
+    "unique_runs": 3,
+    "annotated": 5,
+    "reviewed_human": 0,
+    "training_ready": false,
+    "near_duplicate_candidate_count": 2064,
+    "near_duplicate_details_truncated": true,
+    "errors": [],
+    "coverage_labeled_pixels_by_class": {
+      "0": 50400,
+      "1": 4120,
+      "4": 85910
+    },
+    "labeled_pixels": 140430,
+    "ignore_pixels": 1088370
+  },
+  "final_status": "three authorized live sampling runs complete; input stopped; T0 retained; independent annotation and grouped dedup review pending"
 }
