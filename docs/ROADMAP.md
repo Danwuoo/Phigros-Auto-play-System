@@ -1,5 +1,7 @@
 # 開發路線圖
 
+2026-09-27 使用者已授權下一輪[追蹤對照與分割資料準備](TRACKING_SEGMENTATION_PLAN_20260927.md)：現行基線與 ByteTrack／OC-SORT 思路對照，同步建立有界 ROI 採樣、標註／去重切分與首批資料。此為待開發工作，保留現行證據期限與 HD 主線；模型訓練及推論接入不在此輪。
+
 ## 主程式新路線（2026-09-26）
 
 使用者改採遊戲實戰研究：**Chapter Legacy／Glaciaxion HD 首次 All Perfect 後進 IN**。完整規格以 [主程式計畫](MAIN_PROGRAM_DEVELOPMENT_PLAN.md) 為準。2026-09-27 已落地 G0 runtime／scheduler 接線、指紋核對及 G1 開發版 observer／planner，另依使用者要求由 pixels 自動 PLAY；後續已授權 G2 曲中真實 assist，有限 Tap 首輪有可見命中。G1 全項、G3 全曲能力、G4–G6 與 AP 尚未驗收，實機證據與限制見 [開發紀錄](GAME_RUNTIME_DEVELOPMENT_20260927.md)。下方舊 M3／階段 0–6 與歷史文件中的獨立簡單目標前置順序由此取代，不回填舊驗收。
