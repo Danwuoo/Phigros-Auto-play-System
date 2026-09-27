@@ -25,6 +25,16 @@ TEST(GameTracking, BaselinePixelSequenceAndSerializedBankAreEquivalent){
   const auto comparison=baseline.update(b);const auto a=decision_json(scene),z=decision_json(comparison.executable);
   EXPECT_EQ(a.at("targets"),z.at("targets"));EXPECT_EQ(a.at("lines"),z.at("lines"));EXPECT_EQ(a.at("playing_gate"),z.at("playing_gate"));}
 }
+TEST(GameTracking, MovingHeldBodyEvidenceRoundTripsAndRequiresItsCurrentGeometry){
+ auto b=batch(1,20'000'000);b.extractor_version=32;auto& n=b.candidates.front().note;
+ n.held_body_evidence=true;n.outline_evidence=true;n.head_on_line=false;
+ auto j=candidate_batch_json(b);const auto restored=parse_candidate_batch(j);
+ EXPECT_TRUE(restored.candidates.front().note.held_body_evidence);EXPECT_EQ(candidate_batch_json(restored),j);
+ j["candidates"][0]["note"]["rails"]=false;EXPECT_THROW(parse_candidate_batch(j),std::invalid_argument);
+ j=candidate_batch_json(b);j["candidates"][0]["note"]["kind"]="tap";EXPECT_THROW(parse_candidate_batch(j),std::invalid_argument);
+ j=candidate_batch_json(b);j["extractor_version"]=31;j["candidates"][0]["note"].erase("held_body_evidence");
+ EXPECT_FALSE(parse_candidate_batch(j).candidates.front().note.held_body_evidence);
+}
 TEST(GameTracking, WeakNewCandidatesAndPredictionCannotCreateOrRefreshActions){
  for(const auto* method:{"byte_association","oc_observation"}){GameTrackingComparison tracker(method);auto b=batch(1,10'000'000);b.candidates[0].quality=ObservationQuality::weak_current;
   EXPECT_TRUE(tracker.update(b).observations.empty());b=batch(2,20'000'000);const auto first=tracker.update(b);ASSERT_EQ(first.observations.size(),1);const auto id=first.observations[0].track_id;

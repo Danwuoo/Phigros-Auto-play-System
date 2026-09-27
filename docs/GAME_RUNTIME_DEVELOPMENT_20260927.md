@@ -1,6 +1,6 @@
 # 遊戲 runtime 開發與實測紀錄（2026-09-27）
 
-最新外框／持續接觸開發：使用者恢復自主測試與 Computer Use 導航授權，observer30／planner10 已實作獨立 line ID、當前灰階雙側輪廓、短尾端連續確認、Hold 原 contact 重新關聯與 Drag 同指 Move。Release 回歸已通過，三配置及實戰仍在驗證；原始迭代失敗留在 `measurements/outline-contact-20260927/`。此狀態不代表 HD AP；最新要求為同版本至少連續三次 HD AP 後進 IN。契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)，下方保留歷史版本。
+最新外框／持續接觸開發：使用者恢復自主測試與Computer Use導航授權。observer31／planner12同版本兩輪HD為365／2／0／26與359／7／0／27，未AP；observer32／planner13新增當前Hold前端離線移動的外框續接與同contact Move，三配置／實戰續測。獨立line ID、灰階雙側輪廓、短尾端、Hold原contact重關聯與Drag同指Move仍保留；原始迭代失敗、結算PNG及hash留在`measurements/outline-contact-20260927/`。HD需同版本至少連續三次AP後才進IN。契約與各run見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)，下方保留歷史版本。
 
 狀態：第一批 runtime／scheduler、遊戲 observer 與自動 PLAY 已接入；後續 G2 assist 有真實命中，四類完整試驗最高分結算 Perfect 350／Good 9／Bad 0／Miss 34。G1 全項、G3 所需能力與 HD／IN AP 尚未驗收。下列每批的版本、故障與結果分開保留，不以新修正回填舊 run。
 

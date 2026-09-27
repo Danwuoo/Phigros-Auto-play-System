@@ -1,6 +1,6 @@
 # 架構與資料契約
 
-最新開發版 observer30／planner10 的獨立線身分、當前灰階外框、Hold 接觸重關聯與持續 Drag Move 契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。CandidateBatch schema1 仍相容 extractor29，新增 motion 欄位；執行只依當前像素、無光流／模型接入。實戰與穩定 AP 尚未驗收，下述 planner9 為历史。
+最新開發版 observer32／planner13／diagnostics5 的獨立線身分、當前灰階外框、Hold 接觸重關聯與持續 Drag Move 契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。CandidateBatch schema1／extractor32相容29–31，新增`held_body_evidence`；已接線的Hold可憑當前成對rail與前緣續接、更新近期anchor，Move到目前前端內側，`head_on_line`仍獨立表示是否在線上。當前前端與line投影的Hit分開記錄，純歷史／光流不供action。近線12px走原路徑；局部步進≤48px、90ms anchor／60ms missing／100ms evidence不變，tail未見保持未知。執行只依即時像素，無光流／模型接入。observer31兩輪HD仍有26／27 Miss，穩定AP尚未驗收；下述planner9為歷史。
 
 現行動作層source `59c92bf`／planner9依使用者補充加入5-contact profile、`max_contacts_verified`門控與current-tail正常Hold release。`tail_crossing_ns`仍為預測診斷，不單獨提前Up；當前有效body更新100ms期限，可見tail／rails與當前線一致且已過線才鎖定terminal release。連續Drag用當前候選的保守沿線區域覆蓋active contact，窗口須重疊、法向≤2px、多leader匹配拒絕共用；原missing／anchor／source與stop契約保持。實作、四／五指驗證與局限見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。以下b325／planner8與v75內容為追蹤／歷史契約，不能取代最新動作層版本。
 

@@ -73,7 +73,7 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
     // A recent approaching front can be clipped by the hit effect before its
     // descriptor reaches the line. It may search the current attached rails,
     // but a separated body still fails the same-frame attachment checks.
-    if(!anchor.rails_geometry||(!anchor.head_on_line&&std::abs(anchor_distance)>48)||!line.association_valid||
+    if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence&&std::abs(anchor_distance)>48)||!line.association_valid||
        anchor.width<f.width*.035||anchor.width>f.width*.22||
        std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
     const Vec2 u=line.tangent,n{-u.y,u.x};
@@ -182,5 +182,90 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
     }
     if(!clipped&&!note.tail&&note.height<std::min(96.0,anchor.height*.4))return {};
     return note;
+}
+std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const NoteCandidate& anchor,const LineCandidate& line) {
+    if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence)||
+       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22||
+       std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
+    const Vec2 u=line.tangent,n{-u.y,u.x};
+    std::optional<NoteCandidate> best;double best_cost=1e9;bool ambiguous=false;
+    // A local CURRENT leading luminance edge must span the interior of both
+    // measured rails. Bright particles and internal color transitions are
+    // excluded by requiring dark outside pixels across the same span.
+    for(int shift=-48;shift<=48;shift+=2)for(int forward=-48;forward<=48;++forward) {
+        const Vec2 front{anchor.center.x+u.x*shift+n.x*forward,anchor.center.y+u.y*shift+n.y*forward};
+        if(std::abs(dot(sub(front,line.center),n))<=12)continue;
+        int closure=0;
+        for(int k=-3;k<=3;++k) {
+            const Vec2 p{front.x+u.x*k*anchor.width*.13,front.y+u.y*k*anchor.width*.13};
+            const double inside=gray(f,{p.x-n.x*4,p.y-n.y*4}),outside=gray(f,{p.x+n.x*4,p.y+n.y*4});
+            closure+=inside>=80&&outside>=0&&outside<65&&inside-outside>=18;
+        }
+        if(closure<5)continue;
+        struct Pair {double left,right;};std::array<Pair,4> sections{};int paired_sections=0;
+        for(const int depth:{8,16,32,48}) {
+            bool both=true;std::array<double,2> edges{};int index=0;
+            for(const int side:{-1,1}) {
+                const Vec2 rail{front.x+u.x*side*anchor.width*.5-n.x*depth,
+                                front.y+u.y*side*anchor.width*.5-n.y*depth};
+                bool found=false;
+                for(int radius=0;radius<=16&&!found;++radius)for(const int sign:{-1,1}) {
+                    const int offset=sign*radius;
+                    if(ridge(f,{rail.x+u.x*offset,rail.y+u.y*offset},u)) {
+                        found=true;edges[index]=side*anchor.width*.5+offset;break;
+                    }
+                }
+                ++index;
+                both=both&&found;
+            }
+            if(both&&std::abs(edges[1]-edges[0]-anchor.width)<=std::max(8.0,anchor.width*.20))
+                sections[paired_sections++]={edges[0],edges[1]};
+        }
+        if(paired_sections<3)continue;
+        const auto paired=sections[paired_sections/2];int consistent=0;
+        for(int i=0;i<paired_sections;++i)consistent+=std::abs(sections[i].left-paired.left)<=4&&
+            std::abs(sections[i].right-paired.right)<=4;
+        if(consistent<3)continue;
+        bool continues=false;
+        for(const double edge:{paired.left,paired.right}) {
+            int ahead=0;
+            for(const int depth:{8,16,24}) {
+                bool found=false;for(int offset=-1;offset<=1&&!found;++offset)
+                    found=ridge(f,{front.x+u.x*(edge+offset)+n.x*depth,
+                                   front.y+u.y*(edge+offset)+n.y*depth},u);
+                ahead+=found;
+            }
+            continues=continues||ahead>=2;
+        }
+        if(continues)continue; // an internal dark stripe is not a body front
+        const double cost=std::abs(shift)*.25+std::abs(forward)*.1;
+        if(cost>best_cost+1)continue;
+        std::array<int,2> ends{};bool valid=true;
+        for(int side=0;side<2;++side) {
+            int last=0,gap=0,support=0;
+            for(int depth=4;depth<=static_cast<int>(std::hypot(f.width,f.height));depth+=2) {
+                const double edge=side?paired.right:paired.left;
+                const Vec2 p{front.x+u.x*edge-n.x*depth,front.y+u.y*edge-n.y*depth};
+                if(p.x<4||p.x>=f.width-4||p.y<f.height*.10||p.y>=f.height-4)break;
+                bool found=false;for(int offset=-3;offset<=3&&!found;++offset)
+                    found=ridge(f,{p.x+u.x*offset,p.y+u.y*offset},u);
+                if(found){last=depth;gap=0;++support;}else if((gap+=2)>12)break;
+            }
+            if(support<3||last<96){valid=false;break;}ends[side]=last;
+        }
+        if(!valid||std::abs(ends[0]-ends[1])>16)continue;
+        const double middle=(paired.left+paired.right)*.5;
+        auto current=anchor;current.center={front.x+u.x*middle-n.x*4,front.y+u.y*middle-n.y*4};
+        current.width=paired.right-paired.left;
+        current.tangent=u;current.height=(ends[0]+ends[1])/2.0-4;
+        current.tail.reset();current.head_on_line=false;current.held_body_evidence=true;
+        current.outline_evidence=true;current.direct_rails_evidence=false;
+        if(best&&cost>=best_cost-1) {
+            if(std::hypot(current.center.x-best->center.x,current.center.y-best->center.y)>8)ambiguous=true;
+            continue;
+        }
+        best=current;best_cost=cost;ambiguous=false;
+    }
+    return ambiguous?std::nullopt:best;
 }
 }

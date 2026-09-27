@@ -162,7 +162,7 @@ TrackingResult GameTrackingComparison::update(const CandidateBatch& b){
    o.observed_ns=now;o.estimated={s.x.p,s.y.p};o.reason="current_identity_only";
    o.head_visible=c.head_visible;o.body_visible=c.body_visible;o.left_rail=c.left_rail;o.right_rail=c.right_rail;o.tail=c.head_visible?n.tail:std::nullopt;
    o.action_evidence_valid=c.action_support&&c.head_visible&&b.playing_gate&&line_supported(n)&&
-     (c.quality==ObservationQuality::strong_current||(c.body_visible&&c.left_rail&&c.right_rail&&c.note.rails_geometry&&c.note.head_on_line&&c.hint_source_frame>0&&c.hint_source_frame<b.context.frame&&c.hint_age_ns<=90'000'000));
+     (c.quality==ObservationQuality::strong_current||(c.body_visible&&c.left_rail&&c.right_rail&&c.note.rails_geometry&&(c.note.head_on_line||c.note.held_body_evidence)&&c.hint_source_frame>0&&c.hint_source_frame<b.context.frame&&c.hint_age_ns<=90'000'000));
    if(o.action_evidence_valid){s.supported_ns=now;o.supported_ns=now;auto note=n;note.recent_identity=0;executable_notes.push_back(note);executable_shortened.push_back(c.shortened_hold);forced.push_back(static_cast<int>(i));}
   }
   r.observations.push_back(o);

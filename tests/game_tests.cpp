@@ -317,6 +317,14 @@ TEST(GameDiagnostics, ApproachingBodyCannotConsumeTheHeldDisappearanceWindow) {
     EXPECT_FALSE(diagnostic.observe(s));s=diagnostic_hold_scene(3,40'000'001);EXPECT_FALSE(diagnostic.observe(s));
     s.context.frame=4;s.context.capture_ns=60'000'001;s.targets.clear();EXPECT_TRUE(diagnostic.observe(s));
 }
+TEST(GameDiagnostics, CurrentHeldBodyMovingAwayFromTheLineCanReportItsDisappearance) {
+    HoldVisibilityDiagnostic diagnostic;auto s=diagnostic_hold_scene(1,1);
+    auto& n=s.targets.front().note;n.center.y=480;n.head_on_line=false;n.held_body_evidence=true;
+    EXPECT_FALSE(diagnostic.observe(s));s.context.frame=2;s.context.capture_ns=20'000'001;
+    n.center.y=470;EXPECT_FALSE(diagnostic.observe(s));
+    s.context.frame=3;s.context.capture_ns=40'000'001;s.targets.clear();
+    const auto missing=diagnostic.observe(s);ASSERT_TRUE(missing);EXPECT_NEAR(missing->head.y,470,1);
+}
 TEST(GameObserver, YellowOutlineDoesNotDuplicateBlueCoreAndHoldHasLeadingEdgeAndTail) {
     FakeClock clock; GameObserver observer(clock); auto f=image(1,1); hud(f);
     rect(f,200,380,150,18,{255,220,40}); rect(f,212,385,126,8,{40,190,255});
@@ -1312,6 +1320,56 @@ TEST(GameMotion, ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFl
     auto f=image(1,0);rect(f,440,300,3,290,{160,160,160});rect(f,560,300,3,290,{160,160,160});
     rect(f,440,562,123,3,{160,160,160});const auto current=observe_held_outline(f,anchor,line);
     ASSERT_TRUE(current);EXPECT_FALSE(current->tail); // the flash cannot cut the continuing rails
+}
+TEST(GameMotion, MovingHeldFrontNeedsPairedCurrentTerminationAndCannotInferFromHistory) {
+    NoteCandidate anchor;anchor.kind=NoteKind::hold;anchor.center={500,576};anchor.tangent={1,0};
+    anchor.width=152;anchor.height=300;anchor.rails_geometry=true;anchor.head_on_line=true;
+    LineCandidate line{{640,576},{1,0},1280,2,.9};
+    auto f=image(1,0);rect(f,426,180,149,368,{90,100,110});
+    rect(f,423,180,3,368,{170,170,170});rect(f,575,180,3,368,{170,170,170});
+    auto observed=observe_moving_held_front(f,anchor,line);ASSERT_TRUE(observed);
+    EXPECT_TRUE(observed->held_body_evidence);EXPECT_FALSE(observed->head_on_line);
+    EXPECT_NEAR(observed->center.y,548,5);EXPECT_FALSE(observed->tail);
+    auto unestablished=anchor;unestablished.head_on_line=false;
+    EXPECT_FALSE(observe_moving_held_front(f,unestablished,line));
+    rect(f,575,180,3,368,{0,0,0});EXPECT_FALSE(observe_moving_held_front(f,anchor,line));
+    rect(f,575,180,3,368,{170,170,170});rect(f,426,180,149,368,{0,0,0});
+    EXPECT_FALSE(observe_moving_held_front(f,anchor,line));
+    // A dark effect stripe inside a still-continuing body is not its front.
+    rect(f,426,180,149,520,{90,100,110});rect(f,426,545,149,10,{0,0,0});
+    rect(f,423,180,3,520,{170,170,170});rect(f,575,180,3,520,{170,170,170});
+    EXPECT_FALSE(observe_moving_held_front(f,anchor,line));
+    auto blank=image(2,20'000'000);EXPECT_FALSE(observe_moving_held_front(blank,*observed,line));
+}
+TEST(GameObserver, GrayHeldFrontCanMoveAwayFromTheLineWithTheSameFingerAndCurrentHit) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,2,{2,35'000'000,30'000'000});std::uint64_t identity=0;int finger=-1;
+    for(int i=0;i<4;++i) {
+        auto f=image(i+1,i*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int head=510+i*22;
+        rect(f,432,head-260,136,260,{40,190,255});
+        rect(f,423,head-260,3,260,{245,245,245});rect(f,575,head-260,3,260,{245,245,245});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1);identity=s.targets.front().note_id;owner.accept(s);owner.poll();
+    }
+    ASSERT_EQ(touch.contacts().size(),1);finger=touch.contacts().begin()->first;
+    for(int i=0;i<12;++i) {
+        auto f=image(i+5,(i+4)*20'000'000);hud(f);rect(f,0,575,1280,2,{255,255,255});
+        const int x=500+i*6,head=548-i*8;
+        rect(f,x-74,128,149,head-128,{90,100,110});
+        rect(f,x-77,128,3,head-128,{170,170,170});rect(f,x+75,128,3,head-128,{170,170,170});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.targets.size(),1)<<i;const auto& t=s.targets.front();EXPECT_EQ(t.note_id,identity)<<i;
+        EXPECT_TRUE(t.note.held_body_evidence);EXPECT_FALSE(t.note.head_on_line);EXPECT_FALSE(t.note.tail);
+        EXPECT_NEAR(t.hit.x,x,5);EXPECT_NEAR(t.hit.y,head,5);
+        EXPECT_EQ(t.evidence_ns,f.capture_complete_ns);owner.accept(s);owner.poll();
+        ASSERT_EQ(touch.contacts().size(),1)<<i;EXPECT_EQ(touch.contacts().begin()->first,finger);
+        EXPECT_NEAR(touch.contacts().begin()->second[0],t.hit.x,2);EXPECT_NEAR(touch.contacts().begin()->second[1],t.hit.y,2);
+    }
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    auto missing=image(17,360'000'000);hud(missing);rect(missing,0,575,1280,2,{255,255,255});
+    clock.set(missing.capture_complete_ns);owner.accept(observer.process(missing));owner.poll();
+    EXPECT_TRUE(touch.contacts().empty());owner.stop();
 }
 TEST(GameObserver, RotatingCurrentLineRetainsIdentityAndFreshLocalHitGeometry) {
     FakeClock clock;GameObserver observer(clock);std::uint64_t line_id=0,note_id=0;

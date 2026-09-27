@@ -483,8 +483,10 @@ std::optional<HoldDisappearance> HoldVisibilityDiagnostic::observe(const Decisio
     }
     previous_count_=0;previous_=s.context;
     for(const auto& t:s.targets) {
-        if(t.note.kind!=NoteKind::hold||!t.note.rails_geometry||!t.note.head_on_line||t.note.width<s.context.width*.08||
-           t.note.height<std::max(128.0,t.note.width*.8)||std::abs(normal_distance(t.note.center,*line))>8) continue;
+        if(t.note.kind!=NoteKind::hold||!t.note.rails_geometry||
+           (!t.note.head_on_line&&!t.note.held_body_evidence)||t.note.width<s.context.width*.08||
+           t.note.height<std::max(128.0,t.note.width*.8)||
+           (!t.note.held_body_evidence&&std::abs(normal_distance(t.note.center,*line))>8)) continue;
         if(previous_count_==previous_holds_.size()) {previous_count_=0;return {};}
         previous_holds_[previous_count_++]={s.context.frame,t.note_id,s.context.capture_ns,
             t.note.center,t.note.width,t.note.height};
@@ -825,12 +827,12 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         if(recent_rails) for(const auto& current:out.lines) {
             if(!current.association_valid||std::abs(current.tangent.x*note.tangent.x+
                current.tangent.y*note.tangent.y)<.95||
-               (!note.head_on_line&&std::abs(normal_distance(note.center,current))>48))continue;
+               (!note.head_on_line&&!note.held_body_evidence&&std::abs(normal_distance(note.center,current))>48))continue;
             const bool prior_line=!track.points.empty()&&track.points.back().line.track_id==current.track_id;
             if(!outline_line||prior_line)outline_line=&current;
             if(prior_line)break;
         }
-        if(outline_line&&!note.head_on_line&&std::any_of(notes.begin(),notes.end(),[&](const auto& front){
+        if(outline_line&&!note.head_on_line&&!note.held_body_evidence&&std::any_of(notes.begin(),notes.end(),[&](const auto& front){
             if(front.kind!=NoteKind::hold||!front.rails_geometry||front.recent_identity||
                std::abs(front.width-note.width)>=20) return false;
             const double along=(front.center.x-note.center.x)*outline_line->tangent.x+
@@ -838,7 +840,10 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             const double current_distance=normal_distance(front.center,*outline_line);
             return std::abs(along)<=20&&current_distance>=-48&&current_distance<=8;
         }))outline_line=nullptr; // preserve a complete currently measured front
-        if(outline_line) if(auto outer=observe_held_outline(f,note,*outline_line)) {
+        if(outline_line) {
+          auto outer=observe_moving_held_front(f,note,*outline_line);
+          if(!outer)outer=observe_held_outline(f,note,*outline_line);
+          if(outer) {
             // A current physical pair is evidence for exactly one identity.
             // Otherwise several old anchors can each refresh themselves from
             // the same rails forever and consume all five contacts.
@@ -860,6 +865,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             });
             if(notes.size()==128){out.capacity_valid=false;break;}
             notes.push_back(*outer);continue;
+          }
         }
         const LineCandidate* line=nullptr;
         for(const auto& candidate:out.lines) if(candidate.confidence>=.8&&candidate.length>=f.width*.8&&
@@ -1021,7 +1027,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
     // Unique current outer-body support can retain a finger across candidate
     // ID churn. Completed contacts can never be revived by this association.
     const auto held_support=[&](const GameTarget& t) {
-        return t.note.kind==NoteKind::hold&&t.note.rails_geometry&&t.note.head_on_line&&t.samples>0&&
+        return t.note.kind==NoteKind::hold&&t.note.rails_geometry&&
+            (t.note.head_on_line||t.note.held_body_evidence)&&t.samples>0&&
             t.evidence_ns==s.context.capture_ns&&t.expires_ns>clock_.now_ns()&&
             t.reason!="association_ambiguous"&&t.reason!="line_unobservable"&&
             t.reason!="multiple_line_association_unvalidated";
@@ -1269,6 +1276,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                 }
             }
             if(id.kind==NoteKind::hold&&*cursor>plan.prefix_offset) {
+                if(t.note.held_body_evidence)plan.basis="live_pixels_held_body_continuation";
                 const auto executed=static_cast<std::size_t>(*cursor-plan.prefix_offset);
                 plan.steps.resize(executed);
                 const auto last=plan.steps.back();
@@ -1421,6 +1429,7 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"observation_basis",t.note.direct_rails_evidence?"hold_current_parallel_rails_and_fill":
             t.note.outline_evidence?"hold_parallel_rails_and_recent_identity":"color_core"},
         {"rails_geometry",t.note.rails_geometry},{"head_on_line",t.note.head_on_line},
+        {"held_body_evidence",t.note.held_body_evidence},
         {"relative_distance_px",t.distance},{"relative_velocity_px_s",t.velocity},
         {"residual_px",t.residual},{"samples",t.samples},{"history_span_ns",t.history_span_ns},{"reason",t.reason}});
     return {{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},

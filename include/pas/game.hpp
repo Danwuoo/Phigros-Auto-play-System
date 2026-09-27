@@ -38,6 +38,7 @@ struct NoteCandidate {
     bool rails_geometry = false;
     bool head_on_line = false;
     bool direct_rails_evidence = false;
+    bool held_body_evidence = false; // Current paired body/front from a recently on-line Hold.
 };
 struct GameTarget {
     std::uint64_t note_id = 0, revision = 0;
@@ -69,7 +70,7 @@ struct DecisionSnapshot {
 
 // Shared bounded baseline state. The detector may read current rail anchors;
 // comparison batches explicitly identify that source of candidate bias.
-struct GameTrackPoint { Nanoseconds t; Vec2 p; LineCandidate line; std::optional<Vec2> tail; bool rails=false; };
+struct GameTrackPoint { Nanoseconds t; Vec2 p; LineCandidate line; std::optional<Vec2> tail; bool rails=false; bool front_is_touch=false; };
 struct GameTrackHistory {
     std::uint64_t id=0,revision=0;
     NoteKind kind=NoteKind::ambiguous;

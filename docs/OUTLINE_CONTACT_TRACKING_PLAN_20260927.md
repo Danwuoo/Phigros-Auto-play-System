@@ -1,6 +1,6 @@
 # 外框追蹤與持續接觸方案（2026-09-27）
 
-最新狀態：使用者已重新授權自主實作、迭代、Computer Use 遊戲操作與實戰；HD 同版本至少連續三次 AP 後才進 IN。observer30／planner10 已加入當前灰階雙側外框、短尾端、接觸重新關聯、持續 Drag Move 與獨立 line ID；其餘配置回歸與遊戲驗證正在進行，尚未 AP。以下停止點是歷史紀錄，光流段仍為待評估設計，不能視為已接入。
+最新狀態：使用者已重新授權自主實作、迭代、Computer Use 遊戲操作與實戰；HD 同版本至少連續三次 AP 後才進 IN。observer31／planner12同版本兩輪HD分別365／2／0／26與359／7／0／27，尚未AP；observer32／planner13在開發當前Hold前端離線移動續接。已有灰階雙側外框、短尾端、接觸重新關聯、Drag同指Move及獨立line ID；光流段仍是待評估設計，未接入。
 
 ## 已實作資料契約
 
@@ -31,6 +31,14 @@ conflict事件顯示同一x約639／y576位置有五個不同Hold intent持續�
 ## 歷史停止點與後續實戰
 
 ### 自主迭代補充：第五輪與接線過渡（2026-09-27）
+
+第六／七輪同一 source `5f1c710`／binary `58bafae6...`、五指／lead35／185秒／相同dataset採樣，均STOPPED／exit0。Computer Use 核對第六輪365 Perfect／2 Good／0 Bad／26 Miss、852,341分、max combo53／Late2；第七輪359／7／0／27、862,583分、max combo118／Late7。兩輪都非AP，不能據此升IN或宣稱穩定。兩輪contact conflict0；Hold Down105／112、重關聯10／9、tail確認0／1，geometry取消5／7、ambiguous取消0／1。第六辨識n10640 p50／p95／p99／max=4.6658／6.57259／7.87322／13.6668ms；playing interval n9450=16.67975／33.32927／46.549711／90.4836ms。第七辨識n10278=5.08525／7.50676／9.445496／16.8118ms；playing interval n9103=16.8445／35.77646／48.321038／90.1227ms。原始hash及結算PNG／json見metadata及raw root；只報分布，不將不同行程分數差當單一修正收益。
+
+第七輪frame740–760，Hold98／intent15的當前藍色本體前端由line576逐步往上離開，current外框仍存在；舊路徑卻只在line附近續接，749起只剩新候選103，751以missing取消原contact，候選不能復活它。保存的四張ROI顯示可見前端正在移動，這不是單純顏色消失。observer32新增`observe_moving_held_front`：僅90ms近期已on-line／已有當前held_body_evidence的成對anchor，局部沿／法向各±48px、固定上限搜尋；當前亮度前緣至少5／7內部點、外側暗區、三個一致成對rail截面、两側至少96px連續rail、前方不繼續同rail，才續接。近線≤12px仍走原on-line路徑；tail保持未知，不用截斷長度猜尾端。內部暗條、缺rail、無當前fill、未曾接線與空frame均有拒絕回歸。
+
+NoteCandidate新增`held_body_evidence`，與`head_on_line`分開；GameTrackPoint記錄該current前端是否作實際touch point。Current前端續接可更新90ms rail anchor，Hit／Move採当下量測前端內側，不再投影到原line；owner接觸別名仍需唯一、當前、未完成與≤48px步進。新字段只由專用當前觀測產生，不作新灰色Hold出生或延長60／100ms期限。CandidateBatch extractor32、quality1／schema1不变，讀取29–31缺字段預設false，字段true需Hold／outline／rails同時成立。影子方法仍無真實backend。diagnostics5允許當前moving held body的消失採樣；純approaching未接線仍不消耗held窗口。續接plan basis明示`live_pixels_held_body_continuation`，原首次Down預測仍保留。
+
+新增C++ pixels／fake-clock整合測試：灰色body從line移到上方116px及橫移66px，保持同contact／單Down、每幀Hit是當前body前端，missing仍按60ms釋放；序列化正／負例及新版diagnostic回歸同步加入。最初focused3項有1失敗，原因是136px出生core與152px外rail不一致；改為當前三截面各自量測並核對20%寬度與4px一致性，未放寬預期。修正後focused3／3、完整Release159／159先通過；新增diagnostic後Release／Debug／無suppressions ASan各160／160通過，11.39／28.58／65.28秒。保存frame749 ROI的current moving-front probe定位x638.493／y513／width152，crop內兩側支持176px，tail未知。binary aee65d0be78b82cf2febc2c33535da1329e7e02428aa8ac5348f0efa8380a897；實戰待續。
 
 第五輪 source `5a8fe34`／observer30／planner12／diagnostics4，run `cpp-observe-17905069580837787`，185秒 STOPPED／exit0。Computer Use 結算353 Perfect／4 Good／0 Bad／36 Miss、825,038分、max combo42、accuracy90.48%、Late4；未AP。contact conflict0、Hold Down112、重關聯33、tail確認0；Hold missing取消98／geometry8／ambiguous5。raw SHA256 `7634176a0cebe773e0a3b1edfd14ca1ad9c973fb2908ab3e934c6cd61ec372cc`。本輪另開有界dataset：18 clips／136 native ROI、首2048候選bank、无shadow／模型、停止後WIC編碼，不能把分數差全歸planner12。copy n10614 p50／p95／p99／max=.22465／.3175／.409387／1.5115ms；辨識4.61515／6.65461／7.960794／19.6307ms。playing capture interval n9440=16.70585／32.563705／44.882484／102.3034ms，source expiry2、UI lost1；global capture max322.3705ms含非playing區域。停止後結算PNG及讀值另存raw root。
 

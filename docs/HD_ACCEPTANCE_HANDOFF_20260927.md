@@ -1,6 +1,6 @@
 # Glaciaxion HD 階段驗收與新 task 交接
 
-最新授權覆蓋下方的停止／手動準備限制：自主開發与 Computer Use 重試已恢復，observer30／planner10 的外框、接觸身份與移動跟隨正在驗證，詳見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。HD 同版本至少連續三次 AP 才進 IN，目前未達標。
+最新授權覆蓋下方的停止／手動準備限制：自主開發與Computer Use重試已恢復，observer31同版本兩輪HD仍有26／27 Miss；observer32／planner13的當前Hold前端外框與同指移動續接正在驗證，詳見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。HD同版本至少連續三次AP才進IN，目前未達標。
 
 ## 最新動作修正（source59c92bf／planner9）
 
