@@ -159,11 +159,11 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         throw std::invalid_argument("tracking shadow requires byte_association or oc_observation");
     ConsoleStopGuard console_stop_guard;
     json capability=nullptr;
-    if(auto_play) {
-        if(config.touch_kind!="emulator-grpc") throw std::invalid_argument("auto-start requires explicit touch profile");
+    if(auto_play||assist) {
+        if(config.touch_kind!="emulator-grpc") throw std::invalid_argument("real input requires explicit touch profile");
         capability=game_preflight(config_path,capability_path);
         if(!capability.at("fingerprint_matches").get<bool>())
-            throw std::runtime_error("auto-start touch fingerprint mismatch: "+capability.at("mismatches").dump());
+            throw std::runtime_error("real input touch fingerprint mismatch: "+capability.at("mismatches").dump());
     }
     HostClock clock;
     LatestFrame latest(config.width,config.height,3,&clock);
@@ -188,7 +188,8 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         std::ofstream file(run_dir/"manifest.json");
         file<<json{{"schema_version",3},{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"config",config.public_json},
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
-            {"input_created",false},{"input_policy",assist?"pixels_PLAY_and_gated_gameplay":auto_play?"one_pixels_confirmed_PLAY_only":"none"},
+            {"input_created",false},{"input_policy",assist?(auto_play?"pixels_PLAY_and_gated_gameplay":"manual_PLAY_and_gated_gameplay"):auto_play?"one_pixels_confirmed_PLAY_only":"none"},
+            {"automatic_play_enabled",auto_play},
             {"dry_owner",!assist},{"game_observer_version",34},{"game_diagnostics_version",6},
             {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
             {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
@@ -211,7 +212,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"target_evidence_ms",100},{"playing_confirmation_frames",3},
             {"prediction_horizon_ms",350},{"ui_classes_validated",json::array()},
             {"touch_mapping",{{"width",config.touch_width},{"height",config.touch_height},
-                              {"rotation_deg",config.touch_rotation},{"capability_verified",auto_play}}},
+                              {"rotation_deg",config.touch_rotation},{"capability_verified",auto_play||assist}}},
             {"preview_requested",!no_preview&&config.preview_hz>0},{"stale_ms",stale_ms}}.dump(2)<<'\n';
     }
     Journal log(run_dir/"events.jsonl");
@@ -229,7 +230,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             if(endpoint.token.empty()) throw std::runtime_error("cannot read gRPC token");
             endpoint.target=config.endpoint; endpoint.instance="explicit";
         }
-        if(auto_play) input_endpoint=endpoint;
+        if(auto_play||assist) input_endpoint=endpoint;
         capture=std::make_unique<GrpcCapture>(clock,std::move(endpoint),options);
     }
     std::unique_ptr<PreviewWindow> preview;
@@ -562,6 +563,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     const auto counts=latest.counters();
     json summary={{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"state",fault||main_fault?"FAULT":"STOPPED"},
         {"input_created",real_input_created.load()},{"auto_play_requested",play_requested.load()},
+        {"automatic_play_enabled",auto_play},
         {"playing_seen",playing_seen.load()},{"gameplay_input_enabled",assist},{"frames_consumed",consumed.load()},
         {"published",counts.published},{"overwritten",counts.overwritten},{"pool_drops",counts.pool_drops},
         {"consumer_skips",counts.consumer_skips},{"preview_draws",draws},{"dry_commands",dry_commands.load()},
@@ -594,7 +596,7 @@ void run_auto_start(const std::string& config_path,const std::string& capability
                     double duration_s,bool no_preview) {
     run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path);
 }
-void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview,bool keep_diagnostic_anomalies,bool keep_vision_dataset,const std::string& tracking_shadow) {
-    run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path,true,keep_diagnostic_anomalies,keep_vision_dataset,tracking_shadow);
+void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview,bool keep_diagnostic_anomalies,bool keep_vision_dataset,const std::string& tracking_shadow,bool manual_play) {
+    run_runtime(config_path,duration_s,no_preview,"",100,!manual_play,capability_path,true,keep_diagnostic_anomalies,keep_vision_dataset,tracking_shadow);
 }
 }

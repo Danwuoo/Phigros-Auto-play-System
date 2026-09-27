@@ -369,6 +369,7 @@ int main(int argc, char** argv) {
     double run_duration_s = 30;
     double run_stale_ms = 100;
     bool no_preview = false;
+    bool manual_play = false;
     bool keep_diagnostic_anomalies = false;
     bool keep_vision_dataset=false;
     std::string tracking_shadow;
@@ -379,6 +380,8 @@ int main(int argc, char** argv) {
     run_cmd->add_option("--duration-s", run_duration_s)->check(CLI::PositiveNumber);
     run_cmd->add_option("--stale-ms", run_stale_ms)->check(CLI::PositiveNumber);
     run_cmd->add_flag("--no-preview", no_preview);
+    run_cmd->add_flag("--manual-play",manual_play,
+        "Assist only: user presses PLAY; runtime injects gated gameplay only");
     run_cmd->add_flag("--keep-diagnostic-anomalies",keep_diagnostic_anomalies,
         "Assist only: at most two events x four native ROI frames, encoded after input stops");
     run_cmd->add_flag("--keep-vision-dataset",keep_vision_dataset,
@@ -596,13 +599,15 @@ int main(int argc, char** argv) {
                 64, 64, buffer_consumer_delay_ms, false, buffer_log,
                 "buffer_bench_native").dump(2) << '\n';
         else if (*run_cmd) {
+            if(manual_play&&run_mode!="assist")
+                throw std::invalid_argument("--manual-play requires assist mode");
             if((keep_diagnostic_anomalies||keep_vision_dataset||!tracking_shadow.empty())&&run_mode!="assist")
                 throw std::invalid_argument("diagnostics, dataset and tracking shadow require assist mode");
             if (run_mode == "observe") run_observe(config_path, run_duration_s, no_preview, "", run_stale_ms);
             else if (run_mode == "auto-start" && !run_capability.empty())
                 run_auto_start(config_path, run_capability, run_duration_s, no_preview);
             else if(run_mode=="assist"&&!run_capability.empty())
-                run_assist(config_path,run_capability,run_duration_s,no_preview,keep_diagnostic_anomalies,keep_vision_dataset,tracking_shadow);
+                run_assist(config_path,run_capability,run_duration_s,no_preview,keep_diagnostic_anomalies,keep_vision_dataset,tracking_shadow,manual_play);
             else throw std::invalid_argument("choose observe, auto-start, or assist; input modes require --capability");
         } else if (*dataset_cmd) {
             if(*dataset_validate) {const auto result=validate_vision_dataset(dataset_path);std::cout<<result.dump(2)<<'\n';if(!result.at("valid").get<bool>())return 1;}

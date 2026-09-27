@@ -18,6 +18,8 @@
 
 ## C++ 建置與執行
 
+由使用者按PLAY時，使用`run --mode assist --manual-play`並提供原有`--config`／`--capability`。此旗標只停用自動PLAY，保留真實遊玩、能力指紋與畫面門控；程式啟動就緒後才手動開始。未指定旗標的assist仍會按一次由pixels確認的PLAY。
+
 gRPC Windows 接收區塊優化已接入建置：固定 gRPC 1.81.1 的 vcpkg overlay 修補，畫面擷取預設 256 KiB，觸控等未指定的 channel 保留上游 8 KiB。profile 可設定 `capture.grpc_read_chunk_kib=8|64|256`，bench 可用 `--grpc-read-chunk-kib`；manifest 記錄實際設定及修補版本。開發驗證見 [正式接入紀錄](docs/GRPC_TRANSPORT_INTEGRATION_20260926.md)，先前中位數／CPU 改善與 p99 限制見 [短測研究](docs/GRPC_TRANSPORT_RESEARCH_20260926.md)。
 
 擷取畫面預設只在有界記憶體 buffer 中處理／重用，`run` 不逐幀存圖；`capture-bench`、`capture-campaign`、`capture-five-campaign` 現在也預設不寫診斷 PNG。只有加 `--keep-diagnostic-image` 才每個 bench run 保留一張圖供人工檢查。manifest 記錄 `diagnostic_image_retention=none|keep`；不存圖時 hash 為 null，分析仍檢查 raw／像素證據。歷史驗收圖不會被新程序刪除。空間清理與 gRPC 延遲研究方向見 [儲存政策與清理紀錄](docs/STORAGE_RETENTION_20260926.md)。

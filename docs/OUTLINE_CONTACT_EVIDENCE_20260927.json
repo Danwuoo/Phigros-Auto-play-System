@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "observer34_planner16_current_drag_overlap_173_regressions_live_pending",
+  "status": "manual_play_174_regressions_passed_menu_smoke_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -236,6 +236,55 @@
       "sampling_fault": "",
       "hold_contact_window_completed_up_events": 0,
       "raw_sha256": "5f85c4a442521a999257d0b93c7e983f93c18fd6e1ceb00b93153c9bc4d8920f"
+    },
+    {
+      "run_id": "cpp-observe-17905141849635372",
+      "source": "027f01e",
+      "observer": 34,
+      "planner": 16,
+      "diagnostics": 6,
+      "binary_sha256": "4fb6800d8f9212505fbea1174cb44d7daa637bd59b6694e7a77f05326183c216",
+      "raw_sha256": "d0a62dfbe49f431af98d776f2e22d88a6670b57f3f4c61c3daf87028814143cc",
+      "perfect": 214,
+      "good": 59,
+      "bad": 3,
+      "miss": 117,
+      "score": 582990,
+      "max_combo": 20,
+      "accuracy_percent": 64.21,
+      "early": 2,
+      "late": 57,
+      "duration_s": 185,
+      "state": "STOPPED",
+      "exit_code": 0,
+      "settlement_observed_via": "Computer Use after bringing verified emulator window to foreground; corroborated by user image",
+      "user_image_sha256": "436c0d1f12263cdf6164cb3b8561e167a470d868be1adf693a70f62b61974dbd",
+      "auto_play_requested": true,
+      "manual_start_protocol_valid": false,
+      "source_evidence_expired_revocations": 66,
+      "ui_gate_lost_revocations": 2,
+      "playing_capture_interval_ms": {
+        "p95": 72.20709,
+        "max": 225.6488,
+        "n": 4687,
+        "p50": 34.9333,
+        "p99": 111.652938
+      },
+      "recognition_ms": {
+        "p95": 13.90527,
+        "max": 35.3848,
+        "n": 5088,
+        "p50": 6.3246,
+        "p99": 21.278326
+      },
+      "spatial_drag_initial_intents": 17,
+      "unhandled_drag_nearline_ids": 0,
+      "unhandled_is_ground_truth": false,
+      "diagnostic_images": 136,
+      "sampling_partial": false,
+      "local_contact_conflicts": 0,
+      "test_condition": "different game foreground observed; actual emulator capture slowed; background load causality not proven",
+      "ap": false
     }
   ],
   "followup_regression": {
@@ -474,5 +523,30 @@
     },
     "basis": "current colored Drag core + current same-capture line geometry; no invented crossing; latest capture +100ms lease, 40ms missing",
     "test_execution": "three independent configurations tested concurrently after all respective builds completed; no gameplay overlap"
+  },
+  "current_manual_play_followup": {
+    "observer": 34,
+    "planner": 16,
+    "diagnostics": 6,
+    "binary_sha256": "ea1d7a614d189ea6fcfef421083cb1205541a964e948931b73d0bbc9ca2b1914",
+    "release": {
+      "total": 174,
+      "seconds": 19.9,
+      "passed": 174
+    },
+    "debug": {
+      "total": 174,
+      "seconds": 43.28,
+      "passed": 174
+    },
+    "asan": {
+      "total": 174,
+      "seconds": 88.54,
+      "suppressions": false,
+      "passed": 174
+    },
+    "basis": "assist --manual-play disables automatic PLAY only; capability preflight, input endpoint and gated gameplay preserved",
+    "cli_negative": "--manual-play with observe fails before config/input",
+    "live_verified": false
   }
 }

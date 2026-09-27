@@ -1,6 +1,7 @@
 #include "pas/analysis.hpp"
 #include "pas/config.hpp"
 #include "pas/game.hpp"
+#include "pas/runtime.hpp"
 
 #include <gtest/gtest.h>
 
@@ -30,6 +31,25 @@ private:
 };
 }
 
+TEST(RuntimeInput, ManualPlayCannotBypassTheExplicitTouchPreflight) {
+    const TempJson profile(R"({"schema":2,"name":"manual-play-negative","serial":"emulator-5554",
+        "capture":{"kind":"fake","execution":"thread","transport":"payload",
+                   "image_format":"rgb888","row_order":"top-down","width":64,
+                   "height":36,"source_rotation":0},
+        "touch":{"kind":"none","timeout_ms":100,"max_contacts":2},
+        "scheduler":{"max_plans":4,"max_steps":4,"horizon_ms":350,
+                     "evidence_max_age_ms":100},
+        "preview":{"hz":0},"log_dir":"manual-play-must-not-create-output"})");
+    for(const bool manual:{false,true}) {
+        SCOPED_TRACE(manual);
+        try {
+            run_assist(profile.path().string(),"nonexistent-capability.json",1,true,false,false,"",manual);
+            FAIL()<<"real assist must reject a no-touch profile before capture or input";
+        } catch(const std::invalid_argument& e) {
+            EXPECT_STREQ(e.what(),"real input requires explicit touch profile");
+        }
+    }
+}
 TEST(ConfigMigration, ExplicitProcessToThreadAndStrictSchema) {
     const TempJson old(R"({"schema":1,"name":"test","serial":"emulator-5554",
         "capture":{"kind":"fake","execution":"process","transport":"payload",
