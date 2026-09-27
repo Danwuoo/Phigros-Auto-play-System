@@ -26,6 +26,10 @@ struct LineCandidate {
     Vec2 velocity{};
     double angular_velocity = 0;
     bool association_valid = true;
+    bool motion_valid = false; // Bounded pose fit for association only; never current pixel evidence.
+    int motion_samples = 0;
+    Nanoseconds motion_span_ns = 0;
+    double motion_residual = 0, angular_residual = 0;
 };
 struct NoteCandidate {
     Vec2 center;
@@ -142,7 +146,12 @@ public:
     void reset();
     void update(std::vector<LineCandidate>& lines,const SceneContext& context);
 private:
-    struct Track {LineCandidate line;Nanoseconds time=0;};
+    struct Pose {Vec2 center,tangent;Nanoseconds time=0;};
+    struct Track {
+        LineCandidate line;Nanoseconds time=0,bucket_start=0;
+        std::deque<Pose> poses; // <=6 measured poses, <=90 ms, >=10 ms buckets.
+    };
+    static void fit_motion(Track& track,LineCandidate& current,Nanoseconds time);
     std::vector<Track> tracks_;
     SceneContext context_;
     std::uint64_t next_id_=0;

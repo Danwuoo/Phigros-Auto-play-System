@@ -207,7 +207,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"automatic_play_enabled",auto_play},
             {"duration_s",duration_s},{"wait_play_s",wait_play_s},
             {"duration_origin",wait_play_s>0?"first_pixels_confirmed_playing":"session_start"},
-            {"dry_owner",!assist},{"game_observer_version",34},{"game_diagnostics_version",6},
+            {"dry_owner",!assist},{"game_observer_version",35},{"game_diagnostics_version",6},
             {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
             {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
             {"executable_sha256",sha256_file(executable)},

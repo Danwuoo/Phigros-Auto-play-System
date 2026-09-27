@@ -35,6 +35,21 @@ TEST(GameTracking, MovingHeldBodyEvidenceRoundTripsAndRequiresItsCurrentGeometry
  j=candidate_batch_json(b);j["extractor_version"]=31;j["candidates"][0]["note"].erase("held_body_evidence");
  EXPECT_FALSE(parse_candidate_batch(j).candidates.front().note.held_body_evidence);
 }
+TEST(GameTracking, LinePoseFitRoundTripsAndRejectsUnboundedOrInvalidEvidence){
+ auto b=batch(1,50'000'000);b.extractor_version=35;auto& l=b.lines[0];
+ l.motion_valid=true;l.motion_samples=3;l.motion_span_ns=40'000'000;
+ l.velocity={0,300};l.angular_velocity=2;l.motion_residual=.5;l.angular_residual=.002;
+ const auto j=candidate_batch_json(b);EXPECT_EQ(candidate_batch_json(parse_candidate_batch(j)),j);
+ for(int invalid=0;invalid<7;++invalid){auto bad=j;auto& line=bad["lines"][0];
+  switch(invalid){case 0:line["motion_samples"]=7;break;case 1:line["motion_samples"]=2;break;
+   case 2:line["motion_span_ns"]=100'000'000;break;case 3:line["motion_span_ns"]=20'000'000;break;
+   case 4:line["motion_residual_px"]=3;break;case 5:line["angular_residual_rad"]=-.01;break;
+   case 6:line["angular_residual_rad"]=.02;break;}
+  EXPECT_THROW(parse_candidate_batch(bad),std::invalid_argument);
+ }
+ auto old=j;old["extractor_version"]=34;for(const auto* key:{"motion_valid","motion_samples","motion_span_ns","motion_residual_px","angular_residual_rad"})old["lines"][0].erase(key);
+ const auto restored=parse_candidate_batch(old);EXPECT_FALSE(restored.lines[0].motion_valid);EXPECT_EQ(restored.lines[0].motion_samples,0);
+}
 TEST(GameTracking, HeldBodyPatchHasNoHeadOrTailPredictionAndRoundTripsItsEvidence){
  auto b=batch(1,20'000'000);b.extractor_version=34;auto& n=b.candidates.front().note;
  n.held_body_evidence=n.held_body_patch=n.outline_evidence=true;n.head_on_line=false;n.tail.reset();

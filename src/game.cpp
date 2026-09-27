@@ -29,6 +29,8 @@ constexpr Nanoseconds history_bucket_ns=10'000'000;
 struct Component {
     int color = 0, count = 0, x0 = 0, y0 = 0, x1 = 0, y1 = 0;
     double sx = 0, sy = 0, xx = 0, yy = 0, xy = 0;
+    Vec2 ribbon_center{};
+    double ribbon_width=0,ribbon_height=0;
 };
 int classify(const std::uint8_t* p) {
     const int r=p[0], g=p[1], b=p[2];
@@ -65,6 +67,27 @@ std::vector<Component> components(const Frame& f, bool& capacity) {
             }
         }
         if(c.count<3) continue;
+        if(c.color==2) {
+            const double cx=c.sx/c.count,cy=c.sy/c.count;
+            const double xx=c.xx/c.count-cx*cx,yy=c.yy/c.count-cy*cy,xy=c.xy/c.count-cx*cy;
+            const double theta=.5*std::atan2(2*xy,xx-yy),spread=std::hypot(xx-yy,2*xy);
+            const double major=std::sqrt(std::max(0.0,(xx+yy+spread)/2)),
+                         minor=std::sqrt(std::max(0.0,(xx+yy-spread)/2));
+            if(major>5*std::max(1.0,minor)&&major<f.width*.08&&std::abs(std::sin(theta))>.2) {
+                const Vec2 u{std::cos(theta),std::sin(theta)},n{-u.y,u.x};
+                double s0=1e9,s1=-1e9,d0=1e9,d1=-1e9;
+                // Use only this connected component's measured pixels.
+                // Variance assumes uniform fill and inflates U-shaped
+                // highlights; actual projected extrema preserve their caps.
+                for(const int q:queue) {
+                    const double px=(q%w)*scale,py=(q/w)*scale;
+                    const double s=px*u.x+py*u.y,d=px*n.x+py*n.y;
+                    s0=std::min(s0,s);s1=std::max(s1,s);d0=std::min(d0,d);d1=std::max(d1,d);
+                }
+                c.ribbon_center={u.x*(s0+s1)/2+n.x*(d0+d1)/2,u.y*(s0+s1)/2+n.y*(d0+d1)/2};
+                c.ribbon_width=s1-s0+2;c.ribbon_height=d1-d0+2;
+            }
+        }
         if(output.size()==2048) {capacity=false; return output;}
         output.push_back(c);
     }
@@ -592,11 +615,28 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             });
             if(!existing) {
                 if(out.lines.size()==16) {out.capacity_valid=false; continue;}
-                out.lines.push_back({center,{std::cos(theta),std::sin(theta)},
-                                     major*3.46,std::max(2.0,minor*3.46),.6});
+                LineCandidate line{center,{std::cos(theta),std::sin(theta)},
+                                   major*3.46,std::max(2.0,minor*3.46),.6};
+                if(const auto current=observe_current_line_extent(f,line)) {line=*current;line.confidence=.85;}
+                else if(current_line_ridge_support(f,line))line.confidence=.85;
+                out.lines.push_back(line);
             }
             continue;
         }
+    }
+    // Finish the current line set before interpreting note ribbons. Source
+    // component order changes when a rotating line is interrupted by a note.
+    // A note's local dimensions must not depend on which fragment came first.
+    for(const auto& c:all) {
+        const double w=c.x1-c.x0+2.0,h=c.y1-c.y0+2.0;
+        const Vec2 center{c.sx/c.count,c.sy/c.count};
+        const double xx=c.xx/c.count-center.x*center.x,
+                     yy=c.yy/c.count-center.y*center.y,xy=c.xy/c.count-center.x*center.y;
+        const double theta=.5*std::atan2(2*xy,xx-yy),spread=std::hypot(xx-yy,2*xy);
+        const double major=std::sqrt(std::max(0.0,(xx+yy+spread)/2)),
+                     minor=std::sqrt(std::max(0.0,(xx+yy-spread)/2));
+        if((c.color==4||c.color==2||c.color==1)&&major>f.width*.07&&
+           major>12*std::max(1.0,minor)&&center.y>f.height*.12&&center.y<f.height*.95)continue;
         const double minimum_width=f.width*(c.color==3?.018:.04);
         const bool aligned_ribbon=major>5*std::max(1.0,minor)&&
             std::any_of(out.lines.begin(),out.lines.end(),[&](const auto& l){
@@ -619,6 +659,12 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         if(kind==NoteKind::tap&&std::abs(candidate.tangent.y)>.4) {
             candidate.center=center;candidate.width=major*std::sqrt(12.0)+2;
             candidate.height=minor*std::sqrt(12.0)+2;
+        }
+        // Near-horizontal caps retain their established screen geometry and
+        // highlight suppression. Measure local extents when tilt can turn a
+        // thin core's screen bbox into a falsely thick region.
+        if(kind==NoteKind::drag&&aligned_ribbon&&c.ribbon_width>0) {
+            candidate.center=c.ribbon_center;candidate.width=c.ribbon_width;candidate.height=c.ribbon_height;
         }
         if(kind==NoteKind::hold) {
             Vec2 axis{std::cos(theta),std::sin(theta)};
@@ -1476,7 +1522,9 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
     for(const auto& l:s.lines) lines.push_back({{"x",l.center.x},{"y",l.center.y},
         {"ux",l.tangent.x},{"uy",l.tangent.y},{"length",l.length},{"confidence",l.confidence},
         {"line_id",l.track_id},{"observed_ns",l.observed_ns},{"association_valid",l.association_valid},
-        {"vx",l.velocity.x},{"vy",l.velocity.y},{"angular_velocity",l.angular_velocity}});
+        {"vx",l.velocity.x},{"vy",l.velocity.y},{"angular_velocity",l.angular_velocity},
+        {"motion_valid",l.motion_valid},{"motion_samples",l.motion_samples},{"motion_span_ns",l.motion_span_ns},
+        {"motion_residual_px",l.motion_residual},{"angular_residual_rad",l.angular_residual}});
     for(const auto& t:s.targets) targets.push_back({{"note_id",t.note_id},{"revision",t.revision},
         {"kind",name(t.note.kind)},{"x",t.note.center.x},{"y",t.note.center.y},
         {"width",t.note.width},{"height",t.note.height},{"evidence_ns",t.evidence_ns},

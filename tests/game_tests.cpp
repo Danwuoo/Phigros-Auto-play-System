@@ -1179,8 +1179,95 @@ TEST(GameMotion, IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSig
     s.context.capture_ns+=20'000'000;s.context.frame++;
     ls={{{640,305},{-1,0},1000,2,.9},{{640,506},{1,0},1000,2,.9}};tracker.update(ls,s.context);
     EXPECT_EQ(ls[0].track_id,second);EXPECT_EQ(ls[1].track_id,first);EXPECT_GT(ls[0].tangent.x,0);
-    EXPECT_NEAR(ls[1].velocity.y,300,0.01);
+    EXPECT_FALSE(ls[1].motion_valid);EXPECT_EQ(ls[1].velocity.y,0);
+    s.context.capture_ns+=20'000'000;s.context.frame++;
+    ls={{{640,310},{1,0},1000,2,.9},{{640,512},{1,0},1000,2,.9}};tracker.update(ls,s.context);
+    EXPECT_TRUE(ls[1].motion_valid);EXPECT_NEAR(ls[1].velocity.y,300,0.01);
     s.context.capture_ns+=20'000'000;s.context.epoch++;tracker.update(ls,s.context);EXPECT_NE(ls[1].track_id,first);
+}
+TEST(GameMotion, BurstFramesCannotAmplifyLineNoiseOrReplaceCurrentGeometry) {
+    GameLineTracker tracker;auto s=snapshot(1,1'000'000);std::uint64_t id=0;
+    for(const Nanoseconds t:{1'000'000LL,21'000'000LL,41'000'000LL,42'000'000LL,43'000'000LL,44'000'000LL}) {
+        s.context.capture_ns=t;s.context.frame++;
+        const double y=400+(t-1'000'000)/1e9*300+(t==42'000'000?.3:0);
+        std::vector<LineCandidate> lines={{{640,y},{1,0},1000,2,.9}};tracker.update(lines,s.context);
+        if(!id)id=lines[0].track_id;EXPECT_EQ(lines[0].track_id,id);
+        EXPECT_EQ(lines[0].center.y,y);EXPECT_EQ(lines[0].observed_ns,t);
+        if(t>=41'000'000) {ASSERT_TRUE(lines[0].motion_valid);EXPECT_NEAR(lines[0].velocity.y,300,10);EXPECT_EQ(lines[0].motion_samples,3);}
+    }
+}
+TEST(GameMotion, RotatingLineEquationsIgnoreAlongLineCropCenterDrift) {
+    GameLineTracker tracker;auto s=snapshot(1,1'000'000);std::uint64_t id=0;
+    for(int i=0;i<5;++i) {
+        const double angle=.4+i*.04;const Vec2 u{std::cos(angle),std::sin(angle)},n{-u.y,u.x};
+        const double along=i%2?180:-120;
+        const Vec2 center{640+u.x*along,360+i*4+u.y*along};
+        s.context.capture_ns=1'000'000+i*20'000'000;s.context.frame++;
+        std::vector<LineCandidate> lines={{center,i%2?Vec2{-u.x,-u.y}:u,1000,2,.9}};
+        tracker.update(lines,s.context);const auto& l=lines[0];if(!id)id=l.track_id;
+        EXPECT_EQ(l.track_id,id);EXPECT_NEAR(l.center.x,center.x,1e-8);EXPECT_NEAR(l.tangent.x,u.x,1e-8);
+        if(i>=2) {
+            ASSERT_TRUE(l.motion_valid);EXPECT_NEAR(l.angular_velocity,2,1e-6);
+            // Normal velocity at this visible reference point includes the
+            // true rotation around the pivot, not fictitious along-line speed.
+            EXPECT_NEAR(l.velocity.x*n.x+l.velocity.y*n.y,200*n.y+2*along,20);
+            EXPECT_EQ(decision_json(DecisionSnapshot{.lines=lines}).at("lines")[0].at("motion_samples"),l.motion_samples);
+        }
+    }
+}
+TEST(GameMotion, FittedRotationAssociatesAfterGapWithoutInventingAMissingLine) {
+    GameLineTracker tracker;auto s=snapshot(1,1'000'000);std::uint64_t id=0;
+    for(int i=0;i<4;++i) {
+        const double angle=i*.16;s.context.capture_ns=1'000'000+i*20'000'000;s.context.frame++;
+        std::vector<LineCandidate> lines={{{640,360},{std::cos(angle),std::sin(angle)},700,2,.9}};
+        tracker.update(lines,s.context);if(!id)id=lines[0].track_id;EXPECT_EQ(lines[0].track_id,id);
+        if(i>=2)ASSERT_TRUE(lines[0].motion_valid);
+    }
+    s.context.capture_ns=81'000'000;s.context.frame++;std::vector<LineCandidate> absent;
+    tracker.update(absent,s.context);EXPECT_TRUE(absent.empty());
+    s.context.capture_ns=141'000'000;s.context.frame++;const double angle=1.12;
+    std::vector<LineCandidate> lines={{{640,360},{std::cos(angle),std::sin(angle)},700,2,.9}};
+    tracker.update(lines,s.context);EXPECT_EQ(lines[0].track_id,id);EXPECT_EQ(lines[0].observed_ns,141'000'000);
+    EXPECT_FALSE(lines[0].motion_valid); // Too few retained poses after the gap.
+    s.context.capture_ns+=100'000'000;s.context.frame++;tracker.update(lines,s.context);
+    EXPECT_NE(lines[0].track_id,id);EXPECT_FALSE(lines[0].motion_valid);
+}
+TEST(GameMotion, NonlinearLinePoseRejectsVelocityAndDuplicateLinesRemainAmbiguous) {
+    GameLineTracker tracker;auto s=snapshot(1,1'000'000);std::uint64_t id=0;
+    for(int i=0;i<4;++i) {
+        s.context.capture_ns=1'000'000+i*20'000'000;s.context.frame++;
+        std::vector<LineCandidate> lines={{{640,400.0+(i==3?22:i*4)},{1,0},1000,2,.9}};
+        tracker.update(lines,s.context);if(!id)id=lines[0].track_id;
+        EXPECT_EQ(lines[0].track_id,id);if(i==2)ASSERT_TRUE(lines[0].motion_valid);
+        if(i==3){EXPECT_FALSE(lines[0].motion_valid);EXPECT_GT(lines[0].motion_residual,2);EXPECT_EQ(lines[0].velocity.y,0);}
+    }
+    s.context.capture_ns+=20'000'000;s.context.frame++;
+    std::vector<LineCandidate> twins={{{640,424},{1,0},1000,2,.9},{{640,425},{1,0},1000,2,.9}};
+    tracker.update(twins,s.context);EXPECT_FALSE(twins[0].association_valid);EXPECT_FALSE(twins[1].association_valid);
+}
+TEST(GameMotion, DistributedTiltedRidgeRejectsWideFillShortBarsAndMissingSupport) {
+    auto f=image(1,0);const Vec2 u{.6,.8};const LineCandidate line{{640,360},u,750,3,.6};
+    oriented_box(f,line.center,u,750,3,{245,245,245});EXPECT_TRUE(current_line_ridge_support(f,line));
+    auto short_line=line;short_line.length=150;EXPECT_FALSE(current_line_ridge_support(f,short_line));
+    auto broad=image(2,20'000'000);oriented_box(broad,line.center,u,750,20,{245,245,245});
+    EXPECT_FALSE(current_line_ridge_support(broad,line));
+    auto missing=image(3,40'000'000);oriented_box(missing,line.center,u,250,3,{245,245,245});
+    EXPECT_FALSE(current_line_ridge_support(missing,line));
+}
+TEST(GameMotion, TiltedLineExtentUsesMeasuredFragmentsAndRejectsLargeUnsupportedGaps) {
+    const double angle=.8;const Vec2 u{std::cos(angle),std::sin(angle)},c{640,360};
+    const Vec2 seed_center{c.x+u.x*150,c.y+u.y*150};
+    const LineCandidate seed{seed_center,u,400,3,.6};auto f=image(1,0);
+    oriented_box(f,c,u,750,3,{245,245,245});
+    oriented_box(f,{c.x-u.x*120,c.y-u.y*120},u,128,14,{240,220,40});
+    const auto observed=observe_current_line_extent(f,seed);ASSERT_TRUE(observed);
+    EXPECT_NEAR(observed->length,750,12);EXPECT_NEAR(observed->center.x,c.x,5);EXPECT_NEAR(observed->center.y,c.y,5);
+    auto missing=image(2,20'000'000);EXPECT_FALSE(observe_current_line_extent(missing,seed));
+    auto short_fragment=image(3,40'000'000);oriented_box(short_fragment,seed_center,u,400,3,{245,245,245});
+    EXPECT_FALSE(observe_current_line_extent(short_fragment,seed));
+    auto wide_gap=image(4,60'000'000);
+    for(const int side:{-1,1})oriented_box(wide_gap,{c.x+u.x*side*350,c.y+u.y*side*350},u,300,3,{245,245,245});
+    EXPECT_FALSE(observe_current_line_extent(wide_gap,seed));
 }
 TEST(GameOwner, PreviouslySeenUnsubmittedHoldDescriptionCanRetainStartedContact) {
     FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
@@ -1856,6 +1943,33 @@ TEST(GameOwner, CurrentDragOverlapStartsWithoutInventingARootAndTracksMovingLine
     clock.set(220'000'000);owner.accept(snapshot(21,clock.now_ns()));EXPECT_TRUE(touch.contacts().empty());
     EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
     owner.stop();
+}
+TEST(GameObserver, TiltedMovingDragUsesLocalCoreAndOneCurrentContact) {
+    FakeClock clock;GameObserver observer(clock);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,1,{4,35'000'000,30'000'000});std::uint64_t line_id=0,note_id=0;
+    std::optional<int> finger;
+    for(int i=0;i<9;++i) {
+        auto f=image(i+1,1'000'000+i*20'000'000);hud(f);
+        const double angle=.8+i*.025;const Vec2 u{std::cos(angle),std::sin(angle)},c{640,340.0+i*10};
+        const Vec2 hit{c.x+u.x*(-120+i*6),c.y+u.y*(-120+i*6)};
+        oriented_box(f,c,u,750,3,{245,245,245});oriented_box(f,hit,u,128,10,{240,220,40});
+        clock.set(f.capture_complete_ns);const auto s=observer.process(f);
+        ASSERT_EQ(s.lines.size(),1);ASSERT_EQ(s.targets.size(),1);const auto& t=s.targets[0];
+        ASSERT_EQ(t.note.kind,NoteKind::drag);EXPECT_GE(s.lines[0].confidence,.8);
+        EXPECT_NEAR(t.note.width,128,5);EXPECT_LE(t.note.height,14);
+        if(!line_id){line_id=s.lines[0].track_id;note_id=t.note_id;}
+        EXPECT_EQ(s.lines[0].track_id,line_id);EXPECT_EQ(t.note_id,note_id);EXPECT_EQ(t.line_id,line_id);
+        EXPECT_FALSE(t.crossing_ns);owner.accept(s);owner.poll();
+        const auto plans=owner.take_accepted_plans();for(const auto& p:plans)EXPECT_EQ(p.basis,"live_pixels_current_drag_overlap");
+        if(i>=2) {ASSERT_EQ(touch.contacts().size(),1);
+            if(!finger)finger=touch.contacts().begin()->first;EXPECT_EQ(touch.contacts().begin()->first,*finger);
+            const double dx=touch.contacts().begin()->second[0]-hit.x,dy=touch.contacts().begin()->second[1]-hit.y;
+            EXPECT_LE(std::abs(-dx*u.y+dy*u.x),3);EXPECT_LE(std::abs(dx*u.x+dy*u.y),48);
+        }
+    }
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    EXPECT_GE(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::move;}),2);
+    clock.set(220'000'000);owner.accept(snapshot(20,clock.now_ns()));EXPECT_TRUE(touch.contacts().empty());owner.stop();
 }
 TEST(GameOwner, DragOverlapRejectsMissingStaleAmbiguousAndNonCoreGeometry) {
     for(int rejection=0;rejection<15;++rejection) {

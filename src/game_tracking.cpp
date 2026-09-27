@@ -196,7 +196,7 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
 CandidateBatch make_candidate_batch(const DecisionSnapshot& s,const Frame& f,
  const std::vector<NoteCandidate>& notes,const std::vector<std::optional<NoteCandidate>>& shortened,
  const std::vector<GameTrackHistory>& history) {
- CandidateBatch b;b.extractor_version=34;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
+ CandidateBatch b;b.extractor_version=35;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
  b.capacity_valid=s.capacity_valid;b.source_valid=f.source_valid;
  b.extraction_start_ns=s.recognition_start_ns;b.lines=s.lines;
  for(std::size_t i=0;i<notes.size();++i) {
@@ -244,7 +244,9 @@ json candidate_batch_json(const CandidateBatch& b){json cs=json::array(),ls=json
   {"action_support",c.action_support},{"origin",c.origin},{"hint_source_frame",c.hint_source_frame},{"hint_age_ns",c.hint_age_ns}});
  for(const auto& l:b.lines)ls.push_back({{"center",vec(l.center)},{"tangent",vec(l.tangent)},{"length",l.length},{"thickness",l.thickness},{"confidence",l.confidence},
    {"line_id",l.track_id},{"observed_ns",l.observed_ns},{"velocity",vec(l.velocity)},
-   {"angular_velocity",l.angular_velocity},{"association_valid",l.association_valid}});
+   {"angular_velocity",l.angular_velocity},{"association_valid",l.association_valid},
+   {"motion_valid",l.motion_valid},{"motion_samples",l.motion_samples},{"motion_span_ns",l.motion_span_ns},
+   {"motion_residual_px",l.motion_residual},{"angular_residual_rad",l.angular_residual}});
  return {{"schema",1},{"extractor_version",b.extractor_version},{"quality_version",b.quality_version},{"history_source",b.history_source},
  {"context",{{"epoch",b.context.epoch},{"generation",b.context.generation},{"geometry",b.context.geometry},{"frame",b.context.frame},{"capture_ns",b.context.capture_ns},{"width",b.context.width},{"height",b.context.height},{"rotation",b.context.rotation}}},
  {"extraction_start_ns",b.extraction_start_ns},{"extraction_end_ns",b.extraction_end_ns},{"ui",name(b.ui)},
@@ -254,7 +256,7 @@ CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("sc
  const auto& c=j.at("context");b.context={c.at("epoch"),c.at("generation"),c.at("geometry"),c.at("frame"),c.at("capture_ns"),c.at("width"),c.at("height"),c.at("rotation")};
  if(b.context.width<2||b.context.height<2||b.context.width>4096||b.context.height>4096||b.context.capture_ns<0||b.context.rotation<0||b.context.rotation>3)throw std::invalid_argument("candidate context");
  b.extractor_version=j.at("extractor_version");b.quality_version=j.at("quality_version");b.history_source=j.at("history_source");
- if((b.extractor_version<29||b.extractor_version>34)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
+ if((b.extractor_version<29||b.extractor_version>35)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
  b.extraction_start_ns=j.at("extraction_start_ns");b.extraction_end_ns=j.at("extraction_end_ns");
  if(b.extraction_start_ns<0||b.extraction_end_ns<b.extraction_start_ns)throw std::invalid_argument("extraction time order");
  const auto ui=j.at("ui").get<std::string>();bool found=false;for(auto u:{GameUi::unknown,GameUi::menu,GameUi::loading,GameUi::playing,GameUi::paused,GameUi::result})if(ui==name(u)){b.ui=u;found=true;}
@@ -264,6 +266,13 @@ CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("sc
   line.track_id=l.value("line_id",std::uint64_t{0});line.observed_ns=l.value("observed_ns",Nanoseconds{0});
   if(l.contains("velocity"))line.velocity=point(l.at("velocity"));
   line.angular_velocity=l.value("angular_velocity",0.0);line.association_valid=l.value("association_valid",true);
+  line.motion_valid=l.value("motion_valid",false);line.motion_samples=l.value("motion_samples",0);
+  line.motion_span_ns=l.value("motion_span_ns",Nanoseconds{0});
+  line.motion_residual=l.value("motion_residual_px",0.0);line.angular_residual=l.value("angular_residual_rad",0.0);
+  if(line.motion_samples<0||line.motion_samples>6||line.motion_span_ns<0||line.motion_span_ns>90'000'000||
+     !std::isfinite(line.motion_residual)||!std::isfinite(line.angular_residual)||line.motion_residual<0||line.angular_residual<0||
+     (line.motion_valid&&(line.motion_samples<3||line.motion_span_ns<30'000'000||line.motion_residual>2||line.angular_residual>.015)))
+      throw std::invalid_argument("line motion fit metadata");
   if(line.observed_ns<0||!std::isfinite(line.angular_velocity))throw std::invalid_argument("line motion metadata");
   if(!std::isfinite(line.length)||line.length<=0||!std::isfinite(line.thickness)||line.thickness<=0||!std::isfinite(line.confidence)||std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)>.01)throw std::invalid_argument("line geometry");b.lines.push_back(line);}
  std::set<std::uint64_t> ids;for(const auto& v:j.at("candidates")){TrackingCandidate t;t.candidate_id=v.at("candidate_id");

@@ -20,7 +20,87 @@ bool ridge(const Frame& f,Vec2 p,Vec2 transverse) {
     return a>=0&&b>=0&&v>=80&&v-a>=18&&v-b>=18;
 }
 }
+bool current_line_ridge_support(const Frame& f,const LineCandidate& line) {
+    if(!std::isfinite(line.center.x)||!std::isfinite(line.center.y)||!std::isfinite(line.tangent.x)||
+       !std::isfinite(line.tangent.y)||!std::isfinite(line.thickness)||
+       !std::isfinite(line.length)||line.length<f.width*.5||line.thickness>6||line.thickness<1||
+       std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)>.01)return false;
+    const Vec2 u=line.tangent,n{-u.y,u.x};int supported=0;
+    for(int k=-4;k<=4;++k) {
+        const double along=k*line.length*.10;bool found=false;
+        for(int shift=-2;shift<=2&&!found;++shift)
+            found=ridge(f,{line.center.x+u.x*along+n.x*shift,line.center.y+u.y*along+n.y*shift},n);
+        supported+=found;
+    }
+    return supported>=7;
+}
+std::optional<LineCandidate> observe_current_line_extent(const Frame& f,const LineCandidate& seed) {
+    if(!std::isfinite(seed.center.x)||!std::isfinite(seed.center.y)||!std::isfinite(seed.tangent.x)||
+       !std::isfinite(seed.tangent.y)||!std::isfinite(seed.length)||!std::isfinite(seed.thickness)||
+       seed.length<f.width*.24||seed.thickness>6||seed.thickness<1||
+       std::abs(std::hypot(seed.tangent.x,seed.tangent.y)-1)>.01)return {};
+    const Vec2 u=seed.tangent,n{-u.y,u.x};const int radius=static_cast<int>(std::ceil(std::hypot(f.width,f.height)));
+    int begin=0,last=0;bool have=false;std::optional<LineCandidate> best;
+    const auto finish=[&] {
+        if(!have||begin>0||last<0||last-begin<f.width*.5)return;
+        auto line=seed;const double middle=(begin+last)/2.0;
+        line.center={seed.center.x+u.x*middle,seed.center.y+u.y*middle};line.length=last-begin;
+        if(current_line_ridge_support(f,line)&&(!best||line.length>best->length))best=line;
+    };
+    // A note can interrupt a thin line in any orientation. Measure both
+    // current fragments along the PCA seed; never extrapolate invisible ends.
+    // One bounded scan, 4 px samples, gaps <=22% width, no retained image.
+    for(int along=-radius;along<=radius;along+=4) {
+        const Vec2 p{seed.center.x+u.x*along,seed.center.y+u.y*along};
+        bool supported=false;
+        if(p.x>=4&&p.x<f.width-4&&p.y>=f.height*.12&&p.y<f.height*.95)
+            for(int shift=-2;shift<=2&&!supported;++shift)
+                supported=ridge(f,{p.x+n.x*shift,p.y+n.y*shift},n);
+        if(supported) {
+            if(have&&along-last>f.width*.22){finish();have=false;}
+            if(!have){begin=along;have=true;}last=along;
+        }
+    }
+    finish();return best;
+}
 void GameLineTracker::reset(){tracks_.clear();context_={};}
+void GameLineTracker::fit_motion(Track& track,LineCandidate& current,Nanoseconds time) {
+    current.velocity={};current.angular_velocity=0;current.motion_valid=false;
+    const Pose pose{current.center,current.tangent,time};
+    while(!track.poses.empty()&&time-track.poses.front().time>90'000'000)track.poses.pop_front();
+    if(!track.poses.empty()&&time-track.bucket_start<10'000'000)track.poses.back()=pose;
+    else {track.poses.push_back(pose);track.bucket_start=time;}
+    while(track.poses.size()>6)track.poses.pop_front();
+    current.motion_samples=static_cast<int>(track.poses.size());
+    current.motion_span_ns=time-track.poses.front().time;
+    current.motion_residual=current.angular_residual=0;
+    if(current.motion_samples<3||current.motion_span_ns<30'000'000)return;
+    // A cropped segment's center may slide along a featureless line. Fit
+    // each measured line equation at the CURRENT reference point, rather
+    // than treating its endpoints/center as identifiable material points.
+    std::array<double,6> ts{},offsets{},angles{};int i=0;
+    double st=0,sd=0,sa=0,tt=0,td=0,ta=0;
+    for(const auto& p:track.poses) {
+        const double t=(p.time-time)/1e9;
+        const double d=dot(sub(p.center,current.center),{-p.tangent.y,p.tangent.x});
+        const double a=std::atan2(current.tangent.x*p.tangent.y-current.tangent.y*p.tangent.x,
+                                 dot(current.tangent,p.tangent));
+        ts[i]=t;offsets[i]=d;angles[i++]=a;
+        st+=t;sd+=d;sa+=a;tt+=t*t;td+=t*d;ta+=t*a;
+    }
+    const double count=current.motion_samples,den=count*tt-st*st;
+    if(den<=1e-12)return;
+    const double velocity=(count*td-st*sd)/den,omega=(count*ta-st*sa)/den;
+    const double intercept=(sd-velocity*st)/count,angle_intercept=(sa-omega*st)/count;
+    for(int k=0;k<i;++k) {
+        current.motion_residual=std::max(current.motion_residual,std::abs(offsets[k]-intercept-velocity*ts[k]));
+        current.angular_residual=std::max(current.angular_residual,std::abs(angles[k]-angle_intercept-omega*ts[k]));
+    }
+    if(!std::isfinite(velocity)||!std::isfinite(omega)||std::abs(velocity)>2000||std::abs(omega)>12||
+       current.motion_residual>2||current.angular_residual>.015)return;
+    current.motion_valid=true;current.angular_velocity=omega;
+    current.velocity={-current.tangent.y*velocity,current.tangent.x*velocity};
+}
 void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContext& c) {
     if(lines.size()>16)throw std::invalid_argument("line tracking capacity");
     if(c.epoch!=context_.epoch||c.generation!=context_.generation||c.geometry!=context_.geometry||
@@ -32,8 +112,12 @@ void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContex
     for(std::size_t i=0;i<lines.size();++i)for(std::size_t j=0;j<tracks_.size();++j) {
         const auto& a=lines[i];const auto& t=tracks_[j];const auto& b=t.line;
         const double dt=(c.capture_ns-t.time)/1e9;
-        const Vec2 expected{b.center.x+b.velocity.x*dt,b.center.y+b.velocity.y*dt};
-        const double orientation=std::abs(dot(a.tangent,b.tangent));
+        const double angle=b.motion_valid?b.angular_velocity*dt:0;
+        const Vec2 direction{b.tangent.x*std::cos(angle)-b.tangent.y*std::sin(angle),
+                             b.tangent.x*std::sin(angle)+b.tangent.y*std::cos(angle)};
+        const Vec2 expected{b.center.x+(b.motion_valid?b.velocity.x*dt:0),
+                            b.center.y+(b.motion_valid?b.velocity.y*dt:0)};
+        const double orientation=std::abs(dot(a.tangent,direction));
         const double across=std::abs(dot(sub(a.center,expected),{-a.tangent.y,a.tangent.x}));
         if(orientation<.90||across>64||std::min(a.length,b.length)<std::max(a.length,b.length)*.45)continue;
         pairs.push_back({i,j,across+40*(1-orientation)});
@@ -51,19 +135,15 @@ void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContex
     for(std::size_t i=0;i<lines.size();++i) {
         auto& line=lines[i];line.observed_ns=c.capture_ns;
         if(assigned[i]>=0) {
-            auto& prior=tracks_[assigned[i]];const auto old=prior.line;const double dt=(c.capture_ns-prior.time)/1e9;
+            auto& prior=tracks_[assigned[i]];const auto old=prior.line;
             if(dot(line.tangent,old.tangent)<0){line.tangent.x=-line.tangent.x;line.tangent.y=-line.tangent.y;}
             line.track_id=old.track_id;
-            // Line center can slide along an indistinguishable segment; only
-            // normal displacement is identifiable from the current line.
-            const Vec2 n{-line.tangent.y,line.tangent.x};const double d=dot(sub(line.center,old.center),n);
-            line.velocity={n.x*d/dt,n.y*d/dt};
-            line.angular_velocity=std::atan2(old.tangent.x*line.tangent.y-old.tangent.y*line.tangent.x,
-                                            dot(old.tangent,line.tangent))/dt;
-            prior={line,c.capture_ns};
+            fit_motion(prior,line,c.capture_ns);
+            prior.line=line;prior.time=c.capture_ns;
         } else {
-            line.track_id=++next_id_;line.velocity={};line.angular_velocity=0;
-            if(tracks_.size()<16)tracks_.push_back({line,c.capture_ns});
+            line.track_id=++next_id_;Track fresh;fit_motion(fresh,line,c.capture_ns);
+            fresh.line=line;fresh.time=c.capture_ns;
+            if(tracks_.size()<16)tracks_.push_back(std::move(fresh));
             else line.association_valid=false;
         }
     }
