@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "observer36_187_regressions_passed_hd16_346_19_0_28_no_ap",
+  "status": "observer36_planner18_190_regressions_passed_hd17_304_33_0_56_no_ap",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -638,6 +638,160 @@
         "tilted_refit_valid": 1412
       },
       "environment_note": "Native capture confirmed Glaciaxion HD PLAY. CU snapshot showed a different foreground window and is excluded; emulator foreground not proven. All builds/tests complete before run; no build/test/extra capture during gameplay. Full settlement verified after STOPPED."
+    },
+    {
+      "run_id": "cpp-observe-17905204051070886",
+      "source_commit": "609600f",
+      "observer": 36,
+      "planner": 18,
+      "diagnostics": 6,
+      "binary_sha256": "d7ce474576a0283711b046b82720f9c10e8de0bb92203eb999a6c8decc157162",
+      "perfect": 304,
+      "good": 33,
+      "bad": 0,
+      "miss": 56,
+      "score": 756756,
+      "max_combo": 45,
+      "accuracy": 82.81,
+      "early": 0,
+      "late": 33,
+      "ap": false,
+      "state": "STOPPED",
+      "exit_code": 0,
+      "automatic_play_enabled": true,
+      "auto_play_requested": true,
+      "duration_s": 185,
+      "stability_eligible": true,
+      "raw_sha256": "b954780690b8fe292b4b8833599ffdd0225147f9f83427bc3ad52aa778e1b9c1",
+      "result_image_sha256": "0fbfe51af1e96afc33b30cf9531dca88138fde2660168030dfd9fa0590e9c792",
+      "diagnostic_roi_frames": 134,
+      "diagnostic_partial": false,
+      "sampling_fault": "",
+      "recognition_ms": {
+        "absolute_deviation_p95": 4.2788,
+        "jitter_p95_minus_p5": 6.002654999999997,
+        "jitter_p95_minus_p50": 4.276774999999997,
+        "max": 22.6047,
+        "mean": 6.620367103235762,
+        "min": 2.4186,
+        "n": 6490,
+        "p5": 4.40282,
+        "p50": 6.1287,
+        "p95": 10.405474999999997,
+        "p99": 13.423219999999997
+      },
+      "playing_capture_interval_ms": {
+        "absolute_deviation_p95": 31.9088,
+        "jitter_p95_minus_p5": 54.30086000000004,
+        "jitter_p95_minus_p50": 31.75221000000004,
+        "max": 235.1664,
+        "mean": 27.951272434266365,
+        "min": 1.1803,
+        "n": 5895,
+        "p5": 3.0761499999999997,
+        "p50": 25.6248,
+        "p95": 57.37701000000004,
+        "p99": 87.53652200000025
+      },
+      "playing_no_line_frames": 165,
+      "playing_gate_frames": 5897,
+      "runtime_revokes_by_reason": {
+        "UI_gate_lost": 2,
+        "source_evidence_expired": 48
+      },
+      "accepted_intents_by_basis": {
+        "live_pixels_current_drag_overlap": 21,
+        "live_pixels_short_linear_fit_drag": 79,
+        "live_pixels_short_linear_fit_flick": 6,
+        "live_pixels_short_linear_fit_hold": 101,
+        "live_pixels_short_linear_fit_tap": 131
+      },
+      "pending_prediction_cancellations_by_reason": {
+        "nonlinear_or_mismatch": 3,
+        "root_past": 1
+      },
+      "contact_cancellations_by_kind_and_reason": {
+        "drag": {
+          "current_object_missing_or_region_lost": 83,
+          "identity_ambiguous": 4
+        },
+        "hold": {
+          "current_geometry_unsupported": 5,
+          "current_held_region_unsupported": 6,
+          "current_object_missing_or_region_lost": 63,
+          "identity_ambiguous": 2
+        },
+        "tap": {
+          "current_object_missing_or_region_lost": 2
+        }
+      },
+      "contact_conflicts": [],
+      "unhandled_nearline_candidates": {
+        "handled": 344,
+        "not_ground_truth": true,
+        "unique_unhandled_nearline": {
+          "hold": 22,
+          "tap": 7
+        }
+      },
+      "line_pose_audit": {
+        "comparable_single_line_pairs": 5123,
+        "dimensions": [
+          1280,
+          720
+        ],
+        "largest_recorded_speed_px_s": 696.9782172667724,
+        "largest_valid_refit_omega_rad_s": 1.1162772066644622,
+        "largest_valid_refit_speed_px_s": 696.9782172667724,
+        "line_observations": 6365,
+        "original_id_changes_in_comparable_pairs": 0,
+        "playing_frames": 5897,
+        "raw": "measurements/game-assist/cpp-observe-17905204051070886/events.jsonl",
+        "refit_ambiguous": 0,
+        "refit_id_changes_in_comparable_pairs": 0,
+        "refit_valid": 5247,
+        "schema": 1,
+        "semantics": "offline re-association of saved measured line candidates only; not runtime replay, not identity ground truth or per-note judgments",
+        "tilted_observations_abs_uy_gt_003": 1477,
+        "tilted_refit_valid": 1076
+      },
+      "pending_retry_audit": {
+        "cases": [
+          {
+            "cancel_frame": 4107,
+            "cancel_reason": "current_object_missing_or_region_lost",
+            "new_intent": 197,
+            "note_id": 735,
+            "old_intent": 196,
+            "rebuilt_frame": 4109
+          },
+          {
+            "cancel_frame": 5251,
+            "cancel_reason": "current_object_missing_or_region_lost",
+            "new_intent": 283,
+            "note_id": 1010,
+            "old_intent": 282,
+            "rebuilt_frame": 5256
+          },
+          {
+            "cancel_frame": 5519,
+            "cancel_reason": "current_object_missing_or_region_lost",
+            "new_intent": 325,
+            "note_id": 1144,
+            "old_intent": 324,
+            "rebuilt_frame": 5520
+          }
+        ],
+        "counts": {
+          "known_zero_cursor_cancellations": 6,
+          "rebuilt_new_intents": 3,
+          "successful_down_after_rebuild": 3
+        },
+        "rebuilt_without_successful_down": 0,
+        "schema": 1,
+        "semantics": "offline journal lifecycle audit; not game judgment ground truth or runtime replay"
+      },
+      "environment_note": "Native capture confirmed Glaciaxion HD PLAY. CU snapshot showed a different foreground window and is excluded; emulator foreground not proven. All builds/tests complete before run; no build/test/extra capture during gameplay. Full settlement verified after STOPPED. Other foreground application workload was not measured; do not attribute regression to it."
     }
   ],
   "followup_regression": {
@@ -1057,5 +1211,62 @@
     "unchanged": "lead35ms/source100ms/target100ms/Hold missing60ms/Drag missing40ms",
     "environment": "Windows x64 MSVC19.51 C++20; three configurations tested in parallel after each build completed, no gameplay overlap",
     "diagnostic_note": "HD16 Tap1082 frame6496 pending missing cancellation executed_steps0, no Down; valid returned fit at6501 rejected by submitted identity. Fix still pending. Unhandled counts are not judgment ground truth; Hold60 at577 overlaps independently supported active Hold59."
+  },
+  "current_pending_retry_followup": {
+    "observer": 36,
+    "planner": 18,
+    "source_commit": "609600f",
+    "binary_sha256": "d7ce474576a0283711b046b82720f9c10e8de0bb92203eb999a6c8decc157162",
+    "retry_basis": "known scheduler cursor exactly0 before cancellation; later fresh pixels satisfy original gates and obtain a new intent",
+    "unknown_or_started_down_replay": false,
+    "tests_per_configuration": 190,
+    "release_seconds": 21.65,
+    "debug_seconds": 44.52,
+    "asan_seconds": 104.89,
+    "suppressions": false,
+    "focused_tests": 6,
+    "new_tests": 3,
+    "environment": "Windows x64 MSVC19.51 C++20; each configuration tested only after its own build completed; Debug began before the other build process exits were confirmed; no gameplay overlap",
+    "live_run": "cpp-observe-17905204051070886",
+    "live_audit": {
+      "cases": [
+        {
+          "cancel_frame": 4107,
+          "cancel_reason": "current_object_missing_or_region_lost",
+          "new_intent": 197,
+          "note_id": 735,
+          "old_intent": 196,
+          "rebuilt_frame": 4109
+        },
+        {
+          "cancel_frame": 5251,
+          "cancel_reason": "current_object_missing_or_region_lost",
+          "new_intent": 283,
+          "note_id": 1010,
+          "old_intent": 282,
+          "rebuilt_frame": 5256
+        },
+        {
+          "cancel_frame": 5519,
+          "cancel_reason": "current_object_missing_or_region_lost",
+          "new_intent": 325,
+          "note_id": 1144,
+          "old_intent": 324,
+          "rebuilt_frame": 5520
+        }
+      ],
+      "counts": {
+        "known_zero_cursor_cancellations": 6,
+        "rebuilt_new_intents": 3,
+        "successful_down_after_rebuild": 3
+      },
+      "rebuilt_without_successful_down": 0,
+      "schema": 1,
+      "semantics": "offline journal lifecycle audit; not game judgment ground truth or runtime replay"
+    },
+    "live_ap": false,
+    "causal_score_improvement_proven": false,
+    "unchanged": "observer36/lead35ms/source100ms/target100ms/Hold missing60ms/Drag missing40ms",
+    "raw_root": "measurements/outline-contact-20260927"
   }
 }

@@ -1,5 +1,7 @@
 # 架構與資料契約
 
+planner18 修正未執行觸控的取消生命週期：cancel_contact先取得scheduler cursor，只有已知cursor=0才在取消後清除submitted，讓後續當前有效像素通過原有門控後建立新intent。無cursor／已執行Down保持退役資格，不能把未知結果當未注入。game_contact_cancelled新增retry_without_prior_down，與executed_steps／contact_started一起保留依據；不延長missing／source期限，不保存舊按鍵作下一次決策。沒有cursor的新frame仍不自動重試，必須重新取得完整有效當前觀測與有界預測。observer36不變。
+
 observer36／planner17 將撞線擬合的空間誤差與時間不確定性分開：RMS 與當前實測距離對擬合距離的偏差均須不超過 clamp(note.width×.125, 8, 16)px；prediction_error_px=max(2px, RMS, 當前偏差)，uncertainty_ns=prediction_error_px/abs(relative_velocity) 換算為主機時間。owner 的原 30ms 不確定性上限保持；尚未 Down 的計畫若收到超限不確定性，取消並記 timing_uncertainty_exceeds_limit，後續新有效像素可建立新 intent，活動或完成 Down 不重播。當前 spatial Drag overlap 維持獨立語義。decision targets 新增 prediction_error_px／fit_residual_limit_px，CandidateBatch extractor36 可讀29–36，quality版本不變。未改線的當前幾何、35ms lead、source／target100ms、Hold missing60ms、Drag missing40ms；不是以音符寬度延長接觸期限。合成回歸與實機證據見外框方案。
 
 `run --mode assist --manual-play`只停用自動PLAY，真實遊玩仍須通過原本能力指紋核對、獨立gRPC觸控端及playing gate。manifest記錄input_policy=manual_PLAY_and_gated_gameplay、automatic_play_enabled=false；summary亦記錄automatic_play_enabled。未指定時保留既有一次pixels PLAY預設，observe／auto-start不接受--manual-play。這是使用者回來後改為手動點擊的明確入口，沒有改動音符策略或證據期限。

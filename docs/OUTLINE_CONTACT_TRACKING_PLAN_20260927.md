@@ -186,3 +186,13 @@ source457db83，binary22c4a3428f7e0de852501426d6ee3a6c2d21f64266e163e390761c304b
 recognition n8111 p50／p95／p99／max=5.6231／9.5098／12.2039／23.4988ms；playing interval n7405=19.9293／47.11734／65.343184／226.6533ms。playing7407幀中no-line191；source expired8／UI lost2，local contact conflicts0。pending nonlinear4／outside horizon7／root past3，沒有timing uncertainty取消；Hold missing98／geometry8／held-region-unsupported4／ambiguous6。空間門控與畫面分布都不同，不能從單輪把取消減少視為因果改善。6504可比單線pair的原ID／refit改變均0，仍不是身份真值。未處理近線Drag2／Hold16／Tap3僅診斷，Hold60在577其實與有當前rails支持的活動Hold59重疊，不能當新Miss。
 
 離線只讀C++ note_timeline發現Tap1082／intent312：6495修訂Down48174527421819；6496於48174521555700按missing40ms取消，executed_steps=0、contact_started=false。6499音符返回，6501当前QPC48174620431000、crossing48174614233066、uncertainty4.663914ms均有界，但沒有新plan或Down。cancel_contact保留submitted=true；scheduler已無該intent，返回像素只遇到無cursor後continue。這是可重現的生命週期缺口，不是未知注入結果，下一版只對已知0步取消重建資格；活動／完成／未知Down保持不能重播。
+
+### 未執行 Down 的狀態修正及第十七輪
+
+planner18 的 cancel_contact 在取消前讀取既有scheduler cursor，只有確定0步才清除submitted；沒有cursor或已送Down保持不能重播。新plan仍由返回的當前pixels通過原門控取得新intent，不沿用取消的序列。game_contact_cancelled新增retry_without_prior_down，其他語義／期限不改。source609600f，binaryd7ce474576a0283711b046b82720f9c10e8de0bb92203eb999a6c8decc157162。新增3項回歸涵蓋Tap／Drag missing後重建、四種類型無效geometry取消後拒絕超限新預測再恢復，以及已觸控退役不重播；連同原3項專項共6／6。Release／Debug／嚴格ASan各190／190，21.65／44.52／104.89秒、無suppressions；各配置只在自己建置exit0後執行，Debug測試開始時另兩個build尚未確認exit，全部測試均在遊戲前完成。測試總秒數不是性能基準。
+
+第十七輪cpp-observe-17905204051070886，observer36／planner18／diagnostics6，五指35ms、預設auto PLAY、185s STOPPED／exit0。原生畫面确认Glaciaxion HD PLAY；CU截到其他前景應用，排除該圖，遊玩實際emulator前景未證明，其他應用負載未量測。曲中沒有build／test／額外capture。完整393個結算304／33／0／56，756756分、maxcombo45、ACC82.81%、Early0／Late33，明顯退步、未AP。raw b954780690b8fe292b4b8833599ffdd0225147f9f83427bc3ad52aa778e1b9c1；原生結算PNG0fbfe51af1e96afc33b30cf9531dca88138fde2660168030dfd9fa0590e9c792。18clips134ROI、partial=false／failure空，19個dataset run已保留，原證據未刪。
+
+recognition n6490 p50／p95／p99／max=6.1287／10.405475／13.42322／22.6047ms；被處理的playing畫面capture complete間隔n5895=25.6248／57.37701／87.536522／235.1664ms。playing5897幀中no-line165；source expired48／UI lost2，0本地contact conflicts，1052gameplay commands。間隔與撤銷明顯不同，不能把退步只歸因程式或前景應用，也不延長source期限。pending nonlinear3／root past1，Hold missing63／geometry5／held-region-unsupported6／ambiguous2。5123可比單線pair原ID／refit改變皆0，未處理近線Hold22／Tap7；這些均不是結算真值或修復數量。
+
+只讀C++ pending_retry_audit核對6個已知0步取消，3個在當前新證據返回後建立新intent，3個都成功Down：note735／196→197／4107→4109、note1010／282→283／5251→5256、note1144／324→325／5519→5520。重建未Down數0；不是3個遊戲Miss被救回的證明。修正有合成及live生命週期證據，但遊戲改善／AP仍未成立。下一步優先分開核對畫面交付／處理間隔與source過期，再續歪斜／移動線上Hold外框／Drag区域支援，維持pixels-only及當前期限。
