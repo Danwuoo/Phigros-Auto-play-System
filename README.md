@@ -59,7 +59,7 @@ out/release-v145/Release/pas.exe touch-batch-bench --config configs/avd-fixture.
 
 `run --mode observe` 觀察即時遊戲 pixels，不建立真實 input；`--mode auto-start` 先核對 `--capability` 歷史觸控指紋，再由即時選曲頁／PLAY 圖形送出一次 UI down/up，曲中仍只做 dry 排程。`--mode assist` 使用同一能力門控及單一 action owner 執行 profile 允許的真實遊玩觸控；目前屬開發試驗，不能當作 AP 能力。`game.enabled_types` 可指定 tap／hold／drag／flick，`lead_ms` 是固定版本的綜合提前量，`uncertainty_ms` 是預測接受上限。未指定 `--no-preview` 時可開啟 Win32/D3D11 診斷預覽。Note 決策仍只來自 C++ 即時 pixels。以下為桌面 main build 的入口，選好曲目並保留 PLAY：
 
-目前在桌面 main 續作，observer29／planner8 修正同一 Hold 的內部重建描述，並保留相鄰 Hold 與薄 Tap；合成驗證不代表 HD 實戰改善或 AP。登入、選曲、難度及重試由使用者操作並保留 PLAY，再由 C++ pixels 自動 PLAY。實戰仍固定35ms／兩指，驗證紀錄見 [開發紀錄 v75](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
+目前在桌面 main 續作，observer29／planner8 修正同一 Hold 的內部重建描述，並保留相鄰 Hold 與薄 Tap。v75 HD實戰結算356 Perfect／1 Good／0 Bad／36 Miss，833,295分、90.75%，尚未AP；下一步研究[視覺輔助與時間追蹤](docs/VISION_ASSIST_RESEARCH_20260927.md)，新模型／tracker尚未接入。登入、選曲、難度及重試由使用者操作並保留 PLAY，再由 C++ pixels 自動 PLAY。實戰仍固定35ms／兩指，驗證紀錄見 [開發紀錄 v75](docs/GAME_RUNTIME_DEVELOPMENT_20260927.md)。
 
 assist 可選 `--keep-diagnostic-anomalies`，一輪最多保留兩張原始 PNG（近線長 Hold 候選消失、首次觀察到 combo 字形消失），輸入停止後才編碼並寫入 run 目錄；預設不保留畫面，診斷檔案不回饋遊玩。候選／字形消失只供診斷，不代表逐音符判定。`analyze game-image <PNG>` 僅供離線幾何檢查。
 

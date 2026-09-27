@@ -4,9 +4,13 @@
 
 使用者已恢復開發，舊暫停與禁止合併 main 限制已由新授權取代。main 起點為合併提交 `09dc0d0`，本次程式修改在 `C:/Users/wurre/Desktop/Phigros-Auto-play-System`。observer29／planner8／diagnostics2 修正與新增三項回歸見開發紀錄 v75。固定35ms／兩指；再次實戰前仍需完成當前三配置回歸並由使用者手動準備 Glaciaxion HD 選曲頁，保留 PLAY。
 
-v75三配置已完成：Release／Debug／嚴格ASan各113／113，6.67／13.29／33.03秒，日誌在桌面`measurements/hold-transition-20260927/`。目前`emulator-5554`未以device狀態連線，無輸入preflight已失敗，未啟動assist；新的HD實戰及效果仍待驗證。啟動後先重新核對capability，再以`configs/phigros-hd-assist-lead35.json`／185秒／`--no-preview --keep-diagnostic-anomalies`進行一輪；PLAY與Note仍由C++即時pixels，不操作登入／選曲／重試導覽。
+v75三配置已完成：Release／Debug／嚴格ASan各113／113，6.67／13.29／33.03秒，日誌在桌面`measurements/hold-transition-20260927/`。使用者授權啟動模擬器、手動選曲後回覆「已就緒」；當前capability指紋及1280×720／rotation1預檢通過。同一binary已以`configs/phigros-hd-assist-lead35.json`／185秒／`--no-preview --keep-diagnostic-anomalies`完成一輪，run `cpp-observe-17904849394349323` STOPPED／exit0。結算圖核對 **356 Perfect／1 Good／0 Bad／36 Miss，833,295分、90.75%、MaxCombo65、Early0／Late1**，未AP。PLAY與Note由C++即時pixels，曲中無build/test、第二capture或CU擷取；目前已停止，沒有開始下一輪。
+
+使用者指出線抖動等情況容易中斷，希望加入輔助技術。下一步研究見[視覺輔助與時間追蹤](VISION_ASSIST_RESEARCH_20260927.md)：第一Hold診斷1025主線穩定、Note61缺一幀但未即刻Up；第一combo窗口1193有約1.56px線偏移，中央Hold身份87／92交替、各自最後證據約62／63ms後Up；灰色Hold的PNG1208單張重算沒有target。不能把所有Miss歸因於抖動，也不能直接延長missing期限。先補有界多幀像素／身份診斷與追蹤對照，再評估小型分割模型；目前未實作／訓練新模型或tracker。
 
 歷史資料異常：本次開始時確實讀到原 `C:/Users/wurre/.codex/worktrees/4c3c/Phigros-Auto-play-System` 的 v73 events／manifest／診斷PNG，隨後該專案路徑消失，`git worktree list` 亦不再列出它。此 task 沒有呼叫封存、移動或刪除工具。已向使用者詢問歷史 measurements 的新位置；尚不知是否另有備份，不能假稱全部證據仍可讀。後面以該路徑記載的歷史資料不可直接視為現存。桌面的 `measurements/touch-cpp-full-run3/summary.json` 仍存在，SHA256 `315d738cf2917da84fdbf60afbc2e6afe7e69615c2055c9f01c56d74fb7246da` 與 v73 capability 一致；仍須啟動時核對當前裝置指紋。
+
+使用者後續允許必要時從封存恢復4c3c。已核對其Git快照ref `refs/codex/snapshots/985e4b7595454947183d269d79cba72068d1a611` 指向1b7b05a，已完整包含於main；本輪不需要舊checkout，未恢復。該snapshot没有measurements檔案；沒有宣稱舊ignored證據已恢復。新run的原始events、結算manual／PNG、兩張診斷及離線分析均在桌面。
 
 ## 續作停止點（v73 實戰後，使用者重啟電腦）
 

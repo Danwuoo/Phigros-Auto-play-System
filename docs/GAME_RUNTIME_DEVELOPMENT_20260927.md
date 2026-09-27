@@ -367,3 +367,17 @@ v75保留三項新增回歸（總113項），包括无歷史、過期、僅兩�
 v75歷史證據保管異常：此task初期已讀到4c3c的v73原始檔與PNG，之後整個舊專案路徑消失，未由此task封存／刪除／移動。已詢問使用者是否另有資料位置，不能宣稱舊ignored measurements仍已保留。Git合併歷史及桌面程式仍在；桌面touch-cpp-full-run3能力報告hash與v73相同。歷史實戰結算仍以先前核對紀錄328／16／0／49為最新，不以合成結果更新遊戲分數。
 
 v75最終source observer29／planner8／diagnostics2：Release／Debug／嚴格ASan各113／113通過，CTest總時間6.67／13.29／33.03秒。`ctest-{release,debug,asan}-v75.log`、各build／configure日誌與舊source失敗均保留於上述桌面量測目錄。ASAN_OPTIONS未設定，第三方DLL未插樁／generated依賴warnings照舊；這些測試時間不是遊戲性能量測。最終Release pas.exe SHA256 `cbb6685cbb11eac8967f9f52f7925f0d4417a331da9bb0ab396f9792afeaca96`。沒有並行遊玩、沒有第二capture或CU導覽。無輸入的preflight以同一歷史capability報告檢查當前裝置，返回`selected serial not connected in device state`，不能宣稱當前指紋已核對或模擬器已就緒；尚待使用者啟動並手動準備HD／PLAY，再跑固定35ms／兩指／185秒有界對照。
+
+## v75 完整HD與視覺輔助研究
+
+使用者授權由本task啟動既有phigros AVD、必要時恢復4c3c，選曲後回覆「已就緒」。Git快照 `refs/codex/snapshots/985e4b7595454947183d269d79cba72068d1a611` 指向1b7b05a，已包含在桌面main，不需恢復舊checkout；該snapshot不含measurements，未宣稱舊ignored原始檔已恢復。啟動先保留emulator-user.ini，恢復window.scale0.800000；冷啟動使用 `-avd phigros -port 5554 -no-snapshot-load -no-snapshot-save -fixed-scale -grpc 8554 -grpc-use-token`，gRPC只listen127.0.0.1。第一次未加gRPC旗標的啟動及portrait／rotation3预檢失敗均保留；經console rotate回rotation1後，1280×720與capability指紋通過。沒有觸控Fixture重測或導航登入／選曲。
+
+同一已驗證binary（observer29／planner8／diagnostics2；source81f29b0），35ms／兩指／185秒 `--no-preview --keep-diagnostic-anomalies`：run `cpp-observe-17904849394349323` STOPPED／exit0。10,796消費frames／996真實gameplay命令；PLAY由當前pixels自動按下，曲中沒有build/test、第二capture或CU擷取。結算PNG核對 **833,295分，Perfect356／Good1／Bad0／Miss36，MaxCombo65，ACC90.75%，Early0／Late1**，未AP。較v73多28 Perfect、少13 Miss及15 Good；不同run的capture cadence亦改變，不把全部改善歸因於observer29。manual JSON、events／manifest／summary及兩張bounded異常圖已保存在桌面run。
+
+Down Tap138／Hold92／Drag113／Flick6；2 contact conflict／3 gate expiry／2 target-window expiry，runtime2 source／1 UI revoke，pending取消nonlinear3／outside-short-horizon2。capture interval n10,795，p50／p95／p99／max=16.5381／32.85916／45.603072／441.9336ms；recognition n10,796=4.2574／6.1051／7.80529／124.009ms；排程lateness n996=0.0627／0.598548／1.054419／1.737069ms；RPC n996=0.6875／0.96495／1.223025／1.951ms。絕對source age仍unknown；不以RPC或較低平均延遲當命中證據。
+
+raw SHA256 `d9533f1c244a78448994c9f60d48e8ed4cee40aed7908bd25149bb1a4201345b`。input停止後才執行一秒無輸入result capture，PNG `measurements/hold-transition-20260927/assist-v75-result/diagnostic.png` SHA256 `f02143e97cbc8ca7c90e3cbe067c5df310706598fe20d5e50ec2edeb946eaa6f`；最初兩個CLI options失敗日誌保留，修正copy mode／backend／run_class後才成功，沒有改production。Hold圖1025 SHA256 `71a08f064f7fed821dcc8f456755129dd7f285f4914cb426a381d4a31a85cb29`，combo圖1208 SHA256 `79bc66feba6d77489f158990886541bc41e3ae637c724ca5623cd17a0d6a33c7`。
+
+使用者在曲中指出判定線抖動等情況易斷Hold，希望加入輔助技術。離線窗口顯示1025主線y576／Note61缺一幀但1026恢復，intent7沒有立刻Up。1191–1196中央Note87／92交替，1193主線y574.43687、次幀回576；1194起另有x715垂直線候選。Note87最後有效1192，Down後約29.06ms Up，最後證據到Up62.32ms；Note92最後有效1195，到Up63.24ms，符合missing60ms取消而非100ms source。兩個Down相距8.23ms、位於同一位置，但沒有連續原圖，不能斷言同一Hold或全部Miss成因。PNG1208仍可見灰色Hold與暖色特效，單張當前observer重算只有主線、零targets。這支持補辨識／身份追蹤，不單純拉長grace。
+
+研究規格見 [視覺輔助與時間追蹤](VISION_ASSIST_RESEARCH_20260927.md)：下一個實作點是同一capture、有界多幀ROI／身份診斷，再評估獨立線track、當前Hold body／rails支持的時序追蹤與小型分割模型shadow對照。OpenCV／ONNX Runtime C++官方能力已查核；尚未安裝新依賴、訓練模型或修改tracker。固定擷取、pixels-only、來源期限及C++單程序不變；本輪後沒有自行操作重試或啟動新assist。
