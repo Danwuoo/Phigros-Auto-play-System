@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "manual_play_174_regressions_passed_menu_smoke_pending",
+  "status": "manual_budget_176_regressions_passed_live_validation_pending",
   "observer_version": 30,
   "planner_version": 10,
   "binary_sha256": "e2cab0ac36c98a111d37a05e88f28c2d109d73081a15a58a1bcbaf76dba51d1c",
@@ -285,6 +285,48 @@
       "local_contact_conflicts": 0,
       "test_condition": "different game foreground observed; actual emulator capture slowed; background load causality not proven",
       "ap": false
+    },
+    {
+      "run_id": "cpp-observe-17905151001232871",
+      "source": "b53de14",
+      "binary_sha256": "ea1d7a614d189ea6fcfef421083cb1205541a964e948931b73d0bbc9ca2b1914",
+      "observer": 34,
+      "planner": 16,
+      "diagnostics": 6,
+      "raw_sha256": "f13e0469470dad631e460ef704a383c4252f49b3f1d8baced2fd506c8f55a9f6",
+      "perfect": 306,
+      "good": 1,
+      "bad": 0,
+      "miss": 86,
+      "score": 723626,
+      "max_combo": 84,
+      "accuracy_percent": 78.03,
+      "early": 0,
+      "late": 1,
+      "state": "STOPPED",
+      "exit_code": 0,
+      "automatic_play_enabled": false,
+      "auto_play_requested": false,
+      "duration_s": 185,
+      "duration_origin": "session_start",
+      "run_excluded": true,
+      "exclusion": "CU after runtime STOPPED still showed a Tap in gameplay; native screenshot later shows settlement; manual waiting consumed the session budget, input stopped before song completion",
+      "background_game": "user reported stopped",
+      "playing_capture_interval_ms": {
+        "absolute_deviation_p95": 16.0494,
+        "jitter_p95_minus_p5": 29.290699999999998,
+        "jitter_p95_minus_p50": 16.0494,
+        "max": 73.3782,
+        "mean": 17.648449397883436,
+        "min": 1.1846,
+        "n": 8221,
+        "p5": 3.565,
+        "p50": 16.8063,
+        "p95": 32.8557,
+        "p99": 45.4944
+      },
+      "local_contact_conflicts": 0,
+      "ap": false
     }
   ],
   "followup_regression": {
@@ -547,6 +589,43 @@
     },
     "basis": "assist --manual-play disables automatic PLAY only; capability preflight, input endpoint and gated gameplay preserved",
     "cli_negative": "--manual-play with observe fails before config/input",
-    "live_verified": false
+    "live_verified": true
+  },
+  "manual_play_menu_smoke": {
+    "run_id": "cpp-observe-17905150604712466",
+    "seconds": 5,
+    "state": "STOPPED",
+    "automatic_play_enabled": false,
+    "auto_play_requested": false,
+    "gameplay_commands": 0,
+    "input_created": true,
+    "fingerprint_matches": true,
+    "native_before_after": "Glaciaxion HD PLAY menu remains; animation changes only",
+    "source": "b53de14"
+  },
+  "current_manual_budget_followup": {
+    "observer": 34,
+    "planner": 16,
+    "diagnostics": 6,
+    "binary_sha256": "724759af9e76b5d2055b5413150f0f4a5fc7bcbc72cfcde5836ac3c4f7d24e8e",
+    "release": {
+      "total": 176,
+      "passed": 176,
+      "seconds": 19.95
+    },
+    "debug": {
+      "total": 176,
+      "passed": 176,
+      "seconds": 41.01
+    },
+    "asan": {
+      "suppressions": false,
+      "total": 176,
+      "passed": 176,
+      "seconds": 90.81
+    },
+    "basis": "manual PLAY wait (0,60] seconds; full duration begins once at first pixels-confirmed playing QPC timestamp; no gate reset",
+    "live_wait_timeout_verified": false,
+    "full_manual_live_verified": false
   }
 }

@@ -12,12 +12,25 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <thread>
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 namespace pas {
+GameRunBudget::GameRunBudget(Nanoseconds start,Nanoseconds duration,Nanoseconds wait_play)
+    :start_(start),duration_(duration),wait_play_(wait_play),deadline_(0) {
+    if(start<0||duration<=0||duration>3'600'000'000'000LL||wait_play<0||wait_play>60'000'000'000LL||
+       start>std::numeric_limits<Nanoseconds>::max()-duration-wait_play)
+        throw std::invalid_argument("invalid game run budget");
+    deadline_=start+(wait_play?wait_play:duration);
+    if(!wait_play)origin_=start;
+}
+bool GameRunBudget::arm_from_playing(Nanoseconds observed_ns) {
+    if(!waiting()||observed_ns<start_||observed_ns>=start_+wait_play_)return false;
+    origin_=observed_ns;deadline_=observed_ns+duration_;return true;
+}
 using nlohmann::json;
 CaptureOptions runtime_capture_options(const RuntimeConfig& c) {
     CaptureOptions options;
@@ -150,10 +163,12 @@ private:
 static void run_runtime(const std::string& config_path,double duration_s,bool no_preview,
                  const std::string& launch_package,double stale_ms,bool auto_play,
                  const std::string& capability_path,bool assist=false,bool keep_diagnostic_anomalies=false,
-                 bool keep_vision_dataset=false,const std::string& tracking_shadow="") {
+                 bool keep_vision_dataset=false,const std::string& tracking_shadow="",double wait_play_s=0) {
     if(!std::isfinite(duration_s)||duration_s<=0||duration_s>3600 ||
        !std::isfinite(stale_ms)||stale_ms<5||stale_ms>5000)
         throw std::invalid_argument("invalid duration or stale-ms");
+    if(!std::isfinite(wait_play_s)||wait_play_s<0||wait_play_s>60||
+       (wait_play_s>0&&(!assist||auto_play)))throw std::invalid_argument("invalid manual PLAY wait");
     const auto config=load_config(config_path);
     if(!tracking_shadow.empty()&&tracking_shadow!="byte_association"&&tracking_shadow!="oc_observation")
         throw std::invalid_argument("tracking shadow requires byte_association or oc_observation");
@@ -190,6 +205,8 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
             {"input_created",false},{"input_policy",assist?(auto_play?"pixels_PLAY_and_gated_gameplay":"manual_PLAY_and_gated_gameplay"):auto_play?"one_pixels_confirmed_PLAY_only":"none"},
             {"automatic_play_enabled",auto_play},
+            {"duration_s",duration_s},{"wait_play_s",wait_play_s},
+            {"duration_origin",wait_play_s>0?"first_pixels_confirmed_playing":"session_start"},
             {"dry_owner",!assist},{"game_observer_version",34},{"game_diagnostics_version",6},
             {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
             {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
@@ -240,6 +257,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     std::atomic<std::uint64_t> gameplay_commands=0;
     std::atomic<Nanoseconds> last_capture=0;
     std::atomic<bool> real_input_created=false, play_requested=false, playing_seen=false;
+    std::atomic<Nanoseconds> first_playing_ns=0;
     std::mutex fault_mutex, decision_mutex;
     ActionWake action_wakeup;
     std::exception_ptr worker_fault;
@@ -410,7 +428,11 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
                                 {"valid_until_ns",plan.valid_until_ns},{"source_frame",plan.source_frame_sequence},
                                 {"steps",steps},{"basis",plan.basis},{"real_input",assist}});
                         }
-                        if(current->playing_gate) playing_seen=true;
+                        if(current->playing_gate) {
+                            playing_seen=true;
+                            Nanoseconds unarmed=0;
+                            first_playing_ns.compare_exchange_strong(unarmed,clock.now_ns());
+                        }
                         const auto play_plan=auto_play?play_planner.take(*current,clock.now_ns()):std::nullopt;
                         if(play_plan) {
                             play_requested=true; // One attempt. Unknown outcomes never retry down.
@@ -503,13 +525,20 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             }
         }
     });
-    const auto start=clock.now_ns(), end=start+static_cast<Nanoseconds>(std::llround(duration_s*1e9));
+    const auto start=clock.now_ns();
+    GameRunBudget budget(start,static_cast<Nanoseconds>(std::llround(duration_s*1e9)),
+                         static_cast<Nanoseconds>(std::llround(wait_play_s*1e9)));
     Nanoseconds preview_at=0; std::uint64_t draws=0, lag_drops=0;
     bool launched=false, stale_revoked=false;
     std::exception_ptr main_fault;
     try {
         record({{"event","session_state"},{"state","OBSERVING"},{"monotonic_ns",start}});
-        while(clock.now_ns()<end&&!stopping&&!capture_done&&!console_stop_requested) {
+        while(!stopping&&!capture_done&&!console_stop_requested) {
+            const auto first=first_playing_ns.load();
+            if(first&&budget.arm_from_playing(std::max(start,first)))
+                record({{"event","game_run_budget_armed"},{"origin_ns",*budget.origin()},
+                        {"deadline_ns",budget.deadline()},{"basis","first_pixels_confirmed_playing"}});
+            if(budget.expired(clock.now_ns()))break;
             if(preview&&!preview->pump()) {stopping=true; break;}
             if(capture) {
                 const auto stats=capture->stats();
@@ -564,6 +593,10 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
     json summary={{"mode",assist?"assist":auto_play?"auto-start":"observe"},{"state",fault||main_fault?"FAULT":"STOPPED"},
         {"input_created",real_input_created.load()},{"auto_play_requested",play_requested.load()},
         {"automatic_play_enabled",auto_play},
+        {"duration_s",duration_s},{"wait_play_s",wait_play_s},
+        {"duration_origin",wait_play_s>0?"first_pixels_confirmed_playing":"session_start"},
+        {"budget_origin_ns",budget.origin()?json(*budget.origin()):json(nullptr)},
+        {"budget_deadline_ns",budget.deadline()},
         {"playing_seen",playing_seen.load()},{"gameplay_input_enabled",assist},{"frames_consumed",consumed.load()},
         {"published",counts.published},{"overwritten",counts.overwritten},{"pool_drops",counts.pool_drops},
         {"consumer_skips",counts.consumer_skips},{"preview_draws",draws},{"dry_commands",dry_commands.load()},
@@ -572,7 +605,7 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
         {"vision_dataset_path",sampled_path},{"sampling_manifest",sampled_manifest},{"sampling_fault",sampling_fault},
         {"sampling_copy_ms",distribution(sampling_copy)},{"shadow_publication_ms",distribution(shadow_publication)},{"tracking_bank_copy_ms",distribution(bank_copy)},
         {"tracking_shadow",shadow?shadow->stats():json(nullptr)},{"tracking_bank",tracking_bank?tracking_bank->stats():json(nullptr)},
-        {"stop_reason",console_stop_requested?"console_stop":clock.now_ns()>=end?"duration":"preview_or_fault"},
+        {"stop_reason",console_stop_requested?"console_stop":budget.expired(clock.now_ns())?budget.expiry_reason():"preview_or_fault"},
         {"revocations",revoke.load()},{"relative_stale_drops",lag_drops},
         {"capture_interval_ms",distribution(intervals)},{"host_residency_ms",distribution(residency)},
         {"recognition_duration_ms",distribution(recognition)},{"source_absolute_age",nullptr},
@@ -596,7 +629,9 @@ void run_auto_start(const std::string& config_path,const std::string& capability
                     double duration_s,bool no_preview) {
     run_runtime(config_path,duration_s,no_preview,"",100,true,capability_path);
 }
-void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview,bool keep_diagnostic_anomalies,bool keep_vision_dataset,const std::string& tracking_shadow,bool manual_play) {
-    run_runtime(config_path,duration_s,no_preview,"",100,!manual_play,capability_path,true,keep_diagnostic_anomalies,keep_vision_dataset,tracking_shadow);
+void run_assist(const std::string& config_path,const std::string& capability_path,double duration_s,bool no_preview,bool keep_diagnostic_anomalies,bool keep_vision_dataset,const std::string& tracking_shadow,bool manual_play,double wait_play_s) {
+    if(manual_play&&(!std::isfinite(wait_play_s)||wait_play_s<=0||wait_play_s>60))
+        throw std::invalid_argument("manual PLAY wait must be in (0,60] seconds");
+    run_runtime(config_path,duration_s,no_preview,"",100,!manual_play,capability_path,true,keep_diagnostic_anomalies,keep_vision_dataset,tracking_shadow,manual_play?wait_play_s:0);
 }
 }

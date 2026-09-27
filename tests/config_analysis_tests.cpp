@@ -31,6 +31,26 @@ private:
 };
 }
 
+TEST(RuntimeBudget, DelayedManualPlayPreservesFullDurationAndCannotResetOnGateChurn) {
+    FakeClock clock;GameRunBudget budget(0,185'000'000'000LL,60'000'000'000LL);
+    clock.set(44'000'000'000LL);EXPECT_FALSE(budget.expired(clock.now_ns()));EXPECT_TRUE(budget.waiting());
+    ASSERT_TRUE(budget.arm_from_playing(clock.now_ns()));EXPECT_EQ(budget.deadline(),229'000'000'000LL);
+    EXPECT_FALSE(budget.waiting());EXPECT_FALSE(budget.arm_from_playing(100'000'000'000LL));
+    clock.set(185'000'000'000LL);EXPECT_FALSE(budget.expired(clock.now_ns()));
+    clock.set(229'000'000'000LL-1);EXPECT_FALSE(budget.expired(clock.now_ns()));
+    clock.set(229'000'000'000LL);EXPECT_TRUE(budget.expired(clock.now_ns()));EXPECT_STREQ(budget.expiry_reason(),"duration");
+}
+TEST(RuntimeBudget, MissingOrLatePlayTimesOutAndNonmanualDurationRemainsUnchanged) {
+    GameRunBudget pending(10,185'000'000'000LL,60'000'000'000LL);
+    EXPECT_FALSE(pending.arm_from_playing(9));EXPECT_FALSE(pending.expired(60'000'000'009LL));
+    EXPECT_TRUE(pending.expired(60'000'000'010LL));EXPECT_FALSE(pending.arm_from_playing(60'000'000'010LL));
+    EXPECT_STREQ(pending.expiry_reason(),"waiting_for_play_timeout");EXPECT_FALSE(pending.origin());
+    GameRunBudget normal(10,185'000'000'000LL);
+    EXPECT_FALSE(normal.waiting());EXPECT_FALSE(normal.arm_from_playing(100));
+    EXPECT_EQ(normal.deadline(),185'000'000'010LL);EXPECT_TRUE(normal.expired(normal.deadline()));
+    EXPECT_THROW(GameRunBudget(0,1,60'000'000'001LL),std::invalid_argument);
+    EXPECT_THROW(GameRunBudget(0,0,1),std::invalid_argument);
+}
 TEST(RuntimeInput, ManualPlayCannotBypassTheExplicitTouchPreflight) {
     const TempJson profile(R"({"schema":2,"name":"manual-play-negative","serial":"emulator-5554",
         "capture":{"kind":"fake","execution":"thread","transport":"payload",
