@@ -365,6 +365,14 @@ int main(int argc, char** argv) {
     buffer_cmd->add_option("--consumer-delay-ms", buffer_consumer_delay_ms);
     buffer_cmd->add_option("--log", buffer_log);
     std::string config_path, run_mode = "observe";
+    std::string manual_config,manual_capability;
+    bool manual_no_preview=false;
+    double round_watchdog_s=0;
+    auto* manual_cmd=app.add_subcommand("manual-session","Current strategy: standby, manual Play, result, standby; Escape/Ctrl+C stops");
+    manual_cmd->add_option("--config",manual_config)->required();
+    manual_cmd->add_option("--capability",manual_capability)->required();
+    manual_cmd->add_flag("--no-preview",manual_no_preview);
+    manual_cmd->add_option("--round-watchdog-s",round_watchdog_s,"Optional abnormal round limit; zero disables; never a result detector")->check(CLI::Range(0.0,3600.0));
     std::string run_capability;
     double run_duration_s = 30;
     double run_stale_ms = 100;
@@ -601,6 +609,8 @@ int main(int argc, char** argv) {
             std::cout << fake_capture_bench(buffer_duration_s, 0, buffer_interval_ms,
                 64, 64, buffer_consumer_delay_ms, false, buffer_log,
                 "buffer_bench_native").dump(2) << '\n';
+        else if (*manual_cmd) run_manual_session(manual_config,manual_capability,manual_no_preview,
+            static_cast<Nanoseconds>(std::llround(round_watchdog_s*1e9)));
         else if (*run_cmd) {
             if(manual_play&&run_mode!="assist")
                 throw std::invalid_argument("--manual-play requires assist mode");

@@ -1,5 +1,7 @@
 # 架構與資料契約
 
+2026-09-28 main 合併手動待命 lifecycle1，音符策略保留 observer36／planner18。`manual-session` 的 manifest 與獨立合併前 golden 均以此版本為準；下述 HD9 observer33／planner13 是歷史比較分支，20 張跨曲結算不可歸於合併後 main。兩種入口 `run --manual-play`（有限等待）與 `manual-session`（多輪待命）的生命週期不同。見[合併紀錄](MAIN_MERGE_20260928.md)。
+
 planner18 修正未執行觸控的取消生命週期：cancel_contact先取得scheduler cursor，只有已知cursor=0才在取消後清除submitted，讓後續當前有效像素通過原有門控後建立新intent。無cursor／已執行Down保持退役資格，不能把未知結果當未注入。game_contact_cancelled新增retry_without_prior_down，與executed_steps／contact_started一起保留依據；不延長missing／source期限，不保存舊按鍵作下一次決策。沒有cursor的新frame仍不自動重試，必須重新取得完整有效當前觀測與有界預測。observer36不變。
 
 observer36／planner17 將撞線擬合的空間誤差與時間不確定性分開：RMS 與當前實測距離對擬合距離的偏差均須不超過 clamp(note.width×.125, 8, 16)px；prediction_error_px=max(2px, RMS, 當前偏差)，uncertainty_ns=prediction_error_px/abs(relative_velocity) 換算為主機時間。owner 的原 30ms 不確定性上限保持；尚未 Down 的計畫若收到超限不確定性，取消並記 timing_uncertainty_exceeds_limit，後續新有效像素可建立新 intent，活動或完成 Down 不重播。當前 spatial Drag overlap 維持獨立語義。decision targets 新增 prediction_error_px／fit_residual_limit_px，CandidateBatch extractor36 可讀29–36，quality版本不變。未改線的當前幾何、35ms lead、source／target100ms、Hold missing60ms、Drag missing40ms；不是以音符寬度延長接觸期限。合成回歸與實機證據見外框方案。
@@ -9,6 +11,13 @@ observer36／planner17 將撞線擬合的空間誤差與時間不確定性分開
 手動PLAY的session生命週期另有GameRunBudget：--wait-play-s預設60秒、有效(0,60]，待機無playing時到期停止；action owner第一次處理像素確認的playing_gate時以同一QPC記錄first_playing_ns，supervisor只arm一次，duration自該時刻開始。重複playing／epoch／UI gate變動不能延期或重設已arm預算。非manual的duration仍自session_start起算。manifest／summary記duration_origin、wait_play_s與duration_s，summary另記budget_origin_ns／budget_deadline_ns；game_run_budget_armed事件保留依據。預算只管理session停止，不輸入逐音符決策，不能當歌曲時鐘或譜面。等待超時reason=waiting_for_play_timeout；此時不會取得遊戲時間預算。
 
 observer34／planner16／diagnostics6前一輪契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。Drag新增live_pixels_current_drag_overlap：至少兩樣本／10ms，当前彩色核心與同capture的可靠line幾何重疊才立即Down，predicted_down_ns=null；不得以fitted distance代替当前重疊，接觸租期仍為最新capture+100ms、missing40ms。coverage crossing_ns允許null，其他音符仍按預測排程。尚未注入Down的Hold每次deadline修訂後，Up重設為最新capture evidence+100ms，不能隨Down平移舊Up；source／target期限不延長。CandidateBatch extractor34讀取29–33，held_body_patch表示當前外框內可見觸點、前端／尾端未知，僅近期已接線anchor可用。patch不產生crossing／tail prediction或新Down；一般色塊不能將既有moving body触点投影回line或刷新evidence。四個成對截面含觸點位置、三排fill及雙側96px支持。近線12px原路徑、48px步進／90ms anchor／60ms missing／100ms evidence不變。採樣20run／2560images、2GiB／每輪256MiB、停止後編碼。HD最佳22 Miss，AP未驗收；下述planner9為歷史。
+2026-09-27 本比較分支採 **HD9 observer33／planner13＋獨立手動待命 lifecycle1**，後續 observer／planner 修正沒有帶入。`manual-session` 使用 capture worker → SessionPerception／容量1完整 snapshot → 唯一 SessionGameOwner → 原 gRPC backend，另有有界 SessionArchive writer。STANDBY→STARTING→PLAYING→RESULT→STANDBY；當前 HUD 與原 observer gate 才允許注入；固定六個結算 UI 文字須三個不同新鮮 frame、跨度至少60ms，首個結算證據即關閉 Down。無音符、黑屏、HUD消失、暫停不算 RESULT。
+
+真正新一輪 reset observer／建立新 GamePlanOwner；曲中 source／HUD 撤銷只 cancel scheduler，保留本輪完成 identity，不增 epoch 或重建 backend。geometry／generation 變動或未知 input／release 結果均 FAULT。finalize 以 request_stop＋一次 cancel 保存首份 release report，是生命周期修正，沒有改音符排程。
+
+capture仍gRPC payload fast／RGB888 top-down／256KiB、容量1／三物理buffer。archive mailbox≤8192事件且serialized bytes≤16MiB，另最多一張待編碼結算圖；各輪events每段16MiB、最多32段，超額FAULT。待命只記state／60秒health，1MiB×4輪替；各輪摘要與hash落盤，不保留歷史round vector。每輪四個統計vector各最多100000筆，來源時間domain保持分離。完整範圍、已知HD9 bug與測試見[本次證據](HD9_MANUAL_SESSION_20260927.md)。下文為1636519當時架構，main的新策略不由此分支取代。
+
+最新observer33／planner13／diagnostics6契約見[外框方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)。CandidateBatch extractor33讀取29–32；held_body_evidence與head_on_line獨立，既有Hold憑當前成對rail／前端同指Move。離線前端重新接line需當前body內部支持，特效框線不夠；前方rail須同時有body fill才否定前端。觸點以當前亮度終止邊量測，放在內側3px；近線12px原路徑、48px步進／90ms anchor／60ms missing／100ms evidence不變，tail未見保持未知。純歷史／光流不供action。採樣最多20run／2560images、2GiB根額度／256MiB每輪及停止後編碼，stats記錄額度。HD最佳26 Miss，穩定AP未驗收；下述planner9為歷史。
 
 現行動作層source `59c92bf`／planner9依使用者補充加入5-contact profile、`max_contacts_verified`門控與current-tail正常Hold release。`tail_crossing_ns`仍為預測診斷，不單獨提前Up；當前有效body更新100ms期限，可見tail／rails與當前線一致且已過線才鎖定terminal release。連續Drag用當前候選的保守沿線區域覆蓋active contact，窗口須重疊、法向≤2px、多leader匹配拒絕共用；原missing／anchor／source與stop契約保持。實作、四／五指驗證與局限見[動作語義紀錄](GAME_ACTION_SEMANTICS_20260927.md)。以下b325／planner8與v75內容為追蹤／歷史契約，不能取代最新動作層版本。
 

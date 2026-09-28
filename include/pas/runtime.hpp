@@ -17,6 +17,8 @@ private:
     Nanoseconds start_,duration_,wait_play_,deadline_;
     std::optional<Nanoseconds> origin_;
 };
+void run_manual_session(const std::string& config_path,const std::string& capability_path,
+                        bool no_preview,Nanoseconds round_watchdog=0);
 CaptureOptions runtime_capture_options(const RuntimeConfig& config);
 nlohmann::json match_touch_capability(const RuntimeConfig& config, const nlohmann::json& report,
                                      const nlohmann::json& device, const std::string& installed_hash);
