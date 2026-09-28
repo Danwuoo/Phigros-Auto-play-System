@@ -2,6 +2,8 @@
 
 2026-09-28 main 合併手動待命 lifecycle1，音符策略保留 observer36／planner18。`manual-session` 的 manifest 與獨立合併前 golden 均以此版本為準；下述 HD9 observer33／planner13 是歷史比較分支，20 張跨曲結算不可歸於合併後 main。兩種入口 `run --manual-play`（有限等待）與 `manual-session`（多輪待命）的生命週期不同。見[合併紀錄](MAIN_MERGE_20260928.md)。
 
+2026-09-28 第二輪比較分支為 `manual-session` 新增可選全畫面像素短片段診斷。採樣只在 SessionPerception 處理當前 capture 之後複製畫面，獨立 writer 的 mailbox 最多4張；寫入失敗或滿載只減少診斷樣本，觸控 owner 不讀取任何採樣資料。每輪固定時間窗與少量多線／旋轉事件窗共最多30張，20輪／1,658,880,000原始像素byte硬上限。`index.jsonl`保留同幀QPC時間點、畫面尺寸、雜湊；完整設定與可比性見[第二輪比較](MAIN_LEGACY_HD_COMPARISON_20260928.md)。
+
 planner18 修正未執行觸控的取消生命週期：cancel_contact先取得scheduler cursor，只有已知cursor=0才在取消後清除submitted，讓後續當前有效像素通過原有門控後建立新intent。無cursor／已執行Down保持退役資格，不能把未知結果當未注入。game_contact_cancelled新增retry_without_prior_down，與executed_steps／contact_started一起保留依據；不延長missing／source期限，不保存舊按鍵作下一次決策。沒有cursor的新frame仍不自動重試，必須重新取得完整有效當前觀測與有界預測。observer36不變。
 
 observer36／planner17 將撞線擬合的空間誤差與時間不確定性分開：RMS 與當前實測距離對擬合距離的偏差均須不超過 clamp(note.width×.125, 8, 16)px；prediction_error_px=max(2px, RMS, 當前偏差)，uncertainty_ns=prediction_error_px/abs(relative_velocity) 換算為主機時間。owner 的原 30ms 不確定性上限保持；尚未 Down 的計畫若收到超限不確定性，取消並記 timing_uncertainty_exceeds_limit，後續新有效像素可建立新 intent，活動或完成 Down 不重播。當前 spatial Drag overlap 維持獨立語義。decision targets 新增 prediction_error_px／fit_residual_limit_px，CandidateBatch extractor36 可讀29–36，quality版本不變。未改線的當前幾何、35ms lead、source／target100ms、Hold missing60ms、Drag missing40ms；不是以音符寬度延長接觸期限。合成回歸與實機證據見外框方案。

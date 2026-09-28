@@ -1,6 +1,7 @@
 #include "pas/runtime.hpp"
 #include "pas/game_session.hpp"
 #include "pas/session_archive.hpp"
+#include "pas/session_pixel_clips.hpp"
 #include "pas/analysis.hpp"
 #include "pas/preview.hpp"
 #include "session_build_provenance.hpp"
@@ -56,7 +57,7 @@ json release_json(const ReleaseReport& r,const std::string& reason) {
         {"effect_verified",false}};
 }
 }
-void run_manual_session(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog) {
+void run_manual_session(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips) {
     const auto config=load_config(config_path);
     if(config.capture_kind!="emulator-grpc"||config.touch_kind!="emulator-grpc"||
        config.width!=1280||config.height!=720||config.source_rotation!=1||config.grpc_read_chunk_kib!=256||
@@ -85,9 +86,13 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
         {"capture",grpc_transport_manifest(256)},{"capture_pool_slots",3},{"decision_slots",1},
         {"journal_queue_capacity",8192},{"journal_segment_bytes",16*1024*1024},{"round_max_segments",32},
         {"standby_segment_bytes",1024*1024},{"standby_segments",4},{"stats_samples_per_round_max",100000},
-        {"dataset_sampling",false},{"result_image_policy","one_same_capture_frame_per_confirmed_round_after_owner_release"},
+        {"dataset_sampling",false},{"pixel_clip_sampling",pixel_clips},
+        {"pixel_clip_policy",pixel_clips?"at most 20 rounds x (8 uniform + 2 complex-line) x 3 full 1280x720 RGB888 frames; 4-frame writer mailbox; no runtime feedback":"disabled"},
+        {"result_image_policy","one_same_capture_frame_per_confirmed_round_after_owner_release"},
         {"result_ui_profile","English six static labels / 1280x720 / translation <=3px"}};
     SessionArchive archive(root,manifest);
+    std::unique_ptr<SessionPixelClips> clips;
+    if(pixel_clips)clips=std::make_unique<SessionPixelClips>(root/"pixel-clips",clock,config.width,config.height);
     auto endpoint=discover_endpoint(config.serial);
     if(!config.endpoint.empty()) {
         std::ifstream f(config.token_file);std::getline(f,endpoint.token);
@@ -131,6 +136,7 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                 auto f=latest.read_after(sequence,10'000'000);if(!f)continue;sequence=f->sequence;
                 if(clock.now_ns()-f->capture_complete_ns>=100'000'000){live_gate=false;continue;}
                 auto p=std::make_shared<Packet>();static_cast<SessionObservation&>(*p)=perception.process(*f);
+                if(clips)clips->observe(*f,*p);
                 if(p->status.new_round) {
                     round_epoch=p->status.round;result_frame.reset();
                 }
@@ -291,10 +297,12 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
     live_gate=false;stopping=true;++revocation;wake.notify();latest.close();capture.cancel();
     action_worker.request_stop();perception_worker.request_stop();capture_worker.request_stop();
     action_worker.join();perception_worker.join();capture_worker.join();archive.close();
+    if(clips)clips->close();
     std::exception_ptr error;{std::lock_guard lock(fault_mutex);error=fault;}
     json summary={{"state",error||archive.faulted()?"FAULT":"STOPPED"},{"run_dir",std::filesystem::absolute(root).string()},
         {"published",latest.counters().published},{"pool_drops",latest.counters().pool_drops},
-        {"consumer_skips",latest.counters().consumer_skips},{"journal_peak_queue",archive.peak_queue()},{"automatic_play_enabled",false}};
+        {"consumer_skips",latest.counters().consumer_skips},{"journal_peak_queue",archive.peak_queue()},
+        {"automatic_play_enabled",false},{"pixel_clips",clips?clips->summary():json{{"enabled",false}}}};
     if(error)try{std::rethrow_exception(error);}catch(const std::exception& e){summary["fault"]=e.what();}
     std::ofstream file(root/"summary.json");file<<summary.dump(2)<<'\n';file.close();
     if(!file)throw std::runtime_error("session summary write failed");

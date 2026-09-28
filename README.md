@@ -2,6 +2,8 @@
 
 **2026-09-28 合併狀態：main 保留 observer36／planner18，接入多輪手動待命流程。** 啟動 `out/release-v145/Release/pas.exe manual-session` 後，由使用者選曲及按 Play，完成結算後繼續待命。跨曲成績來自凍結的 `codex/hd9-manual-rounds`（observer33／planner13），不是合併後 main 的成績；原執行檔 `out/hd9-session-release/Release/pas.exe` 與原始量測保留。版本界線及驗證見[合併紀錄](docs/MAIN_MERGE_20260928.md)。舊 AP goal 維持暫停；下一步研討跨曲學習式觀測、多判定線及時間追蹤，尚未開發或訓練。
 
+第二輪 main 策略比較分支可選 `manual-session --pixel-clips`，從同源即時畫面有界保存少量完整 RGB 連續影格，供離線研究多判定線與旋轉場景；選曲與 Play 仍由使用者操作。採樣格式、上限和證據範圍見[第二輪比較紀錄](docs/MAIN_LEGACY_HD_COMPARISON_20260928.md)。
+
 以下為依日期保留的歷史狀態；「持續自主開發」不代表目前授權。
 
 **使用者已暫停goal；停止自主開發與後續遊戲測試。** 最佳三次完整分數依序是第九輪868880、第七輪862583、第六輪852341；第十八輪348／19／0／26、839224分，仍未AP。最新observer36／planner18、三配置各190／190保留，未還原舊版本；技術發現與原始證據見[暫停總結](docs/GOAL_PAUSE_SUMMARY_20260927.md)。下方為歷史紀錄。

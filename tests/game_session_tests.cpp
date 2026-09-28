@@ -1,6 +1,7 @@
 #include "pas/game_session.hpp"
 #include "pas/result_ui_labels.hpp"
 #include "pas/session_archive.hpp"
+#include "pas/session_pixel_clips.hpp"
 #include "pas/adb.hpp"
 #include "pas/analysis.hpp"
 #include "hd9_strategy_trace.hpp"
@@ -228,4 +229,35 @@ TEST(ManualArchive, OversizedRecordFaultsRatherThanGrowingStandbyStorage) {
     SessionArchive archive(root,{{"strategy","HD9"}},256,256);
     archive.event(0,{{"event","oversized"},{"value",std::string(512,'x')}});archive.close();
     EXPECT_TRUE(archive.faulted());EXPECT_FALSE(std::filesystem::exists(root/"standby-0.jsonl"));std::filesystem::remove_all(root);
+}
+TEST(ManualPixelClips, FullFieldFramesKeepTimingAndStopAtRoundLimit) {
+    const auto root=std::filesystem::temp_directory_path()/("pas-clips-test-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    FakeClock clock;PixelClipOptions options;options.max_rounds=1;options.uniform_clips=1;options.event_clips=1;
+    options.frames_per_clip=2;options.queue_capacity=4;
+    SessionPixelClips clips(root,clock,8,4,options);
+    Frame f;f.width=8;f.height=4;f.stride=24;f.rgb.assign(96,73);f.source_valid=true;
+    SessionObservation p;p.status.round=1;p.status.active=true;p.status.state=PlaySessionState::starting;p.status.new_round=true;
+    f.sequence=1;f.capture_complete_ns=900'000'000;clock.set(f.capture_complete_ns);clips.observe(f,p);
+    p.status.new_round=false;p.status.state=PlaySessionState::playing;
+    for(int i=0;i<4;++i){
+        f.sequence=i+2;f.capture_complete_ns=1'000'000'000LL+i*20'000'000LL;clock.set(f.capture_complete_ns);
+        p.scene.recognition_start_ns=f.capture_complete_ns+1'000'000;
+        p.scene.recognition_end_ns=f.capture_complete_ns+2'000'000;
+        p.scene.lines.resize(i>=2?2:1);
+        clips.observe(f,p);
+    }
+    p.status.round=2;p.status.new_round=true;f.sequence=10;f.capture_complete_ns=2'000'000'000;
+    clock.set(f.capture_complete_ns);clips.observe(f,p);clips.close();
+    const auto summary=clips.summary();EXPECT_EQ(summary.at("frames_written"),4);
+    EXPECT_EQ(summary.at("frames_dropped_queue_or_error"),0);
+    EXPECT_EQ(summary.at("max_raw_total_bytes"),384);
+    std::ifstream index(root/"index.jsonl");std::string row;int count=0,events=0;
+    while(std::getline(index,row)){
+        const auto meta=nlohmann::json::parse(row);const auto path=root/meta.at("path").get<std::string>();
+        EXPECT_EQ(std::filesystem::file_size(path),96);EXPECT_EQ(meta.at("sha256"),sha256_file(path));
+        EXPECT_EQ(meta.at("capture_complete_ns"),1'000'000'000LL+count*20'000'000LL);
+        if(meta.at("clip_trigger")=="complex_line_event")++events;
+        ++count;
+    }
+    EXPECT_EQ(count,4);EXPECT_EQ(events,2);index.close();std::filesystem::remove_all(root);
 }
