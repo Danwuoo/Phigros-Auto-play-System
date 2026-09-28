@@ -1,0 +1,1287 @@
+{
+  "schema": 1,
+  "date": "2026-09-28",
+  "source": "offline manual reading of same-capture result PNGs and exhaustive archive/clip hash audit",
+  "session_path": "measurements/game-assist/manual-session-108176133899800",
+  "session_manifest_sha256": "8b66a9f9197d41e1160dd1d9d8b44f82a6a817233d295d579453668976b1f19f",
+  "session_summary_sha256": "0c058026d97bfb8b736682687ed6e68df70afd2e4e1e6594077a9ed7ae3e8322",
+  "rounds_index_sha256": "db7977668f72801d2af2c8d5f0d300d585701b4853c43c1cbc93b5a568b23086",
+  "executable_sha256": "de22022803a00ec0fd81ba19c8575b3728cb6e3bfd007ac73a360b08e08dc601",
+  "source_build_commit": "cd0ec437f495ee73e92a1adaccd097a86eeb91ac",
+  "source_build_dirty": false,
+  "observer": 36,
+  "planner": 18,
+  "capture_geometry": {
+    "execution": "thread",
+    "grpc_read_chunk_kib": 256,
+    "height": 720,
+    "image_format": "rgb888",
+    "kind": "emulator-grpc",
+    "max_relative_lag_ms": 250,
+    "row_order": "top-down",
+    "source_rotation": 1,
+    "transport": "payload",
+    "width": 1280
+  },
+  "clock_domain": "host_qpc_ns",
+  "session_state": "STOPPED",
+  "hash_audit": {
+    "all_round_manifests_events_summaries_results_verified": true,
+    "all_pixel_clip_frames_verified": true
+  },
+  "counts": {
+    "confirmed_results": 21,
+    "hd_results": 19,
+    "in_results": 2,
+    "distinct_song_labels": 19,
+    "all_perfect_results": 0,
+    "capture_pool_drops": 0,
+    "consumer_skips": 2146
+  },
+  "in_rounds": [
+    {
+      "hd_round": 3,
+      "in_round": 4,
+      "song": "Dlyrotz"
+    },
+    {
+      "hd_round": 6,
+      "in_round": 7,
+      "song": "光"
+    }
+  ],
+  "rounds": [
+    {
+      "round_id": 1,
+      "song": "Eradication Catastrophe",
+      "difficulty": "HD",
+      "level": 7,
+      "score": 818000,
+      "perfect": 178,
+      "good": 0,
+      "bad": 0,
+      "miss": 22,
+      "judgments": 200,
+      "perfect_percent": 89.0,
+      "max_combo": 34,
+      "accuracy_display_percent": 89.0,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-1/result.png",
+      "result_sha256": "4c289e1eb6e67f077c649081d4f167fef4e660a14bf0535e2ef142ed21c71265",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-1/summary.json",
+      "summary_sha256": "ebda7cddabff879e145f88859ce4a1e165f05681e2be5192b11e7757ab0e5027",
+      "duration_s": 133.842,
+      "decisions": 7909,
+      "commands": 685,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7517,
+          "p50": 16.5523,
+          "p95": 32.21925999999999,
+          "p99": 46.62927600000001,
+          "max": 182.3648
+        },
+        "recognition_ms": {
+          "n": 7909,
+          "p50": 5.4436,
+          "p95": 8.77,
+          "p99": 10.62526,
+          "max": 26.2662
+        },
+        "host_residency_ms": {
+          "n": 7909,
+          "p50": 6.8385,
+          "p95": 11.515419999999999,
+          "p99": 15.591384,
+          "max": 33.9901
+        }
+      }
+    },
+    {
+      "round_id": 2,
+      "song": "Credits",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 582690,
+      "perfect": 224,
+      "good": 3,
+      "bad": 0,
+      "miss": 128,
+      "judgments": 355,
+      "perfect_percent": 63.1,
+      "max_combo": 35,
+      "accuracy_display_percent": 63.65,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-2/result.png",
+      "result_sha256": "41d4e187a68e6446ea60cd38d2d0e6c92b5dc26d6d4a2337fd9df165caa0cba2",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-2/summary.json",
+      "summary_sha256": "6def206f1273dc74b8314d48ee165366f92aeb22b0a943ee2ed1505a820f3467",
+      "duration_s": 107.698,
+      "decisions": 6368,
+      "commands": 460,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6043,
+          "p50": 16.6101,
+          "p95": 30.763779999999986,
+          "p99": 43.40320799999999,
+          "max": 109.5417
+        },
+        "recognition_ms": {
+          "n": 6368,
+          "p50": 4.44985,
+          "p95": 13.154009999999982,
+          "p99": 17.722570999999995,
+          "max": 24.7183
+        },
+        "host_residency_ms": {
+          "n": 6368,
+          "p50": 5.60735,
+          "p95": 16.05538999999996,
+          "p99": 27.143527,
+          "max": 40.3063
+        }
+      }
+    },
+    {
+      "round_id": 3,
+      "song": "Dlyrotz",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 961572,
+      "perfect": 452,
+      "good": 0,
+      "bad": 0,
+      "miss": 6,
+      "judgments": 458,
+      "perfect_percent": 98.69,
+      "max_combo": 336,
+      "accuracy_display_percent": 98.69,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-3/result.png",
+      "result_sha256": "23e77365df90287b0785a91a5110c970f7b0f650bf1307ad0771b75b7e90039a",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-3/summary.json",
+      "summary_sha256": "45bcc001ca6fb691472619a94d2a49fb38c9e5eb1779158e487d49b7e9a51538",
+      "duration_s": 130.687,
+      "decisions": 7741,
+      "commands": 1863,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7439,
+          "p50": 16.5502,
+          "p95": 31.49506999999999,
+          "p99": 42.526014,
+          "max": 83.7542
+        },
+        "recognition_ms": {
+          "n": 7741,
+          "p50": 4.4871,
+          "p95": 8.2653,
+          "p99": 10.647380000000002,
+          "max": 19.8047
+        },
+        "host_residency_ms": {
+          "n": 7741,
+          "p50": 5.652,
+          "p95": 10.2351,
+          "p99": 14.121580000000023,
+          "max": 24.0536
+        }
+      }
+    },
+    {
+      "round_id": 4,
+      "song": "Dlyrotz",
+      "difficulty": "IN",
+      "level": 13,
+      "score": 634461,
+      "perfect": 395,
+      "good": 5,
+      "bad": 6,
+      "miss": 178,
+      "judgments": 584,
+      "perfect_percent": 67.64,
+      "max_combo": 121,
+      "accuracy_display_percent": 68.19,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-4/result.png",
+      "result_sha256": "50493f6b6e8267d7817872f3c7028f3caf0489c5077e366e31b15f3a229e3cf4",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-4/summary.json",
+      "summary_sha256": "3143d952fb0db8467f8e453b936caee1596d4285edd7d214b9427c04ed5b2dd1",
+      "duration_s": 130.647,
+      "decisions": 7745,
+      "commands": 1474,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7271,
+          "p50": 16.585,
+          "p95": 31.4584,
+          "p99": 45.9726,
+          "max": 382.4594
+        },
+        "recognition_ms": {
+          "n": 7745,
+          "p50": 4.5981,
+          "p95": 7.922159999999996,
+          "p99": 10.883331999999996,
+          "max": 21.4601
+        },
+        "host_residency_ms": {
+          "n": 7745,
+          "p50": 5.8663,
+          "p95": 10.143819999999998,
+          "p99": 13.927779999999975,
+          "max": 27.851
+        }
+      }
+    },
+    {
+      "round_id": 5,
+      "song": "Engine x Start!! (melody mix)",
+      "difficulty": "HD",
+      "level": 8,
+      "score": 919792,
+      "perfect": 187,
+      "good": 0,
+      "bad": 0,
+      "miss": 5,
+      "judgments": 192,
+      "perfect_percent": 97.4,
+      "max_combo": 83,
+      "accuracy_display_percent": 97.4,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-5/result.png",
+      "result_sha256": "9a0985e73b907bb024e70f7b2b6b8a58d1b56a186795a075ad55f222e3a01a39",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-5/summary.json",
+      "summary_sha256": "83f4d1d4eba5bb4210ccd06129655537645e41b844ead49b92c838d97c02aab8",
+      "duration_s": 98.56,
+      "decisions": 5833,
+      "commands": 503,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 5549,
+          "p50": 16.5406,
+          "p95": 31.645179999999996,
+          "p99": 43.231099999999955,
+          "max": 80.982
+        },
+        "recognition_ms": {
+          "n": 5833,
+          "p50": 4.3818,
+          "p95": 6.416819999999999,
+          "p99": 8.239848000000004,
+          "max": 11.8061
+        },
+        "host_residency_ms": {
+          "n": 5833,
+          "p50": 5.5005,
+          "p95": 8.9688,
+          "p99": 11.918068000000002,
+          "max": 20.6347
+        }
+      }
+    },
+    {
+      "round_id": 6,
+      "song": "光",
+      "difficulty": "HD",
+      "level": 7,
+      "score": 943762,
+      "perfect": 312,
+      "good": 1,
+      "bad": 0,
+      "miss": 2,
+      "judgments": 315,
+      "perfect_percent": 99.05,
+      "max_combo": 159,
+      "accuracy_display_percent": 99.25,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-6/result.png",
+      "result_sha256": "b3e284e8c3161fe1edaeafea3e46d6b148146c2795e9f3a9d4e838cc678b4cd3",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-6/summary.json",
+      "summary_sha256": "60f1d8b11f624c50f7a37189e056ffdea2dd3aebd13f9377de9a99d00b6c98d8",
+      "duration_s": 138.661,
+      "decisions": 8224,
+      "commands": 776,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7937,
+          "p50": 16.5287,
+          "p95": 31.6738,
+          "p99": 42.86895600000004,
+          "max": 97.8706
+        },
+        "recognition_ms": {
+          "n": 8224,
+          "p50": 4.37805,
+          "p95": 6.044929999999997,
+          "p99": 7.745802999999988,
+          "max": 25.1406
+        },
+        "host_residency_ms": {
+          "n": 8224,
+          "p50": 5.4946,
+          "p95": 8.40979,
+          "p99": 10.761358999999992,
+          "max": 26.1688
+        }
+      }
+    },
+    {
+      "round_id": 7,
+      "song": "光",
+      "difficulty": "IN",
+      "level": 12,
+      "score": 799603,
+      "perfect": 443,
+      "good": 7,
+      "bad": 0,
+      "miss": 67,
+      "judgments": 517,
+      "perfect_percent": 85.69,
+      "max_combo": 106,
+      "accuracy_display_percent": 86.57,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-7/result.png",
+      "result_sha256": "5b93a955a2aea73cfc24cd9e14219f418d931b9ff9d12e5cd2745db41ac15096",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-7/summary.json",
+      "summary_sha256": "6497059b867f3e62b9bebf64021f8b7047f24c46d629cfffd81fe148a21f01c5",
+      "duration_s": 138.78,
+      "decisions": 8188,
+      "commands": 1439,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7837,
+          "p50": 16.5981,
+          "p95": 31.410299999999992,
+          "p99": 45.00114800000001,
+          "max": 130.4874
+        },
+        "recognition_ms": {
+          "n": 8188,
+          "p50": 4.48045,
+          "p95": 8.203554999999998,
+          "p99": 12.338242000000001,
+          "max": 39.3976
+        },
+        "host_residency_ms": {
+          "n": 8188,
+          "p50": 5.62025,
+          "p95": 10.238854999999994,
+          "p99": 16.918937000000007,
+          "max": 50.18
+        }
+      }
+    },
+    {
+      "round_id": 8,
+      "song": "Winter ↑ cube ↓",
+      "difficulty": "HD",
+      "level": 8,
+      "score": 865601,
+      "perfect": 419,
+      "good": 3,
+      "bad": 0,
+      "miss": 27,
+      "judgments": 449,
+      "perfect_percent": 93.32,
+      "max_combo": 98,
+      "accuracy_display_percent": 93.75,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-8/result.png",
+      "result_sha256": "10afd13a4dd1f110c294e61f37dd0805529e0ed77f73375e5306d92f7901126f",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-8/summary.json",
+      "summary_sha256": "fe262e0e22ad33a88136b927ae188b5c6e7a2fa1a93234d22d661f55e806a9db",
+      "duration_s": 162.771,
+      "decisions": 9435,
+      "commands": 1381,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 9130,
+          "p50": 16.58885,
+          "p95": 33.322459999999985,
+          "p99": 46.63803599999997,
+          "max": 124.8946
+        },
+        "recognition_ms": {
+          "n": 9435,
+          "p50": 5.3317,
+          "p95": 9.406339999999998,
+          "p99": 12.318611999999998,
+          "max": 21.6875
+        },
+        "host_residency_ms": {
+          "n": 9435,
+          "p50": 6.8874,
+          "p95": 12.267879999999996,
+          "p99": 16.822963999999992,
+          "max": 28.2149
+        }
+      }
+    },
+    {
+      "round_id": 9,
+      "song": "混乱-Confusion",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 743692,
+      "perfect": 376,
+      "good": 1,
+      "bad": 0,
+      "miss": 101,
+      "judgments": 478,
+      "perfect_percent": 78.66,
+      "max_combo": 165,
+      "accuracy_display_percent": 78.8,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-9/result.png",
+      "result_sha256": "c7c33e45302758a937685f5dcc96dd315f0c5ac7f86ef1eec5325ffed0eba2b6",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-9/summary.json",
+      "summary_sha256": "2a436ae753538e5cd9a96a4500be558e8c4993485e8dc33bb4069bac0dc07344",
+      "duration_s": 134.678,
+      "decisions": 7879,
+      "commands": 997,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7593,
+          "p50": 16.6458,
+          "p95": 31.897019999999998,
+          "p99": 43.536024,
+          "max": 100.6612
+        },
+        "recognition_ms": {
+          "n": 7879,
+          "p50": 5.045,
+          "p95": 9.20412,
+          "p99": 12.946238000000003,
+          "max": 27.96
+        },
+        "host_residency_ms": {
+          "n": 7879,
+          "p50": 6.318,
+          "p95": 11.749889999999995,
+          "p99": 17.262632000000007,
+          "max": 33.9436
+        }
+      }
+    },
+    {
+      "round_id": 10,
+      "song": "Cipher",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 879884,
+      "perfect": 445,
+      "good": 1,
+      "bad": 0,
+      "miss": 27,
+      "judgments": 473,
+      "perfect_percent": 94.08,
+      "max_combo": 151,
+      "accuracy_display_percent": 94.22,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-10/result.png",
+      "result_sha256": "5e62c082a87bb5aaa6623e10172a95127889d797665a0e09cbf2cd2b1677ec38",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-10/summary.json",
+      "summary_sha256": "3fca05c20537d4d6b12ba5d83c0b0a8267d8ee3c7e5be1bd69256b06440aa30d",
+      "duration_s": 161.224,
+      "decisions": 9531,
+      "commands": 1190,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 9227,
+          "p50": 16.5108,
+          "p95": 31.78188,
+          "p99": 44.77040199999996,
+          "max": 80.4233
+        },
+        "recognition_ms": {
+          "n": 9531,
+          "p50": 4.689,
+          "p95": 7.95655,
+          "p99": 10.256290000000002,
+          "max": 26.5244
+        },
+        "host_residency_ms": {
+          "n": 9531,
+          "p50": 5.9604,
+          "p95": 10.11685,
+          "p99": 13.758350000000007,
+          "max": 32.8065
+        }
+      }
+    },
+    {
+      "round_id": 11,
+      "song": "FULL AUTO SHOOTER",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 704846,
+      "perfect": 295,
+      "good": 1,
+      "bad": 0,
+      "miss": 93,
+      "judgments": 389,
+      "perfect_percent": 75.84,
+      "max_combo": 81,
+      "accuracy_display_percent": 76.0,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-11/result.png",
+      "result_sha256": "fc5910338dbb9a4f7133148d70136787937cf11237f96407314cab62a3757d5c",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-11/summary.json",
+      "summary_sha256": "ff2ea647dc92d32350376e3972ce8a761574bdd4ca2c4a0a16c9031568ffcd5d",
+      "duration_s": 135.988,
+      "decisions": 7972,
+      "commands": 946,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7505,
+          "p50": 16.5751,
+          "p95": 31.880979999999983,
+          "p99": 43.452392,
+          "max": 963.758
+        },
+        "recognition_ms": {
+          "n": 7972,
+          "p50": 4.783250000000001,
+          "p95": 8.01209,
+          "p99": 9.700005999999998,
+          "max": 22.0105
+        },
+        "host_residency_ms": {
+          "n": 7972,
+          "p50": 6.1597,
+          "p95": 10.408739999999998,
+          "p99": 14.182101999999995,
+          "max": 28.21
+        }
+      }
+    },
+    {
+      "round_id": 12,
+      "song": "HumaN",
+      "difficulty": "HD",
+      "level": 8,
+      "score": 903153,
+      "perfect": 212,
+      "good": 0,
+      "bad": 0,
+      "miss": 10,
+      "judgments": 222,
+      "perfect_percent": 95.5,
+      "max_combo": 97,
+      "accuracy_display_percent": 95.5,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-12/result.png",
+      "result_sha256": "6a48d5995277fb7da4dd87132b747abb5e21ef35fbc0b183c3ef3a3a99777cce",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-12/summary.json",
+      "summary_sha256": "08fa13e74b17a4590f2c6d97217df28138dd24358d6c70f11a5f1b56569e6708",
+      "duration_s": 141.242,
+      "decisions": 8306,
+      "commands": 827,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 8015,
+          "p50": 16.6367,
+          "p95": 31.746209999999998,
+          "p99": 43.516386,
+          "max": 116.9745
+        },
+        "recognition_ms": {
+          "n": 8306,
+          "p50": 4.904,
+          "p95": 7.95415,
+          "p99": 10.561155000000001,
+          "max": 24.4656
+        },
+        "host_residency_ms": {
+          "n": 8306,
+          "p50": 6.24125,
+          "p95": 10.301874999999999,
+          "p99": 14.369145000000021,
+          "max": 41.3028
+        }
+      }
+    },
+    {
+      "round_id": 13,
+      "song": "[PRAW]",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 895722,
+      "perfect": 548,
+      "good": 4,
+      "bad": 0,
+      "miss": 23,
+      "judgments": 575,
+      "perfect_percent": 95.3,
+      "max_combo": 195,
+      "accuracy_display_percent": 95.76,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-13/result.png",
+      "result_sha256": "31093a71d61af3f8ed522d1552ae974564a2c87da96c3817d7316d5b59659f56",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-13/summary.json",
+      "summary_sha256": "f82d0fb95ba8b3c9d9f291855e9b2d0eb85903771c04af6da92ff07af019aab2",
+      "duration_s": 163.725,
+      "decisions": 9406,
+      "commands": 1508,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 9047,
+          "p50": 16.6471,
+          "p95": 34.172259999999994,
+          "p99": 47.73318799999989,
+          "max": 254.2557
+        },
+        "recognition_ms": {
+          "n": 9406,
+          "p50": 5.619300000000001,
+          "p95": 8.6695,
+          "p99": 11.123640000000005,
+          "max": 23.671
+        },
+        "host_residency_ms": {
+          "n": 9406,
+          "p50": 7.1446000000000005,
+          "p95": 11.612924999999999,
+          "p99": 15.534025000000016,
+          "max": 42.467
+        }
+      }
+    },
+    {
+      "round_id": 14,
+      "song": "Cereris",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 855164,
+      "perfect": 656,
+      "good": 2,
+      "bad": 0,
+      "miss": 43,
+      "judgments": 701,
+      "perfect_percent": 93.58,
+      "max_combo": 79,
+      "accuracy_display_percent": 93.77,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-14/result.png",
+      "result_sha256": "445627d27fa7c5e2b54e2ade3331656d2554b84cfccd4df07d3fadbc9c036326",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-14/summary.json",
+      "summary_sha256": "e636fd8d6e230f70c415593eeb467aa9c43f5613742a65439bb69adf3fe028bc",
+      "duration_s": 174.996,
+      "decisions": 10240,
+      "commands": 2545,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 9953,
+          "p50": 16.5936,
+          "p95": 32.03672,
+          "p99": 44.869507999999975,
+          "max": 80.884
+        },
+        "recognition_ms": {
+          "n": 10240,
+          "p50": 5.2839,
+          "p95": 9.630354999999996,
+          "p99": 12.423979000000008,
+          "max": 21.4787
+        },
+        "host_residency_ms": {
+          "n": 10240,
+          "p50": 6.6586,
+          "p95": 12.195914999999996,
+          "p99": 16.443657000000037,
+          "max": 29.7876
+        }
+      }
+    },
+    {
+      "round_id": 15,
+      "song": "Pixel Rebelz",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 751257,
+      "perfect": 412,
+      "good": 1,
+      "bad": 0,
+      "miss": 92,
+      "judgments": 505,
+      "perfect_percent": 81.58,
+      "max_combo": 80,
+      "accuracy_display_percent": 81.71,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-15/result.png",
+      "result_sha256": "03f122211d6e2b3346762dcc0f4f5395c608adb0722b51edc182a797d2224378",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-15/summary.json",
+      "summary_sha256": "5a06823403ce5fd0bf45eadb7b444126f93daf4d5dbeb12ac458a8d4bd89cd03",
+      "duration_s": 149.746,
+      "decisions": 8872,
+      "commands": 1308,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 8560,
+          "p50": 16.5732,
+          "p95": 31.650529999999996,
+          "p99": 44.09853199999999,
+          "max": 140.3895
+        },
+        "recognition_ms": {
+          "n": 8872,
+          "p50": 4.48375,
+          "p95": 6.57377,
+          "p99": 8.614311999999998,
+          "max": 14.9286
+        },
+        "host_residency_ms": {
+          "n": 8872,
+          "p50": 5.8889499999999995,
+          "p95": 9.159914999999998,
+          "p99": 11.865233999999994,
+          "max": 20.2574
+        }
+      }
+    },
+    {
+      "round_id": 16,
+      "song": "Non-Melodic Ragez (MUG Edit)",
+      "difficulty": "HD",
+      "level": 11,
+      "score": 887993,
+      "perfect": 642,
+      "good": 7,
+      "bad": 3,
+      "miss": 23,
+      "judgments": 675,
+      "perfect_percent": 95.11,
+      "max_combo": 175,
+      "accuracy_display_percent": 95.79,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-16/result.png",
+      "result_sha256": "b5d9c622aa05d8758500e32464ef97919ca81b3737e75f7a038cc3d17974b1fc",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-16/summary.json",
+      "summary_sha256": "471ca69f54bb29aa09e0617c204f909bdd115306c34b162fcb8f33263939922c",
+      "duration_s": 146.362,
+      "decisions": 8672,
+      "commands": 1607,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 8348,
+          "p50": 16.52335,
+          "p95": 31.58006,
+          "p99": 44.27552900000004,
+          "max": 380.7265
+        },
+        "recognition_ms": {
+          "n": 8672,
+          "p50": 4.56395,
+          "p95": 6.597874999999997,
+          "p99": 8.646358,
+          "max": 14.8929
+        },
+        "host_residency_ms": {
+          "n": 8672,
+          "p50": 6.09085,
+          "p95": 9.487754999999996,
+          "p99": 11.836114999999987,
+          "max": 21.9616
+        }
+      }
+    },
+    {
+      "round_id": 17,
+      "song": "Sultan Rage",
+      "difficulty": "HD",
+      "level": 7,
+      "score": 817320,
+      "perfect": 292,
+      "good": 1,
+      "bad": 0,
+      "miss": 41,
+      "judgments": 334,
+      "perfect_percent": 87.43,
+      "max_combo": 96,
+      "accuracy_display_percent": 87.62,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-17/result.png",
+      "result_sha256": "5475e0d6ccff1cd960b4b86770d5ea62dce99117dbdcf929ea60a43a66336f42",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-17/summary.json",
+      "summary_sha256": "1cc6754cc8adf306e621bf921f7e47e5e4084f946a319d009aa0660cc221f2c7",
+      "duration_s": 122.977,
+      "decisions": 7268,
+      "commands": 797,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6962,
+          "p50": 16.540149999999997,
+          "p95": 32.184965,
+          "p99": 44.732731000000044,
+          "max": 162.1259
+        },
+        "recognition_ms": {
+          "n": 7268,
+          "p50": 4.4529499999999995,
+          "p95": 6.51769,
+          "p99": 8.356714,
+          "max": 16.8932
+        },
+        "host_residency_ms": {
+          "n": 7268,
+          "p50": 5.96915,
+          "p95": 9.497325,
+          "p99": 11.986826999999998,
+          "max": 22.4724
+        }
+      }
+    },
+    {
+      "round_id": 18,
+      "song": "Class Memories",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 897218,
+      "perfect": 743,
+      "good": 3,
+      "bad": 0,
+      "miss": 25,
+      "judgments": 771,
+      "perfect_percent": 96.37,
+      "max_combo": 213,
+      "accuracy_display_percent": 96.62,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-18/result.png",
+      "result_sha256": "2c64178fbbda0585bb39115b3b1c2e796a884e100b0ba1b26d91d916eac3e1f8",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-18/summary.json",
+      "summary_sha256": "e0634b396c0a1102212b56c4560a1fd5c36598067b280b34aa362552a20c9011",
+      "duration_s": 163.897,
+      "decisions": 9645,
+      "commands": 1600,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 8784,
+          "p50": 16.53865,
+          "p95": 32.23705,
+          "p99": 45.74302900000001,
+          "max": 110.1824
+        },
+        "recognition_ms": {
+          "n": 9645,
+          "p50": 4.5642,
+          "p95": 7.295119999999997,
+          "p99": 10.352275999999943,
+          "max": 17.8775
+        },
+        "host_residency_ms": {
+          "n": 9645,
+          "p50": 6.1648,
+          "p95": 10.36326,
+          "p99": 14.485823999999987,
+          "max": 32.8207
+        }
+      }
+    },
+    {
+      "round_id": 19,
+      "song": "-SURREALISM-",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 764396,
+      "perfect": 465,
+      "good": 2,
+      "bad": 0,
+      "miss": 104,
+      "judgments": 571,
+      "perfect_percent": 81.44,
+      "max_combo": 168,
+      "accuracy_display_percent": 81.66,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-19/result.png",
+      "result_sha256": "5b25e45017e30d217c3371bc93c9324308cb7d62b1d91d89c72794900335c7c7",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-19/summary.json",
+      "summary_sha256": "5396b24f54990ff61e6e2e71f6a62eecbe45c6e61078cf4268e173f55bafa63a",
+      "duration_s": 160.471,
+      "decisions": 9465,
+      "commands": 1868,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 9150,
+          "p50": 16.5092,
+          "p95": 32.46022999999998,
+          "p99": 45.65995900000001,
+          "max": 268.3883
+        },
+        "recognition_ms": {
+          "n": 9465,
+          "p50": 4.8309,
+          "p95": 8.451819999999994,
+          "p99": 10.461132000000005,
+          "max": 17.8434
+        },
+        "host_residency_ms": {
+          "n": 9465,
+          "p50": 6.5802,
+          "p95": 11.15878,
+          "p99": 14.893892000000019,
+          "max": 23.2962
+        }
+      }
+    },
+    {
+      "round_id": 20,
+      "song": "Bonus Time",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 909078,
+      "perfect": 392,
+      "good": 4,
+      "bad": 0,
+      "miss": 16,
+      "judgments": 412,
+      "perfect_percent": 95.15,
+      "max_combo": 194,
+      "accuracy_display_percent": 95.78,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-20/result.png",
+      "result_sha256": "5e46cbe3c28a1aedffb9f8338b4f9a952b2e64448a51f72403d4db16d8d32503",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-20/summary.json",
+      "summary_sha256": "bbe02d288ccec0f6174aeac9e853510f6eab3089472b94d461c9825476b5b1eb",
+      "duration_s": 122.463,
+      "decisions": 7261,
+      "commands": 1062,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6971,
+          "p50": 16.509,
+          "p95": 31.521,
+          "p99": 43.46444000000001,
+          "max": 131.6496
+        },
+        "recognition_ms": {
+          "n": 7261,
+          "p50": 4.4567,
+          "p95": 6.54,
+          "p99": 8.306359999999994,
+          "max": 23.535
+        },
+        "host_residency_ms": {
+          "n": 7261,
+          "p50": 5.9287,
+          "p95": 9.3632,
+          "p99": 12.443299999999994,
+          "max": 25.7479
+        }
+      }
+    },
+    {
+      "round_id": 21,
+      "song": "ENERGY SYNERGY MATRIX",
+      "difficulty": "HD",
+      "level": null,
+      "score": 865043,
+      "perfect": 545,
+      "good": 5,
+      "bad": 0,
+      "miss": 30,
+      "judgments": 580,
+      "perfect_percent": 93.97,
+      "max_combo": 83,
+      "accuracy_display_percent": 94.53,
+      "result_path": "measurements/game-assist/manual-session-108176133899800/round-21/result.png",
+      "result_sha256": "caa2fda57b4bcca6b2feb84ffb3e3ee9cc0aca1c0da6cdac06a80931d518e5dd",
+      "summary_path": "measurements/game-assist/manual-session-108176133899800/round-21/summary.json",
+      "summary_sha256": "9e003b55125edaec1520d4b147b79b29604519c5e6fc74744c5cc86c0e37814a",
+      "duration_s": 132.2,
+      "decisions": 7750,
+      "commands": 1911,
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7435,
+          "p50": 16.551,
+          "p95": 32.15711999999999,
+          "p99": 45.14181399999998,
+          "max": 100.9962
+        },
+        "recognition_ms": {
+          "n": 7750,
+          "p50": 4.75845,
+          "p95": 7.524704999999996,
+          "p99": 10.09592,
+          "max": 23.8236
+        },
+        "host_residency_ms": {
+          "n": 7750,
+          "p50": 6.4773,
+          "p95": 10.404734999999992,
+          "p99": 13.468622000000032,
+          "max": 27.4904
+        }
+      }
+    }
+  ],
+  "hd9_comparison_policy": "same song and HD difficulty; Credits uses second confirmed prior HD result B14",
+  "hd9_comparisons": [
+    {
+      "song": "Eradication Catastrophe",
+      "new_round_id": 1,
+      "old_session": "first",
+      "old_round_id": 1,
+      "old_score": 828500,
+      "new_score": 818000,
+      "score_delta": -10500,
+      "old_miss": 20,
+      "new_miss": 22,
+      "miss_delta": 2
+    },
+    {
+      "song": "Credits",
+      "new_round_id": 2,
+      "old_session": "second",
+      "old_round_id": 14,
+      "old_score": 576972,
+      "new_score": 582690,
+      "score_delta": 5718,
+      "old_miss": 130,
+      "new_miss": 128,
+      "miss_delta": -2
+    },
+    {
+      "song": "Dlyrotz",
+      "new_round_id": 3,
+      "old_session": "first",
+      "old_round_id": 3,
+      "old_score": 903024,
+      "new_score": 961572,
+      "score_delta": 58548,
+      "old_miss": 11,
+      "new_miss": 6,
+      "miss_delta": -5
+    },
+    {
+      "song": "Engine x Start!! (melody mix)",
+      "new_round_id": 5,
+      "old_session": "first",
+      "old_round_id": 4,
+      "old_score": 892474,
+      "new_score": 919792,
+      "score_delta": 27318,
+      "old_miss": 6,
+      "new_miss": 5,
+      "miss_delta": -1
+    },
+    {
+      "song": "光",
+      "new_round_id": 6,
+      "old_session": "first",
+      "old_round_id": 5,
+      "old_score": 911381,
+      "new_score": 943762,
+      "score_delta": 32381,
+      "old_miss": 5,
+      "new_miss": 2,
+      "miss_delta": -3
+    },
+    {
+      "song": "Winter ↑ cube ↓",
+      "new_round_id": 8,
+      "old_session": "first",
+      "old_round_id": 6,
+      "old_score": 848129,
+      "new_score": 865601,
+      "score_delta": 17472,
+      "old_miss": 31,
+      "new_miss": 27,
+      "miss_delta": -4
+    },
+    {
+      "song": "混乱-Confusion",
+      "new_round_id": 9,
+      "old_session": "second",
+      "old_round_id": 1,
+      "old_score": 816297,
+      "new_score": 743692,
+      "score_delta": -72605,
+      "old_miss": 47,
+      "new_miss": 101,
+      "miss_delta": 54
+    },
+    {
+      "song": "Cipher",
+      "new_round_id": 10,
+      "old_session": "second",
+      "old_round_id": 2,
+      "old_score": 823573,
+      "new_score": 879884,
+      "score_delta": 56311,
+      "old_miss": 40,
+      "new_miss": 27,
+      "miss_delta": -13
+    },
+    {
+      "song": "FULL AUTO SHOOTER",
+      "new_round_id": 11,
+      "old_session": "second",
+      "old_round_id": 3,
+      "old_score": 765681,
+      "new_score": 704846,
+      "score_delta": -60835,
+      "old_miss": 61,
+      "new_miss": 93,
+      "miss_delta": 32
+    },
+    {
+      "song": "HumaN",
+      "new_round_id": 12,
+      "old_session": "second",
+      "old_round_id": 4,
+      "old_score": 883761,
+      "new_score": 903153,
+      "score_delta": 19392,
+      "old_miss": 12,
+      "new_miss": 10,
+      "miss_delta": -2
+    },
+    {
+      "song": "[PRAW]",
+      "new_round_id": 13,
+      "old_session": "second",
+      "old_round_id": 5,
+      "old_score": 866130,
+      "new_score": 895722,
+      "score_delta": 29592,
+      "old_miss": 29,
+      "new_miss": 23,
+      "miss_delta": -6
+    },
+    {
+      "song": "Cereris",
+      "new_round_id": 14,
+      "old_session": "second",
+      "old_round_id": 6,
+      "old_score": 822104,
+      "new_score": 855164,
+      "score_delta": 33060,
+      "old_miss": 70,
+      "new_miss": 43,
+      "miss_delta": -27
+    },
+    {
+      "song": "Pixel Rebelz",
+      "new_round_id": 15,
+      "old_session": "second",
+      "old_round_id": 7,
+      "old_score": 784574,
+      "new_score": 751257,
+      "score_delta": -33317,
+      "old_miss": 74,
+      "new_miss": 92,
+      "miss_delta": 18
+    },
+    {
+      "song": "Non-Melodic Ragez (MUG Edit)",
+      "new_round_id": 16,
+      "old_session": "second",
+      "old_round_id": 8,
+      "old_score": 877874,
+      "new_score": 887993,
+      "score_delta": 10119,
+      "old_miss": 30,
+      "new_miss": 23,
+      "miss_delta": -7
+    },
+    {
+      "song": "Sultan Rage",
+      "new_round_id": 17,
+      "old_session": "second",
+      "old_round_id": 9,
+      "old_score": 763069,
+      "new_score": 817320,
+      "score_delta": 54251,
+      "old_miss": 54,
+      "new_miss": 41,
+      "miss_delta": -13
+    },
+    {
+      "song": "Class Memories",
+      "new_round_id": 18,
+      "old_session": "second",
+      "old_round_id": 10,
+      "old_score": 872847,
+      "new_score": 897218,
+      "score_delta": 24371,
+      "old_miss": 36,
+      "new_miss": 25,
+      "miss_delta": -11
+    },
+    {
+      "song": "-SURREALISM-",
+      "new_round_id": 19,
+      "old_session": "second",
+      "old_round_id": 13,
+      "old_score": 762496,
+      "new_score": 764396,
+      "score_delta": 1900,
+      "old_miss": 104,
+      "new_miss": 104,
+      "miss_delta": 0
+    },
+    {
+      "song": "Bonus Time",
+      "new_round_id": 20,
+      "old_session": "second",
+      "old_round_id": 11,
+      "old_score": 882864,
+      "new_score": 909078,
+      "score_delta": 26214,
+      "old_miss": 18,
+      "new_miss": 16,
+      "miss_delta": -2
+    },
+    {
+      "song": "ENERGY SYNERGY MATRIX",
+      "new_round_id": 21,
+      "old_session": "second",
+      "old_round_id": 12,
+      "old_score": 857750,
+      "new_score": 865043,
+      "score_delta": 7293,
+      "old_miss": 37,
+      "new_miss": 30,
+      "miss_delta": -7
+    }
+  ],
+  "pixel_clips": {
+    "index_path": "measurements/game-assist/manual-session-108176133899800/pixel-clips/index.jsonl",
+    "index_sha256": "00177ab4c9b8e54bd9b6e7d8f681f09046a1517224e7ba2efd24f2813e63078a",
+    "frames": 558,
+    "rounds_with_samples": 20,
+    "frames_per_round": {
+      "1": 27,
+      "2": 24,
+      "3": 27,
+      "4": 27,
+      "5": 21,
+      "6": 27,
+      "7": 27,
+      "8": 30,
+      "9": 27,
+      "10": 30,
+      "11": 27,
+      "12": 30,
+      "13": 30,
+      "14": 30,
+      "15": 30,
+      "16": 30,
+      "17": 27,
+      "18": 30,
+      "19": 30,
+      "20": 27
+    },
+    "trigger_frame_counts": {
+      "uniform": 438,
+      "complex_line_event": 120
+    },
+    "raw_bytes": 1542758400,
+    "round_21_sampling": "not collected; fixed 20-round cap",
+    "copy_distribution_ms": {
+      "absolute_deviation_p95": 0.49324999999999997,
+      "jitter_p95_minus_p5": 0.6447,
+      "jitter_p95_minus_p50": 0.489935,
+      "max": 1.8164,
+      "mean": 0.7035344086021508,
+      "min": 0.4496,
+      "n": 558,
+      "p5": 0.468685,
+      "p50": 0.6234500000000001,
+      "p95": 1.113385,
+      "p99": 1.3880979999999996
+    },
+    "queue_peak": 1,
+    "queue_drops": 0
+  },
+  "limits": {
+    "score_source": "result PNG only; no runtime OCR or chart access",
+    "same_song_cross_version": "descriptive comparison, not causal attribution",
+    "source_absolute_age": null,
+    "round_21_has_result_but_no_pixel_clips": true,
+    "energy_synergy_matrix_level": "last digit obscured by artwork; unknown"
+  }
+}

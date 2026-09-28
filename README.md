@@ -2,7 +2,7 @@
 
 **2026-09-28 合併狀態：main 保留 observer36／planner18，接入多輪手動待命流程。** 啟動 `out/release-v145/Release/pas.exe manual-session` 後，由使用者選曲及按 Play，完成結算後繼續待命。跨曲成績來自凍結的 `codex/hd9-manual-rounds`（observer33／planner13），不是合併後 main 的成績；原執行檔 `out/hd9-session-release/Release/pas.exe` 與原始量測保留。版本界線及驗證見[合併紀錄](docs/MAIN_MERGE_20260928.md)。舊 AP goal 維持暫停；下一步研討跨曲學習式觀測、多判定線及時間追蹤，尚未開發或訓練。
 
-第二輪 main 策略比較分支可選 `manual-session --pixel-clips`，從同源即時畫面有界保存少量完整 RGB 連續影格，供離線研究多判定線與旋轉場景；選曲與 Play 仍由使用者操作。採樣格式、上限和證據範圍見[第二輪比較紀錄](docs/MAIN_LEGACY_HD_COMPARISON_20260928.md)。
+第二輪 main 策略比較分支使用 `manual-session --pixel-clips`，由使用者選曲與按 Play，已完成21輪：19首HD、Dlyrotz與光各一輪IN。每輪結算與有限全畫面RGB短片段的格式、上限、新舊同曲差異及證據範圍見[第二輪實戰紀錄](docs/MAIN_LEGACY_HD_COMPARISON_20260928.md)。原HD9資料保留；目前沒有AP，也未訓練模型。
 
 以下為依日期保留的歷史狀態；「持續自主開發」不代表目前授權。
 
