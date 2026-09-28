@@ -1,0 +1,1390 @@
+{
+  "schema": 1,
+  "local_date": "2026-09-28",
+  "source": "offline manual result PNG review plus hash-verified session archives",
+  "consolidated_local_path": "measurements/hd9-cross-song-20260928/legacy-consolidated.json",
+  "consolidated_local_sha256": "741cfca0a040120f7c721f3fb22ac4dcef2656f91ccc7fcee22bf6d61af00b5d",
+  "all_round_manifest_event_segment_summary_and_result_hashes_verified": true,
+  "counts": {
+    "confirmed_results": 20,
+    "distinct_song_labels": 19,
+    "aborted_rounds": 1,
+    "standby_only_sessions": 1,
+    "all_perfect_results": 0
+  },
+  "sessions": [
+    {
+      "label": "first",
+      "path": "measurements/game-assist/manual-session-54180603650300",
+      "state": "FAULT",
+      "fault": "screenshot stream failed: 14",
+      "rounds": 7,
+      "manifest_sha256": "7fa7ea30a21cf9b04fed576278ac591141cbee5f18134a1bac52fdd1420e7997",
+      "summary_sha256": "d56eceb841ff084742fd90ec12785775764de3f4696216db053b81ded905e8e5",
+      "rounds_index_sha256": "b08a5d97e72c0e2d870c0b703134c9a3c64dfec2b4bf387f53c6b5a35d67ad76",
+      "executable_sha256": "483cb83887d6daad9f01569aaca8f06c40e4e91df98f393b16a9c713c2534b76",
+      "config_sha256": "d2b5cfdc6be023c715fe402a7124ccd1977f5956b8d9fa74466643a575dbd0e0",
+      "capability_report_sha256": "73dc5c94f1418a1e75bf4488871d27c849e0d6105adc79ec03c167ff672dbcd3",
+      "capture_geometry": {
+        "height": 720,
+        "source_rotation": 1,
+        "width": 1280
+      },
+      "observer": 33,
+      "planner": 13,
+      "clock_domain": "host_qpc_ns",
+      "capture_policy": {
+        "bdp_probe": "upstream_default",
+        "channel_argument": "pas.grpc.windows_read_chunk_bytes",
+        "client_version": "54.0.0",
+        "http2_lookahead": "upstream_default",
+        "package_version": "1.81.1",
+        "read_chunk_bytes": 262144,
+        "windows_read_patch_version": 2
+      },
+      "capture_published": 58057,
+      "consumer_skips": 210,
+      "pool_drops": 0
+    },
+    {
+      "label": "standby_only",
+      "path": "measurements/game-assist/manual-session-99031291652700",
+      "state": "STOPPED",
+      "fault": null,
+      "rounds": 0,
+      "manifest_sha256": "27d8b6950b7ac2060f305f728bcdb102ffa25157a0b90b55ca90a79842853474",
+      "summary_sha256": "c9dfd8dea2215c900fd4c7707f81c9546b1bf0a4e6a65778e42b639155853fb2",
+      "rounds_index_sha256": null,
+      "executable_sha256": "483cb83887d6daad9f01569aaca8f06c40e4e91df98f393b16a9c713c2534b76",
+      "config_sha256": "d2b5cfdc6be023c715fe402a7124ccd1977f5956b8d9fa74466643a575dbd0e0",
+      "capability_report_sha256": "73dc5c94f1418a1e75bf4488871d27c849e0d6105adc79ec03c167ff672dbcd3",
+      "capture_geometry": {
+        "height": 720,
+        "source_rotation": 1,
+        "width": 1280
+      },
+      "observer": 33,
+      "planner": 13,
+      "clock_domain": "host_qpc_ns",
+      "capture_policy": {
+        "bdp_probe": "upstream_default",
+        "channel_argument": "pas.grpc.windows_read_chunk_bytes",
+        "client_version": "54.0.0",
+        "http2_lookahead": "upstream_default",
+        "package_version": "1.81.1",
+        "read_chunk_bytes": 262144,
+        "windows_read_patch_version": 2
+      },
+      "capture_published": 4399,
+      "consumer_skips": 9,
+      "pool_drops": 0
+    },
+    {
+      "label": "second",
+      "path": "measurements/game-assist/manual-session-99700620346600",
+      "state": "STOPPED",
+      "fault": null,
+      "rounds": 14,
+      "manifest_sha256": "035a557645c8011e2db41d1ba9d7b510b1855a08f94deb6ff4bd9bf846ff696f",
+      "summary_sha256": "6f07752f59386474ee56d61b08de3a81049b87424bbeea7ff9e961e3e850d5c8",
+      "rounds_index_sha256": "55ec38635c89b25d639097cb07813bf0f7bd4df63da2b8917a3b26cb13cae8a5",
+      "executable_sha256": "483cb83887d6daad9f01569aaca8f06c40e4e91df98f393b16a9c713c2534b76",
+      "config_sha256": "d2b5cfdc6be023c715fe402a7124ccd1977f5956b8d9fa74466643a575dbd0e0",
+      "capability_report_sha256": "73dc5c94f1418a1e75bf4488871d27c849e0d6105adc79ec03c167ff672dbcd3",
+      "capture_geometry": {
+        "height": 720,
+        "source_rotation": 1,
+        "width": 1280
+      },
+      "observer": 33,
+      "planner": 13,
+      "clock_domain": "host_qpc_ns",
+      "capture_policy": {
+        "bdp_probe": "upstream_default",
+        "channel_argument": "pas.grpc.windows_read_chunk_bytes",
+        "client_version": "54.0.0",
+        "http2_lookahead": "upstream_default",
+        "package_version": "1.81.1",
+        "read_chunk_bytes": 262144,
+        "windows_read_patch_version": 2
+      },
+      "capture_published": 185632,
+      "consumer_skips": 891,
+      "pool_drops": 0
+    }
+  ],
+  "confirmed_complete_repeat": {
+    "song": "Credits",
+    "rounds": [
+      [
+        "first",
+        2
+      ],
+      [
+        "second",
+        14
+      ]
+    ],
+    "score_delta_second_minus_first": 9902,
+    "same_judgments": true,
+    "classification_basis": "same song and difficulty in two saved result PNGs; second PNG displays previous best 0567070"
+  },
+  "user_reported_incomplete_retry": {
+    "song_hint": "surrealism (user corrected earlier approximate name)",
+    "song_identity": "-SURREALISM-",
+    "attempt_count": null,
+    "linked_confirmed_round": [
+      "second",
+      13
+    ],
+    "linked_interrupted_round": null,
+    "basis": "user report of song sticking and restarting; confirmed result is second session round 13, but the interrupted attempt has no separately attributable positive result frame"
+  },
+  "historical_glaciaxion_hd6": {
+    "score": 868880,
+    "perfect": 369,
+    "good": 2,
+    "bad": 0,
+    "miss": 22,
+    "source": "measurements/game-assist/cpp-observe-17905107612608769",
+    "included_in_current_session_counts": false
+  },
+  "rounds": [
+    {
+      "session": "first",
+      "round_id": 1,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Eradication Catastrophe",
+      "difficulty": "HD",
+      "level": 7,
+      "score": 828500,
+      "perfect": 180,
+      "good": 0,
+      "bad": 0,
+      "miss": 20,
+      "max_combo": 37,
+      "accuracy_display_percent": 90.0,
+      "grade": null,
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-54180603650300/round-1/summary.json",
+      "summary_sha256": "032fda0ac990845fc8188a1169a5eb1c3ea54a8fcefe1f71c2dc0215aa689584",
+      "result_path": "measurements/game-assist/manual-session-54180603650300/round-1/result.png",
+      "result_sha256": "c90b480dce05ee1166a6bee7e8141b9e505bc48844fdfc9fcac3f67711d742be",
+      "duration_s": 134.286,
+      "decisions": 7087,
+      "commands": 713,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 200,
+      "judgment_percent": {
+        "perfect": 90.0,
+        "good": 0.0,
+        "bad": 0.0,
+        "miss": 10.0
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6750,
+          "p50": 17.75125,
+          "p95": 38.921829999999986,
+          "p99": 53.23931800000006,
+          "max": 388.0608
+        },
+        "recognition_ms": {
+          "n": 7087,
+          "p50": 5.774,
+          "p95": 10.546189999999996,
+          "p99": 13.802674,
+          "max": 26.2862
+        },
+        "host_residency_ms": {
+          "n": 7087,
+          "p50": 7.9275,
+          "p95": 14.33443,
+          "p99": 18.54376200000002,
+          "max": 31.0515
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "first",
+      "round_id": 2,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Credits",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 567070,
+      "perfect": 216,
+      "good": 6,
+      "bad": 0,
+      "miss": 133,
+      "max_combo": 34,
+      "accuracy_display_percent": 61.94,
+      "grade": null,
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-54180603650300/round-2/summary.json",
+      "summary_sha256": "67b084c86ed57f3bd3013fbf7a2a1924e9d9ea311feb85792caec32541867904",
+      "result_path": "measurements/game-assist/manual-session-54180603650300/round-2/result.png",
+      "result_sha256": "c327a1cdf2bf2918b312d46ea69bce2e50ecce1d56283436ea2af661ebe90f0b",
+      "duration_s": 107.893,
+      "decisions": 5729,
+      "commands": 436,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 355,
+      "judgment_percent": {
+        "perfect": 60.8451,
+        "good": 1.6901,
+        "bad": 0.0,
+        "miss": 37.4648
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 5426,
+          "p50": 17.744799999999998,
+          "p95": 38.1109,
+          "p99": 49.311375,
+          "max": 143.6532
+        },
+        "recognition_ms": {
+          "n": 5729,
+          "p50": 5.25,
+          "p95": 16.728079999999995,
+          "p99": 25.944640000000057,
+          "max": 38.8863
+        },
+        "host_residency_ms": {
+          "n": 5729,
+          "p50": 6.7398,
+          "p95": 21.407659999999993,
+          "p99": 39.61102000000004,
+          "max": 65.9209
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "first",
+      "round_id": 3,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Dlyrotz",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 903024,
+      "perfect": 446,
+      "good": 1,
+      "bad": 0,
+      "miss": 11,
+      "max_combo": 116,
+      "accuracy_display_percent": 97.52,
+      "grade": null,
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-54180603650300/round-3/summary.json",
+      "summary_sha256": "c54de623acad81074de7629964bb2d04c866527beedf6c635443effe4c254055",
+      "result_path": "measurements/game-assist/manual-session-54180603650300/round-3/result.png",
+      "result_sha256": "1710f40f489ba7e2dc7928899ebe8ffd84d909d6f0e34b70ef19f1784adf7fc8",
+      "duration_s": 140.407,
+      "decisions": 7874,
+      "commands": 1618,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 458,
+      "judgment_percent": {
+        "perfect": 97.3799,
+        "good": 0.2183,
+        "bad": 0.0,
+        "miss": 2.4017
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7164,
+          "p50": 16.500500000000002,
+          "p95": 34.601199999999984,
+          "p99": 46.801607999999995,
+          "max": 143.6755
+        },
+        "recognition_ms": {
+          "n": 7874,
+          "p50": 4.8290500000000005,
+          "p95": 9.582184999999988,
+          "p99": 14.002272999999985,
+          "max": 31.9233
+        },
+        "host_residency_ms": {
+          "n": 7874,
+          "p50": 6.25415,
+          "p95": 12.434404999999998,
+          "p99": 18.158999999999985,
+          "max": 37.6984
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "first",
+      "round_id": 4,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Engine x Start!! (melody mix)",
+      "difficulty": "HD",
+      "level": 8,
+      "score": 892474,
+      "perfect": 181,
+      "good": 3,
+      "bad": 2,
+      "miss": 6,
+      "max_combo": 67,
+      "accuracy_display_percent": 95.29,
+      "grade": null,
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-54180603650300/round-4/summary.json",
+      "summary_sha256": "69e00af0f4ee8f5fa040f056a41b1f525557a938a209134069bdf1ac31ad8c6f",
+      "result_path": "measurements/game-assist/manual-session-54180603650300/round-4/result.png",
+      "result_sha256": "ede92e9b9016e698db8ce5191037337203dfdd37344f34ab0f01bdb792ae8cf4",
+      "duration_s": 122.397,
+      "decisions": 6857,
+      "commands": 555,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 192,
+      "judgment_percent": {
+        "perfect": 94.2708,
+        "good": 1.5625,
+        "bad": 1.0417,
+        "miss": 3.125
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 5790,
+          "p50": 16.42705,
+          "p95": 34.555275,
+          "p99": 46.556250999999946,
+          "max": 16682.7227
+        },
+        "recognition_ms": {
+          "n": 6857,
+          "p50": 4.576,
+          "p95": 8.874199999999997,
+          "p99": 15.328191999999985,
+          "max": 26.3796
+        },
+        "host_residency_ms": {
+          "n": 6857,
+          "p50": 6.1536,
+          "p95": 12.361919999999998,
+          "p99": 22.25723999999977,
+          "max": 44.2724
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "first",
+      "round_id": 5,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "光",
+      "difficulty": "HD",
+      "level": 7,
+      "score": 911381,
+      "perfect": 309,
+      "good": 1,
+      "bad": 0,
+      "miss": 5,
+      "max_combo": 84,
+      "accuracy_display_percent": 98.3,
+      "grade": null,
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-54180603650300/round-5/summary.json",
+      "summary_sha256": "0673faf7ac74d8c4054ae22a867ba781796bb3f4bb39c34574131dc706ea4bee",
+      "result_path": "measurements/game-assist/manual-session-54180603650300/round-5/result.png",
+      "result_sha256": "338fc6ea8a9bf6ae07926444a959b74d801db4cc0c921b04f75662eb2548d9f6",
+      "duration_s": 138.719,
+      "decisions": 8018,
+      "commands": 753,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 315,
+      "judgment_percent": {
+        "perfect": 98.0952,
+        "good": 0.3175,
+        "bad": 0.0,
+        "miss": 1.5873
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7754,
+          "p50": 16.55675,
+          "p95": 33.47023499999999,
+          "p99": 43.817228,
+          "max": 120.5757
+        },
+        "recognition_ms": {
+          "n": 8018,
+          "p50": 4.2857,
+          "p95": 7.748064999999998,
+          "p99": 11.41276,
+          "max": 26.766
+        },
+        "host_residency_ms": {
+          "n": 8018,
+          "p50": 5.6266,
+          "p95": 10.277779999999996,
+          "p99": 15.162596999999996,
+          "max": 35.0522
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "first",
+      "round_id": 6,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Winter ↑ cube ↓",
+      "difficulty": "HD",
+      "level": 8,
+      "score": 848129,
+      "perfect": 412,
+      "good": 6,
+      "bad": 0,
+      "miss": 31,
+      "max_combo": 65,
+      "accuracy_display_percent": 92.63,
+      "grade": null,
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-54180603650300/round-6/summary.json",
+      "summary_sha256": "e5612f747a07db113e3818e0bfb47798b4819c8c91a7273d375256df65b334eb",
+      "result_path": "measurements/game-assist/manual-session-54180603650300/round-6/result.png",
+      "result_sha256": "083e190ecd19c2f743f3c5647c3d00cb5d2574366a21a1e56ca96e4231ef9312",
+      "duration_s": 163.87,
+      "decisions": 8745,
+      "commands": 1294,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 449,
+      "judgment_percent": {
+        "perfect": 91.7595,
+        "good": 1.3363,
+        "bad": 0.0,
+        "miss": 6.9042
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 8469,
+          "p50": 17.5063,
+          "p95": 36.44748,
+          "p99": 49.11154399999998,
+          "max": 1155.0927
+        },
+        "recognition_ms": {
+          "n": 8745,
+          "p50": 4.7038,
+          "p95": 8.999959999999996,
+          "p99": 12.201399999999998,
+          "max": 20.3852
+        },
+        "host_residency_ms": {
+          "n": 8745,
+          "p50": 6.2804,
+          "p95": 11.715639999999999,
+          "p99": 16.272871999999992,
+          "max": 26.0842
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "first",
+      "round_id": 7,
+      "status": "aborted",
+      "stop_reason": "runtime_stop_aborted",
+      "song": null,
+      "difficulty": null,
+      "level": null,
+      "score": null,
+      "perfect": null,
+      "good": null,
+      "bad": null,
+      "miss": null,
+      "max_combo": null,
+      "accuracy_display_percent": null,
+      "grade": null,
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-54180603650300/round-7/summary.json",
+      "summary_sha256": "42b0967a2815353f3e9c82934fcc448ca7cff58ba68579deeeeefb5679d5d0bb",
+      "result_path": null,
+      "result_sha256": null,
+      "duration_s": 94.705,
+      "decisions": 4827,
+      "commands": 806,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 4630,
+          "p50": 18.188000000000002,
+          "p95": 37.828055,
+          "p99": 48.84166400000001,
+          "max": 129.5473
+        },
+        "recognition_ms": {
+          "n": 4827,
+          "p50": 4.9666,
+          "p95": 9.89054,
+          "p99": 13.392441999999996,
+          "max": 20.0208
+        },
+        "host_residency_ms": {
+          "n": 4827,
+          "p50": 6.8434,
+          "p95": 13.011270000000001,
+          "p99": 17.647314,
+          "max": 28.5799
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 1,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "混乱-Confusion",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 816297,
+      "perfect": 417,
+      "good": 14,
+      "bad": 0,
+      "miss": 47,
+      "max_combo": 67,
+      "accuracy_display_percent": 89.14,
+      "grade": "C",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-1/summary.json",
+      "summary_sha256": "f36c7c60e33db516335a8408f95a61714325cf75b21bdc3d9f616d6d8021c517",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-1/result.png",
+      "result_sha256": "0c755c1d89f7f0efe263bc409c91bd47f61620e1c5c97a07d0ad0175624d5b9c",
+      "duration_s": 135.09,
+      "decisions": 6308,
+      "commands": 1119,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 478,
+      "judgment_percent": {
+        "perfect": 87.2385,
+        "good": 2.9289,
+        "bad": 0.0,
+        "miss": 9.8326
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6078,
+          "p50": 20.39495,
+          "p95": 42.3023,
+          "p99": 53.46739099999998,
+          "max": 135.994
+        },
+        "recognition_ms": {
+          "n": 6308,
+          "p50": 5.50385,
+          "p95": 10.648294999999992,
+          "p99": 14.341066000000007,
+          "max": 26.7629
+        },
+        "host_residency_ms": {
+          "n": 6308,
+          "p50": 6.9427,
+          "p95": 13.539750000000002,
+          "p99": 18.858665000000006,
+          "max": 35.7827
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 2,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Cipher",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 823573,
+      "perfect": 403,
+      "good": 30,
+      "bad": 0,
+      "miss": 40,
+      "max_combo": 93,
+      "accuracy_display_percent": 89.32,
+      "grade": "B",
+      "transcription_note": "stylized suffix not confidently transcribed; inspect result.png",
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-2/summary.json",
+      "summary_sha256": "bed4a44e2f5ae8cf82be9602ff86a929e81db141233998f525806a09f909a548",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-2/result.png",
+      "result_sha256": "173ffe690f596451c429dbbec025fe5603051bdadc33c6e510196bbed602ac2f",
+      "duration_s": 161.64,
+      "decisions": 7173,
+      "commands": 1170,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 473,
+      "judgment_percent": {
+        "perfect": 85.2008,
+        "good": 6.3425,
+        "bad": 0.0,
+        "miss": 8.4567
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6963,
+          "p50": 21.5499,
+          "p95": 43.83713,
+          "p99": 56.823950000000025,
+          "max": 168.7918
+        },
+        "recognition_ms": {
+          "n": 7173,
+          "p50": 5.6459,
+          "p95": 11.088439999999999,
+          "p99": 15.384827999999942,
+          "max": 30.658
+        },
+        "host_residency_ms": {
+          "n": 7173,
+          "p50": 7.3015,
+          "p95": 14.450999999999995,
+          "p99": 20.544415999999995,
+          "max": 36.0744
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 3,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "FULL AUTO SHOOTER",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 765681,
+      "perfect": 318,
+      "good": 10,
+      "bad": 0,
+      "miss": 61,
+      "max_combo": 58,
+      "accuracy_display_percent": 83.42,
+      "grade": "C",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-3/summary.json",
+      "summary_sha256": "37305422cd545a220e299ba31e8520ef786e7b3f091da9d5a96ece30b05001ea",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-3/result.png",
+      "result_sha256": "7085341700c2c260e8ff5b350129149bc010c6020abbc01006c69e1dbb06d05c",
+      "duration_s": 136.02,
+      "decisions": 6639,
+      "commands": 1062,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 389,
+      "judgment_percent": {
+        "perfect": 81.7481,
+        "good": 2.5707,
+        "bad": 0.0,
+        "miss": 15.6812
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6202,
+          "p50": 19.63135,
+          "p95": 41.369794999999996,
+          "p99": 54.67681299999999,
+          "max": 979.4174
+        },
+        "recognition_ms": {
+          "n": 6639,
+          "p50": 5.5017,
+          "p95": 10.197659999999999,
+          "p99": 13.527249999999995,
+          "max": 29.8071
+        },
+        "host_residency_ms": {
+          "n": 6639,
+          "p50": 7.5396,
+          "p95": 13.363489999999997,
+          "p99": 17.877567999999997,
+          "max": 38.9884
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 4,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "HumaN",
+      "difficulty": "HD",
+      "level": 8,
+      "score": 883761,
+      "perfect": 202,
+      "good": 7,
+      "bad": 1,
+      "miss": 12,
+      "max_combo": 103,
+      "accuracy_display_percent": 93.04,
+      "grade": "A",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-4/summary.json",
+      "summary_sha256": "a48cac235824fff1068fdade078141875074b1d9c54c35013e32f140480f60cb",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-4/result.png",
+      "result_sha256": "1874f920b9e2e5002adae3b2fb5f73ce0024f727ef9303fb15601a104d1f59cd",
+      "duration_s": 141.466,
+      "decisions": 7628,
+      "commands": 744,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 222,
+      "judgment_percent": {
+        "perfect": 90.991,
+        "good": 3.1532,
+        "bad": 0.4505,
+        "miss": 5.4054
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7375,
+          "p50": 17.6003,
+          "p95": 36.77432999999999,
+          "p99": 46.90053,
+          "max": 124.9686
+        },
+        "recognition_ms": {
+          "n": 7628,
+          "p50": 5.4154,
+          "p95": 9.465784999999999,
+          "p99": 12.470872999999996,
+          "max": 27.6855
+        },
+        "host_residency_ms": {
+          "n": 7628,
+          "p50": 6.8885000000000005,
+          "p95": 12.172514999999997,
+          "p99": 17.30120199999997,
+          "max": 31.5552
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 5,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "[PRAW]",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 866130,
+      "perfect": 541,
+      "good": 5,
+      "bad": 0,
+      "miss": 29,
+      "max_combo": 82,
+      "accuracy_display_percent": 94.65,
+      "grade": "B",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-5/summary.json",
+      "summary_sha256": "13baed9206ead5d47fb2ee0c3c4519afdbbab01c876da83c3899c42630d5dab3",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-5/result.png",
+      "result_sha256": "feee549fa862c6e94743a6520315aecf3579dc3b76cdf0fcd29121b49466faa4",
+      "duration_s": 163.963,
+      "decisions": 9393,
+      "commands": 1515,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 575,
+      "judgment_percent": {
+        "perfect": 94.087,
+        "good": 0.8696,
+        "bad": 0.0,
+        "miss": 5.0435
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 9076,
+          "p50": 16.70525,
+          "p95": 33.94584999999999,
+          "p99": 46.6273,
+          "max": 171.5949
+        },
+        "recognition_ms": {
+          "n": 9393,
+          "p50": 4.9198,
+          "p95": 7.64544,
+          "p99": 9.950471999999996,
+          "max": 20.714
+        },
+        "host_residency_ms": {
+          "n": 9393,
+          "p50": 6.6115,
+          "p95": 10.58934,
+          "p99": 13.821952,
+          "max": 23.586
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 6,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Cereris",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 822104,
+      "perfect": 624,
+      "good": 7,
+      "bad": 0,
+      "miss": 70,
+      "max_combo": 106,
+      "accuracy_display_percent": 89.66,
+      "grade": "B",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-6/summary.json",
+      "summary_sha256": "3df9e868ed445fab50a0e31737b02b80f26dfc05c9a92026b18af4b766a9c227",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-6/result.png",
+      "result_sha256": "b162636cce8e5f3a937bb471806fc49e7f8caf5c0d905d3e2e6fe47771f2bb8d",
+      "duration_s": 174.998,
+      "decisions": 10077,
+      "commands": 2303,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 701,
+      "judgment_percent": {
+        "perfect": 89.0157,
+        "good": 0.9986,
+        "bad": 0.0,
+        "miss": 9.9857
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 9795,
+          "p50": 16.6753,
+          "p95": 33.16038999999999,
+          "p99": 45.354293999999996,
+          "max": 84.9038
+        },
+        "recognition_ms": {
+          "n": 10077,
+          "p50": 5.3466,
+          "p95": 9.930819999999994,
+          "p99": 12.592864,
+          "max": 23.4264
+        },
+        "host_residency_ms": {
+          "n": 10077,
+          "p50": 7.0116,
+          "p95": 12.849359999999994,
+          "p99": 16.764975999999997,
+          "max": 28.3002
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 7,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Pixel Rebelz",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 784574,
+      "perfect": 425,
+      "good": 6,
+      "bad": 0,
+      "miss": 74,
+      "max_combo": 102,
+      "accuracy_display_percent": 84.93,
+      "grade": "C",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-7/summary.json",
+      "summary_sha256": "3b3020183131bd88ac5f39ea077fc769cb1061021c25b1006f259a9fc2fda344",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-7/result.png",
+      "result_sha256": "592dfd2b0da5172e461c851051b9363ba705758ba49bae8bc7e3d851537f177a",
+      "duration_s": 149.751,
+      "decisions": 8829,
+      "commands": 1417,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 505,
+      "judgment_percent": {
+        "perfect": 84.1584,
+        "good": 1.1881,
+        "bad": 0.0,
+        "miss": 14.6535
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 8529,
+          "p50": 16.5707,
+          "p95": 31.446859999999983,
+          "p99": 43.43397999999986,
+          "max": 140.235
+        },
+        "recognition_ms": {
+          "n": 8829,
+          "p50": 4.2494,
+          "p95": 7.463760000000001,
+          "p99": 9.780059999999985,
+          "max": 17.8474
+        },
+        "host_residency_ms": {
+          "n": 8829,
+          "p50": 5.4965,
+          "p95": 9.51614,
+          "p99": 12.884391999999977,
+          "max": 19.4506
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 8,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Non-Melodic Ragez (MUG Edit)",
+      "difficulty": "HD",
+      "level": 11,
+      "score": 877874,
+      "perfect": 631,
+      "good": 9,
+      "bad": 5,
+      "miss": 30,
+      "max_combo": 194,
+      "accuracy_display_percent": 94.35,
+      "grade": "B",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-8/summary.json",
+      "summary_sha256": "7df7ff67f6a90ba0b4ffa91625748ac87750b27e8ce9ba15234b7793b5479f0b",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-8/result.png",
+      "result_sha256": "040b5069a7d86aac826151f743f24d5986fc5f5bd1ffa0d6f83a21a92784d648",
+      "duration_s": 146.271,
+      "decisions": 8599,
+      "commands": 1443,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 675,
+      "judgment_percent": {
+        "perfect": 93.4815,
+        "good": 1.3333,
+        "bad": 0.7407,
+        "miss": 4.4444
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 8275,
+          "p50": 16.5604,
+          "p95": 32.48054999999998,
+          "p99": 44.93530400000001,
+          "max": 380.1179
+        },
+        "recognition_ms": {
+          "n": 8599,
+          "p50": 4.3225,
+          "p95": 7.076549999999998,
+          "p99": 9.612700000000004,
+          "max": 20.5817
+        },
+        "host_residency_ms": {
+          "n": 8599,
+          "p50": 5.9266,
+          "p95": 9.76005,
+          "p99": 12.553904000000001,
+          "max": 24.3744
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 9,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Sultan Rage",
+      "difficulty": "HD",
+      "level": 7,
+      "score": 763069,
+      "perfect": 271,
+      "good": 9,
+      "bad": 0,
+      "miss": 54,
+      "max_combo": 57,
+      "accuracy_display_percent": 82.89,
+      "grade": "C",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-9/summary.json",
+      "summary_sha256": "5244b5c17c7ee5f1268103011fd1ae43af2979460512ffbcc714485e9c55194c",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-9/result.png",
+      "result_sha256": "aada5b8ad906876a78a103670c697b35a3bd463ce8bd54f128176bf45b7819b9",
+      "duration_s": 122.943,
+      "decisions": 7078,
+      "commands": 732,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 334,
+      "judgment_percent": {
+        "perfect": 81.1377,
+        "good": 2.6946,
+        "bad": 0.0,
+        "miss": 16.1677
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6771,
+          "p50": 16.6648,
+          "p95": 33.33125,
+          "p99": 43.497340000000015,
+          "max": 145.258
+        },
+        "recognition_ms": {
+          "n": 7078,
+          "p50": 4.4127,
+          "p95": 7.5343849999999986,
+          "p99": 10.212441999999962,
+          "max": 30.6811
+        },
+        "host_residency_ms": {
+          "n": 7078,
+          "p50": 5.922700000000001,
+          "p95": 10.19099,
+          "p99": 13.78906199999999,
+          "max": 32.3581
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 10,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Class Memories",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 872847,
+      "perfect": 726,
+      "good": 9,
+      "bad": 0,
+      "miss": 36,
+      "max_combo": 143,
+      "accuracy_display_percent": 94.92,
+      "grade": "B",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-10/summary.json",
+      "summary_sha256": "1cfc584485a70476cfa271669aa1233b6ed21d729e5e3bfd8180dc087d9db516",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-10/result.png",
+      "result_sha256": "39e7a9a79b360add3c0f49eb297c59570bf3427e779024735d565e3cc540bc51",
+      "duration_s": 154.294,
+      "decisions": 8990,
+      "commands": 1511,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 771,
+      "judgment_percent": {
+        "perfect": 94.1634,
+        "good": 1.1673,
+        "bad": 0.0,
+        "miss": 4.6693
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 8651,
+          "p50": 16.597,
+          "p95": 32.9871,
+          "p99": 45.901300000000006,
+          "max": 106.3766
+        },
+        "recognition_ms": {
+          "n": 8990,
+          "p50": 4.65665,
+          "p95": 7.874799999999999,
+          "p99": 10.914856000000006,
+          "max": 24.457
+        },
+        "host_residency_ms": {
+          "n": 8990,
+          "p50": 6.03345,
+          "p95": 10.330744999999993,
+          "p99": 14.238060000000008,
+          "max": 26.8004
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 11,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Bonus Time",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 882864,
+      "perfect": 390,
+      "good": 4,
+      "bad": 0,
+      "miss": 18,
+      "max_combo": 104,
+      "accuracy_display_percent": 95.29,
+      "grade": "A",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-11/summary.json",
+      "summary_sha256": "844f917d98d52c988872a8bc6e38da85091ce2a5013b718813aca7330c66b292",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-11/result.png",
+      "result_sha256": "11e6dcba380d7717b7cc7a886de50bd0b778e4743e7c410a96eed08505fdd3ee",
+      "duration_s": 264.027,
+      "decisions": 15522,
+      "commands": 2183,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 412,
+      "judgment_percent": {
+        "perfect": 94.6602,
+        "good": 0.9709,
+        "bad": 0.0,
+        "miss": 4.3689
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 14450,
+          "p50": 16.5592,
+          "p95": 31.428264999999993,
+          "p99": 42.918069,
+          "max": 13110.1218
+        },
+        "recognition_ms": {
+          "n": 15522,
+          "p50": 4.29315,
+          "p95": 7.818549999999995,
+          "p99": 10.295784999999999,
+          "max": 17.6999
+        },
+        "host_residency_ms": {
+          "n": 15522,
+          "p50": 5.634399999999999,
+          "p95": 10.164594999999998,
+          "p99": 13.448553,
+          "max": 21.7156
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 12,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "ENERGY SYNERGY MATRIX",
+      "difficulty": "HD",
+      "level": null,
+      "score": 857750,
+      "perfect": 536,
+      "good": 7,
+      "bad": 0,
+      "miss": 37,
+      "max_combo": 110,
+      "accuracy_display_percent": 93.2,
+      "grade": "B",
+      "transcription_note": "last level digit obscured by result panel",
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-12/summary.json",
+      "summary_sha256": "f1933db77acc5b4ab1809f33aa7608815b31890b58ab4dda68446ad008fa639b",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-12/result.png",
+      "result_sha256": "7b76a72b11189a5187753d3764cc27b611a3dc3461752785748dcf534100f651",
+      "duration_s": 132.125,
+      "decisions": 7795,
+      "commands": 1875,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 580,
+      "judgment_percent": {
+        "perfect": 92.4138,
+        "good": 1.2069,
+        "bad": 0.0,
+        "miss": 6.3793
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 7466,
+          "p50": 16.5332,
+          "p95": 32.241,
+          "p99": 45.53361500000001,
+          "max": 117.7667
+        },
+        "recognition_ms": {
+          "n": 7795,
+          "p50": 4.2975,
+          "p95": 7.606469999999996,
+          "p99": 10.238157999999991,
+          "max": 15.7983
+        },
+        "host_residency_ms": {
+          "n": 7795,
+          "p50": 5.5884,
+          "p95": 9.907430000000002,
+          "p99": 12.847103999999991,
+          "max": 24.4213
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 13,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "-SURREALISM-",
+      "difficulty": "HD",
+      "level": 9,
+      "score": 762496,
+      "perfect": 466,
+      "good": 1,
+      "bad": 0,
+      "miss": 104,
+      "max_combo": 154,
+      "accuracy_display_percent": 81.73,
+      "grade": "C",
+      "transcription_note": null,
+      "repeat_of": null,
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-13/summary.json",
+      "summary_sha256": "2b6cc8b51ae531083afaf167400d26273b33ad16ff14cb6536806bcdcfb90c0f",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-13/result.png",
+      "result_sha256": "69bd3825b136bac8e06cfb9f92b63c6d660115ddae74c688ef47a034c83b8307",
+      "duration_s": 160.338,
+      "decisions": 9410,
+      "commands": 1832,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 571,
+      "judgment_percent": {
+        "perfect": 81.6112,
+        "good": 0.1751,
+        "bad": 0.0,
+        "miss": 18.2137
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 9107,
+          "p50": 16.5116,
+          "p95": 32.16513999999998,
+          "p99": 44.64900200000006,
+          "max": 118.6616
+        },
+        "recognition_ms": {
+          "n": 9410,
+          "p50": 4.60185,
+          "p95": 8.701949999999997,
+          "p99": 11.404093,
+          "max": 146.2897
+        },
+        "host_residency_ms": {
+          "n": 9410,
+          "p50": 6.3313500000000005,
+          "p95": 11.338929999999996,
+          "p99": 15.260566999999996,
+          "max": 166.9487
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    },
+    {
+      "session": "second",
+      "round_id": 14,
+      "status": "result_confirmed",
+      "stop_reason": "six_current_result_labels_confirmed_over_60ms",
+      "song": "Credits",
+      "difficulty": "HD",
+      "level": 10,
+      "score": 576972,
+      "perfect": 220,
+      "good": 5,
+      "bad": 0,
+      "miss": 130,
+      "max_combo": 39,
+      "accuracy_display_percent": 62.89,
+      "grade": "F",
+      "transcription_note": null,
+      "repeat_of": "manual-session-54180603650300/round-2",
+      "summary_path": "measurements/game-assist/manual-session-99700620346600/round-14/summary.json",
+      "summary_sha256": "7793812dec88e4eed8bab7039a37c68b0567fca79bda93c7937c1f1a46fb486c",
+      "result_path": "measurements/game-assist/manual-session-99700620346600/round-14/result.png",
+      "result_sha256": "65be1609fdb4595a62216bfe0c85f87d6af586da24b32096a6737b977c7ea599",
+      "duration_s": 107.554,
+      "decisions": 6340,
+      "commands": 447,
+      "release_failed_ids": [],
+      "release_unknown_ids": [],
+      "judgments": 355,
+      "judgment_percent": {
+        "perfect": 61.9718,
+        "good": 1.4085,
+        "bad": 0.0,
+        "miss": 36.6197
+      },
+      "timing": {
+        "playing_capture_interval_ms": {
+          "n": 6018,
+          "p50": 16.540100000000002,
+          "p95": 32.102845,
+          "p99": 45.960786,
+          "max": 125.9776
+        },
+        "recognition_ms": {
+          "n": 6340,
+          "p50": 4.30065,
+          "p95": 13.256574999999993,
+          "p99": 19.585687999999983,
+          "max": 33.3991
+        },
+        "host_residency_ms": {
+          "n": 6340,
+          "p50": 5.8858,
+          "p95": 16.759754999999995,
+          "p99": 30.754859999999987,
+          "max": 49.2444
+        }
+      },
+      "timing_scope": "latest decisions consumed by action owner; includes skipped frames; first 100000 samples"
+    }
+  ],
+  "judgment_truth_policy": "numbers manually read from one same-capture result.png per confirmed round; no runtime score OCR",
+  "missing_attempt_policy": "unconfirmed restarts do not gain inferred scores or separate counted rounds",
+  "source_age_policy": "host QPC timestamps only; source absolute age unknown",
+  "no_AP_claim": true
+}

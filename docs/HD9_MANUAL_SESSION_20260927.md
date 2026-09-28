@@ -52,4 +52,4 @@ out/hd9-session-release/Release/pas.exe manual-session `
 
 離線完成後才請使用者準備模擬器／其他HD。就緒前不啟動遊玩；遊玩期間不build/test、不操作CU、不另開capture。使用者手動選曲／Play，有限輪次，保持五指／35ms等參數；每曲記判定總數、Perfect／Good／Bad／Miss及比例、score、source／binary與畫面間隔。數字只從正面結算pixels讀取，未知保留unknown，不以RPC success或candidate數推斷。
 
-目前沒有其他HD live成績，也未完成真模擬器兩輪待命驗收；合成兩輪不能冒充實機。完成目標是可用待命流程及最高分策略跨曲驗證條件；實戰不足／未知結算需明示，不無限跑到AP。
+2026-09-28 已完成真模擬器連續多輪實戰：同一策略Release binary兩個有遊玩的session共20張確認結算圖、19個不同曲名；另有一輪擷取故障中止、一個只有待命的session。Credits完整重跑一次，-SURREALISM-有使用者回報的卡住重來（未保存失敗嘗試的獨立結算）。數字、原圖索引、每輪時序與限制見[Legacy HD 實戰紀錄](HD9_LEGACY_HD_RESULTS_20260928.md)及[結構化證據](HD9_LEGACY_HD_RESULTS_EVIDENCE_20260928.json)。這證實同程序跨輪待命與跨曲結果蒐集，不表示音符策略All Perfect或未知中斷可歸因於模型／單一bug；不無限跑到AP。
