@@ -1,6 +1,6 @@
 # 現行架構與資料契約
 
-2026-09-29。main 冷合併基線 observer47／planner23／diagnostics11；四首熱調參工作分支候選 observer47／planner24／diagnostics11，單程序 C++20。先前七輪實戰為 observer37／planner19，兩輪較早結果為舊版基準。判定線修正見[實作紀錄](JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)，後續設計見 [跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。本文區分已存在的執行契約與未實作的學習式方案。
+2026-09-29。main 冷合併基線 observer47／planner23／diagnostics11；四首 lead40 已測 observer47／planner24，後續瞬現線／交叉線候選 observer48／planner25／diagnostics11，單程序 C++20。先前七輪實戰為 observer37／planner19，兩輪較早結果為舊版基準。判定線修正見[實作紀錄](JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)，後續設計見 [跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。本文區分已存在的執行契約與未實作的學習式方案。
 
 2026-09-29補充：observer37／planner19已完成七輪實戰（六HD＋光IN）；原始結果見[冷開發計畫](NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md)。[冷開發結果](COLD_DEVELOPMENT_RESULT_20260929.md)記錄新版的分段SHA驗證、source_frame事件join、QPC子段、Note已占用替代配對與Flick路徑修正。固定擷取／時鐘／latest-frame／單owner契約不變；本輪只離線開發。下述為當前實作，不代表所有判定線與Note形式已驗收。
 
@@ -15,6 +15,8 @@ observer45在同一非零line track ID的Note歷史內，將新切向與上一�
 observer46在同一組當前可見Hold側軌上，優先讓已建立的線上body取得續接候選，再處理新生前景片段；後者不得擦掉既有body候選。已觀測tail接近判定線時，後續新鮮像素可在有界的36px局部窗尋找第二份tail支持，仍須當前封口及兩側側軌，並維持兩份新鮮證據才正常Up。旋轉Hold與同位置Tap的36幀合成RGB及獨立oracle一／二指正反例通過；既有753張三幀RGB相對observer45無完整decision變化。這些片段沒有實景長Hold真值，擴張搜尋的整鏈成本尚待正式A/B核對。
 
 observer47在同一Note經至少三次、跨30ms的當前像素測量確認line ID後，拒絕直接改接局部幾何不連續的另一條線；原線消失時該Note的關聯與root變unknown，已提交意圖由owner撤銷或按現有接觸證據續接。若新ID在上一測量接觸區延續原線（切向mod π點積至少.97、局部法向差不超過36px），一般Hold需兩張間隔至少12ms的新鮮影像；近線且當前支持的Drag／Held body可立即重接以保留活動contact。兩者均清空舊線速度擬合，不把舊root搬到新ID。追蹤狀態仍隨Note在100ms未觀測後清理。此守門由交叉雙Hold消線負例與反轉Drag換ID回歸約束；更多遮擋／旋轉換ID仍待驗。
+
+observer48延續已確認的Note→line關聯時，若原線在當幀仍可見且Note以90ms內的測量持續接近，交叉的另一條線不能僅憑瞬時距離搶走關聯；原線消失、遠離或新Note的等距多線仍維持unknown。另有只對Tap啟用的瞬現線重疊路徑：Note先追蹤至少三張，前一筆不超過40ms，當前高信心長線與高信心Tap重疊且前一位置朝線接近。planner25只在當前線同樣有效時即時Down／18ms後Up，basis標`live_pixels_current_tap_overlap`，不宣稱有舊線預測root。Credits實際三幀RGB重播能從`insufficient_history`改為該basis；跨曲遊戲效果尚未驗收，詳見[熱調試紀錄](FOUR_SONG_HOT_TUNING_20260929.md)。
 
 離線`analyze game-cold-pipeline`用有界預產RGB、正式LatestFrame三實體buffer、正式observer／owner／scheduler與FakeTouch、Journal三執行緒跑QPC鏈；每個來源frame分別記capture complete、publish、recognition、owner accept，receipt依source frame／intent join。輸出包含全部publish嘗試、skip、pool drop、writer drop、late／失敗和每100幀RSS；source render age、真gRPC、遊戲採納未知。全掃描A/A先凍結容忍，再以三批ABBA驗正式Tap與密集場景；原計畫跨場景冷gate通過，密集場景另設的逐批加速規則失敗，詳見[結果](COLD_DEVELOPMENT_RESULT_20260929.md)。
 

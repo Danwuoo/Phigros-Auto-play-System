@@ -2292,6 +2292,42 @@ TEST(GameTracking, DistantAppearanceAngleCannotStealEstablishedLineRelation) {
         if(i==3)EXPECT_TRUE(s.targets[0].crossing_ns);
     }
 }
+TEST(GameTracking, CrossingLineDoesNotStealAnApproachingConfirmedNote) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    LineCandidate horizontal{{640,576},{1,0},1280,2,.9};horizontal.track_id=1;
+    NoteCandidate n;n.kind=NoteKind::tap;n.width=128;n.height=8;
+    for(int i=0;i<6;++i) {
+        auto s=snapshot(i+1,static_cast<Nanoseconds>(i)*20'000'000);
+        s.lines={horizontal};n.center={423.0,287.0+i*13};
+        if(i>=4) {
+            LineCandidate crossing{{423.0,490},{0,1},500,2,.9};
+            crossing.track_id=2;s.lines.push_back(crossing);
+        }
+        track_legacy_batch(s,{n},{std::nullopt},history,next);
+        ASSERT_EQ(s.targets.size(),1);
+        EXPECT_EQ(s.targets[0].line_id,1)<<i;
+        EXPECT_NE(s.targets[0].reason,"multiple_line_association_unvalidated")<<i;
+        EXPECT_NE(s.targets[0].reason,"confirmed_line_relation_conflict")<<i;
+    }
+}
+TEST(GameTracking, RecedingConfirmedLineDoesNotOverrideCurrentCrossing) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    LineCandidate horizontal{{640,576},{1,0},1280,2,.9};horizontal.track_id=1;
+    NoteCandidate n;n.kind=NoteKind::tap;n.width=128;n.height=8;
+    for(int i=0;i<4;++i) {
+        auto s=snapshot(i+1,static_cast<Nanoseconds>(i)*20'000'000);
+        s.lines={horizontal};n.center={423.0,430.0+i*13};
+        track_legacy_batch(s,{n},{std::nullopt},history,next);
+    }
+    auto s=snapshot(5,80'000'000);s.lines={horizontal};
+    LineCandidate crossing{{423.0,490},{0,1},500,2,.9};crossing.track_id=2;
+    s.lines.push_back(crossing);n.center={423,420};
+    track_legacy_batch(s,{n},{std::nullopt},history,next);
+    ASSERT_EQ(s.targets.size(),1);
+    EXPECT_EQ(s.targets[0].line_id,0);
+    EXPECT_EQ(s.targets[0].reason,"confirmed_line_relation_conflict");
+    EXPECT_FALSE(s.targets[0].crossing_ns);
+}
 TEST(GameTracking, RelativeApproachSeparatesEquidistantUnrelatedLines) {
     std::vector<GameTrackHistory> history;std::uint64_t next=0;
     auto first=snapshot(1,0);LineCandidate old{{640,800},{1,0},1100,2,.9};
@@ -2433,6 +2469,54 @@ TEST(GameTracking, NearLineFirstAppearanceDoesNotInventTapTiming) {
     ASSERT_EQ(s.targets.size(),1);EXPECT_EQ(s.targets[0].line_id,1);
     EXPECT_EQ(s.targets[0].reason,"near_line_appearance_unqualified");
     EXPECT_FALSE(s.targets[0].crossing_ns);
+}
+TEST(GameOwner, PreviouslyTrackedTapCanUseNewCurrentLineAtVisibleOverlap) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{1,0,30'000'000});
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    for(int i=0;i<3;++i) {
+        const auto now=static_cast<Nanoseconds>(i)*20'000'000;
+        clock.set(now);auto s=snapshot(i+1,now);
+        NoteCandidate n;n.kind=NoteKind::tap;n.center={730.0,520.0+i*9.5};
+        n.width=128;n.height=8;n.confidence=.9;
+        if(i==2) {
+            LineCandidate line{{640,539},{1,0},1280,2,.9};
+            line.track_id=1;line.observed_ns=now;s.lines={line};
+        }
+        track_legacy_batch(s,{n},{std::nullopt},history,next);
+        ASSERT_EQ(s.targets.size(),1);
+        if(i<2)EXPECT_FALSE(s.targets[0].crossing_ns);
+        else {
+            EXPECT_EQ(s.targets[0].reason,"current_tap_overlap");
+            EXPECT_FALSE(s.targets[0].crossing_ns);
+        }
+        owner.accept(s);owner.poll();
+    }
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),1);
+    clock.set(60'000'000);owner.poll();
+    EXPECT_TRUE(touch.contacts().empty());
+    owner.stop();
+}
+TEST(GameTracking, CurrentTapOverlapNeedsPriorApproachAndCannotUseFirstAppearance) {
+    const auto probe=[](const std::vector<double>& centers) {
+        std::vector<GameTrackHistory> history;std::uint64_t next=0;
+        GameTarget last;
+        for(std::size_t i=0;i<centers.size();++i) {
+            auto s=snapshot(i+1,static_cast<Nanoseconds>(i)*20'000'000);
+            NoteCandidate n;n.kind=NoteKind::tap;n.center={730,centers[i]};
+            n.width=128;n.height=8;n.confidence=.9;
+            if(i+1==centers.size()) {
+                LineCandidate line{{640,539},{1,0},1280,2,.9};
+                line.track_id=1;line.observed_ns=s.context.capture_ns;s.lines={line};
+            }
+            track_legacy_batch(s,{n},{std::nullopt},history,next);
+            last=s.targets.at(0);
+        }
+        return last;
+    };
+    EXPECT_NE(probe({539}).reason,"current_tap_overlap");
+    EXPECT_NE(probe({541,544,547}).reason,"current_tap_overlap");
+    EXPECT_NE(probe({520,520,520}).reason,"current_tap_overlap");
 }
 TEST(GameOwner, DiscontinuousPixelsCancelOnlyAnUnexecutedDown) {
     FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{1,0,30'000'000});

@@ -47,7 +47,7 @@ out/release-v145/Release/pas.exe manual-session `
 
 --pixel-clips 需使用從當前 source 重建的執行檔，或保留的第二輪 main-legacy-v145 binary；它啟用既有有限三幀診斷：最多 20 輪、每輪 30 張，writer mailbox 4 張；不是新研究的兩秒採樣器。--round-watchdog-s 預設 0，超時記 FAULT／aborted，不當成曲尾。這些命令是操作說明，不是自動啟動遊戲的授權。
 
-熱調參分支另用 `configs/phigros-hd-assist-five-lead40.json`：manual-session 接受 30–45 ms lead，owner 依 profile 設定並在 manifest 記有效值。40 ms 是待四首重測的候選；35 ms 保留為回退基線。
+熱調參分支另用 `configs/phigros-hd-assist-five-lead40.json`：manual-session 接受 30–45 ms lead，owner 依 profile 設定並在 manifest 記有效值。40 ms 四首已重測，分數皆小幅上升但 Miss 仍多。下一候選 observer48／planner25 針對已追蹤 Tap 的瞬現線重疊與交叉線時既有關聯，尚待實戰；見[熱調試紀錄](docs/FOUR_SONG_HOT_TUNING_20260929.md)。
 
 歷史比較版本請保留原 binary，不在當前 checkout 重建覆寫：
 - 舊版：out/hd9-session-release/Release/pas.exe。

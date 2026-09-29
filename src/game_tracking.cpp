@@ -117,6 +117,9 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
             if(tracks.size()==128) {out.capacity_valid=false; continue;}
             tracks.push_back({++next_id,0,n.kind,n.center,now,{},n}); match=&tracks.back();
         }
+        const auto prior_note_center=match->last;
+        const auto prior_note_observed=match->observed;
+        const auto prior_note_revision=match->revision;
         match->observed=now;
         GameTarget target; target.note_id=match->id; target.revision=++match->revision;
         target.note=n;
@@ -173,7 +176,34 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
             if(score<best_score) {second_score=best_score;best_score=score;selected=&line;}
             else second_score=std::min(second_score,score);
         }
-        const bool relation_ambiguous=second_score-best_score<8;
+        // A crossing line can momentarily be nearer than the line this Note
+        // has approached over several current frames. Keep the confirmed
+        // relation only while that same line is visible now and the measured
+        // relative distance continues to close. This cannot create a new
+        // relation or carry a line through a frame with no current pixels.
+        bool preserve_confirmed=false;
+        if(match->confirmed_line_id&&!match->points.empty()&&
+           now-match->points.back().t<=90'000'000&&
+           match->points.back().line.track_id==match->confirmed_line_id) {
+            const auto established=std::find_if(out.lines.begin(),out.lines.end(),
+                [&](const LineCandidate& line){
+                    return line.track_id==match->confirmed_line_id&&line.association_valid&&
+                        line.length>=out.context.width*.24;
+                });
+            if(established!=out.lines.end()) {
+                const double along=std::abs((n.center.x-established->center.x)*established->tangent.x+
+                                            (n.center.y-established->center.y)*established->tangent.y);
+                const double current_distance=std::abs(normal_distance(n.center,*established));
+                const double prior_distance=std::abs(normal_distance(match->points.back().p,
+                                                                     match->points.back().line));
+                if(along<=established->length*.5+n.width+24&&
+                   current_distance<=prior_distance+std::max(12.0,n.width*.10)) {
+                    selected=&*established;
+                    preserve_confirmed=true;
+                }
+            }
+        }
+        const bool relation_ambiguous=!preserve_confirmed&&second_score-best_score<8;
         if(relation_ambiguous)selected=nullptr;
         // A sustained relation cannot jump to an unrelated surviving line.
         // A new ID may reconnect only where its current ridge is the same
@@ -230,6 +260,7 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
            match->points.back().line.track_id!=selected->track_id)selected=nullptr;
         if(selected&&!ambiguous) {
             const auto& l=*selected;
+            const bool first_line_sample=match->points.empty();
             // A line is unoriented: u and -u describe identical current
             // pixels. Keep the local normal continuous for this Note's
             // measured history so a detector sign flip is not a reversal.
@@ -353,6 +384,26 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
                         }
                     }
                 }
+            }
+            // A newly visible line can coincide with a Tap already tracked
+            // through line-free frames. The current head and current ridge
+            // must actually overlap; the bounded prior note motion only
+            // qualifies that observation, never supplies a hidden line.
+            if(first_line_sample&&prior_note_revision>=2&&
+               target.note.kind==NoteKind::tap&&!target.note.outline_evidence&&
+               prior_note_observed<now&&now-prior_note_observed<=40'000'000&&
+               l.confidence>=.8&&l.length>=out.context.width*.5&&
+               target.note.confidence>=.5&&target.note.height>=4&&
+               std::abs(l.tangent.x*target.note.tangent.x+
+                        l.tangent.y*target.note.tangent.y)>=.9&&
+               std::abs(latest_distance)<=std::min(8.0,target.note.height*.5+4)) {
+                const double prior_distance=normal_distance(prior_note_center,l);
+                const double approach=latest_distance-prior_distance;
+                if(std::abs(approach)>=3&&std::abs(prior_distance)>=3&&
+                   std::abs(latest_distance)<=std::abs(prior_distance)+2&&
+                   prior_distance*approach<0&&
+                   std::abs(prior_distance)<=std::max(32.0,target.note.width*.25))
+                    target.reason="current_tap_overlap";
             }
         } else if(relation_conflict)target.reason="confirmed_line_relation_conflict";
         else if(out.lines.size()>1) target.reason="multiple_line_association_unvalidated";
