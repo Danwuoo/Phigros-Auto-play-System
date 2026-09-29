@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <deque>
 #include <filesystem>
+#include <functional>
 #include <mutex>
 #include <thread>
 
@@ -12,7 +13,8 @@ namespace pas {
 
 class Journal final {
 public:
-    explicit Journal(const std::filesystem::path& path, std::size_t capacity = 8192);
+    explicit Journal(const std::filesystem::path& path, std::size_t capacity = 8192,
+                     std::function<void()> before_write = {});
     ~Journal();
     Journal(const Journal&) = delete;
     Journal& operator=(const Journal&) = delete;
@@ -24,6 +26,7 @@ private:
     void writer(std::stop_token stop);
     const std::size_t capacity_;
     const std::filesystem::path path_;
+    const std::function<void()> before_write_;
     mutable std::mutex mutex_;
     std::condition_variable ready_;
     std::deque<nlohmann::json> queue_;

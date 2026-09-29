@@ -1,5 +1,7 @@
 # Emulator MMAP consistency audit (2026-09-26)
 
+> 2026-09-28 清理後註記：本文保留當時版本與證據界線，舊授權／待辦不作現行指令。後續方向見[跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)；原始資料與 binary 的現存／已刪範圍見[清理紀錄](CLEANUP_AUDIT_20260928.md)。歷史 JSON 的 hash／pass 不代表被刪的 raw 仍可重算。
+
 Status: **diagnostic-only** for the installed Android Emulator 37.1.11.0,
 build 15917651. MMAP is excluded from Session and from eligible capture
 recommendations.
@@ -7,7 +9,7 @@ recommendations.
 The user's latest shortened-test revision leaves this conclusion unchanged.
 No new MMAP long run was added; the r4 diagnostic case was not executed.
 Earlier diagnostic pixels remain historical evidence, without producer
-ownership or fence proof. See the [current comparison](CAPTURE_COMPARISON_20260926.md).
+ownership or fence proof. See the current comparison（CAPTURE_COMPARISON_20260926.md 已清理，歷史見 Git baf3d4f）.
 
 ## Version and source evidence
 

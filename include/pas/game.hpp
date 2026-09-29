@@ -3,6 +3,7 @@
 #include <array>
 #include <deque>
 #include <filesystem>
+#include <stdexcept>
 #include <nlohmann/json.hpp>
 
 namespace pas {
@@ -67,6 +68,14 @@ struct DecisionSnapshot {
     GameUi ui = GameUi::unknown;
     bool playing_gate = false, capacity_valid = true;
     Nanoseconds recognition_start_ns = 0, recognition_end_ns = 0;
+    // Host QPC compute durations, distinct from the injected fake-clock
+    // business timestamps used by deterministic action tests.
+    Nanoseconds components_compute_ns = 0,base_scene_compute_ns = 0;
+    Nanoseconds combo_glyph_compute_ns = 0,line_scan_compute_ns = 0;
+    Nanoseconds component_line_decode_compute_ns = 0,note_decode_compute_ns = 0;
+    Nanoseconds line_tracking_compute_ns = 0;
+    Nanoseconds held_recovery_compute_ns = 0,tracking_compute_ns = 0;
+    bool compute_timing_host_qpc = false;
     std::string ui_basis;
     std::optional<Vec2> play_button;
     int combo_digit_glyphs = 0; // Diagnostic shape count only; no OCR/judgment.
@@ -87,6 +96,10 @@ struct GameTrackHistory {
     std::optional<NoteCandidate> rail_anchor;
     Nanoseconds rail_observed=0,point_bucket_ns=0;
     std::uint64_t rail_frame=0;
+    std::uint64_t confirmed_line_id=0;
+    std::uint64_t replacement_line_id=0;
+    Nanoseconds replacement_first_ns=0;
+    int replacement_observations=0;
 };
 enum class ObservationQuality { strong_current, weak_current, rejected };
 struct TrackingCandidate {
@@ -153,13 +166,22 @@ private:
         std::deque<Pose> poses; // <=6 measured poses, <=90 ms, >=10 ms buckets.
     };
     static void fit_motion(Track& track,LineCandidate& current,Nanoseconds time);
+    struct PendingBirth {LineCandidate line;Nanoseconds time=0;int consecutive=0;};
     std::vector<Track> tracks_;
+    std::vector<PendingBirth> pending_births_; // <=16, current-only consecutive observations.
     SceneContext context_;
     std::uint64_t next_id_=0;
 };
 class GameObserver final {
 public:
-    explicit GameObserver(const Clock& clock) : clock_(clock) {}
+    explicit GameObserver(const Clock& clock,bool reuse_component_scratch=false,
+        bool row_prescreen=true,int horizontal_line_gap_limit=4)
+        : clock_(clock),reuse_component_scratch_(reuse_component_scratch),
+          row_prescreen_(row_prescreen),
+          horizontal_line_gap_limit_(horizontal_line_gap_limit) {
+        if(horizontal_line_gap_limit<2||horizontal_line_gap_limit>6)
+            throw std::invalid_argument("horizontal line gap research bound");
+    }
     DecisionSnapshot process(const Frame& frame);
     const CandidateBatch& candidate_batch() const { return candidate_batch_; }
     void reset();
@@ -173,6 +195,14 @@ private:
     int menu_confirmations_ = 0;
     CandidateBatch candidate_batch_;
     GameLineTracker line_tracker_;
+    // Offline A/B scratch option. Runtime keeps local allocation after the
+    // interleaved RGB ablation found no compute-tail improvement. At 1280x720
+    // the optional storage is <=230400 mask bytes plus <=921600 queue bytes.
+    std::vector<std::uint8_t> component_mask_;
+    std::vector<int> component_queue_;
+    bool reuse_component_scratch_=false;
+    bool row_prescreen_=true;
+    int horizontal_line_gap_limit_=4;
 };
 
 // Single-thread owner. Note identity is distinct from monotonically assigned
@@ -224,5 +254,32 @@ private:
 
 nlohmann::json decision_json(const DecisionSnapshot& scene);
 nlohmann::json analyze_game_jsonl(const std::filesystem::path& path);
+nlohmann::json analyze_game_round(const std::filesystem::path& round_directory);
+nlohmann::json replay_game_pixel_clips(const std::filesystem::path& clips_directory,
+    const std::filesystem::path& overlay_directory = {},int overlay_round = 0,int overlay_clip = 0,
+    bool reuse_component_scratch = false,bool row_prescreen = true,
+    int horizontal_line_gap_limit = 4);
+nlohmann::json benchmark_game_pixel_clips(const std::filesystem::path& clips_directory,
+    int batches,int replays_per_mode,bool benchmark_row_prescreen = false,
+    bool row_prescreen_aa = false);
+nlohmann::json benchmark_game_cold_pipeline(const std::filesystem::path& journal_path,
+    int frames,int cadence_ms,bool jitter,bool row_prescreen,
+    const std::string& scene,int writer_capacity,int writer_delay_us,int rpc_delay_ms);
+nlohmann::json analyze_game_cold_pipeline_ab(const std::filesystem::path& directory);
+nlohmann::json analyze_game_cold_pipeline_aa(const std::filesystem::path& directory,
+    const std::filesystem::path& frozen_meter);
+nlohmann::json analyze_game_line_gap_sweep();
+nlohmann::json analyze_game_cold_c5_gate(const std::filesystem::path& directory);
+nlohmann::json index_game_pixel_corpus(const std::filesystem::path& old_clips,
+    const std::filesystem::path& old_results,const std::filesystem::path& new_clips,
+    const std::filesystem::path& new_results);
+nlohmann::json write_game_corpus_proposals(const std::filesystem::path& corpus_index,
+    const std::filesystem::path& output_directory);
+nlohmann::json validate_game_corpus_proposals(const std::filesystem::path& corpus_index,
+    const std::filesystem::path& proposals_manifest);
+nlohmann::json validate_game_cold_coverage_manifest(const std::filesystem::path& manifest_path);
+nlohmann::json compare_game_pixel_replays(const std::filesystem::path& corpus_index,
+    const std::filesystem::path& before_old,const std::filesystem::path& after_old,
+    const std::filesystem::path& before_new,const std::filesystem::path& after_new);
 void draw_game_overlay(Frame& frame, const DecisionSnapshot& scene);
 } // namespace pas

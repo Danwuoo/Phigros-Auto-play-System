@@ -1,4 +1,5 @@
 #include "pas/game_tracking.hpp"
+#include "pas/strategy_version.hpp"
 #include <algorithm>
 #include <cmath>
 #include <set>
@@ -67,10 +68,45 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
         if(forced_assignment) break;
         if(assigned[pair.note]>=0||track_used[pair.track]) continue;
         assigned[pair.note]=static_cast<int>(pair.track); track_used[pair.track]=true;
-        for(const auto& alternative:pairs) {
-            if(alternative.cost>pair.cost+8) break;
-            if((alternative.note==pair.note&&alternative.track!=pair.track)||
-               (alternative.track==pair.track&&alternative.note!=pair.note)) uncertain[pair.note]=true;
+    }
+    // A near edge to an already occupied track is not, by itself, an
+    // alternative assignment. In the isolated two-note exchange, compare the
+    // cost of BOTH edges. Larger components remain conservatively ambiguous.
+    if(!forced_assignment) {
+        const double unavailable=1e9;
+        std::vector<std::vector<double>> costs(notes.size(),std::vector<double>(tracks.size(),unavailable));
+        std::vector<int> owner(tracks.size(),-1);
+        for(const auto& pair:pairs) costs[pair.note][pair.track]=pair.cost;
+        for(std::size_t ni=0;ni<assigned.size();++ni)
+            if(assigned[ni]>=0) owner[static_cast<std::size_t>(assigned[ni])]=static_cast<int>(ni);
+        for(std::size_t ni=0;ni<assigned.size();++ni) {
+            if(assigned[ni]<0) continue;
+            const auto ti=static_cast<std::size_t>(assigned[ni]);
+            const double selected=costs[ni][ti];
+            for(const auto& alternative:pairs) {
+                if(alternative.cost>selected+8) break;
+                std::size_t nj=ni,tj=ti;
+                if(alternative.note==ni&&alternative.track!=ti) tj=alternative.track;
+                else if(alternative.track==ti&&alternative.note!=ni) nj=alternative.note;
+                else continue;
+                const int displaced=nj==ni?owner[tj]:assigned[nj];
+                if(displaced<0) {uncertain[ni]=true;break;}
+                const auto other_note=nj==ni?static_cast<std::size_t>(displaced):nj;
+                const auto other_track=nj==ni?tj:static_cast<std::size_t>(displaced);
+                // More than two involved tracks may permit an augmenting
+                // chain. Do not claim unique identity without solving it.
+                bool larger_component=false;
+                for(std::size_t k=0;k<tracks.size();++k) {
+                    if(k!=ti&&k!=other_track&&
+                       (costs[ni][k]<unavailable||costs[other_note][k]<unavailable)) {
+                        larger_component=true;break;
+                    }
+                }
+                if(larger_component) {uncertain[ni]=true;break;}
+                const double swap=costs[ni][other_track]+costs[other_note][ti];
+                const double original=selected+costs[other_note][other_track];
+                if(swap<=original+8) {uncertain[ni]=true;break;}
+            }
         }
     }
     for(std::size_t ni=0;ni<notes.size();++ni) {
@@ -97,24 +133,118 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
         target.evidence_ns=now; target.expires_ns=now+100'000'000;
         target.reason=ambiguous?"association_ambiguous":"line_unobservable";
         const LineCandidate* selected=nullptr;
+        double best_score=1e9,second_score=1e9;
         for(const auto& line:out.lines) {
             if(!line.association_valid)continue;
-            if(std::abs(line.tangent.x*n.tangent.x+line.tangent.y*n.tangent.y)<.95||line.length<out.context.width*.32) continue;
-            if(std::abs((n.center.x-line.center.x)*line.tangent.x+
-                        (n.center.y-line.center.y)*line.tangent.y)>line.length/2+n.width) continue;
-            if(!match->points.empty()&&line.track_id&&match->points.back().line.track_id==line.track_id) {
-                selected=&line;break;
+            if(line.length<out.context.width*.24)continue;
+            const double along=std::abs((n.center.x-line.center.x)*line.tangent.x+
+                                        (n.center.y-line.center.y)*line.tangent.y);
+            if(along>line.length*.5+n.width+24)continue;
+            const double across=std::abs(normal_distance(n.center,line));
+            const double alignment=std::abs(line.tangent.x*n.tangent.x+line.tangent.y*n.tangent.y);
+            const bool same_recent=!match->points.empty()&&line.track_id&&
+                match->points.back().line.track_id==line.track_id;
+            double relative_trend=0;
+            if(!match->points.empty()) {
+                const auto& prior=match->points.back();
+                const double dt=(now-prior.t)/1e9;
+                if(dt>0&&dt<=.09) {
+                    LineCandidate previous_line=line;
+                    if(same_recent)previous_line=prior.line;
+                    else if(line.motion_valid) {
+                        previous_line.center.x-=line.velocity.x*dt;
+                        previous_line.center.y-=line.velocity.y*dt;
+                        const double a=-line.angular_velocity*dt;
+                        previous_line.tangent={line.tangent.x*std::cos(a)-line.tangent.y*std::sin(a),
+                                               line.tangent.x*std::sin(a)+line.tangent.y*std::cos(a)};
+                    }
+                    // A weak bounded cue: approach/recession in this line's
+                    // own local frame, not the note's drawn orientation.
+                    relative_trend=std::clamp((across-std::abs(normal_distance(prior.p,previous_line)))*.2,
+                                              -6.0,6.0);
+                }
             }
-            if(!selected||line.confidence>selected->confidence||
-               (line.confidence==selected->confidence&&line.length>selected->length)) selected=&line;
+            // Appearance orientation is only a weak CURRENT cue. A distant
+            // note can align as it approaches; relative position and the
+            // bounded relation history carry the association instead.
+            const double score=across+std::max(0.0,along-line.length*.5)*2+
+                (1-alignment)*(across<32?12:3)+(1-line.confidence)*4+relative_trend-
+                (same_recent?120:0);
+            if(score<best_score) {second_score=best_score;best_score=score;selected=&line;}
+            else second_score=std::min(second_score,score);
         }
-        if(!selected&&out.lines.size()==1&&out.lines.front().association_valid) selected=&out.lines.front();
+        const bool relation_ambiguous=second_score-best_score<8;
+        if(relation_ambiguous)selected=nullptr;
+        // A sustained relation cannot jump to an unrelated surviving line.
+        // A new ID may reconnect only where its current ridge is the same
+        // local line as the last measured one, on two fresh frames. Start
+        // its motion fit anew; the old root is never transferred.
+        bool relation_conflict=false;
+        if(selected&&match->confirmed_line_id&&
+           selected->track_id!=match->confirmed_line_id) {
+            const bool old_visible=std::any_of(out.lines.begin(),out.lines.end(),[&](const auto& line){
+                return line.association_valid&&line.track_id==match->confirmed_line_id;
+            });
+            bool local_continuation=false;
+            if(!old_visible&&!match->points.empty()&&
+               now-match->points.back().t<=90'000'000) {
+                const auto& prior=match->points.back();
+                const double prior_d=normal_distance(prior.p,prior.line);
+                const Vec2 prior_hit{prior.p.x+prior_d*prior.line.tangent.y,
+                                     prior.p.y-prior_d*prior.line.tangent.x};
+                const double alignment=std::abs(prior.line.tangent.x*selected->tangent.x+
+                                                prior.line.tangent.y*selected->tangent.y);
+                local_continuation=alignment>=.97&&
+                    std::abs(normal_distance(prior_hit,*selected))<=36;
+            }
+            if(local_continuation) {
+                if(match->replacement_line_id!=selected->track_id||
+                   now-match->replacement_first_ns>60'000'000) {
+                    match->replacement_line_id=selected->track_id;
+                    match->replacement_first_ns=now;
+                    match->replacement_observations=1;
+                } else ++match->replacement_observations;
+                const bool current_contact_support=
+                    (n.kind==NoteKind::drag||
+                     (n.kind==NoteKind::hold&&n.held_body_evidence&&n.rails_geometry))&&
+                    std::abs(normal_distance(n.center,*selected))<=40;
+                if(current_contact_support||
+                   (match->replacement_observations>=2&&
+                    now-match->replacement_first_ns>=12'000'000)) {
+                    match->confirmed_line_id=selected->track_id;
+                    match->points.clear();
+                    match->replacement_line_id=0;
+                    match->replacement_observations=0;
+                } else relation_conflict=true;
+            } else {
+                match->replacement_line_id=0;
+                match->replacement_observations=0;
+                relation_conflict=true;
+            }
+            if(relation_conflict)selected=nullptr;
+        } else if(!selected||selected->track_id==match->confirmed_line_id) {
+            match->replacement_line_id=0;
+            match->replacement_observations=0;
+        }
+        if(target.note.held_body_evidence&&selected&&!match->points.empty()&&
+           match->points.back().line.track_id!=selected->track_id)selected=nullptr;
         if(selected&&!ambiguous) {
             const auto& l=*selected;
-            const auto latest_distance=normal_distance(target.note.center,l);
+            // A line is unoriented: u and -u describe identical current
+            // pixels. Keep the local normal continuous for this Note's
+            // measured history so a detector sign flip is not a reversal.
+            LineCandidate local_line=l;
+            if(!match->points.empty()&&l.track_id&&
+               match->points.back().line.track_id==l.track_id&&
+               l.tangent.x*match->points.back().line.tangent.x+
+                   l.tangent.y*match->points.back().line.tangent.y<0) {
+                local_line.tangent.x=-local_line.tangent.x;
+                local_line.tangent.y=-local_line.tangent.y;
+            }
+            const auto latest_distance=normal_distance(target.note.center,local_line);
             target.line_id=l.track_id;target.distance=latest_distance;
-            target.hit={target.note.center.x+latest_distance*l.tangent.y,
-                        target.note.center.y-latest_distance*l.tangent.x};
+            target.hit={target.note.center.x+latest_distance*local_line.tangent.y,
+                        target.note.center.y-latest_distance*local_line.tangent.x};
             const bool front_is_touch=target.note.held_body_evidence&&!target.note.head_on_line;
             if(front_is_touch)target.hit=target.note.center;
             if(!match->points.empty()) {
@@ -126,7 +256,7 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
                     target.hit_velocity={(target.hit.x-old_hit.x)/dt,(target.hit.y-old_hit.y)/dt};
                 } else match->points.clear();
             }
-            const GameTrackPoint point{now,target.note.center,l,target.note.tail,target.note.rails_geometry,front_is_touch};
+            const GameTrackPoint point{now,target.note.center,local_line,target.note.tail,target.note.rails_geometry,front_is_touch};
             // A delivery burst must not evict the complete temporal baseline.
             // Keep the newest point in each bounded, host-clock 10 ms bucket.
             if(!match->points.empty()&&now-match->point_bucket_ns<history_bucket_ns)
@@ -134,9 +264,40 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
             else {match->points.push_back(point);match->point_bucket_ns=now;}
             while(match->points.size()>6 || (!match->points.empty()&&now-match->points.front().t>90'000'000))
                 match->points.pop_front();
+            if(!match->confirmed_line_id&&l.track_id&&match->points.size()>=3&&
+               match->points.back().t-match->points.front().t>=minimum_fit_span_ns&&
+               std::all_of(match->points.begin(),match->points.end(),[&](const auto& point){
+                   return point.line.track_id==l.track_id;
+               }))match->confirmed_line_id=l.track_id;
+            bool segment_reset=false;
+            if(match->points.size()>=3) {
+                const auto& a=match->points[match->points.size()-3];
+                const auto& b=match->points[match->points.size()-2];
+                const auto& c=match->points.back();
+                const double dt0=(b.t-a.t)/1e9,dt1=(c.t-b.t)/1e9;
+                if(dt0>0&&dt1>0) {
+                    const double d0=normal_distance(a.p,a.line),d1=normal_distance(b.p,b.line),
+                        d2=normal_distance(c.p,c.line);
+                    const double v0=(d1-d0)/dt0,v1=(d2-d1)/dt1;
+                    const bool reversal=v0*v1<0&&std::abs(v0)>75&&std::abs(v1)>75&&
+                        std::abs(d2-d1)>std::max(24.0,target.note.width*.2);
+                    const bool jump=std::abs(d2-d1)>48&&
+                        std::abs(d2-d1-v0*dt1)>std::max(24.0,std::abs(v0)*dt1);
+                    if(reversal||jump) {
+                        // The current sample begins a fresh measured segment.
+                        // Do not average a turn or teleport into a plausible
+                        // fast crossing. A new root needs its own 30 ms span.
+                        match->points.clear();match->points.push_back(point);
+                        match->point_bucket_ns=now;segment_reset=true;
+                    }
+                }
+            }
             target.samples=static_cast<int>(match->points.size());
             target.history_span_ns=match->points.back().t-match->points.front().t;
-            target.reason="insufficient_history";
+            target.reason=segment_reset?"motion_discontinuity":"insufficient_history";
+            if(!segment_reset&&target.samples==1&&match->revision==1&&
+               std::abs(latest_distance)<=8&&target.note.kind!=NoteKind::drag)
+                target.reason="near_line_appearance_unqualified";
             if(match->points.size()>=3&&target.history_span_ns<minimum_fit_span_ns)
                 target.reason="insufficient_temporal_span";
             if(match->points.size()>=3&&target.history_span_ns>=minimum_fit_span_ns) {
@@ -193,7 +354,8 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
                     }
                 }
             }
-        } else if(out.lines.size()>1) target.reason="multiple_line_association_unvalidated";
+        } else if(relation_conflict)target.reason="confirmed_line_relation_conflict";
+        else if(out.lines.size()>1) target.reason="multiple_line_association_unvalidated";
         if(target.note.held_body_patch) {
             target.crossing_ns.reset();target.tail_crossing_ns.reset();
             if(selected&&!ambiguous)target.reason="held_body_touch_only";
@@ -204,7 +366,7 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
 CandidateBatch make_candidate_batch(const DecisionSnapshot& s,const Frame& f,
  const std::vector<NoteCandidate>& notes,const std::vector<std::optional<NoteCandidate>>& shortened,
  const std::vector<GameTrackHistory>& history) {
- CandidateBatch b;b.extractor_version=36;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
+ CandidateBatch b;b.extractor_version=game_observer_version;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
  b.capacity_valid=s.capacity_valid;b.source_valid=f.source_valid;
  b.extraction_start_ns=s.recognition_start_ns;b.lines=s.lines;
  for(std::size_t i=0;i<notes.size();++i) {
@@ -264,7 +426,7 @@ CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("sc
  const auto& c=j.at("context");b.context={c.at("epoch"),c.at("generation"),c.at("geometry"),c.at("frame"),c.at("capture_ns"),c.at("width"),c.at("height"),c.at("rotation")};
  if(b.context.width<2||b.context.height<2||b.context.width>4096||b.context.height>4096||b.context.capture_ns<0||b.context.rotation<0||b.context.rotation>3)throw std::invalid_argument("candidate context");
  b.extractor_version=j.at("extractor_version");b.quality_version=j.at("quality_version");b.history_source=j.at("history_source");
- if((b.extractor_version<29||b.extractor_version>36)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
+ if((b.extractor_version<29||b.extractor_version>game_observer_version)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
  b.extraction_start_ns=j.at("extraction_start_ns");b.extraction_end_ns=j.at("extraction_end_ns");
  if(b.extraction_start_ns<0||b.extraction_end_ns<b.extraction_start_ns)throw std::invalid_argument("extraction time order");
  const auto ui=j.at("ui").get<std::string>();bool found=false;for(auto u:{GameUi::unknown,GameUi::menu,GameUi::loading,GameUi::playing,GameUi::paused,GameUi::result})if(ui==name(u)){b.ui=u;found=true;}

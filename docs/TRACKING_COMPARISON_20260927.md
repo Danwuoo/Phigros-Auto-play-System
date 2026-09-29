@@ -1,6 +1,8 @@
 # 追蹤關聯對照（2026-09-27）
 
-實作 source `b32517d`，分支 `codex/tracking-segmentation-pilot`；不合併／推送。真實觸控仍採 T0 legacy／observer29／planner8、35ms、兩指。T1／T2 只供離線與單一 shadow worker；本輪未訓練或接入視覺模型。依據 [開發計畫](TRACKING_SEGMENTATION_PLAN_20260927.md)，完整 pipeline、獨立 line tracking 與正式替換仍 pending。
+> 2026-09-28 清理後註記：本文保留當時版本與證據界線，舊授權／待辦不作現行指令。後續方向見[跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)；原始資料與 binary 的現存／已刪範圍見[清理紀錄](CLEANUP_AUDIT_20260928.md)。歷史 JSON 的 hash／pass 不代表被刪的 raw 仍可重算。
+
+實作 source `b32517d`，分支 `codex/tracking-segmentation-pilot`；不合併／推送。真實觸控仍採 T0 legacy／observer29／planner8、35ms、兩指。T1／T2 只供離線與單一 shadow worker；本輪未訓練或接入視覺模型。依據 開發計畫（TRACKING_SEGMENTATION_PLAN_20260927.md 已清理，歷史見 Git baf3d4f），完整 pipeline、獨立 line tracking 與正式替換仍 pending。
 
 ## 實作及資格
 

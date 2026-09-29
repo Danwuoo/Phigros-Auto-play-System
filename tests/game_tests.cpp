@@ -1,6 +1,7 @@
 #include "pas/game.hpp"
 #include "pas/runtime.hpp"
 #include "pas/game_motion.hpp"
+#include "pas/game_tracking.hpp"
 #include <gtest/gtest.h>
 #include <algorithm>
 
@@ -706,7 +707,7 @@ TEST(GameObserver, ColorIndependentHeldOutlineRequiresFreshAnchorAndBothCurrentR
         clock.set(f.capture_complete_ns);const auto s=observer.process(f);
         if(failure==0||failure==1||failure==4) EXPECT_TRUE(s.targets.empty())<<"failure "<<failure;
         else {
-            ASSERT_EQ(s.targets.size(),1)<<"case "<<failure;
+            ASSERT_EQ(s.targets.size(),1)<<"case "<<failure<<" "<<decision_json(s).dump();
             EXPECT_TRUE(s.targets.front().note.outline_evidence);EXPECT_TRUE(s.targets.front().note.head_on_line);
         }
     }
@@ -767,7 +768,7 @@ TEST(GameObserver, WarmSectionCannotUseEmptyOrMismatchedWhitePair) {
         if(failure==1||failure==2)
             EXPECT_TRUE(std::none_of(s.targets.begin(),s.targets.end(),[](const auto& t){return t.note.outline_evidence;}))<<"failure "<<failure;
         else {
-            ASSERT_EQ(s.targets.size(),1);EXPECT_TRUE(s.targets.front().note.outline_evidence);
+            ASSERT_EQ(s.targets.size(),1)<<decision_json(s).dump();EXPECT_TRUE(s.targets.front().note.outline_evidence);
             EXPECT_NEAR(s.targets.front().note.width,158,3);
         }
     }
@@ -813,7 +814,7 @@ TEST(GameObserver, CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWhole
         if(i==0) EXPECT_TRUE(held->note.direct_rails_evidence);
     }
     const auto held=std::find_if(result.targets.begin(),result.targets.end(),[](const auto& t){return t.note.kind==NoteKind::hold;});
-    ASSERT_TRUE(held->crossing_ns);EXPECT_NEAR(held->velocity,500,20);
+    ASSERT_TRUE(held->crossing_ns)<<decision_json(result).dump();EXPECT_NEAR(held->velocity,500,20);
 }
 TEST(GameObserver, ShortWideCurrentRailsNeedDepthAndCannotJoinAdjacentBodiesOrEmptyBorders) {
     FakeClock clock;GameObserver observer(clock);auto f=image(1,1);hud(f);
@@ -996,8 +997,8 @@ TEST(GameObserver, CurrentPointMismatchAndLargeGeometryJumpsRemainRejectedAtHigh
         clock.set(f.capture_complete_ns);scene=observer.process(f);
     }
     ASSERT_EQ(scene.targets.size(),1);const auto& t=scene.targets[0];
-    EXPECT_FALSE(t.crossing_ns);EXPECT_EQ(t.reason,"nonlinear_or_mismatch");
-    EXPECT_GT(t.prediction_error_px,t.fit_residual_limit_px);
+    EXPECT_FALSE(t.crossing_ns);EXPECT_EQ(t.reason,"motion_discontinuity");
+    EXPECT_EQ(t.samples,1);EXPECT_EQ(t.history_span_ns,0);
     FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{1,35'000'000,30'000'000});
     owner.accept(scene);EXPECT_TRUE(owner.take_accepted_plans().empty());owner.poll();EXPECT_TRUE(touch.contacts().empty());
 }
@@ -1142,16 +1143,19 @@ TEST(GameOwner, HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact) {
 TEST(GameOwner, FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass) {
     FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,5,{2,0,30'000'000});
     auto s=snapshot(1,0);s.lines={{{640,500},{1,0},1280,2,1}};
+    s.lines[0].track_id=1;s.lines[0].observed_ns=0;
     for(int id=0;id<5;++id) {
         auto h=target(id+1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=4;
         h.hit={100.0+id*220,500};h.note.center=h.hit;h.note.width=100;h.note.height=300;
         h.note.tail=Vec2{h.hit.x,200};h.note.rails_geometry=true;h.tail_crossing_ns=30'000'000;
+        h.line_id=1;
         s.targets.push_back(h);
     }
     owner.accept(s);owner.take_accepted_plans();clock.set(10'000'000);owner.poll();
     ASSERT_EQ(touch.contacts().size(),5);
     for(int i=1;i<=7;++i) {
         clock.set(10'000'000+i*20'000'000);s.sequence++;s.context.frame++;s.context.capture_ns=clock.now_ns();
+        s.lines[0].observed_ns=s.context.capture_ns;
         for(auto& h:s.targets) {
             h.evidence_ns=clock.now_ns();h.expires_ns=clock.now_ns()+100'000'000;h.revision++;
             h.tail_crossing_ns=clock.now_ns()-10'000'000; // misleading fit must not release early
@@ -1159,11 +1163,13 @@ TEST(GameOwner, FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass) {
         owner.accept(s);owner.poll();owner.take_accepted_plans();EXPECT_EQ(touch.contacts().size(),5);
     }
     clock.set(160'000'000);s.sequence++;s.context.frame++;s.context.capture_ns=clock.now_ns();
+    s.lines[0].observed_ns=s.context.capture_ns;
     for(auto& h:s.targets) {h.evidence_ns=clock.now_ns();h.expires_ns=clock.now_ns()+100'000'000;h.revision++;
         h.note.tail=Vec2{h.hit.x,502};h.note.center={h.hit.x,520};}
     owner.accept(s);owner.take_accepted_plans();
     EXPECT_TRUE(owner.take_coverage_updates().empty()); // one tail sample cannot finish
     clock.set(170'000'000);s.sequence++;s.context.frame++;s.context.capture_ns=clock.now_ns();
+    s.lines[0].observed_ns=s.context.capture_ns;
     for(auto& h:s.targets) {h.evidence_ns=clock.now_ns();h.expires_ns=clock.now_ns()+100'000'000;h.revision++;}
     owner.accept(s);owner.poll();EXPECT_EQ(touch.contacts().size(),5);
     const auto ends=owner.take_coverage_updates();ASSERT_EQ(ends.size(),5);
@@ -1173,6 +1179,46 @@ TEST(GameOwner, FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass) {
     EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),5);
     EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::up;}),5);
     owner.accept(snapshot(20,190'000'000));owner.stop();EXPECT_TRUE(owner.scheduler().fault().empty());
+}
+TEST(GameOwner, SixthSimultaneousContactIsRejectedWithoutStealingFiveActiveFingers) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,5,{2,0,30'000'000});
+    auto s=snapshot(1,0);
+    for(int i=0;i<6;++i) {
+        auto h=target(i+1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=4;
+        h.hit={100.0+i*180,500};h.note.center=h.hit;h.note.width=100;
+        h.note.height=300;h.note.rails_geometry=true;s.targets.push_back(h);
+    }
+    owner.accept(s);clock.set(10'000'000);owner.poll();
+    EXPECT_EQ(touch.contacts().size(),5);
+    const auto notices=owner.scheduler().take_notices();
+    EXPECT_TRUE(std::any_of(notices.begin(),notices.end(),[](const auto& notice){
+        return notice.reason=="contact_conflict";}));
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& receipt){
+        return receipt.command.phase==Phase::down&&receipt.success;}),5);
+    clock.set(110'000'000);owner.poll();
+    EXPECT_TRUE(touch.contacts().empty());
+    owner.stop();
+}
+TEST(GameOwner, RotatingHeldBodyAndColocatedTapKeepSeparateContacts) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{3,0,30'000'000});
+    auto hold=target(1,0,10'000'000);hold.note.kind=NoteKind::hold;hold.samples=4;
+    hold.note.center=hold.hit;hold.note.width=120;hold.note.height=240;
+    hold.note.rails_geometry=true;hold.note.head_on_line=true;hold.line_id=7;
+    auto s=snapshot(1,0);s.targets={hold};owner.accept(s);
+    clock.set(10'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    const auto held_finger=touch.contacts().begin()->first;
+    clock.set(20'000'000);s=snapshot(2,clock.now_ns());
+    hold.evidence_ns=clock.now_ns();hold.expires_ns=clock.now_ns()+100'000'000;
+    hold.revision++;hold.note.tangent={0.8660254,0.5};hold.hit={420,505};
+    auto tap_note=target(2,clock.now_ns(),30'000'000);tap_note.hit={400,500};
+    s.targets={hold,tap_note};owner.accept(s);owner.poll();
+    ASSERT_EQ(touch.contacts().size(),1);EXPECT_EQ(touch.contacts().begin()->first,held_finger);
+    clock.set(30'000'000);owner.poll();
+    ASSERT_EQ(touch.contacts().size(),2);
+    EXPECT_TRUE(touch.contacts().contains(held_finger));
+    clock.set(48'000'000);owner.poll();EXPECT_EQ(touch.contacts().size(),1);
+    EXPECT_TRUE(touch.contacts().contains(held_finger));
+    clock.set(120'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
 }
 TEST(GameOwner, TailPredictionWithoutCurrentVisibleTailDoesNotEndHoldOrExtendExpiry) {
     FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
@@ -1715,6 +1761,37 @@ TEST(GameOwner, TypeGateAndFlickUseIndependentDownMoveUpSequence) {
     for(const auto& step:plans[0].steps) {clock.set(step.due_ns); owner.poll();}
     EXPECT_EQ(backend.receipts().size(),6); EXPECT_TRUE(backend.contacts().empty());
 }
+TEST(GameOwner, FlickNearLowerBoundaryKeepsFourFiniteMovesInsideScreen) {
+    FakeClock clock;FakeTouchBackend backend(clock);GamePlanOwner owner(clock,backend,2,{8,0,30'000'000});
+    auto s=snapshot(1,0);auto flick=target(1,0,10'000'000);flick.note.kind=NoteKind::flick;
+    flick.hit={400,700};s.targets={flick};owner.accept(s);
+    const auto plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);ASSERT_EQ(plans[0].steps.size(),6);
+    const auto& steps=plans[0].steps;
+    const double dx=steps[4].x-steps[0].x,dy=steps[4].y-steps[0].y;
+    EXPECT_GE(std::hypot(dx,dy),79.0);
+    for(std::size_t i=1;i<=4;++i) {
+        EXPECT_GE(steps[i].x,0);EXPECT_LT(steps[i].x,s.context.width);
+        EXPECT_GE(steps[i].y,s.context.height*.12);EXPECT_LT(steps[i].y,s.context.height);
+        EXPECT_NEAR(std::hypot(steps[i].x-steps[i-1].x,steps[i].y-steps[i-1].y),20,0.01);
+    }
+}
+TEST(GameOwner, PendingFlickRevisionRebuildsFullPathFromCurrentHit) {
+    // A pending plan may be revised before its first Down.
+    FakeClock clock;FakeTouchBackend backend(clock);GamePlanOwner owner(clock,backend,2,{8,0,30'000'000});
+    auto s=snapshot(1,0);auto flick=target(1,0,30'000'000);flick.note.kind=NoteKind::flick;flick.samples=3;
+    flick.hit={400,700};s.targets={flick};owner.accept(s);owner.take_accepted_plans();
+    clock.set(5'000'000);s=snapshot(2,clock.now_ns());
+    flick.evidence_ns=clock.now_ns();flick.expires_ns=clock.now_ns()+100'000'000;
+    flick.revision++;flick.hit={410,695};s.targets={flick};owner.accept(s);
+    const auto plans=owner.take_accepted_plans();ASSERT_EQ(plans.size(),1);
+    const auto& steps=plans.front().steps;ASSERT_EQ(steps.size(),6);
+    EXPECT_EQ(steps[0].x,410);EXPECT_EQ(steps[0].y,695);
+    for(int i=1;i<=4;++i) {
+        EXPECT_GE(steps[i].y,s.context.height*.12);EXPECT_LT(steps[i].y,s.context.height);
+        EXPECT_NEAR(std::hypot(steps[i].x-steps[i-1].x,steps[i].y-steps[i-1].y),20,0.01);
+    }
+    EXPECT_NEAR(std::hypot(steps[4].x-steps[0].x,steps[4].y-steps[0].y),80,0.01);
+}
 TEST(GameObserver, InterruptedThinBandIsOneLineButSeparatedBandsRemainDistinct) {
     FakeClock clock; GameObserver observer(clock); auto f=image(1,1);
     rect(f,0,574,424,2,{255,255,255});
@@ -1789,14 +1866,22 @@ TEST(GameOwner, OutOfOrderNotesGetSubmissionIdsAndFullSnapshotCancelsMissing) {
     s=snapshot(3,50'000'000); s.targets={target(80,50'000'000,60'000'000)};
     owner.accept(s); clock.set(60'000'000); EXPECT_TRUE(owner.poll().empty());
 }
-TEST(GameOwner, SingleMissingDragFrameKeepsFutureDownButGraceExpiryCancelsIt) {
+TEST(GameOwner, SingleMissingDragFrameCancelsFutureDownAndFreshReturnCanReplan) {
     for(const bool returns:{false,true}) {
         FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{4,20'000'000,30'000'000});
         auto s=snapshot(1,0);auto t=target(9,0,80'000'000);t.note.kind=NoteKind::drag;t.samples=4;s.targets={t};
         owner.accept(s);ASSERT_EQ(owner.scheduler().pending_count(),1);
-        clock.set(20'000'000);owner.accept(snapshot(2,20'000'000));EXPECT_EQ(owner.scheduler().pending_count(),1);
+        const auto original=owner.take_accepted_plans();ASSERT_EQ(original.size(),1);
+        clock.set(20'000'000);owner.accept(snapshot(2,20'000'000));
+        EXPECT_EQ(owner.scheduler().pending_count(),0);
+        const auto canceled=owner.take_plan_cancellations();ASSERT_EQ(canceled.size(),1);
+        EXPECT_EQ(canceled[0].at("reason"),"pending_down_current_object_missing");
+        EXPECT_EQ(canceled[0].at("executed_steps"),0);
         if(returns) {clock.set(30'000'000);s=snapshot(3,30'000'000);t.evidence_ns=30'000'000;t.expires_ns=130'000'000;
-            t.revision=2;s.targets={t};owner.accept(s);clock.set(45'000'000);ASSERT_EQ(owner.poll().size(),1);
+            t.revision=2;s.targets={t};owner.accept(s);
+            const auto renewed=owner.take_accepted_plans();ASSERT_EQ(renewed.size(),1);
+            EXPECT_NE(renewed[0].intent_id,original[0].intent_id);
+            clock.set(45'000'000);ASSERT_EQ(owner.poll().size(),1);
             EXPECT_EQ(touch.contacts().size(),1);owner.stop();EXPECT_TRUE(touch.contacts().empty());}
         else {clock.set(40'000'000);owner.accept(snapshot(3,40'000'000));EXPECT_EQ(owner.scheduler().pending_count(),0);
             clock.set(50'000'000);EXPECT_TRUE(owner.poll().empty());EXPECT_TRUE(touch.contacts().empty());}
@@ -2135,4 +2220,254 @@ TEST(AutoPlay, UnknownStaleOutOfFrameAndContradictoryScenesCannotStart) {
     s.play_button=Vec2{1200,630}; s.capacity_valid=false; EXPECT_FALSE(planner.take(s,0));
     s.capacity_valid=true; s.playing_gate=true; EXPECT_FALSE(planner.take(s,0));
     s.playing_gate=false; EXPECT_TRUE(planner.take(s,0));
+}
+
+TEST(GameMotion, ContestedDuplicateDoesNotCreateARecurringLineage) {
+    GameLineTracker tracker;auto s=snapshot(1,1'000'000);
+    const auto line=[](double y){return LineCandidate{{640,y},{1,0},1200,2,.85};};
+    std::vector<LineCandidate> lines={line(570)};tracker.update(lines,s.context);
+    const auto id=lines[0].track_id;ASSERT_TRUE(lines[0].association_valid);
+    s.context.frame++;s.context.capture_ns+=16'000'000;
+    lines={line(570),line(572)};tracker.update(lines,s.context);
+    EXPECT_FALSE(lines[0].association_valid);EXPECT_FALSE(lines[1].association_valid);
+    EXPECT_EQ(std::count_if(lines.begin(),lines.end(),[&](const auto& l){return l.track_id==id;}),1);
+    for(int i=0;i<30;++i) {
+        s.context.frame++;s.context.capture_ns+=16'000'000;
+        lines={line(570)};tracker.update(lines,s.context);
+        EXPECT_EQ(lines[0].track_id,id)<<i;EXPECT_TRUE(lines[0].association_valid)<<i;
+    }
+}
+TEST(GameMotion, CloseRealLinesStayDistinctAndExpiryDoesNotBridgeNinetyMilliseconds) {
+    GameLineTracker tracker;auto s=snapshot(1,1'000'000);
+    const auto line=[](double y){return LineCandidate{{640,y},{1,0},1200,2,.85};};
+    std::vector<LineCandidate> lines={line(570),line(572)};tracker.update(lines,s.context);
+    const auto first=lines[0].track_id,second=lines[1].track_id;
+    ASSERT_NE(first,second);
+    for(int i=1;i<=4;++i) {
+        s.context.frame++;s.context.capture_ns+=16'000'000;
+        lines=i%2?std::vector<LineCandidate>{line(572),line(570)}:
+                    std::vector<LineCandidate>{line(570),line(572)};
+        tracker.update(lines,s.context);
+        EXPECT_EQ(lines[i%2?0:1].track_id,second);EXPECT_EQ(lines[i%2?1:0].track_id,first);
+        EXPECT_TRUE(lines[0].association_valid);EXPECT_TRUE(lines[1].association_valid);
+    }
+    s.context.frame++;s.context.capture_ns+=89'000'000;
+    lines={line(570)};tracker.update(lines,s.context);EXPECT_EQ(lines[0].track_id,first);
+    s.context.frame++;s.context.capture_ns+=90'000'000;
+    lines={line(570)};tracker.update(lines,s.context);EXPECT_NE(lines[0].track_id,first);
+}
+TEST(GameMotion, PersistentNearNewLineIsBornAfterBoundedEvidenceButFarNewLineImmediately) {
+    GameLineTracker tracker;auto s=snapshot(1,1'000'000);
+    const auto line=[](double y){return LineCandidate{{640,y},{1,0},1200,2,.85};};
+    std::vector<LineCandidate> lines={line(570)};tracker.update(lines,s.context);
+    const auto original=lines[0].track_id;
+    for(int i=1;i<=3;++i) {
+        s.context.frame++;s.context.capture_ns+=16'000'000;
+        lines={line(570),line(572)};tracker.update(lines,s.context);
+        EXPECT_EQ(lines[0].track_id,original);
+        if(i<3) {EXPECT_EQ(lines[1].track_id,0);EXPECT_FALSE(lines[1].association_valid);}
+    }
+    const auto born=lines[1].track_id;ASSERT_NE(born,0);ASSERT_NE(born,original);
+    EXPECT_FALSE(lines[1].association_valid); // birth frame is still contested
+    s.context.frame++;s.context.capture_ns+=16'000'000;
+    lines={line(572),line(570)};tracker.update(lines,s.context);
+    EXPECT_EQ(lines[0].track_id,born);EXPECT_EQ(lines[1].track_id,original);
+    EXPECT_TRUE(lines[0].association_valid);EXPECT_TRUE(lines[1].association_valid);
+    s.context.frame++;s.context.capture_ns+=16'000'000;
+    lines={line(572),line(570),line(590)};tracker.update(lines,s.context);
+    EXPECT_NE(lines[2].track_id,0);EXPECT_TRUE(lines[2].association_valid);
+}
+TEST(GameTracking, DistantAppearanceAngleCannotStealEstablishedLineRelation) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    const auto right=[](){LineCandidate l{{640,575},{1,0},1100,2,.9};l.track_id=1;return l;};
+    const auto distractor=[](){LineCandidate l{{520,360},{0,1},650,2,.9};l.track_id=2;return l;};
+    for(int i=0;i<4;++i) {
+        auto s=snapshot(i+1,i*20'000'000);s.lines={right()};
+        if(i>0)s.lines.push_back(distractor());
+        NoteCandidate n;n.kind=NoteKind::tap;n.center={500.0,450.0+i*20};
+        n.width=64;n.height=8;n.tangent={0,1};
+        track_legacy_batch(s,{n},{std::nullopt},history,next);
+        ASSERT_EQ(s.targets.size(),1);EXPECT_EQ(s.targets[0].line_id,1)<<i;
+        EXPECT_NE(s.targets[0].reason,"multiple_line_association_unvalidated");
+        if(i==3)EXPECT_TRUE(s.targets[0].crossing_ns);
+    }
+}
+TEST(GameTracking, RelativeApproachSeparatesEquidistantUnrelatedLines) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    auto first=snapshot(1,0);LineCandidate old{{640,800},{1,0},1100,2,.9};
+    old.track_id=99;first.lines={old};
+    NoteCandidate n;n.kind=NoteKind::tap;n.center={500,450};n.width=80;n.height=8;
+    track_legacy_batch(first,{n},{std::nullopt},history,next);
+    auto current=snapshot(2,20'000'000);
+    LineCandidate upper{{640,400},{1,0},1100,2,.9},lower{{640,600},{1,0},1100,2,.9};
+    upper.track_id=1;lower.track_id=2;current.lines={upper,lower};
+    n.center.y=500;track_legacy_batch(current,{n},{std::nullopt},history,next);
+    ASSERT_EQ(current.targets.size(),1);
+    EXPECT_EQ(current.targets[0].line_id,2); // approaching the lower line
+    EXPECT_FALSE(current.targets[0].crossing_ns); // relation alone cannot Down
+}
+TEST(GameTracking, OccupiedAlternativeIsNotAnIdentityAmbiguityWithoutFeasibleSwap) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    auto first=snapshot(1,1'000'000);
+    NoteCandidate a;a.kind=NoteKind::tap;a.center={100,400};a.width=64;a.height=8;
+    auto b=a;b.center.x=108;
+    track_legacy_batch(first,{a,b},{std::nullopt,std::nullopt},history,next);
+    ASSERT_EQ(first.targets.size(),2);
+    const auto a_id=first.targets[0].note_id,b_id=first.targets[1].note_id;
+    auto current=snapshot(2,17'000'000);
+    a.center.x=103;
+    track_legacy_batch(current,{a,b},{std::nullopt,std::nullopt},history,next);
+    ASSERT_EQ(current.targets.size(),2);
+    EXPECT_EQ(current.targets[0].note_id,a_id);
+    EXPECT_EQ(current.targets[1].note_id,b_id);
+    EXPECT_NE(current.targets[0].reason,"association_ambiguous");
+    EXPECT_NE(current.targets[1].reason,"association_ambiguous");
+}
+TEST(GameTracking, JumpAndReversalRequireFreshMeasuredSegments) {
+    const auto exercise=[](const std::vector<int>& ys){
+        std::vector<GameTrackHistory> history;std::uint64_t next=0;
+        std::vector<GameTarget> results;
+        for(std::size_t i=0;i<ys.size();++i) {
+            auto s=snapshot(i+1,static_cast<Nanoseconds>(i)*20'000'000);
+            LineCandidate line{{640,570},{1,0},1200,2,.9};line.track_id=1;s.lines={line};
+            NoteCandidate n;n.kind=NoteKind::tap;n.center={500.0,static_cast<double>(ys[i])};
+            n.width=80;n.height=8;
+            track_legacy_batch(s,{n},{std::nullopt},history,next);
+            results.push_back(s.targets.at(0));
+        }
+        return results;
+    };
+    const auto jump=exercise({400,420,440,520,540,560});
+    EXPECT_EQ(jump[3].reason,"motion_discontinuity");EXPECT_FALSE(jump[3].crossing_ns);
+    ASSERT_TRUE(jump.back().crossing_ns);EXPECT_EQ(jump.back().note_id,jump.front().note_id);
+    const auto turn=exercise({450,470,490,465,440,415,440,465,490});
+    EXPECT_EQ(turn[3].reason,"motion_discontinuity");EXPECT_FALSE(turn[3].crossing_ns);
+    EXPECT_FALSE(turn[5].crossing_ns);
+    EXPECT_EQ(turn[6].reason,"motion_discontinuity");
+    ASSERT_TRUE(turn.back().crossing_ns);EXPECT_EQ(turn.back().note_id,turn.front().note_id);
+}
+TEST(GameMotion, RotatedCurrentHoldRailsCanContinueAnOlderAnchor) {
+    auto f=image(1,0);const double angle=.4;const Vec2 u{std::cos(angle),std::sin(angle)},n{-u.y,u.x};
+    NoteCandidate anchor;anchor.kind=NoteKind::hold;anchor.center={500,560};
+    anchor.tangent={1,0};anchor.width=120;anchor.height=300;
+    anchor.rails_geometry=true;anchor.head_on_line=true;
+    LineCandidate line{{500,560},u,1000,2,.9};line.track_id=1;
+    for(const int side:{-1,1}) {
+        const Vec2 center{500+u.x*side*60-n.x*150,560+u.y*side*60-n.y*150};
+        oriented_box(f,center,n,300,3,{170,170,170});
+    }
+    const auto observed=observe_held_outline(f,anchor,line);
+    ASSERT_TRUE(observed);EXPECT_NEAR(observed->tangent.x,u.x,.01);
+    EXPECT_TRUE(observed->head_on_line);
+}
+TEST(GameOwner, RotatingCurrentHoldKeepsItsFingerAndMovesOnlyWithCurrentBody) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
+    auto s=snapshot(1,0);auto h=target(1,0,10'000'000);
+    h.note.kind=NoteKind::hold;h.note.width=120;h.note.height=300;
+    h.note.center=h.hit;h.note.rails_geometry=true;h.note.head_on_line=true;
+    h.line_id=1;h.samples=3;s.targets={h};owner.accept(s);
+    clock.set(10'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    const auto finger=touch.contacts().begin()->first;
+    clock.set(30'000'000);s=snapshot(2,30'000'000);
+    h.evidence_ns=30'000'000;h.expires_ns=130'000'000;h.revision++;
+    h.note.tangent={std::cos(.4),std::sin(.4)};h.note.center={420,480};
+    h.note.head_on_line=false;h.note.held_body_evidence=true;
+    h.hit=h.note.center;h.crossing_ns.reset();h.reason="held_body_touch_only";
+    s.targets={h};owner.accept(s);owner.poll();
+    ASSERT_EQ(touch.contacts().size(),1);EXPECT_EQ(touch.contacts().begin()->first,finger);
+    EXPECT_NEAR(touch.contacts().begin()->second[0],420,2);
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),1);
+    owner.stop();EXPECT_TRUE(touch.contacts().empty());
+}
+TEST(GameOwner, UnsupportedHoldProjectionCannotMoveTheStartedFinger) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
+    auto s=snapshot(1,0);auto h=target(1,0,10'000'000);
+    h.note.kind=NoteKind::hold;h.note.width=120;h.note.center=h.hit;
+    h.note.rails_geometry=true;h.note.head_on_line=true;h.line_id=1;h.samples=3;
+    s.targets={h};owner.accept(s);clock.set(10'000'000);owner.poll();
+    ASSERT_EQ(touch.contacts().size(),1);const auto finger=touch.contacts().begin()->first;
+    const auto x=touch.contacts().begin()->second[0];
+    clock.set(20'000'000);s=snapshot(2,20'000'000);
+    h.evidence_ns=20'000'000;h.expires_ns=120'000'000;h.revision++;
+    h.note.rails_geometry=false;h.note.head_on_line=false;
+    h.hit.x+=30;h.crossing_ns.reset();h.reason="root_past";s.targets={h};
+    owner.accept(s);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    EXPECT_EQ(touch.contacts().begin()->first,finger);
+    EXPECT_EQ(touch.contacts().begin()->second[0],x);
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::move;}),0);
+    owner.stop();
+}
+TEST(GameMotion, SixteenLinesRemainBoundedAndContextGapStartsNewLineage) {
+    GameLineTracker tracker;auto s=snapshot(1,1'000'000);
+    std::vector<LineCandidate> lines;
+    for(int i=0;i<16;++i)lines.push_back({{640.0,150.0+i*30},{1,0},1100,2,.9});
+    tracker.update(lines,s.context);
+    std::vector<std::uint64_t> ids;for(const auto& l:lines)ids.push_back(l.track_id);
+    std::reverse(lines.begin(),lines.end());s.context.frame++;s.context.capture_ns+=20'000'000;
+    tracker.update(lines,s.context);
+    for(int i=0;i<16;++i) {EXPECT_EQ(lines[i].track_id,ids[15-i]);EXPECT_TRUE(lines[i].association_valid);}
+    lines.push_back({{640,690},{1,0},1100,2,.9});
+    EXPECT_THROW(tracker.update(lines,s.context),std::invalid_argument);
+    lines.pop_back();s.context.frame++;s.context.capture_ns+=100'000'000;
+    tracker.update(lines,s.context);EXPECT_NE(lines[0].track_id,ids[15]);
+}
+TEST(GameTracking, EquidistantLinesRemainCandidatesWithoutAGuessedDown) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    auto s=snapshot(1,0);
+    LineCandidate upper{{640,400},{1,0},1100,2,.9},lower{{640,600},{1,0},1100,2,.9};
+    upper.track_id=1;lower.track_id=2;s.lines={upper,lower};
+    NoteCandidate n;n.kind=NoteKind::tap;n.center={500,500};n.width=80;n.height=8;
+    track_legacy_batch(s,{n},{std::nullopt},history,next);
+    ASSERT_EQ(s.targets.size(),1);EXPECT_EQ(s.targets[0].line_id,0);
+    EXPECT_EQ(s.targets[0].reason,"multiple_line_association_unvalidated");
+    EXPECT_FALSE(s.targets[0].crossing_ns);
+}
+TEST(GameTracking, NearLineFirstAppearanceDoesNotInventTapTiming) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    auto s=snapshot(1,0);LineCandidate line{{640,570},{1,0},1100,2,.9};
+    line.track_id=1;s.lines={line};
+    NoteCandidate n;n.kind=NoteKind::tap;n.center={500,572};n.width=80;n.height=8;
+    track_legacy_batch(s,{n},{std::nullopt},history,next);
+    ASSERT_EQ(s.targets.size(),1);EXPECT_EQ(s.targets[0].line_id,1);
+    EXPECT_EQ(s.targets[0].reason,"near_line_appearance_unqualified");
+    EXPECT_FALSE(s.targets[0].crossing_ns);
+}
+TEST(GameOwner, DiscontinuousPixelsCancelOnlyAnUnexecutedDown) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{1,0,30'000'000});
+    auto s=snapshot(1,0);auto t=target(1,0,60'000'000);t.samples=4;s.targets={t};
+    owner.accept(s);ASSERT_EQ(owner.take_accepted_plans().size(),1);
+    clock.set(20'000'000);s=snapshot(2,20'000'000);
+    t.evidence_ns=20'000'000;t.expires_ns=120'000'000;t.revision++;
+    t.samples=1;t.crossing_ns.reset();t.reason="motion_discontinuity";s.targets={t};
+    owner.accept(s);const auto cancellations=owner.take_plan_cancellations();
+    ASSERT_EQ(cancellations.size(),1);EXPECT_EQ(cancellations[0].at("reason"),"motion_discontinuity");
+    clock.set(60'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),0);
+    owner.stop();
+}
+TEST(GameOwner, RotatedTailNeedsTwoCurrentSamplesOnItsOwnLine) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
+    auto s=snapshot(1,0);auto h=target(1,0,10'000'000);
+    h.note.kind=NoteKind::hold;h.note.width=120;h.note.height=200;
+    h.note.rails_geometry=true;h.note.center={400,520};h.note.tail=Vec2{400,450};
+    h.line_id=7;h.samples=3;s.targets={h};owner.accept(s);
+    clock.set(10'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);
+    const Vec2 u{std::cos(.4),std::sin(.4)},n{-u.y,u.x};
+    for(const Nanoseconds time:{20'000'000LL,40'000'000LL}) {
+        clock.set(time);s=snapshot(s.sequence+1,time);
+        LineCandidate line{{400,500},u,1100,2,.9};line.track_id=7;line.observed_ns=time;
+        s.lines={line};h.note.center={400+n.x*20,500+n.y*20};
+        h.note.tail=Vec2{400+n.x*2,500+n.y*2};h.note.tangent={1,0};
+        h.hit={400,500};h.evidence_ns=time;h.expires_ns=time+100'000'000;
+        h.revision++;h.crossing_ns.reset();h.reason="root_past";s.targets={h};
+        owner.accept(s);owner.poll();
+        if(time==20'000'000)EXPECT_EQ(touch.contacts().size(),1);
+    }
+    const auto events=owner.take_coverage_updates();
+    ASSERT_EQ(events.size(),1);EXPECT_EQ(events[0].at("event"),"game_hold_tail_confirmed");
+    clock.set(60'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    owner.stop();
 }

@@ -2,6 +2,7 @@
 #include "pas/config.hpp"
 #include "pas/game.hpp"
 #include "pas/runtime.hpp"
+#include "pas/strategy_version.hpp"
 
 #include <gtest/gtest.h>
 
@@ -10,6 +11,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 using namespace pas;
 
@@ -340,6 +342,63 @@ TEST(GameAnalysis, ContactReleaseDiagnosticsDoNotClaimGameJudgment) {
     EXPECT_TRUE(result.at("real_downs_by_basis").empty());
     EXPECT_FALSE(result.at("gameplay_validated").get<bool>());
 }
+TEST(GameAnalysis, StrategyMetadataUsesOneVersionSource) {
+    EXPECT_EQ(game_strategy_name(),"main observer"+std::to_string(game_observer_version)+
+        "/planner"+std::to_string(game_planner_version));
+    EXPECT_EQ(game_observer_version,47);
+    EXPECT_EQ(game_planner_version,23);
+    EXPECT_EQ(game_diagnostics_version,11);
+}
+TEST(GameAnalysis, QpcComputeFieldsAreExplicitAndOptionalForLegacyDecisions) {
+    DecisionSnapshot scene;
+    EXPECT_FALSE(decision_json(scene).contains("compute_clock_domain"));
+    scene.compute_timing_host_qpc=true;
+    scene.components_compute_ns=1200;scene.base_scene_compute_ns=2200;
+    scene.combo_glyph_compute_ns=100;scene.line_scan_compute_ns=1700;
+    scene.component_line_decode_compute_ns=100;scene.note_decode_compute_ns=200;
+    scene.line_tracking_compute_ns=100;
+    scene.held_recovery_compute_ns=3200;scene.tracking_compute_ns=4200;
+    const auto data=decision_json(scene);
+    EXPECT_EQ(data.at("compute_clock_domain"),"host_qpc_ns");
+    EXPECT_EQ(data.at("components_compute_ns"),1200);
+    EXPECT_EQ(data.at("line_scan_compute_ns"),1700);
+    EXPECT_EQ(data.at("component_line_decode_compute_ns"),100);
+    EXPECT_EQ(data.at("tracking_compute_ns"),4200);
+}
+TEST(GameAnalysis, VerifiedRoundStreamsAcrossSegmentsAndRejectsTampering) {
+    const auto directory=std::filesystem::temp_directory_path()/
+        ("pas-round-test-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    std::filesystem::create_directory(directory);
+    struct Cleanup { std::filesystem::path path; ~Cleanup(){std::error_code ignored;std::filesystem::remove_all(path,ignored);} } cleanup{directory};
+    const std::string decision=R"({"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"lines":[],"capture_complete_ns":100000000,"recognition_start_ns":100000000,"recognition_end_ns":100000001,"targets":[]})";
+    {std::ofstream out(directory/"events-0.jsonl",std::ios::binary);out<<decision<<'\n';}
+    {std::ofstream out(directory/"events-1.jsonl",std::ios::binary);out<<R"({"event":"game_contact_cancelled","kind":"hold","reason":"current_object_missing_or_region_lost","contact_started":true})"<<'\n';}
+    nlohmann::json summary={{"round_id",1},{"status","result_confirmed"},{"event_segments",nlohmann::json::array()}};
+    for(int i=0;i<2;++i){const auto name="events-"+std::to_string(i)+".jsonl";
+        summary["event_segments"].push_back({{"path",name},{"sha256",sha256_file(directory/name)}});}
+    {std::ofstream out(directory/"summary.json",std::ios::binary);out<<summary.dump();}
+    const auto result=analyze_game_round(directory);
+    EXPECT_EQ(result.at("frames"),1);EXPECT_EQ(result.at("segments_read"),2);
+    EXPECT_EQ(result.at("contact_cancellations_by_reason").at("current_object_missing_or_region_lost"),1);
+    EXPECT_TRUE(result.at("segment_integrity_verified"));
+    {std::ofstream out(directory/"events-1.jsonl",std::ios::app|std::ios::binary);out<<" ";}
+    EXPECT_THROW(analyze_game_round(directory),std::runtime_error);
+}
+TEST(GameAnalysis, HoldCancellationKeepsUnknownEffectAndExactFrameTiming) {
+    const TempJson raw(R"({"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"frame_sequence":10,"lines":[],"capture_complete_ns":100000000,"recognition_start_ns":101000000,"recognition_end_ns":105000000,"targets":[{"note_id":7,"kind":"hold","reason":"prediction_observe_only","crossing_ns":120000000,"uncertainty_ns":1000000,"residual_px":1.0}]}
+{"event":"game_plan_accepted","intent_id":2,"note_id":7,"basis":"hold","source_frame":10,"accepted_ns":107000000,"predicted_down_ns":110000000,"steps":[{"phase":0,"due_ns":110000000}]}
+{"event":"game_touch_receipt","intent_id":2,"contact_id":0,"success":true,"source_frame":10,"phase":0,"scheduled_ns":110000000,"injection_start_ns":111000000,"injection_return_ns":112000000}
+{"event":"game_contact_cancelled","intent_id":2,"note_id":7,"kind":"hold","reason":"identity_ambiguous","source_frame":10,"contact_started":true,"cancel_ns":160000000}
+)");
+    const auto result=analyze_game_jsonl(raw.path());
+    EXPECT_EQ(result.at("hold_cancel_active"),1);
+    EXPECT_EQ(result.at("hold_cancel_before_down"),0);
+    EXPECT_EQ(result.at("hold_cancel_traces").at(0).at("visible_game_effect"),"unknown");
+    EXPECT_EQ(result.at("hold_cancel_traces").at(0).at("plan").at("note_id"),7);
+    EXPECT_EQ(result.at("decision_recognition_end_to_accept_ms").at("p50"),2);
+    EXPECT_EQ(result.at("down_capture_complete_to_injection_start_ms").at("p50"),11);
+    EXPECT_EQ(result.at("down_recognition_end_to_injection_start_ms").at("p50"),6);
+}
 TEST(GameAnalysis, PlayingIntervalsExcludeMenuBoundariesButPreserveSourceGaps) {
     const TempJson raw(R"({"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"lines":[],"capture_complete_ns":100000000,"recognition_start_ns":100000000,"recognition_end_ns":100000001,"targets":[]}
 {"event":"game_decision","decision_schema":2,"ui":"PLAYING","playing_gate":true,"epoch":2,"lines":[],"capture_complete_ns":300000000,"recognition_start_ns":300000000,"recognition_end_ns":300000001,"targets":[]}
@@ -351,4 +410,187 @@ TEST(GameAnalysis, PlayingIntervalsExcludeMenuBoundariesButPreserveSourceGaps) {
     EXPECT_EQ(result.at("playing_capture_interval_ms").at("n"),2);
     EXPECT_EQ(result.at("playing_capture_interval_ms").at("max"),200);
     EXPECT_EQ(result.at("capture_interval_ms").at("n"),4);
+}
+
+TEST(GameClips, IndexedFramesAndUniqueRgbHashesHaveDifferentDenominators) {
+    const auto directory=std::filesystem::temp_directory_path()/
+        ("pas-clip-dedup-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    std::filesystem::create_directories(directory/"round-1/clip-1-uniform");
+    struct Cleanup {std::filesystem::path path;~Cleanup(){std::error_code ec;std::filesystem::remove_all(path,ec);}} cleanup{directory};
+    constexpr std::size_t bytes=1280ULL*720*3;
+    const std::vector<std::uint8_t> rgb(bytes,0);
+    nlohmann::json rows=nlohmann::json::array();
+    for(int i=0;i<3;++i) {
+        const auto relative="round-1/clip-1-uniform/frame-"+std::to_string(i)+".rgb";
+        const auto file=directory/relative;
+        {std::ofstream out(file,std::ios::binary);
+         out.write(reinterpret_cast<const char*>(rgb.data()),static_cast<std::streamsize>(rgb.size()));}
+        rows.push_back({{"round_id",1},{"clip_id",1},{"frame_in_clip",i},
+            {"path",relative},{"layout","top_down_rgb888"},{"width",1280},{"height",720},
+            {"stride",3840},{"source_frame",i+1},{"capture_complete_ns",1'000'000'000LL+i*20'000'000LL},
+            {"sha256",sha256_file(file)},{"detected_lines",0},{"detected_targets",0}});
+    }
+    {std::ofstream out(directory/"index.jsonl",std::ios::binary);
+     for(const auto& row:rows)out<<row.dump()<<'\n';}
+    const auto result=replay_game_pixel_clips(directory);
+    EXPECT_EQ(result.at("indexed_rgb_frames"),3);
+    EXPECT_EQ(result.at("unique_rgb_frames"),1);
+    EXPECT_EQ(result.at("clips"),1);
+    EXPECT_EQ(result.at("frames").at(0).at("source_rotation"),1);
+}
+
+TEST(GameClips, CrossSessionCorpusKeepsOneSongFamilyAndVerifiesDuplicateRgb) {
+    const auto directory=std::filesystem::temp_directory_path()/
+        ("pas-corpus-dedup-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    struct Cleanup {std::filesystem::path path;~Cleanup(){std::error_code ec;std::filesystem::remove_all(path,ec);}} cleanup{directory};
+    std::vector<std::uint8_t> rgb(1280ULL*720*3,0);
+    for(int y=500;y<503;++y)for(int x=100;x<1180;++x)
+        for(int channel=0;channel<3;++channel)
+            rgb[static_cast<std::size_t>(y)*3840+x*3+channel]=255;
+    const auto make_clips=[&](const std::string& name) {
+        const auto root=directory/name;
+        std::filesystem::create_directories(root/"round-1/clip-1-uniform");
+        std::ofstream index(root/"index.jsonl",std::ios::binary);
+        for(int i=0;i<3;++i) {
+            const auto relative="round-1/clip-1-uniform/frame-"+std::to_string(i)+".rgb";
+            const auto file=root/relative;
+            {std::ofstream out(file,std::ios::binary);
+             out.write(reinterpret_cast<const char*>(rgb.data()),static_cast<std::streamsize>(rgb.size()));}
+            index<<nlohmann::json{{"round_id",1},{"clip_id",1},{"frame_in_clip",i},
+                {"path",relative},{"layout","top_down_rgb888"},{"width",1280},
+                {"height",720},{"stride",3840},{"source_frame",i+1},
+                {"capture_complete_ns",1'000'000'000LL+i*20'000'000LL},
+                {"sha256",sha256_file(file)},{"detected_lines",0},{"detected_targets",0}}.dump()<<'\n';
+        }
+        return root;
+    };
+    const auto old_root=make_clips("old"),new_root=make_clips("new");
+    const auto session_manifest=directory/"manifest.json";
+    {std::ofstream out(session_manifest);
+     out<<R"({"capability_preflight":{"capture_geometry":{"width":1280,"height":720,"source_rotation":1}}})";}
+    const auto old_meta=directory/"old-results.json",new_meta=directory/"new-results.json";
+    {std::ofstream out(old_meta);out<<R"({"rounds":[{"round_id":1,"song":"same-family","difficulty":"HD"}]})";}
+    {std::ofstream out(new_meta);out<<R"({"results":[{"round":1,"song":"same-family","mode":"IN"}]})";}
+    const auto result=index_game_pixel_corpus(old_root,old_meta,new_root,new_meta);
+    EXPECT_EQ(result.at("indexed_rgb_frames"),6);
+    EXPECT_EQ(result.at("unique_rgb_hashes"),1);
+    EXPECT_EQ(result.at("clip_count"),2);
+    EXPECT_EQ(result.at("family_count"),1);
+    EXPECT_EQ(result.at("selected_count"),2);
+    EXPECT_FALSE(result.at("human_reviewed_truth").get<bool>());
+    EXPECT_EQ(result.at("clips").at(0).at("truth_status"),"unreviewed_source_pixels");
+    const auto index_file=directory/"corpus.json",proposal_dir=directory/"proposals";
+    {std::ofstream out(index_file);out<<result.dump(2);}
+    const auto written=write_game_corpus_proposals(index_file,proposal_dir);
+    EXPECT_EQ(written.at("selected_clips"),2);
+    EXPECT_EQ(written.at("proposal_frames"),6);
+    const auto proposal_file=proposal_dir/"proposals.json";
+    EXPECT_EQ(validate_game_corpus_proposals(index_file,proposal_file).at("source_frames_verified"),6);
+    std::ifstream proposal_input(proposal_file);
+    auto altered=nlohmann::json::parse(proposal_input);
+    const auto& lines=altered.at("proposal_frames").at(0).at("line_instances");
+    ASSERT_FALSE(lines.empty());
+    EXPECT_FALSE(lines.at(0).at("visible_support_segments").empty());
+    const auto altered_file=directory/"improper-gold.json";
+    altered["gold_eligible"]=true;
+    {std::ofstream out(altered_file);out<<altered.dump(2);}
+    EXPECT_THROW(validate_game_corpus_proposals(index_file,altered_file),std::invalid_argument);
+    {std::ofstream out(session_manifest,std::ios::trunc);
+     out<<R"({"capability_preflight":{"capture_geometry":{"width":1280,"height":720,"source_rotation":0}}})";}
+    EXPECT_THROW(index_game_pixel_corpus(old_root,old_meta,new_root,new_meta),std::invalid_argument);
+    {std::ofstream out(session_manifest,std::ios::trunc);
+     out<<R"({"capability_preflight":{"capture_geometry":{"width":1280,"height":720,"source_rotation":1}}})";}
+    {std::ofstream out(new_meta,std::ios::trunc);out<<R"({"results":[{"round":1,"song":"","mode":"IN"}]})";}
+    EXPECT_THROW(index_game_pixel_corpus(old_root,old_meta,new_root,new_meta),std::invalid_argument);
+}
+
+TEST(GameColdCoverage, PendingCasesAreNotSuccessAndProposedCannotBecomeGold) {
+    nlohmann::json rows=nlohmann::json::array();
+    const auto add=[&](const std::string& group,bool risk) {
+        for(const std::string variant:{"normal","negative"})
+            rows.push_back({{"case_id",group+"-"+variant},{"form_item","required scenario"},
+                {"matrix_group",risk? nlohmann::json(nullptr):nlohmann::json(group)},
+                {"risk_combo",risk?nlohmann::json(group):nlohmann::json(nullptr)},
+                {"variant",variant},{"required_layers",{"RGB","oracle","fake-clock"}},
+                {"verified_layers",nlohmann::json::array()},{"expected_result","known action or explicit refusal"},
+                {"input_sha256",nullptr},{"seed",nullptr},{"test_name",nullptr},
+                {"result_path",nullptr},{"status","pending"}});
+    };
+    for(const std::string group:{"G1","G2","G3","N1","N2","H1","H2","T1","T2"})add(group,false);
+    for(const std::string risk:{"R1","R2","R3","R4","R5","R6","R7"})add(risk,true);
+    nlohmann::json manifest={{"schema_version",1},{"case_count",32},{"cases",rows}};
+    const TempJson pending(manifest.dump());
+    const auto summary=validate_game_cold_coverage_manifest(pending.path());
+    EXPECT_EQ(summary.at("required_cases"),32);
+    EXPECT_EQ(summary.at("pending"),32);
+    EXPECT_EQ(summary.at("passed"),0);
+    EXPECT_FALSE(summary.at("complete").get<bool>());
+    manifest["cases"][0]["status"]="passed";
+    manifest["cases"][0]["truth_basis"]="proposed";
+    manifest["cases"][0]["seed"]=20260929;
+    manifest["cases"][0]["verified_layers"]={"RGB","oracle","fake-clock"};
+    manifest["cases"][0]["test_name"]="unreviewed";
+    manifest["cases"][0]["result_path"]="nonexistent.json";
+    const TempJson invalid(manifest.dump());
+    EXPECT_THROW(validate_game_cold_coverage_manifest(invalid.path()),std::invalid_argument);
+}
+
+TEST(GameClips, ReplayDiffRequiresMatchingVerifiedFrameHashesAndReportsOnlyCandidateCounts) {
+    const std::string old_hash(64,'a'),new_hash(64,'b');
+    const nlohmann::json corpus={{"indexed_rgb_frames",2},{"unique_rgb_hashes",2},
+        {"clips",nlohmann::json::array({
+            {{"source_strategy","observer36/planner18"},{"round_id",1},{"clip_number",1},
+                {"family","family-one"},{"frames",nlohmann::json::array({
+                    {{"frame_in_clip",0},{"sha256",old_hash}}})}},
+            {{"source_strategy","observer37/planner19"},{"round_id",2},{"clip_number",3},
+                {"family","family-two"},{"frames",nlohmann::json::array({
+                    {{"frame_in_clip",0},{"sha256",new_hash}}})}}
+        })}};
+    const auto frame=[](int round,int clip,const std::string& hash,int lines,int targets) {
+        return nlohmann::json{{"round_id",round},{"clip_id",clip},{"frame_in_clip",0},
+            {"source_frame",17},{"sha256",hash},{"cold_lines",lines},{"cold_targets",targets}};
+    };
+    const auto replay=[](const nlohmann::json& value) {
+        return nlohmann::json{{"input_integrity_verified",true},
+            {"frames",nlohmann::json::array({value})}};
+    };
+    const TempJson index(corpus.dump()),before_old(replay(frame(1,1,old_hash,1,1)).dump()),
+        after_old(replay(frame(1,1,old_hash,2,1)).dump()),
+        before_new(replay(frame(2,3,new_hash,0,0)).dump()),
+        after_new(replay(frame(2,3,new_hash,0,0)).dump());
+    const auto result=compare_game_pixel_replays(index.path(),before_old.path(),after_old.path(),
+        before_new.path(),after_new.path());
+    EXPECT_EQ(result.at("indexed_frames_compared"),2);
+    EXPECT_EQ(result.at("changed_frame_count"),1);
+    EXPECT_EQ(result.at("by_family").size(),2);
+    EXPECT_FALSE(result.at("ground_truth_comparison").get<bool>());
+    const TempJson corrupt(replay(frame(1,1,std::string(64,'c'),2,1)).dump());
+    EXPECT_THROW(compare_game_pixel_replays(index.path(),before_old.path(),corrupt.path(),
+        before_new.path(),after_new.path()),std::invalid_argument);
+}
+
+TEST(GameColdPipeline, ConsumedPublicationTimesComeFromSynchronizedFrameLeases) {
+    const TempJson journal("");
+    const auto summary=benchmark_game_cold_pipeline(journal.path(),48,8,true,true,
+        "tap",8192,0,0);
+    EXPECT_EQ(summary.at("publication_time_basis"),"latest_frame_lease_under_publish_lock");
+    EXPECT_EQ(summary.at("published"),48);
+    EXPECT_EQ(summary.at("writer_debug_drops"),0);
+    EXPECT_TRUE(summary.at("contacts_released").get<bool>());
+    std::ifstream input(journal.path());
+    std::string line;
+    std::size_t consumed=0;
+    while(std::getline(input,line)) {
+        const auto event=nlohmann::json::parse(line);
+        if(event.value("event","")!="cold_frame_consumed")continue;
+        const auto capture=event.at("capture_complete_ns").get<Nanoseconds>();
+        const auto published=event.at("published_ns").get<Nanoseconds>();
+        const auto recognized=event.at("recognition_end_ns").get<Nanoseconds>();
+        EXPECT_GT(published,0);
+        EXPECT_LE(capture,published);
+        EXPECT_LE(published,recognized);
+        ++consumed;
+    }
+    EXPECT_GT(consumed,0);
+    EXPECT_EQ(consumed,summary.at("consumed").get<std::size_t>());
 }

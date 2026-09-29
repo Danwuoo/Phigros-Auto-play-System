@@ -3,6 +3,7 @@
 #include "pas/game_motion.hpp"
 #include "pas/analysis.hpp"
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <fstream>
 #include <set>
@@ -31,6 +32,7 @@ struct Component {
     double sx = 0, sy = 0, xx = 0, yy = 0, xy = 0;
     Vec2 ribbon_center{};
     double ribbon_width=0,ribbon_height=0;
+    std::vector<LineCandidate> split_lines;
 };
 int classify(const std::uint8_t* p) {
     const int r=p[0], g=p[1], b=p[2];
@@ -40,14 +42,116 @@ int classify(const std::uint8_t* p) {
     if (r > 195 && g > 195 && b > 195 && std::max({r,g,b})-std::min({r,g,b}) < 35) return 4;
     return 0;
 }
-std::vector<Component> components(const Frame& f, bool& capacity) {
+std::vector<LineCandidate> split_joined_white_ridges(const Frame& f,
+    const std::vector<int>& component_pixels,int sampled_width) {
+    constexpr int scale=2;
+    std::vector<Vec2> points;points.reserve(std::min<std::size_t>(component_pixels.size(),4096));
+    const auto step=std::max<std::size_t>(1,(component_pixels.size()+4095)/4096);
+    for(std::size_t i=0;i<component_pixels.size();i+=step)
+        points.push_back({double(component_pixels[i]%sampled_width*scale),
+                          double(component_pixels[i]/sampled_width*scale)});
+    std::vector<bool> active(points.size(),true);
+    std::vector<LineCandidate> result;result.reserve(4);
+    const auto luminance=[&](Vec2 p) {
+        const int x=static_cast<int>(std::lround(p.x)),y=static_cast<int>(std::lround(p.y));
+        if(x<0||y<0||x>=f.width||y>=f.height)return -1;
+        const auto* rgb=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+        return (rgb[0]*77+rgb[1]*150+rgb[2]*29)/256;
+    };
+    const auto hold_fill=[&](Vec2 p) {
+        const int x=static_cast<int>(std::lround(p.x)),y=static_cast<int>(std::lround(p.y));
+        if(x<0||y<0||x>=f.width||y>=f.height)return false;
+        const auto* rgb=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+        return rgb[0]>=100&&rgb[0]<=180&&rgb[1]>=100&&rgb[1]<=180&&
+            rgb[2]>=100&&rgb[2]<=180&&
+            std::max({rgb[0],rgb[1],rgb[2]})-std::min({rgb[0],rgb[1],rgb[2]})<=30;
+    };
+    const auto note_color=[&](Vec2 p) {
+        const int x=static_cast<int>(std::lround(p.x)),y=static_cast<int>(std::lround(p.y));
+        if(x<0||y<0||x>=f.width||y>=f.height)return false;
+        const int color=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3);
+        return color==1||color==3;
+    };
+    for(int line_number=0;line_number<4;++line_number) {
+        std::vector<std::size_t> extremes;
+        for(int direction=0;direction<8;++direction) {
+            const double angle=direction*3.14159265358979323846/8;
+            const Vec2 u{std::cos(angle),std::sin(angle)};
+            double low=1e20,high=-1e20;std::size_t low_id=0,high_id=0;
+            for(std::size_t i=0;i<points.size();++i)if(active[i]) {
+                const double projection=points[i].x*u.x+points[i].y*u.y;
+                if(projection<low){low=projection;low_id=i;}
+                if(projection>high){high=projection;high_id=i;}
+            }
+            if(high>low){extremes.push_back(low_id);extremes.push_back(high_id);}
+        }
+        std::sort(extremes.begin(),extremes.end());
+        extremes.erase(std::unique(extremes.begin(),extremes.end()),extremes.end());
+        int best_support=0;LineCandidate best;Vec2 best_anchor{},best_normal{};
+        for(std::size_t a=0;a<extremes.size();++a)for(std::size_t b=a+1;b<extremes.size();++b) {
+            const Vec2 p=points[extremes[a]],q=points[extremes[b]];
+            const double distance=std::hypot(q.x-p.x,q.y-p.y);
+            if(distance<f.width*.20)continue;
+            const Vec2 u{(q.x-p.x)/distance,(q.y-p.y)/distance},n{-u.y,u.x};
+            int support=0;double s0=1e20,s1=-1e20,rho=0;
+            for(std::size_t i=0;i<points.size();++i)if(active[i]) {
+                const double d=(points[i].x-p.x)*n.x+(points[i].y-p.y)*n.y;
+                if(std::abs(d)>3)continue;
+                const double s=points[i].x*u.x+points[i].y*u.y;
+                s0=std::min(s0,s);s1=std::max(s1,s);rho+=points[i].x*n.x+points[i].y*n.y;
+                ++support;
+            }
+            const double length=s1-s0;
+            if(support<50||length<f.width*.20||support<length/7||support<best_support)continue;
+            const double mean_rho=rho/support;
+            const LineCandidate candidate{{u.x*(s0+s1)*.5+n.x*mean_rho,
+                                           u.y*(s0+s1)*.5+n.y*mean_rho},u,length,3,.85};
+            int ridge_samples=0,body_adjacent_samples=0;
+            for(int sample=-4;sample<=4;++sample) {
+                bool found=false;
+                for(int shift=-2;shift<=2&&!found;++shift) {
+                    const Vec2 point{candidate.center.x+u.x*sample*length*.10+n.x*shift,
+                                     candidate.center.y+u.y*sample*length*.10+n.y*shift};
+                    const int center=luminance(point);
+                    const int left=luminance({point.x-n.x*4,point.y-n.y*4});
+                    const int right=luminance({point.x+n.x*4,point.y+n.y*4});
+                    found=center>=80&&left>=0&&right>=0&&center-left>=18&&center-right>=18;
+                }
+                ridge_samples+=found;
+                const Vec2 center_point{candidate.center.x+u.x*sample*length*.10,
+                                        candidate.center.y+u.y*sample*length*.10};
+                bool body_adjacent=false;
+                for(const int distance:{8,16,24,32,40,48}) {
+                    const Vec2 left{center_point.x-n.x*distance,center_point.y-n.y*distance};
+                    const Vec2 right{center_point.x+n.x*distance,center_point.y+n.y*distance};
+                    body_adjacent=body_adjacent||note_color(left)||note_color(right)||
+                        hold_fill(left)||hold_fill(right);
+                }
+                body_adjacent_samples+=body_adjacent;
+            }
+            if(ridge_samples<7||body_adjacent_samples>=3)continue;
+            best_support=support;best=candidate;best_anchor=p;best_normal=n;
+        }
+        if(!best_support)break;
+        result.push_back(best);
+        for(std::size_t i=0;i<points.size();++i)if(active[i]&&
+            std::abs((points[i].x-best_anchor.x)*best_normal.x+
+                     (points[i].y-best_anchor.y)*best_normal.y)<=3)active[i]=false;
+    }
+    return result;
+}
+std::vector<Component> components(const Frame& f, bool& capacity,
+    std::vector<std::uint8_t>& mask,std::vector<int>& queue) {
     constexpr int scale=2;
     const int w=(f.width+1)/2, h=(f.height+1)/2;
-    std::vector<std::uint8_t> mask(static_cast<std::size_t>(w)*h);
+    const auto pixels=static_cast<std::size_t>(w)*h;
+    if(pixels>2'073'600) {capacity=false;return {};}
+    mask.resize(pixels);
     for(int y=0;y<h;++y) for(int x=0;x<w;++x)
         mask[static_cast<std::size_t>(y)*w+x]=static_cast<std::uint8_t>(classify(
             f.rgb.data()+static_cast<std::size_t>(y*scale)*f.stride+x*scale*3));
-    std::vector<int> queue; queue.reserve(mask.size());
+    if(queue.capacity()<pixels) queue.reserve(pixels);
+    queue.clear();
     std::vector<Component> output;
     for(int y=0;y<h;++y) for(int x=0;x<w;++x) {
         const int index=y*w+x, color=mask[index];
@@ -87,6 +191,16 @@ std::vector<Component> components(const Frame& f, bool& capacity) {
                 c.ribbon_center={u.x*(s0+s1)/2+n.x*(d0+d1)/2,u.y*(s0+s1)/2+n.y*(d0+d1)/2};
                 c.ribbon_width=s1-s0+2;c.ribbon_height=d1-d0+2;
             }
+        }
+        if(c.color==4&&c.count>=100&&
+           (c.x1-c.x0>f.width*.18||c.y1-c.y0>f.height*.3)) {
+            const double cx=c.sx/c.count,cy=c.sy/c.count;
+            const double xx=c.xx/c.count-cx*cx,yy=c.yy/c.count-cy*cy,
+                         xy=c.xy/c.count-cx*cy;
+            const double major=std::sqrt(std::max(0.0,(xx+yy+std::hypot(xx-yy,2*xy))/2));
+            const double minor=std::sqrt(std::max(0.0,(xx+yy-std::hypot(xx-yy,2*xy))/2));
+            if(major<12*std::max(1.0,minor))
+                c.split_lines=split_joined_white_ridges(f,queue,w);
         }
         if(output.size()==2048) {capacity=false; return output;}
         output.push_back(c);
@@ -137,6 +251,19 @@ int combo_digit_shapes(const Frame& f) {
     return count;
 }
 double distance(Vec2 a, Vec2 b) {return std::hypot(a.x-b.x,a.y-b.y);}
+std::optional<Vec2> safe_flick_direction(Vec2 hit,int width,int height) {
+    if(!std::isfinite(hit.x)||!std::isfinite(hit.y)||hit.x<0||hit.x>=width||
+       hit.y<height*.12||hit.y>=height) return {};
+    // Flick has no required direction. Keep downward motion when the whole
+    // path fits, then choose another cardinal direction with 80px clearance.
+    const std::array<Vec2,4> directions{{{0,1},{0,-1},{1,0},{-1,0}}};
+    for(const auto direction:directions) {
+        const double room=direction.y>0?height-1.0-hit.y:direction.y<0?
+            hit.y-height*.12:direction.x>0?width-1.0-hit.x:hit.x;
+        if(room>=80) return direction;
+    }
+    return {};
+}
 double normal_distance(Vec2 p, const LineCandidate& l) {
     return (p.x-l.center.x)*(-l.tangent.y)+(p.y-l.center.y)*l.tangent.x;
 }
@@ -377,7 +504,7 @@ std::optional<NoteCandidate> current_hold_body(const Frame& f,const Component& s
     }
     return best;
 }
-std::optional<LineCandidate> spanning_line(const Frame& f) {
+std::vector<LineCandidate> spanning_lines(const Frame& f) {
     struct Column {int x; std::vector<double> y;};
     std::array<Column,9> columns;
     const auto bright=[&](int x,int y) {
@@ -397,7 +524,8 @@ std::optional<LineCandidate> spanning_line(const Frame& f) {
             }
         }
     }
-    int best_count=0; double best_slope=0,best_intercept=0;
+    struct SupportedLine {LineCandidate line;int count=0;};
+    std::vector<SupportedLine> supported;
     for(int a=0;a<4;++a) for(int b=a+5;b<9;++b)
         for(const double ya:columns[a].y) for(const double yb:columns[b].y) {
             const double slope=(yb-ya)/(columns[b].x-columns[a].x);
@@ -414,15 +542,34 @@ std::optional<LineCandidate> spanning_line(const Frame& f) {
                 }
                 if(seen) {++count; sx+=x;sy+=found;xx+=static_cast<double>(x)*x;xy+=static_cast<double>(x)*found;}
             }
-            if(count>best_count&&count>=38) {
-                const double den=count*xx-sx*sx;
-                if(den>0) {best_slope=(count*xy-sx*sy)/den;best_intercept=(sy-best_slope*sx)/count;best_count=count;}
+            if(count<38)continue;
+            const double den=count*xx-sx*sx;
+            if(den<=0)continue;
+            const double fitted_slope=(count*xy-sx*sy)/den;
+            const double fitted_intercept=(sy-fitted_slope*sx)/count;
+            const double norm=std::hypot(1.0,fitted_slope);
+            const LineCandidate line{{f.width/2.0,fitted_intercept+fitted_slope*f.width/2.0},
+                {1/norm,fitted_slope/norm},f.width*norm,4,.85};
+            const auto same=std::find_if(supported.begin(),supported.end(),[&](const auto& candidate) {
+                return std::abs(candidate.line.tangent.x*line.tangent.x+
+                    candidate.line.tangent.y*line.tangent.y)>.995&&
+                    std::abs(normal_distance(candidate.line.center,line))<16;
+            });
+            if(same!=supported.end()) {
+                if(count>same->count)*same={line,count};
+            } else if(supported.size()<16) supported.push_back({line,count});
+            else {
+                const auto weakest=std::min_element(supported.begin(),supported.end(),
+                    [](const auto& lhs,const auto& rhs){return lhs.count<rhs.count;});
+                if(count>weakest->count)*weakest={line,count};
             }
         }
-    if(best_count<38) return {};
-    const double norm=std::hypot(1.0,best_slope);
-    return LineCandidate{{f.width/2.0,best_intercept+best_slope*f.width/2.0},
-        {1/norm,best_slope/norm},f.width*norm,4,.85};
+    std::sort(supported.begin(),supported.end(),[](const auto& lhs,const auto& rhs) {
+        return lhs.count>rhs.count;
+    });
+    std::vector<LineCandidate> result;result.reserve(supported.size());
+    for(const auto& candidate:supported)result.push_back(candidate.line);
+    return result;
 }
 std::optional<Vec2> song_play_button(const Frame& f) {
     const auto white=[&](int x,int y) {
@@ -525,6 +672,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     out.context={f.epoch,f.generation,f.geometry_version,f.sequence,f.capture_complete_ns,
                  f.width,f.height,f.source_rotation};
     out.recognition_start_ns=clock_.now_ns();
+    static const HostClock compute_clock;
     const auto gap=f.capture_complete_ns-previous_.capture_ns;
     // UI classification and motion fitting have different continuity needs.
     // A short gap/revocation discards every motion anchor; an independently
@@ -535,8 +683,17 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     else if(f.epoch!=previous_.epoch||gap>100'000'000) tracks_.clear();
     const bool distinct=f.sequence>previous_.frame;
     previous_=out.context;
-    const auto all=components(f,out.capacity_valid);
+    const auto components_start=compute_clock.now_ns();
+    std::vector<std::uint8_t> local_mask;
+    std::vector<int> local_queue;
+    const auto all=reuse_component_scratch_?
+        components(f,out.capacity_valid,component_mask_,component_queue_):
+        components(f,out.capacity_valid,local_mask,local_queue);
+    const auto components_end=compute_clock.now_ns();
+    out.components_compute_ns=components_end-components_start;
     out.combo_digit_glyphs=combo_digit_shapes(f);
+    const auto combo_glyph_end=compute_clock.now_ns();
+    out.combo_glyph_compute_ns=combo_glyph_end-components_end;
     std::vector<NoteCandidate> notes;
     int pause_bars=0, score_glyphs=0;
     // Live HD exposed a one-pixel horizontal line joined to Hold borders.
@@ -545,6 +702,22 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     struct RowLine { int y, x0, x1; };
     std::vector<RowLine> rows;
     for(int y=static_cast<int>(f.height*.12);y<static_cast<int>(f.height*.95);++y) {
+        if(row_prescreen_&&horizontal_line_gap_limit_==4&&f.width>=256) {
+            // An accepted run spans >32% of the width and permits at most
+            // four consecutive non-line pixels. Every five-pixel block fully
+            // inside such a run therefore contains support. The lower bound
+            // below counts complete 64-spaced blocks in even the shortest
+            // accepted run, regardless of its horizontal phase.
+            const int required_blocks=std::max(1,(static_cast<int>(f.width*.32)-5)/64);
+            int supported_blocks=0;
+            for(int x=0;x+4<f.width&&supported_blocks<required_blocks;x+=64) {
+                for(int dx=0;dx<5;++dx) {
+                    const int color=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+(x+dx)*3);
+                    if(color==4||color==2||color==1) {++supported_blocks;break;}
+                }
+            }
+            if(supported_blocks<required_blocks) continue;
+        }
         int begin=-1, last=-1, gaps=0;
         const auto finish=[&] {
             if(begin>=0 && last-begin>f.width*.32 && rows.size()<static_cast<std::size_t>(f.height))
@@ -553,7 +726,9 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         for(int x=0;x<f.width;++x) {
             const int color=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3);
             if(color==4||color==2||color==1) {if(begin<0) begin=x; last=x; gaps=0;}
-            else if(begin>=0 && ++gaps>4) {finish(); begin=-1; last=-1; gaps=0;}
+            else if(begin>=0 && ++gaps>horizontal_line_gap_limit_) {
+                finish(); begin=-1; last=-1; gaps=0;
+            }
         }
         finish();
     }
@@ -572,12 +747,17 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                 {1,0},static_cast<double>(right-left),thickness,.65});
         i=j;
     }
-    if(const auto spanning=spanning_line(f)) {
+    for(const auto& spanning:spanning_lines(f)) {
         std::erase_if(out.lines,[&](const LineCandidate& line) {
-            return std::abs(normal_distance(line.center,*spanning))<16;
+            return std::abs(normal_distance(line.center,spanning))<16&&
+                std::abs(line.tangent.x*spanning.tangent.x+
+                    line.tangent.y*spanning.tangent.y)>.995;
         });
-        out.lines.push_back(*spanning);
+        if(out.lines.size()==16) {out.capacity_valid=false;break;}
+        out.lines.push_back(spanning);
     }
+    const auto line_scan_end=compute_clock.now_ns();
+    out.line_scan_compute_ns=line_scan_end-combo_glyph_end;
     for(const auto& c:all) {
         const double w=c.x1-c.x0+2.0,h=c.y1-c.y0+2.0;
         const Vec2 center{c.sx/c.count,c.sy/c.count};
@@ -623,7 +803,18 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             }
             continue;
         }
+        for(const auto& split:c.split_lines) {
+            if(std::any_of(out.lines.begin(),out.lines.end(),[&](const auto& line) {
+                return std::abs(normal_distance(split.center,line))<12&&
+                    std::abs(split.tangent.x*line.tangent.x+
+                             split.tangent.y*line.tangent.y)>.99;
+            }))continue;
+            if(out.lines.size()==16){out.capacity_valid=false;break;}
+            out.lines.push_back(split);
+        }
     }
+    const auto component_line_decode_end=compute_clock.now_ns();
+    out.component_line_decode_compute_ns=component_line_decode_end-line_scan_end;
     // Finish the current line set before interpreting note ribbons. Source
     // component order changes when a rotating line is interrupted by a note.
     // A note's local dimensions must not depend on which fragment came first.
@@ -640,7 +831,13 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         const double minimum_width=f.width*(c.color==3?.018:.04);
         const bool aligned_ribbon=major>5*std::max(1.0,minor)&&
             std::any_of(out.lines.begin(),out.lines.end(),[&](const auto& l){
-                return (l.confidence>=.8||l.length>=f.width*.5)&&
+                // A true vertical line is bounded by screen height, while a
+                // shorter Hold side rail can otherwise license a false Drag.
+                // Require a substantial viewport span in the candidate's
+                // own direction when its current ridge confidence is weak.
+                const double required=std::hypot(l.tangent.x*f.width*.5,
+                                                  l.tangent.y*f.height*.8);
+                return (l.confidence>=.8||l.length>=required)&&
                     std::abs(l.tangent.x*std::cos(theta)+l.tangent.y*std::sin(theta))>.95;
             });
         const double observed_width=aligned_ribbon?major*std::sqrt(12.0)+2:w;
@@ -691,7 +888,12 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         }
         notes.push_back(candidate);
     }
+    const auto note_decode_end=compute_clock.now_ns();
+    out.note_decode_compute_ns=note_decode_end-component_line_decode_end;
     line_tracker_.update(out.lines,out.context);
+    const auto base_scene_end=compute_clock.now_ns();
+    out.line_tracking_compute_ns=base_scene_end-note_decode_end;
+    out.base_scene_compute_ns=base_scene_end-components_end;
     // A white/yellow Flick arrow interrupts its red ribbon into two cores.
     // Require that visible central vertical marker before joining fragments.
     for(std::size_t i=0;i<notes.size();++i) for(std::size_t j=i+1;j<notes.size();) {
@@ -864,19 +1066,41 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     // a partial core moves the identity away from the still-visible head.
     std::vector<NoteCandidate> claimed_outlines;
     claimed_outlines.reserve(128);
-    if(out.playing_gate) for(const auto& track:tracks_) {
+    // One current rail pair may be described by an older held body and a
+    // newly segmented foreground fragment. Resolve that physical claim in
+    // favor of the established on-line body, independent of track vector
+    // order. Both still have to pass the current-pixel checks below.
+    std::array<const History*,128> hold_recovery_order{};
+    std::size_t hold_recovery_count=0;
+    if(out.playing_gate) for(const auto& track:tracks_)
+        if(track.kind==NoteKind::hold&&!track.points.empty())
+            hold_recovery_order[hold_recovery_count++]=&track;
+    const auto support_rank=[](const History& track) {
+        if(!track.rail_anchor)return 0;
+        return track.rail_anchor->held_body_evidence?3:
+            track.rail_anchor->head_on_line?2:1;
+    };
+    std::sort(hold_recovery_order.begin(),hold_recovery_order.begin()+hold_recovery_count,
+        [&](const History* a,const History* b) {
+            const int ar=support_rank(*a),br=support_rank(*b);
+            return ar!=br?ar>br:a->id<b->id;
+        });
+    for(std::size_t recovery_index=0;recovery_index<hold_recovery_count;++recovery_index) {
+        const auto& track=*hold_recovery_order[recovery_index];
         if(track.kind!=NoteKind::hold||track.points.empty()) continue;
         const bool recent_rails=track.rail_anchor&&now-track.rail_observed<=90'000'000;
         auto note=recent_rails?*track.rail_anchor:track.appearance;
         if(note.width<f.width*.04) continue;
         const LineCandidate* outline_line=nullptr;
         if(recent_rails) for(const auto& current:out.lines) {
-            if(!current.association_valid||std::abs(current.tangent.x*note.tangent.x+
-               current.tangent.y*note.tangent.y)<.95||
+            if(!current.association_valid||
                (!note.head_on_line&&!note.held_body_evidence&&std::abs(normal_distance(note.center,current))>48))continue;
             const bool prior_line=!track.points.empty()&&track.points.back().line.track_id==current.track_id;
-            if(!outline_line||prior_line)outline_line=&current;
-            if(prior_line)break;
+            // On multiple lines, a prior relation is required for Hold
+            // continuation. The current paired body must still be found by
+            // the pixel observer below; this is not inferred rotation.
+            if(prior_line) {outline_line=&current;break;}
+            if(out.lines.size()==1)outline_line=&current;
         }
         if(outline_line&&!note.head_on_line&&!note.held_body_evidence&&std::any_of(notes.begin(),notes.end(),[&](const auto& front){
             if(front.kind!=NoteKind::hold||!front.rails_geometry||front.recent_identity||
@@ -981,6 +1205,11 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         // a new body separated from the line cannot refresh this identity.
         note.tail=rails->tail;note.height=rails->depth;
         note.recent_identity=track.id;
+        if(std::any_of(claimed_outlines.begin(),claimed_outlines.end(),[&](const NoteCandidate& used) {
+            const Vec2 delta{note.center.x-used.center.x,note.center.y-used.center.y};
+            return std::abs(note.width-used.width)<20&&
+                std::abs(delta.x*line->tangent.x+delta.y*line->tangent.y)<=20;
+        })) continue; // the established held body already owns this current rail pair
         std::erase_if(notes,[&](const NoteCandidate& incoming) {
             if(incoming.kind!=NoteKind::hold&&incoming.kind!=NoteKind::tap) return false;
             // An independent thin Tap can coexist with a Hold. Require a
@@ -1022,9 +1251,13 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         h.center.x+=axis.x*(length/2-2);h.center.y+=axis.y*(length/2-2);
         h.tail=visible_hold_tail(f,h);shortened_holds[i]=h;
     }
+    const auto held_recovery_end=compute_clock.now_ns();
+    out.held_recovery_compute_ns=held_recovery_end-base_scene_end;
     candidate_batch_=make_candidate_batch(out,f,notes,shortened_holds,tracks_);
     candidate_batch_.extraction_end_ns=clock_.now_ns();
     track_legacy_batch(out,notes,shortened_holds,tracks_,next_id_);
+    out.tracking_compute_ns=compute_clock.now_ns()-held_recovery_end;
+    out.compute_timing_host_qpc=dynamic_cast<const HostClock*>(&clock_)!=nullptr;
     if(!out.capacity_valid) {out.playing_gate=false; out.ui=GameUi::unknown;}
     out.recognition_end_ns=clock_.now_ns();
     return out;
@@ -1091,10 +1324,12 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         const auto& prior=id.last_note;
         const double alignment=std::abs(prior.tangent.x*t.note.tangent.x+prior.tangent.y*t.note.tangent.y);
         const Vec2 delta{t.note.center.x-prior.center.x,t.note.center.y-prior.center.y};
-        return (!id.line_id||!t.line_id||id.line_id==t.line_id)&&alignment>=.98&&
+        const bool same_line=id.line_id&&t.line_id&&id.line_id==t.line_id;
+        return (!id.line_id||!t.line_id||same_line)&&alignment>=(same_line?.5:.98)&&
             std::abs(prior.width-t.note.width)<=std::max(4.0,prior.width*.12)&&
-            std::abs(delta.x*t.note.tangent.x+delta.y*t.note.tangent.y)<=std::min(48.0,prior.width*.3)&&
-            std::abs(-delta.x*t.note.tangent.y+delta.y*t.note.tangent.x)<=48;
+            std::abs(delta.x*t.note.tangent.x+delta.y*t.note.tangent.y)<=
+                (same_line?std::max(48.0,prior.width*.5):std::min(48.0,prior.width*.3))&&
+            std::abs(-delta.x*t.note.tangent.y+delta.y*t.note.tangent.x)<=(same_line?80:48);
     };
     std::set<std::uint64_t> claimed;
     std::vector<bool> ignored(s.targets.size());
@@ -1156,14 +1391,21 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
            tail.y<0||tail.y>=s.context.height) return false;
         for(const auto& line:s.lines) {
             const double norm=std::hypot(line.tangent.x,line.tangent.y);
-            if(norm<.99||norm>1.01||
-               std::abs(line.tangent.x*t.note.tangent.x+line.tangent.y*t.note.tangent.y)<.95||
-               std::abs(normal_distance(t.hit,line))>3) continue;
+            if(norm<.99||norm>1.01||!line.association_valid||
+               line.observed_ns!=s.context.capture_ns||!t.line_id||
+               line.track_id!=t.line_id||
+               (!t.note.held_body_evidence&&std::abs(normal_distance(t.hit,line))>3)) continue;
+            const Vec2 reference=t.note.held_body_evidence?
+                Vec2{t.note.center.x+normal_distance(t.note.center,line)*line.tangent.y,
+                     t.note.center.y-normal_distance(t.note.center,line)*line.tangent.x}:t.hit;
+            const double along=(reference.x-line.center.x)*line.tangent.x+
+                               (reference.y-line.center.y)*line.tangent.y;
+            if(std::abs(along)>line.length*.5)continue;
             Vec2 normal{-line.tangent.y,line.tangent.x};
             const double depth=(t.note.center.x-tail.x)*normal.x+(t.note.center.y-tail.y)*normal.y;
             if(std::abs(depth)<2) continue;
             if(depth<0) {normal.x=-normal.x;normal.y=-normal.y;}
-            if((tail.x-t.hit.x)*normal.x+(tail.y-t.hit.y)*normal.y>=0) return true;
+            if((tail.x-reference.x)*normal.x+(tail.y-reference.y)*normal.y>=0) return true;
         }
         return false;
     };
@@ -1296,6 +1538,14 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
     for(const auto leader:group_alive) visible.insert(leader);
     for(auto& [id,identity]:identities_) if(!identity.drag_leader&&
         (identity.shared_drag?!group_alive.contains(id):!visible.contains(id))) {
+        // A newer complete snapshot with no current Note must withdraw a
+        // pending Down immediately. Missing grace applies only after a
+        // contact has started; it cannot license a new touch from old pixels.
+        if(identity.submitted) if(const auto cursor=scheduler_.executed_steps(identity.intent);
+           cursor&&*cursor==0) {
+            cancel_contact(id,identity,"pending_down_current_object_missing");
+            continue;
+        }
         const auto grace=identity.kind==NoteKind::hold?60'000'000:identity.kind==NoteKind::flick?75'000'000:40'000'000;
         if(!group_seen.contains(id)&&clock_.now_ns()-identity.plan.evidence_ns<grace) continue;
         cancel_contact(id,identity,"current_object_missing_or_region_lost");
@@ -1337,7 +1587,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             const bool spatial_drag=*cursor==0&&id.kind==NoteKind::drag&&current_drag_overlap(t);
             const bool timing_uncertain=t.crossing_ns&&t.uncertainty_ns>options_.uncertainty_ns;
             if(*cursor==0&&!spatial_drag&&(t.reason=="nonlinear_or_mismatch"||
-               t.reason=="outside_short_horizon"||t.reason=="root_past"||timing_uncertain)) {
+               t.reason=="outside_short_horizon"||t.reason=="root_past"||
+               t.reason=="motion_discontinuity"||timing_uncertain)) {
                 auto canceled=scheduler_.cancel_intent(id.intent);
                 receipts.insert(receipts.end(),canceled.begin(),canceled.end());
                 if(plan_cancellations_.size()>=128) throw std::runtime_error("pending cancellation diagnostic capacity");
@@ -1369,9 +1620,21 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                     plan.predicted_down_ns=due-(id.kind==NoteKind::drag?15'000'000:0);
                     const auto shift=down-plan.steps.front().due_ns;
                     const double dx=t.hit.x-plan.steps.front().x,dy=t.hit.y-plan.steps.front().y;
-                    for(auto& step:plan.steps) {
-                        step.due_ns+=shift;step.x+=dx;
-                        step.y=std::min(s.context.height*.94,step.y+dy);
+                    if(id.kind==NoteKind::flick) {
+                        const auto direction=safe_flick_direction(t.hit,s.context.width,s.context.height);
+                        if(!direction||plan.steps.size()!=6) {
+                            cancel_contact(t.note_id,id,"flick_no_safe_path");continue;
+                        }
+                        for(auto& step:plan.steps) step.due_ns+=shift;
+                        plan.steps.front().x=t.hit.x;plan.steps.front().y=t.hit.y;
+                        for(int k=1;k<=4;++k) {
+                            plan.steps[k].x=t.hit.x+direction->x*k*20;
+                            plan.steps[k].y=t.hit.y+direction->y*k*20;
+                        }
+                        plan.steps.back().x=plan.steps[4].x;
+                        plan.steps.back().y=plan.steps[4].y;
+                    } else for(auto& step:plan.steps) {
+                        step.due_ns+=shift;step.x+=dx;step.y+=dy;
                     }
                     plan.valid_until_ns=down+45'000'000;
                 }
@@ -1388,7 +1651,9 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                 const auto executed=static_cast<std::size_t>(*cursor-plan.prefix_offset);
                 plan.steps.resize(executed);
                 const auto last=plan.steps.back();
-                if(std::hypot(t.hit.x-last.x,t.hit.y-last.y)>2&&t.samples>0&&
+                if(std::hypot(t.hit.x-last.x,t.hit.y-last.y)>2&&
+                   held_support(t)&&compatible_body(id,t)&&
+                   !visible_tail_passed(t)&&
                    t.hit.x>=0&&t.hit.x<s.context.width&&t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height)
                     plan.steps.push_back({Phase::move,t.hit.x,t.hit.y,clock_.now_ns()});
                 const auto limit=t.evidence_ns+100'000'000;
@@ -1432,7 +1697,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         // Late but bounded live evidence may still be recoverable. Dispatch
         // immediately; retain the original prediction separately in the journal.
         const auto due=std::max(predicted_due,now+(t.note.kind==NoteKind::drag?15'000'000:0));
-        if(t.hit.x<0||t.hit.y<s.context.height*.12||t.hit.x>=s.context.width||t.hit.y>=s.context.height) {
+        if(!std::isfinite(t.hit.x)||!std::isfinite(t.hit.y)||t.hit.x<0||
+           t.hit.y<s.context.height*.12||t.hit.x>=s.context.width||t.hit.y>=s.context.height) {
             last_rejection_="unsafe_region"; continue;
         }
         if(t.note.kind==NoteKind::drag) {
@@ -1474,9 +1740,14 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             plan.steps.back().due_ns=spatial_drag?t.evidence_ns+100'000'000:due+75'000'000;
             if(spatial_drag)plan.basis="live_pixels_current_drag_overlap";
         } else if(t.note.kind==NoteKind::flick) {
+            const auto flick_direction=safe_flick_direction(t.hit,s.context.width,s.context.height);
+            if(!flick_direction) {
+                last_rejection_="flick_no_safe_path";
+                continue;
+            }
             plan.steps.pop_back();
-            for(int k=1;k<=4;++k) plan.steps.push_back({Phase::move,t.hit.x,
-                std::min(s.context.height*.94,t.hit.y+k*20),due+k*12'000'000});
+            for(int k=1;k<=4;++k) plan.steps.push_back({Phase::move,
+                t.hit.x+flick_direction->x*k*20,t.hit.y+flick_direction->y*k*20,due+k*12'000'000});
             const auto last=plan.steps.back(); plan.steps.push_back({Phase::up,last.x,last.y,due+52'000'000});
         }
         plan.note_id=t.note_id; plan.generation=s.context.generation; plan.geometry_version=s.context.geometry;
@@ -1549,7 +1820,7 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"residual_px",t.residual},{"prediction_error_px",t.prediction_error_px},
         {"fit_residual_limit_px",t.fit_residual_limit_px},{"samples",t.samples},
         {"history_span_ns",t.history_span_ns},{"reason",t.reason}});
-    return {{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
+    json result={{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
         {"note_anchor_semantics","tap_flick_core_center_hold_leading_edge"},
         {"epoch",s.context.epoch},{"generation",s.context.generation},{"geometry_version",s.context.geometry},
         {"frame_sequence",s.context.frame},{"capture_complete_ns",s.context.capture_ns},
@@ -1559,11 +1830,24 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"play_button",s.play_button?json{{"x",s.play_button->x},{"y",s.play_button->y}}:json(nullptr)},
         {"capacity_valid",s.capacity_valid},{"lines",lines},{"targets",targets},
         {"source_absolute_age",nullptr},{"per_note_feedback","unknown"}};
+    if(s.compute_timing_host_qpc) {
+        result["compute_clock_domain"]="host_qpc_ns";
+        result["components_compute_ns"]=s.components_compute_ns;
+        result["base_scene_compute_ns"]=s.base_scene_compute_ns;
+        result["combo_glyph_compute_ns"]=s.combo_glyph_compute_ns;
+        result["line_scan_compute_ns"]=s.line_scan_compute_ns;
+        result["component_line_decode_compute_ns"]=s.component_line_decode_compute_ns;
+        result["note_decode_compute_ns"]=s.note_decode_compute_ns;
+        result["line_tracking_compute_ns"]=s.line_tracking_compute_ns;
+        result["held_recovery_compute_ns"]=s.held_recovery_compute_ns;
+        result["tracking_compute_ns"]=s.tracking_compute_ns;
+    }
+    return result;
 }
 
-nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
+nlohmann::json analyze_game_segments(const std::vector<std::filesystem::path>& paths) {
     using nlohmann::json;
-    std::ifstream file(path); if(!file) throw std::runtime_error("cannot open game journal");
+    if(paths.empty()||paths.size()>32) throw std::invalid_argument("game journal segment capacity");
     std::uint64_t frames=0,predictions=0,dry=0,real=0,revokes=0,rejections=0,gate_frames=0,multi_line=0;
     std::uint64_t playing_no_line=0;
     std::map<std::string,std::uint64_t> kinds,reasons,uis,accepted_kinds,real_phases,rejection_reasons,revoke_reasons;
@@ -1577,6 +1861,7 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::map<std::string,std::vector<double>> first_near_leads;
     std::uint64_t track_evictions=0;
     std::map<std::uint64_t,IntentEvidence> intent_evidence;
+    std::map<std::uint64_t,IntentEvidence> recently_released_intents;
     std::map<int,std::uint64_t> active_contacts;
     json latest_targets=json::array(),conflicts=json::array();
     Nanoseconds latest_capture=0;
@@ -1587,13 +1872,23 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::map<std::string,std::uint64_t> contact_cancellations,contact_ups;
     std::map<std::string,std::map<std::string,std::uint64_t>> contact_cancellations_by_kind;
     std::uint64_t hold_tail_confirmations=0,hold_contact_reassociations=0;
+    json hold_cancel_traces=json::array();
+    std::uint64_t hold_cancel_traces_omitted=0,hold_cancel_before_down=0,
+        hold_cancel_active=0,hold_cancel_started_unknown=0;
+    struct FrameTiming {Nanoseconds capture=0,recognition_end=0;bool unique=true;};
+    std::map<std::uint64_t,FrameTiming> frame_timing;
+    std::deque<std::uint64_t> frame_timing_order;
+    std::vector<double> decision_to_accept,down_capture_to_injection,down_recognition_to_injection;
+    std::uint64_t accept_join_missing=0,down_join_missing=0,down_join_ambiguous=0;
     const auto describe_intent=[&](std::uint64_t intent) {
         json result={{"intent_id",intent},{"plan",nullptr},{"current_target",nullptr},
             {"target_capture_ns",latest_capture}};
-        const auto found=intent_evidence.find(intent);
-        if(found==intent_evidence.end()) return result;
-        result["plan"]=found->second.plan;
-        for(const auto& target:latest_targets) if(target.value("note_id",std::uint64_t{0})==found->second.note) {
+        const auto active=intent_evidence.find(intent);
+        const auto released=recently_released_intents.find(intent);
+        if(active==intent_evidence.end()&&released==recently_released_intents.end()) return result;
+        const auto& evidence=active!=intent_evidence.end()?active->second:released->second;
+        result["plan"]=evidence.plan;
+        for(const auto& target:latest_targets) if(target.value("note_id",std::uint64_t{0})==evidence.note) {
             result["current_target"]=target;break;
         }
         return result;
@@ -1603,6 +1898,11 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
     std::uint64_t intent_evidence_evictions=0;
     std::uint64_t latest_intent=0;
     std::vector<double> processing,uncertainty,residual,intervals,playing_intervals,down_skew;
+    std::vector<double> components_compute,base_scene_compute,held_recovery_compute,tracking_compute;
+    std::vector<double> combo_glyph_compute,line_scan_compute,component_line_decode_compute;
+    std::vector<double> note_decode_compute,line_tracking_compute;
+    std::uint64_t component_timing_missing=0;
+    std::uint64_t base_scene_subsegment_timing_missing=0;
     bool previous_playing=false;
     std::vector<double> actual_lateness,rpc_duration;
     std::vector<double> future_down_lateness,already_past_down_lateness;
@@ -1623,6 +1923,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             sample(first_near_leads[evidence.kind+"_"+outcome],*evidence.first_near_available_lead_ms);
     };
     std::string line;
+    for(const auto& path:paths) {
+    std::ifstream file(path, std::ios::binary); if(!file) throw std::runtime_error("cannot open game journal segment: "+path.string());
     while(std::getline(file,line)) {
         if(line.empty()) continue;
         const auto e=json::parse(line); const auto event=e.value("event","");
@@ -1636,6 +1938,16 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             const auto t=e.at("capture_complete_ns").get<Nanoseconds>();
             if(e.at("targets").size()>128) throw std::runtime_error("game analyzer target capacity");
             latest_targets=e.at("targets");latest_capture=t;
+            if(e.contains("frame_sequence")&&e.at("frame_sequence").is_number_unsigned()) {
+                const auto frame=e.at("frame_sequence").get<std::uint64_t>();
+                const auto end=e.at("recognition_end_ns").get<Nanoseconds>();
+                const auto [position,inserted]=frame_timing.emplace(frame,FrameTiming{t,end,true});
+                if(!inserted) position->second.unique=false;
+                else frame_timing_order.push_back(frame);
+                if(frame_timing_order.size()>512) {
+                    frame_timing.erase(frame_timing_order.front());frame_timing_order.pop_front();
+                }
+            }
             for(auto it=observed_tracks.begin();it!=observed_tracks.end();) {
                 if(t-it->second.last>200'000'000) {finish_track(it->second);it=observed_tracks.erase(it);}
                 else ++it;
@@ -1647,6 +1959,24 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             previous=t;previous_playing=playing;
             sample(processing,(e.at("recognition_end_ns").get<Nanoseconds>()-
                                e.at("recognition_start_ns").get<Nanoseconds>())/1e6);
+            if(e.value("compute_clock_domain","")=="host_qpc_ns"&&
+               e.contains("components_compute_ns")&&e.contains("base_scene_compute_ns")&&
+               e.contains("held_recovery_compute_ns")&&e.contains("tracking_compute_ns")) {
+                sample(components_compute,e.at("components_compute_ns").get<Nanoseconds>()/1e6);
+                sample(base_scene_compute,e.at("base_scene_compute_ns").get<Nanoseconds>()/1e6);
+                sample(held_recovery_compute,e.at("held_recovery_compute_ns").get<Nanoseconds>()/1e6);
+                sample(tracking_compute,e.at("tracking_compute_ns").get<Nanoseconds>()/1e6);
+            } else ++component_timing_missing;
+            if(e.value("compute_clock_domain","")=="host_qpc_ns"&&
+               e.contains("combo_glyph_compute_ns")&&e.contains("line_scan_compute_ns")&&
+               e.contains("component_line_decode_compute_ns")&&e.contains("note_decode_compute_ns")&&
+               e.contains("line_tracking_compute_ns")) {
+                sample(combo_glyph_compute,e.at("combo_glyph_compute_ns").get<Nanoseconds>()/1e6);
+                sample(line_scan_compute,e.at("line_scan_compute_ns").get<Nanoseconds>()/1e6);
+                sample(component_line_decode_compute,e.at("component_line_decode_compute_ns").get<Nanoseconds>()/1e6);
+                sample(note_decode_compute,e.at("note_decode_compute_ns").get<Nanoseconds>()/1e6);
+                sample(line_tracking_compute,e.at("line_tracking_compute_ns").get<Nanoseconds>()/1e6);
+            } else ++base_scene_subsegment_timing_missing;
             for(const auto& target:e.at("targets")) {
                 count(kinds,target.at("kind").get<std::string>());
                 count(reasons,target.at("reason").get<std::string>());
@@ -1677,6 +2007,14 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                 }
             }
         } else if(event=="game_plan_accepted") {
+            if(e.contains("source_frame")&&e.contains("accepted_ns")) {
+                const auto frame=e.at("source_frame").get<std::uint64_t>();
+                const auto timing=frame_timing.find(frame);
+                if(timing!=frame_timing.end()&&timing->second.unique)
+                    sample(decision_to_accept,(e.at("accepted_ns").get<Nanoseconds>()-
+                        timing->second.recognition_end)/1e6);
+                else ++accept_join_missing;
+            } else ++accept_join_missing;
             const auto intent=e.at("intent_id").get<std::uint64_t>();
             if(!intent_evidence.contains(intent)) {
                 if(intent_evidence.size()>=256) {intent_evidence.erase(intent_evidence.begin());++intent_evidence_evictions;}
@@ -1709,6 +2047,21 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         } else if(event=="game_contact_cancelled") {
             count(contact_cancellations,e.value("reason","unknown"));
             count(contact_cancellations_by_kind[e.value("kind","unknown")],e.value("reason","unknown"));
+            if(e.value("kind","")=="hold") {
+                const auto started=e.find("contact_started");
+                if(started==e.end()||!started->is_boolean()) ++hold_cancel_started_unknown;
+                else if(started->get<bool>()) ++hold_cancel_active;
+                else ++hold_cancel_before_down;
+                if(hold_cancel_traces.size()<128) {
+                    auto trace=describe_intent(e.value("intent_id",std::uint64_t{0}));
+                    trace["cancel_event"]=e;
+                    trace["latest_decision_frame"]=frame_timing_order.empty()?json(nullptr):json(frame_timing_order.back());
+                    trace["classification"]=started==e.end()||!started->is_boolean()?"unknown_contact_start":
+                        started->get<bool>()?"active_contact_cancelled":"before_down_cancelled";
+                    trace["visible_game_effect"]="unknown";
+                    hold_cancel_traces.push_back(std::move(trace));
+                } else ++hold_cancel_traces_omitted;
+            }
         } else if(event=="game_contact_up") {
             count(contact_ups,e.value("reason","unknown"));
         } else if(event=="game_hold_tail_confirmed") {
@@ -1739,6 +2092,15 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             } else ++unknown_contact_receipts;
             const std::string kind=found==intent_evidence.end()?"unknown":found->second.kind;
             if(e.at("phase")==0) {
+                if(e.contains("source_frame")&&e.at("source_frame").is_number_unsigned()) {
+                    const auto timing=frame_timing.find(e.at("source_frame").get<std::uint64_t>());
+                    if(timing==frame_timing.end()) ++down_join_missing;
+                    else if(!timing->second.unique) ++down_join_ambiguous;
+                    else {
+                        sample(down_capture_to_injection,(start-timing->second.capture)/1e6);
+                        sample(down_recognition_to_injection,(start-timing->second.recognition_end)/1e6);
+                    }
+                } else ++down_join_missing;
                 count(actual_down_kinds,kind);
                 sample(down_lateness[kind],(start-e.at("scheduled_ns").get<Nanoseconds>())/1e6);
                 if(found!=intent_evidence.end()) {
@@ -1754,6 +2116,8 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
                 } else {++unclassified_down_deadlines;++unknown_predicted_downs;}
             } else if(e.at("phase")==2&&found!=intent_evidence.end()) {
                 if(found->second.down) sample(contact_durations[kind],(start-*found->second.down)/1e6);
+                if(recently_released_intents.size()>=32) recently_released_intents.erase(recently_released_intents.begin());
+                recently_released_intents[found->first]=found->second;
                 intent_evidence.erase(found);
             }
         } else if(event=="runtime_revoke") {++revokes; count(revoke_reasons,e.value("reason","unknown"));}
@@ -1773,12 +2137,14 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
             }
         }
     }
+    if(!file.eof()) throw std::runtime_error("game journal segment read failed: "+path.string());
+    }
     for(const auto& [id,evidence]:observed_tracks) finish_track(evidence);
     json durations=json::object(),lateness_by_kind=json::object(),first_leads=json::object();
     for(const auto& [kind,values]:contact_durations) durations[kind]=distribution(values);
     for(const auto& [kind,values]:down_lateness) lateness_by_kind[kind]=distribution(values);
     for(const auto& [outcome,values]:first_near_leads) first_leads[outcome]=distribution(values);
-    return {{"schema_version",1},{"frames",frames},{"playing_gate_frames",gate_frames},
+    json result={{"schema_version",1},{"frames",frames},{"playing_gate_frames",gate_frames},
         {"ui_occurrences",uis},{"note_candidate_occurrences",kinds},{"target_reason_occurrences",reasons},
         {"playing_no_line_frames",playing_no_line},{"playing_note_candidate_occurrences",playing_kinds},
         {"playing_target_reason_occurrences",playing_reasons},
@@ -1807,17 +2173,77 @@ nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
         {"contact_ups_by_reason",contact_ups},
         {"hold_tail_confirmations",hold_tail_confirmations},
         {"hold_contact_reassociations",hold_contact_reassociations},
+        {"hold_cancel_before_down",hold_cancel_before_down},
+        {"hold_cancel_active",hold_cancel_active},
+        {"hold_cancel_started_unknown",hold_cancel_started_unknown},
+        {"hold_cancel_traces",hold_cancel_traces},
+        {"hold_cancel_traces_omitted",hold_cancel_traces_omitted},
+        {"decision_recognition_end_to_accept_ms",distribution(decision_to_accept)},
+        {"accept_source_frame_join_missing",accept_join_missing},
+        {"down_capture_complete_to_injection_start_ms",distribution(down_capture_to_injection)},
+        {"down_recognition_end_to_injection_start_ms",distribution(down_recognition_to_injection)},
+        {"down_source_frame_join_missing",down_join_missing},
+        {"down_source_frame_join_ambiguous",down_join_ambiguous},
+        {"down_join_semantics","source_frame exact join only; includes planned waiting, not render age or game effect"},
         {"pending_cancellation_semantics","current pixels explicitly invalidate an unexecuted Down prediction; later valid pixels may retry, game effect remains unknown"},
         {"drag_coverage_semantics","fresh pixels share an already active local Drag contact; successful RPC history supports local coverage only, game judgment remains unknown"},
         {"contact_conflict_semantics","journal-order successful RPC receipts reconstruct local contacts; game effect and true simultaneous note count remain unknown; owner revoke clears local history"},
         {"game_rpc_duration_ms",distribution(rpc_duration)},
         {"capture_interval_ms",distribution(intervals)},{"recognition_duration_ms",distribution(processing)},
+        {"components_compute_ms",distribution(components_compute)},
+        {"base_scene_compute_ms",distribution(base_scene_compute)},
+        {"combo_glyph_compute_ms",distribution(combo_glyph_compute)},
+        {"line_scan_compute_ms",distribution(line_scan_compute)},
+        {"component_line_decode_compute_ms",distribution(component_line_decode_compute)},
+        {"note_decode_compute_ms",distribution(note_decode_compute)},
+        {"line_tracking_compute_ms",distribution(line_tracking_compute)},
+        {"held_recovery_compute_ms",distribution(held_recovery_compute)},
+        {"tracking_compute_ms",distribution(tracking_compute)},
+        {"component_timing_missing_frames",component_timing_missing},
+        {"base_scene_subsegment_timing_missing_frames",base_scene_subsegment_timing_missing},
         {"playing_capture_interval_ms",distribution(playing_intervals)},
         {"playing_interval_scope","consecutive decisions with playing_gate=true; real gaps across epoch are included"},
         {"prediction_uncertainty_ms",distribution(uncertainty)},{"prediction_residual_px",distribution(residual)},
         {"dry_equal_deadline_down_skew_ms",distribution(down_skew)},
         {"distribution_sample_cap",100000},{"per_note_feedback","unknown"},{"gameplay_validated",false},
-        {"raw_sha256",sha256_file(path)}};
+        {"raw_sha256",paths.size()==1?json(sha256_file(paths.front())):json(nullptr)}};
+    result["segments_read"]=paths.size();
+    return result;
+}
+nlohmann::json analyze_game_jsonl(const std::filesystem::path& path) {
+    return analyze_game_segments({path});
+}
+nlohmann::json analyze_game_round(const std::filesystem::path& round_directory) {
+    using nlohmann::json;
+    std::ifstream file(round_directory/"summary.json",std::ios::binary);
+    if(!file) throw std::runtime_error("cannot open game round summary");
+    const auto summary=json::parse(file);
+    if(!summary.contains("event_segments")||!summary.at("event_segments").is_array()||
+       summary.at("event_segments").empty()||summary.at("event_segments").size()>32)
+        throw std::invalid_argument("game round event segment capacity/shape");
+    std::vector<std::filesystem::path> paths;
+    json verified=json::array();
+    std::size_t index=0;
+    for(const auto& segment:summary.at("event_segments")) {
+        if(!segment.is_object()||!segment.contains("path")||!segment.at("path").is_string()||
+           !segment.contains("sha256")||!segment.at("sha256").is_string())
+            throw std::invalid_argument("game round event segment shape");
+        const auto name=segment.at("path").get<std::string>();
+        if(name!="events-"+std::to_string(index++)+".jsonl")
+            throw std::invalid_argument("game round segment order/path");
+        const auto path=round_directory/name;
+        const auto hash=sha256_file(path);
+        if(hash!=segment.at("sha256").get<std::string>())
+            throw std::runtime_error("game round segment SHA256 mismatch: "+name);
+        paths.push_back(path);
+        verified.push_back({{"path",name},{"sha256",hash}});
+    }
+    auto result=analyze_game_segments(paths);
+    result["round_id"]=summary.value("round_id",0);
+    result["round_status"]=summary.value("status",std::string("unknown"));
+    result["verified_event_segments"]=std::move(verified);
+    result["segment_integrity_verified"]=true;
+    return result;
 }
 void draw_game_overlay(Frame& f,const DecisionSnapshot& s) {
     const auto pixel=[&](int x,int y,std::array<std::uint8_t,3> color) {

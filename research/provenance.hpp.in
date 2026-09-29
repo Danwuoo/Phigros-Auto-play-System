@@ -1,0 +1,4 @@
+#pragma once
+inline constexpr auto motion_sha256 = "@PAS_MOTION_SHA256@";
+inline constexpr auto game_header_sha256 = "@PAS_GAME_HEADER_SHA256@";
+inline constexpr auto probe_sha256 = "@PAS_PROBE_SHA256@";

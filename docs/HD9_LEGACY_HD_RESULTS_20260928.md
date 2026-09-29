@@ -1,5 +1,7 @@
 # Legacy 章節 HD 實戰紀錄（2026-09-28）
 
+> 2026-09-28 清理後註記：本文保留當時版本與證據界線，舊授權／待辦不作現行指令。後續方向見[跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)；原始資料與 binary 的現存／已刪範圍見[清理紀錄](CLEANUP_AUDIT_20260928.md)。歷史 JSON 的 hash／pass 不代表被刪的 raw 仍可重算。
+
 使用者完成 Legacy 章節的手動選曲。當天兩次有實戰輪次的 `manual-session` 合計保存 **20 張正面確認結算圖、19 個不同曲名**；另有一輪擷取中斷、一次只有待命的啟動。此處的「19」是從可核對的結算圖去重，並非從遊戲內部或譜面讀出的章節清單。歷史 Glaciaxion HD6 是另一個較早的 run，列在文末，不混入當天20張。
 
 兩次實戰均使用相同Release binary SHA-256 `483cb83887d6daad9f01569aaca8f06c40e4e91df98f393b16a9c713c2534b76`、observer33／planner13、五接觸點、lead35ms、uncertainty30ms。來源固定為 gRPC payload fast／RGB888 top-down／256KiB、1280×720 rotation1，時間域為host QPC。每輪得分與判定由保存的**同一擷取結算圖**離線人工讀取；執行時沒有OCR成績、讀譜、回放按鍵或用本表決定觸控。[結構化證據](HD9_LEGACY_HD_RESULTS_EVIDENCE_20260928.json)包含各輪圖檔／summary的路徑和SHA-256、判定比例、樣本數與延遲分布；本機更完整的原始索引是 `measurements/hd9-cross-song-20260928/legacy-consolidated.json`。所有輪次manifest、events分段、summary和結算圖的hash已逐項核對。

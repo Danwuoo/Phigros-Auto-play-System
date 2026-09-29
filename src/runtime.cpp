@@ -1,6 +1,7 @@
 #include "pas/runtime.hpp"
 #include "pas/adb.hpp"
 #include "pas/analysis.hpp"
+#include "pas/strategy_version.hpp"
 #include "pas/game.hpp"
 #include "pas/game_dataset.hpp"
 #include "pas/game_tracking_shadow.hpp"
@@ -207,11 +208,11 @@ static void run_runtime(const std::string& config_path,double duration_s,bool no
             {"automatic_play_enabled",auto_play},
             {"duration_s",duration_s},{"wait_play_s",wait_play_s},
             {"duration_origin",wait_play_s>0?"first_pixels_confirmed_playing":"session_start"},
-            {"dry_owner",!assist},{"game_observer_version",36},{"game_diagnostics_version",6},
+            {"dry_owner",!assist},{"game_observer_version",game_observer_version},{"game_diagnostics_version",game_diagnostics_version},
             {"tracking_method","legacy"},{"tracking_shadow",tracking_shadow.empty()?json(nullptr):json(tracking_shadow)},
             {"vision_dataset_opt_in",keep_vision_dataset},{"added_memory_upper_bytes",added_memory_upper},
             {"executable_sha256",sha256_file(executable)},
-            {"game_planner_version",18},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
+            {"game_planner_version",game_planner_version},{"hold_release_limit_ms",100},{"hold_missing_grace_ms",60},
             {"hold_normal_release_basis","consecutive_current_tail_passed_10ms_then_20ms_release"},
             {"drag_coverage_position_basis","current_region_deadzone_and_same_line_contact_move"},
             {"drag_planned_contact_ms",90},{"late_crossing_recovery_limit_ms",40},

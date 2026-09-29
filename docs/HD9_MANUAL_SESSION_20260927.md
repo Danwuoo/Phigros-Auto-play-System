@@ -1,5 +1,7 @@
 # HD9 音符策略＋多輪手動待命
 
+> 2026-09-28 清理後註記：本文保留當時版本與證據界線，舊授權／待辦不作現行指令。後續方向見[跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)；原始資料與 binary 的現存／已刪範圍見[清理紀錄](CLEANUP_AUDIT_20260928.md)。歷史 JSON 的 hash／pass 不代表被刪的 raw 仍可重算。
+
 歷史報告補註（2026-09-28）：此分支已依使用者授權合併；main 保留較新的 observer36／planner18，接入相同待命流程。因此下文「未 merge」及策略不變的比較均描述原 HD9 分支，非合併後 main。重現此次跨曲策略需用保留的 `codex/hd9-manual-rounds`／`out/hd9-session-release`。見[合併紀錄](MAIN_MERGE_20260928.md)。
 
 本分支 `codex/hd9-manual-rounds` 從最高完整分数的 `1636519b9e3ddd472fad1d7494f5bc7525cc5fc1` 開始。main／origin/main `5ad759e` 與全部歷史分支、原始量測保留，未 reset main、merge 或 push。本次新授權暫停學習式模型方案；完成有限跨曲 HD 比較條件，不恢復舊的無限 Glaciaxion AP goal，不進 IN。

@@ -1,5 +1,7 @@
 # Legacy HD 跨曲分支合併紀錄
 
+> 2026-09-28 清理後註記：本文保留當時版本與證據界線，舊授權／待辦不作現行指令。後續方向見[跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)；原始資料與 binary 的現存／已刪範圍見[清理紀錄](CLEANUP_AUDIT_20260928.md)。歷史 JSON 的 hash／pass 不代表被刪的 raw 仍可重算。
+
 日期：2026-09-28。使用者完成 Chapter Legacy 跨曲測試後授權合併並研討學習式方法。本次不恢復舊 AP goal，不啟動遊戲、採樣或模型訓練。
 
 ## 版本與資料保留

@@ -1,6 +1,8 @@
 # 五指容量與持續接觸語義（2026-09-27）
 
-後續狀態：使用者授權兩輪後，第一輪run `cpp-observe-17905001386033080`已完成185秒STOPPED／exit0；尚未核對結算，隨後使用者停止測試，第二輪未開始。使用者仍觀察到Drag漏接、Hold提前Up及移動不跟隨。程式核對與下一個具體設計見[外框與持續接觸追蹤方案](OUTLINE_CONTACT_TRACKING_PLAN_20260927.md)；下面「尚未進遊戲」屬原軟體／能力驗證停止點，不代表最新狀態。
+> 2026-09-28 清理後註記：本文保留當時版本與證據界線，舊授權／待辦不作現行指令。後續方向見[跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)；原始資料與 binary 的現存／已刪範圍見[清理紀錄](CLEANUP_AUDIT_20260928.md)。歷史 JSON 的 hash／pass 不代表被刪的 raw 仍可重算。
+
+後續狀態：使用者授權兩輪後，第一輪run `cpp-observe-17905001386033080`已完成185秒STOPPED／exit0；尚未核對結算，隨後使用者停止測試，第二輪未開始。使用者仍觀察到Drag漏接、Hold提前Up及移動不跟隨。程式核對與下一個具體設計見外框與持續接觸追蹤方案（OUTLINE_CONTACT_TRACKING_PLAN_20260927.md 已清理，歷史見 Git baf3d4f）；下面「尚未進遊戲」屬原軟體／能力驗證停止點，不代表最新狀態。
 
 使用者補充：Phigros可使用四／五指；Hold須維持到整條結束；連續黃色Drag可用持續接觸覆蓋。這是本輪動作策略的依據，不把既有兩指設定當成遊戲限制。實作 `0897e21`、最終source `59c92bf32992e02d0cb61c97dec5e96b66f0e0f2`，planner9；observer29／主用擷取不變。四／五指後端核對及三配置回歸已通過，遊戲效果待實戰。機器可讀證據見 [metadata](GAME_ACTION_EVIDENCE_20260927.json)。
 

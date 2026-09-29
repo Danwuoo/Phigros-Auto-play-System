@@ -5,8 +5,9 @@
 
 namespace pas {
 
-Journal::Journal(const std::filesystem::path& path, std::size_t capacity)
-    : capacity_(capacity), path_(path) {
+Journal::Journal(const std::filesystem::path& path, std::size_t capacity,
+                 std::function<void()> before_write)
+    : capacity_(capacity), path_(path), before_write_(std::move(before_write)) {
     if (capacity < 2 || capacity > 1'000'000) throw std::invalid_argument("invalid journal capacity");
     std::filesystem::create_directories(path.parent_path());
     worker_ = std::jthread([this](std::stop_token stop) { writer(stop); });
@@ -42,6 +43,7 @@ void Journal::writer(std::stop_token stop) {
             if (queue_.empty() && stop.stop_requested()) break;
             record = std::move(queue_.front()); queue_.pop_front();
         }
+        if (before_write_) before_write_();
         file << record.dump() << '\n';
         if (!file) { std::lock_guard lock(mutex_); faulted_ = true; return; }
     }

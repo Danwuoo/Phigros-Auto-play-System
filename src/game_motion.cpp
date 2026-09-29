@@ -1,6 +1,7 @@
 #include "pas/game_motion.hpp"
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <set>
 #include <stdexcept>
 namespace pas {
@@ -18,6 +19,44 @@ bool ridge(const Frame& f,Vec2 p,Vec2 transverse) {
     const double v=gray(f,p),a=gray(f,{p.x-transverse.x*4,p.y-transverse.y*4}),
         b=gray(f,{p.x+transverse.x*4,p.y+transverse.y*4});
     return a>=0&&b>=0&&v>=80&&v-a>=18&&v-b>=18;
+}
+// At most 16 observations and 16 live line tracks. Dummy columns represent
+// genuinely unmatched observations, while a forbidden edge tests whether an
+// alternative *feasible complete assignment* is nearly as good.
+struct LineAssignment {double cost=0;std::vector<int> prior;};
+LineAssignment assign_lines(const std::vector<std::vector<double>>& costs,
+                            std::size_t priors,int forbidden_row=-1,int forbidden_prior=-1) {
+    const int rows=static_cast<int>(costs.size()),cols=static_cast<int>(priors)+rows;
+    constexpr double absent=1e6,birth=80;
+    std::vector<double> u(rows+1),v(cols+1);
+    std::vector<int> p(cols+1),way(cols+1);
+    for(int row=1;row<=rows;++row) {
+        p[0]=row;int col=0;std::vector<double> minv(cols+1,absent);
+        std::vector<bool> used(cols+1);
+        do {
+            used[col]=true;const int current=p[col];double delta=absent;int next=0;
+            for(int j=1;j<=cols;++j) if(!used[j]) {
+                const double edge=j<=static_cast<int>(priors)?
+                    ((current-1==forbidden_row&&j-1==forbidden_prior)?absent:costs[current-1][j-1]):birth;
+                const double reduced=edge-u[current]-v[j];
+                if(reduced<minv[j]) {minv[j]=reduced;way[j]=col;}
+                if(minv[j]<delta) {delta=minv[j];next=j;}
+            }
+            for(int j=0;j<=cols;++j) if(used[j]) {u[p[j]]+=delta;v[j]-=delta;}
+                else minv[j]-=delta;
+            col=next;
+        } while(p[col]);
+        do {const int previous=way[col];p[col]=p[previous];col=previous;} while(col);
+    }
+    LineAssignment result;result.prior.assign(rows,-1);
+    for(int j=1;j<=cols;++j) if(p[j]) {
+        const int row=p[j]-1;
+        if(j<=static_cast<int>(priors)&&costs[row][j-1]<absent&&
+           !(row==forbidden_row&&j-1==forbidden_prior)) {
+            result.prior[row]=j-1;result.cost+=costs[row][j-1];
+        } else result.cost+=birth;
+    }
+    return result;
 }
 }
 bool current_line_ridge_support(const Frame& f,const LineCandidate& line) {
@@ -63,7 +102,7 @@ std::optional<LineCandidate> observe_current_line_extent(const Frame& f,const Li
     }
     finish();return best;
 }
-void GameLineTracker::reset(){tracks_.clear();context_={};}
+void GameLineTracker::reset(){tracks_.clear();pending_births_.clear();context_={};}
 void GameLineTracker::fit_motion(Track& track,LineCandidate& current,Nanoseconds time) {
     current.velocity={};current.angular_velocity=0;current.motion_valid=false;
     const Pose pose{current.center,current.tangent,time};
@@ -105,10 +144,13 @@ void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContex
     if(lines.size()>16)throw std::invalid_argument("line tracking capacity");
     if(c.epoch!=context_.epoch||c.generation!=context_.generation||c.geometry!=context_.geometry||
        c.width!=context_.width||c.height!=context_.height||c.rotation!=context_.rotation||
-       c.capture_ns<=context_.capture_ns||c.capture_ns-context_.capture_ns>=100'000'000) tracks_.clear();
+       c.capture_ns<=context_.capture_ns||c.capture_ns-context_.capture_ns>=100'000'000) {
+        tracks_.clear();pending_births_.clear();
+    }
     context_=c;
     std::erase_if(tracks_,[&](const auto& t){return c.capture_ns-t.time>=90'000'000;});
-    struct Pair{std::size_t observed,prior;double cost;};std::vector<Pair> pairs;pairs.reserve(256);
+    constexpr double absent=1e6;
+    std::vector<std::vector<double>> costs(lines.size(),std::vector<double>(tracks_.size(),absent));
     for(std::size_t i=0;i<lines.size();++i)for(std::size_t j=0;j<tracks_.size();++j) {
         const auto& a=lines[i];const auto& t=tracks_[j];const auto& b=t.line;
         const double dt=(c.capture_ns-t.time)/1e9;
@@ -120,20 +162,30 @@ void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContex
         const double orientation=std::abs(dot(a.tangent,direction));
         const double across=std::abs(dot(sub(a.center,expected),{-a.tangent.y,a.tangent.x}));
         if(orientation<.90||across>64||std::min(a.length,b.length)<std::max(a.length,b.length)*.45)continue;
-        pairs.push_back({i,j,across+40*(1-orientation)});
+        costs[i][j]=across+40*(1-orientation);
     }
-    std::sort(pairs.begin(),pairs.end(),[](const auto& a,const auto& b){return a.cost<b.cost;});
-    std::vector<int> assigned(lines.size(),-1);std::vector<bool> used(tracks_.size());
-    for(const auto& p:pairs) {
-        if(assigned[p.observed]>=0||used[p.prior])continue;
-        const bool contested=std::any_of(pairs.begin(),pairs.end(),[&](const auto& q){
-            return ((q.observed==p.observed&&q.prior!=p.prior)||(q.prior==p.prior&&q.observed!=p.observed))&&q.cost<=p.cost+3;
-        });
-        if(contested){lines[p.observed].association_valid=false;continue;}
-        assigned[p.observed]=static_cast<int>(p.prior);used[p.prior]=true;
+    const auto assignment=assign_lines(costs,tracks_.size());
+    const auto& assigned=assignment.prior;
+    std::vector<bool> contested(lines.size());
+    for(std::size_t i=0;i<lines.size();++i) if(assigned[i]>=0) {
+        const auto alternative=assign_lines(costs,tracks_.size(),static_cast<int>(i),assigned[i]);
+        if(alternative.cost<=assignment.cost+3) {
+            contested[i]=true;
+            for(std::size_t j=0;j<lines.size();++j)
+                if(alternative.prior[j]!=assigned[j])contested[j]=true;
+        }
     }
+    // A valid predecessor can be occupied by another observation. Its losing
+    // neighbor is contested, not a new confirmed lineage. In particular a
+    // one-frame duplicate must not poison future single-line observations.
+    for(std::size_t i=0;i<lines.size();++i) if(assigned[i]<0)
+        for(std::size_t k=0;k<lines.size();++k) if(assigned[k]>=0&&
+            costs[i][assigned[k]]<=costs[k][assigned[k]]+3)contested[i]=true;
+    std::vector<PendingBirth> next_pending;
+    std::vector<bool> pending_used(pending_births_.size());
     for(std::size_t i=0;i<lines.size();++i) {
         auto& line=lines[i];line.observed_ns=c.capture_ns;
+        line.association_valid=line.association_valid&&!contested[i];
         if(assigned[i]>=0) {
             auto& prior=tracks_[assigned[i]];const auto old=prior.line;
             if(dot(line.tangent,old.tangent)<0){line.tangent.x=-line.tangent.x;line.tangent.y=-line.tangent.y;}
@@ -141,12 +193,38 @@ void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContex
             fit_motion(prior,line,c.capture_ns);
             prior.line=line;prior.time=c.capture_ns;
         } else {
-            line.track_id=++next_id_;Track fresh;fit_motion(fresh,line,c.capture_ns);
-            fresh.line=line;fresh.time=c.capture_ns;
-            if(tracks_.size()<16)tracks_.push_back(std::move(fresh));
-            else line.association_valid=false;
+            bool birth=!contested[i];
+            if(contested[i]) {
+                // Exact duplicates supply no separable geometry. A distinct
+                // near neighbor must persist for three consecutive frames
+                // before it may become another lineage. A transient twin
+                // therefore cannot regenerate a track each frame.
+                double separation=1e9;
+                for(std::size_t k=0;k<lines.size();++k) if(assigned[k]>=0)
+                    separation=std::min(separation,std::abs(dot(sub(line.center,lines[k].center),
+                        {-line.tangent.y,line.tangent.x})));
+                if(separation>=1.5) {
+                    int count=1;
+                    for(std::size_t p=0;p<pending_births_.size();++p) if(!pending_used[p]&&
+                        c.capture_ns-pending_births_[p].time<90'000'000&&
+                        std::abs(dot(line.tangent,pending_births_[p].line.tangent))>.98&&
+                        std::abs(dot(sub(line.center,pending_births_[p].line.center),
+                            {-line.tangent.y,line.tangent.x}))<=4) {
+                        pending_used[p]=true;count=pending_births_[p].consecutive+1;break;
+                    }
+                    if(count>=3)birth=true;
+                    else if(next_pending.size()<16)next_pending.push_back({line,c.capture_ns,count});
+                }
+            }
+            if(birth&&tracks_.size()<16) {
+                line.track_id=++next_id_;Track fresh;fit_motion(fresh,line,c.capture_ns);
+                fresh.line=line;fresh.time=c.capture_ns;
+                tracks_.push_back(std::move(fresh));
+                if(contested[i])line.association_valid=false;
+            } else {line.track_id=0;line.association_valid=false;}
         }
     }
+    pending_births_=std::move(next_pending);
 }
 std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandidate& anchor,const LineCandidate& line) {
     const double anchor_distance=dot(sub(anchor.center,line.center),{-line.tangent.y,line.tangent.x});
@@ -154,8 +232,7 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
     // descriptor reaches the line. It may search the current attached rails,
     // but a separated body still fails the same-frame attachment checks.
     if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence&&std::abs(anchor_distance)>48)||!line.association_valid||
-       anchor.width<f.width*.035||anchor.width>f.width*.22||
-       std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
+       anchor.width<f.width*.035||anchor.width>f.width*.22)return {};
     const Vec2 u=line.tangent,n{-u.y,u.x};
     const double d=dot(sub(anchor.center,line.center),n);
     const Vec2 projected{anchor.center.x-n.x*d,anchor.center.y-n.y*d};
@@ -173,7 +250,16 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
     // A terminal cap needs two short attached side rails BELOW it and no
     // continuing side rails ABOVE it. This excludes the judgment line and
     // internal hit-effect rectangles, even when their color has changed.
-    for(int shift=-48;shift<=48;shift+=2)for(int depth=-12;depth<=12;++depth) {
+    // After a genuinely observed tail approaches the line, keep its search
+    // window wide enough for the second fresh confirmation even if it moves
+    // across the line by more than one narrow 12 px band per frame. The
+    // closure and two attached rails below still come from current pixels.
+    int tail_window=12;
+    if(anchor.tail) {
+        const double previous_tail_distance=dot(sub(*anchor.tail,line.center),n);
+        if(previous_tail_distance>-40&&previous_tail_distance<40)tail_window=36;
+    }
+    for(int shift=-48;shift<=48;shift+=2)for(int depth=-tail_window;depth<=tail_window;++depth) {
         const Vec2 tail{projected.x+u.x*shift+n.x*depth,projected.y+u.y*shift+n.y*depth};
         int closure=0;
         for(int k=-3;k<=3;++k)closure+=ridge(f,{tail.x+u.x*k*anchor.width*.13,
@@ -276,8 +362,7 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
 }
 std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const NoteCandidate& anchor,const LineCandidate& line) {
     if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence)||
-       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22||
-       std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
+       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22)return {};
     const Vec2 u=line.tangent,n{-u.y,u.x};
     std::optional<NoteCandidate> best;double best_cost=1e9;bool ambiguous=false;
     // A local CURRENT leading luminance edge must span the interior of both
@@ -371,7 +456,29 @@ std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const Note
                                            front.y+u.y*middle+n.y*(edge_offset-3)};
         current.width=paired.right-paired.left;
         current.tangent=u;current.height=(ends[0]+ends[1])/2.0-4;
-        current.tail.reset();current.head_on_line=false;current.held_body_evidence=true;current.held_body_patch=false;
+        // A front can move away from the line while its current body remains
+        // the contact region. Once the trailing end also passes on the
+        // measured front side, those pixels cannot renew that contact.
+        const double front_distance=dot(sub(current.center,line.center),n);
+        const double tail_distance=front_distance-current.height;
+        current.tail.reset();
+        if(tail_distance>=-32&&tail_distance<=32) {
+            const Vec2 measured_tail{current.center.x-n.x*current.height,
+                                     current.center.y-n.y*current.height};
+            int best_closure=0,best_offset=0;
+            for(int offset=-4;offset<=4;++offset) {
+                int closure=0;
+                for(int k=-3;k<=3;++k)
+                    closure+=ridge(f,{measured_tail.x+u.x*k*current.width*.13+n.x*offset,
+                                      measured_tail.y+u.y*k*current.width*.13+n.y*offset},n);
+                if(closure>best_closure){best_closure=closure;best_offset=offset;}
+            }
+            if(best_closure>=5)
+                current.tail=Vec2{measured_tail.x+n.x*best_offset,measured_tail.y+n.y*best_offset};
+        }
+        if(front_distance>0&&tail_distance>2&&
+           !(current.tail&&tail_distance>=-2&&tail_distance<=32))continue;
+        current.head_on_line=false;current.held_body_evidence=true;current.held_body_patch=false;
         current.outline_evidence=true;current.direct_rails_evidence=false;
         if(best&&cost>=best_cost-1) {
             if(std::hypot(current.center.x-best->center.x,current.center.y-best->center.y)>8)ambiguous=true;
@@ -383,8 +490,7 @@ std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const Note
 }
 std::optional<NoteCandidate> observe_held_body_patch(const Frame& f,const NoteCandidate& anchor,const LineCandidate& line) {
     if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence)||
-       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22||
-       std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
+       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22)return {};
     const Vec2 u=line.tangent,n{-u.y,u.x};
     std::optional<NoteCandidate> best;double best_cost=1e9;
     // An already held body can remain visible while its front is hidden by
@@ -441,6 +547,9 @@ std::optional<NoteCandidate> observe_held_body_patch(const Frame& f,const NoteCa
         auto current=anchor;const auto middle=(pair.x+pair.y)*.5;
         current.center={point.x+u.x*middle,point.y+u.y*middle};current.width=pair.y-pair.x;
         current.tangent=u;current.height=(ends[0]+ends[1])*.5;current.tail.reset();
+        const double patch_distance=dot(sub(current.center,line.center),n);
+        const double tail_distance=patch_distance-current.height;
+        if(patch_distance>0&&tail_distance>2)continue;
         current.rails_geometry=true;current.head_on_line=false;current.held_body_evidence=true;
         current.held_body_patch=true;current.outline_evidence=true;current.direct_rails_evidence=false;
         best=current;best_cost=cost;

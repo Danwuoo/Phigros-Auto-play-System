@@ -1,29 +1,33 @@
 # 專案工作準則
 
-本文件適用於整個倉庫。開始工作前，先閱讀 [README.md](README.md)、[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) 與 [docs/ROADMAP.md](docs/ROADMAP.md)。
+開始工作先讀 [README.md](README.md)、[架構](docs/ARCHITECTURE.md)、[路線圖](docs/ROADMAP.md) 與 [主程式架構與跨曲學習研究](docs/MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。
 
-2026-09-25 起的新開發另讀 [C++ 遷移計畫](docs/CPP_MIGRATION_PLAN.md) 與 [盤點報告](docs/CPP_MIGRATION_AUDIT.md)。使用者已決定自有正式邏輯全 C++20、單程序多執行緒；舊 Python／Java／HTML 留 legacy 對照。第三方原版依賴可保留原語言。遷移與五擷取候選評估先於新的遊戲主程式功能；下列 pixels-only、計時、緩衝與驗證原則不變。
+## 現行方向
 
-## 不可偏離的原則
+2026-09-28 使用者指定跨曲學習研究為後續主線。先做 M0 證據／標註小試與線 ID 異常研究，再依 M1–M6 逐階段推進。舊 Glaciaxion HD AP → IN、獨立大型 Fixture 前置階段與五擷取重選均已退出現行順序。研究提案不等於已實作或已驗收；選定方向不代表自動恢復舊 AP goal、無限實戰或模型訓練。
 
-1. 執行時的遊戲決策只能來自即時畫面。不得讀取譜面、遊戲內部狀態、記憶體或已記錄的按鍵序列來決定下一次觸控。
-2. 擷取端只保留最新 frame；下游落後時丟棄舊 frame。不要建立會持續增長的 frame 佇列。
-3. 以預測的撞線時間排程觸控，並保留可解釋的預測依據。辨識、追蹤、排程、注入應有清楚邊界。
-4. 使用同一個主機 monotonic clock 記錄時間；勿用 wall clock 計算延遲。明確區分擷取完成、辨識完成、預定觸控與注入呼叫完成等時間點。
-5. 優先改善尾端延遲與 jitter。任何效能結論都應附測試環境、樣本數與分布數據，不能只報平均值。
+同日使用者補充[判定線形式](docs/判定線形式.md)：先以線局部座標、相對運動與明確策略研究多線、斜向、旋轉、線追 Note、突現及過線往返；不得因形式複雜就預設需要學習。學習只對已確認的觀測／關聯缺口比較，M3／M4可不做；詳見研究 §2.7。幾何過線不等於 note 已完成，返回不代表可重播已執行／未知 Down。
 
-## 實作順序
+2026-09-29持續冷開發以[原計畫§8–9](docs/NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md)的C0–C6為準，沿用原GPT-6 Sol／xhigh task設goal。使用既有pixels、非學習式輔助標記、合成與fake-clock補組合／Hold／排程與效能；本輪不啟動emulator、真觸控或模型訓練。部分未達是里程碑，不是goal完成；proposed不能作人工gold，缺實戰語義不阻塞其他可冷完成項。
 
-依 [docs/ROADMAP.md](docs/ROADMAP.md) 與 [主程式新計畫](docs/MAIN_PROGRAM_DEVELOPMENT_PLAN.md) 推進。2026-09-26 使用者改採遊戲實戰研究：擷取器已固定，直接以 Chapter Legacy 的 Glaciaxion HD 建立觀察、預測、觸控與畫面回饋閉環，首次 All Perfect 後進 IN。不另開大型簡單目標 Fixture 階段；既有能力核對與時間／排程的短小合成回歸仍保留。這取代舊「先獨立 Fixture 閉環再研究 Phigros」順序，不取消閉環量測或 pixels-only 原則。新計畫屬待實作規格，不代表遊戲能力已驗收。
+旋轉情境另須覆蓋「Hold按住期間線仍旋轉」與「Note接近時才與線對齊」。區分Note朝向、運動方向、線法向；不以遠處當前同法向作必要配對條件。Hold的接入、持續body接觸與tail結束分開驗證，保留同一contact並依當前支持修訂Move；不固定初次Down位置，也不盲目跟著線旋轉。
 
-## 程式與驗證
+## 不變原則
 
-- 將擷取、視覺處理、追蹤、排程與觸控後端拆成可替換的元件。遊戲專用邏輯不應寫進底層擷取或注入模組。
-- 模擬器型號、解析度、縮放、幀率與觸控後端應由設定明確指定或在啟動時偵測並記錄；勿在演算法中散落固定座標。
-- 多點觸控後端須驗證可維持彼此獨立的接觸點，再宣稱支援 Hold / Move / Flick / 同時按壓。單一 `adb shell input tap` 不足以代表完整多點觸控能力。
-- 任何時間預測或排程變更，至少以可重現的合成軌跡或簡單目標測試驗證其時序；與模擬器相關的結果需保留量測設定。
-- 日誌可供診斷與離線分析，但不得在執行時回饋為譜面或固定按鍵序列。若介面或資料契約改變，同步更新文件。
+1. 自有正式邏輯全 C++20、單程序多執行緒，包括正式資料、分析及訓練邏輯；第三方原版工具可保留原語言。CMake、JSON、XML 與必要維護 shell 可使用。
+2. 遊戲決策只能來自即時 pixels 與有界近期追蹤。不得讀譜、遊戲內部狀態、記憶體、音訊節拍、歌曲身分／進度或歷史按鍵序列來決定觸控。
+3. 擷取只公開最新 frame；慢消費者跳過舊圖。物理 buffer、mailbox、軌跡、推論與診斷皆有硬上限。診斷資料單向流出，不回饋動作策略。
+4. 當前觀測、線／音符身分、note→line 關聯、撞線預測、動作規劃與注入有清楚邊界。預測或插補不是當前像素證據。
+5. 主機時間統一 QPC monotonic；明列 capture_complete、pixels_ready、recognition_complete、預定觸控、injection_start／return。來源時間另列 domain；未知來源年齡不冒稱已量測。
+6. 單一 touch owner；門控與每個計畫獨立到期。未知注入結果不重試 Down，失效撤銷並釋放，完成意圖不復活。
+7. 效能報環境、n、p50／p95／p99／max、失敗與 jitter；不能只報平均、只報已排程成功子集或把各階段 p99 相加。
 
-## 尚未決定的技術選擇
+## 固定基礎與驗證
 
-擷取主用已固定為 gRPC payload fast／256 KiB，以最後驗收為準，不重開選型。既有 gRPC 觸控能力只在已驗證的裝置／映射指紋範圍沿用；遊戲動作語義、視覺方法／模型與時序參數仍依實機證據決定，不把 Fixture 通過視為 Phigros 通過。選擇與理由記入架構文件。
+- 主用擷取固定 gRPC payload fast／RGB888 top-down／256 KiB；不重開選型。WGC／DXGI／scrcpy 僅 bench，MMAP diagnostic-only，無已驗正式備用。
+- 模擬器、解析度、方向、縮放與五指 mapping 由 profile／preflight 指紋核對。Fixture 能力不等於 Phigros 動作語義驗收。
+- 現行冷開發起點 observer38／planner21／diagnostics7，尚無實戰；最近七輪實戰 observer37／planner19。保留 observer36／planner18、observer33／planner13 歷史跨曲比較 binary；新模型未接入。manual-session 由使用者選曲及按 Play，本輪冷goal不啟動它。
+- 時間預測／排程變更須有可重現的合成軌跡／fake-clock 回歸；實戰結果附版本、環境與原始證據。
+- 模型資料按歌曲／譜面家族切分；標註的 unknown 與 proposed 不升格為人工真值。不按歌名調參，不將舊動作當專家策略。
+- 清理後保留範圍與資料缺口見 [清理紀錄](docs/CLEANUP_AUDIT_20260928.md)。旧文件／legacy 程式可從 Git 歷史查閱；刪除的 ignored raw 不可假稱仍可重算。不要恢復舊流程只為滿足歷史文件。
+- 修改契約時同步更新文件。保留目前兩輪跨曲原始證據、能力報告、獨立 baseline 與必要測試輸入；新增資料另有容量帳本。

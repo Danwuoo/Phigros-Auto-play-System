@@ -43,7 +43,7 @@ add_library(pas_proto STATIC ${PROTO_OUT}/emulator_controller.pb.cc
 target_include_directories(pas_proto PUBLIC ${PROTO_OUT})
 target_link_libraries(pas_proto PUBLIC protobuf::libprotobuf gRPC::grpc++)
 
-add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp src/game_tracking_analysis.cpp src/game_tracking_shadow.cpp src/game_dataset.cpp src/game_dataset_tools.cpp src/game_session.cpp src/session_archive.cpp src/session_pixel_clips.cpp)
+add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp src/game_clip_replay.cpp src/game_cold_pipeline.cpp src/game_cold_corpus.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp src/game_tracking_analysis.cpp src/game_tracking_shadow.cpp src/game_dataset.cpp src/game_dataset_tools.cpp src/game_session.cpp src/session_archive.cpp src/session_pixel_clips.cpp)
 target_include_directories(pas_core PUBLIC include)
 target_link_libraries(pas_core PUBLIC nlohmann_json::nlohmann_json bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32)
 if(MSVC)
@@ -63,9 +63,9 @@ else()
   set(PAS_BUILD_DIRTY_JSON false)
 endif()
 set(PAS_BUILD_HASH_JSON "{")
-foreach(PAS_BUILD_FILE src/game.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp
-    src/core.cpp src/emulator.cpp src/config.cpp include/pas/core.hpp include/pas/game.hpp src/game_session.cpp src/manual_session.cpp src/session_archive.cpp
-    include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp include/pas/session_pixel_clips.hpp src/session_pixel_clips.cpp apps/pas/main.cpp)
+foreach(PAS_BUILD_FILE src/game.cpp src/game_clip_replay.cpp src/game_cold_pipeline.cpp src/game_cold_corpus.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp
+    src/core.cpp src/emulator.cpp src/config.cpp src/analysis.cpp include/pas/analysis.hpp include/pas/core.hpp include/pas/game.hpp include/pas/strategy_version.hpp src/game_session.cpp src/manual_session.cpp src/runtime.cpp src/session_archive.cpp
+    src/journal.cpp include/pas/journal.hpp include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp include/pas/session_pixel_clips.hpp src/session_pixel_clips.cpp apps/pas/main.cpp)
   file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/${PAS_BUILD_FILE}" PAS_BUILD_HASH)
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${PAS_BUILD_FILE}")
   string(APPEND PAS_BUILD_HASH_JSON "\"${PAS_BUILD_FILE}\":\"${PAS_BUILD_HASH}\",")
@@ -111,7 +111,7 @@ endif()
 add_executable(pas_tests tests/core_tests.cpp tests/grpc_loopback_tests.cpp
                          tests/grpc_transport_tests.cpp
                          tests/config_analysis_tests.cpp tests/cli_tests.cpp
-                         tests/capture_backend_tests.cpp tests/game_tests.cpp tests/game_tracking_tests.cpp tests/game_dataset_tests.cpp)
+                         tests/capture_backend_tests.cpp tests/game_tests.cpp tests/game_tracking_tests.cpp tests/game_dataset_tests.cpp tests/cold_scenario_tests.cpp)
 target_sources(pas_tests PRIVATE tests/game_session_tests.cpp)
 target_compile_definitions(pas_tests PRIVATE PAS_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(pas_tests PRIVATE pas_bench pas_emulator pas_core GTest::gtest_main)

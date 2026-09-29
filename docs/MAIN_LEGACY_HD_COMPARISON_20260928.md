@@ -1,5 +1,7 @@
 # 最新 main 策略 Legacy HD 第二輪實戰（2026-09-28）
 
+> 2026-09-28 清理後註記：本文保留當時版本與證據界線，舊授權／待辦不作現行指令。後續方向見[跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)；原始資料與 binary 的現存／已刪範圍見[清理紀錄](CLEANUP_AUDIT_20260928.md)。歷史 JSON 的 hash／pass 不代表被刪的 raw 仍可重算。
+
 本輪已完成，沿用合併後 main 的 observer36／planner18、手動選曲／Play 的多輪待命流程與原五指 lead35ms 配置。保存 **21 張確認結算，包含19首不同曲名的19輪HD、2輪IN**；程式正常STOPPED，emulator已關閉。前一輪 HD9 observer33／planner13 的 20 張結算及原始檔保留在 [舊實戰紀錄](HD9_LEGACY_HD_RESULTS_20260928.md)，不混入新策略成績。**-SURREALISM- 曾卡住重來、Credits 完整重跑一次**是使用者對舊輪次的說明；沒有證據可把卡住原因指定為某筆擷取中止。
 
 新增可選 `manual-session --pixel-clips` 診斷採樣。它只讀與遊玩決策相同的當前 frame，在辨識後複製完整 1280×720 top-down RGB888 畫面，獨立背景執行緒寫成原始 `.rgb` 與 `pixel-clips/index.jsonl`。每筆列出來源 frame、擷取完成、辨識開始／結束、採樣複製開始／結束的 host QPC 時間，及同幀偵測線／目標數；檔案附 SHA-256。原始 RGB 可依 index 的寬、高、stride 離線顯示或轉 PNG。採樣不是新模型、標註或譜面，也不會回饋視覺判斷、排程或觸控。

@@ -566,9 +566,79 @@ int main(int argc, char** argv) {
     auto* analyze_cmd = app.add_subcommand("analyze", "Recompute old or new JSONL without Python");
     auto* capture_analysis = analyze_cmd->add_subcommand("capture", "Capture window and distribution");
     auto* game_analysis = analyze_cmd->add_subcommand("game", "Recompute candidate, prediction and dry-run evidence");
+    auto* game_round_analysis = analyze_cmd->add_subcommand("game-round", "Verify summary event segments and analyze a whole offline round");
+    auto* game_clips_analysis = analyze_cmd->add_subcommand("game-clips", "Verify saved RGB clips and replay each three-frame clip from cold observer state");
+    auto* game_clips_bench = analyze_cmd->add_subcommand("game-clips-bench", "Interleaved bounded A/B for observer scratch reuse on saved RGB");
+    auto* game_cold_pipeline = analyze_cmd->add_subcommand("game-cold-pipeline", "Offline QPC latest-frame to FakeTouch pipeline benchmark; no device access");
+    auto* game_cold_pipeline_ab = analyze_cmd->add_subcommand("game-cold-pipeline-ab", "Validate frozen A/A tolerance against three interleaved offline pipeline A/B batches");
+    auto* game_cold_pipeline_aa = analyze_cmd->add_subcommand("game-cold-pipeline-aa", "Measure three all-full-scan pipeline A/A pairs before freezing tolerance");
+    auto* game_line_gap_sweep = analyze_cmd->add_subcommand("game-line-gap-sweep", "Finite offline synthetic truth sweep for horizontal line gap; no device access");
+    auto* game_cold_c5_gate = analyze_cmd->add_subcommand("game-cold-c5-gate", "Apply original cold C5 rule across tap and dense paired runs plus load evidence");
+    auto* game_corpus_index = analyze_cmd->add_subcommand("game-corpus", "Verify two existing RGB sessions and freeze family-grouped inspection clips; offline only");
+    auto* game_corpus_propose = analyze_cmd->add_subcommand("game-corpus-propose", "Write 30-clip source sheets and proposed observer overlays; offline only");
+    auto* game_corpus_validate = analyze_cmd->add_subcommand("game-corpus-validate", "Verify proposed markers and refuse gold promotion; offline only");
+    auto* game_coverage_validate = analyze_cmd->add_subcommand("game-coverage-validate", "Audit required G1-T2 and risk cases without treating pending as coverage; offline only");
+    auto* game_replay_diff = analyze_cmd->add_subcommand("game-replay-diff", "Compare frozen and current candidate counts on verified RGB frames; offline only");
+    std::string corpus_old_clips,corpus_old_results,corpus_new_clips,corpus_new_results;
+    std::string corpus_index_path,corpus_output_path,corpus_proposals_path;
+    std::string replay_diff_index,replay_before_old,replay_after_old,replay_before_new,replay_after_new;
+    game_corpus_index->add_option("old-clips",corpus_old_clips)->required();
+    game_corpus_index->add_option("old-results",corpus_old_results)->required();
+    game_corpus_index->add_option("new-clips",corpus_new_clips)->required();
+    game_corpus_index->add_option("new-results",corpus_new_results)->required();
+    game_corpus_propose->add_option("corpus-index",corpus_index_path)->required();
+    game_corpus_propose->add_option("output-dir",corpus_output_path)->required();
+    game_corpus_validate->add_option("corpus-index",corpus_index_path)->required();
+    game_corpus_validate->add_option("proposals",corpus_proposals_path)->required();
+    game_coverage_validate->add_option("manifest",analysis_path)->required();
+    game_replay_diff->add_option("corpus-index",replay_diff_index)->required();
+    game_replay_diff->add_option("before-old",replay_before_old)->required();
+    game_replay_diff->add_option("after-old",replay_after_old)->required();
+    game_replay_diff->add_option("before-new",replay_before_new)->required();
+    game_replay_diff->add_option("after-new",replay_after_new)->required();
+    std::string clips_overlay_dir;int clips_overlay_round=0,clips_overlay_clip=0;
+    int clips_line_gap=4;
+    bool clips_no_row_prescreen=false,clips_bench_row_prescreen=false,clips_bench_aa=false;
+    int clips_bench_batches=3,clips_bench_replays=6;
     auto* game_image_analysis = analyze_cmd->add_subcommand("game-image", "Offline single PNG geometry diagnostics; no input or timing prediction");
     game_image_analysis->add_option("path",analysis_path)->required();
     game_analysis->add_option("path", analysis_path)->required();
+    game_round_analysis->add_option("path", analysis_path)->required();
+    game_clips_analysis->add_option("path", analysis_path)->required();
+    game_clips_analysis->add_option("--overlay-dir",clips_overlay_dir,"Write source and proposed overlay PNGs for one selected clip");
+    game_clips_analysis->add_option("--overlay-round",clips_overlay_round);
+    game_clips_analysis->add_option("--overlay-clip",clips_overlay_clip);
+    game_clips_analysis->add_flag("--no-row-prescreen",clips_no_row_prescreen,
+        "Use original full row scan for offline comparison");
+    game_clips_analysis->add_option("--line-gap",clips_line_gap,
+        "Bounded offline horizontal line gap parameter sweep; default runtime value is four")
+        ->check(CLI::Range(3,5));
+    game_clips_bench->add_option("path",analysis_path)->required();
+    game_clips_bench->add_option("--batches",clips_bench_batches)->check(CLI::Range(1,5));
+    game_clips_bench->add_option("--replays",clips_bench_replays)->check(CLI::Range(1,10));
+    game_clips_bench->add_flag("--row-prescreen",clips_bench_row_prescreen,
+        "Interleave original full scan and bounded prescreen instead of scratch allocation modes");
+    game_clips_bench->add_flag("--aa",clips_bench_aa,
+        "Use original full scan in both interleaved modes to quantify measurement noise");
+    std::string pipeline_journal;
+    int pipeline_frames=1000,pipeline_cadence_ms=20;
+    int pipeline_writer_capacity=8192,pipeline_writer_delay_us=0,pipeline_rpc_delay_ms=0;
+    std::string pipeline_scene="tap";
+    bool pipeline_jitter=false,pipeline_full_scan=false;
+    game_cold_pipeline->add_option("--journal",pipeline_journal)->required();
+    game_cold_pipeline->add_option("--frames",pipeline_frames)->check(CLI::Range(12,10000));
+    game_cold_pipeline->add_option("--cadence-ms",pipeline_cadence_ms)->check(CLI::Range(8,50));
+    game_cold_pipeline->add_flag("--jitter",pipeline_jitter);
+    game_cold_pipeline->add_flag("--full-scan",pipeline_full_scan);
+    game_cold_pipeline->add_option("--scene",pipeline_scene)->check(CLI::IsMember({"tap","dense"}));
+    game_cold_pipeline->add_option("--writer-capacity",pipeline_writer_capacity)->check(CLI::Range(2,8192));
+    game_cold_pipeline->add_option("--writer-delay-us",pipeline_writer_delay_us)->check(CLI::Range(0,50000));
+    game_cold_pipeline->add_option("--rpc-delay-ms",pipeline_rpc_delay_ms)->check(CLI::Range(0,50));
+    game_cold_pipeline_ab->add_option("directory",analysis_path)->required();
+    std::string pipeline_meter;
+    game_cold_pipeline_aa->add_option("directory",analysis_path)->required();
+    game_cold_pipeline_aa->add_option("--meter",pipeline_meter)->required();
+    game_cold_c5_gate->add_option("directory",analysis_path)->required();
     capture_analysis->add_option("path", analysis_path)->required();
     auto* pause_analysis = analyze_cmd->add_subcommand("pause", "Receiver pause relative lag");
     pause_analysis->add_option("path", analysis_path)->required();
@@ -648,6 +718,29 @@ int main(int argc, char** argv) {
             } else if (*tracking_analysis){if(tracking_reupdate&&std::find(tracking_methods.begin(),tracking_methods.end(),"oc_observation")==tracking_methods.end())throw std::invalid_argument("--oc-reupdate requires oc_observation");
                 auto result=analyze_tracking_bank(analysis_path,tracking_methods,tracking_updates,tracking_reupdate);wchar_t module[32768]{};if(GetModuleFileNameW(nullptr,module,32768))result["binary_sha256"]=sha256_file(module);std::cout<<result.dump(2)<<'\n';}
             else if (*game_analysis) std::cout << analyze_game_jsonl(analysis_path).dump(2) << '\n';
+            else if (*game_round_analysis) std::cout << analyze_game_round(analysis_path).dump(2) << '\n';
+            else if (*game_clips_analysis) std::cout << replay_game_pixel_clips(analysis_path,clips_overlay_dir,
+                clips_overlay_round,clips_overlay_clip,false,!clips_no_row_prescreen,
+                clips_line_gap).dump(2) << '\n';
+            else if (*game_clips_bench) std::cout << benchmark_game_pixel_clips(analysis_path,
+                clips_bench_batches,clips_bench_replays,clips_bench_row_prescreen,clips_bench_aa).dump(2) << '\n';
+            else if (*game_cold_pipeline) std::cout << benchmark_game_cold_pipeline(pipeline_journal,
+                pipeline_frames,pipeline_cadence_ms,pipeline_jitter,!pipeline_full_scan,
+                pipeline_scene,pipeline_writer_capacity,pipeline_writer_delay_us,
+                pipeline_rpc_delay_ms).dump(2) << '\n';
+            else if (*game_cold_pipeline_ab) std::cout << analyze_game_cold_pipeline_ab(analysis_path).dump(2) << '\n';
+            else if (*game_cold_pipeline_aa) std::cout << analyze_game_cold_pipeline_aa(analysis_path,pipeline_meter).dump(2) << '\n';
+            else if (*game_line_gap_sweep) std::cout << analyze_game_line_gap_sweep().dump(2) << '\n';
+            else if (*game_cold_c5_gate) std::cout << analyze_game_cold_c5_gate(analysis_path).dump(2) << '\n';
+            else if (*game_corpus_index) std::cout << index_game_pixel_corpus(corpus_old_clips,
+                corpus_old_results,corpus_new_clips,corpus_new_results).dump(2) << '\n';
+            else if (*game_corpus_propose) std::cout << write_game_corpus_proposals(corpus_index_path,
+                corpus_output_path).dump(2) << '\n';
+            else if (*game_corpus_validate) std::cout << validate_game_corpus_proposals(corpus_index_path,
+                corpus_proposals_path).dump(2) << '\n';
+            else if (*game_coverage_validate) std::cout << validate_game_cold_coverage_manifest(analysis_path).dump(2) << '\n';
+            else if (*game_replay_diff) std::cout << compare_game_pixel_replays(replay_diff_index,
+                replay_before_old,replay_after_old,replay_before_new,replay_after_new).dump(2) << '\n';
             else if (*capture_analysis) std::cout << analyze_capture_jsonl(analysis_path).dump(2) << '\n';
             else if (*pause_analysis) std::cout << analyze_pause_jsonl(analysis_path).dump(2) << '\n';
             else if (*campaign_analysis) std::cout << analyze_capture_campaign(analysis_path).dump(2) << '\n';

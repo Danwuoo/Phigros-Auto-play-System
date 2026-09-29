@@ -1,8 +1,10 @@
 # gRPC 接收區塊正式接入
 
+> 2026-09-28 清理後註記：本文保留當時版本與證據界線，舊授權／待辦不作現行指令。後續方向見[跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)；原始資料與 binary 的現存／已刪範圍見[清理紀錄](CLEANUP_AUDIT_20260928.md)。歷史 JSON 的 hash／pass 不代表被刪的 raw 仍可重算。
+
 狀態：revision 2 正式接入完成；Release 34／34 回歸通過，18 批傳輸短測、正式擷取、接收暫停與 observe 驗證完成。擷取 channel 預設 256 KiB，保留 8／64 KiB。此交付不等同遊戲閉環或長時間性能驗收。
 
-使用者在 [短測研究](GRPC_TRANSPORT_RESEARCH_20260926.md) 後授權完成開發。本輪將 256 KiB 畫面 channel 接收區塊接入正常建置，保留 8／64 KiB 的配置與比較能力。選擇依據是前輪模擬器 client CPU 改善較穩定；p99 並未一致改善，因此本次不宣稱端到端或尾端延遲已通過數值門檻。
+使用者在 短測研究（GRPC_TRANSPORT_RESEARCH_20260926.md 已清理，歷史見 Git baf3d4f） 後授權完成開發。本輪將 256 KiB 畫面 channel 接收區塊接入正常建置，保留 8／64 KiB 的配置與比較能力。選擇依據是前輪模擬器 client CPU 改善較穩定；p99 並未一致改善，因此本次不宣稱端到端或尾端延遲已通過數值門檻。
 
 ## 交付內容
 

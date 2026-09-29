@@ -4,6 +4,7 @@
 #include "pas/session_pixel_clips.hpp"
 #include "pas/analysis.hpp"
 #include "pas/preview.hpp"
+#include "pas/strategy_version.hpp"
 #include "session_build_provenance.hpp"
 #include <algorithm>
 #include <fstream>
@@ -73,14 +74,15 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
     wchar_t module[32768]{};const auto size=GetModuleFileNameW(nullptr,module,32768);
     if(!size||size==32768)throw std::runtime_error("runtime executable unavailable");
     const auto root=std::filesystem::path(config.log_dir)/("manual-session-"+std::to_string(clock.now_ns()));
-    auto manifest=json{{"schema_version",1},{"mode","manual-session"},{"strategy","main observer36/planner18 plus manual standby lifecycle"},
+    auto manifest=json{{"schema_version",1},{"mode","manual-session"},{"strategy",game_strategy_name()+" plus manual standby lifecycle"},
         {"baseline_source_commit","5ad759ef5004ab89be8f1a326e75fb96e7cb9a0e"},
         {"baseline_historical_binary_sha256","d7ce474576a0283711b046b82720f9c10e8de0bb92203eb999a6c8decc157162"},
         {"executable_sha256",sha256_file(module)},{"config_sha256",sha256_file(config_path)},
         {"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},
         {"compiled_source_sha256",json::parse(pas_session_source_hashes)},
         {"config",config.public_json},{"capability_preflight",preflight},{"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
-        {"game_observer_version",36},{"game_planner_version",18},{"lifecycle_version",1},
+        {"game_observer_version",game_observer_version},{"game_planner_version",game_planner_version},
+        {"game_diagnostics_version",game_diagnostics_version},{"lifecycle_version",1},
         {"automatic_play_enabled",false},{"round_watchdog_ns",watchdog},{"watchdog_is_result",false},
         {"standby_timeout",nullptr},{"source_absolute_age",nullptr},{"input_policy","manual_PLAY_only_gated_gameplay"},
         {"capture",grpc_transport_manifest(256)},{"capture_pool_slots",3},{"decision_slots",1},
