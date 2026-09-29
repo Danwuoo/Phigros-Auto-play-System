@@ -10,9 +10,9 @@ Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程�
 
 ## 現況與證據
 
-2026-09-29 合併審查與冷測量器修補見[驗收紀錄](docs/COLD_DEVELOPMENT_MERGE_REVIEW_20260929.md)；本機main整合不代表新版實戰驗收。
+2026-09-29 合併審查與冷測量器修補見[驗收紀錄](docs/COLD_DEVELOPMENT_MERGE_REVIEW_20260929.md)；本機main整合不代表新版實戰驗收。四首實戰與待驗共用 lead 試驗見[熱調試紀錄](docs/FOUR_SONG_HOT_TUNING_20260929.md)。
 
-- 目前 checkout 為 observer47／planner23／diagnostics11；observer38／planner21／diagnostics7 配套已獨立凍結。現行合成RGB／oracle／fake-clock代表矩陣32／32列通過；線ID確認與局部重接、旋轉Hold同contact、Drag／Flick混合和容量退化均有正反例。C1的3／4／5px共用線缺口參數實驗保留4px，未把未覆核舊RGB當gold。六區塊逐列預檢在原始RGB微基準及25ms固定Tap的正式FakeCapture→LatestFrame→observer→owner→FakeTouch冷鏈均超過預先凍結噪聲容忍；密集128 Note場景的逐批加速實驗未過，但延遲與安全未超原計畫非退步容忍。Tap／密集各10,000幀長跑及受控慢writer／fake RPC已完成，完整結果和限制見[冷開發結果](docs/COLD_DEVELOPMENT_RESULT_20260929.md)。最近七輪實戰仍是observer37／planner19（六HD＋光IN）；新版沒有實戰遊戲結果。
+- 冷合併時的 main 基線為 observer47／planner23／diagnostics11；observer38／planner21／diagnostics7 配套已獨立凍結。現行合成RGB／oracle／fake-clock代表矩陣32／32列通過；線ID確認與局部重接、旋轉Hold同contact、Drag／Flick混合和容量退化均有正反例。C1的3／4／5px共用線缺口參數實驗保留4px，未把未覆核舊RGB當gold。六區塊逐列預檢在原始RGB微基準及25ms固定Tap的正式FakeCapture→LatestFrame→observer→owner→FakeTouch冷鏈均超過預先凍結噪聲容忍；密集128 Note場景的逐批加速實驗未過，但延遲與安全未超原計畫非退步容忍。Tap／密集各10,000幀長跑及受控慢writer／fake RPC已完成，完整結果和限制見[冷開發結果](docs/COLD_DEVELOPMENT_RESULT_20260929.md)。最近七輪實戰仍是observer37／planner19（六HD＋光IN）；當時新版沒有實戰遊戲結果；後續四首熱測另見熱調試紀錄。
 - 兩版各比較同 19 首 HD：舊版 815 Miss，新版 818 Miss；新版 15 首分數提高，但少數曲明顯退步。另有新版兩首 IN，各一輪，不能當泛化驗收。
 - 第二輪保存 186 組三幀／558 張全畫面 RGB，尚未具人工線／音符／關係真值。第 21 輪依採樣上限没有片段。
 - 判定線 M1 的 D1–D4 已有正式 C++ 修正與合成／fake-clock 回歸；[實作與驗證紀錄](docs/JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)列出實際 pixels 核對及仍未知的遊戲語義。兩秒採樣 ring 與模型未接入。
@@ -46,6 +46,8 @@ out/release-v145/Release/pas.exe manual-session `
 啟動後由使用者選曲並按 Play；程式僅由即時 HUD 接手。結算確認後釋放觸控、保存同源結算圖並回待命，不自動選曲／重試。Escape 或 Ctrl+C 停止。未知畫面不取得觸控資格；結算辨識限已核對的 1280×720 英文布局。
 
 --pixel-clips 需使用從當前 source 重建的執行檔，或保留的第二輪 main-legacy-v145 binary；它啟用既有有限三幀診斷：最多 20 輪、每輪 30 張，writer mailbox 4 張；不是新研究的兩秒採樣器。--round-watchdog-s 預設 0，超時記 FAULT／aborted，不當成曲尾。這些命令是操作說明，不是自動啟動遊戲的授權。
+
+熱調參分支另用 `configs/phigros-hd-assist-five-lead40.json`：manual-session 接受 30–45 ms lead，owner 依 profile 設定並在 manifest 記有效值。40 ms 是待四首重測的候選；35 ms 保留為回退基線。
 
 歷史比較版本請保留原 binary，不在當前 checkout 重建覆寫：
 - 舊版：out/hd9-session-release/Release/pas.exe。

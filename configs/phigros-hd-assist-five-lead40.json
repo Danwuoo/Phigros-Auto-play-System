@@ -1,0 +1,38 @@
+{
+  "schema": 2,
+  "name": "phigros-hd-assist-five-lead40",
+  "serial": "emulator-5554",
+  "capture": {
+    "kind": "emulator-grpc",
+    "execution": "thread",
+    "transport": "payload",
+    "image_format": "rgb888",
+    "row_order": "top-down",
+    "width": 1280,
+    "height": 720,
+    "source_rotation": 1,
+    "grpc_read_chunk_kib": 256,
+    "max_relative_lag_ms": 250
+  },
+  "touch": {
+    "kind": "emulator-grpc",
+    "timeout_ms": 100,
+    "max_contacts": 5,
+    "width": 720,
+    "height": 1280,
+    "rotation_deg": 90
+  },
+  "scheduler": {
+    "max_plans": 128,
+    "max_steps": 16,
+    "horizon_ms": 350,
+    "evidence_max_age_ms": 100
+  },
+  "game": {
+    "enabled_types": ["tap", "hold", "drag", "flick"],
+    "lead_ms": 40,
+    "uncertainty_ms": 30
+  },
+  "preview": { "hz": 5 },
+  "log_dir": "measurements/game-assist"
+}

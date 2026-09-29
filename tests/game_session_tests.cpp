@@ -139,6 +139,26 @@ TEST(ManualOwner, StaleEvidenceCannotDownAndUnknownInputCannotRebuild) {
     EXPECT_THROW(fault.finish(),std::runtime_error);
     EXPECT_THROW(fault.start(2),std::logic_error);
 }
+TEST(ManualOwner, ConfiguredLeadMovesOnlyFreshHoldDeadlineAndReleases) {
+    FakeClock clock;FakeTouchBackend touch35(clock),touch40(clock);
+    SessionGameOwner owner35(clock,touch35,5,{15,35'000'000,30'000'000});
+    SessionGameOwner owner40(clock,touch40,5,{15,40'000'000,30'000'000});
+    const Nanoseconds start=1'000'000'000;clock.set(start);
+    owner35.start(1);owner40.start(1);
+    auto s=scene(1,start);s.targets={hold(start)};s.targets[0].crossing_ns=start+80'000'000;
+    owner35.accept(s,true);owner40.accept(s,true);
+    const auto plans35=owner35.owner()->take_accepted_plans();
+    const auto plans40=owner40.owner()->take_accepted_plans();
+    ASSERT_EQ(plans35.size(),1);ASSERT_EQ(plans40.size(),1);
+    EXPECT_EQ(plans35[0].steps.front().due_ns,start+45'000'000);
+    EXPECT_EQ(plans40[0].steps.front().due_ns,start+40'000'000);
+    clock.set(start+40'000'000);owner35.poll();owner40.poll();
+    EXPECT_TRUE(touch35.contacts().empty());EXPECT_EQ(touch40.contacts().size(),1);
+    clock.set(start+45'000'000);owner35.poll();
+    EXPECT_EQ(touch35.contacts().size(),1);
+    owner35.finish();owner40.finish();
+    EXPECT_TRUE(touch35.contacts().empty());EXPECT_TRUE(touch40.contacts().empty());
+}
 TEST(ManualStrategy, SamePixelsFakeClockTargetsPlansReceiptsMatchPremergeMainGolden) {
     const auto original=hd9_trace(false),wrapped=hd9_trace(true);EXPECT_EQ(original,wrapped);
     std::ifstream file(std::filesystem::path(PAS_TEST_SOURCE_DIR)/"tests/data/main-strategy-golden.json");

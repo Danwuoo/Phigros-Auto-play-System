@@ -1,6 +1,6 @@
 # 現行架構與資料契約
 
-2026-09-29。現行開發版 observer47／planner23／diagnostics11，單程序 C++20；最近七輪實戰仍是 observer37／planner19，先前兩輪為舊版基準。判定線修正見[實作紀錄](JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)，後續設計見 [跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。本文區分已存在的執行契約與未實作的學習式方案。
+2026-09-29。main 冷合併基線 observer47／planner23／diagnostics11；四首熱調參工作分支候選 observer47／planner24／diagnostics11，單程序 C++20。先前七輪實戰為 observer37／planner19，兩輪較早結果為舊版基準。判定線修正見[實作紀錄](JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)，後續設計見 [跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。本文區分已存在的執行契約與未實作的學習式方案。
 
 2026-09-29補充：observer37／planner19已完成七輪實戰（六HD＋光IN）；原始結果見[冷開發計畫](NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md)。[冷開發結果](COLD_DEVELOPMENT_RESULT_20260929.md)記錄新版的分段SHA驗證、source_frame事件join、QPC子段、Note已占用替代配對與Flick路徑修正。固定擷取／時鐘／latest-frame／單owner契約不變；本輪只離線開發。下述為當前實作，不代表所有判定線與Note形式已驗收。
 
@@ -73,6 +73,8 @@ note→line 拒絕 association_invalid 的線，以局部距離、沿線範圍�
 ## 多輪生命週期
 
 manual-session：STANDBY → STARTING → PLAYING → RESULT → STANDBY。使用者選曲及按 Play；當前 HUD／observer gate 才可觸控。六個英文結算文字須三個不同新鮮 frame、跨度至少 60ms；第一份結算證據即關閉新 Down。空白、無候選、HUD 消失或暫停不算結算。
+
+熱調參分支只容許 profile 的共用 `game.lead_ms` 在 30–45 ms，owner 依 profile 值排程，manifest 記有效 nanoseconds；原 35 ms 為回退基線，40 ms 為待實景驗證候選。五指、擷取、門控、到期與未知 Down 契約不變。
 
 真正新 round 重設 observer／owner；曲中 HUD／source 撤銷不清除已完成 identity。geometry／generation 改變、未知注入／釋放結果為 FAULT。finalize 保存首份 release report。watchdog 只管停止，不能當歌曲時鐘或結算。
 

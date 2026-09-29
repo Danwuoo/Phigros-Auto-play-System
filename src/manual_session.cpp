@@ -64,8 +64,9 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
        config.width!=1280||config.height!=720||config.source_rotation!=1||config.grpc_read_chunk_kib!=256||
        config.max_relative_lag_ms!=250||config.touch_width!=720||config.touch_height!=1280||config.touch_rotation!=90||
        config.touch_timeout_ms!=100||config.max_plans!=128||config.max_steps!=16||config.horizon_ms!=350||
-       config.evidence_max_age_ms!=100||config.max_contacts!=5||config.game_type_mask!=15||config.game_lead_ms!=35||config.game_uncertainty_ms!=30)
-        throw std::invalid_argument("manual-session requires 1280x720 rotation1 / 256KiB / five contacts / all types / lead35 / uncertainty30 profile");
+       config.evidence_max_age_ms!=100||config.max_contacts!=5||config.game_type_mask!=15||
+       config.game_lead_ms<30||config.game_lead_ms>45||config.game_uncertainty_ms!=30)
+        throw std::invalid_argument("manual-session requires 1280x720 rotation1 / 256KiB / five contacts / all types / lead30..45 / uncertainty30 profile");
     if(watchdog<0||watchdog>3'600'000'000'000LL)throw std::invalid_argument("invalid round watchdog");
     StopGuard stop_guard;
     const auto preflight=game_preflight(config_path,capability_path);
@@ -82,6 +83,8 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
         {"compiled_source_sha256",json::parse(pas_session_source_hashes)},
         {"config",config.public_json},{"capability_preflight",preflight},{"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
         {"game_observer_version",game_observer_version},{"game_planner_version",game_planner_version},
+        {"effective_game_lead_ns",static_cast<Nanoseconds>(config.game_lead_ms)*1'000'000},
+        {"effective_game_uncertainty_ns",static_cast<Nanoseconds>(config.game_uncertainty_ms)*1'000'000},
         {"game_diagnostics_version",game_diagnostics_version},{"lifecycle_version",1},
         {"automatic_play_enabled",false},{"round_watchdog_ns",watchdog},{"watchdog_is_result",false},
         {"standby_timeout",nullptr},{"source_absolute_age",nullptr},{"input_policy","manual_PLAY_only_gated_gameplay"},
@@ -166,7 +169,9 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
         try {
             backend=std::make_unique<GrpcTouch>(clock,endpoint,PixelCoordinateMap(config.width,config.height,config.touch_width,config.touch_height,config.touch_rotation),
                 config.touch_width,config.touch_height,config.max_contacts,std::chrono::milliseconds(config.touch_timeout_ms));
-            SessionGameOwner game(clock,*backend,5,{15,35'000'000,30'000'000});
+            SessionGameOwner game(clock,*backend,config.max_contacts,
+                {config.game_type_mask,static_cast<Nanoseconds>(config.game_lead_ms)*1'000'000,
+                 static_cast<Nanoseconds>(config.game_uncertainty_ms)*1'000'000});
             const auto record=[&](json value){archive.event(active,std::move(value));};
             const auto receipts=[&](const std::vector<TouchReceipt>& rs) {
                 for(const auto& r:rs) {
