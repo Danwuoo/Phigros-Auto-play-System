@@ -31,6 +31,7 @@ struct Component {
     double sx = 0, sy = 0, xx = 0, yy = 0, xy = 0;
     Vec2 ribbon_center{};
     double ribbon_width=0,ribbon_height=0;
+    std::vector<LineCandidate> split_lines;
 };
 int classify(const std::uint8_t* p) {
     const int r=p[0], g=p[1], b=p[2];
@@ -40,7 +41,109 @@ int classify(const std::uint8_t* p) {
     if (r > 195 && g > 195 && b > 195 && std::max({r,g,b})-std::min({r,g,b}) < 35) return 4;
     return 0;
 }
-std::vector<Component> components(const Frame& f, bool& capacity) {
+// Recover long, currently visible ridges when a white crossing joins them
+// into one broad component. This yields line candidates only; association
+// and touch ownership remain in the legacy A36 paths. Bound the search to
+// 4096 sampled pixels and four candidates per component.
+std::vector<LineCandidate> split_joined_white_ridges(const Frame& f,
+    const std::vector<int>& component_pixels,int sampled_width) {
+    constexpr int scale=2;
+    std::vector<Vec2> points;points.reserve(std::min<std::size_t>(component_pixels.size(),4096));
+    const auto step=std::max<std::size_t>(1,(component_pixels.size()+4095)/4096);
+    for(std::size_t i=0;i<component_pixels.size();i+=step)
+        points.push_back({double(component_pixels[i]%sampled_width*scale),
+                          double(component_pixels[i]/sampled_width*scale)});
+    std::vector<bool> active(points.size(),true);
+    std::vector<LineCandidate> result;result.reserve(4);
+    const auto luminance=[&](Vec2 p) {
+        const int x=static_cast<int>(std::lround(p.x)),y=static_cast<int>(std::lround(p.y));
+        if(x<0||y<0||x>=f.width||y>=f.height)return -1;
+        const auto* rgb=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+        return (rgb[0]*77+rgb[1]*150+rgb[2]*29)/256;
+    };
+    const auto hold_fill=[&](Vec2 p) {
+        const int x=static_cast<int>(std::lround(p.x)),y=static_cast<int>(std::lround(p.y));
+        if(x<0||y<0||x>=f.width||y>=f.height)return false;
+        const auto* rgb=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+        return rgb[0]>=100&&rgb[0]<=180&&rgb[1]>=100&&rgb[1]<=180&&
+            rgb[2]>=100&&rgb[2]<=180&&
+            std::max({rgb[0],rgb[1],rgb[2]})-std::min({rgb[0],rgb[1],rgb[2]})<=30;
+    };
+    const auto note_color=[&](Vec2 p) {
+        const int x=static_cast<int>(std::lround(p.x)),y=static_cast<int>(std::lround(p.y));
+        if(x<0||y<0||x>=f.width||y>=f.height)return false;
+        const int color=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3);
+        return color==1||color==3;
+    };
+    for(int line_number=0;line_number<4;++line_number) {
+        std::vector<std::size_t> extremes;
+        for(int direction=0;direction<8;++direction) {
+            const double angle=direction*3.14159265358979323846/8;
+            const Vec2 u{std::cos(angle),std::sin(angle)};
+            double low=1e20,high=-1e20;std::size_t low_id=0,high_id=0;
+            for(std::size_t i=0;i<points.size();++i)if(active[i]) {
+                const double projection=points[i].x*u.x+points[i].y*u.y;
+                if(projection<low){low=projection;low_id=i;}
+                if(projection>high){high=projection;high_id=i;}
+            }
+            if(high>low){extremes.push_back(low_id);extremes.push_back(high_id);}
+        }
+        std::sort(extremes.begin(),extremes.end());
+        extremes.erase(std::unique(extremes.begin(),extremes.end()),extremes.end());
+        int best_support=0;LineCandidate best;Vec2 best_anchor{},best_normal{};
+        for(std::size_t a=0;a<extremes.size();++a)for(std::size_t b=a+1;b<extremes.size();++b) {
+            const Vec2 p=points[extremes[a]],q=points[extremes[b]];
+            const double distance=std::hypot(q.x-p.x,q.y-p.y);
+            if(distance<f.width*.20)continue;
+            const Vec2 u{(q.x-p.x)/distance,(q.y-p.y)/distance},n{-u.y,u.x};
+            int support=0;double s0=1e20,s1=-1e20,rho=0;
+            for(std::size_t i=0;i<points.size();++i)if(active[i]) {
+                const double d=(points[i].x-p.x)*n.x+(points[i].y-p.y)*n.y;
+                if(std::abs(d)>3)continue;
+                const double s=points[i].x*u.x+points[i].y*u.y;
+                s0=std::min(s0,s);s1=std::max(s1,s);rho+=points[i].x*n.x+points[i].y*n.y;
+                ++support;
+            }
+            const double length=s1-s0;
+            if(support<50||length<f.width*.20||support<length/7||support<best_support)continue;
+            const double mean_rho=rho/support;
+            const LineCandidate candidate{{u.x*(s0+s1)*.5+n.x*mean_rho,
+                                           u.y*(s0+s1)*.5+n.y*mean_rho},u,length,3,.85};
+            int ridge_samples=0,body_adjacent_samples=0;
+            for(int sample=-4;sample<=4;++sample) {
+                bool found=false;
+                for(int shift=-2;shift<=2&&!found;++shift) {
+                    const Vec2 point{candidate.center.x+u.x*sample*length*.10+n.x*shift,
+                                     candidate.center.y+u.y*sample*length*.10+n.y*shift};
+                    const int center=luminance(point);
+                    const int left=luminance({point.x-n.x*4,point.y-n.y*4});
+                    const int right=luminance({point.x+n.x*4,point.y+n.y*4});
+                    found=center>=80&&left>=0&&right>=0&&center-left>=18&&center-right>=18;
+                }
+                ridge_samples+=found;
+                const Vec2 center_point{candidate.center.x+u.x*sample*length*.10,
+                                        candidate.center.y+u.y*sample*length*.10};
+                bool body_adjacent=false;
+                for(const int offset:{8,16,24,32,40,48}) {
+                    const Vec2 left{center_point.x-n.x*offset,center_point.y-n.y*offset};
+                    const Vec2 right{center_point.x+n.x*offset,center_point.y+n.y*offset};
+                    body_adjacent=body_adjacent||note_color(left)||note_color(right)||
+                        hold_fill(left)||hold_fill(right);
+                }
+                body_adjacent_samples+=body_adjacent;
+            }
+            if(ridge_samples<7||body_adjacent_samples>=3)continue;
+            best_support=support;best=candidate;best_anchor=p;best_normal=n;
+        }
+        if(!best_support)break;
+        result.push_back(best);
+        for(std::size_t i=0;i<points.size();++i)if(active[i]&&
+            std::abs((points[i].x-best_anchor.x)*best_normal.x+
+                     (points[i].y-best_anchor.y)*best_normal.y)<=3)active[i]=false;
+    }
+    return result;
+}
+std::vector<Component> components(const Frame& f, bool& capacity,bool split_joined_lines) {
     constexpr int scale=2;
     const int w=(f.width+1)/2, h=(f.height+1)/2;
     std::vector<std::uint8_t> mask(static_cast<std::size_t>(w)*h);
@@ -87,6 +190,16 @@ std::vector<Component> components(const Frame& f, bool& capacity) {
                 c.ribbon_center={u.x*(s0+s1)/2+n.x*(d0+d1)/2,u.y*(s0+s1)/2+n.y*(d0+d1)/2};
                 c.ribbon_width=s1-s0+2;c.ribbon_height=d1-d0+2;
             }
+        }
+        if(split_joined_lines&&c.color==4&&c.count>=100&&
+           (c.x1-c.x0>f.width*.18||c.y1-c.y0>f.height*.3)) {
+            const double cx=c.sx/c.count,cy=c.sy/c.count;
+            const double xx=c.xx/c.count-cx*cx,yy=c.yy/c.count-cy*cy,
+                         xy=c.xy/c.count-cx*cy;
+            const double major=std::sqrt(std::max(0.0,(xx+yy+std::hypot(xx-yy,2*xy))/2));
+            const double minor=std::sqrt(std::max(0.0,(xx+yy-std::hypot(xx-yy,2*xy))/2));
+            if(major<12*std::max(1.0,minor))
+                c.split_lines=split_joined_white_ridges(f,queue,w);
         }
         if(output.size()==2048) {capacity=false; return output;}
         output.push_back(c);
@@ -535,7 +648,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     else if(f.epoch!=previous_.epoch||gap>100'000'000) tracks_.clear();
     const bool distinct=f.sequence>previous_.frame;
     previous_=out.context;
-    const auto all=components(f,out.capacity_valid);
+    const auto all=components(f,out.capacity_valid,split_joined_lines_);
     out.combo_digit_glyphs=combo_digit_shapes(f);
     std::vector<NoteCandidate> notes;
     int pause_bars=0, score_glyphs=0;
@@ -545,6 +658,20 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     struct RowLine { int y, x0, x1; };
     std::vector<RowLine> rows;
     for(int y=static_cast<int>(f.height*.12);y<static_cast<int>(f.height*.95);++y) {
+        if(row_prescreen_ && f.width>=256) {
+            // Any run spanning >32% of the width with at most four missing
+            // pixels has support in every complete five-pixel block. Sample
+            // enough spaced blocks before entering the full row scan.
+            const int required_blocks=std::max(1,(static_cast<int>(f.width*.32)-5)/64);
+            int supported_blocks=0;
+            for(int x=0;x+4<f.width&&supported_blocks<required_blocks;x+=64) {
+                for(int dx=0;dx<5;++dx) {
+                    const int color=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+(x+dx)*3);
+                    if(color==4||color==2||color==1) {++supported_blocks;break;}
+                }
+            }
+            if(supported_blocks<required_blocks) continue;
+        }
         int begin=-1, last=-1, gaps=0;
         const auto finish=[&] {
             if(begin>=0 && last-begin>f.width*.32 && rows.size()<static_cast<std::size_t>(f.height))
@@ -622,6 +749,17 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                 out.lines.push_back(line);
             }
             continue;
+        }
+        for(const auto& split:c.split_lines) {
+            const bool duplicate=std::any_of(out.lines.begin(),out.lines.end(),
+                [&](const LineCandidate& line) {
+                    return std::abs(normal_distance(split.center,line))<12&&
+                        std::abs(split.tangent.x*line.tangent.x+
+                                 split.tangent.y*line.tangent.y)>.99;
+                });
+            if(duplicate)continue;
+            if(out.lines.size()==16) {out.capacity_valid=false;break;}
+            out.lines.push_back(split);
         }
     }
     // Finish the current line set before interpreting note ribbons. Source

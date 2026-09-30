@@ -1,5 +1,17 @@
 # 架構與資料契約
 
+2026-09-30 的 36 版恢復候選（獨立 `codex/baseline36-recovery` 分支）只在
+`GameObserver` 觀測端加入兩項可分別關閉的機制。`row_prescreen` 在逐列完整掃描前，
+用間隔 64px 的五像素塊排除不可能通過舊版「長度超過畫寬 32%、連續缺口最多四像素」
+條件的列；原行掃描和後續決策未改。`split_joined_lines` 在白色判定線相交、
+連通區主軸無法表示各條線時，從當前 RGB 提取至多四條可見 ridge 候選；
+每個連通區最多採樣 4096 點，並檢查脊線亮度與鄰近 Note／Hold body，
+避免將 Hold 白輪廓當成獨立線。既有 2048 component／16 line 上限、
+36 版 Note→line 關聯、近期追蹤、planner18 與觸控 owner 不變。
+兩項開關是建置時的 observer 參數，正式候選預設開啟；凍結 A36 執行檔仍是回退點。
+片段等價、合成正反例和 Release 回歸只驗軟體契約，
+不能替代 Phigros 對新線身分與逐 Note 動作的實戰驗收。
+
 2026-09-28 main 合併手動待命 lifecycle1，音符策略保留 observer36／planner18。`manual-session` 的 manifest 與獨立合併前 golden 均以此版本為準；下述 HD9 observer33／planner13 是歷史比較分支，20 張跨曲結算不可歸於合併後 main。兩種入口 `run --manual-play`（有限等待）與 `manual-session`（多輪待命）的生命週期不同。見[合併紀錄](MAIN_MERGE_20260928.md)。
 
 2026-09-28 第二輪比較分支為 `manual-session` 新增可選全畫面像素短片段診斷。採樣只在 SessionPerception 處理當前 capture 之後複製畫面，獨立 writer 的 mailbox 最多4張；寫入失敗或滿載只減少診斷樣本，觸控 owner 不讀取任何採樣資料。每輪固定時間窗與少量多線／旋轉事件窗共最多30張，20輪／1,658,880,000原始像素byte硬上限。`index.jsonl`保留同幀QPC時間點、畫面尺寸、雜湊；完整設定與可比性見[第二輪比較](MAIN_LEGACY_HD_COMPARISON_20260928.md)。

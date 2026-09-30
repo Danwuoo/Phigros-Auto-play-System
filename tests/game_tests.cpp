@@ -3,6 +3,10 @@
 #include "pas/game_motion.hpp"
 #include <gtest/gtest.h>
 #include <algorithm>
+#include <chrono>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
 
 using namespace pas;
 namespace {
@@ -75,6 +79,117 @@ TEST(GameObserver, MultiplePixelsTracksAndRelativeMovingLinePrediction) {
     EXPECT_NEAR(approaching->residual,0,0.01);
     EXPECT_NEAR(*approaching->crossing_ns/1e6,292.5,3);
     EXPECT_GT(approaching->uncertainty_ns,0);
+}
+TEST(GameObserver, RowPrescreenPreservesCompleteDecisionsOnSyntheticMotion) {
+    FakeClock clock; GameObserver full(clock,false,false),fast(clock,true,false);
+    for(int i=0;i<12;++i) {
+        auto f=image(i+1,i*17'000'000);hud(f);
+        rect(f,80,510+i,1120,3,{255,255,255});
+        for(int x=300;x<390;++x) rect(f,x,390+i*9,1,8,{40,190,255});
+        if(i%3==0) rect(f,830,140,3,440,{255,255,255});
+        clock.set(f.capture_complete_ns);
+        EXPECT_EQ(decision_json(full.process(f)),decision_json(fast.process(f))) << "frame " << i;
+    }
+}
+TEST(GameObserver, RowPrescreenPreservesRecordedClipDecisionsWhenProvided) {
+    const char* root_env=std::getenv("PAS_RGB_CLIP_ROOT");
+    if(!root_env) GTEST_SKIP() << "Set PAS_RGB_CLIP_ROOT to a verified pixel-clips directory";
+    const std::filesystem::path root(root_env);
+    std::ifstream index(root/"index.jsonl",std::ios::binary);
+    ASSERT_TRUE(index.is_open());
+    FakeClock clock; GameObserver full(clock,false,false),fast(clock,true,false),joined(clock,true,true);
+    int prior_round=-1,prior_clip=-1,checked=0;
+    int frames_with_new_lines=0,focus_frames_with_new_lines=0;
+    std::vector<double> full_ms,fast_ms,joined_ms;
+    std::string line;
+    while(std::getline(index,line)) {
+        if(line.empty())continue;
+        const auto entry=nlohmann::json::parse(line);
+        const int round=entry.at("round_id").get<int>(),clip=entry.at("clip_id").get<int>();
+        if(round!=prior_round||clip!=prior_clip) {full.reset();fast.reset();joined.reset();}
+        prior_round=round;prior_clip=clip;
+        Frame f;f.width=entry.at("width").get<int>();f.height=entry.at("height").get<int>();
+        f.stride=entry.at("stride").get<int>();f.source_rotation=1;
+        f.epoch=f.generation=f.geometry_version=1;
+        f.sequence=entry.at("source_frame").get<std::uint64_t>();
+        f.capture_complete_ns=entry.at("capture_complete_ns").get<Nanoseconds>();
+        f.rgb.resize(static_cast<std::size_t>(f.stride)*f.height);
+        std::ifstream input(root/entry.at("path").get<std::string>(),std::ios::binary);
+        ASSERT_TRUE(input.is_open());
+        input.read(reinterpret_cast<char*>(f.rgb.data()),static_cast<std::streamsize>(f.rgb.size()));
+        ASSERT_EQ(input.gcount(),static_cast<std::streamsize>(f.rgb.size()));
+        clock.set(f.capture_complete_ns);
+        DecisionSnapshot full_decision,fast_decision,joined_decision;
+        const auto run=[&](GameObserver& observer,DecisionSnapshot& decision,std::vector<double>& times) {
+            const auto begin=std::chrono::steady_clock::now();
+            decision=observer.process(f);
+            const auto end=std::chrono::steady_clock::now();
+            times.push_back(std::chrono::duration<double,std::milli>(end-begin).count());
+        };
+        if(checked%2) {
+            run(fast,fast_decision,fast_ms);run(full,full_decision,full_ms);
+        } else {
+            run(full,full_decision,full_ms);run(fast,fast_decision,fast_ms);
+        }
+        run(joined,joined_decision,joined_ms);
+        EXPECT_EQ(decision_json(full_decision),decision_json(fast_decision))
+            << "round " << round << " clip " << clip << " frame " << f.sequence;
+        ASSERT_LE(joined_decision.lines.size(),16u);
+        if(joined_decision.lines.size()>fast_decision.lines.size()) {
+            ++frames_with_new_lines;
+            if(round==5&&(clip==3||clip==4))++focus_frames_with_new_lines;
+            std::cout << "joined_line_diff round=" << round << " clip=" << clip
+                      << " frame=" << f.sequence << " baseline=" << fast_decision.lines.size()
+                      << " split=" << joined_decision.lines.size();
+            for(const auto& candidate:joined_decision.lines)
+                std::cout << " (" << candidate.center.x << "," << candidate.center.y
+                          << ";" << candidate.tangent.x << "," << candidate.tangent.y
+                          << ";" << candidate.length << ")";
+            std::cout << '\n';
+        }
+        ++checked;
+    }
+    EXPECT_GT(checked,0);
+    const auto report=[](const char* label,std::vector<double> values) {
+        std::sort(values.begin(),values.end());
+        const auto q=[&](double p){return values[static_cast<std::size_t>(p*(values.size()-1))];};
+        std::cout << "row_prescreen " << label << " n=" << values.size()
+                  << " p5=" << q(.05) << " p50=" << q(.50) << " p95=" << q(.95)
+                  << " p99=" << q(.99) << " max=" << values.back()
+                  << " jitter_p95_minus_p5=" << q(.95)-q(.05) << " ms\n";
+    };
+    if(checked>0) {
+        report("full",full_ms);report("prescreen",fast_ms);report("joined",joined_ms);
+        std::cout << "joined_line_differences n=" << frames_with_new_lines
+                  << " focus=" << focus_frames_with_new_lines << " of " << checked << " frames\n";
+    }
+}
+TEST(GameObserver, SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails) {
+    FakeClock clock;
+    GameObserver baseline(clock,true,false),candidate(clock,true,true);
+    auto f=image(1,20'000'000);hud(f);
+    rect(f,80,510,1120,4,{255,255,255});
+    rect(f,540,30,4,680,{255,255,255});
+    rect(f,955,30,4,680,{255,255,255});
+    clock.set(f.capture_complete_ns);
+    const auto old=baseline.process(f),split=candidate.process(f);
+    const auto has_vertical=[](const DecisionSnapshot& decision,int x,int min_length) {
+        return std::any_of(decision.lines.begin(),decision.lines.end(),[&](const LineCandidate& line) {
+            return std::abs(line.center.x-x)<12&&std::abs(line.tangent.y)>.98&&line.length>min_length;
+        });
+    };
+    EXPECT_FALSE(has_vertical(old,540,600));
+    EXPECT_FALSE(has_vertical(old,955,600));
+    EXPECT_TRUE(has_vertical(split,540,600));
+    EXPECT_TRUE(has_vertical(split,955,600));
+
+    auto hold=image(2,40'000'000);hud(hold);
+    rect(hold,80,510,1120,4,{255,255,255});
+    enclosed_hold_patch(hold,510); // White rails join the judgment line at their lower edge.
+    clock.set(hold.capture_complete_ns);
+    const auto hold_result=candidate.process(hold);
+    EXPECT_FALSE(has_vertical(hold_result,418,350));
+    EXPECT_FALSE(has_vertical(hold_result,570,350));
 }
 TEST(GameObserver, NotesAloneDuplicateFramesAndGeometryCannotArm) {
     FakeClock clock; GameObserver observer(clock);

@@ -159,13 +159,18 @@ private:
 };
 class GameObserver final {
 public:
-    explicit GameObserver(const Clock& clock) : clock_(clock) {}
+    explicit GameObserver(const Clock& clock, bool row_prescreen = true,
+                          bool split_joined_lines = true)
+        : clock_(clock), row_prescreen_(row_prescreen),
+          split_joined_lines_(split_joined_lines) {}
     DecisionSnapshot process(const Frame& frame);
     const CandidateBatch& candidate_batch() const { return candidate_batch_; }
     void reset();
 private:
     using History=GameTrackHistory;
     const Clock& clock_;
+    bool row_prescreen_ = true;
+    bool split_joined_lines_ = false;
     SceneContext previous_;
     std::vector<History> tracks_;
     std::uint64_t next_id_ = 0, sequence_ = 0;
