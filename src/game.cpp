@@ -750,6 +750,13 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             }
             continue;
         }
+    }
+    // A36's sole observed line has an intentional fallback for notes whose
+    // orientation is temporarily unreadable. Extra ridges must not silently
+    // disable that established one-line behavior. Add split candidates only
+    // when the legacy detector already had zero or multiple line choices.
+    const auto legacy_line_count=out.lines.size();
+    if(split_joined_lines_&&legacy_line_count!=1) for(const auto& c:all)
         for(const auto& split:c.split_lines) {
             const bool duplicate=std::any_of(out.lines.begin(),out.lines.end(),
                 [&](const LineCandidate& line) {
@@ -761,7 +768,6 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             if(out.lines.size()==16) {out.capacity_valid=false;break;}
             out.lines.push_back(split);
         }
-    }
     // Finish the current line set before interpreting note ribbons. Source
     // component order changes when a rotating line is interrupted by a note.
     // A note's local dimensions must not depend on which fragment came first.

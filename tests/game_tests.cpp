@@ -166,11 +166,18 @@ TEST(GameObserver, RowPrescreenPreservesRecordedClipDecisionsWhenProvided) {
 }
 TEST(GameObserver, SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails) {
     FakeClock clock;
+    auto single=image(1,20'000'000);hud(single);
+    rect(single,80,510,1120,4,{255,255,255});
+    rect(single,540,30,4,680,{255,255,255});
+    rect(single,955,30,4,680,{255,255,255});
+    GameObserver single_baseline(clock,true,false),single_candidate(clock,true,true);
+    clock.set(single.capture_complete_ns);
+    const auto single_old=single_baseline.process(single),single_split=single_candidate.process(single);
+    ASSERT_EQ(single_old.lines.size(),1u);
+    EXPECT_EQ(single_split.lines.size(),single_old.lines.size());
+
+    auto f=single;rect(f,80,200,1120,4,{255,255,255});
     GameObserver baseline(clock,true,false),candidate(clock,true,true);
-    auto f=image(1,20'000'000);hud(f);
-    rect(f,80,510,1120,4,{255,255,255});
-    rect(f,540,30,4,680,{255,255,255});
-    rect(f,955,30,4,680,{255,255,255});
     clock.set(f.capture_complete_ns);
     const auto old=baseline.process(f),split=candidate.process(f);
     const auto has_vertical=[](const DecisionSnapshot& decision,int x,int min_length) {
@@ -178,6 +185,7 @@ TEST(GameObserver, SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails) 
             return std::abs(line.center.x-x)<12&&std::abs(line.tangent.y)>.98&&line.length>min_length;
         });
     };
+    ASSERT_GE(old.lines.size(),2u);
     EXPECT_FALSE(has_vertical(old,540,600));
     EXPECT_FALSE(has_vertical(old,955,600));
     EXPECT_TRUE(has_vertical(split,540,600));
