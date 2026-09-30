@@ -109,22 +109,6 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
                (line.confidence==selected->confidence&&line.length>selected->length)) selected=&line;
         }
         if(!selected&&out.lines.size()==1&&out.lines.front().association_valid) selected=&out.lines.front();
-        if(!selected&&out.lines.size()>1) {
-            // A short fragment cannot pass the normal Note-to-line gate.
-            // It should not suppress the established one-line fallback when
-            // exactly one currently visible, usable line spans this Note.
-            const LineCandidate* sole_usable=nullptr;
-            int usable_count=0;
-            for(const auto& line:out.lines) {
-                if(!line.association_valid||line.length<out.context.width*.32)continue;
-                const double along=(n.center.x-line.center.x)*line.tangent.x+
-                                   (n.center.y-line.center.y)*line.tangent.y;
-                if(std::abs(along)>line.length/2+n.width)continue;
-                sole_usable=&line;
-                if(++usable_count>1)break;
-            }
-            if(usable_count==1)selected=sole_usable;
-        }
         if(selected&&!ambiguous) {
             const auto& l=*selected;
             const auto latest_distance=normal_distance(target.note.center,l);

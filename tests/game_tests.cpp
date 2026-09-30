@@ -1,7 +1,6 @@
 #include "pas/game.hpp"
 #include "pas/runtime.hpp"
 #include "pas/game_motion.hpp"
-#include "pas/game_tracking.hpp"
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <chrono>
@@ -199,27 +198,6 @@ TEST(GameObserver, SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails) 
     const auto hold_result=candidate.process(hold);
     EXPECT_FALSE(has_vertical(hold_result,418,350));
     EXPECT_FALSE(has_vertical(hold_result,570,350));
-}
-TEST(GameTracking, AShortLineFragmentDoesNotSuppressSoleUsableLineFallback) {
-    NoteCandidate note;note.kind=NoteKind::tap;note.center={400,400};
-    note.tangent={0,1};note.width=60;note.height=10;
-    LineCandidate long_line{{640,575},{1,0},1280,3,.85};long_line.track_id=11;
-    LineCandidate short_fragment{{400,350},{0,1},180,3,.85};short_fragment.track_id=12;
-    const auto observe=[&](std::vector<LineCandidate> lines) {
-        auto scene=snapshot(1,20'000'000);scene.lines=std::move(lines);
-        std::vector<GameTrackHistory> history;std::uint64_t next_id=0;
-        track_legacy_batch(scene,{note},{std::nullopt},history,next_id);
-        EXPECT_EQ(scene.targets.size(),1u);
-        return scene.targets.front();
-    };
-    const auto sole=observe({long_line,short_fragment});
-    EXPECT_EQ(sole.line_id,long_line.track_id);
-    EXPECT_EQ(sole.reason,"insufficient_history");
-    LineCandidate other_long{{600,300},{.7071067811865476,.7071067811865476},700,3,.85};
-    other_long.track_id=13;
-    const auto ambiguous=observe({long_line,short_fragment,other_long});
-    EXPECT_EQ(ambiguous.line_id,0u);
-    EXPECT_EQ(ambiguous.reason,"multiple_line_association_unvalidated");
 }
 TEST(GameObserver, NotesAloneDuplicateFramesAndGeometryCannotArm) {
     FakeClock clock; GameObserver observer(clock);
