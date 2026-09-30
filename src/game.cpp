@@ -31,7 +31,9 @@ struct Component {
     double sx = 0, sy = 0, xx = 0, yy = 0, xy = 0;
     Vec2 ribbon_center{};
     double ribbon_width=0,ribbon_height=0;
-    std::vector<LineCandidate> split_lines;
+    // Retain bounded source component pixels until the legacy line count is
+    // known. Most single-line frames do not need the ridge search.
+    std::vector<int> split_pixels;
 };
 int classify(const std::uint8_t* p) {
     const int r=p[0], g=p[1], b=p[2];
@@ -198,8 +200,7 @@ std::vector<Component> components(const Frame& f, bool& capacity,bool split_join
                          xy=c.xy/c.count-cx*cy;
             const double major=std::sqrt(std::max(0.0,(xx+yy+std::hypot(xx-yy,2*xy))/2));
             const double minor=std::sqrt(std::max(0.0,(xx+yy-std::hypot(xx-yy,2*xy))/2));
-            if(major<12*std::max(1.0,minor))
-                c.split_lines=split_joined_white_ridges(f,queue,w);
+            if(major<12*std::max(1.0,minor)) c.split_pixels=queue;
         }
         if(output.size()==2048) {capacity=false; return output;}
         output.push_back(c);
@@ -756,8 +757,9 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     // disable that established one-line behavior. Add split candidates only
     // when the legacy detector already had zero or multiple line choices.
     const auto legacy_line_count=out.lines.size();
-    if(split_joined_lines_&&legacy_line_count!=1) for(const auto& c:all)
-        for(const auto& split:c.split_lines) {
+    if(split_joined_lines_&&legacy_line_count!=1) for(const auto& c:all) {
+        if(c.split_pixels.empty()) continue;
+        for(const auto& split:split_joined_white_ridges(f,c.split_pixels,(f.width+1)/2)) {
             const bool duplicate=std::any_of(out.lines.begin(),out.lines.end(),
                 [&](const LineCandidate& line) {
                     return std::abs(normal_distance(split.center,line))<12&&
@@ -768,6 +770,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             if(out.lines.size()==16) {out.capacity_valid=false;break;}
             out.lines.push_back(split);
         }
+    }
     // Finish the current line set before interpreting note ribbons. Source
     // component order changes when a rotating line is interrupted by a note.
     // A note's local dimensions must not depend on which fragment came first.
