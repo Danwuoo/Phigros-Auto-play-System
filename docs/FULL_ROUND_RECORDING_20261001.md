@@ -1,5 +1,7 @@
 # 單輪全錄與人工篩選契約
 
+當前狀態：全錄、12 段篩選及使用者理由均已保存；`REASONS.md` 原文不改。理由已轉成 revision 3 研究索引，clip-09 已更正為無問題對照，pixel human gold 仍為 0。逐幀結果及後續 C36h 實戰見[分析報告](DLYROTZ_FRAME_ANALYSIS_C36H_20261001.md)，整合後方向見[現況研究](PROJECT_STATUS_NEXT_STEPS_20261001.md)。下文「待填／尚未」描述匯出或啟動前的歷史狀態，不是目前未完成清單。
+
 2026-10-01首輪完成：session manual-session-22885039263800，正常自動STOPPED、
 PAS process已不存在。received pixels 7722/7722保存，約131.8293931秒、
 PNG+index2385518593bytes；無writer fault，全部PNG／index SHA與ordinal／時間
@@ -11,7 +13,7 @@ release failed／unknown均空；這些不證明遊戲效果。結算pixels讀�
 
 篩選入口為campaign/full-recording36g-01/review；`selection.json`引用來源與影片SHA，
 整批理由與每片段時間／現象／選取理由／annotation request／hypothesis分開。
-初次整理時clips空；使用者後續指定12段，已封裝原圖／日誌／小影片，原因待填。
+初次整理時clips空；使用者後續指定12段，已封裝原圖／日誌／小影片，當時原因待填。
 逐Note Miss定位0、human gold0；proposed逐幀標註尚未開始。
 
 ## 2026-10-01 使用者選取12段
@@ -25,7 +27,7 @@ release failed／unknown均空；這些不證明遊戲效果。結算pixels讀�
 不同PNG、專用副本1229237869bytes。各clip保留177、702、649、242、167、
 241、180、123、121、238、239、764張連續原圖；同時匯出相關原始journal。
 每段README入口及REASONS.md供使用者補原因，selection-r1/r2與本批snapshot保留。
-原因、觀察、推測、annotation request全留空，annotation_status=not_started。
+初次匯出時原因、觀察、推測、annotation request 全留空，annotation_status=not_started；該 snapshot 保留，後填理由另見 revision 3。
 
 新增離線C++20 `pas_recording_check select <session> <selection.json> <new-output>`。
 先核對影片／來源索引／journal SHA、幾何、ordinal／時序與全部所選PNG。
@@ -47,7 +49,7 @@ release failed／unknown均空；這些不證明遊戲效果。結算pixels讀�
 原package SHA不變。frozen C36g-rec1 PAS／舊recording工具保留，新selection工具
 另凍結source／binary／DLL於selection-tools。沒有重跑策略回歸或新實戰。
 campaign容量以hard-link每個入口都計長度的保守logical bytes核對仍低於8GiB；
-帳本原12輪與獨立全錄1輪均不改。人工選片12，人工原因0，human gold0。
+帳本原12輪與獨立全錄1輪均不改。初次匯出時人工選片12、人工原因0、human gold0；後續已收到12段理由，並不等於像素gold。
 
 使用者於 2026-09-30 要求「全錄，然後我來做篩選，保留連續影格給程序標註」
 並另授權開 emulator／程式跑一輪。採用隔離 baseline36-recovery 工作樹；
@@ -108,7 +110,7 @@ tail、clip-local 身分／Note→line／可接觸區等標註。未知遮擋或
 錄影單元回歸、270 張實際 RGB 壓力／還原與 MP4 匯出須全部通過後才啟動。
 原 C36g 策略檔 SHA 與凍結 baseline 核對；新 binary/source/DLL/profile/環境
 另建 freeze。live 完成後再核對 completeness、gap、原圖、結果與 owner 收據。
-尚未宣稱全錄實戰完成或成績改善。
+此為啟動前 gate；其後全錄已完成，結果見頁首，沒有主要問題改善驗收。
 
 2026-10-01啟動前驗證：Release231 passed／2 opt-in skipped；三encoder正式
 bench270/270逐RGB bytes一致、exit0、queue peak4、PNG+index80166178bytes。

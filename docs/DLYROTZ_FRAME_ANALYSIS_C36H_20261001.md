@@ -103,7 +103,7 @@ capture skips/gap與完整階段分布。更細後續標註仍沿用本批無損
 18.47秒；`acceptance36h-01/c36h-tint1-full-tests.log`保存完整清單。
 read-only preflight指紋相符、mismatches空、1280×720 rotation1及五指映射相同；
 `real_input_created=false`。final replay、binary/source SHA、容量、manual launch與
-STANDBY證據各自保存；尚未結算，不宣稱實戰驗收通過。
+STANDBY證據各自保存；以上是結算前的準備紀錄，實際單輪結果見下一節，不作實戰驗收通過。
 
 最終`frame-analysis36h-v3`再次核對7722張SHA、21,184 journal rows，3722張join輸出
 SHA仍為`e54f2744e58767073efb01349fc83c24cf5a676eda869a843786c6fd79a53195`。

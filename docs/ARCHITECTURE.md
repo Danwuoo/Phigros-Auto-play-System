@@ -1,36 +1,6 @@
 # 現行架構與資料契約
 
-## 2026-10-01 整合契約補充
-
-目前候選 observer50／planner27／diagnostics11 保留 main 的全域線 assignment、短缺線有界預測與 owner 安全契約，整合 C36h 的當前正交 ridge、局部 Flick 合併與同 Hold body patch/front 接續。歧義線可保留歷史 ID 作診斷，但不能更新 measured lifetime／motion fit 或取得動作資格。full-recording 診斷仍單向流出；CPU 模型只在獨立 offline exe，正式 `pas` 不連結 LibTorch。版本、驗證邊界和文件時序見[整合交接](MAIN_INTEGRATION_HANDOFF_20261001.md)。以下為各阶段設計記錄。
-
-2026-09-29。main 冷合併基線 observer47／planner23／diagnostics11；四首 lead40 已測 observer47／planner24。observer48／planner25 手動試驗中止；observer49／planner26／diagnostics11 的離線回歸通過，2026-09-30 手動實測完成兩首後依使用者要求停止，單程序 C++20。結果見[熱調試紀錄](FOUR_SONG_HOT_TUNING_20260929.md)。先前七輪實戰為 observer37／planner19，兩輪較早結果為舊版基準。判定線修正見[實作紀錄](JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)，後續設計見 [跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。本文區分已存在的執行契約與未實作的學習式方案。
-
-2026-09-29補充：observer37／planner19已完成七輪實戰（六HD＋光IN）；原始結果見[冷開發計畫](NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md)。[冷開發結果](COLD_DEVELOPMENT_RESULT_20260929.md)記錄新版的分段SHA驗證、source_frame事件join、QPC子段、Note已占用替代配對與Flick路徑修正。固定擷取／時鐘／latest-frame／單owner契約不變；本輪只離線開發。下述為當前實作，不代表所有判定線與Note形式已驗收。
-
-續作驗收以[同一冷計畫§8](NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md)為準，C0–C6可冷範圍已通過；這是離線工程證據，尚無新版遊戲效果驗收。資料回饋限定離線標記／驗證與通用常數修訂；runtime仍只用當前pixels與有界追蹤，不讀標籤、歌曲家族或舊觸控。完整冷鏈已以FakeCapture／FakeTouch連正式pipeline，時序語義用fake-clock、CPU與排程成本另用QPC，沒有量到emulator或遊戲生效延遲。
-
-observer44起`base_scene`另有host QPC五子段，顯示逐列線掃描主導兩批原始RGB的冷啟動CPU時間。每64像素抽五個當前RGB像素；在1280寬，少於六個有線色支持的區塊不可能形成舊規則所需「跨度>32%且連續缺口≤4」的長run，故可跳過完整掃描。離線ABBA保留全列路徑作對照，逐幀完整decision語義相等；兩批各三批observer p95/p99皆超過事前A/A容忍下降。此項只證明離線observer微基準，完整鏈效能與實戰效果須各自驗。
-
-planner23將「已Down接觸的短暫missing grace」與「尚未執行的Down」分開：新完整快照中目標不可見時，後者立刻取消，返回後只可用新鮮像素提交新intent。正式LatestFrame的burst測試保存了舊行為先敗、修正後只讀最新frame並零舊Down的FakeTouch證據；此測試尚不代表完整多執行緒效能鏈。
-
-observer45在同一非零line track ID的Note歷史內，將新切向與上一筆切向點積為負的線局部法向翻到等價方向，然後才計算有號距離／root。原始當前線候選不改寫；真正反轉或跳變仍由測量段守門。切向正負交替的獨立oracle案例先失敗為`motion_discontinuity`，修正後與反轉負例皆通過。兩批既有753張三幀RGB的完整cold decision與observer44相同；這不是實景準確率。
-
-observer46在同一組當前可見Hold側軌上，優先讓已建立的線上body取得續接候選，再處理新生前景片段；後者不得擦掉既有body候選。已觀測tail接近判定線時，後續新鮮像素可在有界的36px局部窗尋找第二份tail支持，仍須當前封口及兩側側軌，並維持兩份新鮮證據才正常Up。旋轉Hold與同位置Tap的36幀合成RGB及獨立oracle一／二指正反例通過；既有753張三幀RGB相對observer45無完整decision變化。這些片段沒有實景長Hold真值，擴張搜尋的整鏈成本尚待正式A/B核對。
-
-observer47在同一Note經至少三次、跨30ms的當前像素測量確認line ID後，拒絕直接改接局部幾何不連續的另一條線；原線消失時該Note的關聯與root變unknown，已提交意圖由owner撤銷或按現有接觸證據續接。若新ID在上一測量接觸區延續原線（切向mod π點積至少.97、局部法向差不超過36px），一般Hold需兩張間隔至少12ms的新鮮影像；近線且當前支持的Drag／Held body可立即重接以保留活動contact。兩者均清空舊線速度擬合，不把舊root搬到新ID。追蹤狀態仍隨Note在100ms未觀測後清理。此守門由交叉雙Hold消線負例與反轉Drag換ID回歸約束；更多遮擋／旋轉換ID仍待驗。
-
-observer48延續已確認的Note→line關聯時，若原線在當幀仍可見且Note以90ms內的測量持續接近，交叉的另一條線不能僅憑瞬時距離搶走關聯；原線消失、遠離或新Note的等距多線仍維持unknown。另有只對Tap啟用的瞬現線重疊路徑：Note先追蹤至少三張，前一筆不超過40ms，當前高信心長線與高信心Tap重疊且前一位置朝線接近。planner25只在當前線同樣有效時即時Down／18ms後Up，basis標`live_pixels_current_tap_overlap`，不宣稱有舊線預測root。Credits實際三幀RGB重播能從`insufficient_history`改為該basis；跨曲遊戲效果尚未驗收，詳見[熱調試紀錄](FOUR_SONG_HOT_TUNING_20260929.md)。
-
-observer49將原線短暫不可見與確定失關聯分開：Tap／Flick 的當前Note仍可見、先前同一line ID有至少三次且跨30ms的實測關聯、最後線pose具有效運動擬合、缺線≤40ms、相對接近無反轉且模型誤差合格時，才投影最後實測線的平移／旋轉。落點必須仍在原量測線段和投影線段內；局部有新線候選時保持unknown。投影不寫回線／Note實測歷史，`GameTarget.line_projection_only`及`last_line_observed_ns`標明來源。最後實測線超過90ms時清掉舊確認ID，下一條當前線的常規root須重新累積三次、跨30ms的測量；獨立的當前重疊Tap路徑仍按其自身資格判定，兩者都不轉移舊root。planner26只在同一新鮮Note與有限期限內安排或修訂未執行Down，basis為`live_note_recent_confirmed_line_projection`；已開始的接觸不因投影Move或延長。Hold／Drag新增Down仍需當前線／body支持。decision schema 3增加投影來源欄位，分析器仍接受schema 1／2。這是離線機制，沒有遊戲採納驗證。
-
-離線`analyze game-cold-pipeline`用有界預產RGB、正式LatestFrame三實體buffer、正式observer／owner／scheduler與FakeTouch、Journal三執行緒跑QPC鏈；每個來源frame分別記capture complete、publish、recognition、owner accept，receipt依source frame／intent join。輸出包含全部publish嘗試、skip、pool drop、writer drop、late／失敗和每100幀RSS；source render age、真gRPC、遊戲採納未知。全掃描A/A先凍結容忍，再以三批ABBA驗正式Tap與密集場景；原計畫跨場景冷gate通過，密集場景另設的逐批加速規則失敗，詳見[結果](COLD_DEVELOPMENT_RESULT_20260929.md)。
-
-量測入口另有固定Tap循環及16線／128Note的靜態密集RGB場景；`--writer-capacity`／`--writer-delay-us`只對離線Journal寫執行緒施加有界負載，`--rpc-delay-ms`只延後FakeTouch receipt return。負載時仍從實際QPC記injection start／return，並把所有1000／10000次publish嘗試保留在分母；writer的debug drop是單向診斷損失，不回饋owner策略。正式runtime的Journal預設容量與真輸入backend未受這些離線參數改動。
-
-合併審查修正冷鏈診斷的發布時間所有權：perception只讀Frame lease內在LatestFrame鎖下發布的`published_ns`，不再讀producer在`publish()`返回後另寫的未同步欄位；producer的publish呼叫成本只在join後彙總。詳見[合併驗收](COLD_DEVELOPMENT_MERGE_REVIEW_20260929.md)。observer47／planner23／diagnostics11的遊戲策略不變，冷鏈輸出另記`publication_time_basis`辨識修補；歷史meter不回寫。
-
-相向雙側Hold與Flick的合成RGB已能在同一線上保持三個獨立接觸；容量改為兩指時保留兩個先開始的Hold，Flick無Down。對應oracle消融使用獨立生成的幾何與關聯，隔離觀測及資源規則；這不代表實景Hold部位或遊戲判定已驗。
+2026-10-01，main 整合來源 `9fea67e248411f7c2309f220daf989f652b27d15`，候選 **observer50／planner27／diagnostics11，live rounds=0**。本文按責任整理現行程式；歷史改動順序與測試各見[整合交接](MAIN_INTEGRATION_HANDOFF_20261001.md)、[冷開發結果](COLD_DEVELOPMENT_RESULT_20260929.md)及[熱調試](FOUR_SONG_HOT_TUNING_20260929.md)。下一步研究與尚缺驗證見[現況報告](PROJECT_STATUS_NEXT_STEPS_20261001.md)。模型僅辅助離線標記與主程式優化。
 
 ## 即時閉環
 
@@ -40,53 +10,67 @@ gRPC capture → LatestFrame → SessionPerception / GameObserver
                               → SessionGameOwner / GamePlanOwner
                               → ContactScheduler → GrpcTouch
 supervisor ───────────────────→ revoke / stop / release
-只讀旁路：preview、journal、結果圖、pixel clips、shadow tracker
+只讀旁路：preview、journal、結果圖、pixel clips、full-recording
 ```
 
-capture、perception、action owner、supervisor、診斷 writer 的責任分離；模型／採樣不得直接取得觸控 backend。主程式不讀譜、遊戲內部狀態、音訊節拍或歷史按鍵。曲名／難度只屬離線報告資料。
+正式邏輯為單程序多執行緒 C++20。capture、perception、action owner、supervisor、診斷 writer 分工；只有 owner 可修改 scheduler／發送觸控。runtime 不讀譜、遊戲內部狀態、音訊節拍、曲名／進度、離線標籤或歷史按鍵。模型不連到正式閉環，`pas`／`pas_core` 不連結 LibTorch。
 
 ## 固定擷取、時間與所有權
 
-- gRPC payload fast、RGB888 top-down、1280×720、source rotation 1、read chunk 256 KiB。profile 的相對 lag guard 為 250ms；它不是絕對來源年齡。
-- 邏輯 latest-frame 容量 1，固定三個物理 buffer；reader 持有時不可覆寫，耗盡 drop 並計數，不無限配置。
-- host 使用 QPC nanoseconds。Frame 保留 sequence、epoch、generation、geometry、capture_complete、pixels_ready、published；消費／辨識／排程／RPC 時刻另記。
-- source Unix／Android／WGC／PTS 保持獨立 domain。source age 未校準；receive time 不改稱 render time。
-- frame context、尺寸／方向改變或來源失效撤銷資格。WGC／DXGI／scrcpy 仍僅 bench，MMAP diagnostic-only，無正式自動備援。
+- 固定 gRPC payload fast、RGB888 top-down、1280×720、source rotation 1、read chunk 256 KiB。profile 相對 lag guard 250ms，不是來源絕對年齡。
+- 邏輯 latest-frame 容量 1，固定三個物理 buffer；reader 持有時不可覆寫，耗盡 drop 並計數。慢消費者跳過舊圖，不無限排隊。
+- host 統一 QPC nanoseconds。Frame 保留 sequence、epoch、generation、geometry、capture_complete、pixels_ready、published；辨識起訖、owner 接受、預定觸控、injection_start／return 分開記錄。
+- source Unix／Android／WGC／PTS 保持獨立 domain；未校準 source age，不把 receive time 改稱 render time。
+- frame context、尺寸／方向改變或來源失效撤銷資格。WGC／DXGI／scrcpy 僅 bench，MMAP diagnostic-only，無已驗正式自動備援。
+- 五指 capability 必須匹配裝置／APK／幾何／mapping 指紋；Fixture 多指成功不等於完整 Phigros 動作語義。
 
-## 觀測、身分與預測
+## 當前像素、線與 Note 身分
 
-GameObserver 使用當前像素的 HUD、線、色芯與 Hold 外框候選；GameLineTracker 維護獨立線 ID／有界 pose。GameTarget 與 Note identity、intent identity、contact ID 分離。
-observer42 的跨畫面像素掃描與有界連通區局部線段分割可保留最多16條具獨立支持的線，避免X／V／框／放射的連通白區被單一PCA方向吞掉；相近方向／法向位置先去重，局部線段另查沿線相鄰彩色或灰色Hold body像素，避免側軌／內部裝飾假線。既有兩批RGB中，observer41與凍結38版相比有9幀額外線候選；observer42相對41另有37幀線候選數及2幀Note候選數變化。這只支持候選差異，沒有人工逐像素真值或實戰動作證明。
+`GameObserver` 由当幀 RGB 提取 HUD、線、色芯與 Hold 外框候選，`GameLineTracker` 維護線 ID／有界 pose，Note identity、intent identity、contact ID 各自獨立。線至多 16、note／track 至多 128，近期 pose 至多 6 點／90ms；跨 epoch／geometry、非遞增時間或過大 gap 清理。
 
-線至多 16、note／track 至多 128，近期 pose 至多 6 點／90ms；跨 epoch／geometry、非遞增 QPC 或過大 gap 清理。線用至多16×16的全域可行配對；競爭未分派不即刻出生，近鄰可分離候選需連續三幀才出生，暫存至多16筆。`lines`輸出仍僅列當前量測；track運動用於關聯及上述嚴格有界的缺線投影，投影標為預測而非當前線證據。歧義線不供新Down。
+當前線包括長 run、局部連通區線段及 C36h 正交 ridge。局部線段分割避免整塊 X／V／框／放射白區只剩單一 PCA 方向；染色 ridge 仍需當前純白種子與局部對比，不能由全暖色特效或歷史白線續租。Hold 相鄰 body／側軌排除、最多 16 線等界限保留。Flick 僅在當前中央箭頭支持、局部切向／厚度／gap 合格時合併核心，沒有箭頭的相鄰雙 Flick 不合併。
 
-note→line 拒絕 association_invalid 的線，以局部距離、沿線範圍、近期相對接近趨勢、線ID及弱外觀方向分數選有限候選；次佳分數過近則保持關係 unknown，不建立撞線擬合。歷史趨勢只是軟分數，遠處外觀方向不合不硬拒絕；候選存在不等於Down資格。Hold已有關係時優先維持同線，當前body仍須重新由pixels支持。
+線用至多 16×16 全域可行 assignment；競爭未分派不即刻出生，近鄰可分離候選需連續三幀才出生，暫存至多 16 筆。歧義線可保留歷史 ID 作診斷，不能更新 measured lifetime／motion fit 或取得動作資格。`lines` 只列當前量測，不把投影充作可見線。
 
-撞線使用 note 與線的局部法向距離、近期表觀相對運動。反轉或跳變斷開舊擬合，至少三點／30ms的新量測段才再輸出root；近線首見Tap／Hold／Flick明示未取得時間資格。空間殘差及時間不確定性分開；30ms uncertainty 上限與 35ms lead 屬基準設定，後者不是已量得的 gRPC 固定延遲。
+Hold 在同一組當前側軌上優先找既有 held body，再處理前景片段；已用 rail pair 不能被新候選重複占用。每幀仍須重新支持 body／rails，不能複用上一幀的 boolean。這是候選提取與身分續接，不等於 owner 已有 Down。
 
-後續設計依[判定線形式](判定線形式.md)及[研究 §2.7](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md#27-判定線形式與策略優先的運動處理)：目前先按線局部座標的有號距離，對反轉／跳變做有界分段，使用最新可支持的單root；斜向與線追Note可由相對距離涵蓋。多root且幀間不可見的過程仍是unknown，未建立校準的機率分布。幾何過線不是完成音符的充分依據，返回也不授權重播已執行／未知 Down。
+## Note→line 與撞線預測
 
-## 動作與失效契約
+有限候選以線局部距離、沿線範圍、近期相對接近、原 line ID 及弱外觀方向評分；拒絕 association_invalid 線。遠處 Note 朝向不等於運動方向，不能要求當前同法向才配對。最佳與次佳分數差不足時 unknown，不建立 root。
 
-- 唯一 action owner 修改 scheduler／發送觸控。gate 與每個 plan 的證據獨立檢查，now >= deadline 到期。
-- source／target 證據上限 100ms；missing 容忍 Tap／Drag 40ms、Hold 60ms、Flick 75ms。UNKNOWN UI／context／input fault 撤銷全部，不延長期限掩蓋漏辨。
-- Hold 以當前 body／rails 支持續接同指；可見 tail 結束才正常 release。tail 預測不能單独維持接觸；停止／失效仍釋放。
-- 旋轉 Hold 的續接搜索不再用舊anchor切向硬拒絕當前線；同線且當前body／rails驗證時，可維持contact並同指Move。可見tail必須配對當前線ID及時間，連續兩份新鮮證據才正常結束。接入、持續body及tail是獨立檢查；旋轉／移動時觸點由當前body支持，不由舊Down位置剛體旋轉。合成回歸已通過，遊戲接觸區語義仍未實戰驗收。
-- observer42／planner22 的長序列回歸區分當前 body 仍支持的前緣移動、可見 tail 過線及無 tail 的證據失效。成對側軌與前緣可驗證當前body，兩側末端都已越過所屬線時不再以它們續命；當前橫向tail邊緣可在兩份新鮮幀確認後由owner正常Up。旋轉兼平移的36幀RGB序列亦已驗同contact的Down／Move與可見tail Up。無tail時不可再Move，維持有限missing grace後安全釋放。正反例只代表合成像素與FakeTouch契約。
-- Drag 的當前區域覆蓋可在已驗語義下共用活動接觸，歧義或不同目標不可強行合併。
-- planner19 在新量測判定 `motion_discontinuity` 時撤銷尚未執行的Down；只有能確知 scheduler cursor=0 時，後續完整有效 pixels 才能建立新 intent。未知／已開始／已完成的 Down 不重播。
-- RPC success 只代表呼叫返回；未唯一配對的遊戲效果保持 unknown。未知 Down 不重試，釋放責任保留。
-- 五指 capability 需匹配裝置／APK／幾何／mapping 指紋；Fixture 多指成功不等於 Hold／Flick 的完整遊戲驗收。
+至少三次、跨 30ms 的實測可確認 Note→line 關聯。原線仍當前可見時有保留已確認關聯的分支。**現行程式並非嚴格單調接近**：`game_tracking.cpp` 的 `preserve_confirmed` 接受「當前絕對距離 ≤ 前次距離 + max(12px, Note寬×0.10)」。小幅逐幀遠離也可能持續通過；這是需反例約束的既存風險，不能沿用舊文字「只在持续接近」當保證。
+
+原線消失或候選換 ID 時，不能直接跳到不連續的新線。若新 ID 在上一接觸區延續原線，需局部切向 mod π 點積至少 .97、法向差不超過 36px；一般路徑需兩份間隔至少 12ms 的新鮮影像，近線且當前支持的 Drag／held body 可立即重接。重接清掉舊線速度擬合，不轉移舊 root。這些條件仍可能過度保留錯誤關聯，實例見現況報告的 ordinal6214。
+
+root 由 Note 與線的局部法向距離及近期相對運動取得。反轉／跳變斷開舊擬合，通常至少三點／30ms 新量測才輸出 root；空間殘差與時間 uncertainty 分開。基準 uncertainty 30ms、lead 35ms；lead 不是已量得的固定 gRPC 延遲。當前 Tap 重疊路徑有獨立像素／短期追蹤資格，basis 為 `live_pixels_current_tap_overlap`，不宣稱有舊 root。
+
+Tap／Flick 有嚴格有界的短缺線投影：當前 Note 仍可見、同線曾有至少三次／30ms 實測、最後 pose 運動擬合有效、缺線 ≤40ms、相對接近無反轉且誤差合格、落點仍在原／投影線段、局部無衝突新線。投影不寫入實測歷史，以 `line_projection_only`／`last_line_observed_ns` 區別。超過 90ms 清掉舊確認 ID；新線需重新取得資格。basis `live_note_recent_confirmed_line_projection` 只支援未執行 Down 的有限修訂，不使活動 contact Move 或續命；Hold／Drag 新 Down 仍需當前支持。
+
+斜向、旋轉、線追 Note、晚對齊、反轉、突現與往返以[判定線形式](判定線形式.md)作覆蓋清單。幾何過線不等於音符完成；返回不授權重播已執行／未知 Down。
+
+## 動作與 Hold 接觸契約
+
+| 責任 | 當前行為與界限 |
+|---|---|
+| 門控／到期 | gate 與每個 plan 獨立核對，now ≥ deadline 即到期；source／target 證據上限 100ms。UNKNOWN UI／context／input fault 撤銷全部 |
+| 未執行 Down | 新完整快照目標消失即取消；motion discontinuity 等新矛盾也撤銷。僅確認 cursor=0 才可由後續新鮮像素建立新 intent |
+| 已開始 Hold | 當前 body／rails 支持續接同指；接觸位置由當前支持修訂 Move，不固定初次 Down，不盲隨線旋轉。無 root 本身不等於活動 Hold 失效 |
+| patch/front 切換 | 同一 Note ID、同非零 line ID、兩份當前 rails/body、宽度／方向及 body 覆蓋合格才放寬法向位移至 128px；此放寬不給新 alias |
+| contact alias | 主線已有獨立的 current body alias 規則與有界表；須保留已執行 cursor，已 Up／completed identity 不復活。不能把「新增 alias」重複列為未實作需求 |
+| 明確矛盾 | 已提交目標若 samples=0、關聯歧義、證據倒退或到期，可在 body grace 分支之前直接取消；60ms 不是所有失效的共同緩衝 |
+| 有限 missing grace | 活動接觸按既有規則：Tap／Drag 40ms、Hold 60ms、Flick 75ms；Hold body 不支持時不更新證據、不 Move，超時釋放。不以 grace 掩蓋所有錯配 |
+| tail 結束 | 與當前線／時間一致的可見 tail，需兩份新鮮支持才正常 Up；無 tail 仍可因失效安全釋放。tail 預測不能單獨續命 |
+| 注入結果 | RPC success 只代表呼叫返回。未知 Down 不重試；失效撤銷並保留釋放責任。遊戲是否採納仍需獨立證據 |
+
+旋轉 Hold 的 head 接入、body 接觸與 tail 結束分開驗證。已存在旋轉／平移 36 幀 RGB、混合雙 Hold＋Flick、兩指容量負例及獨立 oracle／fake-clock 回歸；這些只支持軟體契約，沒有建立實景完整判定真值。
 
 ## 多輪生命週期
 
 manual-session：STANDBY → STARTING → PLAYING → RESULT → STANDBY。使用者選曲及按 Play；當前 HUD／observer gate 才可觸控。六個英文結算文字須三個不同新鮮 frame、跨度至少 60ms；第一份結算證據即關閉新 Down。空白、無候選、HUD 消失或暫停不算結算。
 
-熱調參分支只容許 profile 的共用 `game.lead_ms` 在 30–45 ms，owner 依 profile 值排程，manifest 記有效 nanoseconds；原 35 ms 為回退基線，40 ms 為待實景驗證候選。五指、擷取、門控、到期與未知 Down 契約不變。
+真正新 round 重設 observer／owner；曲中 HUD／source 撤銷不清除已完成 identity。geometry／generation 改變、未知注入／釋放結果為 FAULT；finalize 保存首份 release report。watchdog 只管停止，不當歌曲時鐘。`--one-round` 在一輪完成／中止、釋放與 archive 完成後停止；`--full-recording` 包含此單輪模式。
 
-真正新 round 重設 observer／owner；曲中 HUD／source 撤銷不清除已完成 identity。geometry／generation 改變、未知注入／釋放結果為 FAULT。finalize 保存首份 release report。watchdog 只管停止，不能當歌曲時鐘或結算。
-
-run --manual-play 是另一個有限等待入口：預設 wait-play-s 60，首次像素確認 playing 才啟動 duration 預算；重複 playing 不重設。它不等同無限待命的 manual-session。
+profile 共用 `game.lead_ms` 容許 30–45ms，manifest 記有效值；35ms／40ms 的歷史結果需按版本分讀。`run --manual-play` 是另一有限等待入口：首次 pixels 確认 playing 才開始 duration，重複 playing 不重設。操作入口不代表本輪獲准啟動。
 
 ## 診斷容量與資料用途
 
@@ -95,14 +79,23 @@ run --manual-play 是另一個有限等待入口：預設 wait-play-s 60，首�
 | SessionArchive | mailbox 8192 事件且 16MiB；每輪 16MiB×32 段，超額 FAULT；最多一張待編碼結算圖 |
 | 待命 journal | 1MiB×4 輪替；不累積全歷史 round vector |
 | 每輪統計 | 四個 vector 各 100,000 樣本；完整 raw 與有界統計範圍分開 |
-| Pixel clips | opt-in；20輪×每輪最多30張全RGB；writer mailbox 4；採樣失敗只減少診斷、不回饋 owner |
-| 舊 ROI／candidate bank | 有界離線／shadow 工具；proposed masks 未經人工核對不算 gold |
-| 預览 | 降頻只讀；不等待 writer、不作決策來源 |
+| Pixel clips | opt-in；20輪×每輪最多30張全 RGB；writer mailbox 4；採樣失敗不回饋 owner |
+| Full recording | opt-in；32 preroll＋64 pending＋3 encoder＝99 RGB slots；每輪 PNG＋index ≤5GiB／36000張／600秒，越限或溢出明列 incomplete_fault 並停止 |
+| Full-recording 選片 | ≤32 clips、每段 core ≤40秒／context各≤5秒；unique ≤12000 PNG／references≤18000；專用 PNG≤3GiB，其餘 index／journal 界限見全錄契約 |
+| 預覽／候選 bank | 只讀、有界；proposed 不算人工 gold，不作觸控決策來源 |
 
-新的兩秒診斷 ring、學習式觀測、relation head 及推論 runtime 尚未接入。新研究中的 512MiB 診斷 arena、模型延遲／VRAM預算與 data gates 是待驗設計，不取代以上現行上限。
+診斷單向流出。full-recording 故障可停止 session 並釋放，不能改變動作策略或偷降採樣；錄到所有 received pixels 不等於遊戲來源完全無漏幀。原圖與 QPC／source domain、ordinal／source_frame／SHA 映射分開保存。完整界限見[全錄契約](FULL_ROUND_RECORDING_20261001.md)。舊研究的兩秒 ring／512MiB arena 是另一未落地提案，不當作現行 full-recording 容量。
+
+## 離線工具與驗證邊界
+
+- `pas_frame_review`：核對全錄 SHA，以原辨識 cadence＋最多32 preroll 暖機 `GameObserver`；join 原 journal，輸出選段的 observer proposal。沒有重建 `SessionPerception` round reset／門控或 `GamePlanOwner`／FakeTouch；其 summary 的 cancellations 屬原 journal，不能歸因新版 replay。
+- `game-clip-replay`：短 clips／triples 的冷重播，不恢復片段開始前的 contact。
+- `analyze game-cold-pipeline`：有界預產合成 RGB、正式 LatestFrame／observer／owner／scheduler＋FakeTouch、Journal 三執行緒跑 QPC。fake-clock 時序回歸與主機成本分開；原發布時間 race 已修正，perception 讀 lease 內已同步的 published_ns。
+- `pas_vision_cpu`：CMake `PAS_ENABLE_CPU_VISION` 預設 OFF，獨立 C++ LibTorch CPU exe。4377參數合成小試、18 native ROI proposal、gold gate／序列化已存在；人工 pixel gold=0，無跨曲準確率或 runtime 模型。只允許輔助離線標记和通用程式優化。
+- **尚缺**：從真實全錄暖機生命週期、observer、owner、scheduler 並排空診斷的反事實 FakeTouch 重播；規格見現況報告，不冒稱既有工具已完成它。
 
 ## 量測與維護
 
-報告 n／p50／p95／p99／max、complete／abort／fault、逐曲與最差曲。owner lateness、RPC 時間、預測偏差及像素首次可辨效果是不同量測；分位數由完整 raw 或明示有界樣本重算，不平均每曲 p99。
+量測必報環境、n／p50／p95／p99／max、失敗與 jitter，保留全部 publish 嘗試、skip／drop／late 分母；不把各階段 p99 相加，不平均各曲 p99。主機 RPC 時间、owner lateness、預測偏差與遊戲可辨效果各自獨立。六區塊線掃描预檢的既有冷 ABBA／三執行緒 gate 見冷結果；密集場景額外逐批加速未過，不能只報成功子集。
 
-兩版實戰來源與 hash 見 [舊版結果](HD9_LEGACY_HD_RESULTS_20260928.md)、[新版結果](MAIN_LEGACY_HD_COMPARISON_20260928.md) 和 [合併紀錄](MAIN_MERGE_20260928.md)。清理後可用資料與被刪的歷史範圍見 [清理紀錄](CLEANUP_AUDIT_20260928.md)。正式實作修改需同步更新契約、相關合成回歸與能力限制。
+原始跨曲證據、frozen binary、失敗實驗與必要回歸輸入的保留／已刪范围見[本次清理](CLEANUP_AUDIT_20261001.md)與[9/28 清理](CLEANUP_AUDIT_20260928.md)。恢復 worktree 的 ignored 依賴仍由 frozen tools／main CPU build 引用，Git 合併不等於已搬移。修改正式契約時同步更新文件及可重現回歸。

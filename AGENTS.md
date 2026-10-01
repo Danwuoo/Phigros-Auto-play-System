@@ -4,7 +4,7 @@
 
 ## 現行方向
 
-2026-10-01 使用者要求合併全部 worktree 至 main，建立 Astra／xhigh 新 task 閱讀理解、研究下一步並整理清洗。當前整合候選 observer50／planner27／diagnostics11，尚無新實戰；恢復分支 C36h 的同號 observer37/planner19 與歷史 main 並非同一 binary，主要 Miss 問題未改善。以[整合交接](docs/MAIN_INTEGRATION_HANDOFF_20261001.md)核對現況、證據、原分支與 ignored 依賴保留清單。模型只辅助離線標記與主程式優化，不進即時迴圈。新 task 本輪先研究及整理，不自動恢復 emulator、真觸控、AP goal、模型訓練或無限實戰。以下早期阶段限制及成果按當時範圍閱讀。
+2026-10-01 main 已整合兩個 worktree 的 tracked 工作，commit `9fea67e248411f7c2309f220daf989f652b27d15`。當前候選 observer50／planner27／diagnostics11，尚無新實戰；恢復分支 C36h 的同號 observer37/planner19 與歷史 main 並非同一 binary，主要 Miss 問題未改善。閱讀[現況與下一步研究](docs/PROJECT_STATUS_NEXT_STEPS_20261001.md)、[整理帳本](docs/CLEANUP_AUDIT_20261001.md)及[整合交接](docs/MAIN_INTEGRATION_HANDOFF_20261001.md)。模型只輔助離線標記與主程式優化，不進即時迴圈。本輪為研究及整理，不自動恢復 emulator、真觸控、AP goal、模型訓練或無限實戰。以下早期階段限制及成果按當時範圍閱讀。
 
 2026-09-28 使用者指定跨曲學習研究為後續主線。先做 M0 證據／標註小試與線 ID 異常研究，再依 M1–M6 逐階段推進。舊 Glaciaxion HD AP → IN、獨立大型 Fixture 前置階段與五擷取重選均已退出現行順序。研究提案不等於已實作或已驗收；選定方向不代表自動恢復舊 AP goal、無限實戰或模型訓練。
 
@@ -28,7 +28,7 @@
 
 - 主用擷取固定 gRPC payload fast／RGB888 top-down／256 KiB；不重開選型。WGC／DXGI／scrcpy 僅 bench，MMAP diagnostic-only，無已驗正式備用。
 - 模擬器、解析度、方向、縮放與五指 mapping 由 profile／preflight 指紋核對。Fixture 能力不等於 Phigros 動作語義驗收。
-- 現行冷開發起點 observer38／planner21／diagnostics7，尚無實戰；最近七輪實戰 observer37／planner19。保留 observer36／planner18、observer33／planner13 歷史跨曲比較 binary；新模型未接入。manual-session 由使用者選曲及按 Play，本輪冷goal不啟動它。
+- 當前整合候選 observer50／planner27／diagnostics11，live rounds=0；observer38／planner21／diagnostics7 是 9/29 冷開發起點，observer37／planner19 的七輪亦為歷史批次。保留 observer33／36／37／38 配套及 A36 派生 frozen binaries，不以版本號代替 binary/source SHA。manual-session 由使用者選曲及按 Play；本輪研究整理不啟動它，也不新建長期 goal。
 - 時間預測／排程變更須有可重現的合成軌跡／fake-clock 回歸；實戰結果附版本、環境與原始證據。
 - 模型資料按歌曲／譜面家族切分；標註的 unknown 與 proposed 不升格為人工真值。不按歌名調參，不將舊動作當專家策略。
 - 清理後保留範圍與資料缺口見 [清理紀錄](docs/CLEANUP_AUDIT_20260928.md)。旧文件／legacy 程式可從 Git 歷史查閱；刪除的 ignored raw 不可假稱仍可重算。不要恢復舊流程只為滿足歷史文件。
