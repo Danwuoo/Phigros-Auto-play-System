@@ -24,6 +24,7 @@
 | Android native_app_glue | NDK 30.0.16248370 | [AOSP NOTICE](third_party/android-native-app-glue.txt) |
 | ByteTrack，僅演算法思路參考 | `d1bf0191adff59bc8fcfeaa0b33d3d1642552a99` | [上游 MIT 原文](third_party/tracking/ByteTrack-LICENSE.txt) |
 | OC-SORT，僅演算法思路參考 | `8462e7e729a93ccd3bd995c0a79a890336cb3a0b` | [上游 MIT 原文](third_party/tracking/OC-SORT-LICENSE.txt) |
+| LibTorch，僅可選離線 CPU 工具 | `2.7.0+cpu`，固定 archive SHA 見離線小試報告 | [PyTorch 原版授權](third_party/learning/PyTorch-LICENSE.txt)；包內第三方 notices 保留於 LibTorch `share/doc` |
 
 NDK glue 的 Apache 2.0 完整授權亦見 [Abseil 授權副本](third_party/abseil.txt)。Windows／MSVC／SDK／JBR／NDK 工具本身由既有安裝提供；此倉庫沒有重新散布它們。未來製作正式二進位發行包時，須隨實際打包內容一併提供相應 notices。
 

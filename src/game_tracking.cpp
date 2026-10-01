@@ -90,6 +90,12 @@ bool project_recent_confirmed_line(GameTarget& target,const GameTrackHistory& tr
     target.reason="recent_confirmed_line_projection";
     return true;
 }
+bool core_contains(const NoteCandidate& n,Vec2 p) {
+ const Vec2 d{p.x-n.center.x,p.y-n.center.y};
+ return std::abs(std::hypot(n.tangent.x,n.tangent.y)-1)<=.01&&
+     std::abs(d.x*n.tangent.x+d.y*n.tangent.y)<=n.width*.5+2&&
+     std::abs(-d.x*n.tangent.y+d.y*n.tangent.x)<=n.height*.5+2;
+}
 }
 void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& notes,
  const std::vector<std::optional<NoteCandidate>>& shortened_holds,
@@ -259,8 +265,13 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
             // Appearance orientation is only a weak CURRENT cue. A distant
             // note can align as it approaches; relative position and the
             // bounded relation history carry the association instead.
+            // Paired CURRENT rails carry a stronger local geometry cue than
+            // a color core. This is a soft cost, not a far-angle exclusion:
+            // an embedded orthogonal decoration cannot win on distance alone.
+            const double orientation_weight=n.rails_geometry&&n.direct_rails_evidence?
+                40:(across<32?12:3);
             const double score=across+std::max(0.0,along-line.length*.5)*2+
-                (1-alignment)*(across<32?12:3)+(1-line.confidence)*4+relative_trend-
+                (1-alignment)*orientation_weight+(1-line.confidence)*4+relative_trend-
                 (same_recent?120:0);
             if(score<best_score) {second_score=best_score;best_score=score;selected=&line;}
             else second_score=std::min(second_score,score);
@@ -481,14 +492,21 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
             if(first_line_sample&&prior_note_revision>=2&&
                target.note.kind==NoteKind::tap&&!target.note.outline_evidence&&
                prior_note_observed<now&&now-prior_note_observed<=40'000'000&&
+               l.observed_ns==now&&!target.note.rails_geometry&&
                l.confidence>=.8&&l.length>=out.context.width*.5&&
                target.note.confidence>=.5&&target.note.height>=4&&
-               std::abs(l.tangent.x*target.note.tangent.x+
-                        l.tangent.y*target.note.tangent.y)>=.9&&
+               core_contains(target.note,target.hit)&&
                std::abs(latest_distance)<=std::min(8.0,target.note.height*.5+4)) {
                 const double prior_distance=normal_distance(prior_note_center,l);
                 const double approach=latest_distance-prior_distance;
-                if(std::abs(approach)>=3&&std::abs(prior_distance)>=3&&
+                const auto local_lines=std::count_if(out.lines.begin(),out.lines.end(),[&](const LineCandidate& line) {
+                    return line.observed_ns==now&&line.confidence>=.5&&
+                        line.length>=out.context.width*.32&&
+                        std::abs(normal_distance(target.note.center,line))<=std::max(8.0,target.note.height*.5+4)&&
+                        std::abs((target.note.center.x-line.center.x)*line.tangent.x+
+                                 (target.note.center.y-line.center.y)*line.tangent.y)<=line.length*.5+target.note.width*.5;
+                });
+                if(local_lines==1&&std::abs(approach)>=3&&std::abs(prior_distance)>=3&&
                    std::abs(latest_distance)<=std::abs(prior_distance)+2&&
                    prior_distance*approach<0&&
                    std::abs(prior_distance)<=std::max(32.0,target.note.width*.25))

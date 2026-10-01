@@ -1,5 +1,9 @@
 # 現行架構與資料契約
 
+## 2026-10-01 整合契約補充
+
+目前候選 observer50／planner27／diagnostics11 保留 main 的全域線 assignment、短缺線有界預測與 owner 安全契約，整合 C36h 的當前正交 ridge、局部 Flick 合併與同 Hold body patch/front 接續。歧義線可保留歷史 ID 作診斷，但不能更新 measured lifetime／motion fit 或取得動作資格。full-recording 診斷仍單向流出；CPU 模型只在獨立 offline exe，正式 `pas` 不連結 LibTorch。版本、驗證邊界和文件時序見[整合交接](MAIN_INTEGRATION_HANDOFF_20261001.md)。以下為各阶段設計記錄。
+
 2026-09-29。main 冷合併基線 observer47／planner23／diagnostics11；四首 lead40 已測 observer47／planner24。observer48／planner25 手動試驗中止；observer49／planner26／diagnostics11 的離線回歸通過，2026-09-30 手動實測完成兩首後依使用者要求停止，單程序 C++20。結果見[熱調試紀錄](FOUR_SONG_HOT_TUNING_20260929.md)。先前七輪實戰為 observer37／planner19，兩輪較早結果為舊版基準。判定線修正見[實作紀錄](JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)，後續設計見 [跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。本文區分已存在的執行契約與未實作的學習式方案。
 
 2026-09-29補充：observer37／planner19已完成七輪實戰（六HD＋光IN）；原始結果見[冷開發計畫](NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md)。[冷開發結果](COLD_DEVELOPMENT_RESULT_20260929.md)記錄新版的分段SHA驗證、source_frame事件join、QPC子段、Note已占用替代配對與Flick路徑修正。固定擷取／時鐘／latest-frame／單owner契約不變；本輪只離線開發。下述為當前實作，不代表所有判定線與Note形式已驗收。

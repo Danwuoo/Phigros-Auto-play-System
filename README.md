@@ -1,8 +1,12 @@
 # Phigros Auto-play System
 
+## 2026-10-01 整合入口
+
+兩個 worktree 的已保存變更整合至 main；新候選 observer50／planner27／diagnostics11 尚無實戰驗收。全錄、逐幀工具及可選 CPU 離線模型已納入；模型只輔助離線優化，不進主程式迴圈。歷史 A36/C36h binary、原圖與依賴仍獨立保留。當前狀態、保留清單及下一步研究見[整合交接](docs/MAIN_INTEGRATION_HANDOFF_20261001.md)。以下各日期記錄保留其當時範圍。
+
 Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程序多執行緒處理最新畫面、音符／判定線追蹤、撞線預測與可撤銷多指觸控；不讀譜或遊戲內部狀態。
 
-**後續主線：[主程式架構與跨曲學習研究](docs/MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。** 先隔離線身分／音符關聯問題，依[判定線形式](docs/判定線形式.md)驗證幾何與動作策略，建立人工標註與基準；確認觀測／關聯瓶頸後才比較學習式方法。新模型尚未訓練或接入；目前没有 AP 或未知曲泛化驗收。
+**後續主線：[主程式架構與跨曲學習研究](docs/MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。** 先隔離線身分／音符關聯問題，依[判定線形式](docs/判定線形式.md)驗證幾何與動作策略，建立人工標註與基準；確認觀測／關聯瓶頸後才比較學習式方法。CPU 模型僅完成離線合成小試，未接入即時迴圈；目前沒有 AP 或未知曲泛化驗收。
 
 2026-09-29 [非學習式冷開發](docs/COLD_DEVELOPMENT_RESULT_20260929.md)完成分段journal追溯、既有RGB冷重播、FakeTouch反例修正及計畫§8的C0–C6可冷驗收。分析範圍與驗收門檻見[計畫](docs/NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md)。本輪沒有啟動emulator；熱測另階段。
 

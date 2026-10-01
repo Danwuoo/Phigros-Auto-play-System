@@ -4,6 +4,10 @@
 #include "pas/game_tracking.hpp"
 #include <gtest/gtest.h>
 #include <algorithm>
+#include <chrono>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
 
 using namespace pas;
 namespace {
@@ -76,6 +80,164 @@ TEST(GameObserver, MultiplePixelsTracksAndRelativeMovingLinePrediction) {
     EXPECT_NEAR(approaching->residual,0,0.01);
     EXPECT_NEAR(*approaching->crossing_ns/1e6,292.5,3);
     EXPECT_GT(approaching->uncertainty_ns,0);
+}
+TEST(GameObserver, CrossingCurrentVerticalRidgeSurvivesConnectedHorizontalLine) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot scene;
+    for(int i=0;i<6;++i){auto f=image(i+1,i*20'000'000);hud(f);
+        rect(f,20,576,1240,4,{255,255,255});rect(f,960,100,4,590,{255,255,255});
+        oriented_box(f,{800.0+i*16,320},{0,1},140,8,{245,230,80});
+        clock.set(f.capture_complete_ns);scene=observer.process(f);
+    }
+    const auto vertical=std::find_if(scene.lines.begin(),scene.lines.end(),[](const auto& l){return std::abs(l.tangent.y)>.99&&std::abs(l.center.x-962)<5;});
+    ASSERT_NE(vertical,scene.lines.end());ASSERT_GE(scene.lines.size(),2);
+    const auto drag=std::find_if(scene.targets.begin(),scene.targets.end(),[](const auto& t){return t.note.kind==NoteKind::drag;});
+    ASSERT_NE(drag,scene.targets.end());EXPECT_EQ(drag->line_id,vertical->track_id);ASSERT_TRUE(drag->crossing_ns);EXPECT_NEAR(drag->hit.x,962,4);
+}
+TEST(GameObserver, CurrentVerticalSearchRejectsHoldSideRailsAndBroadWhiteFill) {
+    FakeClock clock;GameObserver observer(clock);DecisionSnapshot scene;
+    for(int i=0;i<4;++i){auto f=image(i+1,i*20'000'000);hud(f);rect(f,20,576,1240,4,{255,255,255});
+        rect(f,422,110,140,460,{40,190,255});rect(f,418,110,4,460,{255,255,255});rect(f,562,110,4,460,{255,255,255});
+        rect(f,800,100,40,590,{255,255,255});clock.set(f.capture_complete_ns);scene=observer.process(f);
+    }
+    EXPECT_TRUE(std::none_of(scene.lines.begin(),scene.lines.end(),[](const auto& l){return std::abs(l.tangent.y)>.99;}));
+}
+TEST(GameObserver, RotatedSplitFlickJoinsOnlyWithItsCurrentTransverseArrow) {
+    for(bool marker:{false,true}){FakeClock clock;GameObserver observer(clock);DecisionSnapshot scene;
+        for(int i=0;i<4;++i){auto f=image(i+1,i*20'000'000);hud(f);rect(f,960,50,4,650,{255,255,255});
+            const double x=780+i*20;oriented_box(f,{x,275},{0,1},52,8,{255,60,140});oriented_box(f,{x,355},{0,1},52,8,{255,60,140});
+            if(marker)oriented_box(f,{x,315},{1,0},24,4,{255,255,255});clock.set(f.capture_complete_ns);scene=observer.process(f);
+        }
+        ASSERT_EQ(scene.targets.size(),marker?1u:2u);for(auto& t:scene.targets){EXPECT_EQ(t.note.kind,NoteKind::flick);EXPECT_GT(std::abs(t.note.tangent.y),.99);}
+        if(marker){EXPECT_GT(scene.targets.front().note.width,120);EXPECT_NEAR(scene.targets.front().note.center.y,315,3);}
+    }
+}
+TEST(GameObserver, CrossingVerticalWhiteRidgeSurvivesCurrentWarmHitTintButCannotBeBornFromTint) {
+    for(bool white_seed:{false,true}){FakeClock clock;GameObserver observer(clock);DecisionSnapshot scene;
+        for(int i=0;i<4;++i){auto f=image(i+1,i*20'000'000);hud(f);rect(f,20,576,1240,4,{255,255,255});
+            rect(f,960,80,4,620,white_seed?std::array<std::uint8_t,3>{255,255,255}:std::array<std::uint8_t,3>{170,150,110});
+            rect(f,960,270,4,270,{170,150,110});clock.set(f.capture_complete_ns);scene=observer.process(f);
+        }
+        EXPECT_EQ(std::any_of(scene.lines.begin(),scene.lines.end(),[](const auto& l){return std::abs(l.tangent.y)>.99&&std::abs(l.center.x-962)<4;}),white_seed);
+    }
+}
+TEST(GameObserver, RowPrescreenPreservesCompleteDecisionsOnSyntheticMotion) {
+    FakeClock clock; GameObserver full(clock,false,false,4,false),fast(clock,false,true,4,false);
+    for(int i=0;i<12;++i) {
+        auto f=image(i+1,i*17'000'000);hud(f);
+        rect(f,80,510+i,1120,3,{255,255,255});
+        for(int x=300;x<390;++x) rect(f,x,390+i*9,1,8,{40,190,255});
+        if(i%3==0) rect(f,830,140,3,440,{255,255,255});
+        clock.set(f.capture_complete_ns);
+        EXPECT_EQ(decision_json(full.process(f)),decision_json(fast.process(f))) << "frame " << i;
+    }
+}
+TEST(GameObserver, RowPrescreenPreservesRecordedClipDecisionsWhenProvided) {
+    const char* root_env=std::getenv("PAS_RGB_CLIP_ROOT");
+    if(!root_env) GTEST_SKIP() << "Set PAS_RGB_CLIP_ROOT to a verified pixel-clips directory";
+    const std::filesystem::path root(root_env);
+    std::ifstream index(root/"index.jsonl",std::ios::binary);
+    ASSERT_TRUE(index.is_open());
+    FakeClock clock; GameObserver full(clock,false,false,4,false),fast(clock,false,true,4,false),joined(clock,false,true,4,true);
+    int prior_round=-1,prior_clip=-1,checked=0;
+    int frames_with_new_lines=0,focus_frames_with_new_lines=0;
+    std::vector<double> full_ms,fast_ms,joined_ms;
+    std::string line;
+    while(std::getline(index,line)) {
+        if(line.empty())continue;
+        const auto entry=nlohmann::json::parse(line);
+        const int round=entry.at("round_id").get<int>(),clip=entry.at("clip_id").get<int>();
+        if(round!=prior_round||clip!=prior_clip) {full.reset();fast.reset();joined.reset();}
+        prior_round=round;prior_clip=clip;
+        Frame f;f.width=entry.at("width").get<int>();f.height=entry.at("height").get<int>();
+        f.stride=entry.at("stride").get<int>();f.source_rotation=1;
+        f.epoch=f.generation=f.geometry_version=1;
+        f.sequence=entry.at("source_frame").get<std::uint64_t>();
+        f.capture_complete_ns=entry.at("capture_complete_ns").get<Nanoseconds>();
+        f.rgb.resize(static_cast<std::size_t>(f.stride)*f.height);
+        std::ifstream input(root/entry.at("path").get<std::string>(),std::ios::binary);
+        ASSERT_TRUE(input.is_open());
+        input.read(reinterpret_cast<char*>(f.rgb.data()),static_cast<std::streamsize>(f.rgb.size()));
+        ASSERT_EQ(input.gcount(),static_cast<std::streamsize>(f.rgb.size()));
+        clock.set(f.capture_complete_ns);
+        DecisionSnapshot full_decision,fast_decision,joined_decision;
+        const auto run=[&](GameObserver& observer,DecisionSnapshot& decision,std::vector<double>& times) {
+            const auto begin=std::chrono::steady_clock::now();
+            decision=observer.process(f);
+            const auto end=std::chrono::steady_clock::now();
+            times.push_back(std::chrono::duration<double,std::milli>(end-begin).count());
+        };
+        if(checked%2) {
+            run(fast,fast_decision,fast_ms);run(full,full_decision,full_ms);
+        } else {
+            run(full,full_decision,full_ms);run(fast,fast_decision,fast_ms);
+        }
+        run(joined,joined_decision,joined_ms);
+        EXPECT_EQ(decision_json(full_decision),decision_json(fast_decision))
+            << "round " << round << " clip " << clip << " frame " << f.sequence;
+        ASSERT_LE(joined_decision.lines.size(),16u);
+        if(joined_decision.lines.size()>fast_decision.lines.size()) {
+            ++frames_with_new_lines;
+            if(round==5&&(clip==3||clip==4))++focus_frames_with_new_lines;
+            std::cout << "joined_line_diff round=" << round << " clip=" << clip
+                      << " frame=" << f.sequence << " baseline=" << fast_decision.lines.size()
+                      << " split=" << joined_decision.lines.size();
+            for(const auto& candidate:joined_decision.lines)
+                std::cout << " (" << candidate.center.x << "," << candidate.center.y
+                          << ";" << candidate.tangent.x << "," << candidate.tangent.y
+                          << ";" << candidate.length << ")";
+            std::cout << '\n';
+        }
+        ++checked;
+    }
+    EXPECT_GT(checked,0);
+    const auto report=[](const char* label,std::vector<double> values) {
+        std::sort(values.begin(),values.end());
+        const auto q=[&](double p){return values[static_cast<std::size_t>(p*(values.size()-1))];};
+        std::cout << "row_prescreen " << label << " n=" << values.size()
+                  << " p5=" << q(.05) << " p50=" << q(.50) << " p95=" << q(.95)
+                  << " p99=" << q(.99) << " max=" << values.back()
+                  << " jitter_p95_minus_p5=" << q(.95)-q(.05) << " ms\n";
+    };
+    if(checked>0) {
+        report("full",full_ms);report("prescreen",fast_ms);report("joined",joined_ms);
+        std::cout << "joined_line_differences n=" << frames_with_new_lines
+                  << " focus=" << focus_frames_with_new_lines << " of " << checked << " frames\n";
+    }
+}
+TEST(GameObserver, SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails) {
+    FakeClock clock;
+    auto single=image(1,20'000'000);hud(single);
+    rect(single,80,510,1120,4,{255,255,255});
+    rect(single,540,30,4,680,{255,255,255});
+    rect(single,955,30,4,680,{255,255,255});
+    GameObserver single_baseline(clock,false,true,4,false),single_candidate(clock,false,true,4,true);
+    clock.set(single.capture_complete_ns);
+    const auto single_old=single_baseline.process(single),single_split=single_candidate.process(single);
+    ASSERT_EQ(single_old.lines.size(),1u);
+    EXPECT_EQ(single_split.lines.size(),3u); // Current orthogonal ridges are now independent observations.
+
+    auto f=single;rect(f,80,200,1120,4,{255,255,255});
+    GameObserver baseline(clock,false,true,4,false),candidate(clock,false,true,4,true);
+    clock.set(f.capture_complete_ns);
+    const auto old=baseline.process(f),split=candidate.process(f);
+    const auto has_vertical=[](const DecisionSnapshot& decision,int x,int min_length) {
+        return std::any_of(decision.lines.begin(),decision.lines.end(),[&](const LineCandidate& line) {
+            return std::abs(line.center.x-x)<12&&std::abs(line.tangent.y)>.98&&line.length>min_length;
+        });
+    };
+    ASSERT_GE(old.lines.size(),2u);
+    EXPECT_FALSE(has_vertical(old,540,600));
+    EXPECT_FALSE(has_vertical(old,955,600));
+    EXPECT_TRUE(has_vertical(split,540,600));
+    EXPECT_TRUE(has_vertical(split,955,600));
+
+    auto hold=image(2,40'000'000);hud(hold);
+    rect(hold,80,510,1120,4,{255,255,255});
+    enclosed_hold_patch(hold,510); // White rails join the judgment line at their lower edge.
+    clock.set(hold.capture_complete_ns);
+    const auto hold_result=candidate.process(hold);
+    EXPECT_FALSE(has_vertical(hold_result,418,350));
+    EXPECT_FALSE(has_vertical(hold_result,570,350));
 }
 TEST(GameObserver, NotesAloneDuplicateFramesAndGeometryCannotArm) {
     FakeClock clock; GameObserver observer(clock);
@@ -1615,6 +1777,21 @@ TEST(GameOwner, MovingHoldRejectsColorFragmentProjectionAndKeepsTheOriginalMissi
     EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
     owner.stop();
 }
+TEST(GameOwner, SameHoldCanRecoverItsFrontFromAnInteriorPatchWithoutChangingContact) {
+    for(int variant=0;variant<5;++variant){SCOPED_TRACE(variant);FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{2,0,30'000'000});
+        auto h=target(1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=4;h.line_id=7;
+        h.note.center=h.hit;h.note.width=152;h.note.height=400;h.note.rails_geometry=true;h.note.head_on_line=true;
+        auto s=snapshot(1,0);s.targets={h};owner.accept(s);clock.set(10'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1);const int contact=touch.contacts().begin()->first;
+        clock.set(20'000'000);s=snapshot(2,clock.now_ns());h.evidence_ns=clock.now_ns();h.expires_ns=clock.now_ns()+100'000'000;h.revision++;
+        h.note.center=h.hit={400,460};h.note.head_on_line=false;h.note.held_body_evidence=h.note.held_body_patch=true;h.crossing_ns.reset();h.reason="held_body_touch_only";s.targets={h};owner.accept(s);owner.poll();ASSERT_EQ(touch.contacts().begin()->second[1],460);
+        for(int i=0;i<5;++i){clock.set(40'000'000+i*20'000'000);s=snapshot(i+3,clock.now_ns());h.evidence_ns=clock.now_ns();h.expires_ns=clock.now_ns()+100'000'000;h.revision++;
+            h.note.center=h.hit={400,520};h.note.held_body_patch=false;h.reason="root_past";if(variant==1)h.note_id=2;if(variant==2)h.note.height=20;if(variant==3)h.line_id=8;if(variant==4)h.note.rails_geometry=false;
+            s.targets={h};owner.accept(s);owner.poll();owner.take_accepted_plans();owner.take_coverage_updates();owner.take_plan_cancellations();
+        }
+        if(variant==0){ASSERT_EQ(touch.contacts().size(),1);EXPECT_EQ(touch.contacts().begin()->first,contact);EXPECT_EQ(touch.contacts().begin()->second[1],520);}else EXPECT_TRUE(touch.contacts().empty());
+        EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    }
+}
 TEST(GameOwner, HeldBodySupportCannotCreateANewDownEvenWithAFittedCrossing) {
     FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{2,0,30'000'000});
     auto h=target(1,0,10'000'000);h.note.kind=NoteKind::hold;h.samples=4;
@@ -2178,7 +2355,7 @@ TEST(GameOwner, DragOverlapRejectsMissingStaleAmbiguousAndNonCoreGeometry) {
         case 7:t.hit.x+=30;break;
         case 8:t.note.height=70;break;
         case 9:t.note.rails_geometry=true;break;
-        case 10:t.note.tangent={0,1};break;
+        case 10:t.note.tangent={0,2};break; // Malformed geometry; perpendicular unit orientation is valid.
         case 11:t.expires_ns=0;break;
         case 12:t.history_span_ns=1'000'000;break;
         case 13:clock.set(100'000'000);break;
@@ -2640,6 +2817,7 @@ TEST(GameTracking, ExpiredOriginalLineLetsExplicitNextLineEarnFreshRelation) {
         }
     }
 }
+
 TEST(GameTracking, CurrentTapOverlapNeedsPriorApproachAndCannotUseFirstAppearance) {
     const auto probe=[](const std::vector<double>& centers) {
         std::vector<GameTrackHistory> history;std::uint64_t next=0;
@@ -2697,4 +2875,327 @@ TEST(GameOwner, RotatedTailNeedsTwoCurrentSamplesOnItsOwnLine) {
     ASSERT_EQ(events.size(),1);EXPECT_EQ(events[0].at("event"),"game_hold_tail_confirmed");
     clock.set(60'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
     owner.stop();
+}
+
+namespace {
+DecisionSnapshot emerging_tap(Nanoseconds time=40'000'000) {
+    auto s=snapshot(3,time);
+    LineCandidate line{{640,539},{1,0},1280,2,.9};line.track_id=1;line.observed_ns=time;s.lines={line};
+    auto t=target(1,time,time);t.crossing_ns.reset();t.reason="current_tap_overlap";
+    t.samples=1;t.line_id=1;t.hit={730,539};t.note.center=t.hit;
+    t.note.width=128;t.note.height=8;t.note.confidence=.9;s.targets={t};
+    return s;
+}
+}
+
+TEST(GameOwner, CurrentTapOverlapRejectsCompetingStaleInvalidAndUnsupportedEvidence) {
+    for(int variant=0;variant<12;++variant) {
+        SCOPED_TRACE(variant);FakeClock clock;clock.set(40'000'000);
+        FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,5,{15,35'000'000,30'000'000});
+        auto s=emerging_tap();auto& t=s.targets[0];
+        switch(variant) {
+        case 0:s.lines[0].observed_ns--;break;
+        case 1:s.lines[0].association_valid=false;break;
+        case 2:s.lines[0].length=500;break;
+        case 3:t.hit.x+=10;break;
+        case 4:t.note.kind=NoteKind::hold;break;
+        case 5:t.note.kind=NoteKind::flick;break;
+        case 6:t.note.outline_evidence=true;break;
+        case 7:t.samples=0;break;
+        case 8:t.samples=2;break;
+        case 9:t.expires_ns=clock.now_ns();break;
+        case 10:t.evidence_ns--;break;
+        case 11:{auto other=s.lines[0];other.track_id=2;other.center={730,360};other.tangent={0,1};s.lines.push_back(other);break;}
+        }
+        owner.accept(s);owner.poll();EXPECT_TRUE(touch.receipts().empty());owner.stop();
+    }
+}
+
+TEST(GameTracking, EmergingTapAtCrossedLinesRemainsWithoutImmediateActionBasis) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    for(int i=0;i<3;++i) {
+        auto s=snapshot(i+1,i*20'000'000);NoteCandidate n;
+        n.kind=NoteKind::tap;n.center={730,520+i*9.5};n.width=128;n.height=8;n.confidence=.9;
+        if(i==2) {
+            s.lines=emerging_tap().lines;
+            auto crossed=s.lines[0];crossed.track_id=2;crossed.center={730,360};crossed.tangent={0,1};s.lines.push_back(crossed);
+        }
+        track_legacy_batch(s,{n},{std::nullopt},history,next);
+        ASSERT_EQ(s.targets.size(),1);
+        EXPECT_NE(s.targets[0].reason,"current_tap_overlap");
+    }
+}
+
+TEST(GameOwner, CurrentTapOverlapCompletesOnceAndCannotReplayAfterReturn) {
+    FakeClock clock;clock.set(40'000'000);FakeTouchBackend touch(clock);
+    GamePlanOwner owner(clock,touch,1,{1,35'000'000,30'000'000});
+    auto s=emerging_tap();owner.accept(s);owner.poll();
+    const auto accepted=owner.take_accepted_plans();ASSERT_EQ(accepted.size(),1);
+    EXPECT_EQ(accepted[0].basis,"live_pixels_current_tap_overlap");EXPECT_FALSE(accepted[0].predicted_down_ns);
+    clock.set(58'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    clock.set(90'000'000);owner.accept(snapshot(4,clock.now_ns()));
+    clock.set(100'000'000);s=emerging_tap(clock.now_ns());s.context.frame=5;s.sequence=5;s.targets[0].revision=4;
+    owner.accept(s);owner.poll();EXPECT_TRUE(owner.take_accepted_plans().empty());
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    owner.stop();
+}
+
+TEST(GameOwner, CurrentTapOverlapUnknownDownIsNotRetried) {
+    struct UnknownTouch final:TouchBackend {
+        const Clock& clock;int downs=0,releases=0;
+        explicit UnknownTouch(const Clock& c):clock(c){}
+        TouchReceipt inject(const TouchCommand& c) override {
+            if(c.phase==Phase::down)++downs;
+            return {c,clock.now_ns(),clock.now_ns(),false,"unknown_injection_result"};
+        }
+        ReleaseReport release_all() override {
+            ++releases;
+            return downs?ReleaseReport{{0},{},{0},clock.now_ns(),clock.now_ns()}:
+                ReleaseReport{{},{},{},clock.now_ns(),clock.now_ns()};
+        }
+    };
+    FakeClock clock;clock.set(40'000'000);UnknownTouch touch(clock);
+    GamePlanOwner owner(clock,touch,1,{1,35'000'000,30'000'000});
+    auto s=emerging_tap();owner.accept(s);owner.poll();EXPECT_EQ(touch.downs,1);
+    clock.set(60'000'000);s=emerging_tap(clock.now_ns());s.context.frame=4;s.sequence=4;s.targets[0].revision=4;
+    owner.accept(s);owner.poll();EXPECT_EQ(touch.downs,1);EXPECT_GT(touch.releases,0);
+    owner.stop();
+}
+
+TEST(GameMotion, ContestedObservationCannotSeedRecurringDuplicateTracks) {
+    FakeClock clock;clock.set(1'000'000);GameLineTracker tracker;
+    auto s=snapshot(1,clock.now_ns());
+    const auto line=[](double y){return LineCandidate{{640,y},{1,0},1200,2,.85};};
+    std::vector<LineCandidate> lines={line(570)};tracker.update(lines,s.context);
+    const auto original=lines[0].track_id;ASSERT_TRUE(lines[0].association_valid);
+    clock.set(clock.now_ns()+16'000'000);s.context.frame++;s.context.capture_ns=clock.now_ns();
+    lines={line(570),line(572)};tracker.update(lines,s.context);
+    for(const auto& observed:lines) {
+        EXPECT_FALSE(observed.association_valid);
+        EXPECT_TRUE(observed.track_id==0||observed.track_id==original);
+        EXPECT_EQ(observed.motion_samples,0);
+    }
+    for(int i=0;i<30;++i) {
+        clock.set(clock.now_ns()+16'000'000);s.context.frame++;s.context.capture_ns=clock.now_ns();
+        lines={line(570)};tracker.update(lines,s.context);
+        EXPECT_TRUE(lines[0].association_valid)<<i;
+        EXPECT_EQ(lines[0].track_id,original)<<i;
+    }
+}
+
+TEST(GameMotion, ConvergedLineAmbiguityExpiresWithoutInventingIdentity) {
+    FakeClock clock;clock.set(1'000'000);GameLineTracker tracker;
+    auto s=snapshot(1,clock.now_ns());
+    const auto line=[](double y){return LineCandidate{{640,y},{1,0},1200,2,.85};};
+    std::vector<LineCandidate> lines={line(570),line(572)};tracker.update(lines,s.context);
+    const auto first=lines[0].track_id,second=lines[1].track_id;
+    ASSERT_NE(first,second);
+    for(int i=1;i<=5;++i) {
+        clock.set(clock.now_ns()+16'000'000);s.context.frame++;s.context.capture_ns=clock.now_ns();
+        lines={line(571)};tracker.update(lines,s.context);
+        EXPECT_FALSE(lines[0].association_valid)<<i;
+        EXPECT_TRUE(lines[0].track_id==0||lines[0].track_id==first||lines[0].track_id==second)<<i;
+        EXPECT_FALSE(lines[0].motion_valid)<<i;
+    }
+    clock.set(clock.now_ns()+16'000'000);s.context.frame++;s.context.capture_ns=clock.now_ns();
+    lines={line(571)};tracker.update(lines,s.context);
+    ASSERT_TRUE(lines[0].association_valid);
+    EXPECT_NE(lines[0].track_id,first);EXPECT_NE(lines[0].track_id,second);
+    EXPECT_EQ(lines[0].motion_samples,1); // Current new observation, not an old identity bridge.
+    const auto recovered=lines[0].track_id;
+    for(int i=0;i<30;++i) {
+        clock.set(clock.now_ns()+16'000'000);s.context.frame++;s.context.capture_ns=clock.now_ns();
+        lines={line(571)};tracker.update(lines,s.context);
+        EXPECT_TRUE(lines[0].association_valid)<<i;
+        EXPECT_EQ(lines[0].track_id,recovered)<<i;
+    }
+}
+
+TEST(GameObserver, PerpendicularColoredRibbonsKeepTheirOwnGeometryAndKind) {
+    for(const auto [kind,color]:std::array<std::pair<NoteKind,std::array<std::uint8_t,3>>,3>{{
+        {NoteKind::tap,{40,190,255}},{NoteKind::drag,{255,220,40}},{NoteKind::flick,{255,60,140}}}}) {
+        SCOPED_TRACE(name(kind));FakeClock clock;GameObserver observer(clock);DecisionSnapshot s;
+        for(int i=0;i<5;++i) {
+            auto f=image(i+1,i*20'000'000);hud(f);
+            rect(f,80,570,1120,4,{255,255,255});rect(f,80,160,1120,4,{255,255,255});
+            oriented_box(f,{500.0,400.0+i*20},{0,1},128,8,color);
+            clock.set(f.capture_complete_ns);s=observer.process(f);
+        }
+        ASSERT_EQ(s.targets.size(),1u);const auto& t=s.targets[0];
+        EXPECT_EQ(t.note.kind,kind);EXPECT_GT(std::abs(t.note.tangent.y),.99);
+        EXPECT_NEAR(t.note.width,128,4);EXPECT_LE(t.note.height,12);
+        ASSERT_TRUE(t.crossing_ns);EXPECT_GT(t.velocity,900);
+        const auto line=std::find_if(s.lines.begin(),s.lines.end(),[&](const auto& l){return l.track_id==t.line_id;});
+        ASSERT_NE(line,s.lines.end());EXPECT_NEAR(line->center.y,572,3);
+    }
+}
+
+TEST(GameTracking, NormalMotionOutranksAnUnrelatedParallelDecoration) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;GameTarget last;
+    for(int i=0;i<6;++i) {
+        auto s=snapshot(i+1,i*20'000'000);
+        LineCandidate true_line{{640,570},{1,0},1120,2,.85},decoration{{900.0+i*4,360},{0,1},700,2,.99};
+        true_line.track_id=1;decoration.track_id=2;s.lines={decoration,true_line};
+        NoteCandidate n;n.kind=NoteKind::tap;n.center={500.0,450.0+i*20};
+        n.width=128;n.height=8;n.confidence=.9;n.tangent={0,1};
+        track_legacy_batch(s,{n},{std::nullopt},history,next);last=s.targets.at(0);
+        if(i>=2)EXPECT_EQ(last.line_id,1u);
+    }
+    ASSERT_TRUE(last.crossing_ns);EXPECT_NEAR(last.velocity,1000,1);
+}
+
+TEST(GameTracking, ConfirmedCurrentLineSurvivesLateNoteAlignmentAndBrighterFork) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;std::uint64_t id=0;
+    for(int i=0;i<6;++i) {
+        auto s=snapshot(i+1,i*20'000'000);
+        LineCandidate original{{640,570},{1,0},1120,2,.85};original.track_id=1;s.lines={original};
+        NoteCandidate n;n.kind=NoteKind::tap;n.center={500.0,440.0+i*20};
+        n.width=128;n.height=8;n.confidence=.9;
+        if(i>=3) {
+            n.tangent={0,1};LineCandidate fork{{500.0+(i-2)*18,360},{0,1},700,2,.99};
+            fork.track_id=2;s.lines.insert(s.lines.begin(),fork);
+        }
+        track_legacy_batch(s,{n},{std::nullopt},history,next);const auto& t=s.targets.at(0);
+        if(!id)id=t.note_id;EXPECT_EQ(t.note_id,id);EXPECT_EQ(t.line_id,1u);
+        if(i>=3)EXPECT_TRUE(t.crossing_ns);
+    }
+}
+
+TEST(GameTracking, GenuineTwoLinesRetainIndependentPerpendicularNotes) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;DecisionSnapshot s;
+    for(int i=0;i<6;++i) {
+        s=snapshot(i+1,i*20'000'000);
+        LineCandidate horizontal{{640,570},{1,0},1120,2,.9},vertical{{1000,360},{0,1},700,2,.9};
+        horizontal.track_id=1;vertical.track_id=2;s.lines={horizontal,vertical};
+        NoteCandidate a;a.kind=NoteKind::tap;a.center={400.0,450.0+i*20};a.width=128;a.height=8;a.tangent={0,1};
+        auto b=a;b.center={870.0+i*20,280};b.tangent={1,0};
+        track_legacy_batch(s,{a,b},{std::nullopt,std::nullopt},history,next);
+    }
+    ASSERT_EQ(s.targets.size(),2u);EXPECT_NE(s.targets[0].note_id,s.targets[1].note_id);
+    EXPECT_EQ(s.targets[0].line_id,1u);EXPECT_EQ(s.targets[1].line_id,2u);
+    EXPECT_TRUE(s.targets[0].crossing_ns);EXPECT_TRUE(s.targets[1].crossing_ns);
+}
+
+TEST(GameTracking, CompetingParallelLinesAndRecedingPerpendicularNotesDoNotGuessDown) {
+    for(int variant=0;variant<3;++variant) {
+        SCOPED_TRACE(variant);FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,2,{1,0,30'000'000});
+        std::vector<GameTrackHistory> history;std::uint64_t next=0;
+        for(int i=0;i<5;++i) {
+            const auto now=i*20'000'000LL;clock.set(now);auto s=snapshot(i+1,now);
+            LineCandidate a{{640,variant==0?400.0:570.0},{1,0},1120,2,.9};a.track_id=1;
+            auto b=a;b.track_id=2;b.center.y=variant==0?600:200;s.lines={a,b};
+            NoteCandidate n;n.kind=NoteKind::tap;n.width=128;n.height=8;n.confidence=.9;
+            n.center={500,variant==0?500.0:variant==1?520.0-i*15:450.0};
+            if(variant)n.tangent={0,1};
+            track_legacy_batch(s,{n},{std::nullopt},history,next);
+            if(variant==0)EXPECT_EQ(s.targets[0].line_id,0u);
+            owner.accept(s);owner.poll();
+        }
+        EXPECT_TRUE(touch.receipts().empty());owner.stop();
+    }
+}
+
+TEST(GameOwner, PerpendicularCurrentTapOverlapRequiresItsActualCore) {
+    for(int variant=0;variant<3;++variant) {
+        SCOPED_TRACE(variant);FakeClock clock;clock.set(40'000'000);FakeTouchBackend touch(clock);
+        GamePlanOwner owner(clock,touch,1,{1,0,30'000'000});auto s=emerging_tap();
+        s.targets[0].note.tangent={0,1};
+        if(variant==1)s.targets[0].hit.x+=7; // Projection outside the narrow current core.
+        if(variant==2)s.targets[0].note.center.y-=40; // Long bar alone is not a center overlap.
+        owner.accept(s);owner.poll();EXPECT_EQ(touch.contacts().size(),variant==0?1u:0u);
+        owner.stop();EXPECT_TRUE(touch.contacts().empty());
+    }
+}
+
+TEST(GameOwner, PerpendicularCurrentDragOverlapNeedsCurrentCoreAndReleasesOnce) {
+    for(int variant=0;variant<3;++variant) {
+        SCOPED_TRACE(variant);FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{4,0,30'000'000});
+        auto s=overlapping_drag(1,0);s.targets[0].note.tangent={0,1};
+        if(variant==1)s.targets[0].note.center.x+=12;
+        if(variant==2)s.targets[0].note.center.y-=40;
+        owner.accept(s);owner.poll();EXPECT_EQ(touch.contacts().size(),variant==0?1u:0u);
+        clock.set(100'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());owner.stop();
+        EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),variant==0?1:0);
+    }
+}
+
+TEST(GameMotion, RotatedCurrentHoldRailsRequireBothCurrentlyVisibleSides) {
+    auto f=image(1,0);const double angle=.4;const Vec2 u{std::cos(angle),std::sin(angle)},n{-u.y,u.x};
+    NoteCandidate anchor;anchor.kind=NoteKind::hold;anchor.center={500,560};anchor.width=120;anchor.height=300;
+    anchor.rails_geometry=true;anchor.head_on_line=true;
+    LineCandidate line{{500,560},u,1000,2,.9};line.track_id=1;
+    const auto rail=[&](int side,std::array<std::uint8_t,3> color) {
+        oriented_box(f,{500+u.x*side*60-n.x*150,560+u.y*side*60-n.y*150},n,300,3,color);
+    };
+    rail(-1,{170,170,170});EXPECT_FALSE(observe_held_outline(f,anchor,line));
+    rail(1,{170,170,170});const auto observed=observe_held_outline(f,anchor,line);
+    ASSERT_TRUE(observed);EXPECT_NEAR(observed->tangent.x,u.x,.01);EXPECT_TRUE(observed->head_on_line);
+    auto empty=image(2,20'000'000);EXPECT_FALSE(observe_held_outline(empty,anchor,line));
+    line.association_valid=false;EXPECT_FALSE(observe_held_outline(f,anchor,line));
+}
+
+TEST(GameOwner, RotatingSupportedHoldKeepsTheSameContactButFragmentsCannotMoveIt) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
+    auto h=target(1,0,10'000'000);h.note.kind=NoteKind::hold;h.note.width=120;h.note.height=300;
+    h.note.center=h.hit;h.note.rails_geometry=true;h.note.head_on_line=true;h.line_id=1;h.samples=3;
+    auto s=snapshot(1,0);s.targets={h};owner.accept(s);clock.set(10'000'000);owner.poll();
+    ASSERT_EQ(touch.contacts().size(),1u);const auto finger=touch.contacts().begin()->first;
+    for(int i=0;i<2;++i) {
+        const auto now=30'000'000LL+i*20'000'000LL;clock.set(now);s=snapshot(i+2,now);
+        h.evidence_ns=now;h.expires_ns=now+100'000'000;h.revision++;
+        h.note.head_on_line=false;h.note.held_body_evidence=true;h.note.outline_evidence=true;
+        h.note.tangent={std::cos(i*.4),std::sin(i*.4)};h.note.center={400.0+i*20,500.0-i*20};
+        h.hit=h.note.center;h.crossing_ns.reset();h.reason="held_body_touch_only";s.targets={h};
+        owner.accept(s);owner.poll();ASSERT_EQ(touch.contacts().size(),1u);
+        EXPECT_EQ(touch.contacts().begin()->first,finger);
+        EXPECT_NEAR(touch.contacts().begin()->second[0],h.hit.x,1);
+    }
+    const auto before=touch.contacts().begin()->second;
+    clock.set(70'000'000);s=snapshot(4,clock.now_ns());h.evidence_ns=clock.now_ns();h.expires_ns=170'000'000;
+    h.note.rails_geometry=false;h.note.held_body_evidence=false;h.hit={460,530};s.targets={h};
+    owner.accept(s);owner.poll();EXPECT_EQ(touch.contacts().begin()->second,before);
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){return r.command.phase==Phase::down;}),1);
+    clock.set(111'000'000);s=snapshot(5,clock.now_ns());h.evidence_ns=clock.now_ns();h.expires_ns=211'000'000;s.targets={h};
+    owner.accept(s);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    owner.stop();
+}
+
+TEST(GameTracking, LineChasingAStationaryPerpendicularNoteUsesRelativeMotion) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;GameTarget last;
+    for(int i=0;i<5;++i) {
+        auto s=snapshot(i+1,i*20'000'000);
+        LineCandidate true_line{{640,590.0-i*20},{1,0},1120,2,.9},decoration{{900,360},{0,1},700,2,.99};
+        true_line.track_id=1;decoration.track_id=2;
+        if(i>=2) {
+            true_line.motion_valid=true;true_line.motion_samples=3;true_line.motion_span_ns=40'000'000;
+            true_line.velocity={0,-1000};
+        }
+        s.lines={decoration,true_line};NoteCandidate n;n.kind=NoteKind::tap;n.center={500,500};
+        n.width=128;n.height=8;n.tangent={0,1};
+        track_legacy_batch(s,{n},{std::nullopt},history,next);last=s.targets.at(0);
+    }
+    EXPECT_EQ(last.line_id,1u);ASSERT_TRUE(last.crossing_ns);EXPECT_NEAR(last.velocity,1000,1);
+}
+
+TEST(GameOwner, UnrelatedOrStaleLineCannotConfirmTheCurrentHoldTail) {
+    for(int variant=0;variant<3;++variant) {
+        SCOPED_TRACE(variant);FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{2,0,30'000'000});
+        auto s=snapshot(1,0);auto h=target(1,0,10'000'000);h.note.kind=NoteKind::hold;
+        h.note.center=h.hit;h.note.width=120;h.note.height=300;h.note.rails_geometry=true;h.note.head_on_line=true;
+        h.note.tail=Vec2{400,200};h.line_id=1;h.samples=3;
+        LineCandidate original{{640,500},{1,0},1120,2,.9};original.track_id=1;s.lines={original};s.targets={h};
+        owner.accept(s);clock.set(10'000'000);owner.poll();ASSERT_EQ(touch.contacts().size(),1u);owner.take_coverage_updates();
+        for(int i=0;i<2;++i) {
+            const auto now=30'000'000LL+i*20'000'000LL;clock.set(now);s=snapshot(i+2,now);
+            h.evidence_ns=now;h.expires_ns=now+100'000'000;h.revision++;h.crossing_ns.reset();
+            h.note.head_on_line=true;h.note.center={400,520};h.note.tail=Vec2{400,501};
+            auto unsupported=original;unsupported.center.y=502;unsupported.observed_ns=now;
+            if(variant==0)unsupported.track_id=2;
+            if(variant==1)unsupported.association_valid=false;
+            if(variant==2)unsupported.observed_ns--;
+            s.lines={unsupported};s.targets={h};owner.accept(s);owner.poll();
+        }
+        EXPECT_TRUE(owner.take_coverage_updates().empty());
+        clock.set(71'000'000);owner.poll();EXPECT_EQ(touch.contacts().size(),1u);owner.stop();
+    }
 }

@@ -180,10 +180,10 @@ private:
 class GameObserver final {
 public:
     explicit GameObserver(const Clock& clock,bool reuse_component_scratch=false,
-        bool row_prescreen=true,int horizontal_line_gap_limit=4)
+        bool row_prescreen=true,int horizontal_line_gap_limit=4,bool split_joined_lines=true)
         : clock_(clock),reuse_component_scratch_(reuse_component_scratch),
           row_prescreen_(row_prescreen),
-          horizontal_line_gap_limit_(horizontal_line_gap_limit) {
+          horizontal_line_gap_limit_(horizontal_line_gap_limit),split_joined_lines_(split_joined_lines) {
         if(horizontal_line_gap_limit<2||horizontal_line_gap_limit>6)
             throw std::invalid_argument("horizontal line gap research bound");
     }
@@ -208,6 +208,7 @@ private:
     bool reuse_component_scratch_=false;
     bool row_prescreen_=true;
     int horizontal_line_gap_limit_=4;
+    bool split_joined_lines_=true;
 };
 
 // Single-thread owner. Note identity is distinct from monotonically assigned

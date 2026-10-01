@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "song_family": "Dlyrotz-chart-family",
+  "metadata_use": "offline grouping only; never input to model or action policy",
+  "samples": [
+    {"ordinal": 2479, "x": 174, "y": 402, "width": 256, "height": 256, "reason": "Hold body identity competition; visible parts and physical ID require review"},
+    {"ordinal": 3495, "x": 172, "y": 420, "width": 256, "height": 256, "reason": "Hold patch anchor before front recovery"},
+    {"ordinal": 3497, "x": 172, "y": 420, "width": 256, "height": 256, "reason": "Consecutive supported patch; same object is a proposal"},
+    {"ordinal": 3498, "x": 172, "y": 420, "width": 256, "height": 256, "reason": "Front recovery after patch representation"},
+    {"ordinal": 3501, "x": 172, "y": 420, "width": 256, "height": 256, "reason": "Original owner held-region cancellation; not independent Miss gold"},
+    {"ordinal": 3963, "x": 302, "y": 400, "width": 256, "height": 256, "reason": "Long Hold immediately before visual transition"},
+    {"ordinal": 3964, "x": 302, "y": 400, "width": 256, "height": 256, "reason": "Hold disappears and hit effects remain; do not continue old body label"},
+    {"ordinal": 3990, "x": 384, "y": 90, "width": 256, "height": 256, "reason": "Multi-line transition; line identity and Note relationship unknown"},
+    {"ordinal": 4026, "x": 384, "y": 90, "width": 256, "height": 256, "reason": "Later frame in difficult continuous interval; no temporal truth inferred"},
+    {"ordinal": 4968, "x": 630, "y": 320, "width": 256, "height": 256, "reason": "Before disappearance; visible grey-blue Hold and line, effects overlap its lower body"},
+    {"ordinal": 4986, "x": 630, "y": 320, "width": 256, "height": 256, "reason": "Same ROI after Hold and line disappear; only effects remain, no amodal labels"},
+    {"ordinal": 5287, "x": 650, "y": 328, "width": 256, "height": 256, "reason": "User corrected 90s no-issue control"},
+    {"ordinal": 5520, "x": 887, "y": 231, "width": 256, "height": 256, "reason": "Rotated Flick central arrow splits red core; fragments are not two gold objects"},
+    {"ordinal": 5521, "x": 887, "y": 231, "width": 256, "height": 256, "reason": "Consecutive rotated Flick and vertical line appearance"},
+    {"ordinal": 6211, "x": 796, "y": 160, "width": 256, "height": 256, "reason": "Sideways Drag approaching a currently tinted vertical ridge"},
+    {"ordinal": 6214, "x": 796, "y": 160, "width": 256, "height": 256, "reason": "Recovered line/root; prediction does not prove a hit"},
+    {"ordinal": 6217, "x": 796, "y": 160, "width": 256, "height": 256, "reason": "Drag crossing context; current visible evidence only"},
+    {"ordinal": 6220, "x": 796, "y": 160, "width": 256, "height": 256, "reason": "Post-crossing context; do not infer completion from geometry"}
+  ]
+}

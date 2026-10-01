@@ -190,6 +190,14 @@ void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContex
             auto& prior=tracks_[assigned[i]];const auto old=prior.line;
             if(dot(line.tangent,old.tangent)<0){line.tangent.x=-line.tangent.x;line.tangent.y=-line.tangent.y;}
             line.track_id=old.track_id;
+            // The historical ID remains a diagnostic trace only. Ambiguous
+            // pixels cannot renew its measured lifetime or motion fit.
+            if(!line.association_valid) {
+                line.velocity={};line.angular_velocity=0;
+                line.motion_valid=false;line.motion_samples=0;line.motion_span_ns=0;
+                line.motion_residual=line.angular_residual=0;
+                continue;
+            }
             fit_motion(prior,line,c.capture_ns);
             prior.line=line;prior.time=c.capture_ns;
         } else {
