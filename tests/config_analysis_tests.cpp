@@ -345,8 +345,8 @@ TEST(GameAnalysis, ContactReleaseDiagnosticsDoNotClaimGameJudgment) {
 TEST(GameAnalysis, StrategyMetadataUsesOneVersionSource) {
     EXPECT_EQ(game_strategy_name(),"main observer"+std::to_string(game_observer_version)+
         "/planner"+std::to_string(game_planner_version));
-    EXPECT_EQ(game_observer_version,48);
-    EXPECT_EQ(game_planner_version,25);
+    EXPECT_EQ(game_observer_version,49);
+    EXPECT_EQ(game_planner_version,26);
     EXPECT_EQ(game_diagnostics_version,11);
 }
 TEST(GameAnalysis, QpcComputeFieldsAreExplicitAndOptionalForLegacyDecisions) {

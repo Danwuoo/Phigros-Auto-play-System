@@ -1314,7 +1314,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
     // Unique current outer-body support can retain a finger across candidate
     // ID churn. Completed contacts can never be revived by this association.
     const auto held_support=[&](const GameTarget& t) {
-        return t.note.kind==NoteKind::hold&&t.note.rails_geometry&&
+        return !t.line_projection_only&&t.note.kind==NoteKind::hold&&t.note.rails_geometry&&
             (t.note.head_on_line||t.note.held_body_evidence)&&t.samples>0&&
             t.evidence_ns==s.context.capture_ns&&t.expires_ns>clock_.now_ns()&&
             t.reason!="association_ambiguous"&&t.reason!="line_unobservable"&&
@@ -1383,7 +1383,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
     std::size_t target_index=0;
     std::erase_if(s.targets,[&](const auto&){return ignored[target_index++];});
     const auto visible_tail_passed=[&](const GameTarget& t) {
-        if(t.note.kind!=NoteKind::hold||!t.note.tail||!t.note.rails_geometry||t.samples<=0||
+        if(t.line_projection_only||t.note.kind!=NoteKind::hold||!t.note.tail||!t.note.rails_geometry||t.samples<=0||
            t.evidence_ns!=s.context.capture_ns||t.reason=="association_ambiguous"||
            t.reason=="line_unobservable"||t.reason=="multiple_line_association_unvalidated") return false;
         const auto tail=*t.note.tail;
@@ -1410,7 +1410,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         return false;
     };
     const auto current_drag=[&](const GameTarget& t) {
-        return t.note.kind==NoteKind::drag&&t.samples>0&&t.reason!="association_ambiguous"&&
+        return !t.line_projection_only&&t.note.kind==NoteKind::drag&&t.samples>0&&t.reason!="association_ambiguous"&&
             t.reason!="line_unobservable"&&t.reason!="multiple_line_association_unvalidated"&&
             t.evidence_ns==s.context.capture_ns&&
             t.evidence_ns<=clock_.now_ns()&&clock_.now_ns()-t.evidence_ns<100'000'000&&
@@ -1454,6 +1454,31 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             return line.track_id==t.line_id&&line.association_valid&&
                 line.observed_ns==s.context.capture_ns&&line.confidence>=.8&&
                 line.length>=s.context.width*.5&&std::abs(normal_distance(t.note.center,line))<=8;
+        });
+    };
+    const auto recent_line_projection=[&](const GameTarget& t) {
+        if(!t.line_projection_only||t.reason!="recent_confirmed_line_projection"||
+           !t.line_id||t.samples<3||!t.crossing_ns||
+           t.evidence_ns!=s.context.capture_ns||t.last_line_observed_ns<=0||
+           t.last_line_observed_ns>=t.evidence_ns||
+           t.evidence_ns-t.last_line_observed_ns>40'000'000||
+           t.uncertainty_ns>options_.uncertainty_ns||
+           !std::isfinite(t.projected_line_along_px)||
+           !std::isfinite(t.projected_line_half_length_px)||
+           t.projected_line_half_length_px<=0||
+           std::abs(t.projected_line_along_px)>t.projected_line_half_length_px)
+            return false;
+        return std::none_of(s.lines.begin(),s.lines.end(),[&](const LineCandidate& line) {
+            if(!line.association_valid||line.observed_ns!=s.context.capture_ns||
+               line.length<s.context.width*.24)return false;
+            if(line.track_id==t.line_id)return true;
+            const auto near=[&](Vec2 point) {
+                const double along=std::abs((point.x-line.center.x)*line.tangent.x+
+                                            (point.y-line.center.y)*line.tangent.y);
+                return along<=line.length*.5+t.note.width&&
+                       std::abs(normal_distance(point,line))<=32;
+            };
+            return near(t.note.center)||near(t.hit);
         });
     };
     const auto drag_release=[&](const GameTarget& t)->std::optional<Nanoseconds> {
@@ -1577,9 +1602,17 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             const auto cursor=scheduler_.executed_steps(id.intent);
             if(!cursor) continue;
             if(t.expires_ns<=clock_.now_ns()||t.reason=="association_ambiguous"||
+               (t.line_projection_only&&!recent_line_projection(t))||
                t.evidence_ns<id.plan.evidence_ns||t.samples==0) {
                 cancel_contact(t.note_id,id,t.reason=="association_ambiguous"?"identity_ambiguous":
                     t.samples==0?"current_geometry_unsupported":"target_evidence_invalid");
+                continue;
+            }
+            if(t.line_projection_only&&*cursor>id.plan.prefix_offset) {
+                // An inferred line can revise an unexecuted Down. It cannot
+                // move or prolong a contact that already started.
+                if(clock_.now_ns()-id.plan.evidence_ns>=60'000'000)
+                    cancel_contact(t.note_id,id,"active_contact_projection_expired");
                 continue;
             }
             if(id.kind==NoteKind::hold&&*cursor>id.plan.prefix_offset&&id.last_note.held_body_evidence&&
@@ -1628,9 +1661,12 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                 plan.steps={{Phase::down,t.hit.x,t.hit.y,clock_.now_ns()},
                             {Phase::up,t.hit.x,t.hit.y,t.evidence_ns+100'000'000}};
                 plan.valid_until_ns=clock_.now_ns()+30'000'000;
-            } else if(*cursor==0&&t.crossing_ns&&t.reason=="prediction_observe_only"&&
+            } else if(*cursor==0&&t.crossing_ns&&
+               (t.reason=="prediction_observe_only"||recent_line_projection(t))&&
                t.uncertainty_ns<=options_.uncertainty_ns&&
                t.hit.x>=0&&t.hit.x<s.context.width&&t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height) {
+                plan.basis=recent_line_projection(t)?"live_note_recent_confirmed_line_projection":
+                    std::string("live_pixels_short_linear_fit_")+name(t.note.kind);
                 const auto due=*t.crossing_ns-options_.lead_ns;
                 if(*t.crossing_ns-clock_.now_ns()>=-40'000'000&&due-clock_.now_ns()<=60'000'000) {
                     const auto down=std::max(clock_.now_ns(),due-(id.kind==NoteKind::drag?15'000'000:0));
@@ -1705,8 +1741,10 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                       t.note.kind==NoteKind::drag?4:t.note.kind==NoteKind::flick?8:0;
         const bool spatial_drag=current_drag_overlap(t);
         const bool spatial_tap=current_tap_overlap(t);
+        const bool projected=recent_line_projection(t);
         if(t.note.held_body_evidence||!(options_.enabled_types&bit)||t.expires_ns<=clock_.now_ns()||
-           (!spatial_drag&&!spatial_tap&&(!t.crossing_ns||t.reason!="prediction_observe_only"||
+           (!spatial_drag&&!spatial_tap&&(!t.crossing_ns||
+                            (t.reason!="prediction_observe_only"&&!projected)||
                             t.uncertainty_ns>options_.uncertainty_ns))) continue;
         const auto now=clock_.now_ns();
         const auto predicted_due=spatial_drag?now+15'000'000:
@@ -1748,6 +1786,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         id.intent=++next_intent_; id.revision=t.revision;
         ContactPlan plan{epoch_,id.intent,t.revision,t.evidence_ns,due+30'000'000,
             s.context.frame,spatial_tap?"live_pixels_current_tap_overlap":
+                projected?"live_note_recent_confirmed_line_projection":
                 std::string("live_pixels_short_linear_fit_")+name(t.note.kind),
             {{Phase::down,t.hit.x,t.hit.y,due},
              {Phase::up,t.hit.x,t.hit.y,due+18'000'000}}};
@@ -1831,6 +1870,10 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"expires_ns",t.expires_ns},{"crossing_ns",t.crossing_ns?json(*t.crossing_ns):json(nullptr)},
         {"uncertainty_ns",t.uncertainty_ns},{"hit_x",t.hit.x},{"hit_y",t.hit.y},
         {"line_id",t.line_id},{"hit_vx",t.hit_velocity.x},{"hit_vy",t.hit_velocity.y},
+        {"line_projection_only",t.line_projection_only},
+        {"last_line_observed_ns",t.last_line_observed_ns},
+        {"projected_line_along_px",t.projected_line_along_px},
+        {"projected_line_half_length_px",t.projected_line_half_length_px},
         {"tail_crossing_ns",t.tail_crossing_ns?json(*t.tail_crossing_ns):json(nullptr)},
         {"tail_x",t.note.tail?json(t.note.tail->x):json(nullptr)},{"tail_y",t.note.tail?json(t.note.tail->y):json(nullptr)},
         {"observation_basis",t.note.direct_rails_evidence?"hold_current_parallel_rails_and_fill":
@@ -1842,7 +1885,7 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"residual_px",t.residual},{"prediction_error_px",t.prediction_error_px},
         {"fit_residual_limit_px",t.fit_residual_limit_px},{"samples",t.samples},
         {"history_span_ns",t.history_span_ns},{"reason",t.reason}});
-    json result={{"event","game_decision"},{"decision_schema",2},{"sequence",s.sequence},
+    json result={{"event","game_decision"},{"decision_schema",3},{"sequence",s.sequence},
         {"note_anchor_semantics","tap_flick_core_center_hold_leading_edge"},
         {"epoch",s.context.epoch},{"generation",s.context.generation},{"geometry_version",s.context.geometry},
         {"frame_sequence",s.context.frame},{"capture_complete_ns",s.context.capture_ns},
@@ -1952,7 +1995,7 @@ nlohmann::json analyze_game_segments(const std::vector<std::filesystem::path>& p
         const auto e=json::parse(line); const auto event=e.value("event","");
         if(event=="game_decision") {
             const auto schema=e.value("decision_schema",0);
-            if(schema!=1&&schema!=2) throw std::runtime_error("unknown game decision schema");
+            if(schema!=1&&schema!=2&&schema!=3) throw std::runtime_error("unknown game decision schema");
             ++frames; count(uis,e.at("ui").get<std::string>());
             const bool playing=e.at("playing_gate").get<bool>();
             if(playing) {++gate_frames;if(e.at("lines").empty()) ++playing_no_line;}

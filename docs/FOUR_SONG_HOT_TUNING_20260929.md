@@ -35,3 +35,22 @@ main 固定基線是 `853a4db3e3c1c915780f7fccc5ace64d4a1ce970`、observer47／p
 Dlyrotz round-4 clip-4 與連續事件 frame 38080–38086 顯示水平判定線和掃過的斜直線同時存在；一顆原本朝水平線移動的 Tap，在第二條線接近時先得到 `multiple_line_association_unvalidated`、後得 `confirmed_line_relation_conflict`。四輪 target reason 出現次數分別為 line conflict 752／261／231／704、多線未確認 127／43／1784／87；它們是 frame-target 次數，不是 Miss 顆數。observer48 對**原線在當幀仍可見、已有確認關聯與90ms內測量、Note 到原線的相對距離仍在縮小**者保留原關聯。新 Note 等距多線仍 unknown；原線不可見或 Note 遠離原線也不強制延續。合成正反例與完整 Release 315／315 通過。這是能減少無謂失關聯的候選修正，尚未取得遊戲得分驗證。
 
 Hold 的結算缺口仍不能從事件直接歸因：lead40 四輪 Hold Down 為 101／46／16／16，而 active Hold cancel 為 101／45／16／15；絕大多數接觸在目標消失後依60ms有界 grace 釋放，真正可見 tail 確認只有 0／1／0／1。目標消失可能是已判定結束、遮擋或漏辨，沒有逐 Note 遊戲真值，不應把全部 cancel 當漏接。下輪需比較新策略的四首結算、Hold接續及當前像素證據。
+
+## 使用者停止實測後的追查與離線修正
+
+observer48／planner25／lead40 的使用者手動試驗只留下1個 `aborted` round，無同源結算圖；停止時正常釋放觸控並關閉程序。原始session `manual-session-18848730136100` 的4個事件分段與30張RGB已驗SHA，分析檔在本量測目錄 `aborted48-round1-analysis.json`、`aborted48-clips-analysis.json`。該中止片段有7,865個PLAYING幀、85個無線幀、2,106個多線幀；`line_unobservable` 91、`confirmed_line_relation_conflict` 230、`near_line_appearance_unqualified` 170 次均是target-frame計數，不是Miss。`current_tap_overlap` 在這片段沒有啟用。使用者目視回報大量lost和線閃一下就停按，與事件呈現的關聯缺口一致，但沒有逐Note人工真值，不能把某次lost確定歸因。
+
+原冷開發goal涵蓋線／Note觀測、線ID與note→line關聯、交叉／旋轉線、Hold、相對運動預測、混合組合和整鏈延遲，不只是組合與延遲。原程式的 `GameLineTracker` 會在最多90ms近期保留線pose與法向／角速度，但 `track_legacy_batch` 只從當幀可見線建立動作target。原線暫時不可見時，已確認ID和位移沒有接到Down資格；這是離線通過矩陣後在實測暴露的契約缺口。
+
+observer49／planner26 的修正只在當前Tap／Flick仍可見、原Note已有同線ID三次且跨30ms實測、最後線pose有合格運動擬合、缺線不超過40ms、相對運動連續且接近時，將最後實測線的平移／旋轉投到當前時間。觸點須同時落在原線段與投影線段範圍內；局部存在其他當前線、反轉、超齡、超界或不確定度過大即拒絕。投影明列 `line_projection_only` 與最後實測時間，不寫回線歷史。舊線最後一次實測超過90ms後，原確認ID失效；明確可見的新線的常規root必須重建，不接用舊root，獨立的當前重疊Tap資格另行判斷。owner僅能據此安排或修訂尚未執行的Down，不能移動／延長已開始接觸，未知Down不重播。Hold／Drag的新Down仍需當前線／body支持；交叉雙Hold反例已指出無線投影會多按，故不開放。這是離線候選，不代表遊戲判定已驗收；使用者已停止測試，本輪未重啟emulator或manual-session。
+
+Release正式目標完成編譯，合成平移／旋轉、反轉／局部新線／原線越界／超齡、新線重新建關係、fake-clock單次Down及交叉Hold反例通過；完整CTest 320／320。測試紀錄為本量測目錄 `build49-final.log`、`ctest49.log`，只說明離線契約；尚不能量化真實Miss改善。
+
+2026-09-30 使用者明確要求重啟實測。observer49／planner26／lead40 的獨立runtime bundle、source patch、Release SHA、320／320回歸與preflight保存於本量測目錄；五指指紋相符。`manual-session-21040034439800` 完成兩首後依使用者要求以Ctrl+C正常停止，狀態STOPPED，未開始第三輪。兩輪均有同源結算與三個SHA驗證的事件分段；19組／57張全畫面RGB亦通過index與逐檔hash驗證。逐輪機讀結果見 `candidate49-two-round-results.json`，啟動資料見 `candidate49-launch.json`。
+
+| observer49／planner26，lead40 | 分數 | P/G/B/M | Max Combo／Accuracy | 對舊lead40單輪分數／Miss差 |
+|---|---:|---:|---:|---:|
+| Glaciaxion HD6 | 720827 | 307/1/0/85 | 64／78.28% | −85204／+35 |
+| Dlyrotz HD9 | 895819 | 444/1/0/13 | 101／97.09% | −7238／0 |
+
+結算數字由兩張同源 `result.png` 人工核對，影像SHA與round summary一致。`game-round`重算兩輪各自的三個事件分段SHA；兩輪未知觸控receipt、runtime revoke、scheduler rejection及release失敗／未知均為0。投影target在Glaciaxion／Dlyrotz分別出現6／3個target-frame，實際以`live_note_recent_confirmed_line_projection` basis執行的Down為1／0；因此這兩輪不能說明投影改善了整體lost。和舊lead40各一輪的差值只作描述，不能排除自然波動，也不能把Miss逐顆歸因於投影。使用者已停止測試，不啟動剩餘兩首。

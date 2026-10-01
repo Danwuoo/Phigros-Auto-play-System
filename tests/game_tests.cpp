@@ -2497,6 +2497,149 @@ TEST(GameOwner, PreviouslyTrackedTapCanUseNewCurrentLineAtVisibleOverlap) {
     EXPECT_TRUE(touch.contacts().empty());
     owner.stop();
 }
+TEST(GameOwner, CurrentNoteKeepsConfirmedMovingLineThroughShortOcclusion) {
+    FakeClock clock;FakeTouchBackend touch(clock);GamePlanOwner owner(clock,touch,1,{1,0,30'000'000});
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    GameTarget occluded;
+    for(int i=0;i<4;++i) {
+        const auto now=20'000'000LL+i*20'000'000LL;
+        clock.set(now);auto s=snapshot(i+1,now);
+        NoteCandidate n;n.kind=NoteKind::tap;n.center={730.0,480.0+i*20};
+        n.width=80;n.height=8;n.confidence=.9;
+        if(i<3) {
+            LineCandidate line{{640.0,550.0+i*4},{1,0},1080,2,.9};
+            line.track_id=1;line.observed_ns=now;line.motion_valid=true;
+            line.velocity={0,200};line.motion_samples=3;line.motion_span_ns=40'000'000;
+            s.lines={line};
+        }
+        track_legacy_batch(s,{n},{std::nullopt},history,next);
+        ASSERT_EQ(s.targets.size(),1);
+        if(i==3) {
+            occluded=s.targets[0];
+            EXPECT_EQ(occluded.reason,"recent_confirmed_line_projection");
+            EXPECT_TRUE(occluded.line_projection_only);
+            EXPECT_EQ(occluded.line_id,1);
+            EXPECT_EQ(occluded.last_line_observed_ns,60'000'000);
+            EXPECT_NEAR(occluded.hit.x,730,1);
+            EXPECT_NEAR(occluded.hit.y,562,1);
+            EXPECT_LE(std::abs(occluded.projected_line_along_px),occluded.projected_line_half_length_px);
+            ASSERT_TRUE(occluded.crossing_ns);
+        }
+        owner.accept(s);owner.poll();
+    }
+    const auto plans=owner.take_accepted_plans();
+    ASSERT_FALSE(plans.empty());
+    EXPECT_EQ(plans.back().basis,"live_note_recent_confirmed_line_projection");
+    clock.set(110'000'000);owner.poll();
+    EXPECT_EQ(std::count_if(touch.receipts().begin(),touch.receipts().end(),[](const auto& r){
+        return r.command.phase==Phase::down;}),1);
+    clock.set(140'000'000);owner.poll();EXPECT_TRUE(touch.contacts().empty());
+    owner.stop();
+}
+TEST(GameTracking, MissingLineProjectionRejectsReversalReplacementAndOldExtentExit) {
+    const auto probe=[](double gap_note_y,bool replacement,bool outside) {
+        std::vector<GameTrackHistory> history;std::uint64_t next=0;
+        for(int i=0;i<4;++i) {
+            const auto now=20'000'000LL+i*20'000'000LL;
+            auto s=snapshot(i+1,now);
+            NoteCandidate n;n.kind=NoteKind::tap;n.center={outside?1190.0:730.0,
+                i==3?gap_note_y:480.0+i*20};
+            n.width=80;n.height=8;n.confidence=.9;
+            if(i<3) {
+                LineCandidate line{{640.0,550.0+i*4},{1,0},1080,2,.9};
+                line.track_id=1;line.motion_valid=true;line.velocity={0,200};
+                line.observed_ns=now;s.lines={line};
+            } else if(replacement) {
+                LineCandidate line{{640,560},{1,0},1080,2,.9};
+                line.track_id=2;line.observed_ns=now;s.lines={line};
+            }
+            track_legacy_batch(s,{n},{std::nullopt},history,next);
+            if(i==3)return s.targets.at(0);
+        }
+        return GameTarget{};
+    };
+    EXPECT_NE(probe(520,false,false).reason,"recent_confirmed_line_projection");
+    EXPECT_NE(probe(560,true,false).reason,"recent_confirmed_line_projection");
+    EXPECT_NE(probe(560,false,true).reason,"recent_confirmed_line_projection");
+}
+TEST(GameTracking, RotatingOriginalLineProjectsWithinItsMeasuredExtent) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    for(int i=0;i<4;++i) {
+        const auto now=20'000'000LL+i*20'000'000LL;
+        const double angle=i*.04,d=-70.0+i*16;
+        const Vec2 tangent{std::cos(angle),std::sin(angle)};
+        const Vec2 normal{-tangent.y,tangent.x};
+        auto s=snapshot(i+1,now);
+        NoteCandidate n;n.kind=NoteKind::tap;
+        n.center={640+tangent.x*100+normal.x*d,550+tangent.y*100+normal.y*d};
+        n.width=80;n.height=8;n.confidence=.9;
+        if(i<3) {
+            LineCandidate line{{640,550},tangent,1080,2,.9};
+            line.track_id=1;line.motion_valid=true;line.angular_velocity=2;
+            line.observed_ns=now;s.lines={line};
+        }
+        track_legacy_batch(s,{n},{std::nullopt},history,next);
+        ASSERT_EQ(s.targets.size(),1);
+        if(i==3) {
+            const auto& t=s.targets[0];
+            EXPECT_EQ(t.reason,"recent_confirmed_line_projection");
+            EXPECT_TRUE(t.line_projection_only);
+            EXPECT_NEAR(t.hit.x,640+tangent.x*100,1);
+            EXPECT_NEAR(t.hit.y,550+tangent.y*100,1);
+            EXPECT_LE(std::abs(t.projected_line_along_px),t.projected_line_half_length_px);
+        }
+    }
+}
+TEST(GameTracking, ConfirmedLineProjectionExpiresWithoutNewLinePixels) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    for(int i=0;i<4;++i) {
+        const auto now=20'000'000LL+i*20'000'000LL;
+        auto s=snapshot(i+1,now);
+        NoteCandidate n;n.kind=NoteKind::tap;n.center={730.0,480.0+i*20};
+        n.width=80;n.height=8;n.confidence=.9;
+        if(i<3) {
+            LineCandidate line{{640.0,550.0+i*4},{1,0},1080,2,.9};
+            line.track_id=1;line.motion_valid=true;line.velocity={0,200};
+            line.observed_ns=now;s.lines={line};
+        }
+        track_legacy_batch(s,{n},{std::nullopt},history,next);
+    }
+    auto s=snapshot(5,120'000'000);
+    NoteCandidate n;n.kind=NoteKind::tap;n.center={730,600};n.width=80;n.height=8;n.confidence=.9;
+    track_legacy_batch(s,{n},{std::nullopt},history,next);
+    ASSERT_EQ(s.targets.size(),1);
+    EXPECT_FALSE(s.targets[0].line_projection_only);
+    EXPECT_FALSE(s.targets[0].crossing_ns);
+}
+TEST(GameTracking, ExpiredOriginalLineLetsExplicitNextLineEarnFreshRelation) {
+    std::vector<GameTrackHistory> history;std::uint64_t next=0;
+    const std::array<Nanoseconds,8> times={20'000'000,40'000'000,60'000'000,
+        80'000'000,120'000'000,160'000'000,180'000'000,200'000'000};
+    for(std::size_t i=0;i<times.size();++i) {
+        auto s=snapshot(i+1,times[i]);
+        NoteCandidate n;n.kind=NoteKind::tap;n.center={730.0,480.0+i*20};
+        n.width=80;n.height=8;n.confidence=.9;
+        if(i<3||i>=5) {
+            LineCandidate line{{640.0,i<3?550.0:650.0},{1,0},1080,2,.9};
+            line.track_id=i<3?1:2;line.observed_ns=times[i];
+            line.motion_valid=true;s.lines={line};
+        }
+        const std::vector<int> forced={0};
+        track_legacy_batch(s,{n},{std::nullopt},history,next,
+            history.empty()?nullptr:&forced);
+        ASSERT_EQ(s.targets.size(),1);
+        if(i==5) {
+            EXPECT_EQ(s.targets[0].line_id,2);
+            EXPECT_EQ(s.targets[0].samples,1);
+            EXPECT_FALSE(s.targets[0].crossing_ns);
+        }
+        if(i==7) {
+            EXPECT_EQ(s.targets[0].line_id,2);
+            EXPECT_EQ(history[0].confirmed_line_id,2);
+            EXPECT_EQ(s.targets[0].samples,3);
+        }
+    }
+}
 TEST(GameTracking, CurrentTapOverlapNeedsPriorApproachAndCannotUseFirstAppearance) {
     const auto probe=[](const std::vector<double>& centers) {
         std::vector<GameTrackHistory> history;std::uint64_t next=0;

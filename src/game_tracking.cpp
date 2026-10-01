@@ -9,6 +9,87 @@ namespace {
 constexpr Nanoseconds minimum_fit_span_ns=30'000'000,history_bucket_ns=10'000'000;
 double distance(Vec2 a,Vec2 b) {return std::hypot(a.x-b.x,a.y-b.y);}
 double normal_distance(Vec2 p,const LineCandidate& l) {return (p.x-l.center.x)*(-l.tangent.y)+(p.y-l.center.y)*l.tangent.x;}
+bool project_recent_confirmed_line(GameTarget& target,const GameTrackHistory& track,
+ const DecisionSnapshot& scene,Nanoseconds now) {
+    if(!track.confirmed_line_id||track.points.size()<3||
+       track.points.back().t-track.points.front().t<minimum_fit_span_ns||
+       (target.note.kind!=NoteKind::tap&&target.note.kind!=NoteKind::flick)||
+       target.note.held_body_evidence||
+       target.note.held_body_patch||target.note.confidence<.5)return false;
+    const auto& last=track.points.back();
+    const Nanoseconds gap=now-last.t;
+    if(gap<=0||gap>40'000'000||last.line.track_id!=track.confirmed_line_id||
+       !last.line.motion_valid||last.line.length<scene.context.width*.24||
+       !std::all_of(track.points.begin(),track.points.end(),[&](const auto& point){
+           return point.line.track_id==track.confirmed_line_id;
+       }))return false;
+    const double dt=gap/1e9,angle=last.line.angular_velocity*dt;
+    LineCandidate projected=last.line;
+    projected.center.x+=last.line.velocity.x*dt;
+    projected.center.y+=last.line.velocity.y*dt;
+    projected.tangent={last.line.tangent.x*std::cos(angle)-last.line.tangent.y*std::sin(angle),
+                       last.line.tangent.x*std::sin(angle)+last.line.tangent.y*std::cos(angle)};
+    const double d=normal_distance(target.note.center,projected);
+    const Vec2 hit{target.note.center.x+d*projected.tangent.y,
+                   target.note.center.y-d*projected.tangent.x};
+    const double along=(hit.x-projected.center.x)*projected.tangent.x+
+                       (hit.y-projected.center.y)*projected.tangent.y;
+    const double prior_along=(hit.x-last.line.center.x)*last.line.tangent.x+
+                             (hit.y-last.line.center.y)*last.line.tangent.y;
+    const double half=last.line.length*.5-4;
+    if(half<=0||std::abs(along)>half||std::abs(prior_along)>half)return false;
+    // A current ridge at this Note or its old-line hit makes the replacement
+    // ambiguous. An unrelated ridge elsewhere does not erase the old ID.
+    for(const auto& line:scene.lines) if(line.association_valid&&
+       line.length>=scene.context.width*.24) {
+        if(line.track_id==track.confirmed_line_id)return false;
+        const double note_along=std::abs((target.note.center.x-line.center.x)*line.tangent.x+
+                                         (target.note.center.y-line.center.y)*line.tangent.y);
+        const double hit_along=std::abs((hit.x-line.center.x)*line.tangent.x+
+                                        (hit.y-line.center.y)*line.tangent.y);
+        if((note_along<=line.length*.5+target.note.width&&
+            std::abs(normal_distance(target.note.center,line))<=32)||
+           (hit_along<=line.length*.5+target.note.width&&
+            std::abs(normal_distance(hit,line))<=32))return false;
+    }
+    const auto& first=track.points.front();
+    const double span=(last.t-first.t)/1e9;
+    const double first_d=normal_distance(first.p,first.line);
+    const double last_d=normal_distance(last.p,last.line);
+    const double prior_v=(last_d-first_d)/span;
+    const double current_v=(d-last_d)/dt;
+    if(!std::isfinite(prior_v)||!std::isfinite(current_v)||
+       std::abs(prior_v)<75||std::abs(current_v)<75||
+       prior_v*current_v<=0||last_d*prior_v>=0)return false;
+    double residual=0;
+    for(const auto& point:track.points) {
+        const double expected=first_d+prior_v*(point.t-first.t)/1e9;
+        residual=std::max(residual,std::abs(normal_distance(point.p,point.line)-expected));
+    }
+    const double line_error=2+last.line.motion_residual+
+        last.line.angular_residual*std::abs(along)+
+        dt*(std::hypot(last.line.velocity.x,last.line.velocity.y)*.05+
+            std::abs(last.line.angular_velocity)*std::abs(along)*.05);
+    const double mismatch=std::abs(d-(last_d+prior_v*dt));
+    const double error=std::max(residual,line_error+mismatch);
+    const double limit=std::clamp(target.note.width*.125,8.0,16.0);
+    const double tau=-d/current_v;
+    if(!std::isfinite(error)||error>limit||!std::isfinite(tau)||
+       tau<-.04||tau>.35)return false;
+    target.line_id=track.confirmed_line_id;
+    target.line_projection_only=true;
+    target.last_line_observed_ns=last.t;
+    target.projected_line_along_px=along;
+    target.projected_line_half_length_px=half;
+    target.hit=hit;target.distance=d;target.velocity=current_v;target.residual=residual;
+    target.prediction_error_px=error;target.fit_residual_limit_px=limit;
+    target.samples=static_cast<int>(track.points.size());
+    target.history_span_ns=now-first.t;
+    target.crossing_ns=now+static_cast<Nanoseconds>(std::llround(tau*1e9));
+    target.uncertainty_ns=static_cast<Nanoseconds>(std::llround(error/std::abs(current_v)*1e9));
+    target.reason="recent_confirmed_line_projection";
+    return true;
+}
 }
 void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& notes,
  const std::vector<std::optional<NoteCandidate>>& shortened_holds,
@@ -120,6 +201,14 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
         const auto prior_note_center=match->last;
         const auto prior_note_observed=match->observed;
         const auto prior_note_revision=match->revision;
+        // A confirmed relation is bounded by its last real line measurement.
+        // Once that window ends, a newly visible line must earn a fresh fit;
+        // an expired ID cannot block every later line for this Note forever.
+        if(match->confirmed_line_id&&!match->points.empty()&&
+           now-match->points.back().t>90'000'000) {
+            match->points.clear();match->confirmed_line_id=0;
+            match->replacement_line_id=0;match->replacement_observations=0;
+        }
         match->observed=now;
         GameTarget target; target.note_id=match->id; target.revision=++match->revision;
         target.note=n;
@@ -405,8 +494,11 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
                    std::abs(prior_distance)<=std::max(32.0,target.note.width*.25))
                     target.reason="current_tap_overlap";
             }
-        } else if(relation_conflict)target.reason="confirmed_line_relation_conflict";
-        else if(out.lines.size()>1) target.reason="multiple_line_association_unvalidated";
+        } else {
+            if(relation_conflict)target.reason="confirmed_line_relation_conflict";
+            else if(out.lines.size()>1) target.reason="multiple_line_association_unvalidated";
+            if(!ambiguous)project_recent_confirmed_line(target,*match,out,now);
+        }
         if(target.note.held_body_patch) {
             target.crossing_ns.reset();target.tail_crossing_ns.reset();
             if(selected&&!ambiguous)target.reason="held_body_touch_only";

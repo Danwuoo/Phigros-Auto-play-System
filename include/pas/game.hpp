@@ -61,6 +61,11 @@ struct GameTarget {
     Nanoseconds history_span_ns = 0;
     std::uint64_t line_id = 0;
     Vec2 hit_velocity{};
+    // A fresh Note paired with a bounded projection of its last confirmed
+    // line. This is prediction, never a currently observed line pixel.
+    bool line_projection_only = false;
+    Nanoseconds last_line_observed_ns = 0;
+    double projected_line_along_px = 0, projected_line_half_length_px = 0;
 };
 struct DecisionSnapshot {
     std::uint64_t sequence = 0;

@@ -10,6 +10,8 @@ Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程�
 
 ## 現況與證據
 
+2026-09-30 最新授權改為[33／36版能力恢復與逐項熱開發](docs/BASELINE_RECOVERY_HOT_DEVELOPMENT_PLAN_20260930.md)：先核對凍結舊版並啟動manual-session待命，由使用者選曲與按Play重現基線，再隔離退步改動。以[高分基準修正後的審查](docs/HOT_REGRESSION_REVIEW_20260930.md)為起點，不能只以已退步的47版作恢復目標；先前冷開發限制屬歷史階段。
+
 2026-09-29 合併審查與冷測量器修補見[驗收紀錄](docs/COLD_DEVELOPMENT_MERGE_REVIEW_20260929.md)；本機main整合不代表新版實戰驗收。四首實戰與待驗共用 lead 試驗見[熱調試紀錄](docs/FOUR_SONG_HOT_TUNING_20260929.md)。
 
 - 冷合併時的 main 基線為 observer47／planner23／diagnostics11；observer38／planner21／diagnostics7 配套已獨立凍結。現行合成RGB／oracle／fake-clock代表矩陣32／32列通過；線ID確認與局部重接、旋轉Hold同contact、Drag／Flick混合和容量退化均有正反例。C1的3／4／5px共用線缺口參數實驗保留4px，未把未覆核舊RGB當gold。六區塊逐列預檢在原始RGB微基準及25ms固定Tap的正式FakeCapture→LatestFrame→observer→owner→FakeTouch冷鏈均超過預先凍結噪聲容忍；密集128 Note場景的逐批加速實驗未過，但延遲與安全未超原計畫非退步容忍。Tap／密集各10,000幀長跑及受控慢writer／fake RPC已完成，完整結果和限制見[冷開發結果](docs/COLD_DEVELOPMENT_RESULT_20260929.md)。最近七輪實戰仍是observer37／planner19（六HD＋光IN）；當時新版沒有實戰遊戲結果；後續四首熱測另見熱調試紀錄。
@@ -47,7 +49,7 @@ out/release-v145/Release/pas.exe manual-session `
 
 --pixel-clips 需使用從當前 source 重建的執行檔，或保留的第二輪 main-legacy-v145 binary；它啟用既有有限三幀診斷：最多 20 輪、每輪 30 張，writer mailbox 4 張；不是新研究的兩秒採樣器。--round-watchdog-s 預設 0，超時記 FAULT／aborted，不當成曲尾。這些命令是操作說明，不是自動啟動遊戲的授權。
 
-熱調參分支另用 `configs/phigros-hd-assist-five-lead40.json`：manual-session 接受 30–45 ms lead，owner 依 profile 設定並在 manifest 記有效值。40 ms 四首已重測，分數皆小幅上升但 Miss 仍多。下一候選 observer48／planner25 針對已追蹤 Tap 的瞬現線重疊與交叉線時既有關聯，尚待實戰；見[熱調試紀錄](docs/FOUR_SONG_HOT_TUNING_20260929.md)。
+熱調參分支另用 `configs/phigros-hd-assist-five-lead40.json`：manual-session 接受 30–45 ms lead，owner 依 profile 設定並在 manifest 記有效值。40 ms 四首已重測，分數皆小幅上升但 Miss 仍多。observer48／planner25 的後續手動試驗由使用者停止、無結算，不作效果證據。observer49／planner26 針對原線短暫消失補有界線位移投影；2026-09-30 的手動實測完成 Glaciaxion HD6、Dlyrotz HD9 兩首後依使用者要求停止，結果見[熱調試紀錄](docs/FOUR_SONG_HOT_TUNING_20260929.md)。
 
 歷史比較版本請保留原 binary，不在當前 checkout 重建覆寫：
 - 舊版：out/hd9-session-release/Release/pas.exe。

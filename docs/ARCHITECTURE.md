@@ -1,6 +1,6 @@
 # 現行架構與資料契約
 
-2026-09-29。main 冷合併基線 observer47／planner23／diagnostics11；四首 lead40 已測 observer47／planner24，後續瞬現線／交叉線候選 observer48／planner25／diagnostics11，單程序 C++20。先前七輪實戰為 observer37／planner19，兩輪較早結果為舊版基準。判定線修正見[實作紀錄](JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)，後續設計見 [跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。本文區分已存在的執行契約與未實作的學習式方案。
+2026-09-29。main 冷合併基線 observer47／planner23／diagnostics11；四首 lead40 已測 observer47／planner24。observer48／planner25 手動試驗中止；observer49／planner26／diagnostics11 的離線回歸通過，2026-09-30 手動實測完成兩首後依使用者要求停止，單程序 C++20。結果見[熱調試紀錄](FOUR_SONG_HOT_TUNING_20260929.md)。先前七輪實戰為 observer37／planner19，兩輪較早結果為舊版基準。判定線修正見[實作紀錄](JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md)，後續設計見 [跨曲學習研究](MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md)。本文區分已存在的執行契約與未實作的學習式方案。
 
 2026-09-29補充：observer37／planner19已完成七輪實戰（六HD＋光IN）；原始結果見[冷開發計畫](NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md)。[冷開發結果](COLD_DEVELOPMENT_RESULT_20260929.md)記錄新版的分段SHA驗證、source_frame事件join、QPC子段、Note已占用替代配對與Flick路徑修正。固定擷取／時鐘／latest-frame／單owner契約不變；本輪只離線開發。下述為當前實作，不代表所有判定線與Note形式已驗收。
 
@@ -17,6 +17,8 @@ observer46在同一組當前可見Hold側軌上，優先讓已建立的線上bod
 observer47在同一Note經至少三次、跨30ms的當前像素測量確認line ID後，拒絕直接改接局部幾何不連續的另一條線；原線消失時該Note的關聯與root變unknown，已提交意圖由owner撤銷或按現有接觸證據續接。若新ID在上一測量接觸區延續原線（切向mod π點積至少.97、局部法向差不超過36px），一般Hold需兩張間隔至少12ms的新鮮影像；近線且當前支持的Drag／Held body可立即重接以保留活動contact。兩者均清空舊線速度擬合，不把舊root搬到新ID。追蹤狀態仍隨Note在100ms未觀測後清理。此守門由交叉雙Hold消線負例與反轉Drag換ID回歸約束；更多遮擋／旋轉換ID仍待驗。
 
 observer48延續已確認的Note→line關聯時，若原線在當幀仍可見且Note以90ms內的測量持續接近，交叉的另一條線不能僅憑瞬時距離搶走關聯；原線消失、遠離或新Note的等距多線仍維持unknown。另有只對Tap啟用的瞬現線重疊路徑：Note先追蹤至少三張，前一筆不超過40ms，當前高信心長線與高信心Tap重疊且前一位置朝線接近。planner25只在當前線同樣有效時即時Down／18ms後Up，basis標`live_pixels_current_tap_overlap`，不宣稱有舊線預測root。Credits實際三幀RGB重播能從`insufficient_history`改為該basis；跨曲遊戲效果尚未驗收，詳見[熱調試紀錄](FOUR_SONG_HOT_TUNING_20260929.md)。
+
+observer49將原線短暫不可見與確定失關聯分開：Tap／Flick 的當前Note仍可見、先前同一line ID有至少三次且跨30ms的實測關聯、最後線pose具有效運動擬合、缺線≤40ms、相對接近無反轉且模型誤差合格時，才投影最後實測線的平移／旋轉。落點必須仍在原量測線段和投影線段內；局部有新線候選時保持unknown。投影不寫回線／Note實測歷史，`GameTarget.line_projection_only`及`last_line_observed_ns`標明來源。最後實測線超過90ms時清掉舊確認ID，下一條當前線的常規root須重新累積三次、跨30ms的測量；獨立的當前重疊Tap路徑仍按其自身資格判定，兩者都不轉移舊root。planner26只在同一新鮮Note與有限期限內安排或修訂未執行Down，basis為`live_note_recent_confirmed_line_projection`；已開始的接觸不因投影Move或延長。Hold／Drag新增Down仍需當前線／body支持。decision schema 3增加投影來源欄位，分析器仍接受schema 1／2。這是離線機制，沒有遊戲採納驗證。
 
 離線`analyze game-cold-pipeline`用有界預產RGB、正式LatestFrame三實體buffer、正式observer／owner／scheduler與FakeTouch、Journal三執行緒跑QPC鏈；每個來源frame分別記capture complete、publish、recognition、owner accept，receipt依source frame／intent join。輸出包含全部publish嘗試、skip、pool drop、writer drop、late／失敗和每100幀RSS；source render age、真gRPC、遊戲採納未知。全掃描A/A先凍結容忍，再以三批ABBA驗正式Tap與密集場景；原計畫跨場景冷gate通過，密集場景另設的逐批加速規則失敗，詳見[結果](COLD_DEVELOPMENT_RESULT_20260929.md)。
 
@@ -52,7 +54,7 @@ capture、perception、action owner、supervisor、診斷 writer 的責任分離
 GameObserver 使用當前像素的 HUD、線、色芯與 Hold 外框候選；GameLineTracker 維護獨立線 ID／有界 pose。GameTarget 與 Note identity、intent identity、contact ID 分離。
 observer42 的跨畫面像素掃描與有界連通區局部線段分割可保留最多16條具獨立支持的線，避免X／V／框／放射的連通白區被單一PCA方向吞掉；相近方向／法向位置先去重，局部線段另查沿線相鄰彩色或灰色Hold body像素，避免側軌／內部裝飾假線。既有兩批RGB中，observer41與凍結38版相比有9幀額外線候選；observer42相對41另有37幀線候選數及2幀Note候選數變化。這只支持候選差異，沒有人工逐像素真值或實戰動作證明。
 
-線至多 16、note／track 至多 128，近期 pose 至多 6 點／90ms；跨 epoch／geometry、非遞增 QPC 或過大 gap 清理。線用至多16×16的全域可行配對；競爭未分派不即刻出生，近鄰可分離候選需連續三幀才出生，暫存至多16筆。輸出線幾何仍僅來自當前量測；track運動只供關聯預測，歧義線不供新Down。
+線至多 16、note／track 至多 128，近期 pose 至多 6 點／90ms；跨 epoch／geometry、非遞增 QPC 或過大 gap 清理。線用至多16×16的全域可行配對；競爭未分派不即刻出生，近鄰可分離候選需連續三幀才出生，暫存至多16筆。`lines`輸出仍僅列當前量測；track運動用於關聯及上述嚴格有界的缺線投影，投影標為預測而非當前線證據。歧義線不供新Down。
 
 note→line 拒絕 association_invalid 的線，以局部距離、沿線範圍、近期相對接近趨勢、線ID及弱外觀方向分數選有限候選；次佳分數過近則保持關係 unknown，不建立撞線擬合。歷史趨勢只是軟分數，遠處外觀方向不合不硬拒絕；候選存在不等於Down資格。Hold已有關係時優先維持同線，當前body仍須重新由pixels支持。
 

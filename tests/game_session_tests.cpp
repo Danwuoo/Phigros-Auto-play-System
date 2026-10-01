@@ -162,7 +162,16 @@ TEST(ManualOwner, ConfiguredLeadMovesOnlyFreshHoldDeadlineAndReleases) {
 TEST(ManualStrategy, SamePixelsFakeClockTargetsPlansReceiptsMatchPremergeMainGolden) {
     const auto original=hd9_trace(false),wrapped=hd9_trace(true);EXPECT_EQ(original,wrapped);
     std::ifstream file(std::filesystem::path(PAS_TEST_SOURCE_DIR)/"tests/data/main-strategy-golden.json");
-    ASSERT_TRUE(file);const auto golden=nlohmann::json::parse(file);EXPECT_EQ(wrapped,golden);
+    ASSERT_TRUE(file);const auto golden=nlohmann::json::parse(file);
+    auto legacy_fields=wrapped;
+    for(auto& frame:legacy_fields) {
+        auto& decision=frame.at("decision");decision["decision_schema"]=2;
+        for(auto& target:decision.at("targets")) {
+            target.erase("line_projection_only");target.erase("last_line_observed_ns");
+            target.erase("projected_line_along_px");target.erase("projected_line_half_length_px");
+        }
+    }
+    EXPECT_EQ(legacy_fields,golden);
 }
 TEST(ManualIntegration, SameProcessPixelsTwoRoundsHoldResultAndFreshReset) {
     FakeClock clock;FakeTouchBackend backend(clock);SessionPerception perception(clock);
