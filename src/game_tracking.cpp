@@ -8,6 +8,12 @@ namespace {
 constexpr Nanoseconds minimum_fit_span_ns=30'000'000,history_bucket_ns=10'000'000;
 double distance(Vec2 a,Vec2 b) {return std::hypot(a.x-b.x,a.y-b.y);}
 double normal_distance(Vec2 p,const LineCandidate& l) {return (p.x-l.center.x)*(-l.tangent.y)+(p.y-l.center.y)*l.tangent.x;}
+bool core_contains(const NoteCandidate& n,Vec2 p) {
+ const Vec2 d{p.x-n.center.x,p.y-n.center.y};
+ return std::abs(std::hypot(n.tangent.x,n.tangent.y)-1)<=.01&&
+     std::abs(d.x*n.tangent.x+d.y*n.tangent.y)<=n.width*.5+2&&
+     std::abs(-d.x*n.tangent.y+d.y*n.tangent.x)<=n.height*.5+2;
+}
 }
 void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& notes,
  const std::vector<std::optional<NoteCandidate>>& shortened_holds,
@@ -81,6 +87,10 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
             if(tracks.size()==128) {out.capacity_valid=false; continue;}
             tracks.push_back({++next_id,0,n.kind,n.center,now,{},n}); match=&tracks.back();
         }
+        const auto prior_note_center=match->last;
+        const auto prior_note_observed=match->observed;
+        const auto prior_note_revision=match->revision;
+        const bool first_line_sample=match->points.empty();
         match->observed=now;
         GameTarget target; target.note_id=match->id; target.revision=++match->revision;
         target.note=n;
@@ -97,17 +107,62 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
         target.evidence_ns=now; target.expires_ns=now+100'000'000;
         target.reason=ambiguous?"association_ambiguous":"line_unobservable";
         const LineCandidate* selected=nullptr;
+        int best_class=2;double best_score=1e9,second_score=1e9;
+        bool preserved=false;
         for(const auto& line:out.lines) {
-            if(!line.association_valid)continue;
-            if(std::abs(line.tangent.x*n.tangent.x+line.tangent.y*n.tangent.y)<.95||line.length<out.context.width*.32) continue;
+            if(!line.association_valid||line.length<out.context.width*.32)continue;
+            const double alignment=std::abs(line.tangent.x*n.tangent.x+line.tangent.y*n.tangent.y);
+            const double extent=alignment*n.width*.5+
+                std::abs(-n.tangent.y*line.tangent.x+n.tangent.x*line.tangent.y)*n.height*.5;
             if(std::abs((n.center.x-line.center.x)*line.tangent.x+
-                        (n.center.y-line.center.y)*line.tangent.y)>line.length/2+n.width) continue;
-            if(!match->points.empty()&&line.track_id&&match->points.back().line.track_id==line.track_id) {
-                selected=&line;break;
+                        (n.center.y-line.center.y)*line.tangent.y)>line.length*.5+extent+8)continue;
+            const double current_d=normal_distance(n.center,line);
+            const bool same_recent=line.track_id&&!match->points.empty()&&
+                match->points.back().line.track_id==line.track_id&&
+                now-match->points.back().t<=40'000'000;
+            // Drawn orientation and measured motion are separate cues. A
+            // bounded two-observation displacement may choose a relation;
+            // it never supplies a collision time or current line evidence.
+            bool normal_approach=false;
+            const double dt=(now-prior_note_observed)/1e9;
+            if(prior_note_revision>=2&&dt>=.01&&dt<=.04) {
+                Vec2 relative{n.center.x-prior_note_center.x,n.center.y-prior_note_center.y};
+                if(line.motion_valid) {
+                    const Vec2 radius{n.center.x-line.center.x,n.center.y-line.center.y};
+                    relative.x-=(line.velocity.x-line.angular_velocity*radius.y)*dt;
+                    relative.y-=(line.velocity.y+line.angular_velocity*radius.x)*dt;
+                }
+                double across=-relative.x*line.tangent.y+relative.y*line.tangent.x;
+                if(same_recent&&match->points.back().t==prior_note_observed)
+                    across=current_d-normal_distance(prior_note_center,match->points.back().line);
+                const double along=relative.x*line.tangent.x+relative.y*line.tangent.y;
+                const double travel=std::hypot(along,across);
+                normal_approach=travel>=3&&travel/dt<=4000&&
+                    std::abs(across)>=travel*.85&&current_d*across<0;
             }
-            if(!selected||line.confidence>selected->confidence||
-               (line.confidence==selected->confidence&&line.length>selected->length)) selected=&line;
+            if(same_recent&&match->points.size()>=3&&
+               match->points.back().t-match->points.front().t>=minimum_fit_span_ns) {
+                const double first=std::abs(normal_distance(match->points.front().p,match->points.front().line));
+                const double last=std::abs(normal_distance(match->points.back().p,match->points.back().line));
+                const bool current_body=n.kind==NoteKind::hold&&n.rails_geometry&&
+                    (n.head_on_line||n.held_body_evidence);
+                // An independently visible established line cannot be
+                // stolen by a brighter/longer fork while its Note continues
+                // to close. The ID alone, or an absent line, is insufficient.
+                if(current_body||(first-last>=3&&std::abs(current_d)<=last+std::clamp(n.width*.1,8.0,16.0))) {
+                    selected=&line;preserved=true;break;
+                }
+            }
+            if(!normal_approach&&alignment<.95)continue;
+            const int role_class=normal_approach?0:1;
+            const double score=std::abs(current_d)+(1-line.confidence)*4;
+            if(role_class<best_class) {best_class=role_class;selected=&line;best_score=score;second_score=1e9;}
+            else if(role_class==best_class) {
+                if(score<best_score) {second_score=best_score;best_score=score;selected=&line;}
+                else second_score=std::min(second_score,score);
+            }
         }
+        if(!preserved&&second_score-best_score<8)selected=nullptr;
         if(!selected&&out.lines.size()==1&&out.lines.front().association_valid) selected=&out.lines.front();
         if(selected&&!ambiguous) {
             const auto& l=*selected;
@@ -193,6 +248,33 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
                     }
                 }
             }
+            // A newly visible line can coincide with a Tap already tracked
+            // through line-free frames. The current head and current ridge
+            // must actually overlap; the bounded prior note motion only
+            // qualifies that observation, never supplies a hidden line.
+            if(first_line_sample&&prior_note_revision>=2&&
+               target.note.kind==NoteKind::tap&&!target.note.outline_evidence&&
+               prior_note_observed<now&&now-prior_note_observed<=40'000'000&&
+               l.observed_ns==now&&!target.note.rails_geometry&&
+               l.confidence>=.8&&l.length>=out.context.width*.5&&
+               target.note.confidence>=.5&&target.note.height>=4&&
+               core_contains(target.note,target.hit)&&
+               std::abs(latest_distance)<=std::min(8.0,target.note.height*.5+4)) {
+                const double prior_distance=normal_distance(prior_note_center,l);
+                const double approach=latest_distance-prior_distance;
+                const auto local_lines=std::count_if(out.lines.begin(),out.lines.end(),[&](const LineCandidate& line) {
+                    return line.observed_ns==now&&line.confidence>=.5&&
+                        line.length>=out.context.width*.32&&
+                        std::abs(normal_distance(target.note.center,line))<=std::max(8.0,target.note.height*.5+4)&&
+                        std::abs((target.note.center.x-line.center.x)*line.tangent.x+
+                                 (target.note.center.y-line.center.y)*line.tangent.y)<=line.length*.5+target.note.width*.5;
+                });
+                if(local_lines==1&&std::abs(approach)>=3&&std::abs(prior_distance)>=3&&
+                   std::abs(latest_distance)<=std::abs(prior_distance)+2&&
+                   prior_distance*approach<0&&
+                   std::abs(prior_distance)<=std::max(32.0,target.note.width*.25))
+                    target.reason="current_tap_overlap";
+            }
         } else if(out.lines.size()>1) target.reason="multiple_line_association_unvalidated";
         if(target.note.held_body_patch) {
             target.crossing_ns.reset();target.tail_crossing_ns.reset();
@@ -204,7 +286,7 @@ void track_legacy_batch(DecisionSnapshot& out,const std::vector<NoteCandidate>& 
 CandidateBatch make_candidate_batch(const DecisionSnapshot& s,const Frame& f,
  const std::vector<NoteCandidate>& notes,const std::vector<std::optional<NoteCandidate>>& shortened,
  const std::vector<GameTrackHistory>& history) {
- CandidateBatch b;b.extractor_version=36;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
+ CandidateBatch b;b.extractor_version=37;b.context=s.context;b.ui=s.ui;b.playing_gate=s.playing_gate;
  b.capacity_valid=s.capacity_valid;b.source_valid=f.source_valid;
  b.extraction_start_ns=s.recognition_start_ns;b.lines=s.lines;
  for(std::size_t i=0;i<notes.size();++i) {
@@ -264,7 +346,7 @@ CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("sc
  const auto& c=j.at("context");b.context={c.at("epoch"),c.at("generation"),c.at("geometry"),c.at("frame"),c.at("capture_ns"),c.at("width"),c.at("height"),c.at("rotation")};
  if(b.context.width<2||b.context.height<2||b.context.width>4096||b.context.height>4096||b.context.capture_ns<0||b.context.rotation<0||b.context.rotation>3)throw std::invalid_argument("candidate context");
  b.extractor_version=j.at("extractor_version");b.quality_version=j.at("quality_version");b.history_source=j.at("history_source");
- if((b.extractor_version<29||b.extractor_version>36)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
+ if((b.extractor_version<29||b.extractor_version>37)||b.quality_version!=1||b.history_source.empty()||b.history_source.size()>128)throw std::invalid_argument("candidate extractor/quality/source version");
  b.extraction_start_ns=j.at("extraction_start_ns");b.extraction_end_ns=j.at("extraction_end_ns");
  if(b.extraction_start_ns<0||b.extraction_end_ns<b.extraction_start_ns)throw std::invalid_argument("extraction time order");
  const auto ui=j.at("ui").get<std::string>();bool found=false;for(auto u:{GameUi::unknown,GameUi::menu,GameUi::loading,GameUi::playing,GameUi::paused,GameUi::result})if(ui==name(u)){b.ui=u;found=true;}

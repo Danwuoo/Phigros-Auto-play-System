@@ -1,5 +1,34 @@
 # Phigros Auto-play System
 
+2026-10-01：[離線CPU學習視覺小試](docs/OFFLINE_CPU_VISION_PILOT_20261001.md)。
+使用者限定模型輔助優化，新增獨立C++20 CPU訓練／推論／覆核packet工具，
+已執行兩種合成訓練設定並凍結重現，為18張真實ROI產生proposed部位mask；human pixel gold仍0。
+LibTorch／模型不進正式即時迴圈，正式候選未改、沒有新增實戰或跨曲模型驗收。
+
+2026-10-01：[Dlyrotz連續影格分析與C36h](docs/DLYROTZ_FRAME_ANALYSIS_C36H_20261001.md)
+已接收十二段理由，逐幀join原圖／journal，修交叉線漏辨、旋轉Flick切分及Hold
+patch/front接續。C36h tint1已完成單輪manual：795950分、77 Miss，與前次同為77 Miss；
+主要問題改善未通過驗收，PAS已自停。後續驗證改以完整接觸生命週期為目標，原圖與binary保留。
+
+2026-10-01，本隔離工作樹：使用者另授權全錄一輪，由使用者選曲及按 Play。
+新增 `manual-session --full-recording`，保存同一擷取串流每張收到的無損 PNG、
+QPC／frame 索引，結算或中止後自動停止。C36g 觸控策略不變；細節見
+[全輪錄影契約](docs/FULL_ROUND_RECORDING_20261001.md)。首輪已正常自動停止，
+7722張原圖及MP4核對完成；使用者指定的12段已封裝為連續PNG／日誌／小影片，
+原因已由使用者填寫並完成第一輪分析，尚無逐幀像素gold。
+
+**2026-09-30，本隔離工作樹：12輪有限批次已停止，C36g冷候選已通過回歸。**
+本批C36f兩次Dlyrotz IN13均81Miss，最後A36為158Miss；保留全部波動及
+最後session FAULT。批後修正Note局部朝向／相對運動的多線配對，以及
+旋轉Hold同contact延續／有效當前線的tail確認。Release 227 passed、2
+opt-in skipped，330張RGB冷重播完成。後續使用者另授權首輪C36g manual驗收，
+Dlyrotz IN13為796284分／71Miss，PAS正常停止；仍沒有大幅改善，已整理
+[疑似Miss影格標註](docs/MISS_FRAME_ANNOTATION_20260930.md)。27張RGB中只有
+一個撤銷事件的source_frame被保存，逐Note结果仍unknown，human gold0。
+契約、參數與資料缺口見[批後冷修正](docs/NOTE_LINE_ROLE_FOLLOWUP_20260930.md)，
+12輪紀錄見[M0手動比較](docs/M0_MANUAL_CONTINUATION_20260930.md)。
+下方日期狀態屬歷史；不代表恢复AP、無限測試或模型訓練授權。
+
 **2026-09-28 合併狀態：main 保留 observer36／planner18，接入多輪手動待命流程。** 啟動 `out/release-v145/Release/pas.exe manual-session` 後，由使用者選曲及按 Play，完成結算後繼續待命。跨曲成績來自凍結的 `codex/hd9-manual-rounds`（observer33／planner13），不是合併後 main 的成績；原執行檔 `out/hd9-session-release/Release/pas.exe` 與原始量測保留。版本界線及驗證見[合併紀錄](docs/MAIN_MERGE_20260928.md)。舊 AP goal 維持暫停；下一步研討跨曲學習式觀測、多判定線及時間追蹤，尚未開發或訓練。
 
 第二輪 main 策略比較分支可選 `manual-session --pixel-clips`，從同源即時畫面有界保存少量完整 RGB 連續影格，供離線研究多判定線與旋轉場景；選曲與 Play 仍由使用者操作。採樣格式、上限和證據範圍見[第二輪比較紀錄](docs/MAIN_LEGACY_HD_COMPARISON_20260928.md)。

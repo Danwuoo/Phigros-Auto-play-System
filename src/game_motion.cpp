@@ -141,6 +141,17 @@ void GameLineTracker::update(std::vector<LineCandidate>& lines,const SceneContex
             fit_motion(prior,line,c.capture_ns);
             prior.line=line;prior.time=c.capture_ns;
         } else {
+            // A contested current observation is not a new lineage. Keeping
+            // it as a historical track creates near-duplicate predecessors
+            // which can contest each later single-line observation forever.
+            // Preserve the bounded genuine predecessors; ambiguity still
+            // rejects action, and expiry can start a fresh measured identity.
+            if(!line.association_valid) {
+                line.track_id=0;line.velocity={};line.angular_velocity=0;
+                line.motion_valid=false;line.motion_samples=0;line.motion_span_ns=0;
+                line.motion_residual=line.angular_residual=0;
+                continue;
+            }
             line.track_id=++next_id_;Track fresh;fit_motion(fresh,line,c.capture_ns);
             fresh.line=line;fresh.time=c.capture_ns;
             if(tracks_.size()<16)tracks_.push_back(std::move(fresh));
@@ -154,8 +165,7 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
     // descriptor reaches the line. It may search the current attached rails,
     // but a separated body still fails the same-frame attachment checks.
     if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence&&std::abs(anchor_distance)>48)||!line.association_valid||
-       anchor.width<f.width*.035||anchor.width>f.width*.22||
-       std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
+       anchor.width<f.width*.035||anchor.width>f.width*.22)return {};
     const Vec2 u=line.tangent,n{-u.y,u.x};
     const double d=dot(sub(anchor.center,line.center),n);
     const Vec2 projected{anchor.center.x-n.x*d,anchor.center.y-n.y*d};
@@ -276,8 +286,7 @@ std::optional<NoteCandidate> observe_held_outline(const Frame& f,const NoteCandi
 }
 std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const NoteCandidate& anchor,const LineCandidate& line) {
     if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence)||
-       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22||
-       std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
+       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22)return {};
     const Vec2 u=line.tangent,n{-u.y,u.x};
     std::optional<NoteCandidate> best;double best_cost=1e9;bool ambiguous=false;
     // A local CURRENT leading luminance edge must span the interior of both
@@ -383,8 +392,7 @@ std::optional<NoteCandidate> observe_moving_held_front(const Frame& f,const Note
 }
 std::optional<NoteCandidate> observe_held_body_patch(const Frame& f,const NoteCandidate& anchor,const LineCandidate& line) {
     if(!anchor.rails_geometry||(!anchor.head_on_line&&!anchor.held_body_evidence)||
-       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22||
-       std::abs(dot(anchor.tangent,line.tangent))<.95)return {};
+       !line.association_valid||anchor.width<f.width*.035||anchor.width>f.width*.22)return {};
     const Vec2 u=line.tangent,n{-u.y,u.x};
     std::optional<NoteCandidate> best;double best_cost=1e9;
     // An already held body can remain visible while its front is hidden by

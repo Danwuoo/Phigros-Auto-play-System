@@ -1,5 +1,33 @@
 # 架構與資料契約
 
+2026-10-01使用者限定[模型只作離線輔助優化](OFFLINE_CPU_VISION_PILOT_20261001.md)。
+`pas_vision_cpu`為独立C++20 CPU訓練／推論工具，CMake預設OFF，正式`pas`及
+`pas_core`不連結Torch／模型。單幀native RGB部位提議不含line role、物理ID或動作，
+沒有capture/input backend與owner反饋；proposed／unknown禁止當人工gold訓練。
+packet≤24、ROI≤256²、batch≤4、steps≤2000／loop240秒；家族分組與QPC僅離線追溯。
+實際成本、合成驗證限制、native crop與mask QA及覆核流程見小試報告。
+
+2026-10-01孤立C36h契約見[逐幀研究](DLYROTZ_FRAME_ANALYSIS_C36H_20261001.md)：
+current正交ridge、Note局部Flick箭頭及同ID／同line Hold patch/front切換。
+角色unknown不升gold，新ID／alias不接受位移放寬，lease／tail／未知Down規則维持。
+manual-session新增`--one-round`，可與full recording分開。
+
+2026-10-01新增獨立單輪全錄：同一串流 latest publish 後複製至有界診斷 slots，
+無損 PNG+QPC/index 單向匯出，沒有 observer／owner 歷史讀取。錄影越限停止並
+釋放 owner；結算後自動停 session。bounds／故障與離線影片契約见
+[全輪錄影](FULL_ROUND_RECORDING_20261001.md)。首輪7722張received pixels完整保存，
+逐PNG SHA／MP4 mapping核對完成；來源最長交付間隔443.5487ms，不能宣稱來源無漏幀。
+同日新增C++離線selection封裝：12段按全輪影片時間保留完整連續原圖及上下文，
+所選副本與原全輪原圖隔離，原source_frame／QPC／SHA仍可精確join當時journal。
+原因已填寫並完成第一輪逐幀分析，像素annotation尚未人工覆核，沒有new pixel gold。
+
+2026-09-30 C36g首輪manual驗收完成並正常停止，Dlyrotz IN13為71Miss。
+新增離線C++20 `pas_miss_review`對保存RGB與當時journal做source_frame／QPC
+精確join、輸出疑似事件／缺圖列表及unknown標註模板；不改正式C36g或動作策略。
+助理提議與人工gold分開，觸控撤銷／Combo形狀消失不等於遊戲Miss。
+既有採樣仍是uniform／complex_line_event三幀，沒有事前ring；詳見
+[影格標註與容量](MISS_FRAME_ANNOTATION_20260930.md)。
+
 2026-09-30 的 36 版恢復候選（獨立 `codex/baseline36-recovery` 分支）只在
 `GameObserver` 觀測端加入兩項可分別關閉的機制。`row_prescreen` 在逐列完整掃描前，
 用間隔 64px 的五像素塊排除不可能通過舊版「長度超過畫寬 32%、連續缺口最多四像素」
@@ -283,3 +311,18 @@ GameLineTracker每條線最多6個實測pose／90ms，以10ms bucket取最新pos
 PCA長薄線在保留Hold鄰近色彩排除後，以該當前方向作一次有界4px沿線掃描、法向±2px搜尋雙側ridge。只用當前實際支持的端點，允許最多22%畫面寬的中斷，所選span必須包含seed且至少半個畫面寬；再於九個分布位置檢查雙側亮度對比，至少七個通過才confidence=.85，否則保持原.6。搜尋限於畫面及遊玩Y區，並拒絕厚度>6px；不從歷史伸長不可見線。可獨立完整驗證的原PCA幾何也使用同一九點核對。abs(tangent.y)>.2的Drag aligned ribbon，採該connected component當前像素沿PCA主／次軸的實測extrema及中點，不以variance假定均勻fill；近水平保留原screen geometry與高亮去重，避免U形端帽或亞像素中心變動造成退步。先完成當前line候選再分類Note，避免component順序造成斜Drag尺寸失效。
 
 CandidateBatch extractor35仍接受29–34，新增line motion_valid／motion_samples／motion_span_ns／motion_residual_px／angular_residual_rad；舊資料缺字段預設false／0，parser檢查容量、跨度、有限非負殘差及有效fit最低樣本。decision journal同樣記錄fit依據。planner16、source／target100ms、Hold missing60ms、Drag missing40ms與recent anchor90ms保持。光流／模型尚未接入，synthetic通過不代表HD AP或旋轉全曲能力。
+
+## C36g 隔離候選的當前線支持
+
+2026-09-30有限12輪結束後，baseline36-recovery工作樹新增C36g冷候選；
+這不是主checkout或跨曲主線已驗收版本。彩色薄核心局部幾何、Note長軸、
+近期相對運動與線法向分別處理。多線關聯可用有界相對法向接近優先，
+仍可見且有近期承載支持的原線不被新分支搶配；同等角色歧義保留unknown。
+Down仍受獨立當前接觸／擬合、門控與owner資格限制。
+
+Hold舊anchor只圈定當前pixels搜尋，当前paired rails／body決定當前touch。
+同線旋轉延續保留同一contact；缺當前支持不能Move或續租，也不靠延長
+missing grace。tail確認只接受同ID的新鮮有效線，錯線不能結束Hold。
+容量、QPC、lease、單owner與未知Down不重試維持。完整參數、正負例、
+冷RGB分母和尚缺實戰／變色假線角色gold見
+[Note／線角色契約](NOTE_LINE_ROLE_FOLLOWUP_20260930.md)。

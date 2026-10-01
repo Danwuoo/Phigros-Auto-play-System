@@ -23,6 +23,7 @@ find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC 1.81.1 EXACT CONFIG REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 find_package(FFMPEG REQUIRED)
+find_package(ZLIB REQUIRED)
 
 set(PROTO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/proto/emulator_controller.proto)
 set(PROTO_OUT ${CMAKE_CURRENT_BINARY_DIR}/generated)
@@ -43,9 +44,10 @@ add_library(pas_proto STATIC ${PROTO_OUT}/emulator_controller.pb.cc
 target_include_directories(pas_proto PUBLIC ${PROTO_OUT})
 target_link_libraries(pas_proto PUBLIC protobuf::libprotobuf gRPC::grpc++)
 
-add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp src/game_tracking_analysis.cpp src/game_tracking_shadow.cpp src/game_dataset.cpp src/game_dataset_tools.cpp src/game_session.cpp src/session_archive.cpp src/session_pixel_clips.cpp)
+add_library(pas_core STATIC src/core.cpp src/config.cpp src/analysis.cpp src/adb.cpp src/journal.cpp src/touch_evidence.cpp src/preview.cpp src/game.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp src/game_tracking_analysis.cpp src/game_tracking_shadow.cpp src/game_dataset.cpp src/game_dataset_tools.cpp src/game_session.cpp src/session_archive.cpp src/session_pixel_clips.cpp src/session_recording.cpp)
 target_include_directories(pas_core PUBLIC include)
 target_link_libraries(pas_core PUBLIC nlohmann_json::nlohmann_json bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32)
+target_link_libraries(pas_core PUBLIC ZLIB::ZLIB)
 if(MSVC)
   target_compile_options(pas_core PRIVATE /W4 /permissive- /EHsc)
 endif()
@@ -65,7 +67,8 @@ endif()
 set(PAS_BUILD_HASH_JSON "{")
 foreach(PAS_BUILD_FILE src/game.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp
     src/core.cpp src/emulator.cpp src/config.cpp include/pas/core.hpp include/pas/game.hpp src/game_session.cpp src/manual_session.cpp src/session_archive.cpp
-    include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp include/pas/session_pixel_clips.hpp src/session_pixel_clips.cpp apps/pas/main.cpp)
+    include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp include/pas/session_pixel_clips.hpp src/session_pixel_clips.cpp apps/pas/main.cpp
+    include/pas/session_recording.hpp src/session_recording.cpp include/pas/runtime.hpp)
   file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/${PAS_BUILD_FILE}" PAS_BUILD_HASH)
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${PAS_BUILD_FILE}")
   string(APPEND PAS_BUILD_HASH_JSON "\"${PAS_BUILD_FILE}\":\"${PAS_BUILD_HASH}\",")
@@ -94,6 +97,24 @@ endif()
 
 add_executable(pas apps/pas/main.cpp)
 target_link_libraries(pas PRIVATE pas_core pas_emulator pas_bench CLI11::CLI11)
+
+# Offline only. The A36 target uses its original headers as well as its frozen
+# library, since GameObserver's layout differs from the candidate.
+add_executable(pas_pixel_audit apps/pixel_audit/main.cpp)
+target_link_libraries(pas_pixel_audit PRIVATE pas_core)
+add_executable(pas_miss_review apps/miss_review/main.cpp)
+target_link_libraries(pas_miss_review PRIVATE pas_core)
+add_executable(pas_recording_check apps/recording_check/main.cpp apps/recording_check/select.cpp)
+target_link_libraries(pas_recording_check PRIVATE pas_core mfplat mfreadwrite mfuuid)
+if(MSVC)
+  target_compile_options(pas_miss_review PRIVATE /W4 /permissive- /EHsc)
+endif()
+if(PAS_A36_AUDIT_LIBRARY AND PAS_A36_AUDIT_INCLUDE_DIR)
+  add_executable(pas_a36_pixel_audit apps/pixel_audit/main.cpp)
+  target_include_directories(pas_a36_pixel_audit PRIVATE "${PAS_A36_AUDIT_INCLUDE_DIR}")
+  target_link_libraries(pas_a36_pixel_audit PRIVATE "${PAS_A36_AUDIT_LIBRARY}"
+      nlohmann_json::nlohmann_json bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32)
+endif()
 if(MSVC)
   target_compile_options(pas PRIVATE /W4 /permissive- /EHsc)
 endif()
@@ -108,11 +129,47 @@ if(PAS_GRPC_RESEARCH_SOURCE_DIR)
   message(FATAL_ERROR "Legacy endpoint override is incompatible with the patched dependency; clear PAS_GRPC_RESEARCH_SOURCE_DIR and use --read-chunk-kib")
 endif()
 
+add_executable(pas_frame_review apps/frame_review/main.cpp)
+target_link_libraries(pas_frame_review PRIVATE pas_core)
+
+# Optional and offline only: CPU LibTorch does not become a PAS dependency.
+option(PAS_ENABLE_CPU_VISION "Build offline CPU learned vision experiment" OFF)
+if(PAS_ENABLE_CPU_VISION)
+  find_package(Torch 2.7.0 EXACT CONFIG REQUIRED)
+  file(READ "${TORCH_INSTALL_PREFIX}/build-version" PAS_CPU_TORCH_BUILD)
+  string(STRIP "${PAS_CPU_TORCH_BUILD}" PAS_CPU_TORCH_BUILD)
+  if(NOT PAS_CPU_TORCH_BUILD STREQUAL "2.7.0+cpu")
+    message(FATAL_ERROR "Offline pilot requires the pinned 2.7.0+cpu LibTorch distribution")
+  endif()
+  include(GoogleTest)
+  add_library(pas_vision_cpu_lib STATIC src/vision_cpu.cpp)
+  target_include_directories(pas_vision_cpu_lib PUBLIC include)
+  target_link_libraries(pas_vision_cpu_lib PUBLIC pas_core PRIVATE "${TORCH_LIBRARIES}")
+  separate_arguments(PAS_TORCH_FLAGS NATIVE_COMMAND "${TORCH_CXX_FLAGS}")
+  target_compile_options(pas_vision_cpu_lib PRIVATE ${PAS_TORCH_FLAGS})
+  add_executable(pas_vision_cpu apps/vision_cpu/main.cpp)
+  target_link_libraries(pas_vision_cpu PRIVATE pas_vision_cpu_lib)
+  add_executable(pas_vision_cpu_tests tests/vision_cpu_tests.cpp)
+  target_link_libraries(pas_vision_cpu_tests PRIVATE pas_vision_cpu_lib GTest::gtest_main)
+  target_compile_definitions(pas_vision_cpu_tests PRIVATE PAS_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+  if(MSVC)
+    target_compile_options(pas_vision_cpu_lib PRIVATE /bigobj /EHsc)
+    file(GLOB PAS_CPU_TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+    foreach(PAS_CPU_TARGET pas_vision_cpu pas_vision_cpu_tests)
+      add_custom_command(TARGET ${PAS_CPU_TARGET} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PAS_CPU_TORCH_DLLS}
+          $<TARGET_FILE_DIR:${PAS_CPU_TARGET}>)
+    endforeach()
+  endif()
+  gtest_discover_tests(pas_vision_cpu_tests PROPERTIES TIMEOUT 30)
+endif()
+
 add_executable(pas_tests tests/core_tests.cpp tests/grpc_loopback_tests.cpp
                          tests/grpc_transport_tests.cpp
                          tests/config_analysis_tests.cpp tests/cli_tests.cpp
                          tests/capture_backend_tests.cpp tests/game_tests.cpp tests/game_tracking_tests.cpp tests/game_dataset_tests.cpp)
 target_sources(pas_tests PRIVATE tests/game_session_tests.cpp)
+target_sources(pas_tests PRIVATE tests/session_recording_tests.cpp)
 target_compile_definitions(pas_tests PRIVATE PAS_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(pas_tests PRIVATE pas_bench pas_emulator pas_core GTest::gtest_main)
 add_dependencies(pas_tests pas)

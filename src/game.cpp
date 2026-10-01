@@ -700,6 +700,43 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
                 {1,0},static_cast<double>(right-left),thickness,.65});
         i=j;
     }
+    // Orthogonal ridges may share a white component with the horizontal
+    // line. Discover thin CURRENT column bands before the one-line fallback;
+    // no retained pixels or song/time identity participates in this scan.
+    struct ColumnLine {int x,y0,y1;};std::vector<ColumnLine> columns;
+    for(int x=4;split_joined_lines_&&x<f.width-4;++x) {
+        const auto white=[&](int y){return classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3)==4;};
+        const auto ridge=[&](int y){const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3;
+            const auto gray=[](const std::uint8_t* c){return (c[0]*77+c[1]*150+c[2]*29)/256;};const int v=gray(p);
+            // Hit tint can recolor a currently visible white ridge. Require
+            // current contrast and low chroma; colored Note cores are excluded.
+            return white(y)||(std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<=100&&
+                v>=120&&v-gray(p-12)>=18&&v-gray(p+12)>=18);};
+        // Prescreen the same current ridge support as the final run. Testing
+        // only white here would incorrectly reject a partly tinted ridge;
+        // the full run still needs at least half actual white pixels.
+        int blocks=0;for(int y=0;y+4<f.height;y+=64){bool found=false;for(int dy=0;dy<5;++dy)found|=ridge(y+dy);blocks+=found;}
+        const double minimum=std::max(f.width*.32,f.height*.55);
+        if(blocks<std::max(1,static_cast<int>((minimum-5)/64)))continue;
+        int begin=-1,last=-1,gap=0,white_count=0;
+        const auto finish=[&]{if(begin>=0&&last-begin>minimum&&white_count>=(last-begin+1)*.5&&columns.size()<static_cast<std::size_t>(f.width))columns.push_back({x,begin,last});};
+        for(int y=0;y<f.height;++y){if(ridge(y)){if(begin<0)begin=y;last=y;gap=0;white_count+=white(y);}else if(begin>=0&&++gap>4){finish();begin=last=-1;gap=0;white_count=0;}}finish();
+    }
+    for(std::size_t i=0;i<columns.size();) {
+        std::size_t j=i+1;int top=columns[i].y0,bottom=columns[i].y1;
+        while(j<columns.size()&&columns[j].x-columns[j-1].x<=2){top=std::min(top,columns[j].y0);bottom=std::max(bottom,columns[j].y1);++j;}
+        const double thickness=columns[j-1].x-columns[i].x+1,cx=(columns[i].x+columns[j-1].x)/2.0;
+        if(thickness<=6) {
+            int contrast=0,body=0;for(int k=1;k<=9;++k){const int y=top+(bottom-top)*k/10;const auto* p=f.rgb.data()+static_cast<std::size_t>(y)*f.stride+static_cast<int>(cx)*3;
+                const auto gray=[](const std::uint8_t* c){return (c[0]*77+c[1]*150+c[2]*29)/256;};const int v=gray(p);
+                contrast+=v-gray(p-12)>=18&&v-gray(p+12)>=18;bool adjacent=false;
+                for(const int dx:{-16,-8,8,16}){const int px=static_cast<int>(cx)+dx;if(px<0||px>=f.width)continue;const int c=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+px*3);adjacent|=c==1||c==3;}body+=adjacent;
+            }
+            LineCandidate line{{cx,(top+bottom)/2.0},{0,1},static_cast<double>(bottom-top),thickness,.85};
+            const bool duplicate=std::any_of(out.lines.begin(),out.lines.end(),[&](const auto& l){return std::abs(l.tangent.y)>.995&&std::abs(l.center.x-cx)<8;});
+            if(contrast>=7&&body<3&&!duplicate){if(out.lines.size()<16)out.lines.push_back(line);else out.capacity_valid=false;}
+        }i=j;
+    }
     if(const auto spanning=spanning_line(f)) {
         std::erase_if(out.lines,[&](const LineCandidate& line) {
             return std::abs(normal_distance(line.center,*spanning))<16;
@@ -785,12 +822,12 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         if((c.color==4||c.color==2||c.color==1)&&major>f.width*.07&&
            major>12*std::max(1.0,minor)&&center.y>f.height*.12&&center.y<f.height*.95)continue;
         const double minimum_width=f.width*(c.color==3?.018:.04);
-        const bool aligned_ribbon=major>5*std::max(1.0,minor)&&
-            std::any_of(out.lines.begin(),out.lines.end(),[&](const auto& l){
-                return (l.confidence>=.8||l.length>=f.width*.5)&&
-                    std::abs(l.tangent.x*std::cos(theta)+l.tangent.y*std::sin(theta))>.95;
-            });
-        const double observed_width=aligned_ribbon?major*std::sqrt(12.0)+2:w;
+        // A bounded thin colored core has its own local orientation. Do not
+        // require a currently parallel line to recognize it; broad/long Hold
+        // bodies still use their independent rail reconstruction below.
+        const bool local_ribbon=major>5*std::max(1.0,minor)&&minor*std::sqrt(12.0)+2>=4&&
+            major*std::sqrt(12.0)+2>=minimum_width&&major*std::sqrt(12.0)+2<=f.width*.20;
+        const double observed_width=local_ribbon?major*std::sqrt(12.0)+2:w;
         if(c.color==2&&major<5*std::max(1.0,minor)) continue; // Rings/body borders are not Drag ribbons.
         if(c.color==4||center.y<f.height*.10 || observed_width<minimum_width||observed_width>f.width*.20||
            h<4 || h>f.height*.75 || c.count*4<w*h*.13) continue;
@@ -799,7 +836,7 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
             h>w*.65?NoteKind::hold:NoteKind::tap;
         // A rotated thin blue ribbon has a tall SCREEN bbox. Determine its
         // local thickness before interpreting that bbox as a Hold body.
-        if(c.color==1&&aligned_ribbon)kind=NoteKind::tap;
+        if(c.color==1&&local_ribbon)kind=NoteKind::tap;
         if(kind==NoteKind::tap&&major<5*std::max(1.0,minor)) continue;
         NoteCandidate candidate{{(c.x0+c.x1)/2.0,(c.y0+c.y1)/2.0},kind,w,h,.55};
         candidate.tangent={std::cos(theta),std::sin(theta)};
@@ -810,8 +847,11 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         // Near-horizontal caps retain their established screen geometry and
         // highlight suppression. Measure local extents when tilt can turn a
         // thin core's screen bbox into a falsely thick region.
-        if(kind==NoteKind::drag&&aligned_ribbon&&c.ribbon_width>0) {
+        if((kind==NoteKind::drag||kind==NoteKind::flick)&&local_ribbon&&std::abs(candidate.tangent.y)>.2&&c.ribbon_width>0) {
             candidate.center=c.ribbon_center;candidate.width=c.ribbon_width;candidate.height=c.ribbon_height;
+        }
+        if(kind==NoteKind::flick&&local_ribbon&&std::abs(candidate.tangent.y)>.4&&c.ribbon_width<=0) {
+            candidate.center=center;candidate.width=major*std::sqrt(12.0)+2;candidate.height=minor*std::sqrt(12.0)+2;
         }
         if(kind==NoteKind::hold) {
             Vec2 axis{std::cos(theta),std::sin(theta)};
@@ -839,29 +879,32 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         notes.push_back(candidate);
     }
     line_tracker_.update(out.lines,out.context);
-    // A white/yellow Flick arrow interrupts its red ribbon into two cores.
-    // Require that visible central vertical marker before joining fragments.
+    // A Flick's current central arrow can split its colored ribbon in any
+    // orientation. Measure the pair and arrow in the ribbon's local frame.
     for(std::size_t i=0;i<notes.size();++i) for(std::size_t j=i+1;j<notes.size();) {
         auto& a=notes[i]; const auto& b=notes[j];
-        const double gap=std::abs(a.center.x-b.center.x)-(a.width+b.width)/2;
+        const Vec2 u=a.tangent,n{-u.y,u.x},delta{b.center.x-a.center.x,b.center.y-a.center.y};
+        const double along=delta.x*u.x+delta.y*u.y,across=delta.x*n.x+delta.y*n.y;
+        const double gap=std::abs(along)-(a.width+b.width)/2;
         bool marker=false;
         if(a.kind==NoteKind::flick&&b.kind==NoteKind::flick&&
-           std::max(a.height,b.height)<=20&&std::abs(a.center.y-b.center.y)<8&&
+           std::abs(a.tangent.x*b.tangent.x+a.tangent.y*b.tangent.y)>.985&&
+           std::max(a.height,b.height)<=20&&std::abs(across)<8&&
            gap>=10&&gap<=f.width*.04&&std::abs(a.width-b.width)<12&&
            a.width+b.width+gap<=f.width*.18) {
-            const int x=static_cast<int>(std::lround((a.center.x+b.center.x)/2));
-            const int y=static_cast<int>(std::lround((a.center.y+b.center.y)/2));
+            const Vec2 center{(a.center.x+b.center.x)/2,(a.center.y+b.center.y)/2};
             int support=0;
-            for(int dy=-12;dy<=12;dy+=2) if(x>=0&&x<f.width&&y+dy>=0&&y+dy<f.height) {
-                const auto color=classify(f.rgb.data()+static_cast<std::size_t>(y+dy)*f.stride+x*3);
-                if(color==4||color==2) ++support;
+            for(int offset=-12;offset<=12;offset+=2) {
+                const int x=static_cast<int>(std::lround(center.x+n.x*offset)),y=static_cast<int>(std::lround(center.y+n.y*offset));
+                if(x>=0&&x<f.width&&y>=0&&y<f.height){const auto color=classify(f.rgb.data()+static_cast<std::size_t>(y)*f.stride+x*3);if(color==4||color==2)++support;}
             }
             marker=support>=8;
         }
         if(marker) {
-            const double left=std::min(a.center.x-a.width/2,b.center.x-b.width/2),
-                         right=std::max(a.center.x+a.width/2,b.center.x+b.width/2);
-            a.center={(left+right)/2,(a.center.y+b.center.y)/2}; a.width=right-left;
+            const double pa=a.center.x*u.x+a.center.y*u.y,pb=b.center.x*u.x+b.center.y*u.y;
+            const double left=std::min(pa-a.width/2,pb-b.width/2),right=std::max(pa+a.width/2,pb+b.width/2);
+            const double normal=((a.center.x+b.center.x)*n.x+(a.center.y+b.center.y)*n.y)/2;
+            a.center={u.x*(left+right)/2+n.x*normal,u.y*(left+right)/2+n.y*normal};a.width=right-left;
             a.height=std::max(a.height,b.height); a.confidence=.65;
             notes.erase(notes.begin()+static_cast<std::ptrdiff_t>(j));
         } else ++j;
@@ -1018,12 +1061,11 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
         if(note.width<f.width*.04) continue;
         const LineCandidate* outline_line=nullptr;
         if(recent_rails) for(const auto& current:out.lines) {
-            if(!current.association_valid||std::abs(current.tangent.x*note.tangent.x+
-               current.tangent.y*note.tangent.y)<.95||
+            if(!current.association_valid||
                (!note.head_on_line&&!note.held_body_evidence&&std::abs(normal_distance(note.center,current))>48))continue;
             const bool prior_line=!track.points.empty()&&track.points.back().line.track_id==current.track_id;
-            if(!outline_line||prior_line)outline_line=&current;
-            if(prior_line)break;
+            if(prior_line) {outline_line=&current;break;}
+            if(out.lines.size()==1)outline_line=&current;
         }
         if(outline_line&&!note.head_on_line&&!note.held_body_evidence&&std::any_of(notes.begin(),notes.end(),[&](const auto& front){
             if(front.kind!=NoteKind::hold||!front.rails_geometry||front.recent_identity||
@@ -1238,10 +1280,20 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         const auto& prior=id.last_note;
         const double alignment=std::abs(prior.tangent.x*t.note.tangent.x+prior.tangent.y*t.note.tangent.y);
         const Vec2 delta{t.note.center.x-prior.center.x,t.note.center.y-prior.center.y};
-        return (!id.line_id||!t.line_id||id.line_id==t.line_id)&&alignment>=.98&&
+        const bool same_line=id.line_id&&t.line_id&&id.line_id==t.line_id;
+        const double across=-delta.x*t.note.tangent.y+delta.y*t.note.tangent.x;
+        // A body-interior patch is a touch position, not a measured front.
+        // Recovering the SAME body's front changes that anchor semantics.
+        // Current support gates still apply; no alias/new identity benefits.
+        const bool patch_transition=same_line&&id.plan.note_id==t.note_id&&alignment>=.995&&
+            prior.rails_geometry&&t.note.rails_geometry&&prior.held_body_evidence&&t.note.held_body_evidence&&
+            prior.held_body_patch!=t.note.held_body_patch&&std::abs(across)<=128&&
+            (prior.held_body_patch?(across>=0&&across<=t.note.height-16):
+                                  (across<=0&&-across<=prior.height-16));
+        return (!id.line_id||!t.line_id||same_line)&&alignment>=(same_line?.5:.98)&&
             std::abs(prior.width-t.note.width)<=std::max(4.0,prior.width*.12)&&
             std::abs(delta.x*t.note.tangent.x+delta.y*t.note.tangent.y)<=std::min(48.0,prior.width*.3)&&
-            std::abs(-delta.x*t.note.tangent.y+delta.y*t.note.tangent.x)<=48;
+            (std::abs(across)<=48||patch_transition);
     };
     std::set<std::uint64_t> claimed;
     std::vector<bool> ignored(s.targets.size());
@@ -1302,6 +1354,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         if(!std::isfinite(tail.x)||!std::isfinite(tail.y)||tail.x<0||tail.x>=s.context.width||
            tail.y<0||tail.y>=s.context.height) return false;
         for(const auto& line:s.lines) {
+            if(!line.association_valid||(t.line_id&&
+               (line.track_id!=t.line_id||line.observed_ns!=t.evidence_ns)))continue;
             const double norm=std::hypot(line.tangent.x,line.tangent.y);
             if(norm<.99||norm>1.01||
                std::abs(line.tangent.x*t.note.tangent.x+line.tangent.y*t.note.tangent.y)<.95||
@@ -1322,6 +1376,12 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             t.expires_ns>clock_.now_ns()&&t.hit.x>=0&&t.hit.x<s.context.width&&
             t.hit.y>=s.context.height*.12&&t.hit.y<s.context.height;
     };
+    const auto core_contains=[](const NoteCandidate& n,Vec2 p) {
+        const Vec2 d{p.x-n.center.x,p.y-n.center.y};
+        return std::abs(std::hypot(n.tangent.x,n.tangent.y)-1)<=.01&&
+            std::abs(d.x*n.tangent.x+d.y*n.tangent.y)<=n.width*.5+2&&
+            std::abs(-d.x*n.tangent.y+d.y*n.tangent.x)<=n.height*.5+2;
+    };
     const auto current_drag_overlap=[&](const GameTarget& t) {
         // Drag judges a contact in its CURRENT region. A failed temporal fit
         // need not prohibit that spatial action, but cannot manufacture a
@@ -1337,19 +1397,51 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             if(line.track_id!=t.line_id||!line.association_valid||
                line.observed_ns!=s.context.capture_ns||line.confidence<.8||
                line.length<s.context.width*.5||
-               std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)>.01||
-               std::abs(line.tangent.x*t.note.tangent.x+line.tangent.y*t.note.tangent.y)<.95)
+               std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)>.01)
                 continue;
             const double d=normal_distance(t.note.center,line);
             const Vec2 projected{t.note.center.x+d*line.tangent.y,
                                  t.note.center.y-d*line.tangent.x};
             if(std::abs(d)<=std::min(8.0,t.note.height*.5+2)&&
+               core_contains(t.note,projected)&&
                std::hypot(t.hit.x-projected.x,t.hit.y-projected.y)<=2&&
                std::abs((t.note.center.x-line.center.x)*line.tangent.x+
                         (t.note.center.y-line.center.y)*line.tangent.y)<=line.length*.5)
                 return true;
         }
         return false;
+    };
+    const auto current_tap_overlap=[&](const GameTarget& t) {
+        if(t.note.kind!=NoteKind::tap||t.reason!="current_tap_overlap"||
+           !t.line_id||t.samples==0||t.evidence_ns!=s.context.capture_ns||
+           t.expires_ns<=clock_.now_ns()) return false;
+        if(t.samples!=1||t.crossing_ns||t.note.outline_evidence||
+           t.note.rails_geometry||t.note.held_body_evidence||
+           !std::isfinite(t.note.width)||!std::isfinite(t.note.height)||
+           t.note.width<s.context.width*.05||t.note.width>s.context.width*.22||
+           t.note.height<4||t.note.height>t.note.width*.35||t.note.confidence<.5||
+           !std::isfinite(t.note.center.x)||!std::isfinite(t.note.center.y)||
+           !std::isfinite(t.hit.x)||!std::isfinite(t.hit.y))return false;
+        const auto local_lines=std::count_if(s.lines.begin(),s.lines.end(),[&](const LineCandidate& line) {
+            return line.observed_ns==s.context.capture_ns&&line.confidence>=.5&&
+                line.length>=s.context.width*.32&&
+                std::abs(normal_distance(t.note.center,line))<=std::max(8.0,t.note.height*.5+4)&&
+                std::abs((t.note.center.x-line.center.x)*line.tangent.x+
+                         (t.note.center.y-line.center.y)*line.tangent.y)<=line.length*.5+t.note.width*.5;
+        });
+        if(local_lines!=1)return false;
+        return std::any_of(s.lines.begin(),s.lines.end(),[&](const LineCandidate& line) {
+            return line.track_id==t.line_id&&line.association_valid&&
+                line.observed_ns==s.context.capture_ns&&line.confidence>=.8&&
+                line.length>=s.context.width*.5&&
+                std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)<=.01&&
+                core_contains(t.note,t.hit)&&
+                std::abs(normal_distance(t.note.center,line))<=std::min(8.0,t.note.height*.5+4)&&
+                std::abs((t.note.center.x-line.center.x)*line.tangent.x+
+                         (t.note.center.y-line.center.y)*line.tangent.y)<=line.length*.5&&
+                std::hypot(t.hit.x-t.note.center.x-normal_distance(t.note.center,line)*line.tangent.y,
+                           t.hit.y-t.note.center.y+normal_distance(t.note.center,line)*line.tangent.x)<=2;
+        });
     };
     const auto drag_release=[&](const GameTarget& t)->std::optional<Nanoseconds> {
         const auto now=clock_.now_ns();
@@ -1469,7 +1561,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                     t.samples==0?"current_geometry_unsupported":"target_evidence_invalid");
                 continue;
             }
-            if(id.kind==NoteKind::hold&&*cursor>id.plan.prefix_offset&&id.last_note.held_body_evidence&&
+            if(id.kind==NoteKind::hold&&*cursor>id.plan.prefix_offset&&
+               (id.last_note.held_body_evidence||(id.last_note.rails_geometry&&id.last_note.head_on_line))&&
                (!held_support(t)||!compatible_body(id,t))) {
                 // A color fragment is not the current held region. Retain the
                 // last touch only within the existing missing grace; never
@@ -1482,8 +1575,9 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             // contradicted by newer pixels. A later valid fit can retry with
             // a new intent; active or completed contacts never replay Down.
             const bool spatial_drag=*cursor==0&&id.kind==NoteKind::drag&&current_drag_overlap(t);
+            const bool spatial_tap=*cursor==0&&id.kind==NoteKind::tap&&current_tap_overlap(t);
             const bool timing_uncertain=t.crossing_ns&&t.uncertainty_ns>options_.uncertainty_ns;
-            if(*cursor==0&&!spatial_drag&&(t.reason=="nonlinear_or_mismatch"||
+            if(*cursor==0&&!spatial_drag&&!spatial_tap&&(t.reason=="nonlinear_or_mismatch"||
                t.reason=="outside_short_horizon"||t.reason=="root_past"||timing_uncertain)) {
                 auto canceled=scheduler_.cancel_intent(id.intent);
                 receipts.insert(receipts.end(),canceled.begin(),canceled.end());
@@ -1501,7 +1595,12 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             }
             auto plan=id.plan; plan.revision=std::max(t.revision,plan.revision+1);
             plan.evidence_ns=t.evidence_ns; plan.source_frame_sequence=s.context.frame;
-            if(spatial_drag) {
+            if(spatial_tap) {
+                plan.basis="live_pixels_current_tap_overlap";plan.predicted_down_ns.reset();
+                plan.steps={{Phase::down,t.hit.x,t.hit.y,clock_.now_ns()},
+                            {Phase::up,t.hit.x,t.hit.y,clock_.now_ns()+18'000'000}};
+                plan.valid_until_ns=clock_.now_ns()+30'000'000;
+            } else if(spatial_drag) {
                 plan.basis="live_pixels_current_drag_overlap";
                 plan.predicted_down_ns.reset();
                 plan.steps={{Phase::down,t.hit.x,t.hit.y,clock_.now_ns()},
@@ -1569,13 +1668,14 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         const int bit=t.note.kind==NoteKind::tap?1:t.note.kind==NoteKind::hold?2:
                       t.note.kind==NoteKind::drag?4:t.note.kind==NoteKind::flick?8:0;
         const bool spatial_drag=current_drag_overlap(t);
+        const bool spatial_tap=current_tap_overlap(t);
         if(t.note.held_body_evidence||!(options_.enabled_types&bit)||t.expires_ns<=clock_.now_ns()||
-           (!spatial_drag&&(!t.crossing_ns||t.reason!="prediction_observe_only"||
+           (!spatial_drag&&!spatial_tap&&(!t.crossing_ns||t.reason!="prediction_observe_only"||
                             t.uncertainty_ns>options_.uncertainty_ns))) continue;
         const auto now=clock_.now_ns();
-        const auto predicted_due=spatial_drag?now+15'000'000:*t.crossing_ns-options_.lead_ns;
+        const auto predicted_due=spatial_tap?now:spatial_drag?now+15'000'000:*t.crossing_ns-options_.lead_ns;
         const auto remaining=predicted_due-now;
-        if(!spatial_drag&&(*t.crossing_ns-now< -40'000'000||remaining>60'000'000)) continue;
+        if(!spatial_drag&&!spatial_tap&&(*t.crossing_ns-now< -40'000'000||remaining>60'000'000)) continue;
         // Late but bounded live evidence may still be recoverable. Dispatch
         // immediately; retain the original prediction separately in the journal.
         const auto due=std::max(predicted_due,now+(t.note.kind==NoteKind::drag?15'000'000:0));
@@ -1608,7 +1708,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         if(t.note.kind==NoteKind::hold&&visible_tail_passed(t)) {last_rejection_="hold_tail_already_passed";continue;}
         id.intent=++next_intent_; id.revision=t.revision;
         ContactPlan plan{epoch_,id.intent,t.revision,t.evidence_ns,due+30'000'000,
-            s.context.frame,std::string("live_pixels_short_linear_fit_")+name(t.note.kind),
+            s.context.frame,spatial_tap?"live_pixels_current_tap_overlap":
+                std::string("live_pixels_short_linear_fit_")+name(t.note.kind),
             {{Phase::down,t.hit.x,t.hit.y,due},
              {Phase::up,t.hit.x,t.hit.y,due+18'000'000}}};
         if(t.note.kind==NoteKind::hold) {
@@ -1627,7 +1728,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             const auto last=plan.steps.back(); plan.steps.push_back({Phase::up,last.x,last.y,due+52'000'000});
         }
         plan.note_id=t.note_id; plan.generation=s.context.generation; plan.geometry_version=s.context.geometry;
-        if(!spatial_drag)plan.predicted_down_ns=predicted_due-(t.note.kind==NoteKind::drag?15'000'000:0);
+        if(!spatial_drag&&!spatial_tap)plan.predicted_down_ns=predicted_due-(t.note.kind==NoteKind::drag?15'000'000:0);
         id.submitted=scheduler_.submit(plan); id.kind=t.note.kind; id.plan=plan;
         id.last_note=t.note;id.line_id=t.line_id;
         if(id.submitted) {

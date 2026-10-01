@@ -2,6 +2,7 @@
 #include "pas/game_session.hpp"
 #include "pas/session_archive.hpp"
 #include "pas/session_pixel_clips.hpp"
+#include "pas/session_recording.hpp"
 #include "pas/analysis.hpp"
 #include "pas/preview.hpp"
 #include "session_build_provenance.hpp"
@@ -57,7 +58,7 @@ json release_json(const ReleaseReport& r,const std::string& reason) {
         {"effect_verified",false}};
 }
 }
-void run_manual_session(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips) {
+void run_manual_session(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round) {
     const auto config=load_config(config_path);
     if(config.capture_kind!="emulator-grpc"||config.touch_kind!="emulator-grpc"||
        config.width!=1280||config.height!=720||config.source_rotation!=1||config.grpc_read_chunk_kib!=256||
@@ -73,26 +74,31 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
     wchar_t module[32768]{};const auto size=GetModuleFileNameW(nullptr,module,32768);
     if(!size||size==32768)throw std::runtime_error("runtime executable unavailable");
     const auto root=std::filesystem::path(config.log_dir)/("manual-session-"+std::to_string(clock.now_ns()));
-    auto manifest=json{{"schema_version",1},{"mode","manual-session"},{"strategy","main observer36/planner18 plus manual standby lifecycle"},
-        {"baseline_source_commit","5ad759ef5004ab89be8f1a326e75fb96e7cb9a0e"},
-        {"baseline_historical_binary_sha256","d7ce474576a0283711b046b82720f9c10e8de0bb92203eb999a6c8decc157162"},
+    auto manifest=json{{"schema_version",1},{"mode","manual-session"},{"strategy","A36-derived C36h: orthogonal current ridge extraction; local-frame Flick arrow join; same Hold contact across supported patch/front recovery; retained C36g current-note line relation gates"},
+        {"baseline_source_commit","cd0ec437f495ee73e92a1adaccd097a86eeb91ac"},
+        {"baseline_historical_binary_sha256","de22022803a00ec0fd81ba19c8575b3728cb6e3bfd007ac73a360b08e08dc601"},
         {"executable_sha256",sha256_file(module)},{"config_sha256",sha256_file(config_path)},
         {"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},
         {"compiled_source_sha256",json::parse(pas_session_source_hashes)},
         {"config",config.public_json},{"capability_preflight",preflight},{"clock_domain","host_qpc_ns"},{"qpc_frequency",clock.frequency()},
-        {"game_observer_version",36},{"game_planner_version",18},{"lifecycle_version",1},
+        {"game_observer_version",37},{"game_planner_version",19},{"candidate_variant","C36h-orthogonal-ridge-patch-recovery"},{"version_scope","isolated A36-derived candidate; numbers do not identify historical main observer37/planner19"},{"lifecycle_version",2},
         {"automatic_play_enabled",false},{"round_watchdog_ns",watchdog},{"watchdog_is_result",false},
         {"standby_timeout",nullptr},{"source_absolute_age",nullptr},{"input_policy","manual_PLAY_only_gated_gameplay"},
         {"capture",grpc_transport_manifest(256)},{"capture_pool_slots",3},{"decision_slots",1},
         {"journal_queue_capacity",8192},{"journal_segment_bytes",16*1024*1024},{"round_max_segments",32},
         {"standby_segment_bytes",1024*1024},{"standby_segments",4},{"stats_samples_per_round_max",100000},
         {"dataset_sampling",false},{"pixel_clip_sampling",pixel_clips},
+        {"full_recording",full_recording},{"full_recording_version",full_recording?json(1):json(nullptr)},
+        {"full_recording_policy",full_recording?"one round; every received same-stream frame; 32 pre-roll; 64 outstanding copies; 3 PNG encoders with ordered disk commit; 99 physical RGB slots; lossless PNG RGB24; 36000 frames/600s/5GiB PNG+index; overflow faults instead of sampling; no runtime feedback":"disabled"},
+        {"session_round_limit",(full_recording||one_round)?json(1):json(nullptr)},
         {"pixel_clip_policy",pixel_clips?"at most 20 rounds x (8 uniform + 2 complex-line) x 3 full 1280x720 RGB888 frames; 4-frame writer mailbox; no runtime feedback":"disabled"},
         {"result_image_policy","one_same_capture_frame_per_confirmed_round_after_owner_release"},
         {"result_ui_profile","English six static labels / 1280x720 / translation <=3px"}};
     SessionArchive archive(root,manifest);
     std::unique_ptr<SessionPixelClips> clips;
     if(pixel_clips)clips=std::make_unique<SessionPixelClips>(root/"pixel-clips",clock,config.width,config.height);
+    std::unique_ptr<SessionRecording> recording;
+    if(full_recording)recording=std::make_unique<SessionRecording>(root/"full-recording",clock,config.width,config.height);
     auto endpoint=discover_endpoint(config.serial);
     if(!config.endpoint.empty()) {
         std::ifstream f(config.token_file);std::getline(f,endpoint.token);
@@ -123,6 +129,7 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                 if(f.width!=config.width||f.height!=config.height||f.source_rotation!=config.source_rotation)
                     throw std::runtime_error("capture geometry changed");
                 last_capture=f.capture_complete_ns;latest.publish(f.rgb.data(),f.rgb.size(),f);
+                if(recording)recording->observe(f); // independent of perception/owner frame skips
             });
             if(!stopping&&!stop.stop_requested())throw std::runtime_error("capture stream ended");
         } catch(...) {fail();}
@@ -139,7 +146,9 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                 if(clips)clips->observe(*f,*p);
                 if(p->status.new_round) {
                     round_epoch=p->status.round;result_frame.reset();
+                    if(recording)recording->start(p->status.round);
                 }
+                if(recording&&p->status.ended)recording->finish(p->status.round);
                 // This independent latch closes dispatch before the action owner consumes the packet.
                 live_gate=p->allow_down&&f->capture_complete_ns>invalid_through.load();
                 if(p->status.ended&&p->status.state==PlaySessionState::result&&!result_frame)
@@ -185,9 +194,10 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                     {"source_absolute_age",nullptr},{"release_requested_ids",release.requested_ids},
                     {"release_failed_ids",release.failed_ids},{"release_unknown_ids",release.unknown_ids}},std::move(image));
                 completed=active;active=0;active_round_start=0;
+                if(full_recording||one_round) {stopping=true;wake.notify();}
             };
             archive.event(0,{{"event","session_state"},{"state","STANDBY"},{"reason","capability_preflight_passed"},{"monotonic_ns",clock.now_ns()}});
-            std::cout<<"STANDBY: manually select any HD and press Play. Escape / Ctrl+C stops.\n"<<std::flush;
+            std::cout<<"STANDBY: manually select a chart and press Play. Escape / Ctrl+C stops.\n"<<std::flush;
             while(!stopping&&!stop.stop_requested()) {
                 std::shared_ptr<const Packet> p;{std::lock_guard lock(packet_mutex);p=packet;}
                 if(rev!=revocation.load()) {
@@ -272,6 +282,7 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
         while(!stopping&&!manual_stop) {
             if(GetAsyncKeyState(VK_ESCAPE)&0x8000){manual_stop=true;break;}
             if(archive.faulted())throw std::runtime_error(archive.error());
+            if(recording&&recording->faulted())throw std::runtime_error(recording->error());
             const auto now=clock.now_ns(),last=last_capture.load();const auto stats=capture.stats();
             const bool expired=last&&now-last>=100'000'000;
             if((expired&&!stale)||stats.relative_stale_drops!=lag||stats.inactive!=inactive) {
@@ -298,11 +309,14 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
     action_worker.request_stop();perception_worker.request_stop();capture_worker.request_stop();
     action_worker.join();perception_worker.join();capture_worker.join();archive.close();
     if(clips)clips->close();
+    if(recording)recording->close();
     std::exception_ptr error;{std::lock_guard lock(fault_mutex);error=fault;}
+    if(recording&&recording->faulted()&&!error)error=std::make_exception_ptr(std::runtime_error(recording->error()));
     json summary={{"state",error||archive.faulted()?"FAULT":"STOPPED"},{"run_dir",std::filesystem::absolute(root).string()},
         {"published",latest.counters().published},{"pool_drops",latest.counters().pool_drops},
         {"consumer_skips",latest.counters().consumer_skips},{"journal_peak_queue",archive.peak_queue()},
-        {"automatic_play_enabled",false},{"pixel_clips",clips?clips->summary():json{{"enabled",false}}}};
+        {"automatic_play_enabled",false},{"pixel_clips",clips?clips->summary():json{{"enabled",false}}},
+        {"full_recording",recording?recording->summary():json{{"enabled",false}}}};
     if(error)try{std::rethrow_exception(error);}catch(const std::exception& e){summary["fault"]=e.what();}
     std::ofstream file(root/"summary.json");file<<summary.dump(2)<<'\n';file.close();
     if(!file)throw std::runtime_error("session summary write failed");
