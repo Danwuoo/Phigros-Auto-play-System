@@ -1,0 +1,109 @@
+#include "x5_report.hpp"
+#include "x5_adapter.hpp"
+#include "x5_scenarios.hpp"
+#include "x4_input.hpp"
+#include <iostream>
+#include <map>
+#include <set>
+#define NOMINMAX
+#include <windows.h>
+
+namespace pas::x5 {
+using namespace pas::review;
+namespace {
+constexpr std::uint64_t report_cap=6*1024*1024,development_cap=16*1024*1024,batch_cap=24*1024*1024,campaign_cap=8ULL*1024*1024*1024;
+const std::vector<std::string> line_columns={"line_id","center","tangent","normal","length","confidence","observed_ns","current_valid","support_span_extent","distance_px","along_px","note_appearance_dot","measured_poses","aggregate_pair_valid","latest_measured_secant","note_velocity_px_s","line_center_velocity_px_s","note_normal_rate","note_tangent_rate","line_center_normal_rate","relative_signed_rate","absolute_distance_rate","minimum_note_normal_fraction","maximum_line_contribution","maximum_pair_angle_rad","motion_model_valid","motion_model_velocity","motion_model_angular_velocity","eligibility","unresolved","reason","judgment_role","original_score_comparison_only","original_gate_comparison_only"};
+const std::vector<std::string> secant_columns={"valid","reason","dt_ns","signed_distance_delta_px","distance_rate_px_s","absolute_distance_rate_px_s","note_velocity_px_s","note_normal_velocity_px_s","note_tangent_velocity_px_s"};
+json compact_line(json f){json secant=json::array();for(const auto& key:secant_columns)secant.push_back(f.at("latest_measured_secant").value(key,json(nullptr)));f["latest_measured_secant"]=std::move(secant);for(const auto key:{"original_score_comparison_only","original_gate_comparison_only"})if(!f.at(key).is_null()){f[key].erase("event");f[key].erase("note_id");f[key].erase("line_id");}json a=json::array();for(const auto& key:line_columns)a.push_back(f.at(key));return a;}
+struct Lease {HANDLE h=CreateMutexW(nullptr,FALSE,L"Local\\PAS_X1ContactReplayBudget");Lease(){if(!h)throw std::runtime_error("x5_mutex");const auto v=WaitForSingleObject(h,0);if(v!=WAIT_OBJECT_0&&v!=WAIT_ABANDONED){CloseHandle(h);h=nullptr;throw std::runtime_error("batch_writer_busy");}}~Lease(){if(h){ReleaseMutex(h);CloseHandle(h);}}};
+struct MemoryLimit {HANDLE h=CreateJobObjectW(nullptr,nullptr);MemoryLimit(){if(!h)throw std::runtime_error("x5_memory_job");JOBOBJECT_EXTENDED_LIMIT_INFORMATION l{};l.BasicLimitInformation.LimitFlags=JOB_OBJECT_LIMIT_PROCESS_MEMORY;l.ProcessMemoryLimit=512ULL*1024*1024;if(!SetInformationJobObject(h,JobObjectExtendedLimitInformation,&l,sizeof(l))||!AssignProcessToJobObject(h,GetCurrentProcess()))throw std::runtime_error("x5_memory_cap_unavailable");}~MemoryLimit(){if(h)CloseHandle(h);}};
+void safe_path(const fs::path& p){for(auto a=fs::absolute(p);!a.empty();a=a.parent_path()){const auto attr=GetFileAttributesW(a.c_str());if(attr!=INVALID_FILE_ATTRIBUTES&&(attr&FILE_ATTRIBUTE_REPARSE_POINT))throw std::runtime_error("x5_reparse_path");if(a==a.root_path())break;}}
+std::uint64_t bytes(const fs::path& p){std::uint64_t n=0;for(const auto& e:fs::recursive_directory_iterator(p)){if(fs::is_symlink(e.symlink_status()))throw std::runtime_error("x5_reparse_input");if(e.is_regular_file())n+=e.file_size();}return n;}
+void save_report(const fs::path& path,const json& m,const json& r,bool acceptance){const auto s=r.dump()+"\n";if(s.size()>report_cap)throw std::runtime_error("x5_report_capacity");safe_path(path);const fs::path batch=m.at("batch_root").get<std::string>();if(fs::canonical(path.parent_path())!=fs::canonical(batch))throw std::runtime_error("x5_output_outside_batch");
+    // Explicit output-only authority for independent acceptance. It never
+    // reaches Input/evaluate or changes the pinned evidence/rule contract.
+    const auto writer_cap=acceptance?batch_cap:development_cap;
+    if(bytes(batch)+s.size()>writer_cap||bytes(m.at("campaign_root").get<std::string>())+bytes(m.at("prior_research_root").get<std::string>())+s.size()>campaign_cap)throw std::runtime_error("x5_output_quota");
+    HANDLE h=CreateFileW(path.c_str(),GENERIC_WRITE,0,nullptr,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,nullptr);if(h==INVALID_HANDLE_VALUE)throw std::runtime_error("x5_output_exists_or_open");DWORD w=0;const bool ok=WriteFile(h,s.data(),static_cast<DWORD>(s.size()),&w,nullptr)&&w==s.size();CloseHandle(h);if(!ok)throw std::runtime_error("x5_output_write_incomplete");
+}
+void pinned(const json& m,const char* path_key,const char* hash_key,const char* expected,const char* reason){const fs::path p=m.at(path_key).get<std::string>();safe_path(p);if(m.at(hash_key)!=expected||pas::sha256_file(p)!=expected)throw std::runtime_error(reason);}
+std::string case_id(std::size_t n,const json& x4){if(n>=1533&&n<=1537)return "G1535";for(const auto& w:x4.at("windows"))if(n>=integer(w.at("first"))&&n<=integer(w.at("last")))return w.at("id").get<std::string>();throw std::runtime_error("x5_outside_selection_scope");}
+void verify_tracking(const json& r){const auto provenance=load(r.at("source_provenance_path").get<std::string>());const fs::path p=fs::path(provenance.at("export_root").get<std::string>())/"src/game_tracking.cpp";if(pas::sha256_file(p)!=r.at("tracking_source_sha256").get<std::string>())throw std::runtime_error("x5_tracking_source_SHA");}
+json measure_object(const json& row,const json& t,Adapter& adapter,const StoredFrame& current,json& counts){std::string history_reason;const auto in=adapter.input(row,t,current,history_reason);const auto d=evaluate(in);const auto id=integer(t.at("note_id"));const auto* selection=diag(row,"relation_selection",id);
+    json lines=json::array();for(std::size_t j=0;j<in.line_count;++j){auto f=feature_json(d.features[j],current.raw_lines[j],in,j);json score=nullptr,gate=nullptr;for(const auto& q:row.at("diagnostics"))if(q.contains("note_id")&&q.at("note_id")==t.at("note_id")&&q.contains("line_id")&&q.at("line_id")==current.raw_lines[j].at("line_id")){if(q.at("event")=="relation_score")score=q;if(q.at("event")=="relation_gate")gate=q;}
+        f["original_score_comparison_only"]=score;f["original_gate_comparison_only"]=gate;
+        counts["line_occurrences"]=counts.at("line_occurrences").get<std::size_t>()+1;
+        const auto reason=d.features[j].reason;counts["candidate_reasons"][reason]=counts["candidate_reasons"].value(reason,0)+1;
+        if(d.features[j].eligible)counts["geometric_eligible_candidates"]=counts.at("geometric_eligible_candidates").get<std::size_t>()+1;
+        if(f.at("latest_measured_secant").at("valid")==true)counts["latest_secants_valid"]=counts.at("latest_secants_valid").get<std::size_t>()+1;else counts["latest_secants_unknown"]=counts.at("latest_secants_unknown").get<std::size_t>()+1;
+        lines.push_back(compact_line(std::move(f)));
+    }
+    counts["target_occurrences"]=counts.at("target_occurrences").get<std::size_t>()+1;counts["decision_reasons"][d.reason]=counts["decision_reasons"].value(d.reason,0)+1;
+    if(d.scope_eligible)counts["early_scope_eligible"]=counts.at("early_scope_eligible").get<std::size_t>()+1;
+    const json chosen=d.selected?current.raw_lines[*d.selected].at("line_id"):json(nullptr);
+    if(d.selected)counts["selected"]=counts.at("selected").get<std::size_t>()+1;else counts["abstained"]=counts.at("abstained").get<std::size_t>()+1;
+    const auto* ct=diag(row,"candidate_track",id);
+    return {{"note_id",t.at("note_id")},{"kind",t.at("kind")},{"center",vec(in.center)},{"tangent",in.appearance_known?vec(in.tangent):json(nullptr)},{"width",in.width},{"height",in.height},{"current_strong",in.strong_current},{"identity_assignment",ct?*ct:json(nullptr)},{"identity_grade","explicit_runtime_correspondence_only_physical_identity_unknown"},{"confirmation",in.confirmation==Confirmation::unknown?json(nullptr):json(in.confirmation==Confirmation::confirmed)},{"history_poses",in.sample_count},{"history_first_ns",in.samples[0].ns},{"history_reason",history_reason},{"scope_eligible",d.scope_eligible},{"geometric_eligible_candidates",d.eligible_count},{"selected_line_id",chosen},{"margin",d.margin?json(*d.margin):json(nullptr)},{"decision_reason",d.reason},{"lines",lines},{"original_selection_comparison_only",selection?*selection:json(nullptr)},{"physical_role_gold",false},{"action_eligibility","not_evaluated_no_owner_input"}};
+}
+json initial_counts(const char* role){return {{"role",role},{"trace_frames",0},{"target_occurrences",0},{"line_occurrences",0},{"geometric_eligible_candidates",0},{"early_scope_eligible",0},{"selected",0},{"abstained",0},{"latest_secants_valid",0},{"latest_secants_unknown",0},{"decision_reasons",json::object()},{"candidate_reasons",json::object()},{"input_truncated",false}};}
+}
+int report_main(int argc,char** argv){try {
+    if(argc!=3&&argc!=4)throw std::runtime_error("x5_report query_manifest new_report [--acceptance|--verify-existing]");
+    const bool acceptance=argc==4&&std::string(argv[3])=="--acceptance",verify=argc==4&&std::string(argv[3])=="--verify-existing";
+    if(argc==4&&!acceptance&&!verify)throw std::runtime_error("x5_unknown_output_mode");
+    const fs::path output=argv[2];if(!verify&&fs::exists(output))throw std::runtime_error("x5_output_exists");Lease lease;MemoryLimit memory;
+    safe_path(argv[1]);const auto m=load(argv[1]);if(!m.at("schema").is_number_integer()||m.at("schema")!=1||m.at("experiment")!="early_role_abstain_x5"||!m.at("development_limit_bytes").is_number_integer()||m.at("development_limit_bytes")!=development_cap||integer(m.at("batch_limit_bytes"))!=25165824)throw std::runtime_error("x5_manifest_contract");
+    pinned(m,"x4_manifest_path","x4_manifest_sha256","7c266f7b1163e5bba920fe901d48b48b3248b9b9e8c17647e165a93406261266","x5_parent_SHA");
+    pinned(m,"x4_acceptance_path","x4_acceptance_sha256","7f685429c59de8cf4bd0ab6b65f5f14da1c0bb8ea245344fc8d8fef67cd01fb8","x5_acceptance_SHA");
+    const auto x4=load(m.at("x4_manifest_path").get<std::string>());pas::x4::validate_parent(x4);
+    for(const auto key:{"campaign_root","prior_research_root"})if(m.at(key)!=x4.at(key))throw std::runtime_error("x5_campaign_binding");
+    const fs::path campaign=m.at("campaign_root").get<std::string>();if(fs::canonical(m.at("batch_root").get<std::string>())!=fs::canonical(campaign/"early-role-x5"))throw std::runtime_error("x5_batch_binding");
+    pinned(m,"rule_path","rule_sha256","2984c75da22d080a4fd31202c5e42648f0e87ecc89880efa62228fe670b4fb74","x5_rule_SHA");const auto rule=load(m.at("rule_path").get<std::string>());if(rule.at("rule")!=rule_version||rule.at("minimum_normal_fraction")!=.85||rule.at("maximum_line_contribution_ratio")!=.5||rule.at("minimum_margin")!=.15||rule.at("minimum_poses")!=3||rule.at("minimum_span_ns")!=12000000||rule.at("history_frames")!=6||rule.at("history_ns")!=90000000)throw std::runtime_error("x5_rule_contract");
+    pinned(m,"x4_query_path","x4_query_sha256","69aec7dc4894dc3788904481960b465e24b6e7ab2484fc1cbd3cf40dc9a8ab3a","x5_query_SHA");const fs::path query_path=m.at("x4_query_path").get<std::string>();const auto query=load(query_path);
+    if(query.at("schema")!=1||query.at("experiment")!="preconfirmation_role_oracle_x4_query"||query.at("input_manifest_sha256")!=m.at("x4_manifest_sha256"))throw std::runtime_error("x5_query_bridge");
+    const auto& v=query.at("runs").at("variant_on");if(v.at("role")!="main50_preconfirmation_role_oracle"||v.at("trace")!="on")throw std::runtime_error("x5_X4_role_trace");
+    const std::array<const char*,3> names{{"c36h_reference","main50_control","main50_preconfirmation_role_oracle"}};if(m.at("runs").size()!=3)throw std::runtime_error("x5_roles");
+    std::array<json,3> bindings{{x4.at("reused_runs").at(names[0]),x4.at("reused_runs").at(names[1]),v}};
+    for(std::size_t i=0;i<3;++i){const auto& b=bindings[i];const auto& supplied=m.at("runs")[i];if(supplied.at("role")!=names[i])throw std::runtime_error("x5_role_order");if(supplied.at("root")!=b.at("root"))throw std::runtime_error("x5_run_root_binding");if(!supplied.contains("files")||supplied.at("files")!=b.at("files"))throw std::runtime_error("x5_file_binding");
+        const auto source=i==2?x4.at("variant_source"):b.at("source_binding");if(!supplied.contains("source")||supplied.at("source")!=source)throw std::runtime_error("x5_source_binary_binding");verify_tracking(source);
+        for(const auto& [file,hash]:b.at("files").items()){const fs::path p=fs::path(b.at("root").get<std::string>())/relative(file);safe_path(p);if(pas::sha256_file(p)!=hash.get<std::string>())throw std::runtime_error("x5_trace_artifact_SHA");}
+    }
+    const auto variant_summary=load(fs::path(v.at("root").get<std::string>())/"summary.json");pas::x4::validate_variant_binding(x4,variant_summary,m.at("x4_manifest_sha256"));if(variant_summary.at("success")!=true||variant_summary.at("trace")!=true)throw std::runtime_error("x5_variant_status");
+    const fs::path recording=fs::path(x4.at("session_root").get<std::string>())/"full-recording",indexpath=recording/"index.jsonl";if(pas::sha256_file(indexpath)!=x4.at("index_sha256").get<std::string>()||m.at("index_sha256")!=x4.at("index_sha256"))throw std::runtime_error("x5_index_SHA");
+    std::map<std::size_t,json> index;std::size_t index_count=0;std::int64_t origin=0,last=0;
+    each_row(indexpath,36000,[&](const json& e){const auto n=integer(e.at("ordinal"));const auto time=static_cast<std::int64_t>(integer(e.at("capture_complete_ns")));if(n!=index_count++||time<=last)throw std::runtime_error("x5_index_order");if(!n)origin=time;last=time;bool needed=n>=1533&&n<=1537;for(const auto& w:x4.at("windows"))needed|=n>=integer(w.at("first"))&&n<=integer(w.at("last"));if(needed)index[n]=e;});
+    json report={{"schema",1},{"experiment","early_role_abstain_x5"},{"rule",rule},{"query_manifest_sha256",pas::sha256_file(argv[1])},{"analysis_binary_sha256",pas::sha256_file(argv[0])},{"input_bridge",m.at("runs")},{"x4_acceptance_sha256",m.at("x4_acceptance_sha256")},{"new_full_contact_replays",0},{"physical_role_gold",false},{"cross_song_accuracy",nullptr},{"scope","all current targets and lines in five accepted windows plus available G; 3 factual histories, one C36g recording; no owner/action changes"},{"unknowns",json::array({"C36h pre-selection confirmation not exported","C36h G context unavailable","physical line and note identity and judgment role","original perception race and early state","source render age and true recognition/RPC delay","other-song bound compatible contact traces absent from selected input","shadow recommendations do not generate trajectory or Down/Miss outcome"})},{"limits",{{"history_frames",6},{"history_ns",90000000},{"lines",16},{"notes",128},{"trace_rows_per_role",114},{"trace_bytes_per_role",16777216},{"row_bytes",2097152},{"diagnostic_objects_per_row",8192},{"index_rows",36000},{"report_bytes",report_cap},{"process_commit_bytes",536870912},{"development_evidence_bytes",development_cap},{"acceptance_reserve_bytes",8388608}}},{"denominators",json::array()},{"frames",json::array()}};
+    report["line_columns"]=line_columns;report["latest_secant_columns"]=secant_columns;
+    std::set<std::size_t> pngs;std::size_t report_bytes=0;
+    for(std::size_t role=0;role<3;++role){Adapter adapter;json counts=initial_counts(names[role]);std::size_t rows=0,prior_ordinal=0;std::int64_t prior_ns=0;const fs::path root=bindings[role].at("root").get<std::string>();
+        auto consume=[&](const json& row){const auto n=integer(row.at("ordinal"));if(!index.contains(n)||row.at("consumed")!=true||row.at("scene").is_null()||row.at("candidate_bank").is_null()||(rows&&n<=prior_ordinal))throw std::runtime_error("x5_trace_shape_order");const auto& e=index.at(n);const auto now=static_cast<std::int64_t>(integer(row.at("candidate_bank").at("context").at("capture_ns")));
+            if(row.at("source_frame")!=e.at("source_frame")||row.at("png_sha256")!=e.at("png_sha256")||now!=static_cast<std::int64_t>(integer(e.at("capture_complete_ns")))-origin+1000000000||row.at("scene").at("capture_complete_ns")!=now||(prior_ns&&now<=prior_ns))throw std::runtime_error("x5_frame_join");
+            if(pngs.insert(n).second){const fs::path png=recording/relative(e.at("path"));safe_path(png);if(pas::sha256_file(png)!=e.at("png_sha256").get<std::string>())throw std::runtime_error("x5_png_SHA");}
+            adapter.expire(now);const auto current=adapter.frame(row);json objects=json::array();for(const auto& t:row.at("scene").at("targets"))objects.push_back(measure_object(row,t,adapter,current,counts));
+            json frame={{"role",names[role]},{"case",case_id(n,x4)},{"ordinal",n},{"source_frame",e.at("source_frame")},{"png_sha256",e.at("png_sha256")},{"png_path",(recording/relative(e.at("path"))).string()},{"capture_complete_ns",e.at("capture_complete_ns")},{"pixels_ready_ns",e.at("pixels_ready_ns")},{"fake_capture_ns",now},{"current_target_count",objects.size()},{"current_line_count",current.line_count},{"objects",objects}};
+            report_bytes+=frame.dump().size();if(report_bytes>report_cap||report.at("frames").size()>=337)throw std::runtime_error("x5_report_capacity");report["frames"].push_back(std::move(frame));adapter.commit(current);prior_ordinal=n;prior_ns=now;++rows;
+        };
+        if(role)each_row(root/(role==1?"first-intervention.jsonl":"G1533-1537.jsonl"),5,consume,2*1024*1024);
+        each_row(root/"trace.jsonl",109,consume,16*1024*1024);if(rows!=(role?114:109))throw std::runtime_error("x5_trace_denominator");counts["trace_frames"]=rows;report["denominators"].push_back(std::move(counts));
+    }
+    // Proposal reference annex added ONLY AFTER all shadow decisions. It is
+    // research consistency, never a label or input to the pure rule.
+    const auto& oracle=x4.at("oracle");if(pas::sha256_file(oracle.at("path").get<std::string>())!=oracle.at("sha256").get<std::string>())throw std::runtime_error("x5_proposal_reference_SHA");const auto packet=load(oracle.at("path").get<std::string>());json comparisons=json::array();json first=nullptr;
+    for(const auto& frame:report.at("frames")){for(const auto& o:frame.at("objects")){const auto& selected=o.at("selected_line_id");const auto& original=o.at("original_selection_comparison_only");if(first.is_null()&&!selected.is_null()&&!original.is_null()&&selected!=original.at("winner"))first={{"role",frame.at("role")},{"ordinal",frame.at("ordinal")},{"note_id",o.at("note_id")},{"shadow_line_id",selected},{"factual_winner",original.at("winner")},{"type","recommendation difference, no new state/action trajectory"}};
+            if(frame.at("case")=="D6214"&&o.at("kind")=="drag"&&o.at("center")[1]>250&&o.at("center")[1]<325){json ref=nullptr;for(const auto& p:packet.at("packets"))if(p.at("ordinal")==frame.at("ordinal"))ref=p.at("line");json consistent=nullptr;if(!selected.is_null()&&!ref.is_null())for(const auto& l:o.at("lines"))if(l.at(0)==selected){const auto c=point(l.at(1));const auto u=point(l.at(2));consistent=norm(sub(c,{number(ref.at("x")),number(ref.at("y"))}))<=2&&std::abs(dot(u,{number(ref.at("ux")),number(ref.at("uy"))}))>=.99;}
+                comparisons.push_back({{"role",frame.at("role")},{"ordinal",frame.at("ordinal")},{"note_id",o.at("note_id")},{"selected_line_id",selected},{"decision_reason",o.at("decision_reason")},{"X4_proposed_line",ref},{"proposal_consistency_not_accuracy",consistent}});
+            }
+        }}
+    const auto witness=evaluate(indistinguishable_late_turn_prefix());
+    report["synthetic_falsifier"]={{"name","identical_current_prefix_different_legal_late_turn_roles"},{"prefix_note_centers",json::array({json::array({400,400}),json::array({400,420}),json::array({400,440})})},{"prefix_ns",json::array({0,20000000,40000000})},{"lines",json::array({{{"center",json::array({640,576})},{"tangent",json::array({1,0})},{"length",1280}},{{"center",json::array({900,360})},{"tangent",json::array({0,1})},{"length",720}}})},{"shadow_selected_index",witness.selected?json(*witness.selected):json(nullptr)},{"world_A_role_index",0},{"world_B_role_index",1},{"world_A_future","continue descending then align/strike horizontal"},{"world_B_future","turn right after prefix, align/strike vertical; horizontal is decoration"},{"future_fed_to_rule",false},{"semantic_failure_world_B",witness.selected&&*witness.selected!=1},{"grade","Verified synthetic falsification of unique-role sufficiency; no claim about D role gold"},{"decision","reject NDA-v1 for runtime/replay; stop threshold search; missing discriminating current role evidence"}};
+    report["first_recommendation_difference"]=first;report["D_proposal_reference_only"]=comparisons;report["unique_png_references_verified"]=pngs.size();report["index_rows_read"]=index_count;
+    if(verify){safe_path(output);if(fs::file_size(output)>report_cap)throw std::runtime_error("x5_existing_report_capacity");std::ifstream stream(output);if(!stream)throw std::runtime_error("x5_existing_report_open");const auto expected=json::parse(stream);const auto actual_binary=report.at("analysis_binary_sha256");
+        // Actual reader identity remains in the command/console record.
+        // Only this metadata is normalized; every computed feature, binding,
+        // denominator and counterexample must equal the retained report.
+        report["analysis_binary_sha256"]=expected.at("analysis_binary_sha256");if(report!=expected)throw std::runtime_error("x5_existing_report_semantic_mismatch");
+        std::cout<<"X5 full recomputation verified: "<<report.at("frames").size()<<" role frames; compared SHA="<<pas::sha256_file(output)<<"; actual reader SHA="<<actual_binary<<"; excluded only analysis_binary_sha256; new report/replay=0\n";
+    }else{save_report(output,m,report,acceptance);std::cout<<"X5 read-only shadow: "<<report.at("frames").size()<<" role frames; "<<pngs.size()<<" unique PNG; output quota="<<(acceptance?batch_cap:development_cap)<<"; new full replay=0\n";}
+    return 0;
+}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}
+}

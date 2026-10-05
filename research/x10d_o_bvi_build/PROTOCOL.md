@@ -1,0 +1,9 @@
+# bvi-build-20261005-01
+
+Only the new source/batch/out roots in scope.md are writable. Native launch exclusively uses the unchanged owned.cs and transaction.ps1 from control attempt03. Identity, held handles, 15s quiescence, shared cleanup <=5s, drain, stream bounds and stage deadlines are unchanged. Base source and final runner freeze precede real controls; no runner repair thereafter.
+
+Four declared wrapper probe slots use cmd.exe /d /s /c plus one whitespace-free wrapper path. Cmd shell syntax is separate from the runner's CRT argument quoting. Diagnostic wrapper generation is fixed to telemetry-disabled vcvars initialization, approved version/path queries and pure maintenance argv fixtures. No real configure/compiler/build/candidate/PNG is permitted in probes. Maximum two wrapper revisions after v0; every version and invocation retained. Positive matching final wrappers required before separate product freeze.
+
+Only a trusted natural native wrapper failure (exit/parameter/environment) with complete source/capacity/identity/Job/held/stream/receipt facts and no product execution becomes DIAGNOSTIC_REJECTED. It has verification_exit=1, not a pass. It consumes its durable slot and may move to the next allowlisted probe. Identity/cleanup/source/capacity/runner/output failures and all unexpected product failures cause durable STOP. No retry/reset. Exclusive attempt lock and output reservations prevent reuse; receipt hashes/pending checks gate all launches.
+
+Products: Release configure, parallel2 build, wrong-contact-only expected native1/runner1 and real failed-row consumer rejection, full suite; then available Debug and ASan configure/build/full suite, exactly ten commands, each <=300s and each stream <=512KiB. Cold result never establishes physical ownership, runtime/cost/live or Chapter Legacy Miss=0.

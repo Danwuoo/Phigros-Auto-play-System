@@ -1,0 +1,24 @@
+. "$PSScriptRoot/r2-common.ps1"
+if(!(Test-Path -LiteralPath "$batchPath/tests-collected.json") -or !(Test-Path -LiteralPath "$batchPath/old-freeze-verified-before-stress.json")){throw 'tests/freeze audit prerequisite'}
+Copy-Item -LiteralPath "$repoPath/docs/RUNTIME_X11_P_R2_PROTOCOL_20261003.md" -Destination "$batchPath/protocol-before-stress.md"
+$analysis=Get-Content "$batchPath/existing-raw-analysis-final.json" -Raw|ConvertFrom-Json
+$projection=$analysis.prospective_capacity.AA_owner_four_linear_projection_bytes+$analysis.prospective_capacity.AA_rgb_four_linear_projection_bytes
+if($projection -le 128MB){throw 'protocol admission basis mismatch'}
+R2Save 'method-admission-before-stress.json' @{normal_cost_admission=$false;AA=0;ABBA=0;reason='2000 principal samples require256+2304 attempts; full JSON projection of eight AA alone exceeds128MiB; no validated bounded collector compression';projection_bytes=$projection;projection_not_hard_limit=$true;normal_gate_revision=$false;stress_order=@('B0 Release','B1 Release','B1 Debug-ASan');stress_runs_max=3;extra_fourth_not_planned=$true;warmup_omitted=$false;stress_is_candidate_data=$true;capacity=(R2Capacity);protocol_sha256=(R2Hash "$batchPath/protocol-before-stress.md");analysis_sha256=(R2Hash "$batchPath/existing-raw-analysis-final.json")}
+$inputs=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+$projects=@()
+foreach($role in @('B0','B1','asan','raw-audit')){
+ $build=if($role -eq 'raw-audit'){"$outPath/raw-audit"}else{"$outPath/build-$role"}
+ foreach($f in Get-ChildItem -LiteralPath $build -Filter '*.read.1.tlog' -File -Recurse){foreach($line in [IO.File]::ReadAllLines($f.FullName)){if($line -match '^[A-Z]:\\' -and (Test-Path -LiteralPath $line -PathType Leaf)){[void]$inputs.Add($line)}}}
+ foreach($f in Get-ChildItem -LiteralPath $build -Filter '*.vcxproj' -File){[xml]$x=Get-Content -LiteralPath $f.FullName -Raw;$ns=[Xml.XmlNamespaceManager]::new($x.NameTable);$ns.AddNamespace('m','http://schemas.microsoft.com/developer/msbuild/2003');$config=if($role -eq 'asan'){'Debug'}else{'Release'};$groups=@($x.SelectNodes('//m:ItemDefinitionGroup',$ns)|Where-Object Condition -Match "$config\|x64");$projects+=@{role=$role;path=$f.FullName;settings=@($groups|ForEach-Object OuterXml)};[void]$inputs.Add($f.FullName);foreach($g in $groups){if($g.Link.AdditionalDependencies){foreach($p in $g.Link.AdditionalDependencies.Split(';')){if([IO.Path]::IsPathRooted($p) -and (Test-Path -LiteralPath $p -PathType Leaf)){[void]$inputs.Add($p)}}}}}
+ [void]$inputs.Add("$build/CMakeCache.txt")
+}
+foreach($p in @((Get-Command cmake).Source,'C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe','C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/link.exe')){[void]$inputs.Add($p)}
+$deps=@();foreach($p in $inputs|Sort-Object){$deps+=@{path=$p;bytes=(Get-Item -LiteralPath $p).Length;sha256=(R2Hash $p)}}
+R2Save 'compiled-dependency-freeze.json' @{files=$deps;projects=$projects;scope='actual R2 CL/link read tlogs plus libraries/compiler; reused core and transitive provenance remains independently verified R1 freeze';core_recompiled=$false}
+$files=@();foreach($f in Get-ChildItem -LiteralPath "$repoPath/apps/runtime_x11_p_r2","$repoPath/tools/runtime_x11_p_r2_audit" -File -Recurse){$files+=@{path=$f.FullName;bytes=$f.Length;sha256=(R2Hash $f.FullName)}}
+foreach($f in Get-ChildItem -LiteralPath "$repoPath/tools" -File|Where-Object {$_.Name -like '*runtime-x11-p-r2*' -or $_.Name -eq 'r2-common.ps1'}){$files+=@{path=$f.FullName;bytes=$f.Length;sha256=(R2Hash $f.FullName)}}
+foreach($p in @("$repoPath/apps/runtime_x11_p_r1/meter_touch.hpp","$repoPath/apps/runtime_x11_p_r1/archive_verify.hpp","$batchPath/protocol-before-stress.md","$batchPath/method-admission-before-stress.json")){$files+=@{path=$p;bytes=(Get-Item -LiteralPath $p).Length;sha256=(R2Hash $p)}}
+foreach($f in Get-ChildItem -LiteralPath $outPath -File -Recurse|Where-Object Extension -in '.exe','.dll'){$files+=@{path=$f.FullName;bytes=$f.Length;sha256=(R2Hash $f.FullName)}}
+R2Save 'source-binding-before-stress.json' @{files=$files;unchanged_runtime_B0_sha256=(R2Hash "$repoPath/out/x11-p-r1/runtime-B0/pas.exe");unchanged_runtime_B1_sha256=(R2Hash "$repoPath/out/x11-p-r1/runtime-B1/pas.exe");new_runtime_exe=$false;runtime_profile_reference="$repoPath/measurements/game-assist/2026-09-30-m0-manual-continue/runtime-x11-p-r1/x12-profile-preview.json";runtime_profile_sha256=(R2Hash "$repoPath/measurements/game-assist/2026-09-30-m0-manual-continue/runtime-x11-p-r1/x12-profile-preview.json");strategy_delta='unchanged pending-only; no R2 core edits';meter_delta='symmetric fixed active stimulus, bounded frame coverage evidence, strict active gate; normal disabled'}
+Write-Output "R2 freeze=$($files.Count) compiled inputs=$($deps.Count); new normal runs forbidden"

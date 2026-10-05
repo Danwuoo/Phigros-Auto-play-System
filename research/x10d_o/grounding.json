@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "date": "2026-10-04",
+  "human_gold_added": 0,
+  "reviewer": "AI direct review of original PNG; all identity links proposed",
+  "packet_binding": "batch/rgb-packet.json exact ordinal/source_frame/capture_complete/pixels_ready/PNG SHA",
+  "viewed_ordinals": [2474,2478,2479,2865,2881,2883,2884,2885,3498,6214],
+  "findings": [
+    {"ordinals":[2474,2478,2479],"visible":"One tall cyan/gray body around x280 extending above frame; two side rails; yellow hit effects obscure front/center. Slightly tilted white line near y590.","proposed":"539 may be an internal effect fragment. The original tall body appears continuous through this window.","unknown":"physical 521/539 identity, head/tail semantics behind effect, whether extra Down changed judgment"},
+    {"ordinals":[2865],"visible":"At x783 two disjoint gray/cyan bodies: lower about y352..446, upper about y119..290, background gap roughly62px. Horizontal line at y576. Neighbor column x495 also holds two separated bodies.","proposed":"Same-column independent incoming front should remain separate from lower body.","unknown":"runtime-ID-to-physical-body mapping; direct gameplay acceptance"},
+    {"ordinals":[2881,2883],"visible":"x783 upper front near y533 then y563, still above line y576; bottom of prior body at line is effect-obscured/absent. x495 neighbor front crosses line while next body remains above.","proposed":"Current claim spanning line back to incoming body can borrow support belonging to another body. A gap must not be silently bridged into a physical owner.","unknown":"old tail position, old held body continuation, exact ownership under yellow effects"},
+    {"ordinals":[2884,2885],"visible":"x783 cyan front reaches line; x495 prior visible body below line is gone. Top clipped tilted hold enters frame.","proposed":"An independent new front becoming on-line cannot be rejected solely because earlier same-column anchor existed.","unknown":"whether x783 runtime682 or684 tracks this body correctly; completed old physical body"},
+    {"ordinals":[3498],"visible":"Tilted gray/cyan hold at x280 reaches oblique line; vertical neighboring lines at right. Yellow effects overlap lower body.","proposed":"Useful orientation/neighbor control.","unknown":"This single PNG does not prove rotation during active Hold or contact ownership."},
+    {"ordinals":[6214],"visible":"Horizontal white lines plus vertical white line near x988; colored thin notes in different orientations; yellow effect at right.","proposed":"Different-line/direction and thin-note control.","unknown":"No clearly visible rotating active Hold in this selected image; no physical tail gold."}
+  ],
+  "gaps": [
+    "H/K are not direct human physical ownership gold.",
+    "No verified real label for old tail and incoming front touching with no separating seam.",
+    "No verified real active-Hold rotation, late alignment, note direction distinct from motion vector and line normal sequence in the 10 viewed images.",
+    "Absence behind effects cannot be distinguished from an ended body by these frames alone.",
+    "Prior recording state and render/source age remain unknown. Existing selected full-prefix traces can supply software state only."
+  ],
+  "cold_controls":"Independent C++ renders for gaps/touching/rotation/late axes; FakeClock owner controls for cursor/prefix/unknown/completed/gate. Never promoted to real human gold."
+}

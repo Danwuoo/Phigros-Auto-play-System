@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.28)
+project(R2RawAudit LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+find_package(nlohmann_json CONFIG REQUIRED)
+add_executable(r2_raw_audit ../../apps/runtime_x11_p_r2/analyze.cpp)
+target_link_libraries(r2_raw_audit PRIVATE nlohmann_json::nlohmann_json)
+target_compile_options(r2_raw_audit PRIVATE /W4 /EHsc /utf-8)

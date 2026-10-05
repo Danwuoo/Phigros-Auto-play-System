@@ -6,15 +6,16 @@
 #include <map>
 #include <set>
 #include <regex>
+#include "review_io.hpp"
+#ifdef PAS_X1_OFFLINE
+#include "contact_replay.hpp"
+#endif
 
 using namespace pas;
 using json=nlohmann::json;
 namespace fs=std::filesystem;
 namespace {
-json load(const fs::path& p) {if(fs::file_size(p)>2*1024*1024)throw std::runtime_error("JSON capacity");std::ifstream in(p);return json::parse(in);}
-fs::path relative(const std::string& s) {fs::path p(s);if(p.is_absolute()||p.has_root_name())throw std::runtime_error("absolute path");for(auto& x:p)if(x=="..")throw std::runtime_error("escaping path");return p;}
-std::vector<json> rows(const fs::path& p,std::size_t cap) {if(fs::file_size(p)>64*1024*1024)throw std::runtime_error("index capacity");std::ifstream in(p);std::string s;std::vector<json> out;while(std::getline(in,s)){if(s.size()>2*1024*1024||out.size()>=cap)throw std::runtime_error("row capacity");out.push_back(json::parse(s));}return out;}
-void save(const fs::path& p,const json& j){std::ofstream out(p);out<<j.dump(2)<<'\n';}
+using pas::review::load;using pas::review::relative;using pas::review::rows;using pas::review::save;
 void sheet(const fs::path& root,const std::vector<json>& index,const std::vector<std::size_t>& ordinals,const fs::path& output){
     Frame out;out.width=1280;out.height=static_cast<int>((ordinals.size()+2)/3)*240;out.stride=out.width*3;out.rgb.resize(static_cast<std::size_t>(out.stride)*out.height);
     json mapping=json::array();
@@ -25,6 +26,12 @@ void sheet(const fs::path& root,const std::vector<json>& index,const std::vector
 }
 }
 int main(int argc,char** argv){try{
+#ifdef PAS_X4_OFFLINE
+    if(argc>1&&std::string(argv[1])=="contact-x4")return contact_replay_main(argc,argv);
+#endif
+#ifdef PAS_X1_OFFLINE
+    if(argc>1&&(std::string(argv[1])=="contact"||std::string(argv[1])=="contact-compare"||std::string(argv[1])=="observer-compat"||std::string(argv[1])=="contact-x2"||std::string(argv[1])=="contact-x2-compare"))return contact_replay_main(argc,argv);
+#endif
     if(argc==4&&std::string(argv[1])=="probe") {const auto f=load_diagnostic_png(argv[2]);const int x=std::stoi(argv[3]);if(x<20||x>=f.width-20)throw std::runtime_error("probe x");json columns=json::array();
         const auto gray=[](const std::uint8_t* p){return (p[0]*77+p[1]*150+p[2]*29)/256;};
         for(int px=x-4;px<=x+4;++px){int begin=-1,last=-1,gaps=0;json runs=json::array();const auto finish=[&]{if(begin>=0&&last-begin>400)runs.push_back({{"first",begin},{"last",last}});};

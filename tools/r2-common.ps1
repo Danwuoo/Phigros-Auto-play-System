@@ -1,0 +1,10 @@
+$ErrorActionPreference='Stop'
+$repoPath=(Resolve-Path "$PSScriptRoot/..").Path
+$batchPath="$repoPath/measurements/game-assist/2026-09-30-m0-manual-continue/runtime-x11-p-r2"
+$outPath="$repoPath/out/x11-p-r2"
+function R2Hash($p){(Get-FileHash -LiteralPath $p -Algorithm SHA256).Hash.ToLowerInvariant()}
+function R2Save($name,$value){$p="$batchPath/$name";if(Test-Path -LiteralPath $p){throw "existing $p"};[IO.File]::WriteAllText($p,($value|ConvertTo-Json -Depth 85)+"`n",[Text.UTF8Encoding]::new($false))}
+function R2Run($name,$exe,[string[]]$arguments,[int]$expected=0){R2Save "$name-command.json" @{exe=$exe;arguments=$arguments;expected=$expected;rgb_root=$env:PAS_RGB_CLIP_ROOT;test_root=$env:R2_TEST_ROOT};& $exe @arguments *> "$batchPath/$name.log";$code=$LASTEXITCODE;R2Save "$name-exit.json" @{exit=$code;log_sha256=(R2Hash "$batchPath/$name.log")};Write-Output "$name exit=$code";if($code -ne $expected){throw "$name unexpected exit=$code"}}
+function R2Bytes($p){[long](Get-ChildItem -LiteralPath $p -File -Recurse | Measure-Object Length -Sum).Sum}
+function R2Capacity{ $b=R2Bytes $batchPath;$o=if(Test-Path -LiteralPath $outPath){R2Bytes $outPath}else{0};$c=(R2Bytes "$repoPath/measurements/game-assist/2026-09-30-m0-manual-continue")+(R2Bytes "$repoPath/measurements/research-next-20261001");if($b -gt 128MB -or $o -gt 3GB -or $c+16MB -gt 8GB -or (Get-PSDrive C).Free -lt 5GB+16MB){throw 'capacity'};@{batch_bytes=$b;out_bytes=$o;campaign_plus_prior_bytes=$c;disk_free_bytes=(Get-PSDrive C).Free;controller_reserve=16MB}}
+function R2ConfigureArgs($source,$build){@('-S',$source,'-B',$build,'-G','Visual Studio 18 2026','-A','x64','-T','v145','-DCMAKE_GENERATOR_INSTANCE=C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools,version=18.9.12105.275','-DCMAKE_TOOLCHAIN_FILE=C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake','-DVCPKG_MANIFEST_MODE=OFF',"-DVCPKG_INSTALLED_DIR=$repoPath/out/vcpkg_installed",'-DVCPKG_TARGET_TRIPLET=x64-windows',"-DR2_REPO=$repoPath")}

@@ -2,19 +2,22 @@
 
 Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程序多執行緒處理最新畫面、音符／判定線追蹤、撞線預測與可撤銷多指觸控；不讀譜或遊戲內部狀態。
 
-## 當前狀態（2026-10-01）
+## 當前狀態（2026-10-04）
 
-main 已整合兩個 worktree 的 tracked 工作，commit `9fea67e248411f7c2309f220daf989f652b27d15`。候選為 **observer50／planner27／diagnostics11，live rounds=0**。完整來源、能力清單、未解問題與下一步比較見[現況與下一步研究](docs/PROJECT_STATUS_NEXT_STEPS_20261001.md)；來源整合細節見[整合交接](docs/MAIN_INTEGRATION_HANDOFF_20261001.md)。
+產品目標為 **Chapter Legacy 所有曲目解鎖 IN，完整 IN 結算 Miss=0**；P/G/B與分數照樣報告，HD為解鎖及回歸階段，沒有AP前置。最新逐曲證據、研究狀態與順序工作包見[10/4基準總帳](docs/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)及[配套JSON](docs/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)。現行章節分母未核，`chapter_listing_verified=false`；目前各曲解鎖狀態unknown，不能由HD分數代推。
+
+main HEAD `f83c7ea0bd4e92ab6fb50a14fc9db2c4e333be2c`；整合沿革見[整合交接](docs/MAIN_INTEGRATION_HANDOFF_20261001.md)。**C36h tint1為behavioural／experimental baseline；main50 observer50／planner27／diagnostics11是comparison／donor、live0**。同號歷史版本依binary/source SHA分讀。[10/1狀態](docs/PROJECT_STATUS_NEXT_STEPS_20261001.md) A–I及早期「最新」是歷史，J5–J32銜接後續。
 
 - 整合 Release 回歸 349 項：348 通過、1 opt-in 跳過、0 失敗；離線 CPU 工具 8/8。這是軟體驗證，不是遊戲效果驗收。
 - 恢復分支 C36h tint1 的 Dlyrotz IN13 為 795950／P496-G11-B0-M77，前次全錄亦 M77；使用者回報主要問題未改善。C36h 同號 37/19 與歷史 main 37/19 不是同一 binary。
-- 保存全錄 7722 張 PNG、12 段選取與已填理由；pixel human gold=0。現有暖機 observer replay、原 journal join、合成 FakeTouch 冷鏈各自存在，完整真實全錄 owner 反事實重播尚未實作。
+- 保存全錄7722張PNG、12段選取與理由；pixel human gold=0。X1完整fixed-pixels owner／scheduler／FakeTouch接觸重播及R1/R2於10/2已獨立驗收；固定pixels不包含新觸控的遊戲feedback。
 - 模型僅供離線輔助標記及主程式優化。C++ LibTorch CPU 小試已有權重與 18 張原生 ROI proposal；不進即時迴圈，不以合成 IoU 宣稱真實準確率。
-- 本輪完成研究與整理；下一步建議先補最小完整接觸重播，再定位 Hold 的當前支持／身分／關聯失效。沒有啟動 emulator、真觸控、AP goal 或追加模型訓練。
+- X10b standalone suppression已否決，suppression OFF；X10d-P單一pending-missing hook冷契約已獨立通過，14組機會損失利弊unknown。X11-P/R1/R2/R3工程與負結果已簽收、成本仍not-ready，X12仍conditional；X10d-O尚未開始。
+- 本包只整理證據與入口；接續順序為A獨立驗收收尾→B量測契約審查→X10d-O→conditional候選live／全曲IN。未啟動emulator／觸控／模型／goal，未追加runtime、cost、stress或full replay。
 
 歷史跨曲兩版各 19 首 HD 的 Miss 為 815→818，非 Perfect 957→860；沒有 AP 或未知曲泛化驗收。9/29 的 D1–D4／C0–C6 是已保存的冷工程成果，其後實戰與整合結果依日期分開閱讀。
 
-[本次整理帳本](docs/CLEANUP_AUDIT_20261001.md)列出實際刪除、hash 核對、容量及保留範圍。恢復 worktree 的 ignored LibTorch／DLL references 仍在使用，不能因 Git 合併而刪除它。較早不可重算資料见[9/28 清理紀錄](docs/CLEANUP_AUDIT_20260928.md)。
+[10/1整理帳本](docs/CLEANUP_AUDIT_20261001.md)保留當時範圍；[9/28清理紀錄](docs/CLEANUP_AUDIT_20260928.md)列不可重算資料。10/4現查：舊recovery目錄未registered，其LibTorch及CPU runtime路徑不存在，main CPU cache仍指舊路徑；不宣稱當前CPU可build，也未重裝。原frozen引用與raw不回寫。
 
 ## 建置與回歸
 
@@ -34,7 +37,7 @@ Debug／ASan 對應 windows-debug／windows-asan。presets 含本機 VS instance
 
 ## 手動實戰操作參考（本輪不啟動）
 
-以下使用本機已核對的整合候選；上面的 preset 重新建置會輸出至 `out/release-v145`，不能把該目錄殘留的舊 binary 當作目前候選。
+以下保留main50歷史操作參考，它目前是comparison／donor、沒有live-ready資格。preset建置輸出至`out/release-v145`，不能把殘留binary或此命令當作候選升格／本輪啟動授權。
 
 ```powershell
 out/main-integration-v145/Release/pas.exe manual-session `
@@ -57,7 +60,8 @@ out/main-integration-v145/Release/pas.exe manual-session `
 
 | 文件 | 用途 |
 |---|---|
-| [現況與下一步研究](docs/PROJECT_STATUS_NEXT_STEPS_20261001.md) | 可核對清單、Hold 邊界、方案比較與最小交付 |
+| [10/4 IN zero miss總帳](docs/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)／[JSON](docs/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json) | 最新入口、逐曲證據、基準角色及順序工作包 |
+| [10/1狀態](docs/PROJECT_STATUS_NEXT_STEPS_20261001.md) | 歷史因果鏈；J5–J32接續最新狀態 |
 | [整合交接](docs/MAIN_INTEGRATION_HANDOFF_20261001.md) | 合併來源、frozen 配套、依賴與整合測試 |
 | [架構](docs/ARCHITECTURE.md)／[路線圖](docs/ROADMAP.md) | 現行契約與後续優先順序 |
 | [逐幀與 C36h 結果](docs/DLYROTZ_FRAME_ANALYSIS_C36H_20261001.md) | 使用者 12 段理由、原圖／事件及未改善結果 |
@@ -69,4 +73,4 @@ out/main-integration-v145/Release/pas.exe manual-session `
 | [第三方授權](docs/THIRD_PARTY_NOTICES.md) | 固定依賴及授權原文 |
 | [本次清理](docs/CLEANUP_AUDIT_20261001.md)／[9/28 清理](docs/CLEANUP_AUDIT_20260928.md) | 容量、保護與已刪範圍 |
 
-src／include 為正式核心；apps 為 CLI；tests 與 fixtures 為回歸及 Android C++ Fixture；configs 為 profile。measurements 與 out 不在 Git 追蹤內，Git 提交不等於備份原始證據。历史實戰操作授權不自動延續到本輪。
+src／include為正式核心；apps為CLI；tests／fixtures為回歸及Android C++ Fixture；configs為profile。measurements／out不在Git追蹤內，Git提交不等於備份原始證據。後續有限live依既有授權、gate與總控續派；本整理包不啟動。
