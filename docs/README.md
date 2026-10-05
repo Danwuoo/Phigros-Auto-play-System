@@ -7,9 +7,9 @@
 ## 建議閱讀順序
 
 1. [目前開發現況與問題](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)：已有能力、逐包停止點、真實阻塞、剩餘驗收階段。
-2. [Chapter Legacy 目標與逐曲基準](LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)／[逐曲 JSON](LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)：IN 解鎖與 Miss=0 的產品分母與限制。
-3. [最新 BUILD 結果](HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[交接](HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)：新增診斷預驗18/20，真native前停止，原建置封裝仍未定位。
-4. [R2F control 結果](HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_RESULT_20261005.md)：三真控制通過，但 configure 因 Windows 語法錯誤停止。
+2. [Chapter Legacy 目標與逐曲基準](catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)／[逐曲 JSON](catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)：IN 解鎖與 Miss=0 的產品分母與限制。
+3. [最新 BUILD 結果](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[交接](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)：新增診斷預驗18/20，真native前停止，原建置封裝仍未定位。
+4. [R2F control 結果](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_RESULT_20261005.md)：三真控制通過，但 configure 因 Windows 語法錯誤停止。
 
 ## 依主題查找
 
@@ -24,7 +24,7 @@
 | [成本、runtime 與 A／B 量測](catalog/05-runtime/README.md) | 26 | X11-P/R1/R2/R3及A/B的protocol、結果、交接與驗收。X12仍not-ready；設計簽收不等於量測已實作。 |
 | [擷取、工程整合與資料保全](catalog/06-engineering/README.md) | 10 | 擷取選型、觸控能力／語義、全錄、合併及清理紀錄。操作指令是歷史參考，不授予本輪執行。 |
 | [資料、標註與離線模型](catalog/07-data-learning/README.md) | 6 | 視覺資料、追蹤比較、proposed標註與離線CPU小試。模型不進正式即時閉環，unknown不升格人工gold。 |
-| [第三方依賴與授權](catalog/08-licenses/README.md) | 22 | 第三方聲明與原始授權文字，保持原路徑及bytes。分類不修改授權內容。 |
+| [第三方依賴與授權](catalog/08-licenses/README.md) | 22 | 第三方聲明與原始授權文字，保留授權原文bytes。分類不修改授權內容。 |
 
 ## 文件用途與狀態
 
@@ -35,6 +35,6 @@
 
 ## 整理與保全
 
-原文件路徑、內容與相對連結保持，避免破壞封存收據中的path／bytes／SHA。新增的是本總目錄、分類資料夾與狀態報告，不搬移舊檔、不刪失敗資料、不複製原圖。
+原141份文件已實際搬入八個分類資料夾；Markdown導覽連結與README／AGENTS入口已更新。授權原文與JSON保持bytes；歷史收據、封存腳本中的原路徑與SHA仍代表當時快照，不回寫成新證據。新舊路徑及搬移前後SHA見 [搬移對照與核驗](status/DOCUMENT_RELOCATION_20261005.md)。
 
 維護查核與新增容量見 [本次整理收據](../measurements/documentation-organization-20261005/receipt.json)。這是文件維護，不是新候選驗收或開發授權。

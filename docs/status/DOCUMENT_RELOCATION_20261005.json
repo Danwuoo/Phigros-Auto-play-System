@@ -1,0 +1,1285 @@
+{
+  "date": "2026-10-05",
+  "moved": 141,
+  "links_updated": 734,
+  "existing_missing_link_count": 0,
+  "entries": [
+    {
+      "old": "docs/ARCHITECTURE.md",
+      "new": "docs/catalog/01-project/ARCHITECTURE.md",
+      "before_sha256": "71c45e30276277e1420dd44c805ccd67da844e9bab5682b01416e787786eb78f",
+      "after_sha256": "40a42a41dba793d3d43d2bb66d843987ebc01853fc9a866944a41b538d5f7d17",
+      "before_bytes": 13313,
+      "after_bytes": 13450,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/BASELINE_RECOVERY_HOT_DEVELOPMENT_PLAN_20260930.md",
+      "new": "docs/catalog/02-game-results/BASELINE_RECOVERY_HOT_DEVELOPMENT_PLAN_20260930.md",
+      "before_sha256": "445606fe3a5bce6ef2cfcb33a7bedac4eb2c693ad6d0fa5f208424d374d94803",
+      "after_sha256": "8e5f83172fe56ca1c63092e8f5247a1270e2fa9bcefa2f0f780849b2b0dc6513",
+      "before_bytes": 15594,
+      "after_bytes": 15628,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/C36G_LIVE_ACCEPTANCE_20260930.md",
+      "new": "docs/catalog/02-game-results/C36G_LIVE_ACCEPTANCE_20260930.md",
+      "before_sha256": "553c7c78e8d70c95a362314a54ef72535a7eab7bb2a2f07b8fb63ba74f8ec3e8",
+      "after_sha256": "ce5cb95a23746888f9de9fbb58a4a7f659c01aee1c5c7b9f3726d682a1c6965b",
+      "before_bytes": 4044,
+      "after_bytes": 4064,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/C36H_0100_HANDOFF_20261003.md",
+      "new": "docs/catalog/01-project/C36H_0100_HANDOFF_20261003.md",
+      "before_sha256": "73e8927c789aed847bf038ace4e28ecdf7cdc7a3c9c47657c0e841894dc50523",
+      "after_sha256": "15056d5416f0397c7af610b53b896a52b0bc91ae518c69501ae11e8bd414a61c",
+      "before_bytes": 7667,
+      "after_bytes": 7690,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/C36H_CONTACT_REPLAY_HANDOFF_20261001.md",
+      "new": "docs/catalog/04-offline-research/C36H_CONTACT_REPLAY_HANDOFF_20261001.md",
+      "before_sha256": "3b33465463786437118376c601b1c10f2fb45f537029e6b7a390f6f8ca75175b",
+      "after_sha256": "102354324fc34302f03a44004e256c8115c2a62d72650d1d977d48bd8fa02357",
+      "before_bytes": 29332,
+      "after_bytes": 29520,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/C36H_CONTACT_REPLAY_REPAIR_20261002.md",
+      "new": "docs/catalog/04-offline-research/C36H_CONTACT_REPLAY_REPAIR_20261002.md",
+      "before_sha256": "adea428da9e23529f0088e9de0658091e6480fc4cd1fc095b77dcd50abacfe2a",
+      "after_sha256": "7272480a7d4de75e9618e8c204f0a050d2964de2848f7181831bae327b27da15",
+      "before_bytes": 13337,
+      "after_bytes": 13429,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/C36H_FORWARD_EXECUTION_PLAN_20261003.md",
+      "new": "docs/catalog/01-project/C36H_FORWARD_EXECUTION_PLAN_20261003.md",
+      "before_sha256": "a01d0e1150486b60a7c0a5dc65d872f85da3ad49998b1be3843d4540415e7e94",
+      "after_sha256": "7428117a0668f23bd5f705c54e49b26dc1c22de91c55b38859341269d3fe3e6d",
+      "before_bytes": 26434,
+      "after_bytes": 26819,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/CAPTURE_FINAL_ACCEPTANCE_20260926.md",
+      "new": "docs/catalog/06-engineering/CAPTURE_FINAL_ACCEPTANCE_20260926.md",
+      "before_sha256": "117eaeaaea83d86ec79df9621815aa968acca19230df38a11ac4ad3017d9b15c",
+      "after_sha256": "323a86880581865a9255d98545fdd58a3db7156265892a8d24b5c6c47e97ce4c",
+      "before_bytes": 11870,
+      "after_bytes": 11884,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/CLEANUP_AUDIT_20260928.md",
+      "new": "docs/catalog/06-engineering/CLEANUP_AUDIT_20260928.md",
+      "before_sha256": "598cdfa4a4066ed892f0d89c5f95c29db6b58a0f4c1437323f317b996fe54c8b",
+      "after_sha256": "fff5999854ac616dcc6d3f50b771858b86aa5b08ef52f63793678629aeb09774",
+      "before_bytes": 7159,
+      "after_bytes": 7197,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/CLEANUP_AUDIT_20261001.md",
+      "new": "docs/catalog/06-engineering/CLEANUP_AUDIT_20261001.md",
+      "before_sha256": "bb20c2fa60d4ca194e99553af619b7dd07fc4d9e37d498b803c0864d86ebf2ad",
+      "after_sha256": "bc85a63cd38de5d67d188bd39ccaa88fa08ce1948fe9c044c9311a694e10fef0",
+      "before_bytes": 11128,
+      "after_bytes": 11230,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/COLD_DEVELOPMENT_MERGE_REVIEW_20260929.md",
+      "new": "docs/catalog/04-offline-research/COLD_DEVELOPMENT_MERGE_REVIEW_20260929.md",
+      "before_sha256": "c10b9e34910a754e8f6199785d21a02b91fd58548a0a48cea3804efcf43287bc",
+      "after_sha256": "24adb4dce256a867ed0b8489a75ee7b50360a404702a665a387a9ebd180cab3f",
+      "before_bytes": 6517,
+      "after_bytes": 6549,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/COLD_DEVELOPMENT_RESULT_20260929.md",
+      "new": "docs/catalog/04-offline-research/COLD_DEVELOPMENT_RESULT_20260929.md",
+      "before_sha256": "7828d11173f6ffb1c050a84cf5c56f0ea443bbf995b118f624acf72e8b007e1c",
+      "after_sha256": "e6465fd0ea2651bee0d8bd70983f80d7cb12d3c5004fec205a42f81154318136",
+      "before_bytes": 37553,
+      "after_bytes": 37609,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/CONFIRMED_PRESERVE_ABLATION_X2_HANDOFF_20261002.md",
+      "new": "docs/catalog/04-offline-research/CONFIRMED_PRESERVE_ABLATION_X2_HANDOFF_20261002.md",
+      "before_sha256": "70e7b0acc94f3a432257a60ee411715942e7ed022dddf7baa6e8d056ed251759",
+      "after_sha256": "cbb80bcf3dbb325696ae960581519d4867a7370e041e2783e8f55909ec875b45",
+      "before_bytes": 26326,
+      "after_bytes": 26430,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/CURRENT_INTERIOR_CLAIM_X10B_20261003.md",
+      "new": "docs/catalog/04-offline-research/CURRENT_INTERIOR_CLAIM_X10B_20261003.md",
+      "before_sha256": "6a9281189f1923dca18db36ce394d448bd3c46f8ce6032de33b76c5215098b0c",
+      "after_sha256": "9daff3a406153e12595cb90a6b9188523b3b6aa7d490882bf923aabeb0ddd697",
+      "before_bytes": 4850,
+      "after_bytes": 4878,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/DLYROTZ_FRAME_ANALYSIS_C36H_20261001.md",
+      "new": "docs/catalog/02-game-results/DLYROTZ_FRAME_ANALYSIS_C36H_20261001.md",
+      "before_sha256": "b74775f006fc39845143e6859a9d6dd7ad8653558210bf70aceade1b3b25677f",
+      "after_sha256": "d4e26b299e42284743826d8729e25729439708ebaa459a68ca69bbba7ae96f35",
+      "before_bytes": 14458,
+      "after_bytes": 14478,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/EARLY_ROLE_ABSTAIN_X5_HANDOFF_20261002.md",
+      "new": "docs/catalog/04-offline-research/EARLY_ROLE_ABSTAIN_X5_HANDOFF_20261002.md",
+      "before_sha256": "bb0ff5c6062f246b589ed64d007462b732f1866935dc05b9395aba326fe306a4",
+      "after_sha256": "b9f48418713e979859bd9b4a4c0aac3cdb5c20bd165f4157f12470997f5de4fb",
+      "before_bytes": 28624,
+      "after_bytes": 28739,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/FOUR_SONG_HOT_TUNING_20260929.md",
+      "new": "docs/catalog/02-game-results/FOUR_SONG_HOT_TUNING_20260929.md",
+      "before_sha256": "1424228f1e6aa64b0b1008e14a71061ebd4fd812d8b68f2ebdec5180632a66b3",
+      "after_sha256": "1424228f1e6aa64b0b1008e14a71061ebd4fd812d8b68f2ebdec5180632a66b3",
+      "before_bytes": 9957,
+      "after_bytes": 9957,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/FULL_ROUND_RECORDING_20261001.md",
+      "new": "docs/catalog/06-engineering/FULL_ROUND_RECORDING_20261001.md",
+      "before_sha256": "689ae49d1922e6ac9096de2311401f26a53cf1f3f4f96382551f7e97f3de38a1",
+      "after_sha256": "1feb0a61d0bcb478ebe1352c4a57cb281a9320a542d643d5d0ca2e5c028b5966",
+      "before_bytes": 9858,
+      "after_bytes": 9891,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/GAME_ACTION_EVIDENCE_20260927.json",
+      "new": "docs/catalog/06-engineering/GAME_ACTION_EVIDENCE_20260927.json",
+      "before_sha256": "1cf8cdf2b98fe47d3999196d392984ace656e4c568219e614ae357b82e19c7bb",
+      "after_sha256": "1cf8cdf2b98fe47d3999196d392984ace656e4c568219e614ae357b82e19c7bb",
+      "before_bytes": 10640,
+      "after_bytes": 10640,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/GAME_ACTION_SEMANTICS_20260927.md",
+      "new": "docs/catalog/06-engineering/GAME_ACTION_SEMANTICS_20260927.md",
+      "before_sha256": "ff0da8ac70ba5c4eea701f9afcc35c5a9d20567b0791725d71bac8075539f4d0",
+      "after_sha256": "b7587b032ce372faede1ea1bcde9f2641f46b3b964f6ac64cfa2731c65c29107",
+      "before_bytes": 7808,
+      "after_bytes": 7822,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/GRPC_TRANSPORT_INTEGRATION_20260926.md",
+      "new": "docs/catalog/06-engineering/GRPC_TRANSPORT_INTEGRATION_20260926.md",
+      "before_sha256": "d73a8a8fee9c1d852866c46cefd4a69fba45127127046be6b33368d64f362670",
+      "after_sha256": "d6f25a189cdc0bb791b71b868a1129572a11ccd8ca6061368a51e8e943ba896f",
+      "before_bytes": 11843,
+      "after_bytes": 11857,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HD9_LEGACY_HD_RESULTS_20260928.md",
+      "new": "docs/catalog/02-game-results/HD9_LEGACY_HD_RESULTS_20260928.md",
+      "before_sha256": "f217c3f00a8f3a1dc2aec089048208baf6452068f856f3188b8d98cbe4b7c8ed",
+      "after_sha256": "fcd1e8434bfe81ad0f2a9b401e034deec60bf5f0afcfeddc5d018e943cea0240",
+      "before_bytes": 6379,
+      "after_bytes": 6411,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HD9_LEGACY_HD_RESULTS_EVIDENCE_20260928.json",
+      "new": "docs/catalog/02-game-results/HD9_LEGACY_HD_RESULTS_EVIDENCE_20260928.json",
+      "before_sha256": "9d0cc2db4c1a8aec039586ba2ca2248d5c102247ef50335ba4ac87f77d2f624e",
+      "after_sha256": "9d0cc2db4c1a8aec039586ba2ca2248d5c102247ef50335ba4ac87f77d2f624e",
+      "before_bytes": 46373,
+      "after_bytes": 46373,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HD9_MANUAL_SESSION_20260927.md",
+      "new": "docs/catalog/02-game-results/HD9_MANUAL_SESSION_20260927.md",
+      "before_sha256": "341feb5b2f48abe862e28300e1ca81f1ce8a1a5a8f8e60c758525c094564462a",
+      "after_sha256": "37e38ee3374fdbeb6b960ce8142514a1049d2efacd949895ae321feffe975f4b",
+      "before_bytes": 9208,
+      "after_bytes": 9258,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HD9_MANUAL_SESSION_EVIDENCE_20260927.json",
+      "new": "docs/catalog/02-game-results/HD9_MANUAL_SESSION_EVIDENCE_20260927.json",
+      "before_sha256": "297a9f5817da9458bb4ed79e50b7b5428fcd1d91df17b383fd5db851c4e1cdf9",
+      "after_sha256": "297a9f5817da9458bb4ed79e50b7b5428fcd1d91df17b383fd5db851c4e1cdf9",
+      "before_bytes": 8027,
+      "after_bytes": 8027,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_CASCADE_X10C_PROTOCOL_20261003.md",
+      "new": "docs/catalog/04-offline-research/HOLD_CASCADE_X10C_PROTOCOL_20261003.md",
+      "before_sha256": "b2429e9c2bc47cf64b8dcbf3e27eee4ded86e4b1690c359351775374d75bf4ed",
+      "after_sha256": "b2429e9c2bc47cf64b8dcbf3e27eee4ded86e4b1690c359351775374d75bf4ed",
+      "before_bytes": 3100,
+      "after_bytes": 3100,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_CASCADE_X10C_RESULT_20261003.md",
+      "new": "docs/catalog/04-offline-research/HOLD_CASCADE_X10C_RESULT_20261003.md",
+      "before_sha256": "96f7ed62b56e111675cbf8d37ba04afd169c21b798bc2fabd37980e13b0c4682",
+      "after_sha256": "7a52f4d3070e18295e3c7aa8d2ba6b26842a1c842e4681ff6803081702a80cd3",
+      "before_bytes": 13264,
+      "after_bytes": 13373,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_CAUSAL_X9_20261003.md",
+      "new": "docs/catalog/04-offline-research/HOLD_CAUSAL_X9_20261003.md",
+      "before_sha256": "25bd2f5a8fb15375eef08e7369a62ef8d8a308b3b696de70ffe922fa1e468dcb",
+      "after_sha256": "1ba771f610cc31305a2bd8126f47c7910c2a90806135c35091c340a4fadce909",
+      "before_bytes": 6234,
+      "after_bytes": 6245,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_4I_CONTROLLER_ACCEPTANCE_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_4I_CONTROLLER_ACCEPTANCE_20261004.md",
+      "before_sha256": "51dd38579331f8c0382eb57fb56cad693d4762d7a4fcccc349037876636b2c47",
+      "after_sha256": "91f45e5650a0bd93e5baba29973c03f5749fd5c67fb09707103fa73590873400",
+      "before_bytes": 12289,
+      "after_bytes": 12319,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_4I_R1_CONTROLLER_ACCEPTANCE_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_4I_R1_CONTROLLER_ACCEPTANCE_20261005.md",
+      "before_sha256": "60ebd0ffaba31f992d033746963ad45d01cedfc86b467e7ce3aa909d9b1e802f",
+      "after_sha256": "39e4f380ff0e3c1b3df694bf05b769a2f1a0eb87ba49f4003feef61ee60cf44a",
+      "before_bytes": 10881,
+      "after_bytes": 10911,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_4R_CONTROLLER_ACCEPTANCE_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_4R_CONTROLLER_ACCEPTANCE_20261004.md",
+      "before_sha256": "41374495cf1ff741099578d72d5cfcc1070b9e032eace3248a51cf28455246fe",
+      "after_sha256": "e4e883c169c3151ab40685ac4d5681bfd9ffb7f8197d4f6dfd578300a7e7930c",
+      "before_bytes": 11851,
+      "after_bytes": 11875,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md",
+      "before_sha256": "45ec4b8727eb265723055d5828342173df411f970ebad3e7d3af3d92acd47bba",
+      "after_sha256": "45ec4b8727eb265723055d5828342173df411f970ebad3e7d3af3d92acd47bba",
+      "before_bytes": 3178,
+      "after_bytes": 3178,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md",
+      "before_sha256": "d55746fc06d8dee47b3db556af5f15b54d7e9804a486c753b194edabf827c31f",
+      "after_sha256": "d55746fc06d8dee47b3db556af5f15b54d7e9804a486c753b194edabf827c31f",
+      "before_bytes": 6733,
+      "after_bytes": 6733,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_HANDOFF_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_HANDOFF_20261004.md",
+      "before_sha256": "cfa4f71d605c0c36156bcc621c6a1bcf1ae45868a36c815767ac7fc0491fd698",
+      "after_sha256": "cfa4f71d605c0c36156bcc621c6a1bcf1ae45868a36c815767ac7fc0491fd698",
+      "before_bytes": 2492,
+      "after_bytes": 2492,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R1_HANDOFF_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R1_HANDOFF_20261004.md",
+      "before_sha256": "31127a2c3381b538e19eb3ae2b9a5eb9402d6d094051230b2db6f25b881a343f",
+      "after_sha256": "31127a2c3381b538e19eb3ae2b9a5eb9402d6d094051230b2db6f25b881a343f",
+      "before_bytes": 3343,
+      "after_bytes": 3343,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R1_RESULT_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R1_RESULT_20261004.md",
+      "before_sha256": "e7a16d0f50ffbb0e24ac618a1c39a30bbb16638fd37121f7315874cbe399f085",
+      "after_sha256": "f2e586ca231b8763d4067c4d893c534550e5155605c9f8602d36a6e6ab51170b",
+      "before_bytes": 6621,
+      "after_bytes": 6651,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2D_HANDOFF_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2D_HANDOFF_20261005.md",
+      "before_sha256": "1c0363d4da45a9dd4803c9c1e2d985c883b0fbbcecf4bc78be610c15513caa1a",
+      "after_sha256": "e3409a13dc73254df74c3f8859794509f4af3d652b172ffee027c6f04c83f6b0",
+      "before_bytes": 4556,
+      "after_bytes": 4574,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2D_REVIEW_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2D_REVIEW_20261005.md",
+      "before_sha256": "859ddcdf5bcc61e71cd85d179a6659b02afd930e6de76acecfc4fb8f30e8986b",
+      "after_sha256": "790eb74ca6ad55e0ff49a261193f021712e320d53ded647cf394862d3d15d6dc",
+      "before_bytes": 29107,
+      "after_bytes": 29137,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2E_ACCEPTANCE_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2E_ACCEPTANCE_20261005.md",
+      "before_sha256": "61bf7152db813a0e3e0936d4276389cf38134dd93059d9d01800aa180bd45ea3",
+      "after_sha256": "35eadd24dabbed6be0420dc018ef741735be257247003afb82fc0a44e4db31e4",
+      "before_bytes": 4563,
+      "after_bytes": 4569,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2E_DISPATCH_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2E_DISPATCH_20261005.md",
+      "before_sha256": "b3e5e5b148847d0d922d4cb2d998de29c21435862c386e1f4033c17023bfd125",
+      "after_sha256": "0ff5536f42e19549ee70f6457f14909d3b96355295bf67940a9c9b178caf4e5e",
+      "before_bytes": 10034,
+      "after_bytes": 10048,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2E_HANDOFF_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2E_HANDOFF_20261005.md",
+      "before_sha256": "25a24d44e3898e5e8c815cb7a09b786d20a17726fdcbff5df738d166d0fd1f82",
+      "after_sha256": "25a24d44e3898e5e8c815cb7a09b786d20a17726fdcbff5df738d166d0fd1f82",
+      "before_bytes": 2943,
+      "after_bytes": 2943,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2E_RESULT_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2E_RESULT_20261005.md",
+      "before_sha256": "ff0257f2c8fcb405304b8b402e63346265c8516641d719316cde7f5c84d57a61",
+      "after_sha256": "deb674ab132e6f4144d3fd12a29ef0e2ccfa2b922542b4a5ad636b39d072c409",
+      "before_bytes": 7636,
+      "after_bytes": 7666,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_HANDOFF_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_HANDOFF_20261005.md",
+      "before_sha256": "57b3a79304a42f923ad79ea3bd72e0a1172c2f5d06c9bce69a8cb52d5ad821df",
+      "after_sha256": "57b3a79304a42f923ad79ea3bd72e0a1172c2f5d06c9bce69a8cb52d5ad821df",
+      "before_bytes": 3128,
+      "after_bytes": 3128,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_RESULT_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_RESULT_20261005.md",
+      "before_sha256": "f0a5e85f068f2076a1a424cf687bfa183a11dc8d88fcc6d243daa109ddb47df4",
+      "after_sha256": "f0a5e85f068f2076a1a424cf687bfa183a11dc8d88fcc6d243daa109ddb47df4",
+      "before_bytes": 6193,
+      "after_bytes": 6193,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2F_DISPATCH_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_DISPATCH_20261005.md",
+      "before_sha256": "e7adedee6d04ebe6dc2f1eb58730d0b524cd3429473aad99f869bc7b2399a0e6",
+      "after_sha256": "e7adedee6d04ebe6dc2f1eb58730d0b524cd3429473aad99f869bc7b2399a0e6",
+      "before_bytes": 7648,
+      "after_bytes": 7648,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2F_HANDOFF_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_HANDOFF_20261005.md",
+      "before_sha256": "1695c44cb10483945198df3473f832d63585f5aa3a6f50f2ba3a0a4b730300c6",
+      "after_sha256": "1695c44cb10483945198df3473f832d63585f5aa3a6f50f2ba3a0a4b730300c6",
+      "before_bytes": 2893,
+      "after_bytes": 2893,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESULT_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESULT_20261005.md",
+      "before_sha256": "c117907ea6fb8038b7c93ebcd7d88eb364fc26669a6a8dca59efe1275dd6301c",
+      "after_sha256": "c23c75e570bf21a3269a8e99320eb25741cdbc54865985c9a9fb3eeeca70cc19",
+      "before_bytes": 10927,
+      "after_bytes": 10957,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESUME_HANDOFF_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESUME_HANDOFF_20261005.md",
+      "before_sha256": "1cce088f6b4aadf7bac25d20f5a31692abda30012f3d6591f1b3dad183af4695",
+      "after_sha256": "1cce088f6b4aadf7bac25d20f5a31692abda30012f3d6591f1b3dad183af4695",
+      "before_bytes": 3460,
+      "after_bytes": 3460,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESUME_RESULT_20261005.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESUME_RESULT_20261005.md",
+      "before_sha256": "0176251e734be248d47de2161e4eb1cc0fbbfc5daaa4eea6209f856ab329deff",
+      "after_sha256": "dc808b09be1928e9ac8d4649de4fdb722584588915e6ba4bd96d22725957f537",
+      "before_bytes": 10633,
+      "after_bytes": 10675,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_BVI_RESULT_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_RESULT_20261004.md",
+      "before_sha256": "416e17712ed787565f57667882f2152a9143f07e680563f125ded199da59038e",
+      "after_sha256": "416e17712ed787565f57667882f2152a9143f07e680563f125ded199da59038e",
+      "before_bytes": 7157,
+      "after_bytes": 7157,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_CONTROLLER_ACCEPTANCE_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_CONTROLLER_ACCEPTANCE_20261004.md",
+      "before_sha256": "1ae4cbb72320e2989dfc97f696cd2cf387b1ac2f90328417f70891adfe045204",
+      "after_sha256": "c5dbe50ca32c07dd71979707bb4664e09dc4db4b59da73f47ab60408a8b57930",
+      "before_bytes": 9546,
+      "after_bytes": 9584,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_HANDOFF_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_HANDOFF_20261004.md",
+      "before_sha256": "f91345ef47e1aa236c5b430184571720b0ff3cf224fecc3682f0025c77f9a1b1",
+      "after_sha256": "f91345ef47e1aa236c5b430184571720b0ff3cf224fecc3682f0025c77f9a1b1",
+      "before_bytes": 3863,
+      "after_bytes": 3863,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_OBSERVABILITY_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_OBSERVABILITY_20261004.md",
+      "before_sha256": "35a4c9da25d900f4186f57473434f9ece29c94798e877fe934c3a1822e8f75e8",
+      "after_sha256": "494326314f620461235eb023657c0d1973a234517644f87667c351d1d5356a32",
+      "before_bytes": 19639,
+      "after_bytes": 19651,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_OBSERVABILITY_DESIGN_20261004.json",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_OBSERVABILITY_DESIGN_20261004.json",
+      "before_sha256": "f048b7858beab6dcf27fd3ccd51f1761ab794f692b16b5fcfdab4bfafa12b509",
+      "after_sha256": "f048b7858beab6dcf27fd3ccd51f1761ab794f692b16b5fcfdab4bfafa12b509",
+      "before_bytes": 30139,
+      "after_bytes": 30139,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_OBSERVABILITY_HANDOFF_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_OBSERVABILITY_HANDOFF_20261004.md",
+      "before_sha256": "4bb39e209d8102c74ef7f9611d2940d06cb0f51b10fdf5cd14aab3ee9cf3fd43",
+      "after_sha256": "4bb39e209d8102c74ef7f9611d2940d06cb0f51b10fdf5cd14aab3ee9cf3fd43",
+      "before_bytes": 4278,
+      "after_bytes": 4278,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_PROTOCOL_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_PROTOCOL_20261004.md",
+      "before_sha256": "bbb2c2a17131476431c5134fcf01753bc6941ca13c6323b60965749df9077ec3",
+      "after_sha256": "bbb2c2a17131476431c5134fcf01753bc6941ca13c6323b60965749df9077ec3",
+      "before_bytes": 7044,
+      "after_bytes": 7044,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_OWNERSHIP_X10D_O_RESULT_20261004.md",
+      "new": "docs/catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_RESULT_20261004.md",
+      "before_sha256": "274e4176a586d78f4efe0da1781f51ec06301f17f66237bde2bcb2fdf3823d2d",
+      "after_sha256": "274e4176a586d78f4efe0da1781f51ec06301f17f66237bde2bcb2fdf3823d2d",
+      "before_bytes": 9637,
+      "after_bytes": 9637,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/HOLD_RAIL_CLAIM_X10_20261003.md",
+      "new": "docs/catalog/04-offline-research/HOLD_RAIL_CLAIM_X10_20261003.md",
+      "before_sha256": "8fd74e3244680bcbf0b5d508e98057f6075feac337b413b627aeb1d637d24c6a",
+      "after_sha256": "f4c1bb2f11b0a7794bb32edfb9a2bf5d3586395d31c3f8300b906d291980508e",
+      "before_bytes": 4506,
+      "after_bytes": 4512,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/HOT_REGRESSION_REVIEW_20260930.md",
+      "new": "docs/catalog/02-game-results/HOT_REGRESSION_REVIEW_20260930.md",
+      "before_sha256": "2eb06fc414d91f69384cdf66b2d734eab375b709b748bd52f55758b998a08d0e",
+      "after_sha256": "2eb06fc414d91f69384cdf66b2d734eab375b709b748bd52f55758b998a08d0e",
+      "before_bytes": 13312,
+      "after_bytes": 13312,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md",
+      "new": "docs/catalog/04-offline-research/JUDGMENT_LINE_M1_IMPLEMENTATION_20260928.md",
+      "before_sha256": "f243375f5660e677f7eb0149057d494dfd77d265289f87eae07168a7b6b17245",
+      "after_sha256": "a9c12351f5318e2151896c604ade32c6e85094db2e1016fdaf123d2374d165b2",
+      "before_bytes": 10048,
+      "after_bytes": 10122,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/LEGACY_CROSS_VERSION_ANALYSIS_20260928.md",
+      "new": "docs/catalog/02-game-results/LEGACY_CROSS_VERSION_ANALYSIS_20260928.md",
+      "before_sha256": "17e9c29688ed98b0e2006b6b0c9282285f4bac67bc47b0c34e434dff02cbf8a5",
+      "after_sha256": "0d09e80eaa9501e10db96348ff4dede96c9a2d52fa9d547b2b1c22fa43d71e6b",
+      "before_bytes": 10558,
+      "after_bytes": 10590,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/LEGACY_DEVELOPMENT_INVENTORY_AND_R2D_ACCEPTANCE_20261005.md",
+      "new": "docs/catalog/01-project/LEGACY_DEVELOPMENT_INVENTORY_AND_R2D_ACCEPTANCE_20261005.md",
+      "before_sha256": "0f4c28d93ad2d8df140490ca7adf197f48ab0afc74aaef12186136aba5a45702",
+      "after_sha256": "703b9f06df24a23d37c78ce1bb8e55f31f8c79b1ee62dd15cb975c1c28a11fa1",
+      "before_bytes": 8907,
+      "after_bytes": 8965,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/LEGACY_HD_VS_CONTINUATION_20260930.md",
+      "new": "docs/catalog/02-game-results/LEGACY_HD_VS_CONTINUATION_20260930.md",
+      "before_sha256": "4f0e1384c261815ef347f0803db6e072f9425b8a7bf155af8e6e2418849c57fc",
+      "after_sha256": "6989cd1aefae2b323d521ebd008df35a72f7ceee2db390f0134d73db4e5ba2b1",
+      "before_bytes": 6981,
+      "after_bytes": 6993,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md",
+      "new": "docs/catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md",
+      "before_sha256": "96daa482cc445499cbc7adb1ef34d399340f8ae41dce63bf6a1ad0ce82e0f6c4",
+      "after_sha256": "4c076299377ff7bb7dab12ba93496dc0ad303b8d95e4068f5f2d91c9df7a9d88",
+      "before_bytes": 19581,
+      "after_bytes": 19794,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/LEGACY_IN_ZERO_MISS_CONTROLLER_ACCEPTANCE_20261004.md",
+      "new": "docs/catalog/01-project/LEGACY_IN_ZERO_MISS_CONTROLLER_ACCEPTANCE_20261004.md",
+      "before_sha256": "30e232eb29dd268fcbebbe01f6a8c06976a0fc8af17fbb883f872d5e9e5c2a5e",
+      "after_sha256": "930cb4db1d64ee85fd72a9e69957ff57842e6f97f5b20dc8b3dd68c3abb3ba5c",
+      "before_bytes": 5843,
+      "after_bytes": 5873,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json",
+      "new": "docs/catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json",
+      "before_sha256": "edc7a94e56e56d7b255d5e94608158476f190e5de1ff621a53e1882dcf3dbe41",
+      "after_sha256": "edc7a94e56e56d7b255d5e94608158476f190e5de1ff621a53e1882dcf3dbe41",
+      "before_bytes": 434924,
+      "after_bytes": 434924,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/LINE_IDENTITY_M0_20260928.md",
+      "new": "docs/catalog/04-offline-research/LINE_IDENTITY_M0_20260928.md",
+      "before_sha256": "f3d898b1f7b0a10c1356c2b3e14291420498c8c7d425e7d36bf40d7ef6ba2661",
+      "after_sha256": "3dc29ecbcd5ee40b4c098d15506c27640b3e864d48c036f8d6256df17238f7d5",
+      "before_bytes": 6712,
+      "after_bytes": 6736,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/LINE_ROLE_VALID_REASSOCIATION_X3_HANDOFF_20261002.md",
+      "new": "docs/catalog/04-offline-research/LINE_ROLE_VALID_REASSOCIATION_X3_HANDOFF_20261002.md",
+      "before_sha256": "d85b941469149a1eedfc928f07378659ed6e48d06b6df92b3eb34db3c240b0f7",
+      "after_sha256": "b6717f51ff2305dbbfe6c086bc9adb6c8d100b2bfd8cf5c9dbbcf397913b25c1",
+      "before_bytes": 28551,
+      "after_bytes": 28678,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/M0_MANUAL_CONTINUATION_20260930.md",
+      "new": "docs/catalog/02-game-results/M0_MANUAL_CONTINUATION_20260930.md",
+      "before_sha256": "0f3141fa5ed25f7b81296c5a632221a8fb04cad78ecbb0baf65810546323394b",
+      "after_sha256": "2a3f976bd256492ad79b903185e0e4c4b5b850849eb66de03edb3956f5719634",
+      "before_bytes": 21872,
+      "after_bytes": 21892,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md",
+      "new": "docs/catalog/01-project/MAIN_ARCHITECTURE_CROSS_SONG_LEARNING_RESEARCH_20260928.md",
+      "before_sha256": "2e46d685bc7b1eaaf82129975f83d41326a0e826463390d0740c55ac23ca2f3b",
+      "after_sha256": "23ecf8a7d3ed5f314a97606d4c5755062b06c2d6313297f34a04cac612d353df",
+      "before_bytes": 81924,
+      "after_bytes": 82506,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/MAIN_INTEGRATION_HANDOFF_20261001.md",
+      "new": "docs/catalog/06-engineering/MAIN_INTEGRATION_HANDOFF_20261001.md",
+      "before_sha256": "39eb0a57e12d3011f876c2644e0b1f0d25be9e3432d6ab79310d783a9a6d1804",
+      "after_sha256": "39eb0a57e12d3011f876c2644e0b1f0d25be9e3432d6ab79310d783a9a6d1804",
+      "before_bytes": 10700,
+      "after_bytes": 10700,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/MAIN_LEGACY_HD_COMPARISON_20260928.md",
+      "new": "docs/catalog/02-game-results/MAIN_LEGACY_HD_COMPARISON_20260928.md",
+      "before_sha256": "d255bafca1d23e28fa94bd1313998bb9db21263b5955112185b2349fa2adec8d",
+      "after_sha256": "4d0d6b1dc4eb8833e5ae14b2e85fb54edc5243d6a65c98a9f8ea1317a9387eee",
+      "before_bytes": 8605,
+      "after_bytes": 8643,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/MAIN_LEGACY_HD_RESULTS_EVIDENCE_20260928.json",
+      "new": "docs/catalog/02-game-results/MAIN_LEGACY_HD_RESULTS_EVIDENCE_20260928.json",
+      "before_sha256": "aa7145b60c55ead666f6e75e507c98b29ef2c1532836f198d4ac1e020f22a251",
+      "after_sha256": "aa7145b60c55ead666f6e75e507c98b29ef2c1532836f198d4ac1e020f22a251",
+      "before_bytes": 38497,
+      "after_bytes": 38497,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/MAIN_MERGE_20260928.md",
+      "new": "docs/catalog/06-engineering/MAIN_MERGE_20260928.md",
+      "before_sha256": "61fff2e2239235e1459cb1c48c977ada2afef4e9024a1b3f67ad8207540c6efc",
+      "after_sha256": "61b8052a9cb9b0126d3b6b88ac57e784ae6bb63bdfd7cde1da53b713f62129cf",
+      "before_bytes": 4645,
+      "after_bytes": 4678,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/MISS_FRAME_ANNOTATION_20260930.md",
+      "new": "docs/catalog/07-data-learning/MISS_FRAME_ANNOTATION_20260930.md",
+      "before_sha256": "b67d275ebbf6ac455b68983cddda153023d8da87ebdb92034aed1af9fe717717",
+      "after_sha256": "1625d6a0280e9ac144d83a8c44da5d550ca8c08fb78db0b189cb994ecbd688ed",
+      "before_bytes": 6654,
+      "after_bytes": 6672,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/MMAP_FEASIBILITY_20260926.md",
+      "new": "docs/catalog/06-engineering/MMAP_FEASIBILITY_20260926.md",
+      "before_sha256": "f365ecc86dcffd9f648f0380efe0127ea3cffdf942399f82848cb83c9023f6e3",
+      "after_sha256": "8ee1b8c3c18e329d7ad3f626b673fe9f5d6edfc6dee58ea12a425713d48ff02e",
+      "before_bytes": 3713,
+      "after_bytes": 3727,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md",
+      "new": "docs/catalog/01-project/NON_LEARNING_COLD_DEVELOPMENT_PLAN_20260929.md",
+      "before_sha256": "d10d86066d9df268c67d6e413a4967a0dcd2f6b5b0bb8f5db203b3259082ff59",
+      "after_sha256": "54cdf973311fa781563b28ed514b755566214420b19b6c3a393b956dfc16023a",
+      "before_bytes": 53231,
+      "after_bytes": 53373,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/NOTE_LINE_ROLE_FOLLOWUP_20260930.md",
+      "new": "docs/catalog/04-offline-research/NOTE_LINE_ROLE_FOLLOWUP_20260930.md",
+      "before_sha256": "d08722609df20d35bd57a7b74df6f3dec48f7c1bc162e5e60050e39f9a6c3102",
+      "after_sha256": "52435b05a1fa58c15c92016c282f04b647a9bb6eda2e1815368c603f2b89b5b3",
+      "before_bytes": 8389,
+      "after_bytes": 8409,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/note形式.md",
+      "new": "docs/catalog/01-project/note形式.md",
+      "before_sha256": "d32459f92919960f97feef5d561ad8d9582a2d36a3991f1319acf132ca9821f3",
+      "after_sha256": "d32459f92919960f97feef5d561ad8d9582a2d36a3991f1319acf132ca9821f3",
+      "before_bytes": 6336,
+      "after_bytes": 6336,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/OFFLINE_CPU_VISION_PILOT_20261001.md",
+      "new": "docs/catalog/07-data-learning/OFFLINE_CPU_VISION_PILOT_20261001.md",
+      "before_sha256": "be9c43bea8bc49a8426820f0c6942b5851268178a94a627976b7aeca8d993a64",
+      "after_sha256": "58f96186c38fb1eb7c7fef0d52a6045ae8ba188f2afeafe3684521cce421506e",
+      "before_bytes": 14215,
+      "after_bytes": 14249,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/PENDING_CANCEL_X10D_P_CONTROLLER_ACCEPTANCE_20261003.md",
+      "new": "docs/catalog/04-offline-research/PENDING_CANCEL_X10D_P_CONTROLLER_ACCEPTANCE_20261003.md",
+      "before_sha256": "0082a583d755111f4e58a0cdbe7531b59d7bc12426614a0181be23a88cc666ec",
+      "after_sha256": "3c84b26ecf1b55fe32f701bef74ba81404c77d643d1f7a807c2f850b1570e212",
+      "before_bytes": 6575,
+      "after_bytes": 6581,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/PENDING_CANCEL_X10D_P_PROTOCOL_20261003.md",
+      "new": "docs/catalog/04-offline-research/PENDING_CANCEL_X10D_P_PROTOCOL_20261003.md",
+      "before_sha256": "ae143f5cba53f0d01b558e05880ac43f66c237f9ebff3f3437611269b6c497ba",
+      "after_sha256": "ae143f5cba53f0d01b558e05880ac43f66c237f9ebff3f3437611269b6c497ba",
+      "before_bytes": 5349,
+      "after_bytes": 5349,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/PENDING_CANCEL_X10D_P_RESULT_20261003.md",
+      "new": "docs/catalog/04-offline-research/PENDING_CANCEL_X10D_P_RESULT_20261003.md",
+      "before_sha256": "1d1e0d4a1014503efd13ec815d8eec6b757d33bc0f255103e6d2e13e28f30f86",
+      "after_sha256": "ec3b3768078148463aa5b0dd3ec519f08dafa113bc93c7537aa6ae729f1bf421",
+      "before_bytes": 15924,
+      "after_bytes": 16006,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/PIXEL_CENTER_RELIABILITY_X6_20261003.md",
+      "new": "docs/catalog/04-offline-research/PIXEL_CENTER_RELIABILITY_X6_20261003.md",
+      "before_sha256": "2cb61d65fc558c7e35f5ea2cac2a4eac1f376385969305dd6400ffc1b4283a17",
+      "after_sha256": "cf0f696bb25036b257a50efb9ad82d41d00631f4e6a2a787bc83b2972676eaee",
+      "before_bytes": 5674,
+      "after_bytes": 5700,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/PRECONFIRMATION_ROLE_ORACLE_X4_HANDOFF_20261002.md",
+      "new": "docs/catalog/04-offline-research/PRECONFIRMATION_ROLE_ORACLE_X4_HANDOFF_20261002.md",
+      "before_sha256": "cad06adea8676de3ac052627afc3c756eba65091ded9e0410323cf10d1de8a9b",
+      "after_sha256": "9871cd486d58e59e7dfaf0d64367b7f34086f99230c312f9d145a2ebf7988888",
+      "before_bytes": 23888,
+      "after_bytes": 23979,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/PROJECT_STATUS_NEXT_STEPS_20261001.md",
+      "new": "docs/catalog/01-project/PROJECT_STATUS_NEXT_STEPS_20261001.md",
+      "before_sha256": "e9d644a3e0b69b3dad75d0aaa969f6e17f13526dd1be8fea4f4127fb71eb66bd",
+      "after_sha256": "41457f4fef3ffd803e54a3196fa54b9c501baaf0abdd4ba684d8c11993be384d",
+      "before_bytes": 164074,
+      "after_bytes": 165315,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/ROADMAP.md",
+      "new": "docs/catalog/01-project/ROADMAP.md",
+      "before_sha256": "62a67f7cb5931a5fb44af62af9699e9a730505a370e0c06b0cf00fcd5aebf7b2",
+      "after_sha256": "f414dc0277b421e0ea40562dbe4e60565830edabb74decc931760c00708043c9",
+      "before_bytes": 6273,
+      "after_bytes": 6356,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_A_HANDOFF_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_A_HANDOFF_20261003.md",
+      "before_sha256": "3f6f49f3443524c6f63b7856d2409d01c198e2b7d8ab286daf8c0b85e938432c",
+      "after_sha256": "3f6f49f3443524c6f63b7856d2409d01c198e2b7d8ab286daf8c0b85e938432c",
+      "before_bytes": 4670,
+      "after_bytes": 4670,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_A_INDEPENDENT_HANDOFF_20261004.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_A_INDEPENDENT_HANDOFF_20261004.md",
+      "before_sha256": "70a8ee79164c2af7dc8e20b253c5024b257aaa5956207eb43cd88aa853c931e4",
+      "after_sha256": "70a8ee79164c2af7dc8e20b253c5024b257aaa5956207eb43cd88aa853c931e4",
+      "before_bytes": 3511,
+      "after_bytes": 3511,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_A_INDEPENDENT_RESULT_20261004.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_A_INDEPENDENT_RESULT_20261004.md",
+      "before_sha256": "b6dc9c28dc2ca774cefb375149ede26fca347b41f64ac24f40aa0f7c064262dc",
+      "after_sha256": "c585ff90e2a6ce198467b94311b05ae0cde0dabc8586f38e8e87422e078583c7",
+      "before_bytes": 8280,
+      "after_bytes": 8333,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_A_PACKAGE2_CONTROLLER_REVIEW_20261004.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_A_PACKAGE2_CONTROLLER_REVIEW_20261004.md",
+      "before_sha256": "0501b3e193b7cc3093517f5e064edcdc6021be0e539052211a6ec7b2af391b97",
+      "after_sha256": "b6159dfc6676030b5fecbeef26e61b524fd946bb5dbc85d7ee7cadeb99800177",
+      "before_bytes": 5951,
+      "after_bytes": 5989,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_A_PROTOCOL_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_A_PROTOCOL_20261003.md",
+      "before_sha256": "dd475a5270395f46fae28d5afb69ad9e9f93eb0017b137beaa1787ac18c1e5cf",
+      "after_sha256": "dd475a5270395f46fae28d5afb69ad9e9f93eb0017b137beaa1787ac18c1e5cf",
+      "before_bytes": 7406,
+      "after_bytes": 7406,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_A_RESULT_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_A_RESULT_20261003.md",
+      "before_sha256": "2960d78fcddcd80cbfaa07a36f5792f465f61a4ae2d05f61e170b3b05015c77f",
+      "after_sha256": "0ea407282d829dd62c34b15380592f2e2ed47f227b13a3f37341278fed432d7a",
+      "before_bytes": 13238,
+      "after_bytes": 13250,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_B_CONTRACT_REVIEW_20261004.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_B_CONTRACT_REVIEW_20261004.md",
+      "before_sha256": "e39b1fe97391ce7da2ab959831cd5f2b2ccb9864d5dc4648612b55ca20f2bc4d",
+      "after_sha256": "df9b739a2e42359aa69efa8fbd3be8d6a069d77a05e833efc05fe90d9af6b8a4",
+      "before_bytes": 22453,
+      "after_bytes": 22483,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_B_CONTROLLER_ACCEPTANCE_20261004.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_B_CONTROLLER_ACCEPTANCE_20261004.md",
+      "before_sha256": "cdc5014bc2ec60e000d88b11b88254015c5d38496d60923d5617174eb93470d9",
+      "after_sha256": "91fc656240bc7a69a06bc52221ba10f32db52a8ee1b6b1c38ba1c12c24b9caee",
+      "before_bytes": 6617,
+      "after_bytes": 6718,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_DECISION_SKIP_B_HANDOFF_20261004.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_DECISION_SKIP_B_HANDOFF_20261004.md",
+      "before_sha256": "0c7701d020e473e8688e1e46ad66ba163d9b416773f05dea549962aa20d11db0",
+      "after_sha256": "72d04b260f79b6bd93d5ec866c6dfdff3c0e2f83addb537babf8e46bc09fc30f",
+      "before_bytes": 3796,
+      "after_bytes": 3808,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_CONTROLLER_ACCEPTANCE_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_CONTROLLER_ACCEPTANCE_20261003.md",
+      "before_sha256": "9d849c1b2fcabcebf5950eba8c52b22c338d9e7ff733cb09f9547849342a69e5",
+      "after_sha256": "853d3155c58c06da65e9846be1b89800eabacc5a197782a24f952739f70a2037",
+      "before_bytes": 6967,
+      "after_bytes": 6973,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_HANDOFF_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_HANDOFF_20261003.md",
+      "before_sha256": "94862fca00465d856baae7ec9094e6effb68a99281798dd620e549fd8dbf1efe",
+      "after_sha256": "94862fca00465d856baae7ec9094e6effb68a99281798dd620e549fd8dbf1efe",
+      "before_bytes": 5123,
+      "after_bytes": 5123,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_PROTOCOL_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_PROTOCOL_20261003.md",
+      "before_sha256": "f4d01d59fa62d955216576e9c59aff15e0f27d76c63c30fe30259b0e63de0b51",
+      "after_sha256": "f4d01d59fa62d955216576e9c59aff15e0f27d76c63c30fe30259b0e63de0b51",
+      "before_bytes": 5984,
+      "after_bytes": 5984,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R1_CONTROLLER_ACCEPTANCE_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R1_CONTROLLER_ACCEPTANCE_20261003.md",
+      "before_sha256": "380403e3655e79260e1a88bc126e4f9849ca99bbb4ccd4c2d40dce9b800f1d36",
+      "after_sha256": "380403e3655e79260e1a88bc126e4f9849ca99bbb4ccd4c2d40dce9b800f1d36",
+      "before_bytes": 7757,
+      "after_bytes": 7757,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R1_HANDOFF_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R1_HANDOFF_20261003.md",
+      "before_sha256": "5971de0e07143dbee84f74650f9a6cac2452e4ef3569df3980f137cca3e574c0",
+      "after_sha256": "5971de0e07143dbee84f74650f9a6cac2452e4ef3569df3980f137cca3e574c0",
+      "before_bytes": 4030,
+      "after_bytes": 4030,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R1_PROTOCOL_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R1_PROTOCOL_20261003.md",
+      "before_sha256": "160f6ede076dd5507a32a0bbaf747229d4eb609f52bf093ea27b4134fcd4b442",
+      "after_sha256": "160f6ede076dd5507a32a0bbaf747229d4eb609f52bf093ea27b4134fcd4b442",
+      "before_bytes": 6286,
+      "after_bytes": 6286,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R1_RESULT_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R1_RESULT_20261003.md",
+      "before_sha256": "46f3ac59590f47d28fe3c5b359048704c77b95ce23e94361f2f94b3826aa640e",
+      "after_sha256": "46f3ac59590f47d28fe3c5b359048704c77b95ce23e94361f2f94b3826aa640e",
+      "before_bytes": 11094,
+      "after_bytes": 11094,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R2_CONTROLLER_ACCEPTANCE_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R2_CONTROLLER_ACCEPTANCE_20261003.md",
+      "before_sha256": "a34b92a5fd455fcc97cb1d445b7c94eac956f75b586eae3c54e8c7c512d38bf9",
+      "after_sha256": "a34b92a5fd455fcc97cb1d445b7c94eac956f75b586eae3c54e8c7c512d38bf9",
+      "before_bytes": 7598,
+      "after_bytes": 7598,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R2_HANDOFF_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R2_HANDOFF_20261003.md",
+      "before_sha256": "fd31c132a7ef6a201a4a26a7cb645c6656a013219c8e5e670f42fc4f573c4c8f",
+      "after_sha256": "fd31c132a7ef6a201a4a26a7cb645c6656a013219c8e5e670f42fc4f573c4c8f",
+      "before_bytes": 4281,
+      "after_bytes": 4281,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R2_PROTOCOL_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R2_PROTOCOL_20261003.md",
+      "before_sha256": "41fb0bc3275c05527128f76aafe522d5ed8513d4def24fa88d31c71b7d434683",
+      "after_sha256": "41fb0bc3275c05527128f76aafe522d5ed8513d4def24fa88d31c71b7d434683",
+      "before_bytes": 8471,
+      "after_bytes": 8471,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R2_RAW_ANALYSIS_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R2_RAW_ANALYSIS_20261003.md",
+      "before_sha256": "a8c8715c51ad40efe61c57860e32723a5a7d689c62ac62e1e443c6afa329c359",
+      "after_sha256": "a8c8715c51ad40efe61c57860e32723a5a7d689c62ac62e1e443c6afa329c359",
+      "before_bytes": 5115,
+      "after_bytes": 5115,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R2_RESULT_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R2_RESULT_20261003.md",
+      "before_sha256": "99b684d0918af8461218d41f088285aca1184b992ac2820cffd87507ab617048",
+      "after_sha256": "99b684d0918af8461218d41f088285aca1184b992ac2820cffd87507ab617048",
+      "before_bytes": 9719,
+      "after_bytes": 9719,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R3_CONTROLLER_ACCEPTANCE_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R3_CONTROLLER_ACCEPTANCE_20261003.md",
+      "before_sha256": "186e2fbb5c2f5b622557961096dd2f79676ac0751165113c8ef6d7451f8e3346",
+      "after_sha256": "186e2fbb5c2f5b622557961096dd2f79676ac0751165113c8ef6d7451f8e3346",
+      "before_bytes": 8052,
+      "after_bytes": 8052,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R3_HANDOFF_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R3_HANDOFF_20261003.md",
+      "before_sha256": "aac872d398020a7eafb6959a31b60685569ff18473437b5bcadd2eb1a8807372",
+      "after_sha256": "962cb3e469b0a5accfb4ce6088ff2763307ea3b02636218b91b6bc03629ae1fd",
+      "before_bytes": 6902,
+      "after_bytes": 6908,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R3_PROTOCOL_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R3_PROTOCOL_20261003.md",
+      "before_sha256": "7ed6f5a63c07f22cc1206f25409ac31c6246edf9a79f21daf19d6988c3d690cc",
+      "after_sha256": "7ed6f5a63c07f22cc1206f25409ac31c6246edf9a79f21daf19d6988c3d690cc",
+      "before_bytes": 7566,
+      "after_bytes": 7566,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_R3_RESULT_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_R3_RESULT_20261003.md",
+      "before_sha256": "7cb587b0b62e6a45e8f1f08432cba120469f84a876ce4c2726ab1ce5e737ebb6",
+      "after_sha256": "37bfdda8bab57b69034a54f415479f68f93479f7a168ca2fa11781e97fe84ac2",
+      "before_bytes": 12055,
+      "after_bytes": 12061,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/RUNTIME_X11_P_RESULT_20261003.md",
+      "new": "docs/catalog/05-runtime/RUNTIME_X11_P_RESULT_20261003.md",
+      "before_sha256": "7b17fed5dcb937df3aca630531a5a75339b3ade06a75a5910d61cd92e31c6b3e",
+      "after_sha256": "488ab94df8fbb65490bf56a00d287a13d06591bfeef87962a3959e5cd43c430c",
+      "before_bytes": 11306,
+      "after_bytes": 11318,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/THIRD_PARTY_NOTICES.md",
+      "new": "docs/catalog/08-licenses/THIRD_PARTY_NOTICES.md",
+      "before_sha256": "075759e34f67cbae7b048caf4e265d80a0c3d28cb028be0836d137d0d4430906",
+      "after_sha256": "38cdd8904ed681668bbd23c06754a59f09bcc6320645deba592790fe24498e51",
+      "before_bytes": 3737,
+      "after_bytes": 3757,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/TRACKING_COMPARISON_20260927.md",
+      "new": "docs/catalog/07-data-learning/TRACKING_COMPARISON_20260927.md",
+      "before_sha256": "4db737819d8f3ac3fb364b308f3cc0f9ac472cbdb0d3eca582f268c0486142e9",
+      "after_sha256": "12515d6344034bf578eaea8305fbcf810ae36789fd422acfaec94c9a91207a1a",
+      "before_bytes": 9951,
+      "after_bytes": 9983,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/TRACKING_REFERENCE_SOURCES_20260927.json",
+      "new": "docs/catalog/07-data-learning/TRACKING_REFERENCE_SOURCES_20260927.json",
+      "before_sha256": "55e91aced90ae5a3da9ad140bb01bc1dbfe16f0735d66a412ca5ad5370bb6f3c",
+      "after_sha256": "55e91aced90ae5a3da9ad140bb01bc1dbfe16f0735d66a412ca5ad5370bb6f3c",
+      "before_bytes": 5277,
+      "after_bytes": 5277,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/TRACKING_SEGMENTATION_EVIDENCE_20260927.json",
+      "new": "docs/catalog/07-data-learning/TRACKING_SEGMENTATION_EVIDENCE_20260927.json",
+      "before_sha256": "c9677d908583c685028621c1c800b3021ddc03905d682e01b0aff9642b39750c",
+      "after_sha256": "c9677d908583c685028621c1c800b3021ddc03905d682e01b0aff9642b39750c",
+      "before_bytes": 56112,
+      "after_bytes": 56112,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/VISION_DATASET_20260927.md",
+      "new": "docs/catalog/07-data-learning/VISION_DATASET_20260927.md",
+      "before_sha256": "1e2e7f1bde6697e46bb4be82178dcfc125379114d3a783dbaeb6bc1fa26009c9",
+      "after_sha256": "de50b33b8be324e44c8261707f8c168b483139fb2669d5375292b89c2e5777f2",
+      "before_bytes": 12937,
+      "after_bytes": 12969,
+      "navigation_updated": true
+    },
+    {
+      "old": "docs/X5_SCOPE_TIME_REPAIR_20261002.md",
+      "new": "docs/catalog/04-offline-research/X5_SCOPE_TIME_REPAIR_20261002.md",
+      "before_sha256": "bcfab65f58830c1e2a9a4696fb70382d96f47e468be90d970c23b0503fc481ca",
+      "after_sha256": "bcfab65f58830c1e2a9a4696fb70382d96f47e468be90d970c23b0503fc481ca",
+      "before_bytes": 12253,
+      "after_bytes": 12253,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/判定線形式.md",
+      "new": "docs/catalog/01-project/判定線形式.md",
+      "before_sha256": "65bb326afd29298986a30dd839edadec3a332179203147b1762ab05a4f697784",
+      "after_sha256": "65bb326afd29298986a30dd839edadec3a332179203147b1762ab05a4f697784",
+      "before_bytes": 5150,
+      "after_bytes": 5150,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/abseil.txt",
+      "new": "docs/catalog/08-licenses/third_party/abseil.txt",
+      "before_sha256": "c79a7fea0e3cac04cd43f20e7b648e5a0ff8fa5344e644b0ee09ca1162b62747",
+      "after_sha256": "c79a7fea0e3cac04cd43f20e7b648e5a0ff8fa5344e644b0ee09ca1162b62747",
+      "before_bytes": 11361,
+      "after_bytes": 11361,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/android-native-app-glue.txt",
+      "new": "docs/catalog/08-licenses/third_party/android-native-app-glue.txt",
+      "before_sha256": "396e2d75715e8b4d1029ded55ae92832c8ab9c58148969653d34931248739b95",
+      "after_sha256": "396e2d75715e8b4d1029ded55ae92832c8ab9c58148969653d34931248739b95",
+      "before_bytes": 577,
+      "after_bytes": 577,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/c-ares.txt",
+      "new": "docs/catalog/08-licenses/third_party/c-ares.txt",
+      "before_sha256": "460f5e768fda3752ca2169a95df062578a10fb126bfd65f3b9b1a1bed2f84807",
+      "after_sha256": "460f5e768fda3752ca2169a95df062578a10fb126bfd65f3b9b1a1bed2f84807",
+      "before_bytes": 1211,
+      "after_bytes": 1211,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/cli11.txt",
+      "new": "docs/catalog/08-licenses/third_party/cli11.txt",
+      "before_sha256": "cfc76368aef8f51868fa1cda6bcfa26e583406a4cf8e48e725e7624df24d8855",
+      "after_sha256": "cfc76368aef8f51868fa1cda6bcfa26e583406a4cf8e48e725e7624df24d8855",
+      "before_bytes": 1588,
+      "after_bytes": 1588,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/ffmpeg.txt",
+      "new": "docs/catalog/08-licenses/third_party/ffmpeg.txt",
+      "before_sha256": "8ae6aaeb33e41be956ff8b2e696ab44a06b4181334ec8b1d04b669652ebe353a",
+      "after_sha256": "8ae6aaeb33e41be956ff8b2e696ab44a06b4181334ec8b1d04b669652ebe353a",
+      "before_bytes": 31536,
+      "after_bytes": 31536,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/grpc.txt",
+      "new": "docs/catalog/08-licenses/third_party/grpc.txt",
+      "before_sha256": "58c86a3f2b5cca0ebdf9ed3e7f4e6dc38e3b38796d8c3dc92064c62a4e39d0dd",
+      "after_sha256": "58c86a3f2b5cca0ebdf9ed3e7f4e6dc38e3b38796d8c3dc92064c62a4e39d0dd",
+      "before_bytes": 30191,
+      "after_bytes": 30191,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/gtest.txt",
+      "new": "docs/catalog/08-licenses/third_party/gtest.txt",
+      "before_sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138",
+      "after_sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138",
+      "before_bytes": 1475,
+      "after_bytes": 1475,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/nlohmann-json.txt",
+      "new": "docs/catalog/08-licenses/third_party/nlohmann-json.txt",
+      "before_sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603",
+      "after_sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603",
+      "before_bytes": 1076,
+      "after_bytes": 1076,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/openssl.txt",
+      "new": "docs/catalog/08-licenses/third_party/openssl.txt",
+      "before_sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+      "after_sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+      "before_bytes": 10175,
+      "after_bytes": 10175,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/protobuf.txt",
+      "new": "docs/catalog/08-licenses/third_party/protobuf.txt",
+      "before_sha256": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d",
+      "after_sha256": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d",
+      "before_bytes": 1732,
+      "after_bytes": 1732,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/re2.txt",
+      "new": "docs/catalog/08-licenses/third_party/re2.txt",
+      "before_sha256": "6040cda75d90b1738292a631d89934c411ef7ffd543c4d6a1b7edfc8edf29449",
+      "after_sha256": "6040cda75d90b1738292a631d89934c411ef7ffd543c4d6a1b7edfc8edf29449",
+      "before_bytes": 1558,
+      "after_bytes": 1558,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/scrcpy.txt",
+      "new": "docs/catalog/08-licenses/third_party/scrcpy.txt",
+      "before_sha256": "01c12035bf35af37241298dc7ad538eb2a07e5c940437bc6876feeaa9d1951d0",
+      "after_sha256": "01c12035bf35af37241298dc7ad538eb2a07e5c940437bc6876feeaa9d1951d0",
+      "before_bytes": 11387,
+      "after_bytes": 11387,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/utf8-range.txt",
+      "new": "docs/catalog/08-licenses/third_party/utf8-range.txt",
+      "before_sha256": "02de69b64fc36d9e938f418e52723e42f0b2b226d58a9cb3c8dcbdf7059f5074",
+      "after_sha256": "02de69b64fc36d9e938f418e52723e42f0b2b226d58a9cb3c8dcbdf7059f5074",
+      "before_bytes": 1091,
+      "after_bytes": 1091,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/vcpkg-cmake-config.txt",
+      "new": "docs/catalog/08-licenses/third_party/vcpkg-cmake-config.txt",
+      "before_sha256": "04b60f99a43bfd7fefdc8364b24aac704a2160cef969b75ba6a38b62dc4c4b70",
+      "after_sha256": "04b60f99a43bfd7fefdc8364b24aac704a2160cef969b75ba6a38b62dc4c4b70",
+      "before_bytes": 1096,
+      "after_bytes": 1096,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/vcpkg-cmake-get-vars.txt",
+      "new": "docs/catalog/08-licenses/third_party/vcpkg-cmake-get-vars.txt",
+      "before_sha256": "1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460",
+      "after_sha256": "1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460",
+      "before_bytes": 1073,
+      "after_bytes": 1073,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/vcpkg-cmake.txt",
+      "new": "docs/catalog/08-licenses/third_party/vcpkg-cmake.txt",
+      "before_sha256": "1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460",
+      "after_sha256": "1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460",
+      "before_bytes": 1073,
+      "after_bytes": 1073,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/vcpkg.txt",
+      "new": "docs/catalog/08-licenses/third_party/vcpkg.txt",
+      "before_sha256": "1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460",
+      "after_sha256": "1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460",
+      "before_bytes": 1073,
+      "after_bytes": 1073,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/zlib.txt",
+      "new": "docs/catalog/08-licenses/third_party/zlib.txt",
+      "before_sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+      "after_sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+      "before_bytes": 1002,
+      "after_bytes": 1002,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/learning/PyTorch-LICENSE.txt",
+      "new": "docs/catalog/08-licenses/third_party/learning/PyTorch-LICENSE.txt",
+      "before_sha256": "3a1bf20ba0b5acaf4a0c5f82048af8fb1cb371d1c6d38828ccfc6e6900e55d0f",
+      "after_sha256": "3a1bf20ba0b5acaf4a0c5f82048af8fb1cb371d1c6d38828ccfc6e6900e55d0f",
+      "before_bytes": 3548,
+      "after_bytes": 3548,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/tracking/ByteTrack-LICENSE.txt",
+      "new": "docs/catalog/08-licenses/third_party/tracking/ByteTrack-LICENSE.txt",
+      "before_sha256": "d55e22251df27e2011d431efdd7478e03771db5f5d81dcca45f59072fa0844e8",
+      "after_sha256": "d55e22251df27e2011d431efdd7478e03771db5f5d81dcca45f59072fa0844e8",
+      "before_bytes": 1088,
+      "after_bytes": 1088,
+      "navigation_updated": false
+    },
+    {
+      "old": "docs/third_party/tracking/OC-SORT-LICENSE.txt",
+      "new": "docs/catalog/08-licenses/third_party/tracking/OC-SORT-LICENSE.txt",
+      "before_sha256": "d55e22251df27e2011d431efdd7478e03771db5f5d81dcca45f59072fa0844e8",
+      "after_sha256": "d55e22251df27e2011d431efdd7478e03771db5f5d81dcca45f59072fa0844e8",
+      "before_bytes": 1088,
+      "after_bytes": 1088,
+      "navigation_updated": false
+    }
+  ],
+  "historical_receipts_rewritten": false,
+  "development_executed": false,
+  "verification": {
+    "moved_files_checked": 141,
+    "local_links_checked": 953,
+    "missing_links": 0,
+    "remaining_original_paths": 0
+  }
+}

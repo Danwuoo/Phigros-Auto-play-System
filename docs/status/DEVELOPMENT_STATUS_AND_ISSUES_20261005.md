@@ -14,7 +14,7 @@
 - C36h tint1 是 behavioural／experimental baseline；最近保存的 Dlyrotz IN 結果仍 M77，不能以離線工具進展宣稱 Miss 改善。
 - suppression OFF；X10d-P 沒有混入 BVI；X12 仍 not-ready。模型只供離線研究。
 
-原始逐曲入口：[Legacy 總帳](../LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)、[逐曲 JSON](../LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)。較早的 [R2D 盤點](../LEGACY_DEVELOPMENT_INVENTORY_AND_R2D_ACCEPTANCE_20261005.md)可看長期脈絡；其中當時暫停與派送範圍是歷史，當前暫停以本頁及使用者最新指示為準。
+原始逐曲入口：[Legacy 總帳](../catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)、[逐曲 JSON](../catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)。較早的 [R2D 盤點](../catalog/01-project/LEGACY_DEVELOPMENT_INVENTORY_AND_R2D_ACCEPTANCE_20261005.md)可看長期脈絡；其中當時暫停與派送範圍是歷史，當前暫停以本頁及使用者最新指示為準。
 
 ## 2. 已經開發了甚麼
 
@@ -30,7 +30,7 @@
 | 收據與程序控制 | 共享檔案交易、精確輸出根、durable STOP、PID／creation／image／Job membership、同一期限清理及 identity 交接已有實作；R2F control 三真控制通過 | 任意新 wrapper、root 綁定、工具鏈或候選也已驗；全部 managed／system DLL closure 已採集 |
 | 成本／A／B | X11-P/R1/R2/R3 有工程成果與負結果；A 有 reader／checker 工作，B 量測契約設計審查通過 | A checker 獨立驗收完成、193 skip 因果已知、B 已實作、X12 ready |
 
-主要參考：[架構](../ARCHITECTURE.md)、[冷開發結果](../COLD_DEVELOPMENT_RESULT_20260929.md)、[X1 修補交接](../C36H_CONTACT_REPLAY_REPAIR_20261002.md)、[P 總控驗收](../PENDING_CANCEL_X10D_P_CONTROLLER_ACCEPTANCE_20261003.md)、[O 總控驗收](../HOLD_OWNERSHIP_X10D_O_CONTROLLER_ACCEPTANCE_20261004.md)、[4R 驗收](../HOLD_OWNERSHIP_X10D_O_4R_CONTROLLER_ACCEPTANCE_20261004.md)、[R1 驗收](../HOLD_OWNERSHIP_X10D_O_4I_R1_CONTROLLER_ACCEPTANCE_20261005.md)、[B 設計驗收](../RUNTIME_DECISION_SKIP_B_CONTROLLER_ACCEPTANCE_20261004.md)。
+主要參考：[架構](../catalog/01-project/ARCHITECTURE.md)、[冷開發結果](../catalog/04-offline-research/COLD_DEVELOPMENT_RESULT_20260929.md)、[X1 修補交接](../catalog/04-offline-research/C36H_CONTACT_REPLAY_REPAIR_20261002.md)、[P 總控驗收](../catalog/04-offline-research/PENDING_CANCEL_X10D_P_CONTROLLER_ACCEPTANCE_20261003.md)、[O 總控驗收](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_CONTROLLER_ACCEPTANCE_20261004.md)、[4R 驗收](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_4R_CONTROLLER_ACCEPTANCE_20261004.md)、[R1 驗收](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_4I_R1_CONTROLLER_ACCEPTANCE_20261005.md)、[B 設計驗收](../catalog/05-runtime/RUNTIME_DECISION_SKIP_B_CONTROLLER_ACCEPTANCE_20261004.md)。
 
 ## 3. 最近工作包時間線
 
@@ -53,9 +53,9 @@
 
 原始結果及交接：
 
-- [R2E](../HOLD_OWNERSHIP_X10D_O_BVI_R2E_RESULT_20261005.md)／[R2F-01](../HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESULT_20261005.md)。
-- [resume-02](../HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESUME_RESULT_20261005.md)／[control-03](../HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_RESULT_20261005.md)。
-- [最新 BUILD 結果](../HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[BUILD 交接](../HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)。
+- [R2E](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2E_RESULT_20261005.md)／[R2F-01](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESULT_20261005.md)。
+- [resume-02](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_RESUME_RESULT_20261005.md)／[control-03](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_RESULT_20261005.md)。
+- [最新 BUILD 結果](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[BUILD 交接](../catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)。
 
 ## 4. 問題清單與判定
 
@@ -117,6 +117,6 @@
 
 ## 8. 文件整理方式與證據限制
 
-本次盤點前 `/docs` 共141檔：根目錄120檔、第三方授權21檔。依主題建立八個分類索引，原文件各歸一類，另加[統一入口](../README.md)。保留原141檔的路徑與內容，因為既有收據綁定path／bytes／SHA，且原Markdown互有相對引用；不搬移、不改寫、不刪除原失敗紀錄。
+本次盤點前 `/docs` 共141檔：根目錄120檔、第三方授權21檔。前次只建立八個分類索引；本次依使用者要求把原141份文件實際搬入分類資料夾，另有[統一入口](../README.md)。Markdown相對連結同步更新；歷史收據中的path／bytes／SHA保留當時值，新舊路徑與本次SHA另列[搬移核驗](DOCUMENT_RELOCATION_20261005.md)，不將文件搬移當作產品重新驗收。
 
 較早文件中的「最新」「已授權」「續派」「O未開始」依文件時點解讀；本頁是停止開發後的現況入口，不把歷史文件改寫成新狀態。分類索引不是重新技術驗收。總控前一輪獨立核最新包4134檔／4193引用0不符；本輪另保護原631個Git可見檔及141份docs，核新索引覆蓋與連結，詳[整理收據](../../measurements/documentation-organization-20261005/receipt.json)。沒有重新執行任何候選、正式程序控制或全量raw分析。
