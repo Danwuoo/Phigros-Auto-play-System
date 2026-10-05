@@ -1,0 +1,9 @@
+--- research/x10d_o_bvi_build/bvi.hpp	2026-10-05 19:31:49.350006456 +0800
++++ research/bvi_cold_v2/bvi.hpp	2026-10-05 22:54:41.971568096 +0800
+@@ -1,4 +1,6 @@
+ #pragma once
++// Isolated cold v2 candidate, derived from research/x10d_o_bvi_build/bvi.hpp
++// at acb27fdb095b82253ef9388eab52948a59663d02. Not a production integration.
+ #include <array>
+ #include <cstdint>
+ #include <span>

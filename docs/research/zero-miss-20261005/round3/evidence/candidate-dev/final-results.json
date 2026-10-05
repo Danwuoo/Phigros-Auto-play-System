@@ -1,0 +1,546 @@
+{
+  "adopted": false,
+  "checks": [
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-496/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-496/right",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-496/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "visible-end-496/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-496/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "visible-end-496/same-contact",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-500/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-500/right",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-500/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "visible-end-500/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-500/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "visible-end-500/same-contact",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-504/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-504/right",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-504/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "visible-end-504/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "visible-end-504/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "visible-end-504/same-contact",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "white-line-no-rails/left",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "white-line-no-rails/right",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "white-line-no-rails/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "white-line-no-rails/valid",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "white-line-no-rails/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "white-line-no-rails/same-contact",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "rail-pixels-1/left",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "rail-pixels-1/right",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "rail-pixels-1/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "rail-pixels-1/valid",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "rail-pixels-1/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "rail-pixels-1/same-contact",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "rail-pixels-2/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "rail-pixels-2/right",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "rail-pixels-2/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "rail-pixels-2/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "rail-pixels-2/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "rail-pixels-2/same-contact",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "two-isolated-rail-pixels/left",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "two-isolated-rail-pixels/right",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "two-isolated-rail-pixels/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "two-isolated-rail-pixels/valid",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "two-isolated-rail-pixels/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "two-isolated-rail-pixels/same-contact",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "short-body-long-rails/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "short-body-long-rails/right",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "short-body-long-rails/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "short-body-long-rails/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "short-body-long-rails/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "short-body-long-rails/same-contact",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "short-body-two-pixel-rails/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "short-body-two-pixel-rails/right",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "short-body-two-pixel-rails/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "short-body-two-pixel-rails/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "short-body-two-pixel-rails/move",
+      "pass": true
+    },
+    {
+      "actual": 4,
+      "expected": 4,
+      "name": "short-body-two-pixel-rails/same-contact",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "single-inner-flank/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "single-inner-flank/right",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "single-inner-flank/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "single-inner-flank/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "opaque-inner-band/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "opaque-inner-band/right",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "opaque-inner-band/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "opaque-inner-band/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "no-outer-black/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "no-outer-black/right",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "no-outer-black/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "no-outer-black/valid",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "all-inner-witnesses-masked/left",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "all-inner-witnesses-masked/right",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "all-inner-witnesses-masked/cap",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "all-inner-witnesses-masked/valid",
+      "pass": true
+    },
+    {
+      "actual": 3,
+      "expected": 3,
+      "name": "new-entry/independent",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "new-entry/usable",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "new-entry/down",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "new-entry/not-move",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "unknown/no-down",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "unknown/no-move",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "unknown/release",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "completed/no-down",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "completed/no-move",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "completed/persists",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "deadline/no-move",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "deadline/release",
+      "pass": true
+    },
+    {
+      "actual": 1,
+      "expected": 1,
+      "name": "duplicate-rgb/independent",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "duplicate-rgb/current-move",
+      "pass": true
+    },
+    {
+      "actual": 1,
+      "expected": 1,
+      "name": "new-background/independent",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "new-background/current-move",
+      "pass": true
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "original-union/ambiguous",
+      "pass": true
+    },
+    {
+      "actual": false,
+      "expected": false,
+      "name": "original-union/no-move",
+      "pass": true
+    },
+    {
+      "ambiguous": true,
+      "front_end": true,
+      "move": false,
+      "name": "true-cap-union/decision-only",
+      "status": "unresolved-relation-policy"
+    }
+  ],
+  "failed_assertions": 0,
+  "metadata_bytes": 185904,
+  "physical_human_gold": 0,
+  "probes_max": 410653,
+  "schema": "bvi.cold.v2.author-selfcheck.v1",
+  "touch_backend": false
+}

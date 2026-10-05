@@ -1,0 +1,57 @@
+{
+  "schema": "bvi.contract-v2.validation.v1",
+  "cases": 48,
+  "assertions": 339,
+  "baseline_failed": 23,
+  "p1_failed": 5,
+  "p1_1_failed": 4,
+  "final_release_failed": 0,
+  "final_debug_failed": 0,
+  "final_sanitizers_failed": 0,
+  "final_json_equal": true,
+  "categories": {
+    "ABI_static_bound": {
+      "assertions": 1,
+      "cases": 1,
+      "failed_assertions": 0
+    },
+    "actual_API_capacity": {
+      "assertions": 34,
+      "cases": 5,
+      "failed_assertions": 0
+    },
+    "ambiguous_projection": {
+      "assertions": 27,
+      "cases": 3,
+      "failed_assertions": 0
+    },
+    "capacity_helper_only": {
+      "assertions": 4,
+      "cases": 4,
+      "failed_assertions": 0
+    },
+    "eligibility_positive_reset_and_receipt": {
+      "assertions": 74,
+      "cases": 8,
+      "failed_assertions": 0
+    },
+    "merge_correspondence": {
+      "assertions": 17,
+      "cases": 4,
+      "failed_assertions": 0
+    },
+    "rails_and_endpoints": {
+      "assertions": 70,
+      "cases": 15,
+      "failed_assertions": 0
+    },
+    "typed_invalid_payload": {
+      "assertions": 112,
+      "cases": 8,
+      "failed_assertions": 0
+    }
+  },
+  "legacy_raw_expectations_changed": false,
+  "projection_formal_integration": false,
+  "LSan_enabled": false
+}

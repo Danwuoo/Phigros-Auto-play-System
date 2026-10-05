@@ -1,0 +1,7 @@
+/tmp/phigros-bvi-cold-v2.27oyzd/bvi.cpp: In function ‘bvi::Constraints bvi::constrain(const Observation&, const Guard&)’:
+/tmp/phigros-bvi-cold-v2.27oyzd/bvi.cpp:129:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  129 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |  ^~
+/tmp/phigros-bvi-cold-v2.27oyzd/bvi.cpp:129:71: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  129 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |                                                                       ^~~~~~

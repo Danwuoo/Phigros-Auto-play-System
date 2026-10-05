@@ -1,0 +1,23 @@
+--- docs/research/zero-miss-20261005/round3/evidence/candidate-dev/p1-source/bvi.cpp	2026-10-05 23:03:57.431449374 +0800
++++ research/bvi_cold_v2/bvi.cpp	2026-10-05 23:03:59.798718807 +0800
+@@ -57,7 +57,8 @@
+    if(both>=8&&!railLeft&&!railRight)d.body=Support::supported;
+    d.measured_depth=first>=0?last-first:0;d.rear=add(q.front,mul(nv,-q.depth));
+    // Within four current pixels, require separate bilateral blue and black
+-   // witnesses. White line masks can remove a witness, never supply its color.
++   // witnesses. Actual blue/black pixels remain evidence even inside the
++   // conservative geometric line mask; white never supplies either color.
+    // Search both sides: a fixed outer +4 can hit the line just as inner -4 can.
+    auto endpoint=[&](Point e,int direction){
+     bool inside=false,outside=false;
+@@ -67,8 +68,8 @@
+      auto alp=add(after,mul(tu,-.35*q.width)),arp=add(after,mul(tu,.35*q.width));
+      auto bl=pixel(f,blp,out.probes),br=pixel(f,brp,out.probes);
+      auto al=pixel(f,alp,out.probes),ar=pixel(f,arp,out.probes);
+-     inside|=bl.blue()&&br.blue()&&!masked(pixel_center(blp),lines)&&!masked(pixel_center(brp),lines);
+-     outside|=al.black()&&ar.black()&&!masked(pixel_center(alp),lines)&&!masked(pixel_center(arp),lines);
++     inside|=bl.blue()&&br.blue();
++     outside|=al.black()&&ar.black();
+     }
+     return inside&&outside&&d.left&&d.right;
+    };

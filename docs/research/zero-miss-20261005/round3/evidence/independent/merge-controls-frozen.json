@@ -1,0 +1,14 @@
+{
+  "schema": "bvi-independent-merge-controls-v1",
+  "freeze_recorded_utc": "2026-10-05T14:58:00Z",
+  "reason": "Additional controls requested after frozen 31-case review found true-rail union ambiguity suppressed by a visible current endpoint. Original 31 cases remain unchanged.",
+  "candidate_examined_before_control_freeze": "550efdff2a96602d634cad7b4f5617ff4584c380569bb5d6aa1bc0ac665a9c46",
+  "rules": "Two distinct visible prior endpoint/extents must be distinguished from repeated entries for identical geometric observations. These controls are separate from the original 31-case denominator and do not require physical-owner gold.",
+  "cases": [
+    {"id":"G01_single_legal_continuation","class":"merge_action_control","expect":{"ambiguous":false,"move":true}},
+    {"id":"G02_two_holds_still_separate","class":"merge_action_control","expect":{"all_ambiguous":false,"move":true}},
+    {"id":"G03_union_contains_one_prior_endpoint","class":"merge_action_control","expect":{"ambiguous":false,"move":true}},
+    {"id":"G04_duplicate_prior_ROI","class":"duplicate_representation_control","expect":{"ambiguous":false,"move":true},"note":"Duplicate identical legal Query values over the same current pixels are one geometric observation, not proof of two distinct extents. Public API presently imposes no uniqueness precondition. Failure may be pre-existing nearest-match tie behavior; report separately from merge patch regression."}
+  ],
+  "denominator_policy": "Additional controls are reported as separate classes; never folded into original frozen 31 cases. Expected values remain fixed regardless of candidate output."
+}

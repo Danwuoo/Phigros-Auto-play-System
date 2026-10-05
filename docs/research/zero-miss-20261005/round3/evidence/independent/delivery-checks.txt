@@ -1,0 +1,15 @@
+Independent review final delivery checks
+docs/research/zero-miss-20261005/round3/evidence/independent/expectations-frozen.json: OK
+docs/research/zero-miss-20261005/round3/evidence/independent/merge-controls-frozen.json: OK
+link_check=0
+runner_syntax=0
+diff_check=0
+{
+  "failed_assertions": 2,
+  "decision_count": 4,
+  "retained_failure_cases": [
+    "G04_duplicate_prior_ROI"
+  ],
+  "probe_max": 410690
+}
+evidence_files=113 bytes_before_delivery_manifest=474304

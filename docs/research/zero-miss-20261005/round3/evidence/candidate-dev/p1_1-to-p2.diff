@@ -1,0 +1,12 @@
+--- docs/research/zero-miss-20261005/round3/evidence/candidate-dev/p1_1-source/bvi.cpp	2026-10-05 23:04:00.256697637 +0800
++++ research/bvi_cold_v2/bvi.cpp	2026-10-05 23:04:02.322767160 +0800
+@@ -106,7 +106,8 @@
+   };
+   for(std::size_t h=0;h<size_;++h){const auto&s=history_[h];std::array<std::pair<double,std::size_t>,128>cost{};std::size_t num=0,contained=0;
+    for(std::size_t j=0;j<s.count;++j){double c=distance(d,s.parts[j]);if(c<=128)cost[num++]={c,j};if(contains(d,s.parts[j])&&s.parts[j].front_end)contained++;}
+-   std::sort(cost.begin(),cost.begin()+num);if(contained>=2&&!d.front_end){r.ambiguous=true;maxLinks=2;}
++   // A current cap does not resolve multiple earlier endpoint observations.
++   std::sort(cost.begin(),cost.begin()+num);if(contained>=2){r.ambiguous=true;maxLinks=2;}
+    if(num){bool tie=num>1&&cost[1].first-cost[0].first<=4;if(tie){r.ambiguous=true;maxLinks=std::max<std::size_t>(maxLinks,2);}else{maxLinks=std::max<std::size_t>(maxLinks,1);endpoint(s.parts[cost[0].second],s.key.capture);}}
+   }
+   endpoint(d,key.capture);

@@ -1,0 +1,8 @@
+96d536c5b5e9e01e359da2ead01596428b46f4265f28ba295ee9d9b4297650c5  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json
+90f8680c4362d07a718ac2bb7142b37396871b7ffd81523a06ddd8a685ec5425  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json
+ce69f19d5c488e780c7d1cb7785601d3e3f80750b134440c636dda20f19ff8c3  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json
+45ab5f3d97c3513fb6836211801922a9d86863de273739e35b5e4263b7a6c0a1  /workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json
+8da656609b424eda46633145728dd485d12bfb25e83f1850235a527891e28f46  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json
+4985ec8aac5d89f0863125daa6be483b26c1b200b00f5bbcb23fc691cc517f2a  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json
+232bb808e0e21b3b25e5e85995f8d0333597f446b8f867993535b84b40543e81  /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v2/bvi.cpp
+1426a4b245988c8186f665444f0ddbc9f5f5f93c37d20e513fc77ad5c8bb043a  /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v2/bvi.hpp

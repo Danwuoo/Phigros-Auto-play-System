@@ -1,0 +1,1 @@
+timeout 120 g++ -std=c++20 -Wall -Wextra -Wpedantic -O2 -I /tmp/phigros-bvi-round2-deps -I research/x10d_o_bvi_build -DBVI_HEADER=\"../x10d_o_bvi_build/bvi.hpp\" research/bvi_cold_v2/independent_tests.cpp research/x10d_o_bvi_build/bvi.cpp -o /tmp/bvi-independent.C7FevO/review 

@@ -1,0 +1,16 @@
+2026-10-05T15:04:32Z
+Linux 91ecebcfb8e5 6.18.44 #1 SMP Sat Sep 26 20:02:31 UTC 2026 x86_64 GNU/Linux
+g++ (Debian 14.2.0-19) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+acb27fdb095b82253ef9388eab52948a59663d02
+Implementation=candidate; configuration=sanitizers
+Native cold C++20 only; no production integration or device operations.
+Sanitizers use ASAN_OPTIONS=detect_leaks=0; no leak-freedom claim.
+232bb808e0e21b3b25e5e85995f8d0333597f446b8f867993535b84b40543e81  research/bvi_cold_v2/bvi.cpp
+1426a4b245988c8186f665444f0ddbc9f5f5f93c37d20e513fc77ad5c8bb043a  research/bvi_cold_v2/bvi.hpp
+918da6fa6b2e6d7882bf8f8a7d09da5806ff51b427d4a312cf7c516866a997ca  research/bvi_cold_v2/independent_tests.cpp
+b8691561d1c638af017f301c4b8460c094d1ec0a2e8e6b0b4b4159ccdfe86253  docs/research/zero-miss-20261005/round3/evidence/independent/expectations-frozen.json
+f2e1f3cac4e48fa851d6986291e4bd5b384d87f92c175d8b126cbd91580289cc  /tmp/phigros-bvi-round2-deps/nlohmann/json.hpp

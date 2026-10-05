@@ -1,12 +1,12 @@
 # 文件總目錄
 
-**最新範圍：2026-10-05 補件後第二輪雲端研究已完成；BVI完整冷契約實測尚未通過，正式功能開發與實機未恢復。**
+**最新範圍：2026-10-05 第三階段雲端冷測候選修補完成；原完整冷契約仍有43fail，尚未整合正式runtime或進實機。**
 
-先讀[補件後第二輪更新](research/zero-miss-20261005/round2/README.md)：隔離IO adapter後，356 layer-cases／3938 assertions有54失敗；Windows收據及單輪結算圖也已直接覆核。完整Windows build、真機與全曲驗收仍未成立。[首輪研究](research/zero-miss-20261005/README.md)及[原最小清單](research/zero-miss-20261005/IGNORED_INPUTS.md)保留當時狀態，補件已關閉的缺口以第二輪為準。較早[開發現況](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)仍為停止快照；歷史BUILD包沒有重開。
+先讀[第三階段修補](research/zero-miss-20261005/round3/README.md)：同一原oracle54→43fail、新契約339全過、獨立控制保留2個既存fail，並有完整before/after與限制。[第二輪](research/zero-miss-20261005/round2/README.md)保留首次完整suite負結果、Windows收據與結算圖覆核；[首輪](research/zero-miss-20261005/README.md)保留架構盤點。Windows、成本、真圖與全曲IN驗收仍未成立。較早[開發現況](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)為當時停止快照；歷史BUILD包沒有重開。
 
 ## 建議閱讀順序
 
-0. [10/5 補件後更新](research/zero-miss-20261005/round2/README.md)：完整冷測負結果、54項語義分類、直接收據/圖面覆核與下一步；[首輪](research/zero-miss-20261005/README.md)保留原四分支、Miss根因樹與全曲驗收設計。
+0. [10/5 第三階段修補](research/zero-miss-20261005/round3/README.md)：最小code、契約版本、正反例與全回歸；[第二輪](research/zero-miss-20261005/round2/README.md)是修補前54fail基準，[首輪](research/zero-miss-20261005/README.md)保留Miss根因樹及全曲验收設計。
 1. [目前開發現況與問題](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)：已有能力、逐包停止點、真實阻塞、剩餘驗收階段。
 2. [Chapter Legacy 目標與逐曲基準](catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)／[逐曲 JSON](catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)：IN 解鎖與 Miss=0 的產品分母與限制。
 3. [最新 BUILD 結果](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[交接](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)：新增診斷預驗18/20，真native前停止，原建置封裝仍未定位。

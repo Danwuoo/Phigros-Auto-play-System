@@ -1,0 +1,244 @@
+{
+  "case_count": 35,
+  "assertions": 79,
+  "failed_assertions": 2,
+  "denominators": {
+    "decision_only": {
+      "cases": 4,
+      "failed_cases": 0,
+      "passed_cases": 0,
+      "scored_cases": 0
+    },
+    "duplicate_representation_control": {
+      "cases": 1,
+      "failed_cases": 1,
+      "passed_cases": 0,
+      "scored_cases": 1
+    },
+    "legal_action_opportunity": {
+      "cases": 9,
+      "failed_cases": 0,
+      "passed_cases": 9,
+      "scored_cases": 9
+    },
+    "merge_action_control": {
+      "cases": 3,
+      "failed_cases": 0,
+      "passed_cases": 3,
+      "scored_cases": 3
+    },
+    "metamorphic": {
+      "cases": 3,
+      "failed_cases": 0,
+      "passed_cases": 3,
+      "scored_cases": 3
+    },
+    "observed_geometry": {
+      "cases": 1,
+      "failed_cases": 0,
+      "passed_cases": 1,
+      "scored_cases": 1
+    },
+    "safe_denial": {
+      "cases": 14,
+      "failed_cases": 0,
+      "passed_cases": 14,
+      "scored_cases": 14
+    }
+  },
+  "failures": [
+    {
+      "id": "G04_duplicate_prior_ROI",
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "ambiguous",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "ambiguous": false,
+            "body": "absent",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 0.0,
+            "rear_end": false,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 409610,
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "checks": [],
+      "class": "decision_only",
+      "id": "D01_stationary_tap_moving_line",
+      "pass": null
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "absent",
+            "contact": "absent",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": true,
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 0,
+            "line_unique": false,
+            "measured_depth": 1.0,
+            "rear_end": false,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 409675,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [],
+      "class": "decision_only",
+      "id": "D02_short_visible_depth_6",
+      "pass": null
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "absent",
+            "down": false,
+            "front": [
+              316.0,
+              505.0
+            ],
+            "front_end": true,
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 0,
+            "line_unique": false,
+            "measured_depth": 198.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410645,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [],
+      "class": "decision_only",
+      "id": "D03_oblique_contact",
+      "pass": null
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410145,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [],
+      "class": "decision_only",
+      "id": "D04_identical_observable_worlds",
+      "observational_output_equal": true,
+      "pass": null,
+      "physical_owner": null
+    }
+  ]
+}

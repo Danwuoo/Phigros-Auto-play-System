@@ -1,0 +1,93 @@
+{
+  "baseline": {
+    "action_opportunities": [
+      {
+        "id": "P01_true_rails_front_504",
+        "action": true
+      },
+      {
+        "id": "P02_true_rails_front_500",
+        "action": true
+      },
+      {
+        "id": "P04_translated_true",
+        "action": true
+      },
+      {
+        "id": "P05_rotate_together_025",
+        "action": true
+      },
+      {
+        "id": "P06_rotate_together_060",
+        "action": true
+      },
+      {
+        "id": "P07_short_visible_depth_16",
+        "action": true
+      },
+      {
+        "id": "P08_partial_line_overlay",
+        "action": true
+      },
+      {
+        "id": "S01_stationary_known_down",
+        "action": true
+      },
+      {
+        "id": "S04_three_distinct_endpoints",
+        "action": false
+      }
+    ],
+    "unsafe_actions": [
+      "N01_no_rails_crossing_line",
+      "N02_no_rails_front_line",
+      "N04_isolated_bilateral_dots",
+      "N05_unilateral_rail",
+      "N09_two_holds_union",
+      "N10_no_rails_translated",
+      "N11_no_rails_rotated"
+    ]
+  },
+  "candidate": {
+    "action_opportunities": [
+      {
+        "id": "P01_true_rails_front_504",
+        "action": true
+      },
+      {
+        "id": "P02_true_rails_front_500",
+        "action": true
+      },
+      {
+        "id": "P04_translated_true",
+        "action": true
+      },
+      {
+        "id": "P05_rotate_together_025",
+        "action": true
+      },
+      {
+        "id": "P06_rotate_together_060",
+        "action": true
+      },
+      {
+        "id": "P07_short_visible_depth_16",
+        "action": true
+      },
+      {
+        "id": "P08_partial_line_overlay",
+        "action": true
+      },
+      {
+        "id": "S01_stationary_known_down",
+        "action": true
+      },
+      {
+        "id": "S04_three_distinct_endpoints",
+        "action": true
+      }
+    ],
+    "unsafe_actions": []
+  },
+  "new_unsafe_actions": []
+}

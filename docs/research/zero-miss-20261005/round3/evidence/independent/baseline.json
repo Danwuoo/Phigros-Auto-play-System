@@ -1,0 +1,1856 @@
+{
+  "assertions": 71,
+  "case_count": 31,
+  "cases": [
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "bilateral_rails",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "front_end",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "P01_true_rails_front_504",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 97.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "bilateral_rails",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "P02_true_rails_front_500",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "absent",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": true,
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 0,
+            "line_unique": false,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410113,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "bilateral_rails",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "rear_end",
+          "pass": true
+        }
+      ],
+      "class": "observed_geometry",
+      "id": "P03_no_overlay",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              267.0,
+              443.0
+            ],
+            "front_end": false,
+            "hit": [
+              267.0,
+              439.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "bilateral_rails",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "front_end",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "P04_translated_true",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.9896158370181,
+              500.12435031315744
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 98.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "bilateral_rails",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "front_end",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "P05_rotate_together_025",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              322.25856989358016,
+              500.6986575403613
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 98.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "bilateral_rails",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "front_end",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "P06_rotate_together_060",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 16.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 409701,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "bilateral_rails",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "front_end",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "P07_short_visible_depth_16",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "bilateral_rails",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "front_end",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "P08_partial_line_overlay",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              450.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "front_end",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "bilateral_rails",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N01_no_rails_crossing_line",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 97.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "front_end",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "bilateral_rails",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N02_no_rails_front_line",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 2,
+            "line_unique": false,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410129,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "bilateral_rails",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N03_no_rails_two_crossing_lines",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "bilateral_rails",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N04_isolated_bilateral_dots",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "bilateral_rails",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N05_unilateral_rail",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "absent",
+            "contact": "absent",
+            "down": false,
+            "front": [
+              320.0,
+              501.0
+            ],
+            "front_end": false,
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 0,
+            "left": false,
+            "line_id": 0,
+            "line_unique": false,
+            "measured_depth": 0.0,
+            "rear_end": false,
+            "right": false,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 409631,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N06_fully_white_hidden_body",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": false,
+        "release": true,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N07_unknown_down",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": true,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "completed",
+          "pass": true
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N08_completed_up",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 2,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 147.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "probes": 410371,
+        "refresh": true,
+        "release": false,
+        "samples": 2
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "ambiguous",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N09_two_holds_union",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              267.0,
+              443.0
+            ],
+            "front_end": false,
+            "hit": [
+              267.0,
+              439.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "bilateral_rails",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N10_no_rails_translated",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.9896158370181,
+              500.12435031315744
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 98.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "bilateral_rails",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N11_no_rails_rotated",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "absent",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": true,
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 0,
+            "line_unique": false,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410113,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        }
+      ],
+      "class": "safe_denial",
+      "id": "N12_unique_line_missing",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              450.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              450.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          },
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              190.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              190.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410642,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "eligibility_invariant",
+          "pass": true
+        }
+      ],
+      "class": "metamorphic",
+      "id": "M01_region_order",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              530.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              470.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": false,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410129,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "eligibility_invariant",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "metamorphic",
+      "diagnostic_hit_equal": false,
+      "id": "M02_line_order_ambiguous",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "eligibility_invariant",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "class": "metamorphic",
+      "id": "M03_line_order_unique",
+      "pass": true
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 3
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "independent_eq_1",
+          "pass": false
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "S01_stationary_known_down",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "independent_eq_1",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "S02_stationary_never_executed",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "independent_eq_1",
+          "pass": false
+        }
+      ],
+      "class": "safe_denial",
+      "id": "S03_background_only_change",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 2,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "down",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "independent_eq_3",
+          "pass": false
+        }
+      ],
+      "class": "legal_action_opportunity",
+      "id": "S04_three_distinct_endpoints",
+      "pass": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "ambiguous": false,
+            "body": "absent",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 0.0,
+            "rear_end": false,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 409610,
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "checks": [],
+      "class": "decision_only",
+      "id": "D01_stationary_tap_moving_line",
+      "pass": null
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "absent",
+            "contact": "absent",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 0,
+            "line_unique": false,
+            "measured_depth": 1.0,
+            "rear_end": false,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 409651,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [],
+      "class": "decision_only",
+      "id": "D02_short_visible_depth_6",
+      "pass": null
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "absent",
+            "down": false,
+            "front": [
+              316.0,
+              505.0
+            ],
+            "front_end": true,
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 0,
+            "line_unique": false,
+            "measured_depth": 198.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410621,
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [],
+      "class": "decision_only",
+      "id": "D03_oblique_contact",
+      "pass": null
+    },
+    {
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": false,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "measured_depth": 100.0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410121,
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [],
+      "class": "decision_only",
+      "id": "D04_identical_observable_worlds",
+      "observational_output_equal": true,
+      "pass": null,
+      "physical_owner": null
+    }
+  ],
+  "denominators": {
+    "decision_only": {
+      "cases": 4,
+      "failed_cases": 0,
+      "passed_cases": 0,
+      "scored_cases": 0
+    },
+    "legal_action_opportunity": {
+      "cases": 9,
+      "failed_cases": 8,
+      "passed_cases": 1,
+      "scored_cases": 9
+    },
+    "metamorphic": {
+      "cases": 3,
+      "failed_cases": 0,
+      "passed_cases": 3,
+      "scored_cases": 3
+    },
+    "observed_geometry": {
+      "cases": 1,
+      "failed_cases": 0,
+      "passed_cases": 1,
+      "scored_cases": 1
+    },
+    "safe_denial": {
+      "cases": 14,
+      "failed_cases": 10,
+      "passed_cases": 4,
+      "scored_cases": 14
+    }
+  },
+  "expectation_file": "expectations-frozen.json",
+  "failed_assertions": 28,
+  "renderer": "independent C++20 integer-center rasterizer; no candidate/oracle renderer helpers",
+  "schema": "bvi-independent-review-result-v1"
+}

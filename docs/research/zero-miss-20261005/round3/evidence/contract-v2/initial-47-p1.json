@@ -1,0 +1,3765 @@
+{
+  "assertions": 321,
+  "cases": 47,
+  "categories": {
+    "ABI_static_bound": {
+      "assertions": 1,
+      "cases": 1,
+      "failed_assertions": 0
+    },
+    "actual_API_capacity": {
+      "assertions": 30,
+      "cases": 5,
+      "failed_assertions": 0
+    },
+    "ambiguous_projection": {
+      "assertions": 25,
+      "cases": 3,
+      "failed_assertions": 0
+    },
+    "capacity_helper_only": {
+      "assertions": 4,
+      "cases": 4,
+      "failed_assertions": 0
+    },
+    "eligibility_positive_reset_and_receipt": {
+      "assertions": 74,
+      "cases": 8,
+      "failed_assertions": 0
+    },
+    "merge_correspondence": {
+      "assertions": 17,
+      "cases": 4,
+      "failed_assertions": 4
+    },
+    "rails_and_endpoints": {
+      "assertions": 66,
+      "cases": 14,
+      "failed_assertions": 0
+    },
+    "typed_invalid_payload": {
+      "assertions": 104,
+      "cases": 8,
+      "failed_assertions": 0
+    }
+  },
+  "dynamic_probe_exhaustion_measured": false,
+  "failed_assertions": 4,
+  "legacy_ambiguous_comparator_repaired": false,
+  "legacy_expected_modified": false,
+  "legacy_invalid_adapter_repaired": false,
+  "new_projection_in_formal_owner": false,
+  "pending_decisions": [
+    {
+      "id": "effect-transparent-color",
+      "legacy_failures": 2,
+      "status": "pending_original_yellow_unchanged"
+    },
+    {
+      "id": "rotation-line-occlusion",
+      "legacy_failures": 7,
+      "status": "pending_original_flank_unchanged"
+    },
+    {
+      "id": "dynamic-probe-exhaustion",
+      "status": "not_measured_helper_only"
+    },
+    {
+      "id": "stationary-new-entry-dedup",
+      "status": "not_changed_no_threshold_reduction"
+    }
+  ],
+  "physical_human_gold": 0,
+  "rows": [
+    {
+      "actual": {
+        "count": 128,
+        "invalid": true,
+        "probes": 0
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "count_bound",
+          "pass": true
+        },
+        {
+          "actual": 129,
+          "expected": 129,
+          "field": "actual_query_count",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "actual_line_count",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "effective_body",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "API-129-queries",
+      "category": "actual_API_capacity",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "RGB_bytes": 1228800,
+        "actual_lines": 1,
+        "actual_queries": 129,
+        "declared_usage_passed_to_candidate": false
+      }
+    },
+    {
+      "actual": {
+        "count": 1,
+        "invalid": true,
+        "probes": 0
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "count_bound",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "actual_query_count",
+          "pass": true
+        },
+        {
+          "actual": 17,
+          "expected": 17,
+          "field": "actual_line_count",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "effective_body",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "API-17-lines",
+      "category": "actual_API_capacity",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "RGB_bytes": 1228800,
+        "actual_lines": 17,
+        "actual_queries": 1,
+        "declared_usage_passed_to_candidate": false
+      }
+    },
+    {
+      "actual": {
+        "count": 128,
+        "invalid": false,
+        "probes": 543360
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "count_bound",
+          "pass": true
+        },
+        {
+          "actual": 128,
+          "expected": 128,
+          "field": "actual_query_count",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "actual_line_count",
+          "pass": true
+        }
+      ],
+      "case": "API-128-queries",
+      "category": "actual_API_capacity",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "RGB_bytes": 1228800,
+        "actual_lines": 1,
+        "actual_queries": 128,
+        "declared_usage_passed_to_candidate": false
+      }
+    },
+    {
+      "actual": {
+        "count": 1,
+        "invalid": false,
+        "probes": 410765
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "count_bound",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "actual_query_count",
+          "pass": true
+        },
+        {
+          "actual": 16,
+          "expected": 16,
+          "field": "actual_line_count",
+          "pass": true
+        }
+      ],
+      "case": "API-16-lines",
+      "category": "actual_API_capacity",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "RGB_bytes": 1228800,
+        "actual_lines": 16,
+        "actual_queries": 1,
+        "declared_usage_passed_to_candidate": false
+      }
+    },
+    {
+      "actual": {
+        "count": 128,
+        "invalid": false,
+        "probes": 558720
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "count_bound",
+          "pass": true
+        },
+        {
+          "actual": 128,
+          "expected": 128,
+          "field": "actual_query_count",
+          "pass": true
+        },
+        {
+          "actual": 16,
+          "expected": 16,
+          "field": "actual_line_count",
+          "pass": true
+        }
+      ],
+      "case": "API-128-queries-16-lines",
+      "category": "actual_API_capacity",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "RGB_bytes": 1228800,
+        "actual_lines": 16,
+        "actual_queries": 128,
+        "declared_usage_passed_to_candidate": false
+      }
+    },
+    {
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "capacity_valid",
+          "pass": true
+        }
+      ],
+      "case": "HELPER-metadata-1MiB",
+      "category": "capacity_helper_only",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "dynamic_extract_executed": false,
+        "metadata": 1048576,
+        "probes": 0
+      }
+    },
+    {
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "capacity_valid",
+          "pass": true
+        }
+      ],
+      "case": "HELPER-metadata-1MiB-plus1",
+      "category": "capacity_helper_only",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "dynamic_extract_executed": false,
+        "metadata": 1048577,
+        "probes": 0
+      }
+    },
+    {
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "capacity_valid",
+          "pass": true
+        }
+      ],
+      "case": "HELPER-probes-limit",
+      "category": "capacity_helper_only",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "dynamic_extract_executed": false,
+        "metadata": 0,
+        "probes": 6291456
+      }
+    },
+    {
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "capacity_valid",
+          "pass": true
+        }
+      ],
+      "case": "HELPER-probes-plus1",
+      "category": "capacity_helper_only",
+      "contract": "C-V2-CAPACITY",
+      "input": {
+        "dynamic_extract_executed": false,
+        "metadata": 0,
+        "probes": 6291457
+      }
+    },
+    {
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "metadata_within_1MiB",
+          "pass": true
+        }
+      ],
+      "case": "ABI-static-metadata",
+      "category": "ABI_static_bound",
+      "contract": "C-V2-CAPACITY",
+      "metadata_bytes": 185904
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": false
+          }
+        ],
+        "reason": "source",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "raw_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "history_samples",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "TYPED-invalid-source",
+      "category": "typed_invalid_payload",
+      "contract": "C-V2-ELIGIBILITY",
+      "input": {
+        "actual_lines": 1,
+        "actual_queries": 1,
+        "dynamic_RGB_stress": false,
+        "expected_bytes": 1228800,
+        "measured_bytes": 1228800,
+        "metadata_helper": 185904,
+        "probe_helper": 0
+      },
+      "legacy_case": "V16-source"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": false
+          }
+        ],
+        "reason": "regions",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "raw_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "history_samples",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "TYPED-invalid-regions-overflow",
+      "category": "typed_invalid_payload",
+      "contract": "C-V2-ELIGIBILITY",
+      "input": {
+        "actual_lines": 1,
+        "actual_queries": 129,
+        "dynamic_RGB_stress": false,
+        "expected_bytes": 1228800,
+        "measured_bytes": 1228800,
+        "metadata_helper": 185904,
+        "probe_helper": 0
+      },
+      "legacy_case": "V16-regions-overflow"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": false
+          }
+        ],
+        "reason": "lines",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "raw_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "history_samples",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "TYPED-invalid-lines-overflow",
+      "category": "typed_invalid_payload",
+      "contract": "C-V2-ELIGIBILITY",
+      "input": {
+        "actual_lines": 17,
+        "actual_queries": 1,
+        "dynamic_RGB_stress": false,
+        "expected_bytes": 1228800,
+        "measured_bytes": 1228800,
+        "metadata_helper": 185904,
+        "probe_helper": 0
+      },
+      "legacy_case": "V16-lines-overflow"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": false
+          }
+        ],
+        "reason": "metadata_helper",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "raw_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "history_samples",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "TYPED-invalid-metadata-overflow",
+      "category": "typed_invalid_payload",
+      "contract": "C-V2-ELIGIBILITY",
+      "input": {
+        "actual_lines": 1,
+        "actual_queries": 1,
+        "dynamic_RGB_stress": false,
+        "expected_bytes": 1228800,
+        "measured_bytes": 1228800,
+        "metadata_helper": 1048577,
+        "probe_helper": 0
+      },
+      "legacy_case": "V16-metadata-overflow"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": false
+          }
+        ],
+        "reason": "probes_helper",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "raw_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "history_samples",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "TYPED-invalid-probes-overflow",
+      "category": "typed_invalid_payload",
+      "contract": "C-V2-ELIGIBILITY",
+      "input": {
+        "actual_lines": 1,
+        "actual_queries": 1,
+        "dynamic_RGB_stress": false,
+        "expected_bytes": 1228800,
+        "measured_bytes": 1228800,
+        "metadata_helper": 185904,
+        "probe_helper": 6291457
+      },
+      "legacy_case": "V16-probes-overflow"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": false
+          }
+        ],
+        "reason": "byte_count",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "raw_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "history_samples",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "TYPED-invalid-short-rgb",
+      "category": "typed_invalid_payload",
+      "contract": "C-V2-ELIGIBILITY",
+      "input": {
+        "actual_lines": 1,
+        "actual_queries": 1,
+        "dynamic_RGB_stress": false,
+        "expected_bytes": 1228800,
+        "measured_bytes": 1228799,
+        "metadata_helper": 185904,
+        "probe_helper": 0
+      },
+      "legacy_case": "V16-short-rgb"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": false
+          }
+        ],
+        "reason": "nonfinite_query",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "raw_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "history_samples",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "TYPED-invalid-nan",
+      "category": "typed_invalid_payload",
+      "contract": "C-V2-ELIGIBILITY",
+      "input": {
+        "actual_lines": 1,
+        "actual_queries": 1,
+        "dynamic_RGB_stress": false,
+        "expected_bytes": 1228800,
+        "measured_bytes": 1228800,
+        "metadata_helper": 185904,
+        "probe_helper": 0
+      },
+      "legacy_case": "V16-nan"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": false
+          }
+        ],
+        "reason": "nonfinite_query",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "raw_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "history_samples",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "TYPED-invalid-infinity",
+      "category": "typed_invalid_payload",
+      "contract": "C-V2-ELIGIBILITY",
+      "input": {
+        "actual_lines": 1,
+        "actual_queries": 1,
+        "dynamic_RGB_stress": false,
+        "expected_bytes": 1228800,
+        "measured_bytes": 1228800,
+        "metadata_helper": 185904,
+        "probe_helper": 0
+      },
+      "legacy_case": "V16-infinity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": true,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "context_invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "ELIGIBILITY-valid",
+      "category": "eligibility_positive_reset_and_receipt",
+      "contract": "C-V2-ELIGIBILITY",
+      "history_samples": 2
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": true,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "context changed",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "context_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "ELIGIBILITY-context",
+      "category": "eligibility_positive_reset_and_receipt",
+      "contract": "C-V2-ELIGIBILITY",
+      "history_samples": 0
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": true,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "clock/key invalid",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "context_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "ELIGIBILITY-future",
+      "category": "eligibility_positive_reset_and_receipt",
+      "contract": "C-V2-ELIGIBILITY",
+      "history_samples": 0
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": true,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": true,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "clock/key invalid",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "context_invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "ELIGIBILITY-nonmonotonic",
+      "category": "eligibility_positive_reset_and_receipt",
+      "contract": "C-V2-ELIGIBILITY",
+      "history_samples": 0
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "adjacent gap reset",
+        "refresh": true,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "context_invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "release",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "gap_history_reset_then_current",
+          "pass": true
+        }
+      ],
+      "case": "ELIGIBILITY-ordinary-gap",
+      "category": "eligibility_positive_reset_and_receipt",
+      "contract": "C-V2-ELIGIBILITY",
+      "history_samples": 1
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": true,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "context_invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "ELIGIBILITY-expired-plan",
+      "category": "eligibility_positive_reset_and_receipt",
+      "contract": "C-V2-ELIGIBILITY",
+      "history_samples": 2
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": false,
+        "release": true
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "context_invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "case": "ELIGIBILITY-unknown-down",
+      "category": "eligibility_positive_reset_and_receipt",
+      "contract": "C-V2-ELIGIBILITY",
+      "history_samples": 2
+    },
+    {
+      "actual": {
+        "completed": true,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": false,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "visible_body_valid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "context_invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "action_eligible_body",
+          "pass": true
+        },
+        {
+          "actual": [
+            320.0,
+            500.0
+          ],
+          "expected": [
+            320.0,
+            500.0
+          ],
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "release",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "completed_persists",
+          "pass": true
+        }
+      ],
+      "case": "ELIGIBILITY-completed",
+      "category": "eligibility_positive_reset_and_receipt",
+      "contract": "C-V2-ELIGIBILITY",
+      "history_samples": 2
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": null,
+            "line_unique": false,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "raw_line_id": 8,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": false,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "line_unique",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "release",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "contact_id",
+          "pass": true
+        }
+      ],
+      "case": "AMBIGUOUS-forward",
+      "category": "ambiguous_projection",
+      "contract": "C-V2-AMBIGUOUS"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": null,
+            "line_unique": false,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              308.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": false,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_body_claim",
+          "pass": true
+        },
+        {
+          "actual": "supported",
+          "expected": "supported",
+          "field": "raw_contact",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "line_unique",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "eligible_hit",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "down",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "release",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "contact_id",
+          "pass": true
+        }
+      ],
+      "case": "AMBIGUOUS-reverse",
+      "category": "ambiguous_projection",
+      "contract": "C-V2-AMBIGUOUS"
+    },
+    {
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "raw_hit_order_dependence_retained",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "same_move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "same_refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "same_down",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "same_release",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "same_contact_id",
+          "pass": true
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "field": "same_eligible_hit",
+          "pass": true
+        }
+      ],
+      "case": "AMBIGUOUS-order-semantic-comparison",
+      "category": "ambiguous_projection",
+      "contract": "C-V2-AMBIGUOUS",
+      "legacy_whole_output_equivalence_repaired": false
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": true,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "rear_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "case": "RGB-long-rails",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": true,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "front_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-two-point-rails",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": false,
+        "invalid": false,
+        "left": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": false,
+        "reason": "",
+        "refresh": false,
+        "release": false,
+        "right": false
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        }
+      ],
+      "case": "RGB-one-point-rails",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": false,
+        "invalid": false,
+        "left": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": false,
+        "reason": "",
+        "refresh": false,
+        "release": false,
+        "right": false
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        }
+      ],
+      "case": "RGB-gapped-two-point-rails",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": false,
+        "invalid": false,
+        "left": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": false,
+        "reason": "",
+        "refresh": false,
+        "release": false,
+        "right": false
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        }
+      ],
+      "case": "RGB-no-rails-line-crossing",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": true,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "front_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-front-line-plus4",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": true,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "front_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-front-line-minus4",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": false,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-endpoint-white-band",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": false,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-endpoint-single-blue-side",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": false,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-endpoint-no-outer-black",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": false,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-endpoint-opaque-yellow",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": false,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "front_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-endpoint-clipping",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": true,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              300.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              300.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "rear_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-rear-line-plus4",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "front_end": true,
+        "invalid": false,
+        "left": true,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              308.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              308.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "probes": 410645,
+        "rear_end": true,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "right": true
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "invalid",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "left",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "right",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "front_end",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "rear_end",
+          "pass": true
+        }
+      ],
+      "case": "RGB-rear-line-minus4",
+      "category": "rails_and_endpoints",
+      "contract": "C-V2-RAIL/C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": true,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "relation_ambiguous",
+          "pass": false
+        },
+        {
+          "actual": 1,
+          "expected": 2,
+          "field": "alternatives",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": false,
+          "field": "refresh",
+          "pass": false
+        }
+      ],
+      "case": "MERGE-union-with-cap",
+      "category": "merge_correspondence",
+      "contract": "C-V2-MERGE"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "action_eligible_body": false,
+            "eligible_hit": null,
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": true,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": false,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "relation_ambiguous",
+          "pass": true
+        },
+        {
+          "actual": 2,
+          "expected": 2,
+          "field": "alternatives",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "refresh",
+          "pass": true
+        }
+      ],
+      "case": "MERGE-union-without-cap",
+      "category": "merge_correspondence",
+      "contract": "C-V2-MERGE"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              500.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              500.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": true,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "relation_ambiguous",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "alternatives",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "refresh",
+          "pass": true
+        }
+      ],
+      "case": "MERGE-single-continuation",
+      "category": "merge_correspondence",
+      "contract": "C-V2-MERGE"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "constraint_invalid": false,
+        "contact_id": 1,
+        "context_invalid": false,
+        "down": false,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              480.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              480.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          },
+          {
+            "action_eligible_body": true,
+            "eligible_hit": [
+              320.0,
+              420.0
+            ],
+            "line_unique": true,
+            "raw_body_claim": true,
+            "raw_contact": "supported",
+            "raw_hit": [
+              320.0,
+              420.0
+            ],
+            "raw_line_id": 7,
+            "relation_ambiguous": false,
+            "relation_invalid": false,
+            "visible_body_valid": true
+          }
+        ],
+        "reason": "",
+        "refresh": true,
+        "release": false
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "relation_ambiguous",
+          "pass": true
+        },
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "alternatives",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "second_relation_ambiguous",
+          "pass": true
+        }
+      ],
+      "case": "MERGE-two-separated-current",
+      "category": "merge_correspondence",
+      "contract": "C-V2-MERGE"
+    }
+  ],
+  "schema": "bvi.cold.contract-fixture.v2",
+  "status": "v2_cold_fail",
+  "touch_backend": false
+}

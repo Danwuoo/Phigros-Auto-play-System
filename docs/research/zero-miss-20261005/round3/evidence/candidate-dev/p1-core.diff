@@ -1,0 +1,63 @@
+--- research/x10d_o_bvi_build/bvi.cpp	2026-10-05 19:31:49.350006456 +0800
++++ research/bvi_cold_v2/bvi.cpp	2026-10-05 22:55:29.236467356 +0800
+@@ -1,4 +1,6 @@
+ #include "bvi.hpp"
++// Isolated cold v2 candidate, derived from research/x10d_o_bvi_build/bvi.cpp
++// at acb27fdb095b82253ef9388eab52948a59663d02. The frozen donor stays unchanged.
+ #include <algorithm>
+ #include <cmath>
+ #include <cstring>
+@@ -13,6 +15,7 @@
+ struct Pixel {int r{},g{},b{};bool in{};bool blue()const{return in&&r>=20&&r<=100&&g>=130&&g<=230&&b>=180&&b<=255&&b>=g+20;}bool white()const{return in&&r>=240&&g>=240&&b>=240;}bool yellow()const{return in&&r>=180&&g>=120&&b<=180;}bool black()const{return in&&r<=12&&g<=12&&b<=12;}};
+ Pixel pixel(const View&f,Point p,std::uint64_t&n){++n;int x=static_cast<int>(std::llround(p.x)),y=static_cast<int>(std::llround(p.y));if(x<0||y<0||x>=f.width||y>=f.height)return {};auto i=static_cast<std::size_t>(y)*f.stride+x*3;return {f.rgb[i],f.rgb[i+1],f.rgb[i+2],true};}
+ bool masked(Point p,std::span<const Line>lines){for(const auto&l:lines)if(std::abs(dot(sub(p,l.center),v(l.angle)))<=2.8&&std::abs(dot(sub(p,l.center),u(l.angle)))<=l.length/2)return true;return false;}
++Point pixel_center(Point p){return {double(std::llround(p.x)),double(std::llround(p.y))};}
+ std::uint64_t signature(const Descriptor&d){std::uint64_t h=seed;const double a[]={d.q.front.x,d.q.front.y,d.q.width,d.q.angle,d.measured_depth};for(double n:a){std::array<std::uint8_t,8>b{};std::memcpy(b.data(),&n,8);for(auto c:b)h=hash(h,c);}for(bool x:{d.front_end,d.rear_end,d.left,d.right})h=hash(h,x);return h;}
+ double distance(const Descriptor&a,const Descriptor&b){if(std::abs(a.q.width-b.q.width)>4||std::abs(std::remainder(a.q.angle-b.q.angle,3.141592653589793))>0.6)return std::numeric_limits<double>::infinity();return std::hypot(a.q.front.x-b.q.front.x,a.q.front.y-b.q.front.y);}
+ bool contains(const Descriptor&a,const Descriptor&b){auto diff=sub(b.q.front,a.q.front);double s=dot(diff,u(a.q.angle)),d=dot(diff,v(a.q.angle));return std::abs(s)<=4&&d<=4&&d>=-a.measured_depth-4&&distance(a,b)<=128&&a.measured_depth>=b.measured_depth-4;}
+@@ -31,8 +34,20 @@
+   if(q.tap){auto p1=pixel(f,add(q.front,mul(nv,-3)),out.probes),p2=pixel(f,add(q.front,mul(nv,3)),out.probes);d.left=d.right=p1.blue()&&p2.blue();d.body=Support::absent;d.front_end=d.left;}
+   else{
+    int first=-1,last=-1,both=0;bool someLeft=false,someRight=false,railLeft=false,railRight=false;int breaks=0;
++   int leftRun=0,rightRun=0;Point leftPrevious{},rightPrevious{};
++   // A rail needs a short current white segment, not a measured-line crossing
++   // or one white dot. All witnesses also need their same-depth blue interior.
++   auto rail=[&](Point p,const Pixel&sample,bool blue,int&run,Point&previous,bool&seen){
++    p=pixel_center(p);
++    if(!sample.white()||!blue||masked(p,lines)){run=0;return;}
++    if(!run||p.x!=previous.x||p.y!=previous.y)++run;
++    previous=p;seen|=run>=2;
++   };
+    for(int k=0;k<=static_cast<int>(std::ceil(q.depth));++k){auto p=add(q.front,mul(nv,-k));auto a=pixel(f,add(p,mul(tu,-.35*q.width)),out.probes),b=pixel(f,add(p,mul(tu,.35*q.width)),out.probes);auto ra=pixel(f,add(p,mul(tu,-q.width/2)),out.probes),rb=pixel(f,add(p,mul(tu,q.width/2)),out.probes);auto mid=pixel(f,p,out.probes);
+-    someLeft|=a.blue();someRight|=b.blue();railLeft|=ra.white();railRight|=rb.white();d.effect|=a.yellow()||b.yellow()||mid.yellow();
++    someLeft|=a.blue();someRight|=b.blue();
++    rail(add(p,mul(tu,-q.width/2)),ra,a.blue(),leftRun,leftPrevious,railLeft);
++    rail(add(p,mul(tu,q.width/2)),rb,b.blue(),rightRun,rightPrevious,railRight);
++    d.effect|=a.yellow()||b.yellow()||mid.yellow();
+     bool blue=a.blue()&&b.blue();bool line=(a.white()&&masked(add(p,mul(tu,-.35*q.width)),lines))||(b.white()&&masked(add(p,mul(tu,.35*q.width)),lines));
+     if(blue){if(first<0)first=k;last=k;both++;breaks=0;}else if(first>=0&&!line){if(++breaks>=12)break;}
+     if(out.probes>budget)return invalid("probe overflow");
+@@ -41,7 +56,22 @@
+    // Filled union without rails still reports visible body, but never independent entry.
+    if(both>=8&&!railLeft&&!railRight)d.body=Support::supported;
+    d.measured_depth=first>=0?last-first:0;d.rear=add(q.front,mul(nv,-q.depth));
+-   auto endpoint=[&](Point e,int direction){auto before=add(e,mul(nv,-direction*4)),after=add(e,mul(nv,direction*4));auto bl=pixel(f,add(before,mul(tu,-.35*q.width)),out.probes),br=pixel(f,add(before,mul(tu,.35*q.width)),out.probes);auto al=pixel(f,add(after,mul(tu,-.35*q.width)),out.probes),ar=pixel(f,add(after,mul(tu,.35*q.width)),out.probes);return bl.blue()&&br.blue()&&al.black()&&ar.black()&&d.left&&d.right;};
++   // Within four current pixels, require separate bilateral blue and black
++   // witnesses. White line masks can remove a witness, never supply its color.
++   // Search both sides: a fixed outer +4 can hit the line just as inner -4 can.
++   auto endpoint=[&](Point e,int direction){
++    bool inside=false,outside=false;
++    for(int k=1;k<=4;++k){
++     auto before=add(e,mul(nv,-direction*k)),after=add(e,mul(nv,direction*k));
++     auto blp=add(before,mul(tu,-.35*q.width)),brp=add(before,mul(tu,.35*q.width));
++     auto alp=add(after,mul(tu,-.35*q.width)),arp=add(after,mul(tu,.35*q.width));
++     auto bl=pixel(f,blp,out.probes),br=pixel(f,brp,out.probes);
++     auto al=pixel(f,alp,out.probes),ar=pixel(f,arp,out.probes);
++     inside|=bl.blue()&&br.blue()&&!masked(pixel_center(blp),lines)&&!masked(pixel_center(brp),lines);
++     outside|=al.black()&&ar.black()&&!masked(pixel_center(alp),lines)&&!masked(pixel_center(arp),lines);
++    }
++    return inside&&outside&&d.left&&d.right;
++   };
+    d.front_end=endpoint(q.front,1);d.rear_end=endpoint(d.rear,-1);
+   }
+   std::size_t eligible=0;Support best=Support::absent;

@@ -1,0 +1,30 @@
+{
+  "schema": "bvi.contract-v2.reproduction.v1",
+  "fixture_source": "research/bvi_cold_v2/contract_fixture_v2.cpp",
+  "classification_input": "docs/research/zero-miss-20261005/round2/BVI_FAILURE_SEMANTICS_CLASSIFICATION.json",
+  "json_include": "/tmp/phigros-bvi-round2-deps",
+  "standalone_compile_template": "g++ -std=c++20 FLAGS -Wall -Wextra -Wpedantic -I/tmp/phigros-bvi-round2-deps research/bvi_cold_v2/contract_fixture_v2.cpp CORE_CPP -o FRESH_BINARY",
+  "run_template": "FRESH_BINARY CLASSIFICATION_INPUT FRESH_RESULT_JSON [FRESH_CHANGE_MAP_JSON]",
+  "result_overwrite": "rejected",
+  "release_flags": "-O2",
+  "debug_flags": "-O0 -g -D_GLIBCXX_ASSERTIONS",
+  "sanitizers_flags": "-O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined",
+  "sanitizers_environment": {
+    "ASAN_OPTIONS": "detect_leaks=0",
+    "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+  },
+  "release_execution_detail": "The fixture source was compiled once with -O2 to /tmp/contract-fixture-v2-final.o, then linked with each stage core compiled with -O2. Debug and sanitizer binaries each compiled both source files directly. Header layout is unchanged across stages.",
+  "core_paths": {
+    "baseline": "research/x10d_o_bvi_build/bvi.cpp",
+    "p1": "docs/research/zero-miss-20261005/round3/evidence/candidate-dev/p1-source/bvi.cpp",
+    "p1_1": "docs/research/zero-miss-20261005/round3/evidence/candidate-dev/p1_1-source/bvi.cpp",
+    "final": "research/bvi_cold_v2/bvi.cpp"
+  },
+  "initial_47_case_outputs": "Preserved early suite version: 321 assertions; baseline22fail, P1 4fail. The final 48-case version adds a co-rotation positive and full output/Down-array checks; it does not change any existing expected value.",
+  "typed_schema_scope": "Explicit eight named mutations in a separate cold typed adapter; not a complete serialized-input parser or repaired legacy typed adapter.",
+  "projection_scope": "Observation-level eligibility only; fake constraints separately enforce receipt and deadline decisions. Not integrated with formal owner.",
+  "LSan_enabled": false,
+  "Windows_build_evidence": false,
+  "dynamic_probe_exhaustion_measured": false,
+  "physical_human_gold": 0
+}
