@@ -1,0 +1,12 @@
+{
+ "schema":"bvi-cold-v3-independent-addendum-v1",
+ "frozen_at_utc":"2026-10-05T15:46:00Z",
+ "reason":"Before v3 implementation review or output. The original alias-positive controls do not alone prove Down suppression because repeated stationary pixels lack confirmation. Add stronger qualified controls; original 39 cases stay unchanged.",
+ "cases":[
+  {"id":"R08_active_alias_with_new_down_geometry","expect":"Move and refresh same contact 3, zero Down, at alias index 1 after stationary Hold and line approach 470,485,500. Geometry is the same positive acquisition as A02."},
+  {"id":"R09_duplicate_moving_endpoints_one_down","expect":"Exactly one Down for each-frame duplicate Hold ROI over fronts 490,500,504. Distinct endpoint sequence is inherited prior independent legal control."},
+  {"id":"N20_tangential_selected_line_motion","expect":"No Down for stationary Tap and selected line normal fixed; only tangential center varies and visible segment RGB changes."},
+  {"id":"N21_receding_selected_line","expect":"No Down for stationary Tap and same line moving 500,499,498 away from note center 500; no monotonic relative approach."},
+  {"id":"N22_source_invalid","expect":"No action if last frame source_valid is false even after otherwise legal line approach."}
+ ]
+}

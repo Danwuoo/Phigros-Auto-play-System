@@ -1,0 +1,910 @@
+{
+  "schema": "bvi.round4.original54-classified-map.v1",
+  "assertions_before": 3938,
+  "assertions_after": 3938,
+  "new_failed_assertions": 0,
+  "rows": [
+    {
+      "after_actual": 2,
+      "before_actual": 1,
+      "expected": 2,
+      "field": "alternatives",
+      "pointer": "/layers/e2e/rows/11/assertions/3",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C1",
+      "layer": "e2e",
+      "case": "V07-merge"
+    },
+    {
+      "after_actual": false,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/11/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C1",
+      "layer": "e2e",
+      "case": "V07-merge"
+    },
+    {
+      "after_actual": [
+        "ambiguous"
+      ],
+      "before_actual": [
+        "continued"
+      ],
+      "expected": [
+        "ambiguous"
+      ],
+      "field": "relation",
+      "pointer": "/layers/e2e/rows/11/assertions/7",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C1",
+      "layer": "e2e",
+      "case": "V07-merge"
+    },
+    {
+      "after_actual": [
+        "supported"
+      ],
+      "before_actual": [
+        "absent"
+      ],
+      "expected": [
+        "supported"
+      ],
+      "field": "contact",
+      "pointer": "/layers/e2e/rows/15/assertions/4",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C4",
+      "layer": "e2e",
+      "case": "V10-rotation"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "hit_body_required",
+      "pointer": "/layers/e2e/rows/15/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C4",
+      "layer": "e2e",
+      "case": "V10-rotation"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "hit_line_error_max",
+      "pointer": "/layers/e2e/rows/15/assertions/7",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C4",
+      "layer": "e2e",
+      "case": "V10-rotation"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/15/assertions/8",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C4",
+      "layer": "e2e",
+      "case": "V10-rotation"
+    },
+    {
+      "after_actual": false,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/2/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C1",
+      "layer": "e2e",
+      "case": "V01-whole"
+    },
+    {
+      "after_actual": false,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/3/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C1",
+      "layer": "e2e",
+      "case": "V01-touching"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/e2e/rows/31/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-regions-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/31/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-regions-overflow"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/e2e/rows/31/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-regions-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "refresh",
+      "pointer": "/layers/e2e/rows/31/assertions/7",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-regions-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/e2e/rows/32/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-lines-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/32/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-lines-overflow"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/e2e/rows/32/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-lines-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "refresh",
+      "pointer": "/layers/e2e/rows/32/assertions/7",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-lines-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/e2e/rows/33/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-metadata-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/33/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-metadata-overflow"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/e2e/rows/33/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-metadata-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "refresh",
+      "pointer": "/layers/e2e/rows/33/assertions/7",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-metadata-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/e2e/rows/34/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-probes-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/34/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-probes-overflow"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/e2e/rows/34/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-probes-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "refresh",
+      "pointer": "/layers/e2e/rows/34/assertions/7",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "e2e",
+      "case": "V16-probes-overflow"
+    },
+    {
+      "after_actual": [
+        true
+      ],
+      "before_actual": [
+        false
+      ],
+      "expected": [
+        true
+      ],
+      "field": "cap",
+      "pointer": "/layers/e2e/rows/4/assertions/4",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C2",
+      "layer": "e2e",
+      "case": "V02-continuation"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "usable",
+      "pointer": "/layers/e2e/rows/46/assertions/5",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C2",
+      "layer": "e2e",
+      "case": "V17-gap40"
+    },
+    {
+      "after_actual": 3,
+      "before_actual": 2,
+      "expected": 3,
+      "field": "independent",
+      "pointer": "/layers/e2e/rows/5/assertions/7",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C2",
+      "layer": "e2e",
+      "case": "V02-stationary-current"
+    },
+    {
+      "after_actual": 1,
+      "before_actual": 0,
+      "expected": 1,
+      "field": "independent",
+      "pointer": "/layers/e2e/rows/50/assertions/3",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C2",
+      "layer": "e2e",
+      "case": "V17-duplicate-rgb"
+    },
+    {
+      "after_actual": 1,
+      "before_actual": 0,
+      "expected": 1,
+      "field": "independent",
+      "pointer": "/layers/e2e/rows/51/assertions/3",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C2",
+      "layer": "e2e",
+      "case": "V17-same-descriptor-new-background"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "effect",
+      "pointer": "/layers/e2e/rows/7/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C3",
+      "layer": "e2e",
+      "case": "V04-contained-effect"
+    },
+    {
+      "after_actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "field": "equivalent_to",
+      "pointer": "/layers/lifecycle/rows/65/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C7",
+      "layer": "lifecycle",
+      "case": "V18-V08-line-order"
+    },
+    {
+      "after_actual": [
+        "supported"
+      ],
+      "before_actual": [
+        "absent"
+      ],
+      "expected": [
+        "supported"
+      ],
+      "field": "contact",
+      "pointer": "/layers/rgb/rows/15/assertions/4",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C4",
+      "layer": "rgb",
+      "case": "V10-rotation"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "hit_body_required",
+      "pointer": "/layers/rgb/rows/15/assertions/5",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C4",
+      "layer": "rgb",
+      "case": "V10-rotation"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "hit_line_error_max",
+      "pointer": "/layers/rgb/rows/15/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C4",
+      "layer": "rgb",
+      "case": "V10-rotation"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/rgb/rows/31/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "rgb",
+      "case": "V16-regions-overflow"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/rgb/rows/31/assertions/4",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "rgb",
+      "case": "V16-regions-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/rgb/rows/32/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "rgb",
+      "case": "V16-lines-overflow"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/rgb/rows/32/assertions/4",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "rgb",
+      "case": "V16-lines-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/rgb/rows/33/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "rgb",
+      "case": "V16-metadata-overflow"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/rgb/rows/33/assertions/4",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "rgb",
+      "case": "V16-metadata-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/rgb/rows/34/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "rgb",
+      "case": "V16-probes-overflow"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/rgb/rows/34/assertions/4",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C5",
+      "layer": "rgb",
+      "case": "V16-probes-overflow"
+    },
+    {
+      "after_actual": [
+        true
+      ],
+      "before_actual": [
+        false
+      ],
+      "expected": [
+        true
+      ],
+      "field": "cap",
+      "pointer": "/layers/rgb/rows/4/assertions/4",
+      "status": "fixed_against_unchanged_legacy_expected",
+      "cluster": "C2",
+      "layer": "rgb",
+      "case": "V02-continuation"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "effect",
+      "pointer": "/layers/rgb/rows/7/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C3",
+      "layer": "rgb",
+      "case": "V04-contained-effect"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/24/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C6",
+      "layer": "typed",
+      "case": "V16-source"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/31/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C6",
+      "layer": "typed",
+      "case": "V16-regions-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/32/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C6",
+      "layer": "typed",
+      "case": "V16-lines-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/33/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C6",
+      "layer": "typed",
+      "case": "V16-metadata-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/34/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C6",
+      "layer": "typed",
+      "case": "V16-probes-overflow"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/35/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C6",
+      "layer": "typed",
+      "case": "V16-short-rgb"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/36/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C6",
+      "layer": "typed",
+      "case": "V16-nan"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/39/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C6",
+      "layer": "typed",
+      "case": "V16-infinity"
+    },
+    {
+      "after_actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "field": "equivalent_to",
+      "pointer": "/layers/typed/rows/65/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected",
+      "cluster": "C7",
+      "layer": "typed",
+      "case": "V18-V08-line-order"
+    }
+  ],
+  "clusters": [
+    {
+      "cluster": "C1",
+      "total": 5,
+      "fixed": 5,
+      "remaining": 0
+    },
+    {
+      "cluster": "C2",
+      "total": 6,
+      "fixed": 6,
+      "remaining": 0
+    },
+    {
+      "cluster": "C3",
+      "total": 2,
+      "fixed": 0,
+      "remaining": 2
+    },
+    {
+      "cluster": "C4",
+      "total": 7,
+      "fixed": 7,
+      "remaining": 0
+    },
+    {
+      "cluster": "C5",
+      "total": 24,
+      "fixed": 0,
+      "remaining": 24
+    },
+    {
+      "cluster": "C6",
+      "total": 8,
+      "fixed": 0,
+      "remaining": 8
+    },
+    {
+      "cluster": "C7",
+      "total": 2,
+      "fixed": 0,
+      "remaining": 2
+    }
+  ]
+}

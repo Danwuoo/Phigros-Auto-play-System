@@ -8,7 +8,9 @@ Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程�
 
 [補件後第二輪](docs/research/zero-miss-20261005/round2/README.md)首次完整執行356 layer-cases／3938 assertions，發現54fail並分類；C36h M77圖及Windows失敗收據已覆核。
 
-**最新[第三階段冷測修補](docs/research/zero-miss-20261005/round3/README.md)：新隔離候選修正rails／端部與merge資格，原同oracle54→43fail、無新增原suite失敗；新48-case契約339斷言全過，獨立35-case仍保留duplicate ROI既存2fail。** 程式在[research/bvi_cold_v2](research/bvi_cold_v2/README.md)，尚未整合正式鏈，未進live。Windows、成本、真圖及全曲分母／解鎖仍有門檻。
+**最新[第四階段冷候選v3與交接](docs/research/zero-miss-20261005/round4/README.md)：原3938斷言43→36fail、無新增失敗；stationary／exact alias／斜交contact及正反例完成三配置。雲端委託已停在真圖／Windows必要門檻，交接先留存，未啟動實機、產品Goal未完成。**
+
+**[第三階段冷測修補](docs/research/zero-miss-20261005/round3/README.md)：新隔離候選修正rails／端部與merge資格，原同oracle54→43fail、無新增原suite失敗；新48-case契約339斷言全過，獨立35-case仍保留duplicate ROI既存2fail。** 程式在[research/bvi_cold_v2](research/bvi_cold_v2/README.md)，尚未整合正式鏈，未進live。Windows、成本、真圖及全曲分母／解鎖仍有門檻。
 
 ## 當前狀態（2026-10-04）
 

@@ -1,0 +1,6 @@
+Relation-owned policy/header/test freeze verified after final Release, Debug and ASan+UBSan runs. All three final runs use the 37-case/74-assertion source. Global integrated bvi/contact source completion remains with the parent/other work branch. LeakSanitizer disabled; no leak-pass claim.
+research/bvi_cold_v3/bvi.hpp: OK
+research/bvi_cold_v3/relation_policy.cpp: OK
+research/bvi_cold_v3/relation_policy.hpp: OK
+research/bvi_cold_v3/constraint_policy.cpp: OK
+research/bvi_cold_v3/relation_tests.cpp: OK

@@ -1,0 +1,11 @@
+2026-10-05T15:51:38Z
+original_39_byte_equivalent_exit=0
+65c0efa82f118f3f547cfec61be10f430f1acc63f9f9211817aa79aaedb077cb  /tmp/bvi-v3-original39.json
+65c0efa82f118f3f547cfec61be10f430f1acc63f9f9211817aa79aaedb077cb  /tmp/bvi-v3-addendum-original39.json
+0 docs/research/zero-miss-20261005/round4/evidence/independent/baseline-release/stdout.log
+0 docs/research/zero-miss-20261005/round4/evidence/independent/baseline-release/stderr.log
+0 total
+docs/research/zero-miss-20261005/round4/evidence/independent/expectations-frozen.json: OK
+docs/research/zero-miss-20261005/round4/evidence/independent/addendum-expectations-frozen.json: OK
+docs/research/zero-miss-20261005/round4/evidence/independent/pre-candidate-tests.cpp: OK
+research/bvi_cold_v3/independent_v3_tests.cpp: OK

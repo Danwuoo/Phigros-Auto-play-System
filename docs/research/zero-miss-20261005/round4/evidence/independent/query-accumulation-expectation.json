@@ -1,0 +1,8 @@
+{
+ "schema":"bvi-cold-v3-independent-query-accumulation-v1",
+ "frozen_at_utc":"2026-10-05T16:03:45Z",
+ "id":"P25_accumulated_half_pixel_note_translation",
+ "input":"Tap front x318,318.5,319,319.5,320 at y500, same line,20ms spacing,80ms span. Visible pixel-center renderer and unrelated background tag are supplied; no hidden gold.",
+ "expected":"One final Down, with at least3 independent endpoints. Compare position with last accepted endpoint, not every intervening observation; 0.5px per sample can accumulate into1px accepted displacement.",
+ "stage":"Frozen after source review and before proposed1px novelty repair. This positive is an observation-control for retained moving-note behavior, not physical game correctness."
+}

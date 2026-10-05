@@ -1,0 +1,6 @@
+2026-10-05T15:51:24Z
+g++ (Debian 14.2.0-19) 14.2.0
+637611b92cc8e2ab00d034bb30405a8870f26da1
+build_directory=/tmp/contact-reproduction.I3wyO9 mode=release scope=direct
+timeout 150s g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -I/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3 -I/tmp/phigros-bvi-round2-deps /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_policy.cpp /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_tests.cpp -o /tmp/contact-reproduction.I3wyO9/contact-tests 
+sha256sum: WARNING: 1 computed checksum did NOT match

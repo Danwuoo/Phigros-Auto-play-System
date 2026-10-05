@@ -1,0 +1,21 @@
+2026-10-05T15:57:49Z
+Linux 91ecebcfb8e5 6.18.44 #1 SMP Sat Sep 26 20:02:31 UTC 2026 x86_64 GNU/Linux
+g++ (Debian 14.2.0-19) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+637611b92cc8e2ab00d034bb30405a8870f26da1
+implementation=candidate configuration=release
+Independent current-RGB fake constraints only. v3 extract annotates legal current relation context internally.
+No explicit relation annotation, canonical renderer, candidate private helper, production owner or device.
+ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1; no LSan/leak-free claim.
+d6ce2e84bb4640fc6e5649f24cd1267433fd54fe668d8dfe7c934ea0f3a41531  research/bvi_cold_v3/bvi.cpp
+565e7c058328d01b11b75e7bf05a96a96dcdd378b42f000a422c000957671d5f  research/bvi_cold_v3/bvi.hpp
+c302f8d280df58feff84f60d6456fc43d184474b46bab946ec44f4b07267b664  research/bvi_cold_v3/independent_v3_tests.cpp
+693cb7a1fa177035e1542c772dd2e26e63cd280fcdc34067aea4f3959297c821  research/bvi_cold_v3/constraint_policy.cpp
+b08520d87591b914fd357205e506a5080abb690dc4efe08c6e44e1225aea1c6f  research/bvi_cold_v3/contact_policy.cpp
+b0efddfbacfd96bccb00ad96d6ad434b89f442d1e033ea6f06cda4c5be2d9b61  research/bvi_cold_v3/relation_policy.cpp
+08f48f197ef36449bc04b81cdd27005c50e56bc4766fde9e5d3bc58c38ccb691  research/bvi_cold_v3/contact_policy.hpp
+bbb47373899ac0531e424849aaa3d32638348ea25e8ebf682ddfaf906ac9feb0  research/bvi_cold_v3/relation_policy.hpp
+f2e1f3cac4e48fa851d6986291e4bd5b384d87f92c175d8b126cbd91580289cc  /tmp/phigros-bvi-round2-deps/nlohmann/json.hpp

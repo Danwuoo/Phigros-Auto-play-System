@@ -1,0 +1,593 @@
+{
+  "case_count": 44,
+  "assertions": 101,
+  "failed_assertions": 23,
+  "legal_action_opportunities": 17,
+  "legal_actions_observed": 2,
+  "overrejections": 15,
+  "safety_denial_opportunities": 22,
+  "unsafe_false_positives": 0,
+  "denominators": {
+    "decision_only": {
+      "cases": 3,
+      "failed_cases": 0,
+      "passed_cases": 0,
+      "scored_cases": 0
+    },
+    "legal_action_opportunity": {
+      "cases": 17,
+      "failed_cases": 15,
+      "passed_cases": 2,
+      "scored_cases": 17
+    },
+    "metamorphic": {
+      "cases": 2,
+      "failed_cases": 0,
+      "passed_cases": 2,
+      "scored_cases": 2
+    },
+    "safe_denial": {
+      "cases": 22,
+      "failed_cases": 0,
+      "passed_cases": 22,
+      "scored_cases": 22
+    }
+  },
+  "failures": [
+    {
+      "id": "A01_stationary_tap_line_approach",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "expected_down_count",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "A02_stationary_hold_line_approach",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "expected_down_count",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "A03_stationary_tap_rotated_approach",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "expected_down_count",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "A04_stationary_tap_translated_approach",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "expected_down_count",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "R01_prior_duplicate_continuation",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "refresh",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "R02_current_duplicate_one_down",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "expected_down_count",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "R03_alias_attachment_keeps_contact",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "refresh",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "R04_permuted_alias_attachment",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "refresh",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "R05_prior_duplicates_stationary_down",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "expected_down_count",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "O01_oblique_current_blue",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "refresh",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "O02_oblique_translated",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "refresh",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "O03_oblique_opposite_angle",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "refresh",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "O04_oblique_deeper_intersection",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "refresh",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "R08_active_alias_with_new_down_geometry",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "move",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "refresh",
+          "pass": false
+        }
+      ]
+    },
+    {
+      "id": "R09_duplicate_moving_endpoints_one_down",
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "expected_down_count",
+          "pass": false
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "action_pass": null,
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "down_count": 0,
+        "invalid": false,
+        "move": true,
+        "observation_invalid": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "query_index": 0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410145,
+        "reason": "",
+        "refresh": true,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [],
+      "class": "decision_only",
+      "expected_down_count": null,
+      "expected_move": null,
+      "id": "D01_identical_observations_physical_owner_unknown",
+      "identical_output": true,
+      "pass": null,
+      "physical_owner_gold": null,
+      "trace": [
+        {
+          "completed": false,
+          "contact_id": 3,
+          "down_count": 0,
+          "invalid": false,
+          "move": true,
+          "observation_invalid": false,
+          "parts": [
+            {
+              "alternatives": 0,
+              "ambiguous": false,
+              "body": "supported",
+              "contact": "supported",
+              "down": false,
+              "front": [
+                320.0,
+                504.0
+              ],
+              "front_end": true,
+              "hit": [
+                320.0,
+                500.0
+              ],
+              "independent": 1,
+              "left": true,
+              "line_id": 1,
+              "line_unique": true,
+              "query_index": 0,
+              "rear_end": true,
+              "right": true,
+              "span_ns": 0,
+              "usable": false
+            }
+          ],
+          "probes": 410145,
+          "reason": "",
+          "refresh": true,
+          "release": false,
+          "samples": 1
+        }
+      ]
+    },
+    {
+      "action_pass": null,
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "down_count": 0,
+        "invalid": false,
+        "move": false,
+        "observation_invalid": false,
+        "parts": [
+          {
+            "alternatives": 2,
+            "ambiguous": true,
+            "body": "supported",
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": true,
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 1,
+            "line_unique": true,
+            "query_index": 0,
+            "rear_end": true,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 410145,
+        "reason": "",
+        "refresh": false,
+        "release": false,
+        "samples": 2
+      },
+      "checks": [],
+      "class": "decision_only",
+      "expected_down_count": null,
+      "expected_move": null,
+      "id": "D02_near_duplicate_same_visible_body",
+      "pass": null,
+      "trace": [
+        {
+          "completed": false,
+          "contact_id": 3,
+          "down_count": 0,
+          "invalid": false,
+          "move": true,
+          "observation_invalid": false,
+          "parts": [
+            {
+              "alternatives": 0,
+              "ambiguous": false,
+              "body": "supported",
+              "contact": "supported",
+              "down": false,
+              "front": [
+                320.0,
+                504.0
+              ],
+              "front_end": true,
+              "hit": [
+                320.0,
+                500.0
+              ],
+              "independent": 1,
+              "left": true,
+              "line_id": 1,
+              "line_unique": true,
+              "query_index": 0,
+              "rear_end": true,
+              "right": true,
+              "span_ns": 0,
+              "usable": false
+            },
+            {
+              "alternatives": 0,
+              "ambiguous": false,
+              "body": "supported",
+              "contact": "supported",
+              "down": false,
+              "front": [
+                320.1,
+                504.0
+              ],
+              "front_end": true,
+              "hit": [
+                320.1,
+                500.0
+              ],
+              "independent": 1,
+              "left": true,
+              "line_id": 1,
+              "line_unique": true,
+              "query_index": 1,
+              "rear_end": true,
+              "right": true,
+              "span_ns": 0,
+              "usable": false
+            }
+          ],
+          "probes": 410690,
+          "reason": "",
+          "refresh": true,
+          "release": false,
+          "samples": 1
+        },
+        {
+          "completed": false,
+          "contact_id": 3,
+          "down_count": 0,
+          "invalid": false,
+          "move": false,
+          "observation_invalid": false,
+          "parts": [
+            {
+              "alternatives": 2,
+              "ambiguous": true,
+              "body": "supported",
+              "contact": "supported",
+              "down": false,
+              "front": [
+                320.0,
+                504.0
+              ],
+              "front_end": true,
+              "hit": [
+                320.0,
+                500.0
+              ],
+              "independent": 1,
+              "left": true,
+              "line_id": 1,
+              "line_unique": true,
+              "query_index": 0,
+              "rear_end": true,
+              "right": true,
+              "span_ns": 0,
+              "usable": false
+            }
+          ],
+          "probes": 410145,
+          "reason": "",
+          "refresh": false,
+          "release": false,
+          "samples": 2
+        }
+      ]
+    },
+    {
+      "action_pass": null,
+      "actual": {
+        "completed": false,
+        "contact_id": 3,
+        "down_count": 0,
+        "invalid": false,
+        "move": false,
+        "observation_invalid": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "ambiguous": false,
+            "body": "absent",
+            "contact": "absent",
+            "down": false,
+            "front": [
+              320.0,
+              504.0
+            ],
+            "front_end": true,
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "left": true,
+            "line_id": 0,
+            "line_unique": false,
+            "query_index": 0,
+            "rear_end": false,
+            "right": true,
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "probes": 409675,
+        "reason": "",
+        "refresh": false,
+        "release": false,
+        "samples": 1
+      },
+      "checks": [],
+      "class": "decision_only",
+      "expected_down_count": null,
+      "expected_move": null,
+      "id": "D03_short_six_pixel_body_unresolved",
+      "pass": null,
+      "trace": [
+        {
+          "completed": false,
+          "contact_id": 3,
+          "down_count": 0,
+          "invalid": false,
+          "move": false,
+          "observation_invalid": false,
+          "parts": [
+            {
+              "alternatives": 0,
+              "ambiguous": false,
+              "body": "absent",
+              "contact": "absent",
+              "down": false,
+              "front": [
+                320.0,
+                504.0
+              ],
+              "front_end": true,
+              "hit": [
+                0.0,
+                0.0
+              ],
+              "independent": 1,
+              "left": true,
+              "line_id": 0,
+              "line_unique": false,
+              "query_index": 0,
+              "rear_end": false,
+              "right": true,
+              "span_ns": 0,
+              "usable": false
+            }
+          ],
+          "probes": 409675,
+          "reason": "",
+          "refresh": false,
+          "release": false,
+          "samples": 1
+        }
+      ]
+    }
+  ]
+}

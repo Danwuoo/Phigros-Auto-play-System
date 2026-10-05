@@ -1,0 +1,5 @@
+move planned_ms=22 start_ms=60 y=420
+move planned_ms=34 start_ms=60 y=440
+move planned_ms=46 start_ms=60 y=460
+move planned_ms=58 start_ms=60 y=480
+RESULT cases=1 failures=0; four overdue Moves all dispatch at fake60ms; transport_effect_unknown=true

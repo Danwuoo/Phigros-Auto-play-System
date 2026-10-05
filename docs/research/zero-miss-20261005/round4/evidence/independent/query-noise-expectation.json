@@ -1,0 +1,9 @@
+{
+ "schema":"bvi-cold-v3-independent-query-noise-challenge-v1",
+ "frozen_at_utc":"2026-10-05T16:00:00Z",
+ "independence":"Supplemental challenge designed after source review; frozen before observing this probe output. Does not change the original 44-case oracle.",
+ "id":"N23_subpixel_query_noise_same_note_pixels",
+ "input":"Stationary visible Tap and selected line. Three ROI front x coordinates 320.10, 320.11, 320.12, y500, width140, all yielding exactly identical note and line raster. One unrelated background pixel changes per frame. Legal frame times span40ms.",
+ "expected":"No new Down. Subpixel ROI metadata noise with no visible note or relative normal motion must not create independent note evidence. Background novelty is irrelevant.",
+ "scope":"Public Query measurement noise, no invisible physical ownership gold; synthetic fail-closed opportunity, not device correctness."
+}

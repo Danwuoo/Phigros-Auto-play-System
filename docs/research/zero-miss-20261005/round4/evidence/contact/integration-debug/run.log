@@ -1,0 +1,40 @@
+2026-10-05T15:57:30Z
+g++ (Debian 14.2.0-19) 14.2.0
+637611b92cc8e2ab00d034bb30405a8870f26da1
+build_directory=/tmp/contact-reproduction.Jx4pjq mode=debug scope=integration
+timeout 150s g++ -std=c++20 -O0 -g -D_GLIBCXX_ASSERTIONS -DCONTACT_INTEGRATION -Wall -Wextra -Wpedantic -I/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3 -I/tmp/phigros-bvi-round2-deps /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_policy.cpp /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_tests.cpp /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/bvi.cpp /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/relation_policy.cpp /workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/constraint_policy.cpp -o /tmp/contact-reproduction.Jx4pjq/contact-tests 
+{
+  "assertions": 167,
+  "failed_assertions": 0,
+  "denominators": {
+    "action_gate": {
+      "cases": 6,
+      "failed_cases": 0
+    },
+    "bounded_geometry": {
+      "cases": 8,
+      "failed_cases": 0
+    },
+    "bounded_resource": {
+      "cases": 1,
+      "failed_cases": 0
+    },
+    "invalid_input": {
+      "cases": 11,
+      "failed_cases": 0
+    },
+    "legal_current_support": {
+      "cases": 8,
+      "failed_cases": 0
+    },
+    "missing_current_support": {
+      "cases": 10,
+      "failed_cases": 0
+    },
+    "tap_unchanged": {
+      "cases": 8,
+      "failed_cases": 0
+    }
+  }
+}
+2026-10-05T15:57:40Z

@@ -2,7 +2,7 @@
 
 啟動／更新：2026-10-05。起點：`a53a9b7021bcc900f498047f5cc017b42e4711b0`。
 
-**狀態：持續雲端開發中，產品目標未完成；本次委託在下一個必要門檻需要實機時停止並交接。** 這是repo內的開發目標與進度紀錄；本執行環境沒有可用的專用Goal工具，不冒稱已建立系統Goal。配套機讀狀態：[legacy-in-zero-miss-state.json](legacy-in-zero-miss-state.json)。
+**狀態：本次雲端開發／必要冷回歸完成，交接已準備留存；停在真圖與Windows證據門檻。產品目標未完成。** 這是repo內的開發目標與進度紀錄；本執行環境沒有可用的專用Goal工具，不冒稱已建立系統Goal。配套機讀狀態：[legacy-in-zero-miss-state.json](legacy-in-zero-miss-state.json)。
 
 ## 唯一完成條件
 
@@ -24,13 +24,13 @@ P/G/B與score照報，不加AP要求。先前提出的每曲連續3次是穩定�
 
 ## 現況與活動順序
 
-目前候選cold v2只整合在隔離研究目錄。舊完整3938斷言仍43fail；新契約339全過；獨立79有duplicate ROI既存2fail。沒有新實戰，Chapter Legacy目前分母與IN解鎖仍unknown。
+最終候選cold v3在c2dda1db9fe95b46ff103300d43583857130cd8f，只整合於隔離研究目錄。原3938斷言仍36fail（原54修18、新失敗0）；原契約339、原獨立79、新relation74／contact167／line-ambiguity16／獨立101及另5controls三配置通過。沒有新實戰，Chapter Legacy目前分母與IN解鎖仍unknown。詳見[第四階段](../research/zero-miss-20261005/round4/README.md)。
 
-優先進行：
+本輪已完成1–4並在真圖／Windows必要門檻停止；後續由使用者自行移交，沒有活動中的雲端開發或自動裝置工作。原工作順序與後續目標保留：
 1. 有界stationary新接入與exact duplicate ROI語义，保留重播／未知Down／distinct物件反例。
 2. 斜交contact與effect可見性契約；以真像素支持和安全／合法機會雙分母決定修補。
 3. 選定候選的合法current ROI／lines橋接、owner／FakeTouch回歸及成本；不把研究fake attachment當正式ownership。
-4. 準備最小Windows／真圖／裝置測試包、自足接手prompt及可套用commits/patch，交使用者自行移交Codex task；本次委託到此完成。
+4. 準備並驗證最小Windows／真圖／裝置測試包、自足接手prompt及可套用commits/patch；完成後先留存，只回報完成，不自動發送交接或附件。由使用者之後取用並自行移交Codex task；本次雲端委託到準備完成為止。
 5. 產品Goal在後續Codex task仍需凍結遊戲版本與全曲分母、處理必要HD解鎖、同版逐曲IN結算實機驗收；未完成前不標產品達成。
 
 遇到只有裝置才能回答、規格無法由已授權證據裁定、或需要額外權限時，記明最小阻塞與可並行工作。不得把等待、未跑或未知改成完成。

@@ -1,0 +1,80 @@
+--- research/bvi_cold_v2/bvi.cpp	2026-10-05 23:04:02.322767160 +0800
++++ research/bvi_cold_v3/bvi.cpp	2026-10-05 23:49:36.756848112 +0800
+@@ -1,6 +1,8 @@
+ #include "bvi.hpp"
+-// Isolated cold v2 candidate, derived from research/x10d_o_bvi_build/bvi.cpp
+-// at acb27fdb095b82253ef9388eab52948a59663d02. The frozen donor stays unchanged.
++#include "contact_policy.hpp"
++#include "relation_policy.hpp"
++// Isolated cold v3 candidate, derived from research/bvi_cold_v2/bvi.cpp
++// at a53a9b7021bcc900f498047f5cc017b42e4711b0. The frozen donor stays unchanged.
+ #include <algorithm>
+ #include <cmath>
+ #include <cstring>
+@@ -17,8 +19,6 @@
+ bool masked(Point p,std::span<const Line>lines){for(const auto&l:lines)if(std::abs(dot(sub(p,l.center),v(l.angle)))<=2.8&&std::abs(dot(sub(p,l.center),u(l.angle)))<=l.length/2)return true;return false;}
+ Point pixel_center(Point p){return {double(std::llround(p.x)),double(std::llround(p.y))};}
+ std::uint64_t signature(const Descriptor&d){std::uint64_t h=seed;const double a[]={d.q.front.x,d.q.front.y,d.q.width,d.q.angle,d.measured_depth};for(double n:a){std::array<std::uint8_t,8>b{};std::memcpy(b.data(),&n,8);for(auto c:b)h=hash(h,c);}for(bool x:{d.front_end,d.rear_end,d.left,d.right})h=hash(h,x);return h;}
+-double distance(const Descriptor&a,const Descriptor&b){if(std::abs(a.q.width-b.q.width)>4||std::abs(std::remainder(a.q.angle-b.q.angle,3.141592653589793))>0.6)return std::numeric_limits<double>::infinity();return std::hypot(a.q.front.x-b.q.front.x,a.q.front.y-b.q.front.y);}
+-bool contains(const Descriptor&a,const Descriptor&b){auto diff=sub(b.q.front,a.q.front);double s=dot(diff,u(a.q.angle)),d=dot(diff,v(a.q.angle));return std::abs(s)<=4&&d<=4&&d>=-a.measured_depth-4&&distance(a,b)<=128&&a.measured_depth>=b.measured_depth-4;}
+ }
+ std::string_view name(Support s){switch(s){case Support::supported:return "supported";case Support::occluded:return "occluded";case Support::invalid:return "invalid";default:return "absent";}}
+ bool capacity_valid(std::size_t r,std::size_t l,std::size_t m,std::uint64_t p){return r<=128&&l<=16&&m<=1048576&&p<=budget;}
+@@ -79,54 +79,15 @@
+   for(const auto&l:lines){auto ln=v(l.angle),lu=u(l.angle);double denom=dot(nv,ln);Point hit;
+    if(q.tap){hit=q.front;if(std::abs(dot(sub(hit,l.center),ln))>4)continue;}else{if(std::abs(denom)<1e-6)continue;double k=-dot(sub(q.front,l.center),ln)/denom;hit=add(q.front,mul(nv,k));if(k>4||k<-q.depth-4)continue;}
+    if(std::abs(dot(sub(hit,l.center),lu))>l.length/2||std::abs(dot(sub(hit,q.front),tu))>q.width/2)continue;
+-   bool supported=false,yellow=false;
+-   for(int sign:{-1,1}){bool ok=true;for(int delta:q.tap?std::array<int,2>{3,3}:std::array<int,2>{4,6}){auto cp=add(hit,mul(ln,sign*delta));auto a=pixel(f,add(cp,mul(tu,-.35*q.width)),out.probes),b=pixel(f,add(cp,mul(tu,.35*q.width)),out.probes);yellow|=a.yellow()||b.yellow();ok&=a.blue()&&b.blue();}supported|=ok;}
++   const auto sampled=sample_current_contact(f,q,l,hit,out.probes);
++   const bool supported=sampled.supported,yellow=sampled.yellow;
+    Support s=supported&&(q.tap||d.body==Support::supported)?Support::supported:(yellow?Support::occluded:Support::absent);if(s==Support::supported){eligible++;d.hit=hit;d.line_id=l.id;}if(s==Support::supported||best==Support::absent)best=s;
+   }
+   d.contact=best;d.line_unique=eligible==1;d.probes=static_cast<std::uint32_t>(out.probes-start);d.signature=signature(d);if(out.probes>budget)return invalid("probe overflow");
+  }
++ observe_relation_context(out,lines);
+  return out;
+ }
+ bool Candidate::retains(Ns t)const{for(std::size_t i=0;i<size_;++i)if(history_[i].key.capture==t)return true;return false;}
+-void Candidate::relate(Observation&out,Key key,Ns now){
+- bool context=initialized_&&!(last_.context==key.context);bool clock=key.capture>now||(initialized_&&(key.capture<=last_.capture||key.sequence<=last_.sequence));bool stale=now-key.capture>=100000000;bool gap=initialized_&&key.capture-last_.capture>40000000;
+- if(context||clock||gap||stale||out.invalid){size_=0;out.context_invalid=context||clock||stale;out.reason=context?"context changed":clock?"clock/key invalid":stale?"source deadline":gap?"adjacent gap reset":out.reason;}
+- while(size_&&key.capture-history_[0].key.capture>90000000){for(std::size_t i=1;i<size_;++i)history_[i-1]=history_[i];--size_;}
+- // Reserve current's slot before any causal output: at most five past + current.
+- if(size_==6){for(std::size_t i=1;i<size_;++i)history_[i-1]=history_[i];--size_;}
+- for(std::size_t i=0;i<out.count;++i){auto&d=out.parts[i];auto&r=out.relations[i];r.invalid=out.invalid||out.context_invalid;
+-  r={};r.invalid=out.invalid||out.context_invalid;r.freshness=now-key.capture;
+-  std::array<std::pair<std::uint64_t,std::uint64_t>,6> seen{};std::size_t seenCount=0,maxLinks=0;
+-  auto endpoint=[&](const Descriptor&p,Ns capture){
+-   if(!p.front_end)return;
+-   bool duplicate=false;for(std::size_t j=0;j<seenCount;++j)duplicate|=p.rgb_signature==seen[j].first||p.signature==seen[j].second;
+-   // Remember every eligible endpoint in this effective window, including duplicates.
+-   seen[seenCount++]={p.rgb_signature,p.signature};
+-   if(!duplicate){if(!r.independent)r.first_independent=capture;++r.independent;r.last_independent=capture;}
+-  };
+-  for(std::size_t h=0;h<size_;++h){const auto&s=history_[h];std::array<std::pair<double,std::size_t>,128>cost{};std::size_t num=0,contained=0;
+-   for(std::size_t j=0;j<s.count;++j){double c=distance(d,s.parts[j]);if(c<=128)cost[num++]={c,j};if(contains(d,s.parts[j])&&s.parts[j].front_end)contained++;}
+-   // A current cap does not resolve multiple earlier endpoint observations.
+-   std::sort(cost.begin(),cost.begin()+num);if(contained>=2){r.ambiguous=true;maxLinks=2;}
+-   if(num){bool tie=num>1&&cost[1].first-cost[0].first<=4;if(tie){r.ambiguous=true;maxLinks=std::max<std::size_t>(maxLinks,2);}else{maxLinks=std::max<std::size_t>(maxLinks,1);endpoint(s.parts[cost[0].second],s.key.capture);}}
+-  }
+-  endpoint(d,key.capture);
+-  r.span=r.independent?r.last_independent-r.first_independent:0;r.alternatives=static_cast<std::uint8_t>(maxLinks);r.usable=r.independent>=3&&r.span>=30000000&&!r.ambiguous&&!r.invalid;r.links={0,1};
+- }
+- if(!out.invalid&&!out.context_invalid){auto&s=history_[size_++];s.count=out.count;s.key=key;s.parts=out.parts;}
+- initialized_=true;last_=key;
+-}
+-Constraints constrain(const Observation&out,const Guard&g){
+- Constraints c;c.contact_id=g.contact_id;c.completed=g.execution=="completed_up";bool unknown=g.execution=="unknown_down";bool active=g.execution=="known_down";bool never=g.execution=="never_executed";bool consistent=(never&&g.prefix==0)||(active&&g.prefix>0)||(unknown&&g.prefix>0&&g.receipt_unknown)||(c.completed&&g.prefix>=2);
+- c.invalid=!consistent||out.invalid||out.context_invalid||g.now>=g.gate_deadline||g.now>=g.plan_deadline;c.release=unknown||c.invalid;
+- if(c.invalid||unknown||c.completed)return c;
+- for(std::size_t i=0;i<out.count;++i){const auto&d=out.parts[i];const auto&r=out.relations[i];bool current=d.contact==Support::supported&&d.line_unique;bool attached=active&&static_cast<int>(i)==g.attachment_query;
+-  // A consistent existing receipt is distinct from confirmation for a new Down.
+-  bool bodyNow=d.q.tap||(d.body==Support::supported&&d.left&&d.right);
+-  if(attached&&current&&bodyNow&&!r.invalid&&!r.ambiguous){c.move=c.refresh=true;c.hit=d.hit;}
+-  if(!attached&&current&&d.front_end&&r.usable&&g.free_contacts>0)c.down[i]=true;
+- }
+- if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+-}
+ static_assert(sizeof(Descriptor)<=256);static_assert(Candidate::metadata_bytes()<=1048576);
+ }

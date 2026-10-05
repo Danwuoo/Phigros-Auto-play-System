@@ -1,0 +1,9 @@
+{
+ "schema":"bvi-cold-v3-independent-query-noise-matrix-v1",
+ "frozen_at_utc":"2026-10-05T16:02:00Z",
+ "stage":"Designed after source review and N23 output, before this matrix output; original 44 unchanged.",
+ "negative_cases":["N23_subpixel_query_x", "N24_subpixel_query_width", "N25_subpixel_query_angle"],
+ "negative_expectation":"Each has byte-identical note+line raster across three observations, changing only an unrelated background pixel; zero Down. Metadata noise must not establish new endpoint evidence.",
+ "positive_case":"P24_visible_one_pixel_note_translation",
+ "positive_expectation":"Each frame moves a visible Tap one actual pixel horizontally with the current line unchanged, producing three distinct current endpoint measurements over40ms. The retained existing moving-note path should produce one Down; this is a synthetic observation-control, not physical game correctness."
+}

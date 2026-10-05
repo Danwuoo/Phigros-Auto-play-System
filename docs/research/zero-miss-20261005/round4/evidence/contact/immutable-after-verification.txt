@@ -1,0 +1,6 @@
+research/bvi_cold_v2/bvi.cpp: OK
+research/bvi_cold_v2/bvi.hpp: OK
+research/x10d_o_bvi_build/bvi.cpp: OK
+research/x10d_o_bvi_build/bvi.hpp: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json: OK

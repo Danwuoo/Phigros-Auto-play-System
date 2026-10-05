@@ -1,0 +1,4 @@
+docs/research/zero-miss-20261005/round4/evidence/independent/expectations-frozen.json: OK
+docs/research/zero-miss-20261005/round4/evidence/independent/addendum-expectations-frozen.json: OK
+docs/research/zero-miss-20261005/round4/evidence/independent/pre-candidate-tests.cpp: OK
+research/bvi_cold_v3/independent_v3_tests.cpp: OK

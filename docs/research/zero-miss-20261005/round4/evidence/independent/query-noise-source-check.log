@@ -1,0 +1,8 @@
+research/bvi_cold_v3/bvi.cpp: OK
+research/bvi_cold_v3/bvi.hpp: OK
+research/bvi_cold_v3/independent_v3_tests.cpp: OK
+research/bvi_cold_v3/constraint_policy.cpp: OK
+research/bvi_cold_v3/contact_policy.cpp: OK
+research/bvi_cold_v3/relation_policy.cpp: OK
+research/bvi_cold_v3/contact_policy.hpp: OK
+research/bvi_cold_v3/relation_policy.hpp: OK

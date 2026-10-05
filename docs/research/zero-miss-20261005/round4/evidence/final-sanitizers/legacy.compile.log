@@ -1,0 +1,8 @@
+In file included from /tmp/phigros-bvi-cold-v3.yO8YKn/main.cpp:57:
+/tmp/phigros-bvi-cold-v3.yO8YKn/driver.inc: In lambda function:
+/tmp/phigros-bvi-cold-v3.yO8YKn/driver.inc:81:3: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   81 |   if(!c)throw std::runtime_error("contact permutation fixture missing");auto trajectory=execute(*c,"e2e").frames;
+      |   ^~
+/tmp/phigros-bvi-cold-v3.yO8YKn/driver.inc:81:73: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   81 |   if(!c)throw std::runtime_error("contact permutation fixture missing");auto trajectory=execute(*c,"e2e").frames;
+      |                                                                         ^~~~

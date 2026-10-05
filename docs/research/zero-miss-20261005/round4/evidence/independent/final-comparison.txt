@@ -1,0 +1,29 @@
+2026-10-05T15:59:18Z
+release_debug_cmp_exit=0
+release_sanitizers_cmp_exit=0
+release build=0
+release native=0
+0 docs/research/zero-miss-20261005/round4/evidence/independent/candidate-release/stdout.log
+0 docs/research/zero-miss-20261005/round4/evidence/independent/candidate-release/stderr.log
+0 total
+debug build=0
+debug native=0
+0 docs/research/zero-miss-20261005/round4/evidence/independent/candidate-debug/stdout.log
+0 docs/research/zero-miss-20261005/round4/evidence/independent/candidate-debug/stderr.log
+0 total
+sanitizers build=0
+sanitizers native=0
+0 docs/research/zero-miss-20261005/round4/evidence/independent/candidate-sanitizers/stdout.log
+0 docs/research/zero-miss-20261005/round4/evidence/independent/candidate-sanitizers/stderr.log
+0 total
+316010873178da7eda3f5babb20502648742b3648cead7ac6a2ea958a48343e9  docs/research/zero-miss-20261005/round4/evidence/independent/candidate-release/results.json
+316010873178da7eda3f5babb20502648742b3648cead7ac6a2ea958a48343e9  docs/research/zero-miss-20261005/round4/evidence/independent/candidate-debug/results.json
+316010873178da7eda3f5babb20502648742b3648cead7ac6a2ea958a48343e9  docs/research/zero-miss-20261005/round4/evidence/independent/candidate-sanitizers/results.json
+d6ce2e84bb4640fc6e5649f24cd1267433fd54fe668d8dfe7c934ea0f3a41531  research/bvi_cold_v3/bvi.cpp
+565e7c058328d01b11b75e7bf05a96a96dcdd378b42f000a422c000957671d5f  research/bvi_cold_v3/bvi.hpp
+c302f8d280df58feff84f60d6456fc43d184474b46bab946ec44f4b07267b664  research/bvi_cold_v3/independent_v3_tests.cpp
+693cb7a1fa177035e1542c772dd2e26e63cd280fcdc34067aea4f3959297c821  research/bvi_cold_v3/constraint_policy.cpp
+b08520d87591b914fd357205e506a5080abb690dc4efe08c6e44e1225aea1c6f  research/bvi_cold_v3/contact_policy.cpp
+b0efddfbacfd96bccb00ad96d6ad434b89f442d1e033ea6f06cda4c5be2d9b61  research/bvi_cold_v3/relation_policy.cpp
+08f48f197ef36449bc04b81cdd27005c50e56bc4766fde9e5d3bc58c38ccb691  research/bvi_cold_v3/contact_policy.hpp
+bbb47373899ac0531e424849aaa3d32638348ea25e8ebf682ddfaf906ac9feb0  research/bvi_cold_v3/relation_policy.hpp

@@ -1,0 +1,2351 @@
+{
+  "affected_cases": 20,
+  "all_line_values_exactly_equal_corresponding_rgb_line": true,
+  "already_arrays": 3,
+  "positions": [
+    {
+      "case": "R01-count-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/0/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/0/frames/0/lines/0"
+    },
+    {
+      "case": "R01-count-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/0/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/0/frames/1/lines/0"
+    },
+    {
+      "case": "R01-count-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/0/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/0/frames/2/lines/0"
+    },
+    {
+      "case": "R01-count-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/0/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/0/frames/3/lines/0"
+    },
+    {
+      "case": "R01-count-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/0/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/0/frames/4/lines/0"
+    },
+    {
+      "case": "R01-count-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/0/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/0/frames/5/lines/0"
+    },
+    {
+      "case": "R01-count-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/0/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/0/frames/6/lines/0"
+    },
+    {
+      "case": "R01-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/1/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/1/frames/0/lines/0"
+    },
+    {
+      "case": "R01-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/1/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/1/frames/1/lines/0"
+    },
+    {
+      "case": "R01-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/1/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/1/frames/2/lines/0"
+    },
+    {
+      "case": "R01-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/1/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/1/frames/3/lines/0"
+    },
+    {
+      "case": "R01-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/1/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/1/frames/4/lines/0"
+    },
+    {
+      "case": "R01-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/1/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/1/frames/5/lines/0"
+    },
+    {
+      "case": "R02-count-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/2/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/2/frames/0/lines/0"
+    },
+    {
+      "case": "R02-count-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/2/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/2/frames/1/lines/0"
+    },
+    {
+      "case": "R02-count-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/2/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/2/frames/2/lines/0"
+    },
+    {
+      "case": "R02-count-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/2/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/2/frames/3/lines/0"
+    },
+    {
+      "case": "R02-count-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/2/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/2/frames/4/lines/0"
+    },
+    {
+      "case": "R02-count-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/2/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/2/frames/5/lines/0"
+    },
+    {
+      "case": "R02-count-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/2/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/2/frames/6/lines/0"
+    },
+    {
+      "case": "R02-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/3/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/3/frames/0/lines/0"
+    },
+    {
+      "case": "R02-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/3/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/3/frames/1/lines/0"
+    },
+    {
+      "case": "R02-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/3/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/3/frames/2/lines/0"
+    },
+    {
+      "case": "R02-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/3/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/3/frames/3/lines/0"
+    },
+    {
+      "case": "R02-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/3/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/3/frames/4/lines/0"
+    },
+    {
+      "case": "R02-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/3/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/3/frames/5/lines/0"
+    },
+    {
+      "case": "R03-age-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/4/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/4/frames/0/lines/0"
+    },
+    {
+      "case": "R03-age-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/4/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/4/frames/1/lines/0"
+    },
+    {
+      "case": "R03-age-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/4/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/4/frames/2/lines/0"
+    },
+    {
+      "case": "R03-age-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/4/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/4/frames/3/lines/0"
+    },
+    {
+      "case": "R03-age-eviction-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/4/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/4/frames/4/lines/0"
+    },
+    {
+      "case": "R03-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/5/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/5/frames/0/lines/0"
+    },
+    {
+      "case": "R03-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/5/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/5/frames/1/lines/0"
+    },
+    {
+      "case": "R03-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/5/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/5/frames/2/lines/0"
+    },
+    {
+      "case": "R03-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/5/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/5/frames/3/lines/0"
+    },
+    {
+      "case": "R04-age-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/6/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/6/frames/0/lines/0"
+    },
+    {
+      "case": "R04-age-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/6/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/6/frames/1/lines/0"
+    },
+    {
+      "case": "R04-age-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/6/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/6/frames/2/lines/0"
+    },
+    {
+      "case": "R04-age-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/6/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/6/frames/3/lines/0"
+    },
+    {
+      "case": "R04-age-eviction-confirmation",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/6/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/6/frames/4/lines/0"
+    },
+    {
+      "case": "R04-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/7/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/7/frames/0/lines/0"
+    },
+    {
+      "case": "R04-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/7/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/7/frames/1/lines/0"
+    },
+    {
+      "case": "R04-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/7/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/7/frames/2/lines/0"
+    },
+    {
+      "case": "R04-without-oldest",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/7/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/7/frames/3/lines/0"
+    },
+    {
+      "case": "R05-ABA",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/8/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/8/frames/0/lines/0"
+    },
+    {
+      "case": "R05-ABA",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/8/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/8/frames/1/lines/0"
+    },
+    {
+      "case": "R05-ABA",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/8/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/8/frames/2/lines/0"
+    },
+    {
+      "case": "R06-duplicate-span-extension",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/9/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/9/frames/0/lines/0"
+    },
+    {
+      "case": "R06-duplicate-span-extension",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/9/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/9/frames/1/lines/0"
+    },
+    {
+      "case": "R06-duplicate-span-extension",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/9/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/9/frames/2/lines/0"
+    },
+    {
+      "case": "R06-duplicate-span-extension",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/9/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/9/frames/3/lines/0"
+    },
+    {
+      "case": "R07-independent30-positive",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/10/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/10/frames/0/lines/0"
+    },
+    {
+      "case": "R07-independent30-positive",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/10/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/10/frames/1/lines/0"
+    },
+    {
+      "case": "R07-independent30-positive",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/10/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/10/frames/2/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/0/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/1/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/2/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/3/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/4/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/5/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/6/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/7/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/7/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/8/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/8/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/9/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/9/lines/0"
+    },
+    {
+      "case": "R08-stationary-count-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/11/typed_frames/10/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/11/frames/10/lines/0"
+    },
+    {
+      "case": "R09-stationary-age-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/12/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/12/frames/0/lines/0"
+    },
+    {
+      "case": "R09-stationary-age-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/12/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/12/frames/1/lines/0"
+    },
+    {
+      "case": "R09-stationary-age-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/12/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/12/frames/2/lines/0"
+    },
+    {
+      "case": "R09-stationary-age-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/12/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/12/frames/3/lines/0"
+    },
+    {
+      "case": "R09-stationary-age-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/12/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/12/frames/4/lines/0"
+    },
+    {
+      "case": "R09-stationary-age-window",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/12/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/12/frames/5/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/0/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/1/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/2/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/3/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/4/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/5/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/6/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/7/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/7/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/8/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/8/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/9/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/9/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/10/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/10/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/11/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/11/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/12/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/12/lines/0"
+    },
+    {
+      "case": "R10-stationary-loss",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/13/typed_frames/13/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/13/frames/13/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/0/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/1/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/2/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/3/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/4/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/5/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/6/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/7/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/7/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/8/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/8/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/9/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/9/lines/0"
+    },
+    {
+      "case": "R10-stationary-line-ambiguity",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/14/typed_frames/10/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/14/frames/10/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/0/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/1/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/2/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/3/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/4/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/5/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/6/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/7/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/7/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/8/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/8/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/9/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/9/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/10/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/10/lines/0"
+    },
+    {
+      "case": "R11-stationary-unknown",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/15/typed_frames/11/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/15/frames/11/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/0/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/1/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/2/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/3/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/4/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/5/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/6/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/7/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/7/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/8/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/8/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/9/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/9/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/10/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/10/lines/0"
+    },
+    {
+      "case": "R11-stationary-completed",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/16/typed_frames/11/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/16/frames/11/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/0/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/1/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/2/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/3/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/4/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/5/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/6/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/7/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/7/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/8/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/8/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/9/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/9/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/10/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/10/lines/0"
+    },
+    {
+      "case": "R11-stationary-plan-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/17/typed_frames/11/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/17/frames/11/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/0/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/1/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/2/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/3/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/4/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/5/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/6/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/7/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/7/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/8/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/8/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/9/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/9/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/10/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/10/lines/0"
+    },
+    {
+      "case": "R11-stationary-gate-expired",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/18/typed_frames/11/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/18/frames/11/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/0/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/0/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/1/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/1/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/2/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/2/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/3/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/3/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/4/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/4/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/5/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/5/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/6/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/6/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/7/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/7/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/8/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/8/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/9/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/9/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/10/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/10/lines/0"
+    },
+    {
+      "case": "R11-stationary-source-invalid",
+      "exact_equal_to_single_rgb_line": true,
+      "json_pointer": "/cases/19/typed_frames/11/lines",
+      "line": {
+        "angle": 0,
+        "center": [
+          320,
+          500
+        ],
+        "id": 7,
+        "length": 640
+      },
+      "rgb_pointer": "/cases/19/frames/11/lines/0"
+    }
+  ],
+  "raw_input_unchanged": true,
+  "schema": "bvi.cloud.singleton-input-audit.v1",
+  "singleton_objects": 156,
+  "typed_frames": 159
+}

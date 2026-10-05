@@ -1,0 +1,9 @@
+2026-10-05T16:05:47Z
+Linux 91ecebcfb8e5 6.18.44 #1 SMP Sat Sep 26 20:02:31 UTC 2026 x86_64 GNU/Linux
+g++ (Debian 14.2.0-19) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Source-review supplement. Original 44 cases unchanged. LSan disabled; no leak-free claim.
+f2e1f3cac4e48fa851d6986291e4bd5b384d87f92c175d8b126cbd91580289cc  /tmp/phigros-bvi-round2-deps/nlohmann/json.hpp

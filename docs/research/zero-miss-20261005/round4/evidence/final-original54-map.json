@@ -1,0 +1,2780 @@
+{
+  "after_failed_assertions": 36,
+  "assertions_after": 3938,
+  "assertions_before": 3938,
+  "candidate_adopted": false,
+  "fixed_original_assertions": 18,
+  "literal_expectations_unchanged": true,
+  "metamorphic_expected_materializations_changed": [
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 297.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 0,
+            "freshness_ns": 1000000,
+            "front": [
+              320.0,
+              575.0
+            ],
+            "hit": [
+              320.0,
+              575.0
+            ],
+            "independent": 0,
+            "last_independent_ns": 0,
+            "rear": [
+              320.0,
+              275.0
+            ],
+            "rear_cap": false,
+            "relation": "unconfirmed",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 297.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 50000000,
+            "freshness_ns": 1000000,
+            "front": [
+              320.0,
+              575.0
+            ],
+            "hit": [
+              320.0,
+              575.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 50000000,
+            "rear": [
+              320.0,
+              275.0
+            ],
+            "rear_cap": true,
+            "relation": "unconfirmed",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equal_to",
+      "pointer": "/layers/e2e/rows/1/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 297.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 0,
+            "freshness_ns": 1000000,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "last_independent_ns": 0,
+            "rear": [
+              320.0,
+              200.0
+            ],
+            "rear_cap": false,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 297.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              320.0,
+              200.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equal_to",
+      "pointer": "/layers/e2e/rows/3/assertions/5"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/52/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/53/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/54/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/55/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/56/assertions/5"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/62/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/63/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/64/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/65/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/e2e/rows/66/assertions/5"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 297.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 0,
+            "freshness_ns": 1000000,
+            "front": [
+              320.0,
+              575.0
+            ],
+            "hit": [
+              320.0,
+              575.0
+            ],
+            "independent": 0,
+            "last_independent_ns": 0,
+            "rear": [
+              320.0,
+              275.0
+            ],
+            "rear_cap": false,
+            "relation": "unconfirmed",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 0,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 297.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 50000000,
+            "freshness_ns": 1000000,
+            "front": [
+              320.0,
+              575.0
+            ],
+            "hit": [
+              320.0,
+              575.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 50000000,
+            "rear": [
+              320.0,
+              275.0
+            ],
+            "rear_cap": true,
+            "relation": "unconfirmed",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equal_to",
+      "pointer": "/layers/rgb/rows/1/assertions/2"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 297.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 0,
+            "freshness_ns": 1000000,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 0,
+            "last_independent_ns": 0,
+            "rear": [
+              320.0,
+              200.0
+            ],
+            "rear_cap": false,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 297.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "hit": [
+              320.0,
+              500.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              320.0,
+              200.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equal_to",
+      "pointer": "/layers/rgb/rows/3/assertions/4"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/52/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/53/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/54/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/55/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "unique",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 2,
+            "last_independent_ns": 30000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 20000000,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": true,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/56/assertions/5"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/62/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/63/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/64/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/65/assertions/3"
+    },
+    {
+      "after_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "after_pass": true,
+      "before_expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": false,
+            "contact": "absent",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              0.0,
+              0.0
+            ],
+            "independent": 1,
+            "last_independent_ns": 10000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 0,
+            "usable": false
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_pass": true,
+      "field": "equivalent_to",
+      "pointer": "/layers/rgb/rows/66/assertions/5"
+    }
+  ],
+  "new_failed_assertions": 0,
+  "oracle_definition_integrity": "Six immutable input hashes are independently locked by run_regression.sh; reference-case output materialization is not a literal oracle change.",
+  "original_54_failure_map": [
+    {
+      "after_actual": 2,
+      "before_actual": 1,
+      "expected": 2,
+      "field": "alternatives",
+      "pointer": "/layers/e2e/rows/11/assertions/3",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/11/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": [
+        "ambiguous"
+      ],
+      "before_actual": [
+        "continued"
+      ],
+      "expected": [
+        "ambiguous"
+      ],
+      "field": "relation",
+      "pointer": "/layers/e2e/rows/11/assertions/7",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": [
+        "supported"
+      ],
+      "before_actual": [
+        "absent"
+      ],
+      "expected": [
+        "supported"
+      ],
+      "field": "contact",
+      "pointer": "/layers/e2e/rows/15/assertions/4",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "hit_body_required",
+      "pointer": "/layers/e2e/rows/15/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "hit_line_error_max",
+      "pointer": "/layers/e2e/rows/15/assertions/7",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/15/assertions/8",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/2/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/3/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/e2e/rows/31/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/31/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/e2e/rows/31/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "refresh",
+      "pointer": "/layers/e2e/rows/31/assertions/7",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/e2e/rows/32/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/32/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/e2e/rows/32/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "refresh",
+      "pointer": "/layers/e2e/rows/32/assertions/7",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/e2e/rows/33/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/33/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/e2e/rows/33/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "refresh",
+      "pointer": "/layers/e2e/rows/33/assertions/7",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/e2e/rows/34/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "move",
+      "pointer": "/layers/e2e/rows/34/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/e2e/rows/34/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "refresh",
+      "pointer": "/layers/e2e/rows/34/assertions/7",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": [
+        true
+      ],
+      "before_actual": [
+        false
+      ],
+      "expected": [
+        true
+      ],
+      "field": "cap",
+      "pointer": "/layers/e2e/rows/4/assertions/4",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "usable",
+      "pointer": "/layers/e2e/rows/46/assertions/5",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": 3,
+      "before_actual": 2,
+      "expected": 3,
+      "field": "independent",
+      "pointer": "/layers/e2e/rows/5/assertions/7",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": 1,
+      "before_actual": 0,
+      "expected": 1,
+      "field": "independent",
+      "pointer": "/layers/e2e/rows/50/assertions/3",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": 1,
+      "before_actual": 0,
+      "expected": 1,
+      "field": "independent",
+      "pointer": "/layers/e2e/rows/51/assertions/3",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "effect",
+      "pointer": "/layers/e2e/rows/7/assertions/6",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "field": "equivalent_to",
+      "pointer": "/layers/lifecycle/rows/65/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": [
+        "supported"
+      ],
+      "before_actual": [
+        "absent"
+      ],
+      "expected": [
+        "supported"
+      ],
+      "field": "contact",
+      "pointer": "/layers/rgb/rows/15/assertions/4",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "hit_body_required",
+      "pointer": "/layers/rgb/rows/15/assertions/5",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": false,
+      "expected": true,
+      "field": "hit_line_error_max",
+      "pointer": "/layers/rgb/rows/15/assertions/6",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/rgb/rows/31/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/rgb/rows/31/assertions/4",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/rgb/rows/32/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/rgb/rows/32/assertions/4",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/rgb/rows/33/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/rgb/rows/33/assertions/4",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/rgb/rows/34/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "pointer": "/layers/rgb/rows/34/assertions/4",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": [
+        true
+      ],
+      "before_actual": [
+        false
+      ],
+      "expected": [
+        true
+      ],
+      "field": "cap",
+      "pointer": "/layers/rgb/rows/4/assertions/4",
+      "status": "fixed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": false,
+      "before_actual": false,
+      "expected": true,
+      "field": "effect",
+      "pointer": "/layers/rgb/rows/7/assertions/5",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/24/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/31/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/32/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/33/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/34/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/35/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/36/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": true,
+      "before_actual": true,
+      "expected": false,
+      "field": "current_body_preserved",
+      "pointer": "/layers/typed/rows/39/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    },
+    {
+      "after_actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "before_actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "field": "equivalent_to",
+      "pointer": "/layers/typed/rows/65/assertions/3",
+      "status": "still_failed_against_unchanged_legacy_expected"
+    }
+  ],
+  "original_failed_assertions": 54,
+  "real_game_miss_effect": null,
+  "regressions": [],
+  "remaining_original_failed_assertions": 36,
+  "schema": "bvi.cold-v2.legacy-delta.v1",
+  "unchanged_passed_assertions": 3884
+}

@@ -1,0 +1,124 @@
+{
+  "assertions": 16,
+  "cases": [
+    {
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "current_contact_preserved",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "line_unique",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "no_down",
+          "pass": true
+        }
+      ],
+      "id": "two_crossing"
+    },
+    {
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "current_contact_preserved",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "line_unique",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "no_down",
+          "pass": true
+        }
+      ],
+      "id": "two_crossing_reverse"
+    },
+    {
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "current_contact_preserved",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "line_unique",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "no_down",
+          "pass": true
+        }
+      ],
+      "id": "single_oblique"
+    },
+    {
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "current_contact_preserved",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "line_unique",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "no_down",
+          "pass": true
+        }
+      ],
+      "id": "unrelated_line"
+    }
+  ],
+  "failed_assertions": 0,
+  "physical_human_gold": 0,
+  "schema": "bvi.v3.crossing-line-regression.v1"
+}

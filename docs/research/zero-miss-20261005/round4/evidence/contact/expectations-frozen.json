@@ -1,0 +1,199 @@
+{
+  "V04": "original yellow predicate remains false on RGB(115,202,194); original oracle unchanged",
+  "controls": [
+    {
+      "class": "legal_current_support",
+      "id": "P01_axis_aligned",
+      "max_probes": 8,
+      "supported": true,
+      "yellow": false
+    },
+    {
+      "class": "legal_current_support",
+      "id": "P02_co_rotation",
+      "max_probes": 8,
+      "supported": true,
+      "yellow": false
+    },
+    {
+      "class": "legal_current_support",
+      "id": "P03_frozen_V10_geometry",
+      "max_probes": 8,
+      "supported": true,
+      "yellow": false
+    },
+    {
+      "class": "legal_current_support",
+      "id": "P04_mirrored_oblique",
+      "max_probes": 8,
+      "supported": true,
+      "yellow": false
+    },
+    {
+      "class": "legal_current_support",
+      "id": "P05_translated_oblique",
+      "max_probes": 8,
+      "supported": true,
+      "yellow": false
+    },
+    {
+      "class": "legal_current_support",
+      "id": "P06_deep_oblique",
+      "max_probes": 8,
+      "supported": true,
+      "yellow": false
+    },
+    {
+      "class": "legal_current_support",
+      "id": "P07_short_visible_body16",
+      "max_probes": 8,
+      "supported": true,
+      "yellow": false
+    },
+    {
+      "class": "legal_current_support",
+      "id": "P08_large_obliqueness",
+      "max_probes": 8,
+      "supported": true,
+      "yellow": false
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_black",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_white",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_yellow",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": true
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_left_missing",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_mixed_sides",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_delta6_missing",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_white_band",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_yellow_band",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": true
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N_pixel_alpha89",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "missing_current_support",
+      "id": "N10_short_body2",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_geometry",
+      "id": "N11_parallel",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_geometry",
+      "id": "N12_near_parallel",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_geometry",
+      "id": "N13_clipped_flank",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_geometry",
+      "id": "N14_hit_outside_body",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_geometry",
+      "id": "N15_hit_outside_segment",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_geometry",
+      "id": "N16_flanks_outside_segment",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_geometry",
+      "id": "N17_hit_off_line",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_geometry",
+      "id": "N18_hit_off_axis",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    },
+    {
+      "class": "bounded_resource",
+      "id": "N19_budget_exhaustion",
+      "max_probes": 8,
+      "supported": false,
+      "yellow": false
+    }
+  ],
+  "frozen_before_implementation": true,
+  "integration": "unique-oblique, no-rails, unknown-down, completed-up, two-lines in both orders",
+  "invalid_inputs": "invalid span/source/dimensions/stride, nonfinite query/line/hit, oversized query; fail-closed without read",
+  "schema": "C-V3-CONTACT-1-controls",
+  "tap_parity": "8 valid-input variants, old literal subpredicate equality"
+}

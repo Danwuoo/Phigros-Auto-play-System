@@ -1,0 +1,25 @@
+--- docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/bvi.cpp	2026-10-06 00:01:55.099902451 +0800
++++ research/bvi_cold_v3/bvi.cpp	2026-10-06 00:02:42.516521141 +0800
+@@ -75,15 +75,20 @@
+    };
+    d.front_end=endpoint(q.front,1);d.rear_end=endpoint(d.rear,-1);
+   }
+-  std::size_t eligible=0;Support best=Support::absent;
++  std::size_t eligible=0,geometric_body_lines=0;Support best=Support::absent;
+   for(const auto&l:lines){auto ln=v(l.angle),lu=u(l.angle);double denom=dot(nv,ln);Point hit;
+    if(q.tap){hit=q.front;if(std::abs(dot(sub(hit,l.center),ln))>4)continue;}else{if(std::abs(denom)<1e-6)continue;double k=-dot(sub(q.front,l.center),ln)/denom;hit=add(q.front,mul(nv,k));if(k>4||k<-q.depth-4)continue;}
+    if(std::abs(dot(sub(hit,l.center),lu))>l.length/2||std::abs(dot(sub(hit,q.front),tu))>q.width/2)continue;
++   // A second measured line cannot disappear from association just because
++   // the first line occludes its blue support samples. Keep body intersections
++   // competing; this supplies no pixel support or physical-owner identity.
++   const double body_k=dot(sub(hit,q.front),nv);
++   if(!q.tap&&body_k<=0&&body_k>=-q.depth)++geometric_body_lines;
+    const auto sampled=sample_current_contact(f,q,l,hit,out.probes);
+    const bool supported=sampled.supported,yellow=sampled.yellow;
+    Support s=supported&&(q.tap||d.body==Support::supported)?Support::supported:(yellow?Support::occluded:Support::absent);if(s==Support::supported){eligible++;d.hit=hit;d.line_id=l.id;}if(s==Support::supported||best==Support::absent)best=s;
+   }
+-  d.contact=best;d.line_unique=eligible==1;d.probes=static_cast<std::uint32_t>(out.probes-start);d.signature=signature(d);if(out.probes>budget)return invalid("probe overflow");
++  d.contact=best;d.line_unique=eligible==1&&(q.tap||geometric_body_lines<=1);d.probes=static_cast<std::uint32_t>(out.probes-start);d.signature=signature(d);if(out.probes>budget)return invalid("probe overflow");
+  }
+  observe_relation_context(out,lines);
+  return out;

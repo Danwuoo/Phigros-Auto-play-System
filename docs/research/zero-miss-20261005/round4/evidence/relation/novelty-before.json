@@ -1,0 +1,3774 @@
+{
+  "assertions": 74,
+  "case_count": 37,
+  "cases": [
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 1,
+          "field": "new_down_count",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "usable",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "three_independent",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "span_ge_30ms",
+          "pass": false
+        }
+      ],
+      "failed": 4,
+      "id": "P01_stationary_tap_line_approach",
+      "kind": "legal_opportunity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 2,
+            "index": 0,
+            "line_unique": true,
+            "span": 40000000,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 1,
+          "field": "new_down_count",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "usable",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "three_independent",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "span_ge_30ms",
+          "pass": true
+        }
+      ],
+      "failed": 3,
+      "id": "P02_stationary_hold_line_approach",
+      "kind": "legal_opportunity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": true,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 3,
+            "index": 0,
+            "line_unique": true,
+            "span": 40000000,
+            "usable": true
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 1,
+          "expected": 1,
+          "field": "new_down_count",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "usable",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "three_independent",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "span_ge_30ms",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "P03_legacy_moving_note",
+      "kind": "legal_opportunity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 2,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 1,
+          "field": "new_down_count",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "usable",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "three_independent",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "span_ge_30ms",
+          "pass": false
+        }
+      ],
+      "failed": 4,
+      "id": "P04_exact_current_duplicates_one_down",
+      "kind": "legal_opportunity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 2,
+        "downs": 0,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": true,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "refresh",
+          "pass": true
+        },
+        {
+          "actual": 2,
+          "expected": 2,
+          "field": "count_preserved",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "P05_noncanonical_attachment",
+      "kind": "legal_opportunity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 3,
+            "index": 0,
+            "line_unique": true,
+            "span": 40000000,
+            "usable": true
+          }
+        ],
+        "refresh": true,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "ambiguous",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "refresh",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "P06_duplicate_prior_no_false_ambiguity",
+      "kind": "legal_opportunity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 2,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              500.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 2,
+          "expected": 2,
+          "field": "count_preserved",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 2,
+          "field": "new_down_count",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "first_down",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "second_down",
+          "pass": false
+        }
+      ],
+      "failed": 3,
+      "id": "P07_distinct_separated_current",
+      "kind": "legal_opportunity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 3,
+        "downs": 0,
+        "invalid": false,
+        "move": true,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              500.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 2,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": true,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 3,
+          "expected": 3,
+          "field": "count_preserved",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 1,
+          "field": "new_down_count",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": true,
+          "field": "other_group_down",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "move",
+          "pass": true
+        }
+      ],
+      "failed": 2,
+      "id": "P08_alias_attachment_other_group_down",
+      "kind": "legal_opportunity"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N01_stationary_pair",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N02_background_only_change",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N03_line_id_only_change",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N04_replayed_rgb_fresh_timestamps",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N05_unrelated_line_motion",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N06_tangential_motion_only",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "absent",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": false,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N07_receding_line",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N08_short_span",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 2
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N09_two_samples",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N10_multiple_relevant_lines",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 2,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": true,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": true,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              321.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 2,
+          "expected": 2,
+          "field": "count_preserved",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "first_ambiguous",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "second_ambiguous",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N11_near_current_not_alias",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": true,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 2
+      },
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "ambiguous",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N12_distinct_prior_union",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 2,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": true,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": true,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              321.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "first_ambiguous",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "second_ambiguous",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N17_new_current_competitor",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N18_switched_measured_line",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": false,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N19_overline_crossing",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": false,
+            "independent": 2,
+            "index": 0,
+            "line_unique": true,
+            "span": 20000000,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "A01_stationary_hold_line_receding_near_cap",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": true,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 3,
+            "index": 0,
+            "line_unique": true,
+            "span": 40000000,
+            "usable": true
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 1,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": false
+        }
+      ],
+      "failed": 1,
+      "id": "A02_stationary_hold_line_crosses",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 2,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": true,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "release",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N13_unknown_down",
+      "kind": "receipt_safety"
+    },
+    {
+      "actual": {
+        "completed": true,
+        "count": 2,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "move",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "completed",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N13_completed_up",
+      "kind": "receipt_safety"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": true,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N14_deadline",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": true,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N14_gate",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "invalid",
+            "down": false,
+            "front": [
+              0.0,
+              0.0
+            ],
+            "front_end": false,
+            "independent": 0,
+            "index": 0,
+            "line_unique": false,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": true,
+        "samples": 0
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N14_source",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": true,
+        "samples": 0
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N14_context",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": true,
+        "samples": 0
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N14_future",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": true,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": true,
+        "samples": 0
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N14_sequence",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N14_no_contacts",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N15_missing_intermediate_witness",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 1,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 4
+      },
+      "assertions": [
+        {
+          "actual": 0,
+          "expected": 0,
+          "field": "new_down_count",
+          "pass": true
+        }
+      ],
+      "failed": 0,
+      "id": "N16_recession_breaks_stationary_chain",
+      "kind": "safe_rejection"
+    },
+    {
+      "actual": {
+        "completed": false,
+        "count": 128,
+        "downs": 0,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 0,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 1,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 2,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 3,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 4,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 5,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 6,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 7,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 8,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 9,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 10,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 11,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 12,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 13,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 14,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 15,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 16,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 17,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 18,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 19,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 20,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 21,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 22,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 23,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 24,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 25,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 26,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 27,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 28,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 29,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 30,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 31,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 32,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 33,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 34,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 35,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 36,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 37,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 38,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 39,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 40,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 41,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 42,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 43,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 44,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 45,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 46,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 47,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 48,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 49,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 50,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 51,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 52,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 53,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 54,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 55,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 56,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 57,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 58,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 59,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 60,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 61,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 62,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 63,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 64,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 65,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 66,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 67,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 68,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 69,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 70,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 71,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 72,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 73,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 74,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 75,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 76,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 77,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 78,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 79,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 80,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 81,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 82,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 83,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 84,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 85,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 86,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 87,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 88,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 89,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 90,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 91,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 92,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 93,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 94,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 95,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 96,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 97,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 98,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 99,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 100,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 101,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 102,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 103,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 104,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 105,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 106,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 107,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 108,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 109,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 110,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 111,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 112,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 113,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 114,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 115,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 116,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 117,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 118,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 119,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 120,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 121,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 122,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 123,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 124,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 125,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 126,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          },
+          {
+            "ambiguous": false,
+            "contact": "supported",
+            "down": false,
+            "front": [
+              320.0,
+              500.0
+            ],
+            "front_end": true,
+            "independent": 1,
+            "index": 127,
+            "line_unique": true,
+            "span": 0,
+            "usable": false
+          }
+        ],
+        "refresh": false,
+        "release": false,
+        "samples": 3
+      },
+      "assertions": [
+        {
+          "actual": 128,
+          "expected": 128,
+          "field": "count",
+          "pass": true
+        },
+        {
+          "actual": 0,
+          "expected": 1,
+          "field": "new_down_count",
+          "pass": false
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "metadata_le_1MiB",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "descriptor_le_256",
+          "pass": true
+        }
+      ],
+      "failed": 1,
+      "id": "B01_exact_alias_capacity_128",
+      "kind": "bounded_capacity"
+    }
+  ],
+  "denominators": {
+    "bounded_capacity": {
+      "assertions": 4,
+      "cases": 1,
+      "failed": 1
+    },
+    "legal_opportunity": {
+      "assertions": 31,
+      "cases": 8,
+      "failed": 16
+    },
+    "receipt_safety": {
+      "assertions": 6,
+      "cases": 2,
+      "failed": 0
+    },
+    "safe_rejection": {
+      "assertions": 33,
+      "cases": 26,
+      "failed": 1
+    }
+  },
+  "descriptor_bytes": 256,
+  "failed_assertions": 18,
+  "metadata_bytes": 236216,
+  "schema": "bvi-v3-relation-tests-v1"
+}

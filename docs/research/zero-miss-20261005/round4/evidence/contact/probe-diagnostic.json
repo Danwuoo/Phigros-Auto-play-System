@@ -1,0 +1,374 @@
+{
+  "V04_alpha89": {
+    "background_rgb": [
+      40,
+      190,
+      255
+    ],
+    "observed_rgb": [
+      115,
+      202,
+      194
+    ],
+    "original_effect_oracle_unchanged": true,
+    "source_rgba": [
+      255,
+      225,
+      80,
+      89
+    ],
+    "yellow_predicate_visible_v1": false
+  },
+  "after": [
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 4,
+      "flank": -1,
+      "line_normal_distance": -3.8028017675626664,
+      "pixel": [
+        273,
+        476
+      ],
+      "point": [
+        273.45520674446544,
+        475.97835933045735
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": -1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 4,
+      "flank": 1,
+      "line_normal_distance": -3.707910493845997,
+      "pixel": [
+        365,
+        515
+      ],
+      "point": [
+        364.7442618417276,
+        514.5747527705942
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": -1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 6,
+      "flank": -1,
+      "line_normal_distance": -6.03434209787709,
+      "pixel": [
+        274,
+        474
+      ],
+      "point": [
+        274.23404342908276,
+        474.1362373424516
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": -1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 6,
+      "flank": 1,
+      "line_normal_distance": -5.939450824160417,
+      "pixel": [
+        366,
+        513
+      ],
+      "point": [
+        365.52309852634494,
+        512.7326307825884
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": -1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 4,
+      "flank": -1,
+      "line_normal_distance": 3.81288021738348,
+      "pixel": [
+        270,
+        483
+      ],
+      "point": [
+        270.3398600059963,
+        483.34684728248044
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": 1
+    },
+    {
+      "blue_predicate": false,
+      "body_continuous_and_pixel": false,
+      "delta": 4,
+      "flank": 1,
+      "line_normal_distance": 3.9077714911001493,
+      "pixel": [
+        362,
+        522
+      ],
+      "point": [
+        361.62891510325846,
+        521.9432407226172
+      ],
+      "rgb": [
+        0,
+        0,
+        0
+      ],
+      "sign": 1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 6,
+      "flank": -1,
+      "line_normal_distance": 5.655002205389252,
+      "pixel": [
+        270,
+        485
+      ],
+      "point": [
+        269.56102332137897,
+        485.1889692704862
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": 1
+    },
+    {
+      "blue_predicate": false,
+      "body_continuous_and_pixel": false,
+      "delta": 6,
+      "flank": 1,
+      "line_normal_distance": 6.139311821414571,
+      "pixel": [
+        361,
+        524
+      ],
+      "point": [
+        360.85007841864115,
+        523.785362710623
+      ],
+      "rgb": [
+        0,
+        0,
+        0
+      ],
+      "sign": 1
+    }
+  ],
+  "before": [
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 4,
+      "flank": -1,
+      "line_normal_distance": 3.0340435327661766,
+      "pixel": [
+        272,
+        483
+      ],
+      "point": [
+        271.623025629275,
+        483.15376204705416
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": -1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 4,
+      "flank": 1,
+      "line_normal_distance": -11.855235130486381,
+      "pixel": [
+        367,
+        507
+      ],
+      "point": [
+        366.57644295691813,
+        507.39935005399735
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": -1
+    },
+    {
+      "blue_predicate": false,
+      "body_continuous_and_pixel": true,
+      "delta": 6,
+      "flank": -1,
+      "line_normal_distance": 1.1919215447604081,
+      "pixel": [
+        272,
+        481
+      ],
+      "point": [
+        272.4018623138923,
+        481.3116400590484
+      ],
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "sign": -1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 6,
+      "flank": 1,
+      "line_normal_distance": -12.776296124489265,
+      "pixel": [
+        367,
+        506
+      ],
+      "point": [
+        367.35527964153545,
+        505.5572280659916
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": -1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 4,
+      "flank": -1,
+      "line_normal_distance": 11.570786511715209,
+      "pixel": [
+        269,
+        491
+      ],
+      "point": [
+        268.50767889080583,
+        490.52224999907725
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": 1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 4,
+      "flank": 1,
+      "line_normal_distance": -2.929073809228697,
+      "pixel": [
+        363,
+        515
+      ],
+      "point": [
+        363.461096218449,
+        514.7678380060204
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": 1
+    },
+    {
+      "blue_predicate": true,
+      "body_continuous_and_pixel": true,
+      "delta": 6,
+      "flank": -1,
+      "line_normal_distance": 12.881265848026747,
+      "pixel": [
+        268,
+        492
+      ],
+      "point": [
+        267.7288422061885,
+        492.364371987083
+      ],
+      "rgb": [
+        40,
+        190,
+        255
+      ],
+      "sign": 1
+    },
+    {
+      "blue_predicate": false,
+      "body_continuous_and_pixel": true,
+      "delta": 6,
+      "flank": 1,
+      "line_normal_distance": -1.0869518212229252,
+      "pixel": [
+        363,
+        517
+      ],
+      "point": [
+        362.68225953383165,
+        516.6099599940262
+      ],
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "sign": 1
+    }
+  ],
+  "candidate": {
+    "probes": 6,
+    "supported": true,
+    "yellow": false
+  },
+  "case": "V10-rotation",
+  "hit": [
+    317.542060923862,
+    498.9608000265373
+  ],
+  "schema": "contact-probe-diagnostic-v1",
+  "source": "original normalized-execution.json with unchanged historical renderer"
+}

@@ -1,0 +1,4 @@
+#define main independent_suite_main
+#include "research/bvi_cold_v3/independent_v3_tests.cpp"
+#undef main
+int main(int argc,char**argv){using namespace independent_v3;std::vector<Frame>frames;std::vector<std::uint8_t>first;bool same_local_pixels=true;int tag=1;for(double x:{320.10,320.11,320.12}){auto f=frame(tap(x,500));auto clean=render(f);if(first.empty())first=clean;else same_local_pixels&=clean==first;f.background=tag++;frames.push_back(f);}auto r=execute(frames);json report={{"schema","bvi-v3-independent-query-noise-result-v1"},{"same_note_line_rgb_without_background",same_local_pixels},{"expected_down_count",0},{"actual",describe(r)},{"trace",r.trace},{"pass",same_local_pixels&&downs(r.c)==0}};if(argc==2){std::ofstream o(argv[1]);o<<report.dump(2)<<'\n';}else std::cout<<report.dump(2)<<'\n';return report["pass"].get<bool>()?0:1;}

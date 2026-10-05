@@ -1,0 +1,32 @@
+2026-10-05T16:04:43Z
+g++ (Debian 14.2.0-19) 14.2.0
+637611b92cc8e2ab00d034bb30405a8870f26da1
+timeout 150s g++ -std=c++20 -O2 -I /tmp/pas-v3-contracts.0gFP7j -I /tmp/phigros-bvi-round2-deps /tmp/pas-v3-contracts.0gFP7j/bvi.cpp /tmp/pas-v3-contracts.0gFP7j/contact_policy.cpp /tmp/pas-v3-contracts.0gFP7j/relation_policy.cpp /tmp/pas-v3-contracts.0gFP7j/constraint_policy.cpp /tmp/pas-v3-contracts.0gFP7j/relation_tests.cpp -o /tmp/pas-v3-contracts.0gFP7j/relation 
+{
+  "assertions": 74,
+  "failed_assertions": 0
+}
+timeout 150s g++ -std=c++20 -O2 -DCONTACT_INTEGRATION -I /tmp/pas-v3-contracts.0gFP7j -I /tmp/phigros-bvi-round2-deps /tmp/pas-v3-contracts.0gFP7j/bvi.cpp /tmp/pas-v3-contracts.0gFP7j/contact_policy.cpp /tmp/pas-v3-contracts.0gFP7j/relation_policy.cpp /tmp/pas-v3-contracts.0gFP7j/constraint_policy.cpp /tmp/pas-v3-contracts.0gFP7j/contact_tests.cpp -o /tmp/pas-v3-contracts.0gFP7j/contact 
+{
+  "assertions": 167,
+  "failed_assertions": 0
+}
+timeout 150s g++ -std=c++20 -O2 -I /tmp/pas-v3-contracts.0gFP7j -I /tmp/phigros-bvi-round2-deps /tmp/pas-v3-contracts.0gFP7j/bvi.cpp /tmp/pas-v3-contracts.0gFP7j/contact_policy.cpp /tmp/pas-v3-contracts.0gFP7j/relation_policy.cpp /tmp/pas-v3-contracts.0gFP7j/constraint_policy.cpp /tmp/pas-v3-contracts.0gFP7j/line_ambiguity_tests.cpp -o /tmp/pas-v3-contracts.0gFP7j/line_ambiguity 
+{
+  "assertions": 16,
+  "failed_assertions": 0
+}
+research/bvi_cold_v3/bvi.cpp: OK
+research/bvi_cold_v3/compare_legacy_results.cpp: OK
+research/bvi_cold_v3/constraint_policy.cpp: OK
+research/bvi_cold_v3/contact_policy.cpp: OK
+research/bvi_cold_v3/contact_tests.cpp: OK
+research/bvi_cold_v3/cost_probe.cpp: OK
+research/bvi_cold_v3/independent_v3_tests.cpp: OK
+research/bvi_cold_v3/line_ambiguity_tests.cpp: OK
+research/bvi_cold_v3/relation_policy.cpp: OK
+research/bvi_cold_v3/relation_tests.cpp: OK
+research/bvi_cold_v3/bvi.hpp: OK
+research/bvi_cold_v3/contact_policy.hpp: OK
+research/bvi_cold_v3/relation_policy.hpp: OK
+/tmp/phigros-bvi-round2-deps/nlohmann/json.hpp: OK

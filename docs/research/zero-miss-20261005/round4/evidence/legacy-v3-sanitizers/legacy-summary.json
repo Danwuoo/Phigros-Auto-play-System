@@ -1,0 +1,674 @@
+{
+  "aggregate_pass": false,
+  "assertions": 3938,
+  "failed_assertions": 42,
+  "failed_layer_cases": 24,
+  "failed_rows": [
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "effect",
+        "pass": false
+      },
+      "case": "V04-contained-effect",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": "unique",
+        "expected": "ambiguous",
+        "field": "association",
+        "pass": false
+      },
+      "case": "V08-forward",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": "unique",
+        "expected": "ambiguous",
+        "field": "association",
+        "pass": false
+      },
+      "case": "V08-reverse",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-regions-overflow",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "qualification_invalid",
+        "pass": false
+      },
+      "case": "V16-regions-overflow",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-lines-overflow",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "qualification_invalid",
+        "pass": false
+      },
+      "case": "V16-lines-overflow",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-metadata-overflow",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "qualification_invalid",
+        "pass": false
+      },
+      "case": "V16-metadata-overflow",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-probes-overflow",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "qualification_invalid",
+        "pass": false
+      },
+      "case": "V16-probes-overflow",
+      "layer": "rgb",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-source",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-regions-overflow",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-lines-overflow",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-metadata-overflow",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-probes-overflow",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-short-rgb",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-nan",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-infinity",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": {
+          "contact_id": 1,
+          "invalid": false,
+          "move": false,
+          "parts": [
+            {
+              "alternatives": 1,
+              "association": "ambiguous",
+              "body": true,
+              "cap": true,
+              "contact": "supported",
+              "depth": 200.0,
+              "down": false,
+              "effect": false,
+              "first_independent_ns": 10000000,
+              "freshness_ns": 1000000,
+              "front": [
+                308.0,
+                504.0
+              ],
+              "hit": [
+                308.0,
+                500.0
+              ],
+              "independent": 3,
+              "last_independent_ns": 50000000,
+              "rear": [
+                308.0,
+                304.0
+              ],
+              "rear_cap": true,
+              "relation": "continued",
+              "span_ns": 40000000,
+              "usable": true
+            }
+          ],
+          "physical": "unknown",
+          "refresh": false,
+          "release": false
+        },
+        "expected": {
+          "contact_id": 1,
+          "invalid": false,
+          "move": false,
+          "parts": [
+            {
+              "alternatives": 1,
+              "association": "ambiguous",
+              "body": true,
+              "cap": true,
+              "contact": "supported",
+              "depth": 200.0,
+              "down": false,
+              "effect": false,
+              "first_independent_ns": 10000000,
+              "freshness_ns": 1000000,
+              "front": [
+                308.0,
+                504.0
+              ],
+              "hit": [
+                308.0,
+                499.5197438360538
+              ],
+              "independent": 3,
+              "last_independent_ns": 50000000,
+              "rear": [
+                308.0,
+                304.0
+              ],
+              "rear_cap": true,
+              "relation": "continued",
+              "span_ns": 40000000,
+              "usable": true
+            }
+          ],
+          "physical": "unknown",
+          "refresh": false,
+          "release": false
+        },
+        "field": "equivalent_to",
+        "pass": false
+      },
+      "case": "V18-V08-line-order",
+      "layer": "typed",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": {
+          "contact_id": 1,
+          "invalid": false,
+          "move": false,
+          "parts": [
+            {
+              "alternatives": 1,
+              "association": "ambiguous",
+              "body": true,
+              "cap": true,
+              "contact": "supported",
+              "depth": 200.0,
+              "down": false,
+              "effect": false,
+              "first_independent_ns": 10000000,
+              "freshness_ns": 1000000,
+              "front": [
+                308.0,
+                504.0
+              ],
+              "hit": [
+                308.0,
+                500.0
+              ],
+              "independent": 3,
+              "last_independent_ns": 50000000,
+              "rear": [
+                308.0,
+                304.0
+              ],
+              "rear_cap": true,
+              "relation": "continued",
+              "span_ns": 40000000,
+              "usable": true
+            }
+          ],
+          "physical": "unknown",
+          "refresh": false,
+          "release": false
+        },
+        "expected": {
+          "contact_id": 1,
+          "invalid": false,
+          "move": false,
+          "parts": [
+            {
+              "alternatives": 1,
+              "association": "ambiguous",
+              "body": true,
+              "cap": true,
+              "contact": "supported",
+              "depth": 200.0,
+              "down": false,
+              "effect": false,
+              "first_independent_ns": 10000000,
+              "freshness_ns": 1000000,
+              "front": [
+                308.0,
+                504.0
+              ],
+              "hit": [
+                308.0,
+                499.5197438360538
+              ],
+              "independent": 3,
+              "last_independent_ns": 50000000,
+              "rear": [
+                308.0,
+                304.0
+              ],
+              "rear_cap": true,
+              "relation": "continued",
+              "span_ns": 40000000,
+              "usable": true
+            }
+          ],
+          "physical": "unknown",
+          "refresh": false,
+          "release": false
+        },
+        "field": "equivalent_to",
+        "pass": false
+      },
+      "case": "V18-V08-line-order",
+      "layer": "lifecycle",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "effect",
+        "pass": false
+      },
+      "case": "V04-contained-effect",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": "unique",
+        "expected": "ambiguous",
+        "field": "association",
+        "pass": false
+      },
+      "case": "V08-forward",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "move",
+        "pass": false
+      },
+      "case": "V08-forward",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": "unique",
+        "expected": "ambiguous",
+        "field": "association",
+        "pass": false
+      },
+      "case": "V08-reverse",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "move",
+        "pass": false
+      },
+      "case": "V08-reverse",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-regions-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "move",
+        "pass": false
+      },
+      "case": "V16-regions-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "qualification_invalid",
+        "pass": false
+      },
+      "case": "V16-regions-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "refresh",
+        "pass": false
+      },
+      "case": "V16-regions-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-lines-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "move",
+        "pass": false
+      },
+      "case": "V16-lines-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "qualification_invalid",
+        "pass": false
+      },
+      "case": "V16-lines-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "refresh",
+        "pass": false
+      },
+      "case": "V16-lines-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-metadata-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "move",
+        "pass": false
+      },
+      "case": "V16-metadata-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "qualification_invalid",
+        "pass": false
+      },
+      "case": "V16-metadata-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "refresh",
+        "pass": false
+      },
+      "case": "V16-metadata-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "current_body_preserved",
+        "pass": false
+      },
+      "case": "V16-probes-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "move",
+        "pass": false
+      },
+      "case": "V16-probes-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": false,
+        "expected": true,
+        "field": "qualification_invalid",
+        "pass": false
+      },
+      "case": "V16-probes-overflow",
+      "layer": "e2e",
+      "original": true
+    },
+    {
+      "assertion": {
+        "actual": true,
+        "expected": false,
+        "field": "refresh",
+        "pass": false
+      },
+      "case": "V16-probes-overflow",
+      "layer": "e2e",
+      "original": true
+    }
+  ],
+  "layer_cases": 356,
+  "layers": {
+    "e2e": {
+      "assertions": 1495,
+      "cases": 89,
+      "failed_assertions": 21,
+      "failed_cases": 7
+    },
+    "lifecycle": {
+      "assertions": 1331,
+      "cases": 89,
+      "failed_assertions": 1,
+      "failed_cases": 1
+    },
+    "rgb": {
+      "assertions": 490,
+      "cases": 89,
+      "failed_assertions": 11,
+      "failed_cases": 7
+    },
+    "typed": {
+      "assertions": 589,
+      "cases": 89,
+      "failed_assertions": 9,
+      "failed_cases": 9
+    }
+  },
+  "new_case_failed_assertions": 0,
+  "passed_layer_cases": 332,
+  "renderer_controls": {
+    "cases": 3,
+    "failed_assertions": 0
+  },
+  "schema": "bvi.cloud.suite-summary.v1",
+  "schema_errors": [],
+  "schema_negative_controls": {
+    "cases": 4,
+    "failed_assertions": 0
+  },
+  "status": "cold_fail_requires_classification",
+  "suite_native_exit": 1,
+  "supplemental": {
+    "cases": 22,
+    "failed_assertions": 0
+  },
+  "unverified_oracle_fields": [],
+  "wrong_contact_native_exit": 1,
+  "wrong_contact_verified": true
+}

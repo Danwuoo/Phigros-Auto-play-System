@@ -1,0 +1,21 @@
+{
+  "schema": "bvi-cold-v3-independent-expectations-v1",
+  "frozen_at_utc": "2026-10-05T15:41:00Z",
+  "baseline": "a53a9b7021bcc900f498047f5cc017b42e4711b0",
+  "independence": "Written before reading v3 implementation. Public baseline header and prior independent v2 renderer only. Expected actions use current RGB and finite legal history, never hidden physical labels.",
+  "positive_groups": {
+    "stationary_acquisition": ["A01_stationary_tap_line_approach", "A02_stationary_hold_line_approach", "A03_stationary_tap_rotated_approach", "A04_stationary_tap_translated_approach"],
+    "exact_duplicate_representation": ["R01_prior_duplicate_continuation", "R02_current_duplicate_one_down", "R03_alias_attachment_keeps_contact", "R04_permuted_alias_attachment", "R05_prior_duplicates_stationary_down"],
+    "distinct_objects": ["R06_two_separate_nearby_taps", "R07_two_holds_remain_separate"],
+    "oblique_hold_contact": ["O01_oblique_current_blue", "O02_oblique_translated", "O03_oblique_opposite_angle", "O04_oblique_deeper_intersection"]
+  },
+  "negative_groups": {
+    "freshness_and_relative_novelty": ["N01_background_only", "N02_irrelevant_line_moves", "N03_same_source_replay", "N04_subpixel_line_noise_same_pixels", "N05_wrong_epoch", "N06_future_capture", "N07_stale_capture", "N08_two_current_lines_ambiguous", "N09_line_id_switch", "N10_unknown_receipt_no_resurrection", "N11_completed_no_resurrection"],
+    "distinct_merge": ["N12_two_holds_union", "N13_near_distinct_prior_regions_not_exact_duplicates"],
+    "oblique_contact_denial": ["N14_white_line_only", "N15_oblique_no_rails", "N16_parallel_line_and_rails", "N17_frame_boundary_missing_witness", "N18_short_body_no_visible_contact", "N19_missing_one_side_support"]
+  },
+  "metamorphic": ["M01_line_input_order", "M02_distinct_query_order"],
+  "decision_only": ["D01_identical_observations_physical_owner_unknown", "D02_near_duplicate_same_visible_body", "D03_short_six_pixel_body_unresolved"],
+  "scoring": "Report legal action opportunities and overrejects separately from unsafe false positives. Duplicate current requests must emit exactly one new Down; an already active attachment at a noncanonical alias must keep contact ID and emit zero Down. Ambiguous physical ownership is not a safety pass. Raw descriptors and action results are retained. No candidate output changes these expected actions.",
+  "limits": "Synthetic opportunity, not Phigros physical correctness or zero Miss. No original frozen tests or oracle changed. Near-duplicate same visible body is deliberately unknown unless policy establishes observable distinction."
+}

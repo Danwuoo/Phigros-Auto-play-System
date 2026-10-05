@@ -1,0 +1,20 @@
+--- docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/relation_policy.cpp	2026-10-06 00:01:55.100041279 +0800
++++ research/bvi_cold_v3/relation_policy.cpp	2026-10-06 00:04:16.510321273 +0800
+@@ -42,11 +42,15 @@
+  std::array<Aliases,6> pastAliases{};std::array<std::array<Choice,128>,6> choices{};
+  for(std::size_t h=0;h<size_;++h){auto&s=history_[h];pastAliases[h]=aliases({s.parts.data(),s.count});std::array<std::uint8_t,128> users{};for(std::size_t i=0;i<out.count;++i)if(out.canonical[i]==i){auto&c=choices[h][i];c=choose(out.parts[i],s,pastAliases[h]);if(c.index!=255&&out.parts[i].front_end)++users[c.index];}for(std::size_t i=0;i<out.count;++i)if(out.canonical[i]==i){auto&c=choices[h][i];if(c.index!=255&&users[c.index]>1){c.ambiguous=true;c.alternatives=2;}}}
+  for(std::size_t i=0;i<out.count;++i){if(out.canonical[i]!=i)continue;auto&d=out.parts[i];auto&r=out.relations[i];r={};r.invalid=out.invalid||out.context_invalid;r.freshness=now-key.capture;
+-  std::array<const Descriptor*,6> seen{};std::size_t seenCount=0;std::uint8_t stationaryCount=0;Ns stationaryFirst=0,stationaryLast=0;const Descriptor*previous=nullptr;const Descriptor*lastObserved=nullptr;std::array<std::uint64_t,6> stationaryRgb{};std::size_t rgbCount=0;
++  std::array<const Descriptor*,6> seen{};std::size_t seenCount=0;const Descriptor*lastNoteWitness=nullptr;std::uint8_t stationaryCount=0;Ns stationaryFirst=0,stationaryLast=0;const Descriptor*previous=nullptr;const Descriptor*lastObserved=nullptr;std::array<std::uint64_t,6> stationaryRgb{};std::size_t rgbCount=0;
+   auto resetStationary=[&](){stationaryCount=0;stationaryFirst=stationaryLast=0;previous=lastObserved=nullptr;rgbCount=0;};
+   auto endpoint=[&](const Descriptor&p,Ns capture){
+    if(!p.front_end){resetStationary();return;}
+-   bool duplicate=false;for(std::size_t j=0;j<seenCount;++j)duplicate|=p.rgb_signature==seen[j]->rgb_signature||p.signature==seen[j]->signature||same_query(p.q,seen[j]->q);seen[seenCount++]=&p;if(!duplicate){if(!r.independent)r.first_independent=capture;++r.independent;r.last_independent=capture;}
++   bool duplicate=false;for(std::size_t j=0;j<seenCount;++j)duplicate|=p.rgb_signature==seen[j]->rgb_signature||p.signature==seen[j]->signature||same_query(p.q,seen[j]->q);seen[seenCount++]=&p;
++   // Double-valued ROI jitter and background changes are not a moving note.
++   // Accumulate against the last counted witness, not every intervening frame.
++   const bool pixelStep=!lastNoteWitness||std::hypot(p.q.front.x-lastNoteWitness->q.front.x,p.q.front.y-lastNoteWitness->q.front.y)>=1.0;
++   if(!duplicate&&pixelStep){if(!r.independent)r.first_independent=capture;++r.independent;r.last_independent=capture;lastNoteWitness=&p;}
+    if(!same_query(p.q,d.q)||p.approach.state!=RelationLineState::unique){resetStationary();return;}
+    if(lastObserved){const auto&a=lastObserved->approach;const auto&b=p.approach;const bool crossed=a.separation*b.separation<0;const bool receded=std::abs(b.separation)>std::abs(a.separation)+1e-9;
+     if(!same_stationary_line(a,b)||crossed||receded){resetStationary();}

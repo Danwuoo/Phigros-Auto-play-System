@@ -1,0 +1,14 @@
+PASS valid_until_equality: submit=true, down=0, expired=1
+PASS expiry_precedes_lateness: default window closes at down+30ms
+PASS late_30ms_equality: down=1
+PASS late_30ms_plus_1ns: down=0, same_intent_resubmit=false
+PASS contact_conflict_retirement: submitted=6, down=5, conflict=1, retry_same_id=false, retry_new_id=true
+PASS equal_due_release_then_reuse: phases=Up,Down, same_contact=true
+PASS overdue_order: next Down due29 conflicts, prior Up due30 executes at35; no automatic reschedule
+PASS scripted_serial_rpc_10ms: plans=5, down=4, down_too_late=1, starts_ms=10,20,30,40, (synthetic, not measured gRPC)
+PASS scripted_serial_rpc_10ms_default_window: plans=5, down=3, expired=2
+PASS unknown_down: attempts=1, release_requested=1, fault_latched=true, retry=false
+PASS independent_gate_target_expiry: fresh_gate=true, target_released_at100=true
+PASS stop_before_due: down=0
+PASS five_profile_rotation90_edges: (0,0)->(719,0), (1279,719)->(0,1279)
+RESULT cases=13 checks=66 failures=0; fake-clock_only=true; production_source_unmodified=true

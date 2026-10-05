@@ -1,0 +1,1121 @@
+{
+  "assertions": 106,
+  "cases": [
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "legal_current_support",
+      "id": "P01_axis_aligned"
+    },
+    {
+      "actual": {
+        "hit": [
+          336.93927420185105,
+          495.23993155270966
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "legal_current_support",
+      "id": "P02_co_rotation"
+    },
+    {
+      "actual": {
+        "hit": [
+          317.542060923862,
+          498.9608000265373
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "legal_current_support",
+      "id": "P03_frozen_V10_geometry"
+    },
+    {
+      "actual": {
+        "hit": [
+          322.457939076138,
+          498.9608000265373
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "legal_current_support",
+      "id": "P04_mirrored_oblique"
+    },
+    {
+      "actual": {
+        "hit": [
+          264.542060923862,
+          445.9608000265373
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": true,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "legal_current_support",
+      "id": "P05_translated_oblique"
+    },
+    {
+      "actual": {
+        "hit": [
+          349.2063756731488,
+          450.92042544978364
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "legal_current_support",
+      "id": "P06_deep_oblique"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "legal_current_support",
+      "id": "P07_short_visible_body16"
+    },
+    {
+      "actual": {
+        "hit": [
+          341.85362638745676,
+          412.19267643746343
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "legal_current_support",
+      "id": "P08_large_obliqueness"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_black"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_white"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": true
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_yellow"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_left_missing"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_mixed_sides"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_delta6_missing"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_white_band"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": true
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_yellow_band"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N_pixel_alpha89"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "missing_current_support",
+      "id": "N10_short_body2"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          520.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "bounded_geometry",
+      "id": "N11_parallel"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          480.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "bounded_geometry",
+      "id": "N12_near_parallel"
+    },
+    {
+      "actual": {
+        "hit": [
+          20.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": false,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "bounded_geometry",
+      "id": "N13_clipped_flank"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "bounded_geometry",
+      "id": "N14_hit_outside_body"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "bounded_geometry",
+      "id": "N15_hit_outside_segment"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "bounded_geometry",
+      "id": "N16_flanks_outside_segment"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          498.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "bounded_geometry",
+      "id": "N17_hit_off_line"
+    },
+    {
+      "actual": {
+        "hit": [
+          325.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        }
+      ],
+      "class": "bounded_geometry",
+      "id": "N18_hit_off_axis"
+    },
+    {
+      "actual": {
+        "hit": [
+          320.0,
+          500.0
+        ],
+        "probes": 8,
+        "supported": true,
+        "yellow": false
+      },
+      "checks": [
+        {
+          "actual": true,
+          "expected": false,
+          "field": "supported",
+          "pass": false
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "max8",
+          "pass": true
+        },
+        {
+          "actual": 6291462,
+          "expected": 6291457,
+          "field": "budget_overflow_reported",
+          "pass": false
+        }
+      ],
+      "class": "bounded_resource",
+      "id": "N19_budget_exhaustion"
+    },
+    {
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": 8,
+          "expected": 8,
+          "field": "probes",
+          "pass": true
+        }
+      ],
+      "class": "tap_unchanged",
+      "id": "TAP-parity-0"
+    },
+    {
+      "checks": [
+        {
+          "actual": true,
+          "expected": true,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": 8,
+          "expected": 8,
+          "field": "probes",
+          "pass": true
+        }
+      ],
+      "class": "tap_unchanged",
+      "id": "TAP-parity-1"
+    },
+    {
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": 8,
+          "expected": 8,
+          "field": "probes",
+          "pass": true
+        }
+      ],
+      "class": "tap_unchanged",
+      "id": "TAP-parity-2"
+    },
+    {
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": 8,
+          "expected": 8,
+          "field": "probes",
+          "pass": true
+        }
+      ],
+      "class": "tap_unchanged",
+      "id": "TAP-parity-3"
+    },
+    {
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": 8,
+          "expected": 8,
+          "field": "probes",
+          "pass": true
+        }
+      ],
+      "class": "tap_unchanged",
+      "id": "TAP-parity-4"
+    },
+    {
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": 8,
+          "expected": 8,
+          "field": "probes",
+          "pass": true
+        }
+      ],
+      "class": "tap_unchanged",
+      "id": "TAP-parity-5"
+    },
+    {
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": true,
+          "expected": true,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": 8,
+          "expected": 8,
+          "field": "probes",
+          "pass": true
+        }
+      ],
+      "class": "tap_unchanged",
+      "id": "TAP-parity-6"
+    },
+    {
+      "checks": [
+        {
+          "actual": false,
+          "expected": false,
+          "field": "supported",
+          "pass": true
+        },
+        {
+          "actual": false,
+          "expected": false,
+          "field": "yellow",
+          "pass": true
+        },
+        {
+          "actual": 8,
+          "expected": 8,
+          "field": "probes",
+          "pass": true
+        }
+      ],
+      "class": "tap_unchanged",
+      "id": "TAP-parity-7"
+    }
+  ],
+  "contract": "C-V3-CONTACT-1",
+  "denominators": {
+    "bounded_geometry": {
+      "cases": 8,
+      "failed_cases": 7
+    },
+    "bounded_resource": {
+      "cases": 1,
+      "failed_cases": 1
+    },
+    "legal_current_support": {
+      "cases": 8,
+      "failed_cases": 3
+    },
+    "missing_current_support": {
+      "cases": 10,
+      "failed_cases": 0
+    },
+    "tap_unchanged": {
+      "cases": 8,
+      "failed_cases": 0
+    }
+  },
+  "failed_assertions": 12,
+  "physical_human_gold": 0,
+  "schema": "contact-policy-result-v1",
+  "touch_backend": false
+}

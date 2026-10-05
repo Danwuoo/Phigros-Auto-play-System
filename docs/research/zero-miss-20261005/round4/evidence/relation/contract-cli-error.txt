@@ -1,0 +1,1 @@
+2026-10-05: author ran contract_fixture_v2 with only a fresh output path. Native exit 2; usage requires the original classification JSON followed by fresh-result.json. No report or expectation was overwritten. Corrected invocation saved separately.

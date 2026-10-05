@@ -4,7 +4,7 @@
   "created_date": "2026-10-05",
   "updated_date": "2026-10-05",
   "initial_commit": "a53a9b7021bcc900f498047f5cc017b42e4711b0",
-  "status": "active_cloud_development",
+  "status": "cloud_checkpoint_complete_handoff_prepared",
   "completed": false,
   "record_kind": "repository_development_goal_not_system_goal",
   "dedicated_goal_tool_available_in_current_environment": false,
@@ -21,24 +21,30 @@
     "extra_three_consecutive_successes_required": false
   },
   "latest_checkpoint": {
-    "commit": "a53a9b7021bcc900f498047f5cc017b42e4711b0",
-    "candidate": "isolated BVI cold v2; not integrated into production",
+    "commit": "c2dda1db9fe95b46ff103300d43583857130cd8f",
+    "candidate": "isolated BVI cold v3; no production pixels-to-touch integration",
+    "legacy_layer_cases": 356,
     "legacy_assertions": 3938,
-    "legacy_failed_assertions": 43,
+    "legacy_failed_assertions": 36,
+    "original54_fixed": 18,
+    "new_legacy_failures": 0,
     "contract_assertions": 339,
     "contract_failed_assertions": 0,
-    "independent_assertions": 79,
-    "independent_failed_assertions": 2,
+    "old_independent_assertions": 79,
+    "old_independent_failed_assertions": 0,
+    "relation_assertions": 74,
+    "contact_assertions": 167,
+    "line_ambiguity_assertions": 16,
+    "independent_assertions": 101,
+    "independent_failed_assertions": 0,
+    "independent_additional_controls": 5,
+    "independent_additional_failed_controls": 0,
     "new_live_runs": 0
   },
-  "active_work": [
-    "stationary acquisition and exact-duplicate ROI semantics",
-    "oblique current-pixel contact support and effect contract",
-    "independent safety/opportunity regression",
-    "production integration, cost and device handoff readiness"
-  ],
+  "active_work": [],
   "current_assignment_stop_condition": "Stop and hand off when actual-device or game feedback becomes the next necessary gate, after required cold regressions; do not wait for device connectivity or exhaust unrelated cloud improvements.",
-  "current_assignment_completion": "complete_handoff_to_user_for_manual_Codex_task_transfer",
+  "current_assignment_completion": "prepare_and_verify_handoff_then_retain_for_user_requested_manual_Codex_transfer",
+  "completion_delivery": "report completion only; retain detailed handoff and attachments until user requests them",
   "device_work_route": "user manually transfers the handoff to a Codex task; this cloud task and parent do not create or run device tasks",
   "device_state_last_reported": "offline; not rechecked by this cloud task",
   "scope_limits": [
@@ -50,6 +56,8 @@
   "blocked_acceptance": [
     "Current chapter/version/unlock screenshots not supplied",
     "Exact candidate not yet integrated and qualified for real gameplay",
-    "Actual-device validation must be coordinated later"
-  ]
+    "User manually transfers the retained handoff; this cloud task does not arrange device work."
+  ],
+  "current_assignment_completed": true,
+  "next_required_gate": "User-manual Codex handoff: target Windows offline build, legitimate real-pixel ROI/all-lines and complete contact-prefix bridge before owner/cost and device gameplay."
 }

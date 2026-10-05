@@ -1,0 +1,37 @@
+2026-10-05T15:43:15Z
+a53a9b7021bcc900f498047f5cc017b42e4711b0
+g++ (Debian 14.2.0-19) 14.2.0
+
+Tool presence (no install):
+cmake: unavailable
+pwsh: unavailable
+powershell: unavailable
+cl: unavailable
+x86_64-w64-mingw32-g++: unavailable
+a6655069bb33fa6c8eea05aae5e4917c25df94f4d3a60d76043feed9d9a8ca81  src/game.cpp
+69e1431c31b67e5585eebfad5665ed2b2d97cf5463b42b752154fc95bce42bfa  src/game_tracking.cpp
+4828fe28cb4f482234900e7ebc8ced78011d10045d37de499697d8bff467ba67  src/game_motion.cpp
+9fba9f836a56e4856aa33188682b9bef5180c745f1f60b6eeb0de1e6591c857a  src/game_session.cpp
+ca0cae9619fd3481b56ca39d89aa05db621a558bbd5aa58b666dc6303bdce7f4  src/core.cpp
+00e2cf41b6092c09fd071e5ec57c2cd9f201541ea5d7246ff5819f203dfbb5af  include/pas/game.hpp
+c27ed9223cd3eed4a496d4d5b63b910bc72a6a76414380c174e9dd2720edf578  include/pas/core.hpp
+f2e1f3cac4e48fa851d6986291e4bd5b384d87f92c175d8b126cbd91580289cc  /tmp/phigros-bvi-round2-deps/nlohmann/json.hpp
+
+COMMAND: timeout 60s g++ -std=c++20 -fsyntax-only -Iinclude -I/tmp/phigros-bvi-round2-deps src/game.cpp
+EXIT: 0
+
+COMMAND: timeout 60s g++ -std=c++20 -fsyntax-only -Iinclude -I/tmp/phigros-bvi-round2-deps src/game_tracking.cpp
+EXIT: 0
+
+COMMAND: timeout 60s g++ -std=c++20 -fsyntax-only -Iinclude -I/tmp/phigros-bvi-round2-deps src/game_motion.cpp
+EXIT: 0
+
+COMMAND: timeout 60s g++ -std=c++20 -fsyntax-only -Iinclude -I/tmp/phigros-bvi-round2-deps src/game_session.cpp
+EXIT: 0
+
+COMMAND: timeout 60s g++ -std=c++20 -fsyntax-only -Iinclude -I/tmp/phigros-bvi-round2-deps src/core.cpp
+src/core.cpp:11:10: fatal error: windows.h: No such file or directory
+   11 | #include <windows.h>
+      |          ^~~~~~~~~~~
+compilation terminated.
+EXIT: 1

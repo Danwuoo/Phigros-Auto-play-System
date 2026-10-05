@@ -1,0 +1,11 @@
+timeout 120s g++ -std=c++20 -O2 -I docs/research/zero-miss-20261005/evidence/touch-scheduler/shim -I include src/core.cpp docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp -o /tmp/pas-v3-scheduler.5Jp7G8/release-scheduler 
+timeout 120s g++ -std=c++20 -O2 -I docs/research/zero-miss-20261005/evidence/touch-scheduler/shim -I include src/core.cpp docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp -o /tmp/pas-v3-scheduler.5Jp7G8/release-flick_move 
+timeout 120s g++ -std=c++20 -O0 -g -D_GLIBCXX_ASSERTIONS -I docs/research/zero-miss-20261005/evidence/touch-scheduler/shim -I include src/core.cpp docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp -o /tmp/pas-v3-scheduler.5Jp7G8/debug-scheduler 
+timeout 120s g++ -std=c++20 -O0 -g -D_GLIBCXX_ASSERTIONS -I docs/research/zero-miss-20261005/evidence/touch-scheduler/shim -I include src/core.cpp docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp -o /tmp/pas-v3-scheduler.5Jp7G8/debug-flick_move 
+timeout 120s g++ -std=c++20 -O1 -g -fno-omit-frame-pointer -fsanitize=address\,undefined -I docs/research/zero-miss-20261005/evidence/touch-scheduler/shim -I include src/core.cpp docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp -o /tmp/pas-v3-scheduler.5Jp7G8/sanitizers-scheduler 
+timeout 120s g++ -std=c++20 -O1 -g -fno-omit-frame-pointer -fsanitize=address\,undefined -I docs/research/zero-miss-20261005/evidence/touch-scheduler/shim -I include src/core.cpp docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp -o /tmp/pas-v3-scheduler.5Jp7G8/sanitizers-flick_move 
+src/core.cpp: OK
+include/pas/core.hpp: OK
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp: OK
+docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp: OK
+docs/research/zero-miss-20261005/evidence/touch-scheduler/shim/windows.h: OK

@@ -1,0 +1,10 @@
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_policy.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_tests.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/bvi.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/relation_policy.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/constraint_policy.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/bvi.hpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_policy.hpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/relation_policy.hpp: OK
+/tmp/phigros-bvi-round2-deps/nlohmann/json.hpp: OK
+/workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/contact/run-contact.sh: OK

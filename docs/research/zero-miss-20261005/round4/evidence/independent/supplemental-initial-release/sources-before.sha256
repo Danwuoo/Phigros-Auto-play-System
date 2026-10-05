@@ -1,0 +1,10 @@
+d6ce2e84bb4640fc6e5649f24cd1267433fd54fe668d8dfe7c934ea0f3a41531  /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/bvi.cpp
+565e7c058328d01b11b75e7bf05a96a96dcdd378b42f000a422c000957671d5f  /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/bvi.hpp
+693cb7a1fa177035e1542c772dd2e26e63cd280fcdc34067aea4f3959297c821  /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/constraint_policy.cpp
+b08520d87591b914fd357205e506a5080abb690dc4efe08c6e44e1225aea1c6f  /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/contact_policy.cpp
+b0efddfbacfd96bccb00ad96d6ad434b89f442d1e033ea6f06cda4c5be2d9b61  /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/relation_policy.cpp
+08f48f197ef36449bc04b81cdd27005c50e56bc4766fde9e5d3bc58c38ccb691  /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/contact_policy.hpp
+bbb47373899ac0531e424849aaa3d32638348ea25e8ebf682ddfaf906ac9feb0  /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/independent/initial-candidate-source/relation_policy.hpp
+c302f8d280df58feff84f60d6456fc43d184474b46bab946ec44f4b07267b664  research/bvi_cold_v3/independent_v3_tests.cpp
+70e29157f9f44433fa0f4ece2cf032a32a680b5f7b73a53abdf88febd6022546  docs/research/zero-miss-20261005/round4/evidence/independent/query-noise-matrix.cpp
+9115325d8116a06115a3e38b9b643fa8c964c45879daa576b8f21c62bde9bd5c  docs/research/zero-miss-20261005/round4/evidence/independent/query-accumulation-probe.cpp

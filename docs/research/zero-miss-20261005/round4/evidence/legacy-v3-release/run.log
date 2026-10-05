@@ -1,0 +1,43 @@
+2026-10-05T15:57:34Z
+variant=candidate mode=release suite=all attempt=cloud-bvi-cold-v3-20261005
+g++ (Debian 14.2.0-19) 14.2.0
+637611b92cc8e2ab00d034bb30405a8870f26da1
+temporary_build=/tmp/phigros-bvi-cold-v3.frVhct
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/bvi.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/bvi.hpp: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/driver.inc: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/main.cpp: OK
+/tmp/phigros-bvi-round2-deps/nlohmann/json.hpp: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json: OK
+patching file /tmp/phigros-bvi-cold-v3.frVhct/main.cpp
+COMPILE timeout 150s g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -I/tmp/phigros-bvi-cold-v3.frVhct -I/tmp/phigros-bvi-round2-deps /tmp/phigros-bvi-cold-v3.frVhct/bvi.cpp /tmp/phigros-bvi-cold-v3.frVhct/contact_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/relation_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/constraint_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/main.cpp -o /tmp/phigros-bvi-cold-v3.frVhct/legacy
+RUN timeout 90s /tmp/phigros-bvi-cold-v3.frVhct/legacy /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json /workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/legacy-v3-release/wrong-contact.json wrong-contact-only
+wrong-contact_native_exit=1
+RUN timeout 90s /tmp/phigros-bvi-cold-v3.frVhct/legacy /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json /workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/legacy-v3-release/suite.json
+suite_native_exit=1
+COMPILE timeout 150s g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -I/tmp/phigros-bvi-cold-v3.frVhct -I/tmp/phigros-bvi-round2-deps /tmp/phigros-bvi-cold-v3.frVhct/bvi.cpp /tmp/phigros-bvi-cold-v3.frVhct/contact_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/relation_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/constraint_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/contract.cpp -o /tmp/phigros-bvi-cold-v3.frVhct/contract
+RUN timeout 90s /tmp/phigros-bvi-cold-v3.frVhct/contract /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round2/BVI_FAILURE_SEMANTICS_CLASSIFICATION.json /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/legacy-v3-release/contract.json /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/legacy-v3-release/contract-change-map.json
+contract_native_exit=0
+COMPILE timeout 150s g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -I/tmp/phigros-bvi-cold-v3.frVhct -I/tmp/phigros-bvi-round2-deps /tmp/phigros-bvi-cold-v3.frVhct/bvi.cpp /tmp/phigros-bvi-cold-v3.frVhct/contact_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/relation_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/constraint_policy.cpp /tmp/phigros-bvi-cold-v3.frVhct/independent.cpp -o /tmp/phigros-bvi-cold-v3.frVhct/independent
+RUN timeout 90s /tmp/phigros-bvi-cold-v3.frVhct/independent /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round4/evidence/legacy-v3-release/independent.json
+independent_native_exit=0
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/bvi.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/bvi.hpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/constraint_policy.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_policy.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/relation_policy.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/contact_policy.hpp: OK
+/workspace/shared/phigros-zero-miss-research/research/bvi_cold_v3/relation_policy.hpp: OK
+aggregate_exit=1; original-contract failures remain failures, not a collector pass
+2026-10-05T15:58:13Z
