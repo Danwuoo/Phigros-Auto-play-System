@@ -1,0 +1,55 @@
+{
+  "schema": "pas.development-goal-state.v1",
+  "goal": "Chapter Legacy all tracks unlocked at IN and same-candidate complete IN results with Miss=0",
+  "created_date": "2026-10-05",
+  "updated_date": "2026-10-05",
+  "initial_commit": "a53a9b7021bcc900f498047f5cc017b42e4711b0",
+  "status": "active_cloud_development",
+  "completed": false,
+  "record_kind": "repository_development_goal_not_system_goal",
+  "dedicated_goal_tool_available_in_current_environment": false,
+  "automation_created": false,
+  "required_acceptance": {
+    "current_game_version_verified": false,
+    "chapter_listing_verified": false,
+    "chapter_track_count": null,
+    "all_IN_unlocks_verified": false,
+    "same_frozen_candidate_for_all_tracks": true,
+    "complete_IN_results_miss_zero_for_all_tracks": false,
+    "actual_device_gameplay_required": true,
+    "all_perfect_required": false,
+    "extra_three_consecutive_successes_required": false
+  },
+  "latest_checkpoint": {
+    "commit": "a53a9b7021bcc900f498047f5cc017b42e4711b0",
+    "candidate": "isolated BVI cold v2; not integrated into production",
+    "legacy_assertions": 3938,
+    "legacy_failed_assertions": 43,
+    "contract_assertions": 339,
+    "contract_failed_assertions": 0,
+    "independent_assertions": 79,
+    "independent_failed_assertions": 2,
+    "new_live_runs": 0
+  },
+  "active_work": [
+    "stationary acquisition and exact-duplicate ROI semantics",
+    "oblique current-pixel contact support and effect contract",
+    "independent safety/opportunity regression",
+    "production integration, cost and device handoff readiness"
+  ],
+  "current_assignment_stop_condition": "Stop and hand off when actual-device or game feedback becomes the next necessary gate, after required cold regressions; do not wait for device connectivity or exhaust unrelated cloud improvements.",
+  "current_assignment_completion": "complete_handoff_to_user_for_manual_Codex_task_transfer",
+  "device_work_route": "user manually transfers the handoff to a Codex task; this cloud task and parent do not create or run device tasks",
+  "device_state_last_reported": "offline; not rechecked by this cloud task",
+  "scope_limits": [
+    "No automatic push, PR or merge",
+    "No paid compute, system-security changes, game-save edits or device-setting changes",
+    "Preserve frozen inputs, oracle definitions, failures and historical STOP states",
+    "Synthetic or cloud passing results never complete the product goal"
+  ],
+  "blocked_acceptance": [
+    "Current chapter/version/unlock screenshots not supplied",
+    "Exact candidate not yet integrated and qualified for real gameplay",
+    "Actual-device validation must be coordinated later"
+  ]
+}
