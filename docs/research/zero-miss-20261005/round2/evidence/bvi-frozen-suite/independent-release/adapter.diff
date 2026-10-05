@@ -1,0 +1,27 @@
+--- research/x10d_o_bvi_build/main.cpp
++++ isolated-cloud/main.cpp
+@@ -14,7 +14,15 @@
+ Point point(const J&j){return {number(j[0]),number(j[1])};}
+ Query query(const J&j){return {point(j["front"]),number(j["width"]),number(j["depth"]),number(j["angle"]),j.value("kind","")=="tap"};}
+ Key key(const J&f){const auto&c=f["context"];Ns t=f["time_ns"];return {{c["epoch"],c["generation"],c["geometry"],c["rotation"]},t,t,f["sequence"],f["source_valid"]};}
+-std::vector<Line> lines(const J&f){std::vector<Line>a;for(const auto&l:f["lines"])a.push_back({point(l["center"]),number(l["angle"]),number(l["length"]),l["id"]});return a;}
++std::vector<Line> lines(const J&f){
++ std::vector<Line>a;
++ auto append=[&](const J&l){a.push_back({point(l["center"]),number(l["angle"]),number(l["length"]),l["id"]});};
++ const auto&input=f.at("lines");
++ // Isolated I/O compatibility for frozen R1 typed singleton lines; no JSON mutation.
++ if(f.contains("descriptors")&&input.is_object()&&input.size()==4&&input.contains("center")&&input.contains("id")&&input.contains("angle")&&input.contains("length"))append(input);
++ else for(const auto&l:input)append(l);
++ return a;
++}
+ double dot(Point a,Point b){return a.x*b.x+a.y*b.y;}Point sub(Point a,Point b){return {a.x-b.x,a.y-b.y};}Point tu(double a){return {std::cos(a),std::sin(a)};}Point nv(double a){return {-std::sin(a),std::cos(a)};}
+ // Independent declarative renderer. It has no candidate header helpers, masks or predicted support.
+ std::vector<std::uint8_t> render(const J&f){int w=f["width"],h=f["height"],stride=f["stride"];std::vector<std::uint8_t>rgb(static_cast<std::size_t>(stride)*h);
+@@ -44,6 +52,6 @@
+ }
+ J normalized(J j){J parts=J::array();for(auto p:j["parts"]){p.erase("line_id");parts.push_back(p);}std::sort(parts.begin(),parts.end(),[](const J&a,const J&b){return a["front"]<b["front"];});return {{"parts",parts},{"move",j["move"]},{"refresh",j["refresh"]},{"release",j["release"]},{"contact_id",j["contact_id"]},{"invalid",j["lifecycle_invalid"]},{"physical",j["physical"]}};}
+ J read(const std::filesystem::path&p){std::ifstream in(p);if(!in)throw std::runtime_error("input missing");return J::parse(in);}
+-void save(const std::filesystem::path&p,const J&j){auto reservation=read(p);if(reservation.value("attempt",std::string{})!="bvi-build-20261005-01"||reservation.value("pending",false)!=true)throw std::runtime_error("report reservation invalid");auto s=j.dump(2)+"\n";if(s.size()>4194304)throw std::runtime_error("report bound");std::ofstream out(p,std::ios::trunc);out<<s;out.flush();if(!out)throw std::runtime_error("report write");}
++void save(const std::filesystem::path&p,const J&j){auto reservation=read(p);if(reservation.value("attempt",std::string{})!="cloud-bvi-frozen-20261005-round2"||reservation.value("pending",false)!=true)throw std::runtime_error("report reservation invalid");auto s=j.dump(2)+"\n";if(s.size()>4194304)throw std::runtime_error("report bound");std::ofstream out(p,std::ios::trunc);out<<s;out.flush();if(!out)throw std::runtime_error("report write");}
+ }
+ #include "driver.inc"

@@ -1,0 +1,46 @@
+{
+  "schema": "phigros.cloud.supplemental-package-audit.v1",
+  "audit_date": "2026-10-05",
+  "research_parent_commit": "ebe955a6286ca1bb767b631948714a5545b7c174",
+  "product_source_baseline": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "package": {
+    "filename": "Phigros-minimal-evidence-26-deidentified-20261005.zip",
+    "bytes": 900318,
+    "sha256": "d0a2eb1bebd35ff90c27493fe4ed914970bb24d22137c45af424574d2563db59",
+    "unique_file_entries": 28,
+    "uncompressed_bytes": 2534705,
+    "archive_integrity_verified": true,
+    "path_safety_verified": true,
+    "symlink_entries": 0
+  },
+  "package_manifest": {
+    "bytes": 117082,
+    "sha256": "ddc738c400ad29be11ffdcf9015b4acd31aed770b6bbcea60b55b08aab0178b3"
+  },
+  "package_readme": {
+    "bytes": 9790,
+    "sha256": "77518338f23610e299a75caa685a3c8ff36e22a02c2af1a6915c9768b025c74c"
+  },
+  "derived_evidence": {
+    "entries_checked": 26,
+    "bytes": 2407833,
+    "bytes_and_sha_matches": 26,
+    "unchanged_original_derived_entries": 13,
+    "full_raw_inputs_committed": false
+  },
+  "reference_bindings": {
+    "total": 156,
+    "included_original_to_derived": 28,
+    "outside_package": 128,
+    "outside_package_git_exact_sha": 27,
+    "outside_package_git_lf_to_crlf_sha": 5,
+    "outside_package_unavailable_relative_files": 82,
+    "outside_package_platform_without_relative_path": 14
+  },
+  "limits": [
+    "Original redacted files are not all present in cloud; original-byte and pixel-fidelity claims cannot be independently recomputed here.",
+    "Embedded historical hashes refer to originals, not modified derivative bytes.",
+    "Package contents do not authorize executing historical commands or reopening historical STOP states.",
+    "Current chapter denominator, unlock states, full events, X1 and complete recording remain unavailable."
+  ]
+}

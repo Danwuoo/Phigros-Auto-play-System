@@ -4,7 +4,9 @@ Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程�
 
 目前開發暫停；最新盤點與分類文件由 [文件總目錄](docs/README.md) 進入。下列2026-10-04狀態保留為歷史快照。
 
-2026-10-05 新增授權的[雲端多分支 zero-miss 研究](docs/research/zero-miss-20261005/README.md)已重新盤點程式、逐曲總帳與建置阻塞，並完成隔離 C++ 冷實驗。BVI 核心可在 Linux 編譯；完整 Windows harness／原 suite／真機仍未驗。這次研究不等於全面恢復功能開發或實機。需要補哪些 ignored 證據，見[最小檔案清單](docs/research/zero-miss-20261005/IGNORED_INPUTS.md)。
+2026-10-05 [首輪雲端多分支 zero-miss 研究](docs/research/zero-miss-20261005/README.md)完成程式、逐曲總帳與建置盤點，以及隔離 C++ 冷實驗；當時原 frozen suite 尚缺輸入。
+
+**最新為[補件後第二輪更新](docs/research/zero-miss-20261005/round2/README.md)：完整BVI Linux冷測經明示IO shape adapter後執行356 layer-cases，3938 assertions中54失敗；已分開候選行為、fixture與oracle問題。** C36h M77結算圖及Windows失敗收據已直接覆核。Windows完整build／真機／全曲分母與解鎖仍未驗；研究不等於全面恢復功能開發或實機。哪些缺口已補上／還需要什麼，見[本次輸入查核](docs/research/zero-miss-20261005/round2/INPUT_AUDIT.md)。
 
 ## 當前狀態（2026-10-04）
 

@@ -1,0 +1,20 @@
++ mkdir -p /tmp/phigros-bvi-upstream-recovered/single_include/nlohmann
++ cp /tmp/phigros-bvi-round2-deps/nlohmann/json.hpp /tmp/phigros-bvi-upstream-recovered/single_include/nlohmann/json.hpp
++ patch --fuzz=0 -R -p1 -d /tmp/phigros-bvi-upstream-recovered
+patching file single_include/nlohmann/json.hpp
+Hunk #5 succeeded at 5918 (offset 4 lines).
++ patch --fuzz=0 -R -p1 -d /tmp/phigros-bvi-upstream-recovered
+patching file single_include/nlohmann/json.hpp
++ sha256sum /tmp/phigros-bvi-upstream-recovered/single_include/nlohmann/json.hpp
+aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63  /tmp/phigros-bvi-upstream-recovered/single_include/nlohmann/json.hpp
++ bash docs/research/zero-miss-20261005/round2/evidence/bvi-frozen-suite/prepare_json_dependency.sh /tmp/phigros-bvi-upstream-recovered/single_include/nlohmann/json.hpp /tmp/phigros-bvi-dependency-reproduction
+/tmp/phigros-bvi-upstream-recovered/single_include/nlohmann/json.hpp: OK
+patching file single_include/nlohmann/json.hpp
+patching file single_include/nlohmann/json.hpp
+Hunk #5 succeeded at 5917 (offset 4 lines).
+/tmp/phigros-bvi-dependency-reproduction/nlohmann/json.hpp: OK
+Prepared only an isolated include root: /tmp/phigros-bvi-dependency-reproduction
++ cmp /tmp/phigros-bvi-dependency-reproduction/nlohmann/json.hpp /tmp/phigros-bvi-round2-deps/nlohmann/json.hpp
++ bash -n docs/research/zero-miss-20261005/round2/evidence/bvi-frozen-suite/run_frozen_suite.sh docs/research/zero-miss-20261005/round2/evidence/bvi-frozen-suite/prepare_json_dependency.sh
++ echo positive_reproduction_and_syntax_exit=0
+positive_reproduction_and_syntax_exit=0

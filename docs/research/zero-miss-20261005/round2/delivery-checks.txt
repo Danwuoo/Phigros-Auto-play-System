@@ -1,0 +1,13 @@
+research_parent_commit=ebe955a6286ca1bb767b631948714a5545b7c174
+product_original_research_existing_tests_diff=NONE
+round1_preserved_hashes=PASS
+local_links=47 missing=0
+preserved_empty_failed_audit_stdout=docs/research/zero-miss-20261005/round2/evidence/bvi-frozen-suite/diagnostics/post-audit-summary.json
+preserved_empty_failed_audit_stdout=docs/research/zero-miss-20261005/round2/evidence/bvi-frozen-suite/release/post-audit-summary.json
+nonempty_json_parse_pass=43 expected_empty_failed_outputs=2
+shell_syntax=PASS
+gzip_integrity=PASS
+independent_suite_byte_identical=TRUE native_exit=1 aggregate_exit=1 assertions=3938 failed=54
+privacy_pattern_scan=NO_MATCH
+raw_images_binaries_python_or_vendor_header_in_commit=NONE
+source_document_shell_whitespace=PASS; raw_logs_upstream_patch_context_whitespace_preserved=true

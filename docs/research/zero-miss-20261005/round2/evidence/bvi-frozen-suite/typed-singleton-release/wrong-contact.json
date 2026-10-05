@@ -1,0 +1,23 @@
+{
+  "adopted": false,
+  "assertions": 2,
+  "consumer_rejects": true,
+  "expected_native_exit": 1,
+  "failed_assertions": 2,
+  "negative_rows": [
+    {
+      "actual": 1,
+      "expected": 4,
+      "field": "contact_id_transfer@0",
+      "pass": false
+    },
+    {
+      "actual": 1,
+      "expected": 4,
+      "field": "renaming_output_contact",
+      "pass": false
+    }
+  ],
+  "schema": "bvi.r2f.contact-negative.v1",
+  "status": "cold_fail_requires_classification"
+}

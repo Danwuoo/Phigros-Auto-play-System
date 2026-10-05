@@ -1,0 +1,26 @@
+{
+  "initial_collection_script": [
+    "release",
+    "diagnostics",
+    "typed-singleton-release"
+  ],
+  "initial_collection_script_native_exit": 0,
+  "initial_exit_semantics": "collection completed only, not acceptance; date command was final",
+  "immutable_stage_exits_preserved": true,
+  "post_audit": {
+    "release": 2,
+    "diagnostics": 2,
+    "typed-singleton-release": 1
+  },
+  "final_script": "run_frozen_suite.sh",
+  "final_aggregate_exit_semantics": {
+    "0": "full suite pass and correct wrong-contact rejection",
+    "1": "completed suite has assertion/protocol failure",
+    "2": "missing, invalid, or incomplete result"
+  },
+  "verified_final_script_runs": [
+    "typed-singleton-debug",
+    "typed-singleton-sanitizers",
+    "typed-singleton-release-verified"
+  ]
+}

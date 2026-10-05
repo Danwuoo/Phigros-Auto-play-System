@@ -1,0 +1,57 @@
+2026-10-05T13:20:33Z
+Linux 91ecebcfb8e5 6.18.44 #1 SMP Sat Sep 26 20:02:31 UTC 2026 x86_64 GNU/Linux
+g++ (Debian 14.2.0-19) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+mode=release attempt=cloud-bvi-frozen-20261005-round2
+ebe955a6286ca1bb767b631948714a5545b7c174
+temporary_work=/tmp/phigros-bvi-round2.85qPbE
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/bvi.cpp: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/bvi.hpp: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/driver.inc: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/main.cpp: OK
+/tmp/phigros-bvi-round2-deps/nlohmann/json.hpp: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json: OK
+96d536c5b5e9e01e359da2ead01596428b46f4265f28ba295ee9d9b4297650c5  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json
+90f8680c4362d07a718ac2bb7142b37396871b7ffd81523a06ddd8a685ec5425  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json
+ce69f19d5c488e780c7d1cb7785601d3e3f80750b134440c636dda20f19ff8c3  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json
+45ab5f3d97c3513fb6836211801922a9d86863de273739e35b5e4263b7a6c0a1  /workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json
+8da656609b424eda46633145728dd485d12bfb25e83f1850235a527891e28f46  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json
+4985ec8aac5d89f0863125daa6be483b26c1b200b00f5bbcb23fc691cc517f2a  /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json
+timeout 120s g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -I/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build -I/tmp/phigros-bvi-round2-deps /workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/bvi.cpp /tmp/phigros-bvi-round2.85qPbE/main.cpp -o /tmp/phigros-bvi-round2.85qPbE/bvi-tests 
+compile_exit=0
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/bvi.cpp: In function ‘bvi::Constraints bvi::constrain(const Observation&, const Guard&)’:
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/bvi.cpp:97:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |  ^~
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/bvi.cpp:97:71: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |                                                                       ^~~~~~
+In file included from /tmp/phigros-bvi-round2.85qPbE/main.cpp:49:
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/driver.inc: In lambda function:
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/driver.inc:81:3: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   81 |   if(!c)throw std::runtime_error("contact permutation fixture missing");auto trajectory=execute(*c,"e2e").frames;
+      |   ^~
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi_build/driver.inc:81:73: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   81 |   if(!c)throw std::runtime_error("contact permutation fixture missing");auto trajectory=execute(*c,"e2e").frames;
+      |                                                                         ^~~~
+cf218e88c4b4b1b3052f23c02b317cddb2b848821ca7895bbbf1a2f13aac4c64  /tmp/phigros-bvi-round2.85qPbE/bvi-tests
+timeout 60s /tmp/phigros-bvi-round2.85qPbE/bvi-tests /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json /workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round2/evidence/bvi-frozen-suite/release/wrong-contact.json wrong-contact-only 
+wrong-contact_exit=1
+timeout 60s /tmp/phigros-bvi-round2.85qPbE/bvi-tests /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json /workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json /workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json /workspace/shared/phigros-zero-miss-research/docs/research/zero-miss-20261005/round2/evidence/bvi-frozen-suite/release/suite.json 
+suite_exit=2
+[json.exception.type_error.305] cannot use operator[] with a string argument with number
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/normalized-execution.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi/oracle.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/typed-r1.json: OK
+/workspace/shared/phigros-zero-miss-research/research/x10d_o_bvi/supplemental.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/r1-cases.json: OK
+/workspace/shared/phigros-evidence-round2/unpacked/measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-bvi-r1/expected-coverage.json: OK
+2026-10-05T13:20:44Z

@@ -1,0 +1,10 @@
+--- research/x10d_o_bvi_build/main.cpp
++++ isolated-cloud/main.cpp
+@@ -44,6 +44,6 @@
+ }
+ J normalized(J j){J parts=J::array();for(auto p:j["parts"]){p.erase("line_id");parts.push_back(p);}std::sort(parts.begin(),parts.end(),[](const J&a,const J&b){return a["front"]<b["front"];});return {{"parts",parts},{"move",j["move"]},{"refresh",j["refresh"]},{"release",j["release"]},{"contact_id",j["contact_id"]},{"invalid",j["lifecycle_invalid"]},{"physical",j["physical"]}};}
+ J read(const std::filesystem::path&p){std::ifstream in(p);if(!in)throw std::runtime_error("input missing");return J::parse(in);}
+-void save(const std::filesystem::path&p,const J&j){auto reservation=read(p);if(reservation.value("attempt",std::string{})!="bvi-build-20261005-01"||reservation.value("pending",false)!=true)throw std::runtime_error("report reservation invalid");auto s=j.dump(2)+"\n";if(s.size()>4194304)throw std::runtime_error("report bound");std::ofstream out(p,std::ios::trunc);out<<s;out.flush();if(!out)throw std::runtime_error("report write");}
++void save(const std::filesystem::path&p,const J&j){auto reservation=read(p);if(reservation.value("attempt",std::string{})!="cloud-bvi-frozen-20261005-round2"||reservation.value("pending",false)!=true)throw std::runtime_error("report reservation invalid");auto s=j.dump(2)+"\n";if(s.size()>4194304)throw std::runtime_error("report bound");std::ofstream out(p,std::ios::trunc);out<<s;out.flush();if(!out)throw std::runtime_error("report write");}
+ }
+ #include "driver.inc"

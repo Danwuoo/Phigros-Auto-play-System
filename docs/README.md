@@ -1,12 +1,12 @@
 # 文件總目錄
 
-**最新範圍：2026-10-05 新授權的有界雲端盤點、研究與隔離冷實驗已完成；正式功能開發與實機未恢復。**
+**最新範圍：2026-10-05 補件後第二輪雲端研究已完成；BVI完整冷契約實測尚未通過，正式功能開發與實機未恢復。**
 
-先讀[雲端多分支 zero-miss 研究](research/zero-miss-20261005/README.md)與[ignored 最小檔案清單](research/zero-miss-20261005/IGNORED_INPUTS.md)。本次 BVI 核心 Linux 小型 probe 已編譯／通過，完整 Windows harness、原 frozen suite 與真機仍未驗。較早的[開發現況與問題總整理](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)保留當時停止快照；最新歷史 BUILD 包仍為 STOP，未續跑。舊 README／路線圖中的「O 未開始」等文字依其日期解讀。
+先讀[補件後第二輪更新](research/zero-miss-20261005/round2/README.md)：隔離IO adapter後，356 layer-cases／3938 assertions有54失敗；Windows收據及單輪結算圖也已直接覆核。完整Windows build、真機與全曲驗收仍未成立。[首輪研究](research/zero-miss-20261005/README.md)及[原最小清單](research/zero-miss-20261005/IGNORED_INPUTS.md)保留當時狀態，補件已關閉的缺口以第二輪為準。較早[開發現況](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)仍為停止快照；歷史BUILD包沒有重開。
 
 ## 建議閱讀順序
 
-0. [10/5 雲端研究總結](research/zero-miss-20261005/README.md)：四分支查核、新冷實驗、Miss根因樹、優先實驗與逐曲驗收；不是遊戲改善宣稱。
+0. [10/5 補件後更新](research/zero-miss-20261005/round2/README.md)：完整冷測負結果、54項語義分類、直接收據/圖面覆核與下一步；[首輪](research/zero-miss-20261005/README.md)保留原四分支、Miss根因樹與全曲驗收設計。
 1. [目前開發現況與問題](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)：已有能力、逐包停止點、真實阻塞、剩餘驗收階段。
 2. [Chapter Legacy 目標與逐曲基準](catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)／[逐曲 JSON](catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)：IN 解鎖與 Miss=0 的產品分母與限制。
 3. [最新 BUILD 結果](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[交接](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)：新增診斷預驗18/20，真native前停止，原建置封裝仍未定位。

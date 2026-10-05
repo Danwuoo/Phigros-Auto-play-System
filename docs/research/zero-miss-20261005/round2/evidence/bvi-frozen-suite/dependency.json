@@ -1,0 +1,38 @@
+{
+  "schema": "bvi.cloud.dependency.v1",
+  "name": "nlohmann-json",
+  "upstream_version": "3.12.0",
+  "upstream_commit": "55f93686c01528224f448c19128836e7df245f72",
+  "upstream_tag_object": "65ee68451d8eb2b5f3a30b410476ab83deb3289b",
+  "upstream_url": "https://raw.githubusercontent.com/nlohmann/json/55f93686c01528224f448c19128836e7df245f72/single_include/nlohmann/json.hpp",
+  "retrieval": "connected GitHub read-only plugin; tag and immutable commit content compared equal",
+  "base_single_header": {
+    "bytes": 953436,
+    "sha256": "aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63"
+  },
+  "vcpkg_baseline": "93c50752b23e350ca6b9063a167f0a4cf8a3b3eb",
+  "vcpkg_port_version": 2,
+  "patch_policy": "only unchanged official single_include/nlohmann/json.hpp hunks extracted; patch --fuzz=0, in declared portfile order",
+  "patches": [
+    {
+      "path": "fix-4736_char8_t.patch",
+      "bytes": 2396,
+      "sha256": "b0ef178955eeb4979ef6dd106094efc919dc246871a47f087ce39d4f9f52714f",
+      "source_url": "https://github.com/microsoft/vcpkg/blob/93c50752b23e350ca6b9063a167f0a4cf8a3b3eb/ports/nlohmann-json/fix-4736_char8_t.patch"
+    },
+    {
+      "path": "fix-4742_std_optional.patch",
+      "bytes": 1732,
+      "sha256": "d934c79a23ee1ce4cd3a7668e9f532408e66019a9f13c7f515c22ec263eefd76",
+      "source_url": "https://github.com/microsoft/vcpkg/blob/93c50752b23e350ca6b9063a167f0a4cf8a3b3eb/ports/nlohmann-json/fix-4742_std_optional.patch"
+    }
+  ],
+  "effective_header": {
+    "bytes": 954094,
+    "sha256": "f2e1f3cac4e48fa851d6986291e4bd5b384d87f92c175d8b126cbd91580289cc"
+  },
+  "license": "MIT",
+  "license_path": "docs/catalog/08-licenses/third_party/nlohmann-json.txt",
+  "historical_windows_layout": "multiple headers; local historical header set not materialized; same version plus same pinned port patches, not claimed byte-identical layout",
+  "installation": "temporary /tmp include root only; no system install; no full vendored header in repo"
+}

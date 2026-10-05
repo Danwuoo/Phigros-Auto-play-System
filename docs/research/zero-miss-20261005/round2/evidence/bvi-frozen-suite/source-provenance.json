@@ -1,0 +1,74 @@
+{
+  "schema": "bvi.cloud.source-provenance.v1",
+  "repo_head": "ebe955a6286ca1bb767b631948714a5545b7c174",
+  "source_records": [
+    {
+      "repo_path": "research/x10d_o_bvi_r2f_control/bvi.cpp",
+      "bytes": 11388,
+      "sha256": "f45c079548c9e0e78472f31c1613f0b2aaddede0ca6e383ae663f31cfe91fdce",
+      "historical_freeze_sha256": "f45c079548c9e0e78472f31c1613f0b2aaddede0ca6e383ae663f31cfe91fdce",
+      "matches_control_freeze": true,
+      "note": ""
+    },
+    {
+      "repo_path": "research/x10d_o_bvi_build/bvi.cpp",
+      "bytes": 11388,
+      "sha256": "f45c079548c9e0e78472f31c1613f0b2aaddede0ca6e383ae663f31cfe91fdce",
+      "historical_freeze_sha256": "f45c079548c9e0e78472f31c1613f0b2aaddede0ca6e383ae663f31cfe91fdce",
+      "matches_control_freeze": true,
+      "note": ""
+    },
+    {
+      "repo_path": "research/x10d_o_bvi_r2f_control/bvi.hpp",
+      "bytes": 2578,
+      "sha256": "6f6313ef23ae473404d07f22f3438abc25364d65bce9f08fa35eaad5872eff0f",
+      "historical_freeze_sha256": "6f6313ef23ae473404d07f22f3438abc25364d65bce9f08fa35eaad5872eff0f",
+      "matches_control_freeze": true,
+      "note": ""
+    },
+    {
+      "repo_path": "research/x10d_o_bvi_build/bvi.hpp",
+      "bytes": 2578,
+      "sha256": "6f6313ef23ae473404d07f22f3438abc25364d65bce9f08fa35eaad5872eff0f",
+      "historical_freeze_sha256": "6f6313ef23ae473404d07f22f3438abc25364d65bce9f08fa35eaad5872eff0f",
+      "matches_control_freeze": true,
+      "note": ""
+    },
+    {
+      "repo_path": "research/x10d_o_bvi_r2f_control/driver.inc",
+      "bytes": 18232,
+      "sha256": "ba0328c622bcd44974e4d7e66414546d1e8de71cfd28f379d796096f2e67f0b3",
+      "historical_freeze_sha256": "ba0328c622bcd44974e4d7e66414546d1e8de71cfd28f379d796096f2e67f0b3",
+      "matches_control_freeze": true,
+      "note": ""
+    },
+    {
+      "repo_path": "research/x10d_o_bvi_build/driver.inc",
+      "bytes": 18232,
+      "sha256": "ba0328c622bcd44974e4d7e66414546d1e8de71cfd28f379d796096f2e67f0b3",
+      "historical_freeze_sha256": "ba0328c622bcd44974e4d7e66414546d1e8de71cfd28f379d796096f2e67f0b3",
+      "matches_control_freeze": true,
+      "note": ""
+    },
+    {
+      "repo_path": "research/x10d_o_bvi_r2f_control/main.cpp",
+      "bytes": 8140,
+      "sha256": "700912cfd8de1a6af2d17a884f00313c3907fedabb4e4bc0ce49092f668cfa91",
+      "historical_freeze_sha256": "700912cfd8de1a6af2d17a884f00313c3907fedabb4e4bc0ce49092f668cfa91",
+      "matches_control_freeze": true,
+      "note": ""
+    },
+    {
+      "repo_path": "research/x10d_o_bvi_build/main.cpp",
+      "bytes": 8142,
+      "sha256": "fc3199dc45bb7caf32557d8b8099ddc58cf0a8eec527fe25690b3423b802a407",
+      "historical_freeze_sha256": "700912cfd8de1a6af2d17a884f00313c3907fedabb4e4bc0ce49092f668cfa91",
+      "matches_control_freeze": false,
+      "note": "different historical attempt identity only"
+    }
+  ],
+  "raw_zip_sha256": "d0a2eb1bebd35ff90c27493fe4ed914970bb24d22137c45af424574d2563db59",
+  "identity_only_main_sha256": "86d71616ddb1bfc74e0e00531337ce7feeb352f24205b46f0977d3a1cf11c79c",
+  "singleton_adapter_main_sha256": "5383ffb0d5a821df71f8a14c063a0ce4c29b2b67dc9eebbcf4128c79492b2e61",
+  "no_core_driver_oracle_modification": true
+}

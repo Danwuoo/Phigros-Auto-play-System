@@ -1,0 +1,161 @@
+{
+  "schema": "phigros.round2_result_provenance_review.v1",
+  "review_date_utc": "2026-10-05",
+  "repo_head": "ebe955a6286ca1bb767b631948714a5545b7c174",
+  "package_base_repo_head": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "package_manifest_sha256": "ddc738c400ad29be11ffdcf9015b4acd31aed770b6bbcea60b55b08aab0178b3",
+  "tracked_ledger_sha256": "610e7f613f2a5ce1e75ef05938a6207b067bfe9026bbba690ec63aa99ba0fe4a",
+  "source_pointers": {
+    "ledger_run": "/runs/88",
+    "ledger_session": "/sessions/2"
+  },
+  "image_review": {
+    "method": "view_image_original_resolution_actual_pixels",
+    "width": 1280,
+    "height": 720,
+    "song": "Dlyrotz",
+    "difficulty": "IN",
+    "level": 13,
+    "score_display": "0795950",
+    "score": 795950,
+    "perfect": 496,
+    "good": 11,
+    "bad": 0,
+    "miss": 77,
+    "judgment_sum": 584,
+    "max_combo": 120,
+    "accuracy_percent": 86.16,
+    "early": 8,
+    "late": 3,
+    "grade": "C",
+    "is_new_gameplay_attempt": false,
+    "is_human_gold": false
+  },
+  "artifact_hashes": [
+    {
+      "relative_path": "measurements/game-assist/2026-09-30-m0-manual-continue/acceptance36h-01/sessions/manual-session-16174738262800/manifest.json",
+      "original": {
+        "bytes": 10293,
+        "sha256": "bf515cc46a728936643f4c4a0f69933c95caf9ad2aea2eae2bf0ea73b6bed996"
+      },
+      "derived": {
+        "bytes": 8688,
+        "sha256": "3bad0f5aef266cd432113e1aee4dbe718f4ac7091488fc9102b9027d0e65163d"
+      }
+    },
+    {
+      "relative_path": "measurements/game-assist/2026-09-30-m0-manual-continue/acceptance36h-01/sessions/manual-session-16174738262800/round-1/manifest.json",
+      "original": {
+        "bytes": 10311,
+        "sha256": "df84edcd4b50fb57ca91311705443b589238f2406dcc90945b11f8430867868c"
+      },
+      "derived": {
+        "bytes": 8705,
+        "sha256": "45d5cd48dbbb7b968bf25705a839d177fc5b0bf968b073c8b7c3f12dfd8c5f79"
+      }
+    },
+    {
+      "relative_path": "measurements/game-assist/2026-09-30-m0-manual-continue/acceptance36h-01/sessions/manual-session-16174738262800/round-1/summary.json",
+      "original": {
+        "bytes": 2477,
+        "sha256": "56e2f733ace6c47cbe2f4e2a218ec59318c8efe0058fa8ab3a6f34458c6f4446"
+      },
+      "derived": {
+        "bytes": 2477,
+        "sha256": "56e2f733ace6c47cbe2f4e2a218ec59318c8efe0058fa8ab3a6f34458c6f4446"
+      }
+    },
+    {
+      "relative_path": "measurements/game-assist/2026-09-30-m0-manual-continue/acceptance36h-01/sessions/manual-session-16174738262800/round-1/result.png",
+      "original": {
+        "bytes": 614091,
+        "sha256": "d85240867fa6386538076fb556c2f995f82e1e887d7675d64ab789a69c4271af"
+      },
+      "derived": {
+        "bytes": 824386,
+        "sha256": "d5ecd02c4979c8a78bee1e080abc54a67f0eb5a9ba5e0f00a124e2c869b7796e"
+      }
+    }
+  ],
+  "c4_consistency_checks": {
+    "round_manifest_equals_session_plus_round_id": true,
+    "manifest_round_matches_summary": true,
+    "ledger_result_original_identity": true,
+    "ledger_summary_original_identity": true,
+    "ledger_session_original_identity": true,
+    "ledger_executable_matches": true,
+    "ledger_profile_historical_sha_matches": true,
+    "ledger_source_commit_and_dirty_match": true,
+    "compiled_source_sha_count": 21,
+    "compiled_source_map_matches": true,
+    "embedded_config_matches_except_two_redacted_fields": true,
+    "event_references_match": true,
+    "summary_result_numbers": "unknown_until_result_pixels_reviewed",
+    "source_age_is_null": true,
+    "image_transcription_matches_ledger": true
+  },
+  "package_integrity_checks": {
+    "derived_files": 26,
+    "derived_bytes": 2407833,
+    "all_derived_bytes_and_sha_match": true,
+    "evidence_json_files": 22,
+    "historical_64hex_string_leaves": 217,
+    "reference_bindings": 156,
+    "all_binding_source_leaf_values_match": true,
+    "included_binding_edges": 28,
+    "included_mapping_failures": 0,
+    "not_in_package_binding_edges": 128,
+    "not_in_package_target_states": {
+      "tracked_same_path_sha_match": 27,
+      "tracked_same_path_lf_to_crlf_sha_match": 5,
+      "not_present_at_stated_relative_path": 82,
+      "platform_without_relative_path": 14
+    },
+    "absent_unique_relative_targets": 74
+  },
+  "redaction_boundary": {
+    "original_png_available": false,
+    "original_manifest_bytes_available": false,
+    "original_vs_derived_pixel_diff_rerun": false,
+    "mask_xywh_claim": [
+      1040,
+      0,
+      240,
+      112
+    ],
+    "outside_mask_unchanged_pixels_claim": 894720,
+    "outside_mask_unchanged_basis": "local_packager_statement_only_not_cloud_independent_pixel_comparison",
+    "device_identity": "redacted_not_revalidated",
+    "historical_fingerprint_matches_is_current_preflight": false
+  },
+  "remaining_limits": {
+    "event_segments_available": false,
+    "rounds_jsonl_available": false,
+    "session_summary_available": false,
+    "complete_lifecycle_recomputed": false,
+    "individual_rpc_timing_recomputed": false,
+    "source_absolute_age": null,
+    "exact_historical_build_closure_reconstructed": false,
+    "chapter_listing_verified": false,
+    "current_chapter_denominator": null,
+    "current_in_unlock_states": "unknown",
+    "zero_miss_result": false,
+    "product_acceptance": "not_accepted",
+    "other_historical_results_visually_rechecked": false
+  },
+  "ledger_unchanged": {
+    "runs": 89,
+    "HD": 70,
+    "IN": 19,
+    "IN_miss_zero_runs": 0,
+    "new_runs_added": 0
+  },
+  "scope": {
+    "formal_code_changed": false,
+    "original_evidence_changed": false,
+    "game_or_device_started": false,
+    "replay_run": false,
+    "committed": false,
+    "pushed": false
+  }
+}
