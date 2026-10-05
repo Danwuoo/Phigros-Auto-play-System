@@ -1,0 +1,7 @@
+Mon Oct  5 11:37:29 UTC 2026
+Linux 91ecebcfb8e5 6.18.44 #1 SMP Sat Sep 26 20:02:31 UTC 2026 x86_64 GNU/Linux
+g++ (Debian 14.2.0-19) 14.2.0
+ca0cae9619fd3481b56ca39d89aa05db621a558bbd5aa58b666dc6303bdce7f4  src/core.cpp
+c27ed9223cd3eed4a496d4d5b63b910bc72a6a76414380c174e9dd2720edf578  include/pas/core.hpp
+b948a22ff46039181d6b91292fd5c06a08790fd9fd82310855cc241e1114462b  docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp
+323daf48a3c02fb08ef2d16435de824d7b00119c97874f45a526bcfc9a371bab  docs/research/zero-miss-20261005/evidence/touch-scheduler/shim/windows.h

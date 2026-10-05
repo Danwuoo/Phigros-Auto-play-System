@@ -1,11 +1,12 @@
 # 文件總目錄
 
-**目前狀態：開發與續派暫停（2026-10-05，Asia/Taipei）。本輪只整理文件。**
+**最新範圍：2026-10-05 新授權的有界雲端盤點、研究與隔離冷實驗已完成；正式功能開發與實機未恢復。**
 
-先讀 [開發現況與問題總整理](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)。舊 README／路線圖中的「O 未開始」等文字屬當時快照；最新 BUILD 包已 STOP，BVI 尚未編譯或冷驗。
+先讀[雲端多分支 zero-miss 研究](research/zero-miss-20261005/README.md)與[ignored 最小檔案清單](research/zero-miss-20261005/IGNORED_INPUTS.md)。本次 BVI 核心 Linux 小型 probe 已編譯／通過，完整 Windows harness、原 frozen suite 與真機仍未驗。較早的[開發現況與問題總整理](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)保留當時停止快照；最新歷史 BUILD 包仍為 STOP，未續跑。舊 README／路線圖中的「O 未開始」等文字依其日期解讀。
 
 ## 建議閱讀順序
 
+0. [10/5 雲端研究總結](research/zero-miss-20261005/README.md)：四分支查核、新冷實驗、Miss根因樹、優先實驗與逐曲驗收；不是遊戲改善宣稱。
 1. [目前開發現況與問題](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)：已有能力、逐包停止點、真實阻塞、剩餘驗收階段。
 2. [Chapter Legacy 目標與逐曲基準](catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)／[逐曲 JSON](catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)：IN 解鎖與 Miss=0 的產品分母與限制。
 3. [最新 BUILD 結果](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[交接](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)：新增診斷預驗18/20，真native前停止，原建置封裝仍未定位。
@@ -31,7 +32,7 @@
 - RESULT 是該包結果；HANDOFF 是接手說明；PROTOCOL／DISPATCH／PLAN 是當時契約或規劃。
 - CONTROLLER_ACCEPTANCE／REVIEW 的驗收範圍可能只到保全、設計、工程控制或冷契約；不能只看檔名就當作產品已驗。
 - 日期相同不代表同一來源／binary；source SHA、attempt 與收據才是辨識依據。
-- 目前的暫停指示優先於任何歷史派送文字；不得由文件自行恢復開發或實機。
+- 使用者最新授權決定範圍；本次僅有界雲端研究，不得由歷史派送或研究建議自行恢復功能開發或實機。
 
 ## 整理與保全
 

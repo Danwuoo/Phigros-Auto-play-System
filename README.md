@@ -4,6 +4,8 @@ Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程�
 
 目前開發暫停；最新盤點與分類文件由 [文件總目錄](docs/README.md) 進入。下列2026-10-04狀態保留為歷史快照。
 
+2026-10-05 新增授權的[雲端多分支 zero-miss 研究](docs/research/zero-miss-20261005/README.md)已重新盤點程式、逐曲總帳與建置阻塞，並完成隔離 C++ 冷實驗。BVI 核心可在 Linux 編譯；完整 Windows harness／原 suite／真機仍未驗。這次研究不等於全面恢復功能開發或實機。需要補哪些 ignored 證據，見[最小檔案清單](docs/research/zero-miss-20261005/IGNORED_INPUTS.md)。
+
 ## 當前狀態（2026-10-04）
 
 產品目標為 **Chapter Legacy 所有曲目解鎖 IN，完整 IN 結算 Miss=0**；P/G/B與分數照樣報告，HD為解鎖及回歸階段，沒有AP前置。最新逐曲證據、研究狀態與順序工作包見[10/4基準總帳](docs/catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)及[配套JSON](docs/catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)。現行章節分母未核，`chapter_listing_verified=false`；目前各曲解鎖狀態unknown，不能由HD分數代推。

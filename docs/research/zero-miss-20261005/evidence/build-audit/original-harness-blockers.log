@@ -1,0 +1,9 @@
+COMMAND: timeout 30s g++ -std=c++20 -fsyntax-only -Iresearch/x10d_o_bvi_build research/x10d_o_bvi_build/main.cpp
+research/x10d_o_bvi_build/main.cpp:2:10: fatal error: nlohmann/json.hpp: No such file or directory
+    2 | #include <nlohmann/json.hpp>
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+EXIT=1
+COMMAND: cmake -S research/x10d_o_bvi_build -B /tmp/phigros-bvi-original-cmake
+/bin/bash: line 1: cmake: command not found
+EXIT=127

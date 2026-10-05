@@ -1,0 +1,7 @@
+baseline=74e54437d4a3ad2b2bd1a3b09312211a92f2359e
+product_and_existing_tests_diff=NONE
+local_markdown_links=32 failures=0
+json_parse=PASS docs/research/zero-miss-20261005/LEGACY_ACCEPTANCE_MANIFEST_TEMPLATE.json
+json_parse=PASS docs/research/zero-miss-20261005/evidence/build-audit/probe-results.json
+privacy_shape_scan=NO_MATCH
+staged_whitespace_check=PASS

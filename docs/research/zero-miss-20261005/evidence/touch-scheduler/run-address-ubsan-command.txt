@@ -1,0 +1,1 @@
+ASAN_OPTIONS=detect_leaks=0 "$B/probe-asan-ubsan" > "$E/results-address-ubsan.txt" 2> "$E/address-ubsan.log"

@@ -1,0 +1,9 @@
+case,frame,current_contact,descriptor_same_as_first,rgb_same_as_previous,independent,span_ns,usable,new_down_opportunity
+stationary_tap_line_chase,1,0,1,0,1,0,0,0
+stationary_tap_line_chase,2,0,1,0,1,0,0,0
+stationary_tap_line_chase,3,1,1,0,1,0,0,0
+stationary_tap_line_chase,4,1,1,0,1,0,0,0
+moving_tap_line_chase,1,0,1,0,1,0,0,0
+moving_tap_line_chase,2,0,0,0,2,20000000,0,0
+moving_tap_line_chase,3,1,0,0,3,40000000,1,1
+moving_tap_line_chase,4,1,0,0,4,60000000,1,1

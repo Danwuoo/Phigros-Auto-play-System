@@ -1,0 +1,35 @@
+Bounded environment diagnostic rerun; prior LSan failure preserved; leak detection disabled, no source change.
+COMMAND: ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 timeout 30s /tmp/phigros-bvi-core-probe-san
+platform=Linux independent_probe=true frozen_suite=false
+sizeof_candidate=154112 sizeof_observation=31792 sizeof_descriptor=200 metadata_bytes=185904
+PASS capacity inclusive maxima
+PASS capacity rejects region/line/metadata/probe overflow
+rgb_probes=4307
+PASS RGB body rails endpoints current contact
+PASS RGB byte-count invalid
+PASS RGB source invalid
+PASS nonfinite query invalid
+PASS nonfinite line invalid
+PASS actual 129 queries fail closed
+PASS duplicate supported lines remain nonunique
+PASS three independent samples over 30ms usable
+PASS qualified never-executed permits one Down
+PASS no free contacts denies new Down
+PASS duplicate signatures do not accumulate confirmation
+PASS six-sample bound evicts oldest before output
+PASS 40ms gap included
+PASS 40ms+1 gap resets history
+PASS source age 100ms-1 accepted
+PASS source age 100ms rejected
+PASS context change revokes current qualification
+PASS nonincreasing key rejected
+PASS active current body refresh uses same contact without new confirmation
+PASS unknown Down releases without replay
+PASS completed remains complete without replay
+PASS gate deadline equality releases
+PASS plan deadline equality releases
+PASS inconsistent receipt fails closed
+PASS missing 60ms-1 no refresh no premature release
+PASS missing 60ms releases
+assertions=28 passed=28 failed=0
+TEST_EXIT=0

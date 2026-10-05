@@ -1,0 +1,9 @@
+case,frame,independent,span_ns,usable,new_down_opportunity,active_move
+stationary_endpoint,1,1,0,0,0,1
+stationary_endpoint,2,1,0,0,0,1
+stationary_endpoint,3,1,0,0,0,1
+stationary_endpoint,4,1,0,0,0,1
+moving_endpoint,1,1,0,0,0,1
+moving_endpoint,2,2,20000000,0,0,1
+moving_endpoint,3,3,40000000,1,1,1
+moving_endpoint,4,4,60000000,1,1,1

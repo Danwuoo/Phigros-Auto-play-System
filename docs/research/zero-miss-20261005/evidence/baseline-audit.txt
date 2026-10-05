@@ -1,0 +1,53 @@
+audit_date_utc=2026-10-05
+baseline_commit=74e54437d4a3ad2b2bd1a3b09312211a92f2359e
+baseline_tree=e6880d268f6eaadc43717be0bdb3942c7b9a5c4a
+tracked_files=643
+
+platform
+Linux 6.18.44 x86_64
+PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+g++ (Debian 14.2.0-19) 14.2.0
+
+available_commands
+/usr/local/bin/git
+/usr/bin/g++
+/usr/bin/jq
+cmake: NOT_IN_PATH
+ninja: NOT_IN_PATH
+clang++: NOT_IN_PATH
+pwsh: NOT_IN_PATH
+powershell: NOT_IN_PATH
+adb: NOT_IN_PATH
+emulator: NOT_IN_PATH
+
+ignored_directories
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+measurements/
+out/
+
+tracked_raw_build_assets
+
+product_diff_f83c7ea_to_baseline
+
+recent_history
+74e5443 2026-10-05T19:15:58+08:00 docs: move documents into topic directories and repair links
+ccc2de8 2026-10-05T19:11:15+08:00 chore: preserve offline research tools and BVI source snapshots
+92a02af 2026-10-05T19:03:00+08:00 docs: organize documentation and summarize paused development
+f83c7ea 2026-10-01T16:40:16+08:00 update
+9fea67e 2026-10-01T15:26:52+08:00 Merge all worktrees into main with observer50 integration and offline tools
+98169a5 2026-10-01T14:52:07+08:00 Preserve C36h full recording analysis and offline CPU vision pilot
+39366fd 2026-10-01T14:52:06+08:00 Preserve observer49 hot trial and baseline recovery handoff
+e23b3f9 2026-09-30T13:27:21+08:00 Revert "Allow sole usable current line fallback beside short fragments"
+f592bd6 2026-09-30T13:22:17+08:00 Allow sole usable current line fallback beside short fragments
+146cfaf 2026-09-30T13:14:04+08:00 Defer connected ridge search until legacy line count is known
+d199db8 2026-09-30T12:52:38+08:00 Preserve A36 single-line fallback when adding split ridges
+62d6eb4 2026-09-30T11:15:27+08:00 Recover connected judgment lines on A36 with bounded row prescreen
+
+repository_instruction_files
+./AGENTS.md

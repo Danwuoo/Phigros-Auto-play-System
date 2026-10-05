@@ -1,0 +1,44 @@
+COMMAND: timeout 60s g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Iresearch/x10d_o_bvi_build research/x10d_o_bvi_build/bvi.cpp docs/research/zero-miss-20261005/evidence/build-audit/bvi_core_probe.cpp -o /tmp/phigros-bvi-core-probe
+research/x10d_o_bvi_build/bvi.cpp: In function ‘bvi::Constraints bvi::constrain(const Observation&, const Guard&)’:
+research/x10d_o_bvi_build/bvi.cpp:97:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |  ^~
+research/x10d_o_bvi_build/bvi.cpp:97:71: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |                                                                       ^~~~~~
+BUILD_EXIT=0
+COMMAND: timeout 30s /tmp/phigros-bvi-core-probe
+platform=Linux independent_probe=true frozen_suite=false
+sizeof_candidate=154112 sizeof_observation=31792 sizeof_descriptor=200 metadata_bytes=185904
+PASS capacity inclusive maxima
+PASS capacity rejects region/line/metadata/probe overflow
+rgb_probes=4307
+PASS RGB body rails endpoints current contact
+PASS RGB byte-count invalid
+PASS RGB source invalid
+PASS nonfinite query invalid
+PASS nonfinite line invalid
+PASS actual 129 queries fail closed
+PASS duplicate supported lines remain nonunique
+PASS three independent samples over 30ms usable
+PASS qualified never-executed permits one Down
+PASS no free contacts denies new Down
+PASS duplicate signatures do not accumulate confirmation
+PASS six-sample bound evicts oldest before output
+PASS 40ms gap included
+PASS 40ms+1 gap resets history
+PASS source age 100ms-1 accepted
+PASS source age 100ms rejected
+PASS context change revokes current qualification
+PASS nonincreasing key rejected
+PASS active current body refresh uses same contact without new confirmation
+PASS unknown Down releases without replay
+PASS completed remains complete without replay
+PASS gate deadline equality releases
+PASS plan deadline equality releases
+PASS inconsistent receipt fails closed
+PASS missing 60ms-1 no refresh no premature release
+PASS missing 60ms releases
+assertions=28 passed=28 failed=0
+TEST_EXIT=0
+c00113ec632b02568b90adbc1f653d13934e7abb2b3ffa02547c19021795cb83  /tmp/phigros-bvi-core-probe

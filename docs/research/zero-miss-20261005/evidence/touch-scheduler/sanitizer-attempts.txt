@@ -1,0 +1,2 @@
+First sanitizer launch exited nonzero at LeakSanitizer environment check under ptrace; no suite pass is claimed.
+Second launch ASAN_OPTIONS=detect_leaks=0: exit=0; AddressSanitizer+UndefinedBehaviorSanitizer only, LeakSanitizer excluded.

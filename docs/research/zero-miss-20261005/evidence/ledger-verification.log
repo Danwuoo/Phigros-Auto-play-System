@@ -1,0 +1,21 @@
+610e7f613f2a5ce1e75ef05938a6207b067bfe9026bbba690ec63aa99ba0fe4a  docs/catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json
+{
+  "runs": 89,
+  "sessions": 33,
+  "songs": 20,
+  "HD": 70,
+  "IN": 19,
+  "miss0": 0,
+  "all_statuses": [
+    "result_confirmed"
+  ],
+  "run_ids_unique": true,
+  "session_refs_resolve": true,
+  "song_run_refs_resolve": true,
+  "per_song_counts_match": true,
+  "judgment_sums_consistent": true,
+  "chapter_listing_verified": false,
+  "current_chapter_denominator": null
+}
+true
+RESULT=PASS_FOR_TRACKED_JSON_CONSISTENCY_ONLY

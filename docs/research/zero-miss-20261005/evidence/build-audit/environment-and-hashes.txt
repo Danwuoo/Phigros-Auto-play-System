@@ -1,0 +1,33 @@
+2026-10-05T11:34:03Z
+Linux 6.18.44 x86_64
+74e54437d4a3ad2b2bd1a3b09312211a92f2359e
+?? docs/research/
+/usr/bin/g++
+g++ (Debian 14.2.0-19) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+=== dependency inputs ===
+nlohmann_system_exit=1
+measurements_present_exit=1
+out_present_exit=1
+
+=== protected source hashes ===
+903a977cf6d308f75b03992d26a11a3531047c57b682d616d16853efa19d74cc  research/x10d_o_bvi_build/CMakeLists.txt
+f45c079548c9e0e78472f31c1613f0b2aaddede0ca6e383ae663f31cfe91fdce  research/x10d_o_bvi_build/bvi.cpp
+6f6313ef23ae473404d07f22f3438abc25364d65bce9f08fa35eaad5872eff0f  research/x10d_o_bvi_build/bvi.hpp
+fc3199dc45bb7caf32557d8b8099ddc58cf0a8eec527fe25690b3423b802a407  research/x10d_o_bvi_build/main.cpp
+ba0328c622bcd44974e4d7e66414546d1e8de71cfd28f379d796096f2e67f0b3  research/x10d_o_bvi_build/driver.inc
+6e9e59dccafdb52f3baad55d2afe9d7ddf9aae6b0295d58bbbe9d06cdb9ca5cf  research/x10d_o_bvi_build/transaction.ps1
+5bb73e1860746a22bcf1f6c2fecd9ecc9822531c2d9915d8152e5875e6cca16e  research/x10d_o_bvi_build/diagnostic-pretest.ps1
+06f223175921fa3e55261901f4ca51ecd24eb5b6110dfc3ef847fa95eec5b0e0  research/x10d_o_bvi_build/initialize.ps1
+41cb0ac22659e7bec2b3a5cb399a1f270694c30f07d1e21ff43e03172c785a84  research/x10d_o_bvi_build/owned.cs
+40d0e0e3b3724879ec6ac55ed5b6cd21ea4e90939b55d453d93478d1e3b60327  research/x10d_o_bvi_build/identity.ps1
+f45c079548c9e0e78472f31c1613f0b2aaddede0ca6e383ae663f31cfe91fdce  research/x10d_o_bvi_r2f_control/bvi.cpp
+6f6313ef23ae473404d07f22f3438abc25364d65bce9f08fa35eaad5872eff0f  research/x10d_o_bvi_r2f_control/bvi.hpp
+ba0328c622bcd44974e4d7e66414546d1e8de71cfd28f379d796096f2e67f0b3  research/x10d_o_bvi_r2f_control/driver.inc
+41cb0ac22659e7bec2b3a5cb399a1f270694c30f07d1e21ff43e03172c785a84  research/x10d_o_bvi_r2f_control/owned.cs
+40d0e0e3b3724879ec6ac55ed5b6cd21ea4e90939b55d453d93478d1e3b60327  research/x10d_o_bvi_r2f_control/identity.ps1
+6e9e59dccafdb52f3baad55d2afe9d7ddf9aae6b0295d58bbbe9d06cdb9ca5cf  research/x10d_o_bvi_r2f_control/transaction.ps1

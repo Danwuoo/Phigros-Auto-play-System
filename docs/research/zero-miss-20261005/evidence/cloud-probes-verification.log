@@ -1,0 +1,183 @@
+scope=Linux isolated research probes; original Windows suites and gameplay not run
+baseline=74e54437d4a3ad2b2bd1a3b09312211a92f2359e
+g++ (Debian 14.2.0-19) 14.2.0
+
+COMMAND: timeout 60s g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Iresearch/x10d_o_bvi_build research/x10d_o_bvi_build/bvi.cpp docs/research/zero-miss-20261005/evidence/build-audit/bvi_core_probe.cpp -o /tmp/phigros-cloud-review.iAHfUN/bvi-core
+research/x10d_o_bvi_build/bvi.cpp: In function ‘bvi::Constraints bvi::constrain(const Observation&, const Guard&)’:
+research/x10d_o_bvi_build/bvi.cpp:97:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |  ^~
+research/x10d_o_bvi_build/bvi.cpp:97:71: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |                                                                       ^~~~~~
+EXIT=0
+
+COMMAND: timeout 30s /tmp/phigros-cloud-review.iAHfUN/bvi-core
+platform=Linux independent_probe=true frozen_suite=false
+sizeof_candidate=154112 sizeof_observation=31792 sizeof_descriptor=200 metadata_bytes=185904
+PASS capacity inclusive maxima
+PASS capacity rejects region/line/metadata/probe overflow
+rgb_probes=4307
+PASS RGB body rails endpoints current contact
+PASS RGB byte-count invalid
+PASS RGB source invalid
+PASS nonfinite query invalid
+PASS nonfinite line invalid
+PASS actual 129 queries fail closed
+PASS duplicate supported lines remain nonunique
+PASS three independent samples over 30ms usable
+PASS qualified never-executed permits one Down
+PASS no free contacts denies new Down
+PASS duplicate signatures do not accumulate confirmation
+PASS six-sample bound evicts oldest before output
+PASS 40ms gap included
+PASS 40ms+1 gap resets history
+PASS source age 100ms-1 accepted
+PASS source age 100ms rejected
+PASS context change revokes current qualification
+PASS nonincreasing key rejected
+PASS active current body refresh uses same contact without new confirmation
+PASS unknown Down releases without replay
+PASS completed remains complete without replay
+PASS gate deadline equality releases
+PASS plan deadline equality releases
+PASS inconsistent receipt fails closed
+PASS missing 60ms-1 no refresh no premature release
+PASS missing 60ms releases
+assertions=28 passed=28 failed=0
+EXIT=0
+
+COMMAND: timeout 60s g++ -std=c++20 -O2 -Wall -Wextra -I docs/research/zero-miss-20261005/evidence/touch-scheduler/shim -I include src/core.cpp docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp -o /tmp/phigros-cloud-review.iAHfUN/scheduler
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp: In function ‘int main()’:
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp:50:3: warning: this ‘for’ clause does not guard... [-Wmisleading-indentation]
+   50 |   for(int i=1;i<=6;++i)require(s.submit(plan(i,0,10*ms,60*ms)),"capacity submit");c.set(10*ms);
+      |   ^~~
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp:50:83: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
+   50 |   for(int i=1;i<=6;++i)require(s.submit(plan(i,0,10*ms,60*ms)),"capacity submit");c.set(10*ms);
+      |                                                                                   ^
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp:71:3: warning: this ‘for’ clause does not guard... [-Wmisleading-indentation]
+   71 |   for(auto& x:r)std::cout<<x.injection_start_ns/ms<<",";std::cout<<" (synthetic, not measured gRPC)\n";}
+      |   ^~~
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp:71:57: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
+   71 |   for(auto& x:r)std::cout<<x.injection_start_ns/ms<<",";std::cout<<" (synthetic, not measured gRPC)\n";}
+      |                                                         ^~~
+EXIT=0
+
+COMMAND: timeout 30s /tmp/phigros-cloud-review.iAHfUN/scheduler
+PASS valid_until_equality: submit=true, down=0, expired=1
+PASS expiry_precedes_lateness: default window closes at down+30ms
+PASS late_30ms_equality: down=1
+PASS late_30ms_plus_1ns: down=0, same_intent_resubmit=false
+PASS contact_conflict_retirement: submitted=6, down=5, conflict=1, retry_same_id=false, retry_new_id=true
+PASS equal_due_release_then_reuse: phases=Up,Down, same_contact=true
+PASS overdue_order: next Down due29 conflicts, prior Up due30 executes at35; no automatic reschedule
+PASS scripted_serial_rpc_10ms: plans=5, down=4, down_too_late=1, starts_ms=10,20,30,40, (synthetic, not measured gRPC)
+PASS scripted_serial_rpc_10ms_default_window: plans=5, down=3, expired=2
+PASS unknown_down: attempts=1, release_requested=1, fault_latched=true, retry=false
+PASS independent_gate_target_expiry: fresh_gate=true, target_released_at100=true
+PASS stop_before_due: down=0
+PASS five_profile_rotation90_edges: (0,0)->(719,0), (1279,719)->(0,1279)
+RESULT cases=13 checks=66 failures=0; fake-clock_only=true; production_source_unmodified=true
+EXIT=0
+
+COMMAND: timeout 60s g++ -std=c++20 -O2 -Wall -Wextra docs/research/zero-miss-20261005/evidence/vision-timing/formula_probe.cpp -o /tmp/phigros-cloud-review.iAHfUN/formula
+EXIT=0
+
+COMMAND: timeout 30s /tmp/phigros-cloud-review.iAHfUN/formula
+kind,case,arrival_ms,measured_distance_px,fit_speed_px_s,predicted_root_ms,true_root_ms,bias_ms,residual_px,uncertainty_ms,relative_lag_ms
+time,constant_age_0,100.000000,-40.000000,800.000000,150.000000,150.000000,0.000000,0.000000,2.500000,0.000000
+time,constant_age_20,120.000000,-40.000000,800.000000,170.000000,150.000000,20.000000,0.000000,2.500000,0.000000
+time,affine_age_20_plus_half_source,170.000000,-40.000000,533.333333,245.000000,150.000000,95.000000,0.000000,3.750000,50.000000
+kind,case,step,prior_abs_distance_px,current_abs_distance_px,allowed_increment_px,preserve_predicate
+preserve,width128_increment12.000000,1,100.000000,112.000000,12.800000,1
+preserve,width128_increment12.000000,2,112.000000,124.000000,12.800000,1
+preserve,width128_increment12.000000,3,124.000000,136.000000,12.800000,1
+preserve,width128_increment12.000000,4,136.000000,148.000000,12.800000,1
+preserve,width128_increment12.000000,5,148.000000,160.000000,12.800000,1
+preserve,width128_increment12.000000,6,160.000000,172.000000,12.800000,1
+preserve,width128_increment12.800000,1,100.000000,112.800000,12.800000,1
+preserve,width128_increment12.800000,2,112.800000,125.600000,12.800000,1
+preserve,width128_increment12.800000,3,125.600000,138.400000,12.800000,1
+preserve,width128_increment12.800000,4,138.400000,151.200000,12.800000,1
+preserve,width128_increment12.800000,5,151.200000,164.000000,12.800000,1
+preserve,width128_increment12.800000,6,164.000000,176.800000,12.800000,1
+preserve,width128_increment12.800001,1,100.000000,112.800001,12.800000,0
+preserve,width128_increment12.800001,2,112.800001,125.600002,12.800000,0
+preserve,width128_increment12.800001,3,125.600002,138.400003,12.800000,0
+preserve,width128_increment12.800001,4,138.400003,151.200004,12.800000,0
+preserve,width128_increment12.800001,5,151.200004,164.000005,12.800000,0
+preserve,width128_increment12.800001,6,164.000005,176.800006,12.800000,0
+preserve,width128_increment49.000000,1,100.000000,149.000000,12.800000,0
+preserve,width128_increment49.000000,2,149.000000,198.000000,12.800000,0
+preserve,width128_increment49.000000,3,198.000000,247.000000,12.800000,0
+preserve,width128_increment49.000000,4,247.000000,296.000000,12.800000,0
+preserve,width128_increment49.000000,5,296.000000,345.000000,12.800000,0
+preserve,width128_increment49.000000,6,345.000000,394.000000,12.800000,0
+EXIT=0
+
+COMMAND: timeout 60s g++ -std=c++20 -O2 -Wall -Wextra -Iresearch/x10d_o_bvi_build research/x10d_o_bvi_build/bvi.cpp docs/research/zero-miss-20261005/evidence/vision-timing/bvi_stationary_probe.cpp -o /tmp/phigros-cloud-review.iAHfUN/bvi-stationary
+research/x10d_o_bvi_build/bvi.cpp: In function ‘bvi::Constraints bvi::constrain(const Observation&, const Guard&)’:
+research/x10d_o_bvi_build/bvi.cpp:97:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |  ^~
+research/x10d_o_bvi_build/bvi.cpp:97:71: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |                                                                       ^~~~~~
+EXIT=0
+
+COMMAND: timeout 30s /tmp/phigros-cloud-review.iAHfUN/bvi-stationary
+case,frame,independent,span_ns,usable,new_down_opportunity,active_move
+stationary_endpoint,1,1,0,0,0,1
+stationary_endpoint,2,1,0,0,0,1
+stationary_endpoint,3,1,0,0,0,1
+stationary_endpoint,4,1,0,0,0,1
+moving_endpoint,1,1,0,0,0,1
+moving_endpoint,2,2,20000000,0,0,1
+moving_endpoint,3,3,40000000,1,1,1
+moving_endpoint,4,4,60000000,1,1,1
+EXIT=0
+
+COMMAND: timeout 60s g++ -std=c++20 -O2 -Wall -Wextra -Iresearch/x10d_o_bvi_build research/x10d_o_bvi_build/bvi.cpp docs/research/zero-miss-20261005/evidence/vision-timing/bvi_rgb_stationary_probe.cpp -o /tmp/phigros-cloud-review.iAHfUN/bvi-rgb-stationary
+research/x10d_o_bvi_build/bvi.cpp: In function ‘bvi::Constraints bvi::constrain(const Observation&, const Guard&)’:
+research/x10d_o_bvi_build/bvi.cpp:97:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |  ^~
+research/x10d_o_bvi_build/bvi.cpp:97:71: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |                                                                       ^~~~~~
+EXIT=0
+
+COMMAND: timeout 30s /tmp/phigros-cloud-review.iAHfUN/bvi-rgb-stationary
+case,frame,current_contact,descriptor_same_as_first,rgb_same_as_previous,independent,span_ns,usable,new_down_opportunity
+stationary_tap_line_chase,1,0,1,0,1,0,0,0
+stationary_tap_line_chase,2,0,1,0,1,0,0,0
+stationary_tap_line_chase,3,1,1,0,1,0,0,0
+stationary_tap_line_chase,4,1,1,0,1,0,0,0
+moving_tap_line_chase,1,0,1,0,1,0,0,0
+moving_tap_line_chase,2,0,0,0,2,20000000,0,0
+moving_tap_line_chase,3,1,0,0,3,40000000,1,1
+moving_tap_line_chase,4,1,0,0,4,60000000,1,1
+EXIT=0
+
+COMMAND: timeout 60s g++ -std=c++20 -O2 -Wall -Wextra -I docs/research/zero-miss-20261005/evidence/touch-scheduler/shim -I include src/core.cpp docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp -o /tmp/phigros-cloud-review.iAHfUN/flick-scheduler
+docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp: In function ‘int main()’:
+docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp:12:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   12 |  if(!s.submit(p))throw std::runtime_error("submit");c.set(10*ms);if(s.run_due().size()!=1)throw std::runtime_error("down");
+      |  ^~
+docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp:12:53: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   12 |  if(!s.submit(p))throw std::runtime_error("submit");c.set(10*ms);if(s.run_due().size()!=1)throw std::runtime_error("down");
+      |                                                     ^
+EXIT=0
+
+COMMAND: timeout 30s /tmp/phigros-cloud-review.iAHfUN/flick-scheduler
+move planned_ms=22 start_ms=60 y=420
+move planned_ms=34 start_ms=60 y=440
+move planned_ms=46 start_ms=60 y=460
+move planned_ms=58 start_ms=60 y=480
+RESULT cases=1 failures=0; four overdue Moves all dispatch at fake60ms; transport_effect_unknown=true
+EXIT=0
+
+COMMAND: git diff --exit-code 74e54437d4a3ad2b2bd1a3b09312211a92f2359e -- src include configs tests fixtures research tools CMakeLists.txt CMakePresets.json
+EXIT=0
+
+RESULT=PASS_FOR_LISTED_CLOUD_PROBES_ONLY

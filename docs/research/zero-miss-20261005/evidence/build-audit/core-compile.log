@@ -1,0 +1,9 @@
+COMMAND: timeout 60s g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Iresearch/x10d_o_bvi_build -c research/x10d_o_bvi_build/bvi.cpp -o /tmp/phigros-bvi-core-audit.o
+research/x10d_o_bvi_build/bvi.cpp: In function ‘bvi::Constraints bvi::constrain(const Observation&, const Guard&)’:
+research/x10d_o_bvi_build/bvi.cpp:97:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |  ^~
+research/x10d_o_bvi_build/bvi.cpp:97:71: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   97 |  if(active&&!c.refresh&&g.now-g.last_contact>=60000000)c.release=true;return c;
+      |                                                                       ^~~~~~
+EXIT=0

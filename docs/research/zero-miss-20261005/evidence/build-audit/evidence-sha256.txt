@@ -1,0 +1,8 @@
+c7d77416e7efe6b15f4ee91f6fcd58d74af5f1d7a4c5e33dae4b41ff152ba2af  docs/research/zero-miss-20261005/evidence/build-audit/bvi_core_probe.cpp
+356a95232b6d0cc0ab1d7438e03c6ea73f298a79585c08af1186163f02b84157  docs/research/zero-miss-20261005/evidence/build-audit/core-compile.log
+92e64e0127b2fbcdb7128ece2b9fe3f6badb86c4a1b59266b206f9b9e429db80  docs/research/zero-miss-20261005/evidence/build-audit/original-harness-blockers.log
+8a3a97423b040ec7ae525b7555883b2c9be5f47546c10abb1fec595dfc408afb  docs/research/zero-miss-20261005/evidence/build-audit/probe-asan-ubsan-no-lsan.log
+cd211ab329b5902f1051075a3b5f5485248e924301d76f0f1c352be844056bcd  docs/research/zero-miss-20261005/evidence/build-audit/probe-release.log
+1b66be463f09d367634141bfacfbd412d1797c35cbeb11623f09af514946b7b0  docs/research/zero-miss-20261005/evidence/build-audit/probe-sanitizers.log
+ae0871bb23bc5c26f910bd3177684ae9f17c18c5e8fa49d2641e8d2c8ff8a95b  docs/research/zero-miss-20261005/evidence/build-audit/environment-and-hashes.txt
+bda15d92ef9cde5b308ae1201e202f3ed5983decae273ac1cee36f02454702e6  docs/research/zero-miss-20261005/evidence/build-audit/probe-results.json

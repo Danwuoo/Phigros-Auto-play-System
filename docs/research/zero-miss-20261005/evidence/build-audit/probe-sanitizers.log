@@ -1,0 +1,8 @@
+COMMAND: timeout 60s g++ -std=c++20 -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -Iresearch/x10d_o_bvi_build research/x10d_o_bvi_build/bvi.cpp docs/research/zero-miss-20261005/evidence/build-audit/bvi_core_probe.cpp -o /tmp/phigros-bvi-core-probe-san
+BUILD_EXIT=0
+COMMAND: ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 timeout 30s /tmp/phigros-bvi-core-probe-san
+==26==LeakSanitizer has encountered a fatal error.
+==26==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
+==26==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)
+TEST_EXIT=1
+8bb6d9929e7934017a4a6accc24a4d1f43efb25c4b70157e29d4c91108f29699  /tmp/phigros-bvi-core-probe-san
