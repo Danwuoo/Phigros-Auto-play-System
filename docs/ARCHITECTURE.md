@@ -1,6 +1,6 @@
 # 現行架構與資料契約
 
-2026-10-01，main 整合來源 `9fea67e248411f7c2309f220daf989f652b27d15`，候選 **observer50／planner27／diagnostics11，live rounds=0**。本文按責任整理現行程式；歷史改動順序與測試各見[整合交接](MAIN_INTEGRATION_HANDOFF_20261001.md)、[冷開發結果](COLD_DEVELOPMENT_RESULT_20260929.md)及[熱調試](FOUR_SONG_HOT_TUNING_20260929.md)。下一步研究與尚缺驗證見[現況報告](PROJECT_STATUS_NEXT_STEPS_20261001.md)。模型僅辅助離線標記與主程式優化。
+2026-10-04，main HEAD `f83c7ea0bd4e92ab6fb50a14fc9db2c4e333be2c`，**observer50／planner27／diagnostics11、live0，是comparison／donor**；behavioural／experimental baseline仍是另有frozen來源的C36h tint1。本文按責任描述main50正式程式，不把其owner規則套到C36h。產品目標、逐曲證據、最新研究狀態與工作包見[10/4總帳](LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)；[10/1狀態](PROJECT_STATUS_NEXT_STEPS_20261001.md)按J5–J32接續，早期段落為歷史。來源沿革見[整合交接](MAIN_INTEGRATION_HANDOFF_20261001.md)、[冷開發](COLD_DEVELOPMENT_RESULT_20260929.md)及[熱調試](FOUR_SONG_HOT_TUNING_20260929.md)。模型只離線；main50或研究工具通過不授予live-ready。
 
 ## 即時閉環
 
@@ -88,14 +88,15 @@ profile 共用 `game.lead_ms` 容許 30–45ms，manifest 記有效值；35ms／
 
 ## 離線工具與驗證邊界
 
-- `pas_frame_review`：核對全錄 SHA，以原辨識 cadence＋最多32 preroll 暖機 `GameObserver`；join 原 journal，輸出選段的 observer proposal。沒有重建 `SessionPerception` round reset／門控或 `GamePlanOwner`／FakeTouch；其 summary 的 cancellations 屬原 journal，不能歸因新版 replay。
+- `pas_frame_review`原observer-only模式：核對全錄SHA、原cadence＋最多32preroll暖機observer、join原journal；原summary cancellations屬journal。這個模式與後來X1完整接觸模式分開，不將舊模式的能力限制套到整個工具。
 - `game-clip-replay`：短 clips／triples 的冷重播，不恢復片段開始前的 contact。
 - `analyze game-cold-pipeline`：有界預產合成 RGB、正式 LatestFrame／observer／owner／scheduler＋FakeTouch、Journal 三執行緒跑 QPC。fake-clock 時序回歸與主機成本分開；原發布時間 race 已修正，perception 讀 lease 內已同步的 published_ns。
 - `pas_vision_cpu`：CMake `PAS_ENABLE_CPU_VISION` 預設 OFF，獨立 C++ LibTorch CPU exe。4377參數合成小試、18 native ROI proposal、gold gate／序列化已存在；人工 pixel gold=0，無跨曲準確率或 runtime 模型。只允許輔助離線標记和通用程式優化。
-- **尚缺**：從真實全錄暖機生命週期、observer、owner、scheduler 並排空診斷的反事實 FakeTouch 重播；規格見現況報告，不冒稱既有工具已完成它。
+- **X1已完成／獨立驗收**：fixed-pixels的SessionPerception生命週期／reset／gate、owner／scheduler／FakeTouch、幀間due及診斷排空，R1/R2來源與CLI修補見[交接](C36H_CONTACT_REPLAY_REPAIR_20261002.md)及status J5。Replay只回答其明列clock/cadence/fake-delay契約，不含新touch feedback、真recognition/RPC成本或physical gold。
+- **後續採用界線**：X10d-P隔離C36h候選只帶pending-missing hook，冷契約已獨立通過；X10b suppression仍否決／OFF，X10d-O未開始。X11-P/R1/R2/R3成本仍not-ready；A reader重現與新checker獨立驗收分層。未經完整行為／有效成本／遊戲結果證據，不移植為產品策略。
 
 ## 量測與維護
 
 量測必報環境、n／p50／p95／p99／max、失敗與 jitter，保留全部 publish 嘗試、skip／drop／late 分母；不把各階段 p99 相加，不平均各曲 p99。主機 RPC 時间、owner lateness、預測偏差與遊戲可辨效果各自獨立。六區塊線掃描预檢的既有冷 ABBA／三執行緒 gate 見冷結果；密集場景額外逐批加速未過，不能只報成功子集。
 
-原始跨曲證據、frozen binary、失敗實驗與必要回歸輸入的保留／已刪范围見[本次清理](CLEANUP_AUDIT_20261001.md)與[9/28 清理](CLEANUP_AUDIT_20260928.md)。恢復 worktree 的 ignored 依賴仍由 frozen tools／main CPU build 引用，Git 合併不等於已搬移。修改正式契約時同步更新文件及可重現回歸。
+原始跨曲證據、frozen binary、失敗實驗與必要輸入的歷史保留／已刪範圍見[10/1清理](CLEANUP_AUDIT_20261001.md)及[9/28清理](CLEANUP_AUDIT_20260928.md)。10/4現查：舊recovery目錄未registered，其中LibTorch／CPU runtime路徑不存在；main CPU cache仍引用該歷史絕對路徑，不能默認可build，未重裝。新維護資料容量／引用檢查見10/4總帳。修改正式契約須同步文件與可重現回歸，原frozen來源不回寫。

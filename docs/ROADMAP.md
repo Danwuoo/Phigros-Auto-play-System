@@ -1,19 +1,20 @@
 # 開發路線圖
 
-## 2026-10-01 現行順序
+## 2026-10-04 現行順序
 
-main 已整合 tracked 工作；候選 **observer50／planner27／diagnostics11，尚無實戰**。C36h tint1 與前次 C36g 全錄皆 77 Miss，使用者回報主要問題未改善。模型只辅助離線標記和主程式優化；不進即時迴圈。本輪完成研究、既有資料重播與實際清理，沒有恢復 emulator／真觸控、AP goal、無限實戰或模型訓練。
+產品目標為 **Chapter Legacy所有曲目解鎖IN並完整IN結算Miss=0**，HD作解鎖及回歸，P/G/B照報，不增AP前置。最新基準、逐曲證據及工作包契約見[10/4總帳](LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)與[JSON](LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)。現行章節分母未核、目前逐曲解鎖unknown，沒有全曲驗收。
 
-可核對的現況、main50 重播新差異與詳細交付標準見[現況與下一步研究](PROJECT_STATUS_NEXT_STEPS_20261001.md)；來源與 binary 對應見[整合交接](MAIN_INTEGRATION_HANDOFF_20261001.md)。下一步建議如下，尚未實作的項目不標完成：
+main HEAD f83c7ea，**main50 50/27/11是comparison／donor、live0；C36h tint1是behavioural／experimental baseline**，Dlyrotz IN仍77Miss。X1完整fixed-pixels contact replay已於10/2獨立驗收；X10d-P冷契約已通過，X10b suppression否決／OFF，X10d-O未開始。X11-P/R1/R2/R3工程與負結果已簽收、成本not-ready，X12仍conditional。[10/1狀態](PROJECT_STATUS_NEXT_STEPS_20261001.md)按J5–J32接續，A–I及早期「最新」是歷史；[10/3計畫](C36H_FORWARD_EXECUTION_PLAN_20261003.md)最新追加段銜接下列順序。
 
 | 優先 | 工作 | 最小交付／停止条件 |
 |---|---|---|
-| P0 | 真實全錄的完整接觸重播 | 沿用現有 C++ reader，補 SessionPerception／reset／gate、GamePlanOwner、FakeTouch、幀間 scheduler；先取兩個 Hold 窗＋clip09正常對照＋5520 Flick＋6214側向 Drag。不能用原按鍵或 runtime ID 當 oracle；早期狀態不足明示 unknown |
-| P1 | 用反例定位與修正通用機制 | 分離当前 body提取、身分、Note→line、owner取消。main50 的6214 Drag仍有垂直線卻綁水平線，是優先關聯反例；Hold3498有body但無root不能直接算漏接。每次只改一個已定位機制，以先紅後綠與跨形式負例約束 |
-| P2 | 小量針對性標記 | 沿用7722原圖、12段理由及18 ROI，補最必要的body／tail／干擾線／同物件連續性覆核；proposed、unknown、人工gold各自保留。缺人工gold不阻塞可冷驗的owner／scheduler契約 |
-| P3 | 凍結候選再提有限熱驗方案 | 先保留所有已知反例、失敗與baseline；量完整冷鏈分布和資料界限，再由使用者另行安排固定版本跨曲比較。不得把離線root數或FakeTouch當命中提升 |
+| 包1 | 基準、逐曲證據與入口整理 | 本包開發自驗後交總控獨立驗收；不改策略或追加遊戲／成本 |
+| 包2 | 選項A獨立驗收收尾 | 原reader重現與新checker分層；收斂002/003工具quiescence阻塞，193因果保留Unknown，不擴成無限平台 |
+| 包3 | 量測契約B審查 | 最小publication/selection觀測、可否證假說、容量及observer effect；只審查，不自動R4/新cost |
+| 包4 | X10d-O current-body ownership | 先同column兩Hold／舊tail新front／rotation/neighbor/absence真圖反例及合成控制，至多一個預聲明通用候選；不混pending-only、不復活suppression。研究不依賴193全部歸因 |
+| 包5 | 候選live／全曲解鎖與IN验收 | conditional；完整行為／有效成本／exact freeze/preflight先成立，現有X12 gate未過不得自行開；同版完整IN Miss=0驗收 |
 
-不把大型新 Fixture、完整標註平台、更多合成訓練或擷取重選當前置。重播先補能回答問題的最小功能；若原始記錄不足以重建可信接觸狀態，保存 unknown 與缺口，用獨立合成／fake-clock 驗契約，不偽造歷史 Down。
+每包的輸入、可修改邊界、交付、總控驗收、停止條件及依賴以10/4總帳為準；完成後才續派。本包不建立goal/automation/下一chat、不啟動emulator／觸控／模型，不追加runtime/cost/stress/full replay。不把大型Fixture、標註平台、更多訓練或擷取重選當前置；unknown／proposed不升格gold，不偽造歷史Down。
 
 ## 已存在的成果與限制
 
@@ -23,7 +24,7 @@ main 已整合 tracked 工作；候選 **observer50／planner27／diagnostics11�
 | 9/29–9/30 main 熱測 | observer47/24、48/25中止、49/26兩首後停止，須按版本與完成／中止分讀；不是main50效果，見[熱調試](FOUR_SONG_HOT_TUNING_20260929.md) |
 | 恢復線 C36h | 同號37/19不是歷史main37/19；Dlyrotz IN13為795950／P496-G11-B0-M77，主要Miss未改善 |
 | 全錄與人工選取 | 7722原生PNG、12段已填理由、3722 unique／3843 references；clip09是正常對照。131.829秒received pixels，最長capture gap443.5487ms；不是來源完全無漏幀 |
-| main50離線研究 | 新暖機observer重播7715次、核對全部PNG；3722選段中960幀root／垂直線數改變，不能換算準確率或Miss。完整owner重播仍缺 |
+| main50離線研究／X1 | 歷史暖機observer7715次及960幀差異不換算Miss；後續完整fixed-pixels owner重播及R1/R2已獨立驗收，真觸控feedback／成本及physical gold仍缺 |
 | CPU模型小試 | 4377參數、合成IoU .89267、18 native ROI proposal；真實人工pixel gold=0，真實／跨曲準確率unknown。本輪只核對既有工具與資料，未追加訓練 |
 | 整合測試／整理 | 整合Release348通過／1 opt-in跳過／0失敗，CPU8/8；本輪清理後117/117相關回歸。實際清理與原檔SHA保護見[清理帳本](CLEANUP_AUDIT_20261001.md) |
 
@@ -33,13 +34,13 @@ main 已整合 tracked 工作；候選 **observer50／planner27／diagnostics11�
 
 | 階段 | 當前定位 | 尚缺證據 |
 |---|---|---|
-| M0 證據與根因 | 現行P0–P2主線；既有原圖、選片、proposal、合成反例可用 | 真實全錄owner因果鏈、針對性人工覆核、可證偽根因；cancel／combo／ID不算逐Note判定 |
+| M0 證據與根因 | X1及X2–X6／X9／X10c研究已存在；目前依10/4包1–4接續 | 物理ownership／judgment-role gold、逐Note採納、193skip因果仍Unknown；cancel／combo／ID不算Miss |
 | M1 幾何與關聯 | 已有全域assignment、線局部運動、Hold接續與有界預測，繼續由反例修通用機制 | 多線／旋轉／晚對齊／反轉等實景語義；不能因形式複雜先推定需學習 |
 | M2 跨曲資料pilot | 按歌曲／譜面家族切分、必要短窗與長Hold並存 | 現有18 ROI全為Dlyrotz development；不足跨曲訓練或驗收，不能湊幀數代替分布 |
 | M3 單幀學習（可略） | 僅可條件式比較離線輔助標記品質與人工成本 | 未達相應資料gate，不追加無界合成選模；不再排入runtime部署 |
 | M4 時序／關聯學習（可略） | 只有已證缺口需要時再研究離線用途 | 不以全曲時鐘、舊按鍵、未來幀充當正式即時策略；非本輪前置 |
-| M5 有限實戰 | 驗證凍結後的C++候選，固定版本A/A、A/B並報所有曲與故障 | 需另行安排；main50 live=0，歷史開機授權不自動延續 |
-| M6 新曲保留驗收 | 凍結後解封未用歌曲家族，HD／IN分層 | 開發曲不算未知曲；沒有足量資料只稱pilot；AP另行全曲驗收 |
+| M5 有限實戰 | 凍結通用C++候選A/A、A/B，報所有曲及故障 | 既有有限授權仍受gate／總控續派約束；X12成本未過、main50 live0，不自行開 |
+| M6 全曲IN／保留家族 | Chapter Legacy清單與解鎖先核，HD／IN分層；未知家族泛化另列 | 完整IN Miss=0是產品驗收，沒有AP前置；開發曲不算未知曲，資料不足只稱pilot |
 
 ## 必須保留的驗收邊界
 

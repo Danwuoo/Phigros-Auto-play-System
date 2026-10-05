@@ -1,0 +1,298 @@
+{
+  "schema": "pas.x10d_o.observability.design.v1",
+  "date": "2026-10-04",
+  "timezone": "Asia/Taipei",
+  "package": "4R",
+  "status": "design_only_pending_controller_acceptance",
+  "recommendation": {
+    "design_count": 1,
+    "name": "BVI-1 bounded visible boundary interface",
+    "next_scope": "isolated C++20 observation and temporal-link contract implementation only after separate authorization",
+    "exclusive_physical_owner": "no_go_from_BCC_input",
+    "runtime_adoption": false,
+    "gameplay_acceptance": false
+  },
+  "baseline": {
+    "head": "f83c7ea0bd4e92ab6fb50a14fc9db2c4e333be2c",
+    "behavioral": "C36h tint1 experimental",
+    "main50": "comparison/donor live0",
+    "suppression": "OFF",
+    "pending_hook": "excluded",
+    "x12": "not-ready",
+    "chapter_denominator": "unknown",
+    "current_in_unlocks": "unknown",
+    "complete_in_zero_miss_evidence_added": 0
+  },
+  "scope": {
+    "new_product_algorithms": 0,
+    "new_analysis_algorithms": 0,
+    "new_cpp": 0,
+    "new_binary": 0,
+    "builds": 0,
+    "tests": "not_run",
+    "asan": "not_run",
+    "full_replay": "not_run",
+    "runtime_cost_stress": "not_run",
+    "live": 0,
+    "model": 0,
+    "goals": 0,
+    "automations": 0,
+    "commit_push": 0,
+    "physical_human_gold_added": 0
+  },
+  "sources": [
+    {"path":"research/x10d_o/contract.hpp","sha256":"a3a773f42349bdbeffb921618005c60d16dd1bb960e3bbc694a1fd3fe1dcf236"},
+    {"path":"research/x10d_o/contract_tests.cpp","sha256":"c9850bea7e81139d6e4e07c8d992164fa2956036ad726f9a31beadb575dbd0e8","role":"original eleven tests unchanged"},
+    {"path":"research/x10d_o/candidate.cpp","sha256":"eb9937f79b1ee70dbb194e30238c04818855aa4f429ffea2a732bc88ee107b29"},
+    {"path":"research/x10d_o/reference.cpp","sha256":"4f04994bd644e69dfacc2a39451527faf0d6af0376e6b8876bc93476e6c2797f"},
+    {"path":"research/x10d_o/packet_audit.cpp","sha256":"348809adc622357df2b2e2e677567ccdcf9fe5d6f7d199fa610a2b0fbe0ab0dc","reader_caveat":"scene first line is validity/context gate; empty anchors; 206/263 is not ownership accuracy"},
+    {"path":"measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o/rgb-packet.json","sha256":"bc6049a779a0f53368978a1e97375e5473037138d8d8635396ca418d9d4c56c2"},
+    {"path":"measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o/controller-review/controller-receipt.json","sha256":"183ff07db1186ea46ef12f9be4bf5370b5b83444d58131e5580cce8482a95ea5"},
+    {"path":"measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o/artifact-ledger.json","sha256":"ca7c721250ed234c388f4e7276c2828b005100d718b2cf92b2bdbc67a386e1c7"},
+    {"path":"measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o/controller-review/artifact-ledger.json","sha256":"112a14f67d523de35e049e6fc9ed8ba0010bc8490f3722e49c7813d0843ee922"},
+    {"path":"measurements/game-assist/2026-09-30-m0-manual-continue/hold-cascade-x10c/baseline-on-1/trace.jsonl","sha256":"bbd9d3215bd4095a7b3792cc9f7f2d0848ea5fc86db880248ff91283058c7545","role":"existing full-prefix software state only"},
+    {"path":"measurements/game-assist/2026-09-30-m0-manual-continue/hold-cascade-x10c/baseline-on-1/fallback-witness.jsonl","sha256":"6c73e926ea5e35bbb7509b60d6238f5811b81469dc20f6c92d3347f3e0d10aae","role":"diagnostics, never physical oracle"},
+    {"path":"measurements/game-assist/2026-09-30-m0-manual-continue/hold-causal-x9/c36h-on-1/trace.jsonl","sha256":"a481994e0cf1adc4728c70e1c741485cf3e03997d252ce40ca2bb45a0e3ceadd","role":"H software lifecycle cross-check"},
+    {"path":"measurements/game-assist/2026-09-30-m0-manual-continue/full-recording36g-01/sessions/manual-session-22885039263800/full-recording/index.jsonl","sha256":"0bd8ec74b6bc19d1f8080c064453a052095e328e31d2759f12d6d04d78500f8d"}
+  ],
+  "real_review": {
+    "packet_distinct": 196,
+    "additional": 0,
+    "total_distinct": 196,
+    "limit": 260,
+    "planned_and_completed_direct_views": 52,
+    "sequences": [
+      {"name":"H","first":2468,"last":2488,"count":21},
+      {"name":"K","first":2865,"last":2889,"count":25},
+      {"name":"A","first":3496,"last":3500,"count":5},
+      {"name":"D","first":6214,"last":6214,"count":1}
+    ],
+    "selection": "measurements/game-assist/2026-09-30-m0-manual-continue/hold-ownership-x10d-o-observability/review-selection.json",
+    "png_copies": 0,
+    "reviewer": "AI direct original image review",
+    "physical_links": "proposed/unknown only",
+    "real_oracle": null,
+    "causal_view_rule": "At each current ordinal only past <=6 actual measurements within <=90ms may enter runtime. The 405ms K review is diagnostic context.",
+    "skip": {"ordinal":2882,"source_frame":14649,"consumed":false,"scene":null,"may_view_pixels":true,"may_fabricate_observer":false}
+  },
+  "original_contract": {
+    "defaults": {
+      "frame": {"width":640,"height":640,"stride":1920,"epoch":1,"generation":1,"geometry":1,"sequence":2,"capture_ns":50000000,"background":[0,0,0]},
+      "note": {"center":[320,575],"width":140,"depth":300,"tangent":[1,0],"kind":"hold","rails":true,"head_on_line":true},
+      "line": {"id":7,"center":[320,575],"tangent":[1,0],"observed_ns":50000000},
+      "anchor": {"id":1,"observed_ns":40000000,"context_matches":true,"note":"same as current note"},
+      "fill": [40,190,255],
+      "render_region": "abs(dot(p-center,u))<=width/2 and -depth<=dot(p-center,v)<=0, v=(-u.y,u.x), integer pixel centers"
+    },
+    "cases": [
+      {"name":"SolidSupportPositive","input":"defaults/full rectangle","oracle":{"support":true,"min_depth":290,"owner":1},"revision":"original retained; owner1 requires new observable evidence in new contract"},
+      {"name":"GapCannotBeBorrowed","input":{"rectangles":[{"front":[320,575],"depth":80},{"front":[320,400],"depth":125}]},"oracle":{"max_depth":85},"caveat":"no original owner-null assertion"},
+      {"name":"AbsentBodyIsUnknown","input":"black RGB; flags unchanged","oracle":{"support":false,"owner":null}},
+      {"name":"OneSideAbsentIsUnknown","input":{"base":"full rectangle","clear_pixels":{"x_half_open":[250,280],"y_half_open":[270,580]}},"oracle":{"support":false,"owner":null}},
+      {"name":"SecondAnchorIsUnknown","input":{"anchors":[1,2],"geometry":"identical"},"oracle":{"owner":null},"caveat":"software duplication is not physical count"},
+      {"name":"TouchingTailIncomingIsUnknown","input":{"world_a":"full default rectangle","world_b":[{"front":[320,575],"depth":175},{"front":[320,400],"depth":125}],"other_inputs":"identical","rgb_equality":"asserted in original test"},"oracle":{"positive_support":true,"negative_owner":null,"equal_owner":true,"equal_probes":true},"conflicts_with":"SolidSupportPositive owner1"},
+      {"name":"RotatingAndTranslatingSupportUsesCurrentNotePose","input":{"k":[0,1,2,3,4,5,6,7],"angle_rad":"0.05*k","front":"[300+3*k,500-2*k]","depth":200,"anchor":"same instantaneous pose"},"oracle":{"support":true,"owner":"present","min_depth":190},"caveat":"not sequential pixels/history rollout"},
+      {"name":"ThinTapNeighborAndOtherDirectionCannotOwn","input":{"mutations":[{"kind":"tap","height":8},{"anchor_x_offset":200},{"anchor_tangent":[0,1]}]},"oracle":{"owner":null},"caveat":"does not require canceling a legitimate Tap"},
+      {"name":"LateAlignmentDoesNotConflateNoteAndLineAxes","input":{"front":[320,500],"depth":200,"note_angle_rad":0.25,"line_angle_rad":0,"anchor":"current note pose"},"oracle":{"support":true,"owner":"present"},"caveat":"single frame; association/root separate"},
+      {"name":"StaleContextAndCapacityRemainUnknown","input":{"mutations":[{"anchor_observed_ns":-50000000},{"anchor_epoch":2},{"anchor_geometry":2},{"anchor_observed_ns":50000001},{"line_association_valid":false},{"anchor_count":129}]},"oracle":{"owner":null}},
+      {"name":"InvalidFrameAndNonFiniteGeometryCannotClaim","input":{"mutations":[{"rgb_byte_delta":-1},{"note_width_tag":"positive_infinity"}]},"oracle":{"owner":null}}
+    ],
+    "satisfiable_as_next_all_green_owner_target": false,
+    "preservation": "Do not change original source, tests, assertions, logs, or counterexample"
+  },
+  "new_observable_information": [
+    {
+      "id": "A",
+      "name": "current bilateral ends, separation, and actual contact-region support",
+      "fields": ["visible bounded rail endpoints","visible end pairs/visibility","body and contact support polygons with source key","background gap distinct from effect occlusion","appearance orientation independent of movement and line normal"],
+      "real_evidence": ["K2865 separated end pairs/gap","K2881 front approx533 line576 contact gap","H2474-2479 outside rails/effect inside"],
+      "does_not_prove": ["cap is physical tail","engine accepted contact","seamless union is one note","no cap means fragment"],
+      "failure_modes": ["effect-generated bevels","clipped cap","low contrast/gray fill","two bodies abut invisibly","one-sided rail","other line crosses body"]
+    },
+    {
+      "id": "B",
+      "name": "causal bounded correspondence of observed parts/separation witnesses",
+      "fields": ["<=6 measured descriptors <=90ms","source keys and clocks","separated pieces retain distinct alternatives until original witness expiry","<=2 geometric alternatives","prior contact-local pixel support rather than anchor ID"],
+      "real_evidence": ["H2469-2470 visible angle change/software active contact1","K2878-2884 recent approach and overlap"],
+      "does_not_prove": ["unique physical owner after unseen replacement","history beyond90ms","future-frame justification","new sequence implies distinct visual evidence"],
+      "failure_modes": ["identical bounded pixels in different worlds","gap>40ms","duplicate pixels","merge/tie","separation evicted from6 samples","projection mislabeled measured"]
+    }
+  ],
+  "interface": {
+    "current_support": {"values":["supported","absent","occluded","invalid"],"separate_fields":["body_region","contact_zone","independent_end","visible_gap"],"provenance":"same current frame/geometry and pixel region; no extrapolated samples"},
+    "temporal_relation": {"values":["continued_observed_piece","recently_separated_piece","contained_feature","ambiguous","invalid"],"physical_interpretation":"proposed only","alternatives_max":2},
+    "physical_identity": {"values":["proposed","unknown"],"exclusive_runtime_owner":null,"human_verified":false,"rule":"one feasible observed link is not unique physical truth; IDs are not gold"},
+    "contact_constraints": {"values":["same_contact_move_candidate","independent_down_opportunity","no_current_support","no_down","release_responsibility"],"candidate_only":true,"prefix_rule":"bounded owner receipt/cursor constrains lifecycle; never expert-action-history policy"},
+    "rule_order": ["validate source/context/frame/capacity/clock and measured line relation","A current body/contact/end facts","B measured part links; retain separated alternatives without bridging gaps","publish proposed relations and ambiguity, never unique physical owner","publish opportunity/constraints for a separately validated owner; preserve contradiction versus generic absence"]
+  },
+  "bounds": {
+    "lines": 16,
+    "regions": 128,
+    "contacts": 5,
+    "history_samples": 6,
+    "history_window_ns": 90000000,
+    "max_adjacent_measurement_gap_ns": 40000000,
+    "minimum_distinct_measurements_for_usable_link": 3,
+    "minimum_span_ns": 30000000,
+    "duplicate_pixels_refresh_boundary_confirmation": false,
+    "current_descriptor_bytes_per_region": 512,
+    "history_descriptor_bytes": 256,
+    "links_metadata_bytes_per_region": 128,
+    "contact_metadata_bytes": 512,
+    "line_pose_bytes": 128,
+    "total_metadata_cap_bytes": 1048576,
+    "history_rgb_slots": 0,
+    "current_rgb": "one borrowed LatestFrame lease; no added past RGB ring",
+    "normal_positions_per_region": 4096,
+    "probes_per_position": 12,
+    "max_pixel_probes_per_frame": 6291456,
+    "control_thresholds": {"match_error_bound_px":4,"visible_gap_min_px":12,"endpoint_margin_px":4,"status":"uncalibrated synthetic proposal, not accepted Phigros tolerances or H/K tuning"},
+    "source_target_expiry_ns": 100000000,
+    "hold_missing_grace_max_ns": 60000000,
+    "expiry_rule": "now >= plan/gate deadline expires independently",
+    "invalidate_on": ["source fault","epoch/generation/geometry/rotation change","nonincreasing/future clock","stale witness","gap>40ms","nonfinite geometry","link tie","multiple line association","cap/contact occlusion","any capacity/probe overflow"],
+    "overflow_rule": "explicit invalid, keep incoming denominator/reason, revoke rather than silently drop hard notes",
+    "prediction_rule": "separate estimated geometry; never refresh pixels, support Move, or revive intent"
+  },
+  "oracle_protocol": {
+    "status": "declared_not_executed",
+    "kind": "independent synthetic geometry/current support and fake-clock lifecycle",
+    "renderer": "future C++20 test-only declarative renderer; none created/run in4R",
+    "operations": {
+      "oriented_fill": "integer pixel inclusion with u=(cos(angle),sin(angle)), v=(-u.y,u.x); abs(dot(p-front,u))<=width/2 and -depth<=dot(p-front,v)<=0",
+      "caps": "white 3px side-rail termini extending6px along each side at front and rear; finite geometry, no physical labels",
+      "gap": "declared unobscured strip without body/effect; line-local d interval",
+      "effect": "bounded yellow RGBA polygon; effect is not body support",
+      "support_oracle": "predeclared interior points/intervals and membership/visibility from recipe, independently of helper output",
+      "temporal_oracle": "declared geometric correspondence of observed pieces; ties/occlusion unknown; private physical labels withheld",
+      "action_oracle": "active/pending/unknown/completed execution state plus current support/line/deadlines; opportunity not injection/game success"
+    },
+    "legal_input": "RGB and measured geometry/context; bounded descriptors with pixel provenance; own contact lifecycle for execution guards only",
+    "forbidden_input": ["private world label/name","oracle physical IDs","song/chart/progress","future frames","recorded actions","anchor/runtime ID as physical gold"],
+    "pass_requirements": ["identical-input pairs equal outputs/distributions","non-unknown support/incoming/Move/Tap positive constraints required","unknown/completed do not repeat Down","no unsupported Move/borrowed extent","incoming/raw front/Tap preserved with explicit reasons","rotation and late alignment separate","original eleven tests and negative preserved"],
+    "real_game_oracle": null
+  },
+  "vector_defaults": {
+    "units": "screen pixels and synthetic host monotonic ns independent of recording/replay clocks",
+    "frame": {"width":640,"height":640,"stride":1920,"epoch":1,"generation":1,"geometry":1,"rotation":0,"source_valid":true},
+    "clock_samples_ns": [10000000,30000000,50000000],
+    "now_ns": 51000000,
+    "line": {"id":"L","center":[320,500],"angle_rad":0,"length":640,"thickness":4,"current_measured":true,"association_unique":true},
+    "owner_guard": {"gate":"valid","contact_capacity":5,"source_age":"bounded host evidence; render age unknown"},
+    "geometry": {"width":140,"depth":200,"fill":[40,190,255]},
+    "inheritance": "Only declared defaults or named earlier base vectors inherited; mutation overrides are explicit. Evaluate each time causally, never using future array elements.",
+    "physical_output": {"status":"unknown","human_gold":false,"exclusive_owner":null},
+    "result_status": "not_run"
+  },
+  "vectors": [
+    {
+      "id":"V00","purpose":"original current-input contradiction",
+      "inputs":{"recipe":"original_contract.defaults","world_a":[{"front":[320,575],"width":140,"depth":300,"angle":0}],"world_b":[{"front":[320,575],"width":140,"depth":175,"angle":0},{"front":[320,400],"width":140,"depth":125,"angle":0}],"caps":false,"prior_pixels":[],"anchor":{"id":1,"observed_ns":40000000,"note":"original default"},"contact":"not supplied to original resolver"},
+      "oracle":{"equal_rgb_and_legal_inputs":true,"current_body_support":"supported","physical_identity":"unknown","same_constraints_for_both":true,"new_down":"not qualified by this input","move":"not qualified by this input"},"original_assertions_unchanged":true
+    },
+    {
+      "id":"V01","purpose":"bounded history can also be identical",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"world_a_each_frame":[{"front":[320,500],"width":140,"depth":300,"angle":0}],"world_b_each_frame":[{"front":[320,500],"width":140,"depth":175,"angle":0},{"front":[320,325],"width":140,"depth":125,"angle":0}],"caps":false,"contact":{"state":"active_known_down","id":1,"cursor":2,"prefix":1},"prior_attachment":"one geometric anchor; no independently visible end entry"},
+      "oracle":{"all_three_rgb_equal":true,"current_body_support":"supported","observed_union":"continuous","physical_identity":"unknown","transfer":"ambiguous","new_down":"forbidden","move":"no new attachment from union alone","lease_refresh_from_physical_guess":false}
+    },
+    {
+      "id":"V02","purpose":"current-supported continuation uses visible entry and part history",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"fronts":[[300,490],[304,500],[308,504]],"width":140,"depth":200,"caps":true,"measured_contact_regions":[{"time_ns":30000000,"points":[[300,500],[304,500]]},{"time_ns":50000000,"points":[[304,500],[308,500],[312,500]]}],"contact":{"state":"active_known_down","id":1,"cursor":2,"prefix":1,"attachment":"independent visible end at t30 with observed-part pixel provenance"},"current_root":null,"other_region_in_contact_zone":false},
+      "oracle":{"contact_support":"supported","relation":"continued_observed_piece","physical_identity":"proposed_not_verified","move":{"contact_id":1,"allowed_points":[[304,500],[308,500],[312,500]],"same_prefix":true},"new_down":"forbidden for existing intent","rootless_continuation_allowed":true}
+    },
+    {
+      "id":"V03","purpose":"independent incoming opportunity and old-contact support loss",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"old_fronts":[[320,580],[320,600],[320,640]],"old_depth":20,"incoming_fronts":[[320,450],[320,480],[320,500]],"incoming_depth":120,"width":140,"caps":true,"gap_intervals_d":[[-50,60],[-20,80],[0,120]],"contact":{"state":"active_known_down","id":1,"cursor":2,"attachment":"old lower piece, never incoming"},"incoming":{"prefix":0,"unknown_down":false,"completed":false,"association_unique":true,"current_end_visible":true,"current_hit":[320,500],"root_ns":50000000},"free_contacts":4},
+      "oracle":{"regions_distinct":true,"relation":"recently_separated_piece","incoming":"independent_down_opportunity","incoming_contact_must_differ_from":1,"old_move_to_incoming":"forbidden","old_support":"absent","old_release":"safe support-loss handling, not physical completion","do_not_swallow_by_column_anchor":true}
+    },
+    {
+      "id":"V04","purpose":"contained feature is not physical fragment gold",
+      "inputs":{"base":"V02","effect_polygons":[null,[[285,450],[323,450],[323,470],[285,470]],[[289,460],[327,460],[327,480],[289,480]]],"rgba":[255,225,80,0.35],"feature_independent_cap":false,"outer_rails_contact_points_unoccluded":true},
+      "oracle":{"contact_support":"supported","feature_relation":"contained_feature","feature_physical_identity":"unknown","fragment":"proposed","second_hold_down":"not qualified","existing_move":"same_contact_move_candidate","raw_feature_retained":true}
+    },
+    {
+      "id":"V05","purpose":"contact occluded; body above cannot renew lease",
+      "inputs":{"base":"V02","current_effect_polygon":[[220,485],[400,485],[400,520],[220,520]],"alpha":1,"upper_body_visible":true,"now_ns":51000000,"last_unoccluded_contact_ns":30000000},
+      "oracle":{"contact_support":"occluded","move":"forbidden","refresh":false,"new_down":"forbidden from occluded end","grace":"original bound only; release at>=90000000ns without new real support","tail_complete":false}
+    },
+    {
+      "id":"V06","purpose":"missing side and occluded side must be distinct",
+      "inputs":{"base":"V02","clear_strip":{"x_half_open":[238,266],"y_half_open":[300,505]},"variants":["unobscured black strip","opaque yellow effect over same strip"]},
+      "oracle":{"bilateral_support":"absent or occluded by variant","move":"forbidden","end":"unknown","physical_two_bodies":"not inferred from missing side","refresh":false}
+    },
+    {
+      "id":"V07","purpose":"recent visible separation then seamless current union",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"frame_operations":[[{"front":[320,500],"depth":60},{"front":[320,420],"depth":120}],[{"front":[320,500],"depth":40},{"front":[320,440],"depth":120}],[{"front":[320,500],"depth":60},{"front":[320,440],"depth":120}]],"width":140,"angle":0,"caps_at_times":[true,true,false],"contact":{"state":"active_known_down","id":1,"cursor":2,"attachment":"lower piece"}},
+      "oracle":{"union_support":"supported","separation_witness":"preserve only to original time/6sample expiry","links":"ambiguous merge retaining2 alternatives","exclusive_owner":null,"alias_merge":"forbidden","new_down":"not qualified without current independent end","old_move_or_lease_from_upper_fill":"forbidden"}
+    },
+    {
+      "id":"V08","purpose":"first line or similar direction cannot stand in for relation",
+      "inputs":{"base":"V02","lines":[{"id":"L1","center":[320,500],"angle":0},{"id":"L2","center":[320,500],"angle":0.04}],"association_unique":false,"orders":["L1,L2","L2,L1"]},
+      "oracle":{"body_support":"supported","relation":"ambiguous","new_down":"forbidden","move":"forbidden","order_invariant":true,"physical_identity":"unknown"}
+    },
+    {
+      "id":"V09","purpose":"neighbor thin Tap retains independent opportunity",
+      "inputs":{"base":"V02","tap_centers":[[520,460],[520,480],[520,500]],"tap_width":80,"tap_height":8,"tap_color":[40,190,255],"tap_line":"L","tap_prefix":0,"tap_current_overlap":true,"free_contacts":4},
+      "oracle":{"held":"same_contact_move_candidate","tap":"independent_down_opportunity under existing Tap contract","tap_not_deleted_by_body_filter":true,"tap_is_not_body":true,"unknown_completed_guards_independent":true}
+    },
+    {
+      "id":"V10","purpose":"Hold during rotation separates body, line, and motion",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"fronts":[[300,505],[308,505],[316,505]],"body_angles":[0,0.1,0.25],"line_centers":[[320,500],[320,500],[320,500]],"line_angles":[0,0.2,0.4],"width":140,"depth":200,"caps":true,"contact":{"state":"active_known_down","id":1,"cursor":3,"prefix":1,"attachment":"measured piece with pixel provenance"},"current_support_points":[[310,495.772],[316,498.309],[322,500.846]],"initial_down_point":[300,500]},
+      "oracle":{"relation":"continued_observed_piece if unique measured match","move":{"contact_id":1,"allowed_points":[[310,495.772],[316,498.309],[322,500.846]],"current_body_and_line_required":true},"new_down":"forbidden","body_angle_not_line_angle":true,"motion_not_line_normal":true,"no_blind_rotation_or_fixed_initial_point":true,"tail":"separate unknown","real_rotation_acceptance":false}
+    },
+    {
+      "id":"V11","purpose":"far misalignment followed by near-line alignment",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"fronts":[[280,400],[300,450],[320,500]],"note_angles":[0.5,0.25,0],"width":140,"depth":120,"caps":true,"line":{"id":"L","center":[320,500],"angle":0},"distractor":{"id":"D","center":[600,500],"angle":0.5,"length":80},"displacements":[[20,50],[20,50]],"contact":{"state":"never_executed","cursor":0},"current_relation":"unique L by current position and measured relative distance","root_ns":50000000},
+      "oracle":{"far_candidate":"retained without Down","current_head":"supported","current_opportunity":"independent_down_opportunity under original deadline/gate","line_choice":"L rather than D","orientation_motion_normal_distinct":true,"real_late_alignment_acceptance":false}
+    },
+    {
+      "id":"V12","purpose":"unknown Down never retried",
+      "inputs":{"base":"V03","incoming_override":{"state":"unknown_down","prefix":1,"receipt":"unknown","release_responsibility":true}},
+      "oracle":{"pixels":"still observed","new_down":"forbidden","new_intent_from_new_runtime_id":"forbidden","release_responsibility":true,"game_adoption":"unknown"}
+    },
+    {
+      "id":"V13","purpose":"completed/already-Up identity does not revive",
+      "inputs":{"base":"V03","incoming_override":{"state":"completed_up","prefix":2,"completed":true}},
+      "oracle":{"pixels":"still observed","new_down":"forbidden","move":"forbidden for completed contact","completed_identity_persists_this_round":true}
+    },
+    {
+      "id":"V14","purpose":"crossing and return do not replay executed/unknown intent",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"fronts":[[320,490],[320,510],[320,495]],"caps":true,"contact_states":["active_known_down_prefix1","unknown_down_prefix1","never_executed_prefix0"],"old_root_invalid_after_reversal":true},
+      "oracle":{"completed_from_geometry":false,"known_or_unknown_prefix1_down":"forbidden","prefix0":"replan only with new current support/fresh relative-motion fit, not old root","identity":"proposed or unknown","move":"requires independent current support"}
+    },
+    {
+      "id":"V15","purpose":"tail termination separate from support loss",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"fronts":[[320,600],[320,620],[320,640]],"depths":[108,112,128],"caps":true,"trailing_ends":[[320,492],[320,508],[320,512]],"tail_semantics":"declared synthetic contract, not real cap gold","contact":{"state":"active_known_down","id":1,"cursor":3,"prefix":1},"incoming":false},
+      "oracle":{"up_opportunity":"two distinct measured trailing-end-past-line supports at30/50ms, current relation valid","at30ms":"one support insufficient for normal Up","geometry_only_completion":false,"new_down_after_up":"forbidden","real_tail_gold":null}
+    },
+    {
+      "id":"V16","purpose":"context/frame/capacity/deadline invalidation",
+      "inputs":{"base":"V02","mutations":[{"source_valid":false},{"epoch":2},{"generation":2},{"geometry":2},{"rotation":1},{"times_ns":[10000000,30000000,30000000]},{"times_ns":[10000000,30000000,52000000],"now_ns":51000000},{"regions":129},{"lines":17},{"metadata_bytes":1048577},{"pixel_probes":6291457},{"rgb_byte_delta":-1},{"geometry_tag":"NaN"},{"plan_deadline_ns":51000000,"now_ns":51000000}]},
+      "oracle":{"invalid":true,"new_down":"forbidden","move":"forbidden","refresh":false,"release":"owner fault/revoke responsibility","no_silent_hard_case_drop":true}
+    },
+    {
+      "id":"V17","purpose":"witness eviction/staleness/exact gap bounds",
+      "inputs":{"base":"V07","mutations":[{"separation_ns":-40000000,"current_ns":50000000},{"separation_ns":-40000001,"current_ns":50000000},{"adjacent_gap_ns":40000000},{"adjacent_gap_ns":40000001},{"more_than6_measurements_since_separation":true},{"three_frames_same_rgb":true}]},
+      "oracle":{"age90ms":"retain only if also in6samples/context valid, never refresh","age90ms_plus1":"evict","gap40ms":"allowed boundary","gap40ms_plus1":"reset usable link","evicted_witness":"no everlasting veto or invented current cap","duplicate_rgb":"not three independent end confirmations","move_from_prediction":"forbidden"}
+    },
+    {
+      "id":"V18","purpose":"IDs and iteration order are not oracle",
+      "inputs":{"bases":["V02","V03","V08"],"metamorphoses":[{"runtime_ids":[521,539],"rename_to":[9999,3]},{"anchor_ids":[1,2],"rename_to":[27,8]},{"region_order":"reverse"},{"line_order":"reverse"},{"contact_id":"bijective renaming with lifecycle unchanged"}]},
+      "oracle":{"geometry_and_relation_constraints_invariant":true,"contact_action":"equivariant only to contact-ID renaming","physical_truth_from_names":false}
+    },
+    {
+      "id":"V19","purpose":"countermodel: new cap cues still cannot prove physical identity",
+      "inputs":{"times_ns":[10000000,30000000,50000000],"same_rgb_recipe_both_worlds":"V03 full geometry/caps","private_world_a":"two physical Hold instances","private_world_b":"one physical object plus visually identical decorative or fragment geometry","private_labels_passed_to_resolver":false},
+      "oracle":{"equal_outputs_or_distributions":true,"visible_regions_caps":"same supported observations","physical_identity":"unknown or identical proposed hypotheses","exclusive_owner":"forbidden","contact_constraints":"same for both; real correctness unverified","implication":"tests observations/lifecycle, not universal physical classification"}
+    }
+  ],
+  "missing_evidence": [
+    {"claim":"H physical fragment removed improves game","missing":"independent real part/link oracle distinguishing inner effect from separate small Hold; uniquely attributable contact feedback","status":"not_claimed"},
+    {"claim":"K old tail completed and incoming is uniquely new physical note","missing":"unobscured trailing-end/current-front causal link, independent review and contact feedback","status":"unknown"},
+    {"claim":"Phigros accepted active Hold rotation","missing":"entry through large rotation/reversal/translation, body and tail plus feedback; H only small observed angle change and software active state","status":"not_verified"},
+    {"claim":"real late alignment correctness","missing":"far-misaligned to near-aligned sequence with unique relation and interfering line; K top object does not reach line in reviewed window","status":"not_verified"},
+    {"claim":"bounded descriptors suffice for occlusion","missing":"merge and identical-appearance controls/real QA; cannot silently add unbounded history or model","status":"design_question"},
+    {"claim":"runtime/live readiness","missing":"separate implementation authorization, full behavior, valid cost, freeze/preflight, game results","status":"not-ready"}
+  ],
+  "handoff": {"stop_after_delivery":true,"controller_acceptance_required":true,"implementation_not_authorized_by_design":true,"max_next_designs":1,"no_goal_or_auto_dispatch":true}
+}
