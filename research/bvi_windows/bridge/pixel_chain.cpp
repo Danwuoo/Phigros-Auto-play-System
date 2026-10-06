@@ -4,6 +4,7 @@
 #include <psapi.h>
 #include <wrl/client.h>
 #include "bridge.hpp"
+#include "pixel_diagnostics.hpp"
 #include "pas/game_session.hpp"
 #include <algorithm>
 #include <cmath>
@@ -19,39 +20,7 @@ using Microsoft::WRL::ComPtr;
 namespace {
 void checked(HRESULT code){if(FAILED(code))throw std::runtime_error("WIC decode failed");}
 J pixel_rgb(const Frame& frame,double x,double y) {
-    const auto px=std::llround(x),py=std::llround(y);
-    if(px<0||px>=frame.width||py<0||py>=frame.height)return nullptr;
-    const auto offset=static_cast<std::size_t>(py)*frame.stride+static_cast<std::size_t>(px)*3;
-    return J::array({frame.rgb[offset],frame.rgb[offset+1],frame.rgb[offset+2]});
-}
-// Post-dispatch review only. Never passed to extract/relate/owner. Fixed 37
-// normal offsets x five tangent positions, at most 925 pixels per query.
-J witness_review(const Frame& frame,const bvi::Query& q) {
-    J rows=J::array();
-    const double ux=std::cos(q.angle),uy=std::sin(q.angle),nx=-uy,ny=ux;
-    for(int normal=-16;normal<=20;++normal) {
-        J points=J::array();
-        for(double along:{-q.width/2,-.35*q.width,0.,.35*q.width,q.width/2}) {
-            const double x=q.front.x+along*ux+normal*nx,y=q.front.y+along*uy+normal*ny;
-            const auto rgb=pixel_rgb(frame,x,y);J failures=J::array();
-            bool blue=false,white=false,black=false;
-            if(rgb.is_null())failures.push_back("outside_frame");
-            else {
-                const int r=rgb[0],g=rgb[1],b=rgb[2];
-                if(r<20||r>100)failures.push_back("R20..100");
-                if(g<130||g>230)failures.push_back("G130..230");
-                if(b<180||b>255)failures.push_back("B180..255");
-                if(b<g+20)failures.push_back("B>=G+20");
-                blue=failures.empty();white=r>=240&&g>=240&&b>=240;
-                black=r<=12&&g<=12&&b<=12;
-            }
-            points.push_back({{"along",along},{"pixel",{std::llround(x),std::llround(y)}},
-                {"rgb",rgb},{"v3_blue",blue},{"v3_blue_failures",failures},
-                {"v3_white",white},{"v3_black",black}});
-        }
-        rows.push_back({{"normal",normal},{"points",points}});
-    }
-    return rows;
+    return diagnostic::rgb_at(frame,x,y);
 }
 J loaded_modules() {
     std::array<HMODULE,128> modules{};DWORD needed=0;
@@ -120,7 +89,7 @@ int main(int argc,char** argv) {
     std::unique_ptr<Window> window;
     std::ofstream trace;
     std::size_t processed=0,trace_bytes=0;
-    constexpr std::size_t trace_cap=32*1024*1024;
+    constexpr auto trace_cap=diagnostic::trace_cap_bytes;
     try {
     if(argc!=3||std::filesystem::exists(argv[2]))throw std::runtime_error("usage: pixel_chain SELECTION FRESH_REPORT");
     const auto trace_path=std::filesystem::absolute(std::string(argv[2])+".rows.jsonl");
@@ -201,6 +170,7 @@ int main(int argc,char** argv) {
                 {"actual_intent",a?J(a->intent):J(nullptr)},{"actual_contact",a&&a->contact>=0?J(a->contact):J(nullptr)},
                 {"full_cursor",a&&a->cursor?J(*a->cursor):J(nullptr)},
                 {"query_tap",q.tap},{"query_front",{q.front.x,q.front.y}},{"query_depth",q.depth},
+                {"query_width",q.width},{"query_angle",q.angle},
                 {"tap_normal_minus3_rgb",sample(0,-3)},{"tap_normal_plus3_rgb",sample(0,3)},
                 {"body_mid_left_rgb",sample(-.35*q.width,-q.depth/2)},
                 {"body_mid_right_rgb",sample(.35*q.width,-q.depth/2)},
@@ -209,7 +179,7 @@ int main(int argc,char** argv) {
                 {"front_exterior_left3_rgb",sample(-.35*q.width,3)},
                 {"front_exterior_right3_rgb",sample(.35*q.width,3)}});
             if(ordinal==1519||ordinal==3030)
-                roi.back()["post_dispatch_witness_review"]=witness_review(frame,q);
+                roi.back()["post_dispatch_witness_review"]=diagnostic::witness_review(frame,q);
         }
         // Diagnostic sidecars retain the complete current proposal denominator,
         // including body patches and unsupported kinds rejected by the adapter.
@@ -269,6 +239,9 @@ int main(int argc,char** argv) {
         {"physical_human_gold",0},{"device_commands",0},{"source_absolute_age",nullptr},
         {"loaded_module_paths",loaded_modules()},
         {"color_samples","diagnostic-only rounded current query-local pixels; neither human gold nor policy input"},
+        {"witness_review_contract",{{"normal_count",diagnostic::normal_count},
+            {"tangent_count",diagnostic::tangent_count},{"points_per_query",diagnostic::points_per_query},
+            {"max_queries_per_frame",128},{"selected_frame_cap",2},{"flow","post-dispatch output only"}}},
         {"trace_rows_path",trace_path.string()},{"trace_rows_bytes",trace_bytes},{"trace_cap_bytes",trace_cap}};
     std::ofstream out(argv[2]);out<<report.dump(2)<<'\n';if(!out)return 2;
     std::cout<<"real pixels="<<processed<<" invalid="<<invalid<<" own_fake_downs="<<owned_downs<<'\n';return 0;

@@ -31,6 +31,12 @@ CMake／Ninja／VS／SDK；搬至另一工作站先重新核實，不能把已�
 native freeze 包含該 manifest、完整 build freeze 與 selection。
 單靠 native exit0 或 JSON 存在不表示整個查核通過。
 
+`bridge/pixel_diagnostics` 僅在 dispatch 後借用 current RGB，固定每 query
+37×5＝185 點，trace 上限 32 MiB；座標非有限、越界或 storage 不完整時不取像素。
+獨立 C++ audit 重解所選兩張原 PNG，核對 1,665 個 query-local 取樣及整組
+256 幀的決策欄位；重複 integer pixel 不當成獨立像素／人工 gold。
+診斷契約回歸另與原封 v3 extractor 比對色彩邊界，不修改其 predicate。
+
 ## 尚未取得的資格
 
 Body patch 被拒絕，不能冒稱 seen front；跨 epoch／generation／geometry 的
