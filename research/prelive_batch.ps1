@@ -13,6 +13,10 @@ if($Operation -eq 'aa'){
  foreach($scene in @('tap','hold','dense')){for($i=1;$i -le 4;$i++){$attempt='aa-'+$scene+'-'+$i;if($stop){$remaining+=@{attempt=$attempt;reason='previous necessary gate failed';status='not_run'};continue}
   Run @('-Operation','pipeline','-Mode','release','-BuildAttempt','13','-Attempt',$attempt,'-Variant','A','-Scene',$scene,'-Frames','2560')
   $path=Join-Path $pkg ('pipeline-release-'+$attempt+'.json');$runs+=@{scene=$scene;path=$path;sha256=(Get-FileHash -LiteralPath $path).Hash.ToLowerInvariant()}
+  & $pwsh -NoProfile -File (Join-Path $PSScriptRoot 'prelive_audit/run.ps1') -Report $path -Attempt $attempt
+  if($LASTEXITCODE -ne 0){throw 'AA integrity stage failed'}
+  $integrity=Get-Content -LiteralPath (Join-Path $pkg ('audit-'+$attempt+'.json')) -Raw|ConvertFrom-Json
+  if(-not $integrity.integrity -or -not $integrity.complete_prefix_evidence){$stop=$true}
   $input=Join-Path $pkg ($attempt+'-gate-input.json');Save ($attempt+'-gate-input.json') @{path=$path}
   Run @('-Operation','analysis','-Mode','release','-BuildAttempt','13','-Attempt',$attempt,'-Analysis','run','-AnalysisInput',$input)
   $gate=Get-Content -LiteralPath (Join-Path $pkg ('analysis-release-'+$attempt+'.json')) -Raw|ConvertFrom-Json
@@ -21,7 +25,7 @@ if($Operation -eq 'aa'){
  Save 'aa-input.json' @{runs=$runs;not_run=$remaining;normal_stopped=$stop}
  Run @('-Operation','analysis','-Mode','release','-BuildAttempt','13','-Attempt','aa-freeze','-Analysis','aa','-AnalysisInput',(Join-Path $pkg 'aa-input.json'))
  $noise=Get-Content -LiteralPath (Join-Path $pkg 'analysis-release-aa-freeze.json') -Raw|ConvertFrom-Json
- Save 'ab-disposition.json' @{comparison_allowed=$noise.comparison_allowed;noise_path=(Join-Path $pkg 'analysis-release-aa-freeze.json');noise_sha=(Get-FileHash (Join-Path $pkg 'analysis-release-aa-freeze.json')).Hash.ToLowerInvariant();status=if($noise.comparison_allowed){'qualified; comparison not yet run'}else{'not_run: frozen AA gate NOT_READY'};planned_runs=36;candidate_results_used_in_noise=0}
+ Save 'ab-disposition.json' @{comparison_allowed=($noise.comparison_allowed -and -not $stop);noise_path=(Join-Path $pkg 'analysis-release-aa-freeze.json');noise_sha=(Get-FileHash (Join-Path $pkg 'analysis-release-aa-freeze.json')).Hash.ToLowerInvariant();status=if($noise.comparison_allowed -and -not $stop){'qualified; comparison not yet run'}else{'not_run: frozen AA gate NOT_READY'};planned_runs=36;candidate_results_used_in_noise=0}
 }elseif($Operation -eq 'independent'){
  foreach($mode in @('debug','asan')){$build=if($mode -eq 'debug'){'05'}else{'04'};foreach($scene in @('tap','hold')){Run @('-Operation','pipeline','-Mode',$mode,'-BuildAttempt',$build,'-Attempt',('load-'+$scene+'-01'),'-Variant','B','-Scene',$scene,'-Frames','1000')}}
  foreach($scene in @('slow','writer','rpc','fault')){Run @('-Operation','pipeline','-Mode','release','-BuildAttempt','13','-Attempt',('stress-'+$scene+'-01'),'-Variant','B','-Scene',$scene,'-Frames','1000')}
