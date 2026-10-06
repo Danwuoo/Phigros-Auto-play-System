@@ -27,5 +27,5 @@ if($Operation -eq 'aa'){
  foreach($scene in @('slow','writer','rpc','fault')){Run @('-Operation','pipeline','-Mode','release','-BuildAttempt','13','-Attempt',('stress-'+$scene+'-01'),'-Variant','B','-Scene',$scene,'-Frames','1000')}
  foreach($scene in @('tap','dense')){Run @('-Operation','pipeline','-Mode','release','-BuildAttempt','13','-Attempt',('long-'+$scene+'-01'),'-Variant','B','-Scene',$scene,'-Frames','10000')}
 }else{
- foreach($mode in @('release','debug','asan')){$b=if($mode -eq 'release'){'11'}elseif($mode -eq 'debug'){'05'}else{'04'};Run @('-Operation','bindings','-Mode',$mode,'-BuildAttempt',$b,'-Attempt','closure')}
+ foreach($mode in @('release','debug','asan')){$b=if($mode -eq 'release'){'13'}elseif($mode -eq 'debug'){'05'}else{'04'};Run @('-Operation','bindings','-Mode',$mode,'-BuildAttempt',$b,'-Attempt','closure')}
 }
