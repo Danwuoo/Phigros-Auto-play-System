@@ -1,8 +1,27 @@
 # 2026-10-06 近期 ignored 開發封包
 
+使用者後續要求合併main並縮小封包；開發分支已快轉合併至main並push到 `f07dc40`。
+main的AUX修改SHA保持原樣；Windows保留名稱造成的索引缺項已就指定兩個path修正，
+修正後index tree精確等於HEAD tree，沒有改持久Git／系統安全設定。
+
+精簡封包為原 main root 的 `phigros-prelive-compact-20261006-f07dc40-01.zip`，精確大小、
+SHA與縮小比例見 [PRELIVE_COMPACT_PACKAGE.json](PRELIVE_COMPACT_PACKAGE.json)。
+實際1,001,668,802B（約1.00GB），比完整包5,867,867,149B縮小82.93%；
+13,670個保留payload逐項解壓SHA核對通過。ZIP SHA
+`e59766f09879b927b26cd0947ce501cea05f16fd838cfb1cce9321a63a0d7530`。
+它保留全部本輪raw／收據／STOP、3063張原PNG、60段正式clips與最終三配置EXE／DLL／map；
+省略舊build roots、`.obj`／`.lib`／`.pdb`、old objects ZIP及isolated MSVC compiler binaries，
+保留runtime DLL、headers、tools、licenses與metadata。ZIP內有保留／省略清單及逐項SHA。
+因此它適合證據審查、離線候選執行與沿既有環境接續研究，**不是完整獨立重建環境**；
+CMake／vcpkg metadata仍描述原完整安裝，重建需既有相符依賴或下述完整封包。
+原資料與5.87GB完整封包保持原件。精簡不刪raw列、不把STOP／失敗改成pass。
+
+下列為第一版完整封包的範圍與建立收據。
+
 使用者另行授權本機 commit／push，並將近期開發需要的 ignored 檔案整理成 ZIP，
 放在原 main root。開發資料 checkpoint 為 `55738325eb1cbcd83fe18e18c7d0320dc8eedcd4`，
-推送分支為 `codex/prelive-preparation-20261006`。本包不新增 runtime／遊戲測試或裝置權限。
+原推送分支為 `codex/prelive-preparation-20261006`，後續已整合main。
+本包不新增 runtime／遊戲測試或裝置權限。
 
 封包：原 main root 的 `phigros-prelive-ignored-20261006-5573832-01.zip`；
 旁有 `.zip.sha256`。精確 bytes／SHA／逐項核對數量／容量及 main 狀態見

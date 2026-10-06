@@ -2,11 +2,16 @@
 
 Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程序多執行緒處理最新畫面、音符／判定線追蹤、撞線預測與可撤銷多指觸控；不讀譜或遊戲內部狀態。
 
-目前完成 Windows 離線接手與隔離研究候選橋接；正式runtime整合與實機未啟動。最新入口由[文件總目錄](docs/README.md)進入。下列2026-10-04狀態保留為歷史快照。
+2026-10-06 current-rails-v1 已整合至 main 的正式離線 observer／owner／scheduler；
+三配置回歸及3063幀自身接觸前綴通過。成本／physical gate仍NOT_READY，未接live CLI，
+Chapter Legacy完整IN Miss=0目標未完成。最新結果由
+[Windows冷準備入口](docs/research/zero-miss-20261006/windows/README.md)進入，
+近期 ignored 資料與精簡 ZIP 見 [封包說明](docs/research/zero-miss-20261006/windows/PRELIVE_IGNORED_PACKAGE.md)。
+分類文件見[文件總目錄](docs/README.md)。下列較早驗收及2026-10-04狀態保留為歷史快照。
 
-派送已撤回並由本 task 自行開發；最新[檔案驗收與診斷修補](docs/research/zero-miss-20261006/windows/WITHDRAWAL_ACCEPTANCE.md)保留原件與 STOP。使用者已確認一筆 Hold head前緣語義，三配置獨立核對256幀決策及原圖取樣；正式策略與實機資格尚未成立。
+前一包派送撤回後的[檔案驗收與診斷修補](docs/research/zero-miss-20261006/windows/WITHDRAWAL_ACCEPTANCE.md)保留原件與 STOP。使用者已確認一筆 Hold head前緣語義，當時三配置獨立核對256幀決策及原圖取樣；該標註不等於合法觸點或遊戲採納。
 
-**最新 [10/6 Windows 接手里程碑](docs/research/zero-miss-20261006/windows/README.md)：ZIP／delivery tree／v3 core SHA 已核；Windows 三配置原套件仍保留相同 36 fail，正式 owner／scheduler 前綴 113/113。256 張本地真圖橋接沒有 eligible action，顏色／front 語義及完整成本資格仍未成立；未操作裝置，產品 Goal 未完成。**
+**最新 [10/6 冷準備結果](docs/research/zero-miss-20261006/windows/PRELIVE_RESULTS.md)：三配置113／56／113／68／186項回歸通過，完整3063幀自身receipt有效；原v3的36fail原件保留，本包未重跑／改原oracle。A/A在第5筆Hold無動作時停止，ABBA未跑；有限負載／fault／10000次stress有完整負結果，成本未取得資格。沒有裝置操作或實機採納，產品Goal未完成。**
 
 2026-10-05 [首輪雲端多分支 zero-miss 研究](docs/research/zero-miss-20261005/README.md)完成程式、逐曲總帳與建置盤點，以及隔離 C++ 冷實驗；當時原 frozen suite 尚缺輸入。
 
@@ -16,7 +21,7 @@ Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程�
 
 **[第三階段冷測修補](docs/research/zero-miss-20261005/round3/README.md)：新隔離候選修正rails／端部與merge資格，原同oracle54→43fail、無新增原suite失敗；新48-case契約339斷言全過，獨立35-case仍保留duplicate ROI既存2fail。** 程式在[research/bvi_cold_v2](research/bvi_cold_v2/README.md)，尚未整合正式鏈，未進live。Windows、成本、真圖及全曲分母／解鎖仍有門檻。
 
-## 當前狀態（2026-10-04）
+## 歷史狀態（2026-10-04）
 
 產品目標為 **Chapter Legacy 所有曲目解鎖 IN，完整 IN 結算 Miss=0**；P/G/B與分數照樣報告，HD為解鎖及回歸階段，沒有AP前置。最新逐曲證據、研究狀態與順序工作包見[10/4基準總帳](docs/catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)及[配套JSON](docs/catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)。現行章節分母未核，`chapter_listing_verified=false`；目前各曲解鎖狀態unknown，不能由HD分數代推。
 

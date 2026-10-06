@@ -1,0 +1,23 @@
+{
+  "device_commands": 0,
+  "remote": "origin",
+  "index_equals_head_tree": true,
+  "source_branch": "codex/prelive-preparation-20261006",
+  "cost_gate": "NOT_READY",
+  "persistent_git_security_setting_changed": false,
+  "push_verified": true,
+  "merge_kind": "fast-forward",
+  "product_goal_complete": false,
+  "original_aux_sha256": "e5c78a1d90a5e430c4f7c5328c7e9a8b3571800b0b8fc698d082b1cbe16d5501",
+  "destination_branch": "main",
+  "index_tree_after_repair": "b9c608adfdd4b8e5edd9f59b5679e1d305c2d28e",
+  "from_commit": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "utc": "2026-10-06T13:14:31.5171616Z",
+  "candidate_changed": false,
+  "to_commit": "f07dc408385aaf70e1885a2734fc51097d6ed840",
+  "schema": "pas.main-fast-forward-receipt.v1",
+  "windows_index_repair_paths": [
+    "apps/runtime_x11_p/aux/CMakeLists.txt",
+    "docs/README.md"
+  ]
+}
