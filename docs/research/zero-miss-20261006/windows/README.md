@@ -7,6 +7,8 @@ receipt前綴有效。A/A在第5筆Hold無動作時停止，A/B未跑，成本�
 收據入口為 [最終SHA索引](prelive-evidence-01/SHA256_INDEX_FINAL.json)，另附
 [重跑方式](PRELIVE_REPRODUCTION.md)、[待授權操作包](PRELIVE_OPERATION_PACKET.md)與
 [逐曲採證模板](PRELIVE_RESULT_TEMPLATE.json)。候選只有offline entry，未接live CLI。
+本輪後續push與原main root的近期ignored ZIP另見
+[封包範圍／還原方式／收據](PRELIVE_IGNORED_PACKAGE.md)。
 
 以下為先前Windows交接／sidecar驗收的歷史里程碑，封存與負結果維持原件。
 

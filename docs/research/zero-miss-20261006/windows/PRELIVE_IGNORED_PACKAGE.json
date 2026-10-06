@@ -1,0 +1,39 @@
+{
+  "zip_entries": 17264,
+  "payload_cap": 34359738368,
+  "ignored_paths_verified": true,
+  "historical_remaining_png_not_included": 4659,
+  "all_payload_entries_sha_verified": 17255,
+  "branch": "codex/prelive-preparation-20261006",
+  "payload_bytes": 23871787765,
+  "minimum_free": 21474836480,
+  "cost_gate": "NOT_READY",
+  "device_commands": 0,
+  "main_dirty_after": [
+    " M apps/runtime_x11_p/aux/CMakeLists.txt",
+    "?? phigros-prelive-ignored-20261006-5573832-01.zip",
+    "?? phigros-prelive-ignored-20261006-5573832-01.zip.sha256"
+  ],
+  "archive_bytes": 5867867149,
+  "archive_cap": 17179869184,
+  "manifest_entry": "_package/FILES.json",
+  "payload_files": 17255,
+  "original_png_prefix": 3063,
+  "main_head": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "source_recipe_sha256": "b7de11657aff4030e8da50ff2f787bdca7edcc8bda9e7d8d7d19eee14cc0c15f",
+  "formal_clips": 60,
+  "data_source_commit": "55738325eb1cbcd83fe18e18c7d0320dc8eedcd4",
+  "duration_s": 276.2351004,
+  "archive": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\phigros-prelive-ignored-20261006-5573832-01.zip",
+  "manifest_sha256": "f1b88b27c558ebeecf18502448b58dc93ad5326bc51f6caf3c422cdacf415322",
+  "live_cli_hook": false,
+  "original_aux_sha256": "e5c78a1d90a5e430c4f7c5328c7e9a8b3571800b0b8fc698d082b1cbe16d5501",
+  "utc": "2026-10-06T12:48:27.7252472Z",
+  "free_after": 173405175808,
+  "product_goal_complete": false,
+  "archive_sha256": "adc529b7f70d3d7f2de030b1d3936181dc6d6824eb45b60b6db6980731b6bf68",
+  "main_dirty_before": [
+    " M apps/runtime_x11_p/aux/CMakeLists.txt"
+  ],
+  "schema": "pas.recent-ignored-archive-receipt.v1"
+}
