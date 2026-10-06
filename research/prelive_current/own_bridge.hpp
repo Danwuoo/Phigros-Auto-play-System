@@ -61,6 +61,11 @@ public:
     bool finalize(const ReleaseReport&);
     const Attachment* find(std::uint64_t note) const;
     bool retired(std::uint64_t note) const { return note<=retired_note_floor_&&!find(note); }
+    bool permits_current_target(std::uint64_t note) const {
+        if(!valid_||!note||retired(note))return false;
+        const auto* a=find(note);
+        return !a||a->state==Execution::pending||a->state==Execution::active;
+    }
     bvi::Guard guard(std::uint64_t note,int query,Nanoseconds now,Nanoseconds gate_deadline,
                      Nanoseconds plan_deadline,int free_contacts) const;
     std::size_t size() const {return count_;}

@@ -63,7 +63,7 @@ Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionS
  for(auto& t:taps.filtered.targets)if(t.note.kind==NoteKind::tap){out.filtered.targets.push_back(t);++out.accepted;}
  // Drag/Flick keep the original formal observer/owner contract. This adapter
  // makes no new BVI claim about them; completed/retired IDs still cannot revive.
- for(const auto&t:scene.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&!ledger.retired(t.note_id)){out.filtered.targets.push_back(t);++out.accepted;}
+ for(const auto&t:scene.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&ledger.permits_current_target(t.note_id)){out.filtered.targets.push_back(t);++out.accepted;}
  Reader read{f,out.probes};
  for(const auto& c:b.candidates){
   if(c.note.kind!=NoteKind::hold)continue;

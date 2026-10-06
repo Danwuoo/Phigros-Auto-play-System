@@ -41,7 +41,7 @@ public:
   if(candidate){last=hook.evaluate(f,batch,s,ledger,clock_.now_ns());accepted+=last.accepted;unknown+=last.unknown;
    for(std::size_t k=0;k<last.count;++k){terminals+=last.support[k].terminal;bodies+=last.support[k].body;}
    filtered=last.filtered;
-  }else{const auto e=current_execution::evaluate(*baseline,f,batch,s,ledger,clock_.now_ns());accepted+=e.allowed;filtered=e.filtered;if(e.input.valid&&ledger.valid())for(const auto&t:s.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&!ledger.retired(t.note_id)){filtered.targets.push_back(t);++accepted;}}
+  }else{const auto e=current_execution::evaluate(*baseline,f,batch,s,ledger,clock_.now_ns());accepted+=e.allowed;filtered=e.filtered;if(e.input.valid&&ledger.valid())for(const auto&t:s.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&ledger.permits_current_target(t.note_id)){filtered.targets.push_back(t);++accepted;}}
   hook_compute=meter.now_ns()-t0;if(event_output)event_output({{"event","filtered_owner_scene"},{"allow",allow},{"scene",decision_json(filtered)}});t0=meter.now_ns();owner.accept(filtered,allow);owner_processed=bool(owner.owner());owner.poll();const bool ok=sync();owner_compute=meter.now_ns()-t0;return ok;
  }
  bool finish(){if(!owner.owner())return backend.active_count()==0;
