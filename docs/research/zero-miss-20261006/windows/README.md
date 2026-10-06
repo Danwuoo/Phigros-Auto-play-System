@@ -5,7 +5,13 @@
 橋接。凍結 v3 的七份 core source、正式 runtime、原測試與 oracle 均保留。
 沒有裝置讀取、Fixture／遊戲操作、模型工作、push、PR、merge 或新長期 Goal。
 
-最終橋接 source commit：`29e3ed09ae176a93a159f3b7993c8047505e9482`。
+最新自行開發與派送撤回驗收見 [WITHDRAWAL_ACCEPTANCE](WITHDRAWAL_ACCEPTANCE.md)：
+source `774f3e7020818e94c508cc1481dd0986ebe417a0`，三配置113項前綴、32項診斷、
+256幀／1,665原圖取樣獨立核驗與兩個竄改拒絕控制；初次程序 STOP 保留。
+frame3030已有一筆使用者確認的可見 head 前緣語義，1519身分及接觸採納仍 unknown。
+下列是原接手里程碑的歷史結果，舊封存不覆寫。
+
+原橋接 source commit：`29e3ed09ae176a93a159f3b7993c8047505e9482`。
 前一個 checkpoint `0f81a387676ec67b470f537812113cbe33df8fa0` 的 binary、108 項前綴、
 真圖與 source SHA 原件保留；最後修補只明確拒絕凍結 profile 以外的 rotation。
 配套實作：[research/bvi_windows](../../../../research/bvi_windows/README.md)。

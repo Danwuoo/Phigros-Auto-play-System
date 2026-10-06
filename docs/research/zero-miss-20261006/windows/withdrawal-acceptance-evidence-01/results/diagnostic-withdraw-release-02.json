@@ -1,0 +1,139 @@
+{
+  "assertions": 32,
+  "checks": [
+    {
+      "id": "rounding_uses_actual_integer_pixel",
+      "pass": true
+    },
+    {
+      "id": "fractional_inside_border",
+      "pass": true
+    },
+    {
+      "id": "negative_half_rounds_outside",
+      "pass": true
+    },
+    {
+      "id": "right_half_rounds_outside",
+      "pass": true
+    },
+    {
+      "id": "nonfinite_pixel_abstains",
+      "pass": true
+    },
+    {
+      "id": "huge_pixel_abstains_before_integer_cast",
+      "pass": true
+    },
+    {
+      "id": "negative_stride_abstains",
+      "pass": true
+    },
+    {
+      "id": "truncated_storage_abstains",
+      "pass": true
+    },
+    {
+      "id": "oversized_width_abstains",
+      "pass": true
+    },
+    {
+      "id": "bounded_exact_37_by_5_points",
+      "pass": true
+    },
+    {
+      "id": "rotated_query_uses_note_local_normal",
+      "pass": true
+    },
+    {
+      "id": "outside_frame_not_color_evidence",
+      "pass": true
+    },
+    {
+      "id": "nonfinite_query_rejected",
+      "pass": true
+    },
+    {
+      "id": "oversized_query_rejected",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_0",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_1",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_2",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_3",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_4",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_5",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_6",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_7",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_8",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_9",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_10",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_11",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_12",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_13",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_14",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_15",
+      "pass": true
+    },
+    {
+      "id": "frozen_v3_blue_boundary_16",
+      "pass": true
+    },
+    {
+      "id": "sample_json_has_bounded_size",
+      "pass": true
+    }
+  ],
+  "device_commands": 0,
+  "failed_assertions": 0,
+  "physical_human_gold": 0,
+  "points_per_query": 185,
+  "schema": "pas.windows-pixel-diagnostics-contract.v1",
+  "trace_cap_bytes": 33554432
+}

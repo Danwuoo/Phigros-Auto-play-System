@@ -1,0 +1,17 @@
+{
+  "compared_rows": 256,
+  "current_witness_frames": 2,
+  "device_commands": 0,
+  "excluded_fields": [
+    "five current-host timing fields",
+    "post_dispatch_witness_review",
+    "query_width",
+    "query_angle"
+  ],
+  "passed": true,
+  "physical_human_gold": 0,
+  "raw_png_points_verified": 1665,
+  "schema": "pas.windows-independent-pixel-diagnostic-audit.v1",
+  "scope": "frozen 256-frame selection; current raw PNG coordinates and policy fields; no physical gold",
+  "witness_queries": 9
+}

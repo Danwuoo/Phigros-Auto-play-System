@@ -1,0 +1,85 @@
+{
+  "schema": "pas.withdrawn-development-independent-acceptance.v1",
+  "source_commit": "57b00d566db805d4f62bc63f054b3b7a268e7734",
+  "source_path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\pixel_chain.cpp",
+  "source_sha256": "7724f8e2a189bfd9b30431a520f4ef02b7aa33be763fed716edb9fb2a55e3bd4",
+  "source_snapshot": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\withdrawal-review-01\\source-57b00d5\\pixel_chain.cpp",
+  "stages": [
+    {
+      "runner_exit": 0,
+      "stage": "configure-bridge-review-release-01",
+      "active_final": 0,
+      "verification_exit": 0,
+      "native_exit": 0
+    },
+    {
+      "runner_exit": 0,
+      "stage": "build-bridge-review-release-01",
+      "active_final": 0,
+      "verification_exit": 0,
+      "native_exit": 0
+    },
+    {
+      "runner_exit": 0,
+      "stage": "prefix-bridge-review-release-01",
+      "active_final": 0,
+      "verification_exit": 0,
+      "native_exit": 0
+    },
+    {
+      "runner_exit": 0,
+      "stage": "pixels-bridge-review-release-01",
+      "active_final": 0,
+      "verification_exit": 0,
+      "native_exit": 0
+    }
+  ],
+  "frozen_entries_rechecked": 762,
+  "original_sealed_metadata_verified": 2111,
+  "original_selected_pngs_verified": 256,
+  "inherited_release_prefix": 113,
+  "inherited_release_pixels": 256,
+  "eligible_targets": 0,
+  "all_owned_stages_exited": true,
+  "binaries": [
+    {
+      "bytes": 270848,
+      "sha256": "076712472da1887fef83f5ef1ad6cff56e02ffb6972169c9331dd01a2b2586a0",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-review-release-01\\bridge_tests.exe"
+    },
+    {
+      "bytes": 1996688,
+      "sha256": "bdec8dfe8ef0b4283b8279669af07d466bd01b1a87aaade01da50609eba4175b",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-review-release-01\\current_bridge.lib"
+    },
+    {
+      "bytes": 684270,
+      "sha256": "f27b78adc60caa16f2fcddb8c3d0027cf221eff795ff1d28c48f4678904f31dd",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-review-release-01\\exact_bvi_v3.lib"
+    },
+    {
+      "bytes": 200940044,
+      "sha256": "af340e2686e381abfb58f5d5e7dbb2f6daba92482808a5f0acf9c33041a1d292",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-review-release-01\\formal_core.lib"
+    },
+    {
+      "bytes": 516608,
+      "sha256": "31ac29a2de2cb3a665364e0c84dce589b74a3d5e5297ca8715a628829db4a55e",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-review-release-01\\pixel_chain.exe"
+    }
+  ],
+  "code_status": "diagnostic-only conditionally accepted; sample-bound comment and trace-cap documentation inconsistent",
+  "sample_bound_actual": 185,
+  "sample_bound_comment": 925,
+  "trace_cap_actual": 33554432,
+  "trace_cap_documented": 16777216,
+  "archive_status": "partial preserved; failed PowerShell bare false and interrupted export; no completed seal",
+  "required_followup": "independent C++ behavior audit, bounded diagnostic tests and corrected provenance; no change to v3 policy",
+  "human_gold": 0,
+  "device_commands": 0,
+  "new_package_out_cap_bytes": 2147483648,
+  "new_package_metadata_cap_bytes": 16777216,
+  "minimum_free_bytes": 21474836480,
+  "free_bytes": 196793483264,
+  "old_STOPS_reopened": false
+}

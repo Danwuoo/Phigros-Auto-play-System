@@ -1,0 +1,158 @@
+[
+  {
+    "configuration": "release",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\bridge_tests.exe",
+    "bytes": 270848,
+    "sha256": "2de644dcddab6fc680b4e9995d4a2c6969dfbc5400c4d2f5aea868c8d1daa745"
+  },
+  {
+    "configuration": "release",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\current_bridge.lib",
+    "bytes": 1996704,
+    "sha256": "37eb0b350b8e6da3b4bd970d54a978616a6d1c3c73726d440a479eef0a19be91"
+  },
+  {
+    "configuration": "release",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\exact_bvi_v3.lib",
+    "bytes": 684322,
+    "sha256": "493d94380e9ddb1034b4620c1004c47ce7608621c8369de058bc87be63246b62"
+  },
+  {
+    "configuration": "release",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\formal_core.lib",
+    "bytes": 200940208,
+    "sha256": "167ec825c6da9aeca6baa1f7ebec3afffe63455d60f7baafeb7f347fea643464"
+  },
+  {
+    "configuration": "release",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\pixel_chain.exe",
+    "bytes": 520192,
+    "sha256": "6b720ffb513858103ed503dae8b0802ffa46d6463be22dc201a7932ad8c20eba"
+  },
+  {
+    "configuration": "release",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\pixel_diagnostics_audit.exe",
+    "bytes": 184320,
+    "sha256": "992217003ce325c1793922f874780986baca020d730d4f7ef537d5cb617715c5"
+  },
+  {
+    "configuration": "release",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\pixel_diagnostics_tests.exe",
+    "bytes": 129024,
+    "sha256": "1c0503ef541da79375ee8dd8d203a80c54e68930c8b63bc2a0791264a74f1a82"
+  },
+  {
+    "configuration": "release",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\pixel_diagnostics.lib",
+    "bytes": 5541408,
+    "sha256": "6a6e55a6d9366f76e174e8dd084636d0897eabd38be0e330af77651a2acd80db"
+  },
+  {
+    "configuration": "debug",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\bridge_tests.exe",
+    "bytes": 3780608,
+    "sha256": "dbcfb486724e0cd6d735dad3803dc78b27702ffc76ad7e210bace23dfea549d5"
+  },
+  {
+    "configuration": "debug",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\current_bridge.lib",
+    "bytes": 2157596,
+    "sha256": "3c6f13ed6268b020b4f76b04fabb58c3e122e3acbef27fc64399e46747e42477"
+  },
+  {
+    "configuration": "debug",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\exact_bvi_v3.lib",
+    "bytes": 682006,
+    "sha256": "6878e6466f2c95c56b17f5a2102009b075cb53299d6994ef4d1a95ff73edecb5"
+  },
+  {
+    "configuration": "debug",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\formal_core.lib",
+    "bytes": 215084334,
+    "sha256": "878e13442ad91f3a7eca76d6e95154908f4f45c582f686d6a5ed27b275e55422"
+  },
+  {
+    "configuration": "debug",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\pixel_chain.exe",
+    "bytes": 3884544,
+    "sha256": "52cfb95d4bfc6bf1f9fa2cf23dc10182293fa9d572f0c86859d45b58538019d8"
+  },
+  {
+    "configuration": "debug",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\pixel_diagnostics_audit.exe",
+    "bytes": 860160,
+    "sha256": "e8bf729521460ba2b090e7ba82e3b0d87689385d5de5b1261962aec9e708a969"
+  },
+  {
+    "configuration": "debug",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\pixel_diagnostics_tests.exe",
+    "bytes": 598016,
+    "sha256": "9a386d389f73fc193818d51bd9a3de86e3ac6bd3d03512308487a841a5a8fc63"
+  },
+  {
+    "configuration": "debug",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\pixel_diagnostics.lib",
+    "bytes": 6069706,
+    "sha256": "4a0091de359673669a971ca93f285534504c742a25edde4ae0252116eddd1f73"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\bridge_tests.exe",
+    "bytes": 5889536,
+    "sha256": "f691daa52fe13be3c01ff637f9465df6b391c0143535d83976095a356cf63f34"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\clang_rt.asan_dbg_dynamic-x86_64.dll",
+    "bytes": 1296920,
+    "sha256": "f56d5ff0b9fcb1c99e84201268d84df0c3406aa3710173f44446cf24cf2f857e"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\clang_rt.asan_dynamic-x86_64.dll",
+    "bytes": 1208352,
+    "sha256": "52580b50dadca40f8f04e21c0b61e8ff272b31379270116377f47449c52ef758"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\current_bridge.lib",
+    "bytes": 2299800,
+    "sha256": "5bce9823727998de023e5c3b9239107ce4bc9438c992eed337f955912a6aa153"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\exact_bvi_v3.lib",
+    "bytes": 765174,
+    "sha256": "d943b2fab11d153b8a30ecc1706e9d4ec8c7aec8a73397cfc59f6a580029bb1f"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\formal_core.lib",
+    "bytes": 222242760,
+    "sha256": "b7769e3f055ab137b6c5f29d42a28f99a94ee11df9ec4dbe3f814232b2afce56"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_chain.exe",
+    "bytes": 6032896,
+    "sha256": "f4cb8aa6d66265666690023ccd0b00423156f9f4d5b73be564043033e6d51063"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics_audit.exe",
+    "bytes": 1396224,
+    "sha256": "e98842e55060a187ebfd9c94c5db7b5cbd2d3bffc07e2a64f2cce874a7e09ee8"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics_tests.exe",
+    "bytes": 916992,
+    "sha256": "dd8f7633fc777afbf2f49b2227ec2d9a016a567e689abc266846f7502b33ec13"
+  },
+  {
+    "configuration": "asan",
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics.lib",
+    "bytes": 6060254,
+    "sha256": "edef929053ef689cedea186dec58bb1b2a93b814a923c1aadb1095ad353780d1"
+  }
+]

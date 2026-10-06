@@ -1,0 +1,38 @@
+{
+  "native_exit": 0,
+  "total_s": 900,
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-withdraw-asan-01-inputs\\native.cmd",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_chain.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\pixel-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-withdraw-asan-01-pixel-controls\\pixel-leaves.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\real-pixels-selection-02\\selection.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-withdraw-asan-01\\freeze.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-withdraw-asan-01\\build-bridge-withdraw-asan-01-verification.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-withdraw-asan-01\\build-bridge-withdraw-asan-01-result.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800/full-recording/index.jsonl",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800\\manifest.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\bridge_tests.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\clang_rt.asan_dbg_dynamic-x86_64.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\clang_rt.asan_dynamic-x86_64.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\current_bridge.lib",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\exact_bvi_v3.lib",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\formal_core.lib",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_chain.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics_audit.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics_tests.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics.lib"
+  ],
+  "argv": [
+    "/d",
+    "/s",
+    "/c",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-withdraw-asan-01-inputs\\native.cmd"
+  ],
+  "exe": "C:\\WINDOWS\\system32\\cmd.exe",
+  "runner_exit": 0,
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-withdraw-asan-01",
+  "stage": "pixels-bridge-withdraw-asan-01",
+  "stream_cap": 4194304
+}

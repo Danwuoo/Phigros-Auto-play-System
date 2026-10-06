@@ -1,0 +1,431 @@
+{
+  "status": "failed/interrupted export, no original completed seal; preserved as partial only",
+  "root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261006\\windows\\real-pixels-review-evidence-01",
+  "files": [
+    {
+      "relative": "pixels-review-release-01.json",
+      "bytes": 3630,
+      "sha256": "ed6532117299733d0d32cb16cefb9b37d277a979abca54e029de85dbd487aa0a"
+    },
+    {
+      "relative": "pixels-review-release-01.json.rows.jsonl",
+      "bytes": 1186453,
+      "sha256": "b7ddaeeb03f40738e58eebb9ca48d312142f58049063e4ea2614a71f458414a0"
+    },
+    {
+      "relative": "prefix-review-release-01.json",
+      "bytes": 10101,
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-checkpoint-0.json",
+      "bytes": 920,
+      "sha256": "3722c736c7af5fcd8cae43402b946655ec6f593a166c3dbfcfb552f742ffb33f"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-checkpoint-1.json",
+      "bytes": 926,
+      "sha256": "edcd8c54fc913b9ba894da6488d13acb23f188613851e367a70611daee6f4d7f"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-checkpoint-2.json",
+      "bytes": 913,
+      "sha256": "ee6831d84db2db39dbb0e97b1080edaf9b2714c0bdc064b9e20d6ad02edc55e8"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-checkpoint-3.json",
+      "bytes": 1360,
+      "sha256": "71a10511970cbcb4d72e0c9d1763943681690e6bdbf71ac9f9d31444c9dbcbdf"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-checkpoint-4.json",
+      "bytes": 1358,
+      "sha256": "48b3ab7e57b02df46d3e4c0588a17464b4cfe80f089e35a19a43a0b9e85a2284"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-checkpoint-5.json",
+      "bytes": 1764,
+      "sha256": "dc0f198b358ef6ddef5a34d40e7835f2c6bef13d554a05d3c8518a311a394393"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-checkpoint-6.json",
+      "bytes": 1971,
+      "sha256": "33b5c5a81104e53972c43e2740880b40da138c54c96469f5b44dfe0317fd89e0"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-checkpoint-7.json",
+      "bytes": 2470,
+      "sha256": "ef3e4f6874edc4d862e65298a07b2bb7f160c620ebcb19103b1a3987f17d42ad"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-command.json",
+      "bytes": 711,
+      "sha256": "3603d37e7eec2c498340f25c974e5e5638946f429338b76b2217cb57759cccd5"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-result.json",
+      "bytes": 2454,
+      "sha256": "72c1e63e2e7ad6fd9090112ffa6ffa58b72b01b15b16a828250c86ba8095ca6d"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01-verification.json",
+      "bytes": 3330,
+      "sha256": "058d664e96c806a659f7290dfd53d6aacbb5b3074a96a557653093b71f315063"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "build-bridge-review-release-01/build-bridge-review-release-01.stdout.log",
+      "bytes": 10189,
+      "sha256": "267fef91a2194037c56ac7f341bad29a2600b8c736a40ae89f1f85b31f2c58cc"
+    },
+    {
+      "relative": "build-bridge-review-release-01/contract.json",
+      "bytes": 491,
+      "sha256": "460f3db6403c35601164e368e6ab4d59e70d6926385eddd255f6f9cb0afd3ac3"
+    },
+    {
+      "relative": "build-bridge-review-release-01/freeze.json",
+      "bytes": 47364,
+      "sha256": "8c23fbb7255b4486f828d60eadd0d8d6721af4e02c81bb55cf4cfb8d54a9a9b6"
+    },
+    {
+      "relative": "build-bridge-review-release-01/state.json",
+      "bytes": 783,
+      "sha256": "2490788423bb070dac2e53033d9346cd13d4ce15f04c64b5774d6274af446076"
+    },
+    {
+      "relative": "build-bridge-review-release-01-inputs/build.cmd",
+      "bytes": 743,
+      "sha256": "f489d11251017d449c589c1dbabd0aa8a0b364848c43c5c0328524139b1a09a8"
+    },
+    {
+      "relative": "build-bridge-review-release-01-inputs/spec.json",
+      "bytes": 36262,
+      "sha256": "b60bf8c45a7ce6d2e7d16489fa353382bc48ad1b0881fd4197bd38167b157ef8"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-checkpoint-0.json",
+      "bytes": 924,
+      "sha256": "ac40e399f4b34b7b8e22c5f63ff59c50e77103019ab81844fc979adac1da5282"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-checkpoint-1.json",
+      "bytes": 930,
+      "sha256": "a926e7e17358121ae156072e7270246e78f55a146a6f162f59f0d17b3de21311"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-checkpoint-2.json",
+      "bytes": 917,
+      "sha256": "74beabdc39060e0c6384f85370c87b64ea411d3c322da9b9b23bb99b98491070"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-checkpoint-3.json",
+      "bytes": 1364,
+      "sha256": "fdffc1f63bdb2a3a88043a06d1a0193310b774e99b6098b311332fb93f15c99c"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-checkpoint-4.json",
+      "bytes": 1362,
+      "sha256": "a87741f99ceecc82a2e9eab0d1f982d32db69d1066b1391b841c89a435fee938"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-checkpoint-5.json",
+      "bytes": 1560,
+      "sha256": "7be5d2b2e14ff6d19416c6389d11ff7d2c54b44f6f7f0a16e3c9b643179f230e"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-checkpoint-6.json",
+      "bytes": 1766,
+      "sha256": "a33431a4deec6bbf153da8499ac4252e8b19e98b30ab658db204cd5475b961ff"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-checkpoint-7.json",
+      "bytes": 2121,
+      "sha256": "8a5e182e2edbf22c09ba5660537a1e753968a9013cac5227ba960f7b9f160831"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-command.json",
+      "bytes": 735,
+      "sha256": "46730ff6fb44b60817416d90051af5b9f83bf9f55d555d355db5f5b49b5c4bb4"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-result.json",
+      "bytes": 2105,
+      "sha256": "7d3873555acf9909b232f7a2ad5d3209da5f63f1df809b462c42feccf9578d5b"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01-verification.json",
+      "bytes": 3429,
+      "sha256": "ee9a6ec6b48c2b0f90ec8867e53b459cf7801e1a7a61d2298d1cd5d8bca9cdd6"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/configure-bridge-review-release-01.stdout.log",
+      "bytes": 1186,
+      "sha256": "9a6713499a95b62b137c28c423d75d34185538fb6e4c842e269947fdbee932a9"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/contract.json",
+      "bytes": 503,
+      "sha256": "daf269f6e1c9e86d404bd7432a6e08220420ff0e02e1f5e4487c3e00e4186fc0"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/freeze.json",
+      "bytes": 47377,
+      "sha256": "ef58d94179fedde0eb327dc0c17003b6d20568b956414a9412ce9b909b3d99df"
+    },
+    {
+      "relative": "configure-bridge-review-release-01/state.json",
+      "bytes": 791,
+      "sha256": "0748b07ad2cdc040a32ab1b57898757b3a3217179ab64c291a92c470ff840c0e"
+    },
+    {
+      "relative": "configure-bridge-review-release-01-inputs/configure.cmd",
+      "bytes": 1646,
+      "sha256": "5a36657fd3d80ba8b378b33479c12650fb2b08818d40b2e0083e44ccfc95c2d6"
+    },
+    {
+      "relative": "configure-bridge-review-release-01-inputs/spec.json",
+      "bytes": 36286,
+      "sha256": "3e2e97d677ec5ac1b67d0b8083025447f4447fd4f5a75a13a1165349de165a9a"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/contract.json",
+      "bytes": 493,
+      "sha256": "e51454541aefe1eb1537d192306769dee0e9946603efa70d0a115710a9ddf6ac"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/freeze.json",
+      "bytes": 5390,
+      "sha256": "84ac35c85ea43cc382f7155a43b9cb10e081d9f1a860719197a28bd4533a59d3"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-checkpoint-0.json",
+      "bytes": 921,
+      "sha256": "b7c0acf696b81ffa58bee0a257dc12499e81e65e377ee2359586166c167d7032"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-checkpoint-1.json",
+      "bytes": 927,
+      "sha256": "ee632c5a876626245c1292d813af609b428750e237f34270cf05e9973dc85bae"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-checkpoint-2.json",
+      "bytes": 914,
+      "sha256": "08eca9a502865fd705fc1d1da5f81f28c63358336b4c144d3308acd22b6113da"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-checkpoint-3.json",
+      "bytes": 1361,
+      "sha256": "e2220163540521947169b25e677830a08ef77dfc00eb41d2db793ea6a443b8d5"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-checkpoint-4.json",
+      "bytes": 1359,
+      "sha256": "f55439d55bf84c234fa09eb0ba5fd474f15c27b2bd7ee89832d06b5e650527d6"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-checkpoint-5.json",
+      "bytes": 1557,
+      "sha256": "a44fbf070e418fe4417f7bfb8009ac3bf081bed36b7b9497fdfa143ace15fe17"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-checkpoint-6.json",
+      "bytes": 1763,
+      "sha256": "aa0f16341e9648759c297b0e0393b543dc381f50d802bc61985dcd5a01cbf41b"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-checkpoint-7.json",
+      "bytes": 2132,
+      "sha256": "bccbe83b8fda0694183690be90342eff091517c14bd0565ff2f292f806033977"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-command.json",
+      "bytes": 716,
+      "sha256": "127a362c8cb0fc5ca4c00dbc26ac37cd7bf6b4a992d96350fa40ac659a611509"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-result.json",
+      "bytes": 2116,
+      "sha256": "006a26d5ea24a5dd983fcb79431f5f6b28adc66e04775f50c97e67af1257faf0"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01-verification.json",
+      "bytes": 3352,
+      "sha256": "9b55de4831a5a590739a8a5fddfdcfc74237a08d81110888140e5ce08bde9bca"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/pixels-bridge-review-release-01.stdout.log",
+      "bytes": 89,
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01/state.json",
+      "bytes": 785,
+      "sha256": "7a319e2958f9b0d176080403dda86bf8c047a67829957995cca8e66ebd5bd62e"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01-inputs/native.cmd",
+      "bytes": 458,
+      "sha256": "7520e626436ad7d59b6c5188c5eb8b997ba1746d7de123ee50d2bdd03dd0fbf7"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01-inputs/spec.json",
+      "bytes": 2673,
+      "sha256": "ec794ea43a96dd8db70bb7d12e2a967fb0f9354d1ec9047f0f53c29c7fb4a598"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01-pixel-controls/pixel-leaves.json",
+      "bytes": 81346,
+      "sha256": "58be31ce4ffa456a0e4522e0be2d9869a7a97042cfb022ab40b26b40dfd8f9d6"
+    },
+    {
+      "relative": "pixels-bridge-review-release-01-pixel-controls/verification.json",
+      "bytes": 3652,
+      "sha256": "f32f9c5436209f9d4afec9a3397064b3c0f9ee3afc73125954a40a21a4abeb37"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/contract.json",
+      "bytes": 493,
+      "sha256": "71ca0fc95f551e50c189e53413f2e31ad5f01372699e8473db9b7085f558ad64"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/freeze.json",
+      "bytes": 49746,
+      "sha256": "69fb45d6daf6946ad7d1da46f18e4688ce52881ee6a26216f590a5f031d6c0cc"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-checkpoint-0.json",
+      "bytes": 921,
+      "sha256": "2babf929e5fade295549c842bf4ec733819ee535a53438c94019f08fa1e780d5"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-checkpoint-1.json",
+      "bytes": 927,
+      "sha256": "589ba9d04d5b96f4e93cf378c492957b03a8bb2a7fe7a6c527411f03919ee270"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-checkpoint-2.json",
+      "bytes": 914,
+      "sha256": "060ebf0f5f1a613ffad0a2b6b844b56f217fc5943e19c4ef7d8e403292b172f9"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-checkpoint-3.json",
+      "bytes": 1361,
+      "sha256": "d298ca657e0f6f2d017ed14035cf90364f1210fc7412e37109608dce0a274fc6"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-checkpoint-4.json",
+      "bytes": 1359,
+      "sha256": "5f9d260c9f6fc8c05c05825495de63840c88bfe3803bc97b4fc3fd7e4abf67f8"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-checkpoint-5.json",
+      "bytes": 1557,
+      "sha256": "04fc433eea5a4ecf608be893f0f2e768e84266cb3342d67ac8b797cb2cebf654"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-checkpoint-6.json",
+      "bytes": 1763,
+      "sha256": "4d19b6a96a78596dc6df7c5c254d24c0e64a2b5587efd61a025ab53b95f22886"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-checkpoint-7.json",
+      "bytes": 2116,
+      "sha256": "5588b4c27d2c7b9556358cd733e340eadcfbc90bf5bc7898395220f7d0865d2d"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-command.json",
+      "bytes": 716,
+      "sha256": "f4f1cb2a04428bc146e8094419ece78d376169d6e757d03f6c4a40b59cc6b6d6"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-result.json",
+      "bytes": 2100,
+      "sha256": "6fc63df78c8102383038739f7362aad13d6d378f868eb84a870b4f9551afc776"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01-verification.json",
+      "bytes": 3352,
+      "sha256": "926a5941e2d901bd1990f4a7caab54b447d46e0c8799275f210e894499cd7297"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/prefix-bridge-review-release-01.stdout.log",
+      "bytes": 77,
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01/state.json",
+      "bytes": 785,
+      "sha256": "952878795ab70cf83580f2e22c70e609580ed08cf648304623ac89fc12c09a4a"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01-inputs/native.cmd",
+      "bytes": 348,
+      "sha256": "9a401702bdfb61964b5737aade95d4954ba5e62a3daaf008d269c8438d2c6735"
+    },
+    {
+      "relative": "prefix-bridge-review-release-01-inputs/spec.json",
+      "bytes": 28223,
+      "sha256": "d1949f2db90fc6147a0157780eb010d2cb249a4b88c9e04dd2726733ba2f15ad"
+    },
+    {
+      "relative": "real-pixels-review-01/behavior-comparison.json",
+      "bytes": 178,
+      "sha256": "0fe677db804ff8014af56ca3be4a2554577da4233830a3804b858d20d9966975"
+    },
+    {
+      "relative": "real-pixels-review-01/build.ps1",
+      "bytes": 2416,
+      "sha256": "45b31735d2045e9296f3634fcf304969adacd87817ad75360ea026ee1a63896d"
+    },
+    {
+      "relative": "real-pixels-review-01/prefix.ps1",
+      "bytes": 2186,
+      "sha256": "5165879fef725b34b3a6be9bf82f62ee032b0186de5f1924e2a09d0dcf0d1cec"
+    },
+    {
+      "relative": "real-pixels-review-01/release-build.json",
+      "bytes": 26464,
+      "sha256": "b5c1050432386a6c24d966624894898f327e88886cbaa721d0dcd2320a4b7773"
+    },
+    {
+      "relative": "real-pixels-review-01/release-configure.json",
+      "bytes": 26810,
+      "sha256": "c389840d77475deda2d9f2dbdd7d44fcd2ba290f08e4e52ceaf7454ec498f0f7"
+    },
+    {
+      "relative": "real-pixels-review-01/release-pixels.json",
+      "bytes": 746,
+      "sha256": "9b2ddffd39f9c22079d210b7ecc263c24bda035401507e53e2ba4f7129ade836"
+    },
+    {
+      "relative": "real-pixels-review-01/release-prefix.json",
+      "bytes": 28476,
+      "sha256": "ea5d3f273d0c562f8184b99a5698ff21ad57d6301f3b12419bac05aad0ff090d"
+    },
+    {
+      "relative": "real-pixels-review-01/stage.ps1",
+      "bytes": 224,
+      "sha256": "42635f7254b1f29d4a944761aa6ce60bc02b06992ff4629612ef65d901f656a6"
+    }
+  ]
+}

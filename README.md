@@ -4,6 +4,8 @@ Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程�
 
 目前完成 Windows 離線接手與隔離研究候選橋接；正式runtime整合與實機未啟動。最新入口由[文件總目錄](docs/README.md)進入。下列2026-10-04狀態保留為歷史快照。
 
+派送已撤回並由本 task 自行開發；最新[檔案驗收與診斷修補](docs/research/zero-miss-20261006/windows/WITHDRAWAL_ACCEPTANCE.md)保留原件與 STOP。使用者已確認一筆 Hold head前緣語義，三配置獨立核對256幀決策及原圖取樣；正式策略與實機資格尚未成立。
+
 **最新 [10/6 Windows 接手里程碑](docs/research/zero-miss-20261006/windows/README.md)：ZIP／delivery tree／v3 core SHA 已核；Windows 三配置原套件仍保留相同 36 fail，正式 owner／scheduler 前綴 113/113。256 張本地真圖橋接沒有 eligible action，顏色／front 語義及完整成本資格仍未成立；未操作裝置，產品 Goal 未完成。**
 
 2026-10-05 [首輪雲端多分支 zero-miss 研究](docs/research/zero-miss-20261005/README.md)完成程式、逐曲總帳與建置盤點，以及隔離 C++ 冷實驗；當時原 frozen suite 尚缺輸入。

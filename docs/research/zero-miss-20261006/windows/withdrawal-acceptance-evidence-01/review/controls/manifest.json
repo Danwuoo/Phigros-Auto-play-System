@@ -1,0 +1,12 @@
+{
+  "schema": "pas.independent-audit-negative-fixtures.v1",
+  "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-withdraw-release-01.json.rows.jsonl",
+  "source_sha256": "64e42937ed25b58049456e410c0f63d8febee0f15769b4f68dfa0f6513e7393e",
+  "rows": 256,
+  "fixtures": [
+    "bad-policy.rows.jsonl",
+    "bad-rgb.rows.jsonl"
+  ],
+  "scope": "Only copied diagnostic trace mutated; original PNGs, frozen inputs and oracles unchanged; expected native1 rejects",
+  "device_commands": 0
+}

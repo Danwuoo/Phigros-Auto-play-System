@@ -1,0 +1,3 @@
+TRACE native START
+diagnostic assertions=32 failed=0
+TRACE native END exit=0

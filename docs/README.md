@@ -2,7 +2,7 @@
 
 **最新範圍：2026-10-06 Windows 離線接手及隔離橋接里程碑；原完整冷契約仍36fail，正式 owner／scheduler 前綴113/113，256張真圖沒有 eligible action。正式runtime與實機尚未接入，成本與全曲驗收未成立。**
 
-先讀[10/6 Windows 收據與限制](research/zero-miss-20261006/windows/README.md)，再讀[10/5 第四階段候選與交接](research/zero-miss-20261005/round4/README.md)。[第三階段](research/zero-miss-20261005/round3/README.md)保留54→43fail，[第二輪](research/zero-miss-20261005/round2/README.md)保留首次54fail及早期Windows收據，[首輪](research/zero-miss-20261005/README.md)保留架構盤點。較早[開發現況](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)是歷史停止快照；舊BUILD／STOP沒有重開。
+先讀[10/6撤回驗收與自行開發](research/zero-miss-20261006/windows/WITHDRAWAL_ACCEPTANCE.md)、[Windows 收據與限制](research/zero-miss-20261006/windows/README.md)，再讀[10/5 第四階段候選與交接](research/zero-miss-20261005/round4/README.md)。[第三階段](research/zero-miss-20261005/round3/README.md)保留54→43fail，[第二輪](research/zero-miss-20261005/round2/README.md)保留首次54fail及早期Windows收據，[首輪](research/zero-miss-20261005/README.md)保留架構盤點。較早[開發現況](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)是歷史停止快照；舊BUILD／STOP沒有重開。
 
 ## 建議閱讀順序
 
