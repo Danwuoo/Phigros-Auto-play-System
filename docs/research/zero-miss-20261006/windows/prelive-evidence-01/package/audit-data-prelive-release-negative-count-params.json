@@ -1,0 +1,23 @@
+{
+  "arguments": {
+    "StageName": "audit-data-prelive-release-negative-count",
+    "TotalSeconds": 300,
+    "ExpectedNative": 0,
+    "Inputs": [
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\negative-audit-receipt-count.json",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-audit-release-01\\prelive_audit.exe",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\negative-audit-receipt-count.json.events.jsonl",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\negative-audit-receipt-count.json.rows.jsonl",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\audit.cpp",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\CMakeLists.txt",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\run.ps1"
+    ],
+    "Executable": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-audit-release-01\\prelive_audit.exe",
+    "Arguments": [
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\negative-audit-receipt-count.json",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\audit-negative-count.json"
+    ],
+    "GateReceipt": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\native-qualification-01\\native-gate.json"
+  },
+  "script": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1"
+}

@@ -1,0 +1,145 @@
+{
+  "all_phase_lateness_ms": {
+    "n": 0
+  },
+  "attempts": 1000,
+  "cadence_ms": 20,
+  "capture_to_owner_journal_ms": {
+    "jitter_p95_minus_p5": 0.3188749999999999,
+    "max": 2.5448,
+    "n": 1000,
+    "p50": 0.31779999999999997,
+    "p95": 0.5424149999999999,
+    "p99": 0.781845
+  },
+  "capture_to_owner_ms": {
+    "jitter_p95_minus_p5": 0.0,
+    "max": 2.5334,
+    "n": 1,
+    "p50": 2.5334,
+    "p95": 2.5334,
+    "p99": 2.5334
+  },
+  "capture_to_publish_ms": {
+    "jitter_p95_minus_p5": 0.2580399999999999,
+    "max": 0.9216,
+    "n": 1000,
+    "p50": 0.2428,
+    "p95": 0.4344249999999999,
+    "p99": 0.6855479999999998
+  },
+  "clock_domain": "host_QPC",
+  "consumed": 1000,
+  "consumer_skips": 0,
+  "device_endpoints": 0,
+  "eligible": 0,
+  "evidence_to_injection_ms": {
+    "n": 0
+  },
+  "final_release": {
+    "failed": [],
+    "requested": [],
+    "return": 6581695222100,
+    "start": 6581695222100,
+    "unknown": []
+  },
+  "hook_storage_bytes": 224824,
+  "injection_failed": 0,
+  "injection_ms": {
+    "n": 0
+  },
+  "invalid": 1000,
+  "journal_admission_failed": true,
+  "journal_admitted_bytes": 316552,
+  "journal_records": 1007,
+  "latest_capacity": 1,
+  "loaded_module_paths": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_chain.exe",
+    "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+    "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+    "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+    "C:\\WINDOWS\\System32\\ole32.dll",
+    "C:\\WINDOWS\\System32\\msvcp_win.dll",
+    "C:\\WINDOWS\\System32\\ucrtbase.dll",
+    "C:\\WINDOWS\\System32\\GDI32.dll",
+    "C:\\WINDOWS\\System32\\win32u.dll",
+    "C:\\WINDOWS\\System32\\gdi32full.dll",
+    "C:\\WINDOWS\\System32\\USER32.dll",
+    "C:\\WINDOWS\\System32\\combase.dll",
+    "C:\\WINDOWS\\System32\\RPCRT4.dll",
+    "C:\\WINDOWS\\SYSTEM32\\MSVCP140.dll",
+    "C:\\WINDOWS\\SYSTEM32\\MSVCP140_ATOMIC_WAIT.dll",
+    "C:\\WINDOWS\\SYSTEM32\\VCRUNTIME140.dll",
+    "C:\\WINDOWS\\SYSTEM32\\VCRUNTIME140_1.dll",
+    "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+    "C:\\WINDOWS\\System32\\msvcrt.dll",
+    "C:\\WINDOWS\\System32\\sechost.dll",
+    "C:\\WINDOWS\\System32\\IMM32.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\kernel.appcore.dll"
+  ],
+  "measurement": {
+    "attempts": 744,
+    "capture_to_owner_ms": {
+      "n": 0
+    },
+    "hook_ms": {
+      "n": 0
+    },
+    "observer_ms": {
+      "n": 0
+    },
+    "owner_ms": {
+      "n": 0
+    },
+    "owner_seen": 0,
+    "owner_seen_fraction": 0.0
+  },
+  "mode": "B",
+  "own_down": 0,
+  "own_move": 0,
+  "own_up": 0,
+  "owner_seen": 1,
+  "owner_seen_fraction": 0.001,
+  "phase_lateness_ms": {
+    "down": {
+      "n": 0
+    },
+    "move": {
+      "n": 0
+    },
+    "up": {
+      "n": 0
+    }
+  },
+  "physical_opportunities": null,
+  "pool_drops": 0,
+  "pool_slots": 3,
+  "published": 1000,
+  "raw_proposals": 1,
+  "receipt_count": 0,
+  "release_calls": 4,
+  "release_ms": 0.0018,
+  "release_verified": true,
+  "requested": 1000,
+  "rss_initial": 48930816,
+  "rss_peak_os": 52076544,
+  "rss_peak_sampled": 49688576,
+  "rss_sampling_frames": 100,
+  "runtime_cost_gate": "NOT_READY until frozen AA/AB and complete safety review",
+  "safe": false,
+  "sample_storage_bound": 1001,
+  "scene": "writer",
+  "schema": "pas.prelive-complete-chain-cost.v1",
+  "source_absolute_age": null,
+  "stop": "journal_admission_or_writer_fault",
+  "supervisor_stopped": true,
+  "transport": "offline FakeTouch receipts; no real capture/RPC cost",
+  "unconsumed": 0,
+  "unknown": 0,
+  "wall_ms": 20001.6096,
+  "warmup_attempts": 256,
+  "writer_capacity": 2,
+  "writer_drops": 0,
+  "writer_fault": true,
+  "writer_ok": 0
+}

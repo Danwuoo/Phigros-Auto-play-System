@@ -1,0 +1,27 @@
+{
+  "total_s": 300,
+  "runner_exit": 0,
+  "exe": "C:\\WINDOWS\\system32\\cmd.exe",
+  "stream_cap": 4194304,
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\audit-data-prelive-release-pixels-short-inputs\\native.cmd",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-audit-release-01\\prelive_audit.exe",
+    "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-02.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-audit-release-01\\prelive_audit.exe",
+    "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-02.json.events.jsonl",
+    "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-02.json.rows.jsonl",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\audit.cpp",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\CMakeLists.txt",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\run.ps1"
+  ],
+  "native_exit": 0,
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\audit-data-prelive-release-pixels-short",
+  "argv": [
+    "/d",
+    "/s",
+    "/c",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\audit-data-prelive-release-pixels-short-inputs\\native.cmd"
+  ],
+  "stage": "audit-data-prelive-release-pixels-short"
+}

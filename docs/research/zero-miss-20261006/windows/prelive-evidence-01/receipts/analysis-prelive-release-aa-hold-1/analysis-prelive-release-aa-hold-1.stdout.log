@@ -1,0 +1,3 @@
+TRACE native START
+NOT_READY
+TRACE native END exit=0

@@ -1,0 +1,129 @@
+{
+  "candidate_results_used": 0,
+  "comparison_allowed": false,
+  "noise": {
+    "dense": {
+      "adequate": false,
+      "n": 0,
+      "reason": "four_frozen_A_runs_missing"
+    },
+    "hold": {
+      "adequate": false,
+      "n": 1,
+      "reason": "four_frozen_A_runs_missing"
+    },
+    "tap": {
+      "adequate": false,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 5.504759999999983,
+          "adequate": false,
+          "d": 2.7523799999999916,
+          "values": [
+            14.688004999999992,
+            11.935625,
+            14.725049999999996,
+            12.025889999999997
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 5.914749999999934,
+          "adequate": false,
+          "d": 2.957374999999967,
+          "values": [
+            18.810529999999964,
+            15.853154999999997,
+            19.23263599999997,
+            17.297870999999997
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 3.216219999999997,
+          "adequate": false,
+          "d": 1.6081099999999986,
+          "values": [
+            5.3389099999999985,
+            3.7308,
+            5.087494999999998,
+            3.978334999999999
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 4.178285999999959,
+          "adequate": false,
+          "d": 2.0891429999999795,
+          "values": [
+            7.399224999999974,
+            5.310081999999994,
+            7.388398999999979,
+            6.165697999999989
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0008000000000000004,
+          "values": [
+            0.0129,
+            0.0137,
+            0.0131,
+            0.0125
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0035120000000000845,
+          "values": [
+            0.040593999999999957,
+            0.03998199999999988,
+            0.04046699999999978,
+            0.036954999999999696
+          ]
+        }
+      }
+    }
+  },
+  "normal_runs": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-2.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-3.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-4.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-hold-1.json",
+      "validity": {
+        "failures": [
+          "action_opportunities_unknown_or_zero",
+          "all_phase_lateness"
+        ],
+        "pass": false
+      }
+    }
+  ],
+  "ready": false,
+  "schema": "pas.current-rails-noise-freeze.v1"
+}

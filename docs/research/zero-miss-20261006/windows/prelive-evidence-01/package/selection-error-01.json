@@ -1,0 +1,7 @@
+{
+  "schema": "pas.file-only-preparation-error.v1",
+  "reason": "record_root is session root; PNG path is relative to index directory",
+  "device_operations": 0,
+  "native_started": false,
+  "step": "full-prefix-selection-01"
+}

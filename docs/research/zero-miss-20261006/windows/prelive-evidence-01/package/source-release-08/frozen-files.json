@@ -1,0 +1,67 @@
+[
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\chain.cpp",
+    "sha256": "d8b0193d8646c5af26485e6fb4fa6c9830eb9c3165d9efbe89e1e1528f50ba4d",
+    "bytes": 15749
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\cmake-stage.ps1",
+    "sha256": "7e6591a124a3a0fe207b0bb5c42aacb0c34fb05a041e085c1e74dc2bc42cde17",
+    "bytes": 4386
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\CMakeLists.txt",
+    "sha256": "9ee93b33a8cd746f8332158a5117a25f2f0f6d9159b33cfb66ed628d53ee0b13",
+    "bytes": 5378
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\cost_analysis.cpp",
+    "sha256": "7d3ba258c070ca77b3bb1e90b95559fe7c1bd0ba3f7f6f7c0bed898552ca868e",
+    "bytes": 3456
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\current_tests.cpp",
+    "sha256": "89e7d4b925badeb205c81b85812c924cfa2977599f1122546d24fdfdf1ca74aa",
+    "bytes": 13892
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\current.cpp",
+    "sha256": "0f412a4821e6be39d1429ca4307cd24cfa335648e6c87062c7d94ac7cc329679",
+    "bytes": 12001
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\current.hpp",
+    "sha256": "2b45dcf1d316476a53ebdee310f0ad53c749aff57c315285030ad3eb6f20d50c",
+    "bytes": 1279
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\own_bridge.cpp",
+    "sha256": "5b8259935fc41f80c3e99fbf486515a84515c45a40817f78aabfc8b104fbe3eb",
+    "bytes": 15086
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\own_bridge.hpp",
+    "sha256": "159947c7c642bb5bbb9e0bd48143f6e429f388f42724b82269b440e0b7f977a4",
+    "bytes": 3531
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\own_prefix.cpp",
+    "sha256": "29c172a2fa9f62e7e3baed3b63ae0fab16358a27e0cf105734d45477ab0f635c",
+    "bytes": 16023
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\PLAN.md",
+    "sha256": "6d4f410da0321f6a0c6fd863397854a546814a564f3016130b1474607058fc37",
+    "bytes": 3829
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\run.ps1",
+    "sha256": "38e4e02f63629443692c67902d379da6f6dc5f621575f3f004a44293b21f9ca3",
+    "bytes": 8021
+  },
+  {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\runtime.hpp",
+    "sha256": "84b8e3d1df3da94adfe55272a0a92e397258909a5b2f1632ea75bc4ea5ac106c",
+    "bytes": 3356
+  }
+]

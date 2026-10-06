@@ -1,0 +1,11 @@
+{
+  "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-hold-1.json",
+  "schema": "pas.current-rails-run-gate.v1",
+  "validity": {
+    "failures": [
+      "action_opportunities_unknown_or_zero",
+      "all_phase_lateness"
+    ],
+    "pass": false
+  }
+}

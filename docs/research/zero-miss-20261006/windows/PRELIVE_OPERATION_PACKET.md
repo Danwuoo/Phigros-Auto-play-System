@@ -10,7 +10,8 @@ ReplayBackend；完整 typed hook 在正式 observer、lifecycle、SessionGameOw
 ## 冷準備與歷史指紋
 
 exact source／binary／lib／DLL／flags／輸入／receipt 見同目錄
-`prelive-evidence-01/closure.json` 與 `candidate-manifest.json`。正式變更是 typed
+`prelive-evidence-01/SHA256_INDEX_FINAL.json`、`closure-final.json`、`closure.json` 與
+`candidate-manifest.json`。正式變更是 typed
 current contact 與自身 execution guard，原 v3 七份 core／oracle 沒有修改。
 全分母結果見 PRELIVE_RESULTS；沒有使用歌曲名稱、ordinal、舊 touches 或本表來決定動作。
 
@@ -37,11 +38,13 @@ capability 原路徑：原根 `measurements/game-assist/2026-09-30-m0-manual-con
 |---|---|---|---|
 |`<qualified-donor-pas> probe --serial <confirmed-serial>`|讀裝置 inventory，可能連 ADB|明確 device-read 授權；serial不符、未知回應、程序 guard拒絕即停|一次read、30s、metadata1MiB|
 |`<qualified-donor-pas> game-preflight --config <confirmed-profile> --capability <verified-capability>`|讀目前capture geometry並比歷史mapping；不是候選實戰|先核binary/profile/capability SHA，真capture fingerprint不符即停|一次preflight、60s、metadata8MiB|
-|Fixture touch|驗五contact、orientation、corner、unknown／release路徑|另行Fixture與touch授權；先核exact CLI/source/APK及目前geometry；不能以冷fixture代替Phigros語義|一個有限case/session；budget先凍結，不自動追加|
+|`<qualified-donor-pas> touch-bench --config <confirmed-profile> --repetitions 1 --kinds tap hold move flick pair simultaneous --output-dir <fresh-output> --fixture-apk <verified-apk>`|驗donor native Fixture pointer路徑；會安裝／操作Fixture與真觸控|另行Fixture與touch授權；核exact binary/profile/APK／geometry及停止／釋放；不能代替候選或Phigros語義|各kind一次；先凍結deadline與raw硬額，不自動追加|
 |current-rails manual-session|觀察目前合法接入／body／tail及結果|**目前無此 live binary／CLI 命令**。需成本、physical語義、driver資格及另行runtime endpoint接線／freeze；舊donor `manual-session`不滿足|未准執行，零輪|
 
 原 CLI 的 `manual-session --config … --capability … --one-round --round-watchdog-s …`
 語法已核，但只屬 donor。不得加上不存在的 candidate flag，或用不同版本最佳分數拼成驗收。
+上述touch-bench語法依 `apps/pas/main.cpp` 核對；單命令不證明候選五contact或故障資格。
+候選真五contact／unknown／release仍需相符live入口與另行簽收有限case，現在沒有可執行命令。
 沒有 auto-start／自選曲／連打／失敗 Down重試。遊戲一定由使用者選曲及按 Play，一次一輪。
 
 開始前核新資料容量及20GiB最低free，PNG／raw另訂單輪硬額；延用本包≤12GiB新OUT、

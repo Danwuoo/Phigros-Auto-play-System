@@ -1,0 +1,1964 @@
+{
+  "tests": 186,
+  "failures": 0,
+  "disabled": 0,
+  "errors": 0,
+  "timestamp": "2026-10-06T18:49:02Z",
+  "time": "2.221s",
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "GameObserver",
+      "tests": 56,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-06T18:49:02Z",
+      "time": "2.094s",
+      "testsuite": [
+        {
+          "name": "MultiplePixelsTracksAndRelativeMovingLinePrediction",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 63,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.015s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "CrossingCurrentVerticalRidgeSurvivesConnectedHorizontalLine",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 84,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.024s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "CurrentVerticalSearchRejectsHoldSideRailsAndBroadWhiteFill",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 96,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.016s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "RotatedSplitFlickJoinsOnlyWithItsCurrentTransverseArrow",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 104,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.027s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "CrossingVerticalWhiteRidgeSurvivesCurrentWarmHitTintButCannotBeBornFromTint",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 114,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.026s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "RowPrescreenPreservesCompleteDecisionsOnSyntheticMotion",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 123,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.056s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "RowPrescreenPreservesRecordedClipDecisionsWhenProvided",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 134,
+          "status": "RUN",
+          "result": "SKIPPED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0s",
+          "classname": "GameObserver",
+          "skipped": [
+            {
+              "message": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp:136\nSet PAS_RGB_CLIP_ROOT to a verified pixel-clips directory\n"
+            }
+          ]
+        },
+        {
+          "name": "SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 207,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.013s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "NotesAloneDuplicateFramesAndGeometryCannotArm",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 242,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.021s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ChangingIndicatorColorKeepsTiltedLinePredictionAndNoteIdentity",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 255,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.012s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "UiLossCancelsAndCapacityIsBounded",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 273,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.022s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "FreshHudAfterShortGapKeepsUiButClearsAllMotionAcrossEpoch",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 285,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.017s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "HudContinuityNeverBridgesMissingPixelsLongGapOrGeometry",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 307,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.048s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "OnePixelLineJoinedToHoldBorderStaysObservable",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 333,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.003s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "NestedRibbonsMergeButEqualWidthOverlapsRemainDistinct",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 466,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.002s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "YellowOutlineDoesNotDuplicateBlueCoreAndHoldHasLeadingEdgeAndTail",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 491,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.002s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "DesaturatedHoldRequiresFreshParallelRailsAndDoesNotInventClippedTail",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 502,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.025s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "CurrentHoldRailsOverrideFragmentedCoreWithoutRemovingIndependentNotes",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 525,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.066s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "HoldRailAnchorSurvivesOneMissingRailButRequiresCurrentPairToRecover",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 566,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.023s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "HeldTiltedBodyPreservesAnIndependentThinTapInsideItsRails",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 593,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.029s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "RecentHeldRegionRejectsEnclosedSideFragmentsWithoutRefreshingMissingRails",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 622,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:02Z",
+          "time": "0.011s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsCore",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 641,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.027s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ApproachingConnectedHoldWithInteriorHitTintKeepsOneIdentity",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 660,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.131s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ApproachingHoldWithEnclosedHitPatchKeepsOneIdentityAcrossSparseFrames",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 685,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.031s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "InteriorHoldDescriptionDedupPreservesThinTapAndAdjacentHold",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 720,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.029s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "InteriorHoldDescriptionNeedsBothCurrentSideBandsAndRecentFront",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 756,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.107s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ClippedTopHoldKeepsCurrentRailsAndContactAcrossTheHeightLimit",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 778,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.059s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ClippedTopHoldCanValidateCurrentLeadingEdgeWithoutPriorAnchor",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 805,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.017s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "RecentHeldRailsRemainVisibleThroughWarmHitTint",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 824,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.062s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ColorIndependentHeldOutlineRequiresFreshAnchorAndBothCurrentRails",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 850,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.157s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 878,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.123s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "WarmSectionCannotUseEmptyOrMismatchedWhitePair",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 906,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.13s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ClippedBlueColumnWithoutBothRailsCannotBecomeANewHold",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 939,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.008s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 951,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.018s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ShortWideCurrentRailsNeedDepthAndCannotJoinAdjacentBodiesOrEmptyBorders",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 981,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.005s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "CurrentHoldReconstructionRejectsLongRailGapDespiteBodyFill",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1009,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.002s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "HoldRailsCannotExpandToDecorationWithFillMissingOnOneSide",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1017,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.002s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1029,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.025s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "SmallHitParticlesAndYellowRingsCannotBecomeNoteTargets",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1046,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.002s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ShortWideHoldUsesLineNormalAndStationaryHeadStillHasHitRegion",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1054,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.011s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "SplitFlickRequiresCentralArrowAndHighlightCannotBecomeDrag",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1067,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.002s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1080,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.015s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ShortCaptureBurstCannotPredictAnImminentCrossingFromFarNotes",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1098,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:03Z",
+          "time": "0.025s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "ContinuousFastFramesKeepEnoughTemporalHistoryToPredict",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1119,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.063s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "TimingUncertaintySeparatesFastCaptureJitterFromSlowAmbiguousMotion",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1131,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.031s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "CurrentPointMismatchAndLargeGeometryJumpsRemainRejectedAtHighSpeed",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1154,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.016s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "FitResidualDoesNotDisplaceTheHitPointFromTheObservedLine",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1183,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.015s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "SlantedLineSurvivesIntersectionAndMatchesNoteOrientation",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1197,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.012s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFragments",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1590,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.155s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "CurrentAttachedGrayRailsRetainFrontClippedBeforeOnlineClassification",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1628,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.042s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "GrayHeldFrontCanMoveAwayFromTheLineWithTheSameFingerAndCurrentHit",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1691,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.114s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "HeldBodyKeepsItsFingerThroughAFrontOcclusionAndRecoversCurrentFront",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1827,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.08s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "RotatingCurrentLineRetainsIdentityAndFreshLocalHitGeometry",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1857,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.024s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "InterruptedThinBandIsOneLineButSeparatedBandsRemainDistinct",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1972,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.003s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "TiltedMovingDragUsesLocalCoreAndOneCurrentContact",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2316,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.025s",
+          "classname": "GameObserver"
+        },
+        {
+          "name": "PerpendicularColoredRibbonsKeepTheirOwnGeometryAndKind",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3014,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.041s",
+          "classname": "GameObserver"
+        }
+      ]
+    },
+    {
+      "name": "GameDiagnostics",
+      "tests": 10,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-06T18:49:04Z",
+      "time": "0.027s",
+      "testsuite": [
+        {
+          "name": "CurrentCentralDigitShapesExcludeComboLabelRailsAndProgress",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 342,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.003s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "ComboDisappearanceRequiresFreshSustainedAbsenceAndRearms",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 356,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "DecorativeRailConnectedToDigitDoesNotReportDisappearance",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 374,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.018s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "ThinHorizontalRibbonJoiningDigitsKeepsVisibleTallInk",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 393,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.005s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 405,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "LongHoldDisappearanceRetainsOnlyItsPriorCoordinateEvidence",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 430,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "HoldDiagnosticKeepsVisibleNewIdentityButRejectsNarrowFragments",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 441,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "HoldDiagnosticSkipsEndingBodyAndFrameDiscontinuities",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 450,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "ApproachingBodyCannotConsumeTheHeldDisappearanceWindow",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 476,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameDiagnostics"
+        },
+        {
+          "name": "CurrentHeldBodyMovingAwayFromTheLineCanReportItsDisappearance",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 483,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameDiagnostics"
+        }
+      ]
+    },
+    {
+      "name": "GameOwner",
+      "tests": 51,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-06T18:49:04Z",
+      "time": "0.002s",
+      "testsuite": [
+        {
+          "name": "NewTimingUncertaintyCancelsPendingDownAndFreshEvidenceCanRetryExactlyOnce",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1167,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "FreshPredictionRefinesPendingDeadlineButCannotReplayActiveDown",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1228,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "ContradictedPendingPredictionCannotInjectButFreshPredictionCanRetry",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1243,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "ContradictionAfterDownCannotReplayOrCancelTheActiveDragWindow",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1272,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1290,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1305,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "SixthSimultaneousContactIsRejectedWithoutStealingFiveActiveFingers",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1345,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "RotatingHeldBodyAndColocatedTapKeepSeparateContacts",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1364,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "TailPredictionWithoutCurrentVisibleTailDoesNotEndHoldOrExtendExpiry",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1385,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "MovingNearLineDragKeepsOneFingerWithoutRepeatedCrossingFits",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1392,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "CurrentOuterBodyReassociatesHoldButCannotReviveCompletedFinger",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1408,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "PreviouslySeenUnsubmittedHoldDescriptionCanRetainStartedContact",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1532,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "AliasesNeedCurrentSupportAndCannotOverrideOriginalOrReviveExpiredOwner",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1552,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "MovingHoldRejectsColorFragmentProjectionAndKeepsTheOriginalMissingGrace",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1756,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "SameHoldCanRecoverItsFrontFromAnInteriorPatchWithoutChangingContact",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1780,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "HeldBodySupportCannotCreateANewDownEvenWithAFittedCrossing",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1795,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "PendingHoldDeadlineRevisionsRenewFromCurrentCaptureBeforeTheNextFrameGap",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1802,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "FreshYellowRegionsBridgeSuccessiveIdsWithoutRepeatingDown",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1872,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "YellowRegionSharingRejectsAcrossLineAndAmbiguousActiveCoverage",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1888,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "LongHoldBridgesFreshSparseFramesButStopsAtActualEvidenceExpiry",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1905,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "TypeGateAndFlickUseIndependentDownMoveUpSequence",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1933,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "FlickNearLowerBoundaryKeepsFourFiniteMovesInsideScreen",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1941,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "PendingFlickRevisionRebuildsFullPathFromCurrentHit",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1955,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "OutOfOrderNotesGetSubmissionIdsAndFullSnapshotCancelsMissing",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2036,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "SingleMissingDragFrameCancelsFutureDownAndFreshReturnCanReplan",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2046,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "MissingPendingTapAndDragRetryWithCurrentEvidenceExactlyOnce",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2067,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "InvalidPendingGeometryCanRetryOnlyFromFreshValidPrediction",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2086,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "MissingAfterStartedOrCompletedDownCannotRetryReturnedPixels",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2107,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "DragCoverageSurvivesLateCrossingWithoutReplayingDown",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2122,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "DenseColocatedDragsShareOneActiveContactAndKeepTapIndependent",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2136,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "ADisappearingDragMemberCannotReleaseTheStillObservedGroup",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2158,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "DifferentDragPositionsKeepIndependentContactsAndGateLossReleasesTheGroup",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2172,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "BoundedLatePredictionRecoversNowButOldEvidenceAndExecutedDownCannotReplay",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2189,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "LateGeometrySnapshotCannotCancelCurrentPendingIntent",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2218,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "CurrentDragOverlapStartsWithoutInventingARootAndTracksMovingLine",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2294,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "DragOverlapRejectsMissingStaleAmbiguousAndNonCoreGeometry",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2343,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "PendingDragPredictionCanBecomeACurrentSpatialContactExactlyOnce",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2367,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "ConsecutiveSpatialDragCoresShareTheStartedFingerWithoutAnyCrossing",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2380,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "RotatingCurrentHoldKeepsItsFingerAndMovesOnlyWithCurrentBody",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2576,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "UnsupportedHoldProjectionCannotMoveTheStartedFinger",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2596,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "PreviouslyTrackedTapCanUseNewCurrentLineAtVisibleOverlap",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2650,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "CurrentNoteKeepsConfirmedMovingLineThroughShortOcclusion",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2677,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "DiscontinuousPixelsCancelOnlyAnUnexecutedDown",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2842,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "RotatedTailNeedsTwoCurrentSamplesOnItsOwnLine",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2856,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "CurrentTapOverlapRejectsCompetingStaleInvalidAndUnsupportedEvidence",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2891,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "CurrentTapOverlapCompletesOnceAndCannotReplayAfterReturn",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2929,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "CurrentTapOverlapUnknownDownIsNotRetried",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2943,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "PerpendicularCurrentTapOverlapRequiresItsActualCore",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3098,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "PerpendicularCurrentDragOverlapNeedsCurrentCoreAndReleasesOnce",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3110,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "RotatingSupportedHoldKeepsTheSameContactButFragmentsCannotMoveIt",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3137,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        },
+        {
+          "name": "UnrelatedOrStaleLineCannotConfirmTheCurrentHoldTail",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3180,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameOwner"
+        }
+      ]
+    },
+    {
+      "name": "GameScheduler",
+      "tests": 5,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-06T18:49:04Z",
+      "time": "0s",
+      "testsuite": [
+        {
+          "name": "ActivePrefixCompactionKeepsLastExecutedStepAndCannotDropFuture",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1215,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameScheduler"
+        },
+        {
+          "name": "FuturePlansDoNotReserveContacts",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1986,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameScheduler"
+        },
+        {
+          "name": "ActiveRevisionPreservesMovesAndRejectsChangedExecutedPrefix",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1996,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameScheduler"
+        },
+        {
+          "name": "TargetExpiryReleasesOnlyThatContactAndFreshGateKeepsOther",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2011,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameScheduler"
+        },
+        {
+          "name": "ContextAndDispatchGuardRevokePendingAndActive",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2024,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameScheduler"
+        }
+      ]
+    },
+    {
+      "name": "GameMotion",
+      "tests": 21,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-06T18:49:04Z",
+      "time": "0.05s",
+      "testsuite": [
+        {
+          "name": "CurrentGrayOutlineTracksTranslationButRejectsSingleRailAndMissingClosure",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1423,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.001s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSign",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1435,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "BurstFramesCannotAmplifyLineNoiseOrReplaceCurrentGeometry",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1448,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "RotatingLineEquationsIgnoreAlongLineCropCenterDrift",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1459,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "FittedRotationAssociatesAfterGapWithoutInventingAMissingLine",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1478,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "NonlinearLinePoseRejectsVelocityAndDuplicateLinesRemainAmbiguous",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1495,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "DistributedTiltedRidgeRejectsWideFillShortBarsAndMissingSupport",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1508,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.003s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "TiltedLineExtentUsesMeasuredFragmentsAndRejectsLargeUnsupportedGaps",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1517,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.003s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "ApproachingAnchorNeedsCurrentRailsAttachedToTheLine",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1612,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.001s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1657,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.005s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "MovingHeldFrontNeedsPairedCurrentTerminationAndCannotInferFromHistory",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1671,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.015s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1723,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.007s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "OccludedFrontCanUseOnlyAVisiblePairedBodyInterior",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 1738,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.007s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "ContestedDuplicateDoesNotCreateARecurringLineage",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2402,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "CloseRealLinesStayDistinctAndExpiryDoesNotBridgeNinetyMilliseconds",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2417,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "PersistentNearNewLineIsBornAfterBoundedEvidenceButFarNewLineImmediately",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2436,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "RotatedCurrentHoldRailsCanContinueAnOlderAnchor",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2562,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.001s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "SixteenLinesRemainBoundedAndContextGapStartsNewLineage",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2615,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "ContestedObservationCannotSeedRecurringDuplicateTracks",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2965,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "ConvergedLineAmbiguityExpiresWithoutInventingIdentity",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2986,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameMotion"
+        },
+        {
+          "name": "RotatedCurrentHoldRailsRequireBothCurrentlyVisibleSides",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3122,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.002s",
+          "classname": "GameMotion"
+        }
+      ]
+    },
+    {
+      "name": "GameRuntime",
+      "tests": 2,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-06T18:49:04Z",
+      "time": "0s",
+      "testsuite": [
+        {
+          "name": "ActualCaptureOptionsUseEffectiveProfileGuard",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2210,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameRuntime"
+        },
+        {
+          "name": "HistoricalFingerprintRejectsMappingDeviceAndUnverifiedReports",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2231,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameRuntime"
+        }
+      ]
+    },
+    {
+      "name": "AutoPlay",
+      "tests": 2,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-06T18:49:04Z",
+      "time": "0.006s",
+      "testsuite": [
+        {
+          "name": "PixelsConfirmSelectionAndOneAttemptNeverBecomesGameplayInput",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2260,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.006s",
+          "classname": "AutoPlay"
+        },
+        {
+          "name": "UnknownStaleOutOfFrameAndContradictoryScenesCannotStart",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2391,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "AutoPlay"
+        }
+      ]
+    },
+    {
+      "name": "GameTracking",
+      "tests": 39,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-06T18:49:04Z",
+      "time": "0.039s",
+      "testsuite": [
+        {
+          "name": "DistantAppearanceAngleCannotStealEstablishedLineRelation",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2457,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "CrossingLineDoesNotStealAnApproachingConfirmedNote",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2472,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "RecedingConfirmedLineDoesNotOverrideCurrentCrossing",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2490,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "RelativeApproachSeparatesEquidistantUnrelatedLines",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2508,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "OccupiedAlternativeIsNotAnIdentityAmbiguityWithoutFeasibleSwap",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2522,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "JumpAndReversalRequireFreshMeasuredSegments",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2539,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "EquidistantLinesRemainCandidatesWithoutAGuessedDown",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2629,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "NearLineFirstAppearanceDoesNotInventTapTiming",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2640,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "MissingLineProjectionRejectsReversalReplacementAndOldExtentExit",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2716,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "RotatingOriginalLineProjectsWithinItsMeasuredExtent",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2742,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "ConfirmedLineProjectionExpiresWithoutNewLinePixels",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2770,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "ExpiredOriginalLineLetsExplicitNextLineEarnFreshRelation",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2791,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "CurrentTapOverlapNeedsPriorApproachAndCannotUseFirstAppearance",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2821,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "EmergingTapAtCrossedLinesRemainsWithoutImmediateActionBasis",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 2914,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "NormalMotionOutranksAnUnrelatedParallelDecoration",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3033,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "ConfirmedCurrentLineSurvivesLateNoteAlignmentAndBrighterFork",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3047,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "GenuineTwoLinesRetainIndependentPerpendicularNotes",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3064,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "CompetingParallelLinesAndRecedingPerpendicularNotesDoNotGuessDown",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3079,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "LineChasingAStationaryPerpendicularNoteUsesRelativeMotion",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp",
+          "line": 3163,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "BaselinePixelSequenceAndSerializedBankAreEquivalent",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 21,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.033s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "MovingHeldBodyEvidenceRoundTripsAndRequiresItsCurrentGeometry",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 28,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "LinePoseFitRoundTripsAndRejectsUnboundedOrInvalidEvidence",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 38,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "HeldBodyPatchHasNoHeadOrTailPredictionAndRoundTripsItsEvidence",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 53,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "WeakNewCandidatesAndPredictionCannotCreateOrRefreshActions",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 70,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "CurrentWeakRailsRequireBothSidesFreshAnchorAndVisibleHead",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 78,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "ActualDtAndBoundedReupdateNeverInsertSyntheticEvidence",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 84,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "AdjacentHoldsAndThinOverlappingTapStayDistinct",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 91,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "CompetingIdentityIsVisibleAndCannotBecomeNewBirth",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 97,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "DuplicateNewCandidatesCannotBothCreateExecutionBirths",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 101,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "CapacityRevokeDoesNotForgetRetiredExecutionBirth",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 105,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "ShortenedHoldFrontContinuesButThinTapRemainsNew",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 109,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "SixtyNinetyAndHundredMsUseActualSourceTime",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 115,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "RetiredHoldBirthPersistsThrough441msAndRevisionIsMonotonic",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 119,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "SourceInvalidAndReplayedTimeCannotArm",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 125,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "MissingOrPerpendicularLineCannotProvideActionEvidence",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 130,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "AssignmentIndicesAndCandidateGeometryAreRejected",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 134,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "TrackAndRetirementCapacityHaveConservativeFailure",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 141,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.002s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "FakeOwnerMissingAndStopReleaseWithoutPredictedContinuation",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 148,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0s",
+          "classname": "GameTracking"
+        },
+        {
+          "name": "ShadowAndBankAreBoundedAndHaveNoBackend",
+          "file": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp",
+          "line": 154,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-06T18:49:04Z",
+          "time": "0.001s",
+          "classname": "GameTracking"
+        }
+      ]
+    }
+  ]
+}

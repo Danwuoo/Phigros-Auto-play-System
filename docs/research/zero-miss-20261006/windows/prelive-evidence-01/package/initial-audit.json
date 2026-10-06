@@ -1,0 +1,43 @@
+{
+  "seals": [
+    {
+      "index_sha": "a517fe19a795f7fb2eaf90636985ded77cb67946306065891e2972cb2ff331f4",
+      "checked": 2111,
+      "name": "evidence"
+    },
+    {
+      "index_sha": "5c2be9b0b468d45658f9fca76f35e9b8538b5a843c263194bed9f3a977c01bc9",
+      "checked": 534,
+      "name": "withdrawal-acceptance-evidence-01"
+    },
+    {
+      "index_sha": "03bdc52737bc2e0afb6a0ab4c41ede24e3ab3ea63db480d253ce949e095d4fb3",
+      "checked": 749,
+      "name": "front-candidate-evidence-01"
+    },
+    {
+      "index_sha": "1dd569bb51f2ee7337a199e90a70240f198db3ae7b6ff6d50d893735ffbd9a07",
+      "checked": 321,
+      "name": "front-controller-acceptance-evidence-01"
+    }
+  ],
+  "head": "015d0fdb776e0046d6d8cc0d34658d5bc61ec574",
+  "zip_sha": "18040114639c560c0ed33d6d7949affd1a4fb1ce2be807adf1f53b948656ee9b",
+  "capacity": {
+    "free_bytes": 192636624896,
+    "minimum_free_bytes": 21474836480,
+    "metadata_cap_bytes": 67108864,
+    "new_out_cap_bytes": 12884901888
+  },
+  "aux_sha": "e5c78a1d90a5e430c4f7c5328c7e9a8b3571800b0b8fc698d082b1cbe16d5501",
+  "index_sha": "0bd8ec74b6bc19d1f8080c064453a052095e328e31d2759f12d6d04d78500f8d",
+  "original_dirty": [
+    " M apps/runtime_x11_p/aux/CMakeLists.txt",
+    "?? phigros-zero-miss-handoff-round4-9dc99d6.zip"
+  ],
+  "png_checked": 256,
+  "v3_core_checked": 7,
+  "schema": "pas.prelive-initial-audit.v1",
+  "original_head": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "branch": "codex/prelive-preparation-20261006"
+}

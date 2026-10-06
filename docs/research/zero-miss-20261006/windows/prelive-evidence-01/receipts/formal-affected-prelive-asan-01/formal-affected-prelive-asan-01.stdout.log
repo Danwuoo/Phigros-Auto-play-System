@@ -1,0 +1,414 @@
+TRACE native START
+Running main() from C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\vcpkg\blds\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 186 tests from 8 test suites.
+[----------] Global test environment set-up.
+[----------] 56 tests from GameObserver
+[ RUN      ] GameObserver.MultiplePixelsTracksAndRelativeMovingLinePrediction
+[       OK ] GameObserver.MultiplePixelsTracksAndRelativeMovingLinePrediction (130 ms)
+[ RUN      ] GameObserver.CrossingCurrentVerticalRidgeSurvivesConnectedHorizontalLine
+[       OK ] GameObserver.CrossingCurrentVerticalRidgeSurvivesConnectedHorizontalLine (304 ms)
+[ RUN      ] GameObserver.CurrentVerticalSearchRejectsHoldSideRailsAndBroadWhiteFill
+[       OK ] GameObserver.CurrentVerticalSearchRejectsHoldSideRailsAndBroadWhiteFill (256 ms)
+[ RUN      ] GameObserver.RotatedSplitFlickJoinsOnlyWithItsCurrentTransverseArrow
+[       OK ] GameObserver.RotatedSplitFlickJoinsOnlyWithItsCurrentTransverseArrow (219 ms)
+[ RUN      ] GameObserver.CrossingVerticalWhiteRidgeSurvivesCurrentWarmHitTintButCannotBeBornFromTint
+[       OK ] GameObserver.CrossingVerticalWhiteRidgeSurvivesCurrentWarmHitTintButCannotBeBornFromTint (225 ms)
+[ RUN      ] GameObserver.RowPrescreenPreservesCompleteDecisionsOnSyntheticMotion
+[       OK ] GameObserver.RowPrescreenPreservesCompleteDecisionsOnSyntheticMotion (511 ms)
+[ RUN      ] GameObserver.RowPrescreenPreservesRecordedClipDecisionsWhenProvided
+joined_line_diff round=1 clip=4 frame=1466 baseline=1 split=3 (543,359.5;0,1;719) (955,394;0,1;650) (640,576;1,0;1280)
+joined_line_diff round=1 clip=4 frame=1467 baseline=2 split=4 (536.5,359.5;0,1;719) (956.5,406.5;0,1;625) (640,576;1,0;1280) (352,165.668;6.12323e-17,1;332.941)
+joined_line_diff round=1 clip=4 frame=1468 baseline=2 split=4 (533,359.5;0,1;719) (958,413;0,1;612) (640,576.022;1,4.39244e-05;1280) (369,169;6.12323e-17,1;339.592)
+joined_line_diff round=2 clip=9 frame=19284 baseline=1 split=2 (640.5,363.5;0,1;711) (640,575.521;0.999999,0.00116466;1280)
+joined_line_diff round=2 clip=9 frame=19285 baseline=1 split=2 (641.5,363.5;0,1;711) (640,575.502;0.999989,0.00465035;1280.01)
+joined_line_diff round=2 clip=9 frame=19286 baseline=1 split=2 (644.5,363.5;0,1;711) (640,575.297;0.999947,0.0102676;1280.07)
+row_prescreen full n=60 p5=22.2317 p50=36.0512 p95=55.922 p99=65.3417 max=65.8796 jitter_p95_minus_p5=33.6903 ms
+row_prescreen prescreen n=60 p5=8.5566 p50=19.254 p95=37.7621 p99=42.6078 max=43.0909 jitter_p95_minus_p5=29.2055 ms
+row_prescreen joined n=60 p5=21.2538 p50=41.3112 p95=79.2793 p99=91.4786 max=127.99 jitter_p95_minus_p5=58.0255 ms
+joined_line_differences n=6 focus=0 of 60 frames
+[       OK ] GameObserver.RowPrescreenPreservesRecordedClipDecisionsWhenProvided (7955 ms)
+[ RUN      ] GameObserver.SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails
+[       OK ] GameObserver.SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails (321 ms)
+[ RUN      ] GameObserver.NotesAloneDuplicateFramesAndGeometryCannotArm
+[       OK ] GameObserver.NotesAloneDuplicateFramesAndGeometryCannotArm (290 ms)
+[ RUN      ] GameObserver.ChangingIndicatorColorKeepsTiltedLinePredictionAndNoteIdentity
+[       OK ] GameObserver.ChangingIndicatorColorKeepsTiltedLinePredictionAndNoteIdentity (165 ms)
+[ RUN      ] GameObserver.UiLossCancelsAndCapacityIsBounded
+[       OK ] GameObserver.UiLossCancelsAndCapacityIsBounded (289 ms)
+[ RUN      ] GameObserver.FreshHudAfterShortGapKeepsUiButClearsAllMotionAcrossEpoch
+[       OK ] GameObserver.FreshHudAfterShortGapKeepsUiButClearsAllMotionAcrossEpoch (376 ms)
+[ RUN      ] GameObserver.HudContinuityNeverBridgesMissingPixelsLongGapOrGeometry
+[       OK ] GameObserver.HudContinuityNeverBridgesMissingPixelsLongGapOrGeometry (592 ms)
+[ RUN      ] GameObserver.OnePixelLineJoinedToHoldBorderStaysObservable
+[       OK ] GameObserver.OnePixelLineJoinedToHoldBorderStaysObservable (35 ms)
+[ RUN      ] GameObserver.NestedRibbonsMergeButEqualWidthOverlapsRemainDistinct
+[       OK ] GameObserver.NestedRibbonsMergeButEqualWidthOverlapsRemainDistinct (47 ms)
+[ RUN      ] GameObserver.YellowOutlineDoesNotDuplicateBlueCoreAndHoldHasLeadingEdgeAndTail
+[       OK ] GameObserver.YellowOutlineDoesNotDuplicateBlueCoreAndHoldHasLeadingEdgeAndTail (48 ms)
+[ RUN      ] GameObserver.DesaturatedHoldRequiresFreshParallelRailsAndDoesNotInventClippedTail
+[       OK ] GameObserver.DesaturatedHoldRequiresFreshParallelRailsAndDoesNotInventClippedTail (394 ms)
+[ RUN      ] GameObserver.CurrentHoldRailsOverrideFragmentedCoreWithoutRemovingIndependentNotes
+[       OK ] GameObserver.CurrentHoldRailsOverrideFragmentedCoreWithoutRemovingIndependentNotes (926 ms)
+[ RUN      ] GameObserver.HoldRailAnchorSurvivesOneMissingRailButRequiresCurrentPairToRecover
+[       OK ] GameObserver.HoldRailAnchorSurvivesOneMissingRailButRequiresCurrentPairToRecover (420 ms)
+[ RUN      ] GameObserver.HeldTiltedBodyPreservesAnIndependentThinTapInsideItsRails
+[       OK ] GameObserver.HeldTiltedBodyPreservesAnIndependentThinTapInsideItsRails (429 ms)
+[ RUN      ] GameObserver.RecentHeldRegionRejectsEnclosedSideFragmentsWithoutRefreshingMissingRails
+[       OK ] GameObserver.RecentHeldRegionRejectsEnclosedSideFragmentsWithoutRefreshingMissingRails (278 ms)
+[ RUN      ] GameObserver.ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsCore
+[       OK ] GameObserver.ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsCore (349 ms)
+[ RUN      ] GameObserver.ApproachingConnectedHoldWithInteriorHitTintKeepsOneIdentity
+[       OK ] GameObserver.ApproachingConnectedHoldWithInteriorHitTintKeepsOneIdentity (2678 ms)
+[ RUN      ] GameObserver.ApproachingHoldWithEnclosedHitPatchKeepsOneIdentityAcrossSparseFrames
+[       OK ] GameObserver.ApproachingHoldWithEnclosedHitPatchKeepsOneIdentityAcrossSparseFrames (602 ms)
+[ RUN      ] GameObserver.InteriorHoldDescriptionDedupPreservesThinTapAndAdjacentHold
+[       OK ] GameObserver.InteriorHoldDescriptionDedupPreservesThinTapAndAdjacentHold (1091 ms)
+[ RUN      ] GameObserver.InteriorHoldDescriptionNeedsBothCurrentSideBandsAndRecentFront
+[       OK ] GameObserver.InteriorHoldDescriptionNeedsBothCurrentSideBandsAndRecentFront (2604 ms)
+[ RUN      ] GameObserver.ClippedTopHoldKeepsCurrentRailsAndContactAcrossTheHeightLimit
+[       OK ] GameObserver.ClippedTopHoldKeepsCurrentRailsAndContactAcrossTheHeightLimit (1278 ms)
+[ RUN      ] GameObserver.ClippedTopHoldCanValidateCurrentLeadingEdgeWithoutPriorAnchor
+[       OK ] GameObserver.ClippedTopHoldCanValidateCurrentLeadingEdgeWithoutPriorAnchor (409 ms)
+[ RUN      ] GameObserver.RecentHeldRailsRemainVisibleThroughWarmHitTint
+[       OK ] GameObserver.RecentHeldRailsRemainVisibleThroughWarmHitTint (1290 ms)
+[ RUN      ] GameObserver.ColorIndependentHeldOutlineRequiresFreshAnchorAndBothCurrentRails
+[       OK ] GameObserver.ColorIndependentHeldOutlineRequiresFreshAnchorAndBothCurrentRails (3938 ms)
+[ RUN      ] GameObserver.WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased
+[       OK ] GameObserver.WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased (2804 ms)
+[ RUN      ] GameObserver.WarmSectionCannotUseEmptyOrMismatchedWhitePair
+[       OK ] GameObserver.WarmSectionCannotUseEmptyOrMismatchedWhitePair (3207 ms)
+[ RUN      ] GameObserver.ClippedBlueColumnWithoutBothRailsCannotBecomeANewHold
+[       OK ] GameObserver.ClippedBlueColumnWithoutBothRailsCannotBecomeANewHold (185 ms)
+[ RUN      ] GameObserver.CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore
+[       OK ] GameObserver.CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore (411 ms)
+[ RUN      ] GameObserver.ShortWideCurrentRailsNeedDepthAndCannotJoinAdjacentBodiesOrEmptyBorders
+[       OK ] GameObserver.ShortWideCurrentRailsNeedDepthAndCannotJoinAdjacentBodiesOrEmptyBorders (67 ms)
+[ RUN      ] GameObserver.CurrentHoldReconstructionRejectsLongRailGapDespiteBodyFill
+[       OK ] GameObserver.CurrentHoldReconstructionRejectsLongRailGapDespiteBodyFill (48 ms)
+[ RUN      ] GameObserver.HoldRailsCannotExpandToDecorationWithFillMissingOnOneSide
+[       OK ] GameObserver.HoldRailsCannotExpandToDecorationWithFillMissingOnOneSide (47 ms)
+[ RUN      ] GameObserver.ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt
+[       OK ] GameObserver.ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt (463 ms)
+[ RUN      ] GameObserver.SmallHitParticlesAndYellowRingsCannotBecomeNoteTargets
+[       OK ] GameObserver.SmallHitParticlesAndYellowRingsCannotBecomeNoteTargets (23 ms)
+[ RUN      ] GameObserver.ShortWideHoldUsesLineNormalAndStationaryHeadStillHasHitRegion
+[       OK ] GameObserver.ShortWideHoldUsesLineNormalAndStationaryHeadStillHasHitRegion (222 ms)
+[ RUN      ] GameObserver.SplitFlickRequiresCentralArrowAndHighlightCannotBecomeDrag
+[       OK ] GameObserver.SplitFlickRequiresCentralArrowAndHighlightCannotBecomeDrag (29 ms)
+[ RUN      ] GameObserver.TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag
+[       OK ] GameObserver.TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag (263 ms)
+[ RUN      ] GameObserver.ShortCaptureBurstCannotPredictAnImminentCrossingFromFarNotes
+[       OK ] GameObserver.ShortCaptureBurstCannotPredictAnImminentCrossingFromFarNotes (366 ms)
+[ RUN      ] GameObserver.ContinuousFastFramesKeepEnoughTemporalHistoryToPredict
+[       OK ] GameObserver.ContinuousFastFramesKeepEnoughTemporalHistoryToPredict (1040 ms)
+[ RUN      ] GameObserver.TimingUncertaintySeparatesFastCaptureJitterFromSlowAmbiguousMotion
+[       OK ] GameObserver.TimingUncertaintySeparatesFastCaptureJitterFromSlowAmbiguousMotion (441 ms)
+[ RUN      ] GameObserver.CurrentPointMismatchAndLargeGeometryJumpsRemainRejectedAtHighSpeed
+[       OK ] GameObserver.CurrentPointMismatchAndLargeGeometryJumpsRemainRejectedAtHighSpeed (230 ms)
+[ RUN      ] GameObserver.FitResidualDoesNotDisplaceTheHitPointFromTheObservedLine
+[       OK ] GameObserver.FitResidualDoesNotDisplaceTheHitPointFromTheObservedLine (236 ms)
+[ RUN      ] GameObserver.SlantedLineSurvivesIntersectionAndMatchesNoteOrientation
+[       OK ] GameObserver.SlantedLineSurvivesIntersectionAndMatchesNoteOrientation (354 ms)
+[ RUN      ] GameObserver.OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFragments
+[       OK ] GameObserver.OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFragments (3129 ms)
+[ RUN      ] GameObserver.CurrentAttachedGrayRailsRetainFrontClippedBeforeOnlineClassification
+[       OK ] GameObserver.CurrentAttachedGrayRailsRetainFrontClippedBeforeOnlineClassification (757 ms)
+[ RUN      ] GameObserver.GrayHeldFrontCanMoveAwayFromTheLineWithTheSameFingerAndCurrentHit
+[       OK ] GameObserver.GrayHeldFrontCanMoveAwayFromTheLineWithTheSameFingerAndCurrentHit (1298 ms)
+[ RUN      ] GameObserver.HeldBodyKeepsItsFingerThroughAFrontOcclusionAndRecoversCurrentFront
+[       OK ] GameObserver.HeldBodyKeepsItsFingerThroughAFrontOcclusionAndRecoversCurrentFront (964 ms)
+[ RUN      ] GameObserver.RotatingCurrentLineRetainsIdentityAndFreshLocalHitGeometry
+[       OK ] GameObserver.RotatingCurrentLineRetainsIdentityAndFreshLocalHitGeometry (337 ms)
+[ RUN      ] GameObserver.InterruptedThinBandIsOneLineButSeparatedBandsRemainDistinct
+[       OK ] GameObserver.InterruptedThinBandIsOneLineButSeparatedBandsRemainDistinct (75 ms)
+[ RUN      ] GameObserver.TiltedMovingDragUsesLocalCoreAndOneCurrentContact
+[       OK ] GameObserver.TiltedMovingDragUsesLocalCoreAndOneCurrentContact (387 ms)
+[ RUN      ] GameObserver.PerpendicularColoredRibbonsKeepTheirOwnGeometryAndKind
+[       OK ] GameObserver.PerpendicularColoredRibbonsKeepTheirOwnGeometryAndKind (587 ms)
+[----------] 56 tests from GameObserver (46459 ms total)
+
+[----------] 10 tests from GameDiagnostics
+[ RUN      ] GameDiagnostics.CurrentCentralDigitShapesExcludeComboLabelRailsAndProgress
+[       OK ] GameDiagnostics.CurrentCentralDigitShapesExcludeComboLabelRailsAndProgress (89 ms)
+[ RUN      ] GameDiagnostics.ComboDisappearanceRequiresFreshSustainedAbsenceAndRearms
+[       OK ] GameDiagnostics.ComboDisappearanceRequiresFreshSustainedAbsenceAndRearms (0 ms)
+[ RUN      ] GameDiagnostics.DecorativeRailConnectedToDigitDoesNotReportDisappearance
+[       OK ] GameDiagnostics.DecorativeRailConnectedToDigitDoesNotReportDisappearance (278 ms)
+[ RUN      ] GameDiagnostics.ThinHorizontalRibbonJoiningDigitsKeepsVisibleTallInk
+[       OK ] GameDiagnostics.ThinHorizontalRibbonJoiningDigitsKeepsVisibleTallInk (70 ms)
+[ RUN      ] GameDiagnostics.ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange
+[       OK ] GameDiagnostics.ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange (0 ms)
+[ RUN      ] GameDiagnostics.LongHoldDisappearanceRetainsOnlyItsPriorCoordinateEvidence
+[       OK ] GameDiagnostics.LongHoldDisappearanceRetainsOnlyItsPriorCoordinateEvidence (3 ms)
+[ RUN      ] GameDiagnostics.HoldDiagnosticKeepsVisibleNewIdentityButRejectsNarrowFragments
+[       OK ] GameDiagnostics.HoldDiagnosticKeepsVisibleNewIdentityButRejectsNarrowFragments (0 ms)
+[ RUN      ] GameDiagnostics.HoldDiagnosticSkipsEndingBodyAndFrameDiscontinuities
+[       OK ] GameDiagnostics.HoldDiagnosticSkipsEndingBodyAndFrameDiscontinuities (0 ms)
+[ RUN      ] GameDiagnostics.ApproachingBodyCannotConsumeTheHeldDisappearanceWindow
+[       OK ] GameDiagnostics.ApproachingBodyCannotConsumeTheHeldDisappearanceWindow (0 ms)
+[ RUN      ] GameDiagnostics.CurrentHeldBodyMovingAwayFromTheLineCanReportItsDisappearance
+[       OK ] GameDiagnostics.CurrentHeldBodyMovingAwayFromTheLineCanReportItsDisappearance (0 ms)
+[----------] 10 tests from GameDiagnostics (445 ms total)
+
+[----------] 51 tests from GameOwner
+[ RUN      ] GameOwner.NewTimingUncertaintyCancelsPendingDownAndFreshEvidenceCanRetryExactlyOnce
+[       OK ] GameOwner.NewTimingUncertaintyCancelsPendingDownAndFreshEvidenceCanRetryExactlyOnce (2 ms)
+[ RUN      ] GameOwner.FreshPredictionRefinesPendingDeadlineButCannotReplayActiveDown
+[       OK ] GameOwner.FreshPredictionRefinesPendingDeadlineButCannotReplayActiveDown (2 ms)
+[ RUN      ] GameOwner.ContradictedPendingPredictionCannotInjectButFreshPredictionCanRetry
+[       OK ] GameOwner.ContradictedPendingPredictionCannotInjectButFreshPredictionCanRetry (29 ms)
+[ RUN      ] GameOwner.ContradictionAfterDownCannotReplayOrCancelTheActiveDragWindow
+[       OK ] GameOwner.ContradictionAfterDownCannotReplayOrCancelTheActiveDragWindow (2 ms)
+[ RUN      ] GameOwner.HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact
+[       OK ] GameOwner.HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact (11 ms)
+[ RUN      ] GameOwner.FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass
+[       OK ] GameOwner.FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass (14 ms)
+[ RUN      ] GameOwner.SixthSimultaneousContactIsRejectedWithoutStealingFiveActiveFingers
+[       OK ] GameOwner.SixthSimultaneousContactIsRejectedWithoutStealingFiveActiveFingers (3 ms)
+[ RUN      ] GameOwner.RotatingHeldBodyAndColocatedTapKeepSeparateContacts
+[       OK ] GameOwner.RotatingHeldBodyAndColocatedTapKeepSeparateContacts (2 ms)
+[ RUN      ] GameOwner.TailPredictionWithoutCurrentVisibleTailDoesNotEndHoldOrExtendExpiry
+[       OK ] GameOwner.TailPredictionWithoutCurrentVisibleTailDoesNotEndHoldOrExtendExpiry (1 ms)
+[ RUN      ] GameOwner.MovingNearLineDragKeepsOneFingerWithoutRepeatedCrossingFits
+[       OK ] GameOwner.MovingNearLineDragKeepsOneFingerWithoutRepeatedCrossingFits (8 ms)
+[ RUN      ] GameOwner.CurrentOuterBodyReassociatesHoldButCannotReviveCompletedFinger
+[       OK ] GameOwner.CurrentOuterBodyReassociatesHoldButCannotReviveCompletedFinger (2 ms)
+[ RUN      ] GameOwner.PreviouslySeenUnsubmittedHoldDescriptionCanRetainStartedContact
+[       OK ] GameOwner.PreviouslySeenUnsubmittedHoldDescriptionCanRetainStartedContact (2 ms)
+[ RUN      ] GameOwner.AliasesNeedCurrentSupportAndCannotOverrideOriginalOrReviveExpiredOwner
+[       OK ] GameOwner.AliasesNeedCurrentSupportAndCannotOverrideOriginalOrReviveExpiredOwner (7 ms)
+[ RUN      ] GameOwner.MovingHoldRejectsColorFragmentProjectionAndKeepsTheOriginalMissingGrace
+[       OK ] GameOwner.MovingHoldRejectsColorFragmentProjectionAndKeepsTheOriginalMissingGrace (3 ms)
+[ RUN      ] GameOwner.SameHoldCanRecoverItsFrontFromAnInteriorPatchWithoutChangingContact
+[       OK ] GameOwner.SameHoldCanRecoverItsFrontFromAnInteriorPatchWithoutChangingContact (15 ms)
+[ RUN      ] GameOwner.HeldBodySupportCannotCreateANewDownEvenWithAFittedCrossing
+[       OK ] GameOwner.HeldBodySupportCannotCreateANewDownEvenWithAFittedCrossing (0 ms)
+[ RUN      ] GameOwner.PendingHoldDeadlineRevisionsRenewFromCurrentCaptureBeforeTheNextFrameGap
+[       OK ] GameOwner.PendingHoldDeadlineRevisionsRenewFromCurrentCaptureBeforeTheNextFrameGap (1 ms)
+[ RUN      ] GameOwner.FreshYellowRegionsBridgeSuccessiveIdsWithoutRepeatingDown
+[       OK ] GameOwner.FreshYellowRegionsBridgeSuccessiveIdsWithoutRepeatingDown (11 ms)
+[ RUN      ] GameOwner.YellowRegionSharingRejectsAcrossLineAndAmbiguousActiveCoverage
+[       OK ] GameOwner.YellowRegionSharingRejectsAcrossLineAndAmbiguousActiveCoverage (3 ms)
+[ RUN      ] GameOwner.LongHoldBridgesFreshSparseFramesButStopsAtActualEvidenceExpiry
+[       OK ] GameOwner.LongHoldBridgesFreshSparseFramesButStopsAtActualEvidenceExpiry (4 ms)
+[ RUN      ] GameOwner.TypeGateAndFlickUseIndependentDownMoveUpSequence
+[       OK ] GameOwner.TypeGateAndFlickUseIndependentDownMoveUpSequence (2 ms)
+[ RUN      ] GameOwner.FlickNearLowerBoundaryKeepsFourFiniteMovesInsideScreen
+[       OK ] GameOwner.FlickNearLowerBoundaryKeepsFourFiniteMovesInsideScreen (0 ms)
+[ RUN      ] GameOwner.PendingFlickRevisionRebuildsFullPathFromCurrentHit
+[       OK ] GameOwner.PendingFlickRevisionRebuildsFullPathFromCurrentHit (1 ms)
+[ RUN      ] GameOwner.OutOfOrderNotesGetSubmissionIdsAndFullSnapshotCancelsMissing
+[       OK ] GameOwner.OutOfOrderNotesGetSubmissionIdsAndFullSnapshotCancelsMissing (2 ms)
+[ RUN      ] GameOwner.SingleMissingDragFrameCancelsFutureDownAndFreshReturnCanReplan
+[       OK ] GameOwner.SingleMissingDragFrameCancelsFutureDownAndFreshReturnCanReplan (3 ms)
+[ RUN      ] GameOwner.MissingPendingTapAndDragRetryWithCurrentEvidenceExactlyOnce
+[       OK ] GameOwner.MissingPendingTapAndDragRetryWithCurrentEvidenceExactlyOnce (4 ms)
+[ RUN      ] GameOwner.InvalidPendingGeometryCanRetryOnlyFromFreshValidPrediction
+[       OK ] GameOwner.InvalidPendingGeometryCanRetryOnlyFromFreshValidPrediction (11 ms)
+[ RUN      ] GameOwner.MissingAfterStartedOrCompletedDownCannotRetryReturnedPixels
+[       OK ] GameOwner.MissingAfterStartedOrCompletedDownCannotRetryReturnedPixels (8 ms)
+[ RUN      ] GameOwner.DragCoverageSurvivesLateCrossingWithoutReplayingDown
+[       OK ] GameOwner.DragCoverageSurvivesLateCrossingWithoutReplayingDown (3 ms)
+[ RUN      ] GameOwner.DenseColocatedDragsShareOneActiveContactAndKeepTapIndependent
+[       OK ] GameOwner.DenseColocatedDragsShareOneActiveContactAndKeepTapIndependent (4 ms)
+[ RUN      ] GameOwner.ADisappearingDragMemberCannotReleaseTheStillObservedGroup
+[       OK ] GameOwner.ADisappearingDragMemberCannotReleaseTheStillObservedGroup (2 ms)
+[ RUN      ] GameOwner.DifferentDragPositionsKeepIndependentContactsAndGateLossReleasesTheGroup
+[       OK ] GameOwner.DifferentDragPositionsKeepIndependentContactsAndGateLossReleasesTheGroup (4 ms)
+[ RUN      ] GameOwner.BoundedLatePredictionRecoversNowButOldEvidenceAndExecutedDownCannotReplay
+[       OK ] GameOwner.BoundedLatePredictionRecoversNowButOldEvidenceAndExecutedDownCannotReplay (9 ms)
+[ RUN      ] GameOwner.LateGeometrySnapshotCannotCancelCurrentPendingIntent
+[       OK ] GameOwner.LateGeometrySnapshotCannotCancelCurrentPendingIntent (0 ms)
+[ RUN      ] GameOwner.CurrentDragOverlapStartsWithoutInventingARootAndTracksMovingLine
+[       OK ] GameOwner.CurrentDragOverlapStartsWithoutInventingARootAndTracksMovingLine (5 ms)
+[ RUN      ] GameOwner.DragOverlapRejectsMissingStaleAmbiguousAndNonCoreGeometry
+[       OK ] GameOwner.DragOverlapRejectsMissingStaleAmbiguousAndNonCoreGeometry (8 ms)
+[ RUN      ] GameOwner.PendingDragPredictionCanBecomeACurrentSpatialContactExactlyOnce
+[       OK ] GameOwner.PendingDragPredictionCanBecomeACurrentSpatialContactExactlyOnce (2 ms)
+[ RUN      ] GameOwner.ConsecutiveSpatialDragCoresShareTheStartedFingerWithoutAnyCrossing
+[       OK ] GameOwner.ConsecutiveSpatialDragCoresShareTheStartedFingerWithoutAnyCrossing (2 ms)
+[ RUN      ] GameOwner.RotatingCurrentHoldKeepsItsFingerAndMovesOnlyWithCurrentBody
+[       OK ] GameOwner.RotatingCurrentHoldKeepsItsFingerAndMovesOnlyWithCurrentBody (1 ms)
+[ RUN      ] GameOwner.UnsupportedHoldProjectionCannotMoveTheStartedFinger
+[       OK ] GameOwner.UnsupportedHoldProjectionCannotMoveTheStartedFinger (1 ms)
+[ RUN      ] GameOwner.PreviouslyTrackedTapCanUseNewCurrentLineAtVisibleOverlap
+[       OK ] GameOwner.PreviouslyTrackedTapCanUseNewCurrentLineAtVisibleOverlap (2 ms)
+[ RUN      ] GameOwner.CurrentNoteKeepsConfirmedMovingLineThroughShortOcclusion
+[       OK ] GameOwner.CurrentNoteKeepsConfirmedMovingLineThroughShortOcclusion (3 ms)
+[ RUN      ] GameOwner.DiscontinuousPixelsCancelOnlyAnUnexecutedDown
+[       OK ] GameOwner.DiscontinuousPixelsCancelOnlyAnUnexecutedDown (2 ms)
+[ RUN      ] GameOwner.RotatedTailNeedsTwoCurrentSamplesOnItsOwnLine
+[       OK ] GameOwner.RotatedTailNeedsTwoCurrentSamplesOnItsOwnLine (2 ms)
+[ RUN      ] GameOwner.CurrentTapOverlapRejectsCompetingStaleInvalidAndUnsupportedEvidence
+[       OK ] GameOwner.CurrentTapOverlapRejectsCompetingStaleInvalidAndUnsupportedEvidence (7 ms)
+[ RUN      ] GameOwner.CurrentTapOverlapCompletesOnceAndCannotReplayAfterReturn
+[       OK ] GameOwner.CurrentTapOverlapCompletesOnceAndCannotReplayAfterReturn (2 ms)
+[ RUN      ] GameOwner.CurrentTapOverlapUnknownDownIsNotRetried
+[       OK ] GameOwner.CurrentTapOverlapUnknownDownIsNotRetried (1 ms)
+[ RUN      ] GameOwner.PerpendicularCurrentTapOverlapRequiresItsActualCore
+[       OK ] GameOwner.PerpendicularCurrentTapOverlapRequiresItsActualCore (2 ms)
+[ RUN      ] GameOwner.PerpendicularCurrentDragOverlapNeedsCurrentCoreAndReleasesOnce
+[       OK ] GameOwner.PerpendicularCurrentDragOverlapNeedsCurrentCoreAndReleasesOnce (2 ms)
+[ RUN      ] GameOwner.RotatingSupportedHoldKeepsTheSameContactButFragmentsCannotMoveIt
+[       OK ] GameOwner.RotatingSupportedHoldKeepsTheSameContactButFragmentsCannotMoveIt (2 ms)
+[ RUN      ] GameOwner.UnrelatedOrStaleLineCannotConfirmTheCurrentHoldTail
+[       OK ] GameOwner.UnrelatedOrStaleLineCannotConfirmTheCurrentHoldTail (4 ms)
+[----------] 51 tests from GameOwner (254 ms total)
+
+[----------] 5 tests from GameScheduler
+[ RUN      ] GameScheduler.ActivePrefixCompactionKeepsLastExecutedStepAndCannotDropFuture
+[       OK ] GameScheduler.ActivePrefixCompactionKeepsLastExecutedStepAndCannotDropFuture (0 ms)
+[ RUN      ] GameScheduler.FuturePlansDoNotReserveContacts
+[       OK ] GameScheduler.FuturePlansDoNotReserveContacts (0 ms)
+[ RUN      ] GameScheduler.ActiveRevisionPreservesMovesAndRejectsChangedExecutedPrefix
+[       OK ] GameScheduler.ActiveRevisionPreservesMovesAndRejectsChangedExecutedPrefix (0 ms)
+[ RUN      ] GameScheduler.TargetExpiryReleasesOnlyThatContactAndFreshGateKeepsOther
+[       OK ] GameScheduler.TargetExpiryReleasesOnlyThatContactAndFreshGateKeepsOther (0 ms)
+[ RUN      ] GameScheduler.ContextAndDispatchGuardRevokePendingAndActive
+[       OK ] GameScheduler.ContextAndDispatchGuardRevokePendingAndActive (0 ms)
+[----------] 5 tests from GameScheduler (3 ms total)
+
+[----------] 21 tests from GameMotion
+[ RUN      ] GameMotion.CurrentGrayOutlineTracksTranslationButRejectsSingleRailAndMissingClosure
+[       OK ] GameMotion.CurrentGrayOutlineTracksTranslationButRejectsSingleRailAndMissingClosure (11 ms)
+[ RUN      ] GameMotion.IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSign
+[       OK ] GameMotion.IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSign (2 ms)
+[ RUN      ] GameMotion.BurstFramesCannotAmplifyLineNoiseOrReplaceCurrentGeometry
+[       OK ] GameMotion.BurstFramesCannotAmplifyLineNoiseOrReplaceCurrentGeometry (2 ms)
+[ RUN      ] GameMotion.RotatingLineEquationsIgnoreAlongLineCropCenterDrift
+[       OK ] GameMotion.RotatingLineEquationsIgnoreAlongLineCropCenterDrift (10 ms)
+[ RUN      ] GameMotion.FittedRotationAssociatesAfterGapWithoutInventingAMissingLine
+[       OK ] GameMotion.FittedRotationAssociatesAfterGapWithoutInventingAMissingLine (1 ms)
+[ RUN      ] GameMotion.NonlinearLinePoseRejectsVelocityAndDuplicateLinesRemainAmbiguous
+[       OK ] GameMotion.NonlinearLinePoseRejectsVelocityAndDuplicateLinesRemainAmbiguous (1 ms)
+[ RUN      ] GameMotion.DistributedTiltedRidgeRejectsWideFillShortBarsAndMissingSupport
+[       OK ] GameMotion.DistributedTiltedRidgeRejectsWideFillShortBarsAndMissingSupport (23 ms)
+[ RUN      ] GameMotion.TiltedLineExtentUsesMeasuredFragmentsAndRejectsLargeUnsupportedGaps
+[       OK ] GameMotion.TiltedLineExtentUsesMeasuredFragmentsAndRejectsLargeUnsupportedGaps (19 ms)
+[ RUN      ] GameMotion.ApproachingAnchorNeedsCurrentRailsAttachedToTheLine
+[       OK ] GameMotion.ApproachingAnchorNeedsCurrentRailsAttachedToTheLine (5 ms)
+[ RUN      ] GameMotion.ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash
+[       OK ] GameMotion.ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash (17 ms)
+[ RUN      ] GameMotion.MovingHeldFrontNeedsPairedCurrentTerminationAndCannotInferFromHistory
+[       OK ] GameMotion.MovingHeldFrontNeedsPairedCurrentTerminationAndCannotInferFromHistory (135 ms)
+[ RUN      ] GameMotion.MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior
+[       OK ] GameMotion.MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior (71 ms)
+[ RUN      ] GameMotion.OccludedFrontCanUseOnlyAVisiblePairedBodyInterior
+[       OK ] GameMotion.OccludedFrontCanUseOnlyAVisiblePairedBodyInterior (57 ms)
+[ RUN      ] GameMotion.ContestedDuplicateDoesNotCreateARecurringLineage
+[       OK ] GameMotion.ContestedDuplicateDoesNotCreateARecurringLineage (6 ms)
+[ RUN      ] GameMotion.CloseRealLinesStayDistinctAndExpiryDoesNotBridgeNinetyMilliseconds
+[       OK ] GameMotion.CloseRealLinesStayDistinctAndExpiryDoesNotBridgeNinetyMilliseconds (2 ms)
+[ RUN      ] GameMotion.PersistentNearNewLineIsBornAfterBoundedEvidenceButFarNewLineImmediately
+[       OK ] GameMotion.PersistentNearNewLineIsBornAfterBoundedEvidenceButFarNewLineImmediately (2 ms)
+[ RUN      ] GameMotion.RotatedCurrentHoldRailsCanContinueAnOlderAnchor
+[       OK ] GameMotion.RotatedCurrentHoldRailsCanContinueAnOlderAnchor (5 ms)
+[ RUN      ] GameMotion.SixteenLinesRemainBoundedAndContextGapStartsNewLineage
+[       OK ] GameMotion.SixteenLinesRemainBoundedAndContextGapStartsNewLineage (18 ms)
+[ RUN      ] GameMotion.ContestedObservationCannotSeedRecurringDuplicateTracks
+[       OK ] GameMotion.ContestedObservationCannotSeedRecurringDuplicateTracks (6 ms)
+[ RUN      ] GameMotion.ConvergedLineAmbiguityExpiresWithoutInventingIdentity
+[       OK ] GameMotion.ConvergedLineAmbiguityExpiresWithoutInventingIdentity (7 ms)
+[ RUN      ] GameMotion.RotatedCurrentHoldRailsRequireBothCurrentlyVisibleSides
+[       OK ] GameMotion.RotatedCurrentHoldRailsRequireBothCurrentlyVisibleSides (13 ms)
+[----------] 21 tests from GameMotion (426 ms total)
+
+[----------] 2 tests from GameRuntime
+[ RUN      ] GameRuntime.ActualCaptureOptionsUseEffectiveProfileGuard
+[       OK ] GameRuntime.ActualCaptureOptionsUseEffectiveProfileGuard (0 ms)
+[ RUN      ] GameRuntime.HistoricalFingerprintRejectsMappingDeviceAndUnverifiedReports
+[       OK ] GameRuntime.HistoricalFingerprintRejectsMappingDeviceAndUnverifiedReports (23 ms)
+[----------] 2 tests from GameRuntime (24 ms total)
+
+[----------] 2 tests from AutoPlay
+[ RUN      ] AutoPlay.PixelsConfirmSelectionAndOneAttemptNeverBecomesGameplayInput
+[       OK ] AutoPlay.PixelsConfirmSelectionAndOneAttemptNeverBecomesGameplayInput (135 ms)
+[ RUN      ] AutoPlay.UnknownStaleOutOfFrameAndContradictoryScenesCannotStart
+[       OK ] AutoPlay.UnknownStaleOutOfFrameAndContradictoryScenesCannotStart (0 ms)
+[----------] 2 tests from AutoPlay (136 ms total)
+
+[----------] 39 tests from GameTracking
+[ RUN      ] GameTracking.DistantAppearanceAngleCannotStealEstablishedLineRelation
+[       OK ] GameTracking.DistantAppearanceAngleCannotStealEstablishedLineRelation (1 ms)
+[ RUN      ] GameTracking.CrossingLineDoesNotStealAnApproachingConfirmedNote
+[       OK ] GameTracking.CrossingLineDoesNotStealAnApproachingConfirmedNote (1 ms)
+[ RUN      ] GameTracking.RecedingConfirmedLineDoesNotOverrideCurrentCrossing
+[       OK ] GameTracking.RecedingConfirmedLineDoesNotOverrideCurrentCrossing (0 ms)
+[ RUN      ] GameTracking.RelativeApproachSeparatesEquidistantUnrelatedLines
+[       OK ] GameTracking.RelativeApproachSeparatesEquidistantUnrelatedLines (0 ms)
+[ RUN      ] GameTracking.OccupiedAlternativeIsNotAnIdentityAmbiguityWithoutFeasibleSwap
+[       OK ] GameTracking.OccupiedAlternativeIsNotAnIdentityAmbiguityWithoutFeasibleSwap (0 ms)
+[ RUN      ] GameTracking.JumpAndReversalRequireFreshMeasuredSegments
+[       OK ] GameTracking.JumpAndReversalRequireFreshMeasuredSegments (3 ms)
+[ RUN      ] GameTracking.EquidistantLinesRemainCandidatesWithoutAGuessedDown
+[       OK ] GameTracking.EquidistantLinesRemainCandidatesWithoutAGuessedDown (0 ms)
+[ RUN      ] GameTracking.NearLineFirstAppearanceDoesNotInventTapTiming
+[       OK ] GameTracking.NearLineFirstAppearanceDoesNotInventTapTiming (0 ms)
+[ RUN      ] GameTracking.MissingLineProjectionRejectsReversalReplacementAndOldExtentExit
+[       OK ] GameTracking.MissingLineProjectionRejectsReversalReplacementAndOldExtentExit (2 ms)
+[ RUN      ] GameTracking.RotatingOriginalLineProjectsWithinItsMeasuredExtent
+[       OK ] GameTracking.RotatingOriginalLineProjectsWithinItsMeasuredExtent (0 ms)
+[ RUN      ] GameTracking.ConfirmedLineProjectionExpiresWithoutNewLinePixels
+[       OK ] GameTracking.ConfirmedLineProjectionExpiresWithoutNewLinePixels (0 ms)
+[ RUN      ] GameTracking.ExpiredOriginalLineLetsExplicitNextLineEarnFreshRelation
+[       OK ] GameTracking.ExpiredOriginalLineLetsExplicitNextLineEarnFreshRelation (0 ms)
+[ RUN      ] GameTracking.CurrentTapOverlapNeedsPriorApproachAndCannotUseFirstAppearance
+[       OK ] GameTracking.CurrentTapOverlapNeedsPriorApproachAndCannotUseFirstAppearance (2 ms)
+[ RUN      ] GameTracking.EmergingTapAtCrossedLinesRemainsWithoutImmediateActionBasis
+[       OK ] GameTracking.EmergingTapAtCrossedLinesRemainsWithoutImmediateActionBasis (0 ms)
+[ RUN      ] GameTracking.NormalMotionOutranksAnUnrelatedParallelDecoration
+[       OK ] GameTracking.NormalMotionOutranksAnUnrelatedParallelDecoration (1 ms)
+[ RUN      ] GameTracking.ConfirmedCurrentLineSurvivesLateNoteAlignmentAndBrighterFork
+[       OK ] GameTracking.ConfirmedCurrentLineSurvivesLateNoteAlignmentAndBrighterFork (1 ms)
+[ RUN      ] GameTracking.GenuineTwoLinesRetainIndependentPerpendicularNotes
+[       OK ] GameTracking.GenuineTwoLinesRetainIndependentPerpendicularNotes (1 ms)
+[ RUN      ] GameTracking.CompetingParallelLinesAndRecedingPerpendicularNotesDoNotGuessDown
+[       OK ] GameTracking.CompetingParallelLinesAndRecedingPerpendicularNotesDoNotGuessDown (5 ms)
+[ RUN      ] GameTracking.LineChasingAStationaryPerpendicularNoteUsesRelativeMotion
+[       OK ] GameTracking.LineChasingAStationaryPerpendicularNoteUsesRelativeMotion (0 ms)
+[ RUN      ] GameTracking.BaselinePixelSequenceAndSerializedBankAreEquivalent
+[       OK ] GameTracking.BaselinePixelSequenceAndSerializedBankAreEquivalent (789 ms)
+[ RUN      ] GameTracking.MovingHeldBodyEvidenceRoundTripsAndRequiresItsCurrentGeometry
+[       OK ] GameTracking.MovingHeldBodyEvidenceRoundTripsAndRequiresItsCurrentGeometry (18 ms)
+[ RUN      ] GameTracking.LinePoseFitRoundTripsAndRejectsUnboundedOrInvalidEvidence
+[       OK ] GameTracking.LinePoseFitRoundTripsAndRejectsUnboundedOrInvalidEvidence (19 ms)
+[ RUN      ] GameTracking.HeldBodyPatchHasNoHeadOrTailPredictionAndRoundTripsItsEvidence
+[       OK ] GameTracking.HeldBodyPatchHasNoHeadOrTailPredictionAndRoundTripsItsEvidence (15 ms)
+[ RUN      ] GameTracking.WeakNewCandidatesAndPredictionCannotCreateOrRefreshActions
+[       OK ] GameTracking.WeakNewCandidatesAndPredictionCannotCreateOrRefreshActions (5 ms)
+[ RUN      ] GameTracking.CurrentWeakRailsRequireBothSidesFreshAnchorAndVisibleHead
+[       OK ] GameTracking.CurrentWeakRailsRequireBothSidesFreshAnchorAndVisibleHead (8 ms)
+[ RUN      ] GameTracking.ActualDtAndBoundedReupdateNeverInsertSyntheticEvidence
+[       OK ] GameTracking.ActualDtAndBoundedReupdateNeverInsertSyntheticEvidence (7 ms)
+[ RUN      ] GameTracking.AdjacentHoldsAndThinOverlappingTapStayDistinct
+[       OK ] GameTracking.AdjacentHoldsAndThinOverlappingTapStayDistinct (11 ms)
+[ RUN      ] GameTracking.CompetingIdentityIsVisibleAndCannotBecomeNewBirth
+[       OK ] GameTracking.CompetingIdentityIsVisibleAndCannotBecomeNewBirth (2 ms)
+[ RUN      ] GameTracking.DuplicateNewCandidatesCannotBothCreateExecutionBirths
+[       OK ] GameTracking.DuplicateNewCandidatesCannotBothCreateExecutionBirths (1 ms)
+[ RUN      ] GameTracking.CapacityRevokeDoesNotForgetRetiredExecutionBirth
+[       OK ] GameTracking.CapacityRevokeDoesNotForgetRetiredExecutionBirth (2 ms)
+[ RUN      ] GameTracking.ShortenedHoldFrontContinuesButThinTapRemainsNew
+[       OK ] GameTracking.ShortenedHoldFrontContinuesButThinTapRemainsNew (3 ms)
+[ RUN      ] GameTracking.SixtyNinetyAndHundredMsUseActualSourceTime
+[       OK ] GameTracking.SixtyNinetyAndHundredMsUseActualSourceTime (10 ms)
+[ RUN      ] GameTracking.RetiredHoldBirthPersistsThrough441msAndRevisionIsMonotonic
+[       OK ] GameTracking.RetiredHoldBirthPersistsThrough441msAndRevisionIsMonotonic (7 ms)
+[ RUN      ] GameTracking.SourceInvalidAndReplayedTimeCannotArm
+[       OK ] GameTracking.SourceInvalidAndReplayedTimeCannotArm (2 ms)
+[ RUN      ] GameTracking.MissingOrPerpendicularLineCannotProvideActionEvidence
+[       OK ] GameTracking.MissingOrPerpendicularLineCannotProvideActionEvidence (1 ms)
+[ RUN      ] GameTracking.AssignmentIndicesAndCandidateGeometryAreRejected
+[       OK ] GameTracking.AssignmentIndicesAndCandidateGeometryAreRejected (5 ms)
+[ RUN      ] GameTracking.TrackAndRetirementCapacityHaveConservativeFailure
+[       OK ] GameTracking.TrackAndRetirementCapacityHaveConservativeFailure (80 ms)
+[ RUN      ] GameTracking.FakeOwnerMissingAndStopReleaseWithoutPredictedContinuation
+[       OK ] GameTracking.FakeOwnerMissingAndStopReleaseWithoutPredictedContinuation (7 ms)
+[ RUN      ] GameTracking.ShadowAndBankAreBoundedAndHaveNoBackend
+[       OK ] GameTracking.ShadowAndBankAreBoundedAndHaveNoBackend (189 ms)
+[----------] 39 tests from GameTracking (1224 ms total)
+
+[----------] Global test environment tear-down
+[==========] 186 tests from 8 test suites ran. (48977 ms total)
+[  PASSED  ] 186 tests.
+TRACE native END exit=0

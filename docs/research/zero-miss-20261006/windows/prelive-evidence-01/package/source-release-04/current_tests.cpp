@@ -1,0 +1,60 @@
+#include "current.hpp"
+#include "pas/game_session.hpp"
+#include <cmath>
+#include <fstream>
+#include <iostream>
+using namespace pas;using namespace pas::current_rails;using namespace pas::current_execution;using J=nlohmann::json;
+constexpr Nanoseconds ms=1'000'000;
+struct Tests {J rows=J::array();int failed=0;void check(std::string id,bool ok){rows.push_back({{"id",id},{"pass",ok}});failed+=!ok;}};
+struct Input {Frame f;CandidateBatch b;DecisionSnapshot s;};
+Input make(int sequence,Nanoseconds time,double front=500,double tail=200,double x=400,double angle=0,bool patch=false,std::array<int,3> rgb={155,233,255}){
+ Input a;a.f.sequence=sequence;a.f.epoch=a.f.generation=a.f.geometry_version=1;a.f.width=1280;a.f.height=720;a.f.stride=3840;a.f.source_rotation=1;a.f.source_valid=true;a.f.capture_complete_ns=a.f.pixels_ready_ns=time;a.f.rgb.assign(1280*720*3,30);
+ a.s.context={1,1,1,std::uint64_t(sequence),time,1280,720,1};a.s.sequence=sequence;a.s.playing_gate=true;a.s.ui=GameUi::playing;
+ LineCandidate l;l.center={640,500};l.tangent={1,0};l.length=1200;l.track_id=7;l.observed_ns=time;l.confidence=1;a.s.lines={l};
+ GameTarget t;t.note_id=42;t.revision=sequence;t.line_id=7;t.note.kind=NoteKind::hold;t.note.center={x,front};t.note.tangent={std::cos(angle),std::sin(angle)};t.note.width=100;t.note.height=front-tail;t.note.rails_geometry=true;t.note.held_body_patch=patch;t.note.held_body_evidence=patch;t.note.head_on_line=std::abs(front-500)<5;
+ const Vec2 n{-t.note.tangent.y,t.note.tangent.x};if(!patch)t.note.tail=Vec2{x-n.x*(front-tail),front-n.y*(front-tail)};
+ t.hit={x,500};t.crossing_ns=time;t.samples=4;t.history_span_ns=40*ms;t.uncertainty_ns=2*ms;t.evidence_ns=time;t.expires_ns=time+100*ms;t.reason="prediction_observe_only";a.s.targets={t};
+ a.b.context=a.s.context;a.b.lines=a.s.lines;a.b.playing_gate=true;TrackingCandidate c;c.candidate_id=1;c.note=t.note;c.quality=ObservationQuality::strong_current;c.head_visible=!patch;c.origin="synthetic_current_pixels";a.b.candidates={c};
+ // Independent raster: transform every local shape to pixels; no production sampler is used.
+ const auto u=t.note.tangent;const Vec2 v{-u.y,u.x};const double depth=patch?100:front-tail;
+ for(int y=0;y<720;++y)for(int px=0;px<1280;++px){const double dx=px-x,dy=y-front,along=dx*u.x+dy*u.y,normal=dx*v.x+dy*v.y;auto* p=a.f.rgb.data()+std::size_t(y)*3840+px*3;
+  if(normal>=-depth&&normal<=0&&std::abs(along)<=50){for(int k=0;k<3;++k)p[k]=static_cast<std::uint8_t>(rgb[k]);}
+  if(normal>=-depth&&normal<=0&&std::abs(std::abs(along)-50)<=1){p[0]=p[1]=p[2]=255;}}
+ return a;
+}
+struct Own {FakeClock clock;ReplayBackend backend{clock};SessionGameOwner owner{clock,backend,5,{3,0,30*ms}};ExecutionLedger ledger;Hook hook;
+ Own(){owner.start(1);}bool sync(){auto p=owner.owner()->take_accepted_plans();auto e=backend.take_events();owner.owner()->take_coverage_updates();owner.owner()->take_plan_cancellations();return ledger.observe(p,e,*owner.scheduler());}
+ pas::current_rails::Evaluation step(Input& i){clock.set(i.f.pixels_ready_ns);owner.poll();if(!sync())throw std::runtime_error("prior receipts");auto e=hook.evaluate(i.f,i.b,i.s,ledger,clock.now_ns());owner.accept(e.filtered,true);owner.poll();if(!sync())throw std::runtime_error(std::string(ledger.reason()));return e;}
+ bool finish(){const auto r=owner.finish();backend.take_events();return r.failed_ids.empty()&&r.unknown_ids.empty()&&!backend.active_count();}};
+void entry(Tests& r,bool unknown=false){Own o;if(unknown)o.backend.failure=ReplayBackend::Failure::unknown_down;
+ for(int i=0;i<3;++i){auto a=make(i+1,(10+i*20)*ms,460+i*20);auto e=o.step(a);r.check("hold_warming_"+std::to_string(i)+std::to_string(unknown),e.valid&&e.accepted==(i==2?1:0));}
+ r.check(unknown?"own_unknown_down":"own_hold_down",o.backend.downs==1&&o.ledger.find(42)&&o.ledger.find(42)->state==(unknown?Execution::unknown:Execution::active));
+ if(unknown){auto a=make(4,70*ms,520);o.step(a);r.check("unknown_down_not_retried",o.backend.downs==1&&o.backend.active_count()==0);r.check("unknown_release_retained",o.owner.scheduler()->fault()=="input_result_unknown");return;}
+ const auto finger=o.ledger.find(42)->contact;
+ for(int i=0;i<4;++i){auto a=make(4+i,(70+i*20)*ms,530+i*6,200,405+i*3,.08*i);auto e=o.step(a);r.check("rotating_active_body_"+std::to_string(i),e.accepted==1&&e.support[0].body&&o.ledger.find(42)->contact==finger&&o.backend.downs==1);}
+ r.check("current_support_moves_same_contact",o.backend.moves>0);
+ auto patch=make(8,150*ms,516,0,417,0,true);auto e=o.step(patch);r.check("body_patch_continues_own_receipt",e.accepted==1&&!e.support[0].terminal&&o.backend.downs==1);
+ o.clock.set(260*ms);o.owner.poll();o.sync();r.check("evidence_expiry_releases",o.backend.active_count()==0&&o.backend.ups==1);
+ auto returned=make(9,270*ms);o.step(returned);r.check("completed_return_cannot_down",o.backend.downs==1);r.check("final_release_verified",o.finish());
+}
+int main(int argc,char**argv){Tests r;try{if(argc!=2||std::filesystem::exists(argv[1]))return 2;entry(r);entry(r,true);
+ for(const auto color:{std::array<int,3>{155,233,255},std::array<int,3>{192,226,237},std::array<int,3>{40,190,255}}){Own o;pas::current_rails::Evaluation e;for(int k=0;k<3;++k){auto a=make(k+1,(10+k*20)*ms,460+k*20,200,400,0,false,color);e=o.step(a);}r.check("cyan_variant_entry_"+std::to_string(color[0]),e.accepted==1&&o.backend.downs==1);o.finish();}
+ for(int negative=0;negative<10;++negative){Own o;pas::current_rails::Evaluation e;for(int k=0;k<3;++k){auto a=make(k+1,(10+k*20)*ms,460+k*20);
+  if(negative==0){a.f.source_rotation=2;a.b.context.rotation=a.s.context.rotation=2;}
+  if(negative==1)a.b.context.frame++;
+  if(negative==2)a.f.rgb.pop_back();
+  if(negative==3){a.b.lines[0].association_valid=false;a.s.lines=a.b.lines;}
+  if(negative==4){auto l=a.b.lines[0];l.track_id=8;l.center.y=501;a.b.lines.push_back(l);a.s.lines=a.b.lines;}
+  if(negative==5){a.b.candidates[0].note.held_body_patch=true;a.s.targets[0].note.held_body_patch=true;}
+  if(negative==6){auto t=a.s.targets[0];t.note_id=43;a.s.targets.push_back(t);}
+  if(negative==7){a=make(k+1,(10+k*20)*ms,460+k*20,200,400,0,false,{230,190,70});}
+  if(negative==8){for(int y=200;y<=500;++y)for(int edge:{350,450})for(int d=-2;d<=2;++d)for(int c=0;c<3;++c)a.f.rgb[std::size_t(y)*3840+(edge+d)*3+c]=30;}
+  if(negative==9){a.s.targets[0].line_projection_only=true;}
+  e=o.step(a);}
+  r.check("negative_never_down_"+std::to_string(negative),o.backend.downs==0&&e.accepted==0);o.finish();}
+ // Capacity is whole-batch invalid, including unsupported entries.
+ {Own o;auto a=make(1,10*ms);a.b.candidates.resize(129,a.b.candidates[0]);auto e=o.step(a);r.check("129_complete_batch_invalid",!e.valid&&o.backend.downs==0);o.finish();}
+ {Own o;auto a=make(1,10*ms);a.b.lines.resize(17,a.b.lines[0]);auto e=o.step(a);r.check("17_lines_invalid",!e.valid&&o.backend.downs==0);o.finish();}
+ {Own o;auto a=make(1,10*ms);a.b.candidates[0].note.center.x=std::numeric_limits<double>::infinity();a.s.targets[0].note=a.b.candidates[0].note;auto e=o.step(a);r.check("nonfinite_geometry_no_down",e.accepted==0);o.finish();}
+ J j={{"schema","pas.current-rails-v1.contract.v1"},{"checks",r.rows},{"assertions",r.rows.size()},{"failed",r.failed},{"device_endpoints",0},{"physical_gold",0}};std::ofstream out(argv[1]);out<<j.dump(2)<<'\n';std::cout<<"current checks="<<r.rows.size()<<" failed="<<r.failed<<'\n';return r.failed?1:0;
+ }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

@@ -6,7 +6,8 @@
 
 唯一開發根 `C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006`，分支
 `codex/prelive-preparation-20261006`。原 checkout HEAD 74e5443、使用者 AUX、ZIP 保持原狀。
-初始核7份v3 core、3715份封存項目、256 PNG；完整選擇另核原錄影1–3063全部SHA。
+初始核7份v3 core、3715份封存項目、256 PNG；結案再核7份core、3715份舊封存項目及
+原錄影1–3063全部PNG SHA，原checkout HEAD／dirty／AUX／ZIP不變。
 本包不自簽總控獨立驗收；所有新收據與再跑入口在 `prelive-evidence-01`。
 
 ## 實作與自身前綴
@@ -66,6 +67,11 @@ Release08 formal185pass1skip另保留，後續已實跑該clip case。没有重�
 source08只有事後hash receipt，不能冒稱exact當時source snapshot；最終source／donor與raw閉包完整。
 long-dense01的native0結果也因identity guard而STOP，另開long-dense02同source／輸入通過；
 兩筆10000分母／raw均保留，不將第一次STOP升格成qualified run。
+writer raw auditor的首次程序收據也因identity guard STOP而保留；另開fresh
+`audit-data-prelive-release-writer-final`，native／runner／verifier皆0，active_final=0、
+held handles／streams完成。其integrity=true只核明示writer loss的資料，
+complete_prefix_evidence=false不改成成功前綴；verification SHA
+`0a8356218d22cc6e54a9e6d32f1bfede8bd5831c1b060cf1c5eb3e764a87c5e8`。
 
 ## 全鏈成本與安全
 
@@ -110,7 +116,12 @@ object bindings提供舊path與archive entry。帳本使用file bytes，沒有�
 
 metadata seal保存全部params／freeze／stdout／stderr／退出及失敗、source snapshots、結果與SHA索引；
 大raw timings／Journal、PNG、binary、依賴以external hashes保留，不重複複製入64MiB metadata。
-最終容量、sealed counts、original checkout及PNG前後SHA核對在 `closure.json`。
+首版封存 `SHA256_INDEX.json` 與 `closure.json` 原件保留；最後writer收據僅追加，
+最終閉包為 `SHA256_INDEX_FINAL.json` → `closure-final.json`。兩份index不互相覆寫，
+最終索引同時綁定首版index、大raw external index及追加writer檔案。
+最終索引4104項，metadata 36,748,060B／64MiB，新OUT 11,125,265,328B／12GiB，
+final index SHA `f059078eba9fdf06ed66e9fe08176ce7531081ef44334f5eda2c227cd2518445`。
+首版index SHA仍為 `3c8ecef50639858ecf71f2ed88e4a4653aaae2071125cc07c625cc23db9394bd`。
 再跑以fresh stage/root/report，詳見 PRELIVE_REPRODUCTION。所有local commits留在本分支，沒有push。
 
 主要local code commits：7ac2a31（typed current Hold／自身橋接）、971000d（獨立旋轉line raster）、

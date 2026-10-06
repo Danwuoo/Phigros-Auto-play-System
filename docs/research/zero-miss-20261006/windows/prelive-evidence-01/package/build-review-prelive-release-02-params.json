@@ -1,0 +1,18 @@
+{
+  "arguments": {
+    "Configuration": "Release",
+    "StageName": "build-review-prelive-release-02",
+    "GateReceipt": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\native-qualification-01\\native-gate.json",
+    "ToolSnapshot": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\tool-snapshot.json",
+    "BuildRoot": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-review-release-02",
+    "Inputs": [
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_review\\CMakeLists.txt",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_review\\pixel_review.cpp",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_review\\run.ps1"
+    ],
+    "SourceRoot": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_review",
+    "Operation": "Build",
+    "TotalSeconds": 300
+  },
+  "script": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\cmake-stage.ps1"
+}

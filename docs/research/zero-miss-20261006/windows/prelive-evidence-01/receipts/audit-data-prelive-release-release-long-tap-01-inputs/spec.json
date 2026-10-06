@@ -1,0 +1,27 @@
+{
+  "stage": "audit-data-prelive-release-release-long-tap-01",
+  "total_s": 300,
+  "runner_exit": 0,
+  "exe": "C:\\WINDOWS\\system32\\cmd.exe",
+  "native_exit": 0,
+  "argv": [
+    "/d",
+    "/s",
+    "/c",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\audit-data-prelive-release-release-long-tap-01-inputs\\native.cmd"
+  ],
+  "stream_cap": 4194304,
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\audit-data-prelive-release-release-long-tap-01-inputs\\native.cmd",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-audit-release-01\\prelive_audit.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-long-tap-01.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-audit-release-01\\prelive_audit.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-long-tap-01.json.journal.jsonl",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-long-tap-01.json.attempts.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\audit.cpp",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\CMakeLists.txt",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\run.ps1"
+  ],
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\audit-data-prelive-release-release-long-tap-01"
+}

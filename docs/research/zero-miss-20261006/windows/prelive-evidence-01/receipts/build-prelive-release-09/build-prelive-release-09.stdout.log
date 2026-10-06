@@ -1,0 +1,181 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-prelive-release-09-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\config.cpp for CXX dependencies
+[2/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\core.cpp for CXX dependencies
+[3/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp for CXX dependencies
+[4/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\journal.cpp for CXX dependencies
+[5/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\adb.cpp for CXX dependencies
+[6/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\touch_evidence.cpp for CXX dependencies
+[7/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp for CXX dependencies
+[8/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_clip_replay.cpp for CXX dependencies
+[9/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\preview.cpp for CXX dependencies
+[10/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp for CXX dependencies
+[11/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp for CXX dependencies
+[12/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking.cpp for CXX dependencies
+[13/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_pipeline.cpp for CXX dependencies
+[14/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_methods.cpp for CXX dependencies
+[15/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_shadow.cpp for CXX dependencies
+[16/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset_tools.cpp for CXX dependencies
+[17/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_analysis.cpp for CXX dependencies
+[18/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_session.cpp for CXX dependencies
+[19/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset.cpp for CXX dependencies
+[20/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_archive.cpp for CXX dependencies
+[21/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp for CXX dependencies
+[22/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_pixel_clips.cpp for CXX dependencies
+[23/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp for CXX dependencies
+[24/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_recording.cpp for CXX dependencies
+[25/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp for CXX dependencies
+[26/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp for CXX dependencies
+[27/104] Generating CXX dyndep file CMakeFiles\exact_bvi_v3.dir\CXX.dd
+[28/104] Generating CXX dyndep file CMakeFiles\formal_core.dir\CXX.dd
+[29/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front.cpp for CXX dependencies
+[30/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.cpp for CXX dependencies
+[31/104] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp.obj
+[32/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\core.cpp.obj
+[33/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\config.cpp.obj
+[34/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\adb.cpp.obj
+[35/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\touch_evidence.cpp.obj
+[36/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\journal.cpp.obj
+[37/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\preview.cpp.obj
+[38/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(311): warning C4244: 'argument': conversion from '__int64' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(312): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(315): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(317): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(324): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(325): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(328): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+[39/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_clip_replay.cpp.obj
+[40/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_pipeline.cpp.obj
+[41/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp(420): warning C4456: declaration of 'id' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp(390): note: see declaration of 'id'
+[42/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp(478): warning C4456: declaration of 'closure' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp(382): note: see declaration of 'closure'
+[43/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(773): warning C4456: declaration of 'gap' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(681): note: see declaration of 'gap'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(921): warning C4456: declaration of 'minor' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(880): note: see declaration of 'minor'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(952): warning C4456: declaration of 'gap' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(681): note: see declaration of 'gap'
+[44/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_methods.cpp.obj
+[45/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking.cpp.obj
+[46/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_shadow.cpp.obj
+[47/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_analysis.cpp.obj
+[48/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_session.cpp.obj
+[49/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset.cpp.obj
+[50/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset_tools.cpp.obj
+[51/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_archive.cpp.obj
+[52/104] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp.obj
+[53/104] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp.obj
+[54/104] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp.obj
+[55/104] Generating CXX dyndep file CMakeFiles\current_front.dir\CXX.dd
+[56/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_pixel_clips.cpp.obj
+[57/104] Generating CXX dyndep file CMakeFiles\own_bridge.dir\CXX.dd
+[58/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge.cpp for CXX dependencies
+[59/104] Generating CXX dyndep file CMakeFiles\current_bridge.dir\CXX.dd
+[60/104] Linking CXX static library exact_bvi_v3.lib
+[61/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current.cpp for CXX dependencies
+[62/104] Generating CXX dyndep file CMakeFiles\current_rails.dir\CXX.dd
+[63/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp for CXX dependencies
+[64/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_tests.cpp for CXX dependencies
+[65/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp for CXX dependencies
+[66/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_prefix.cpp for CXX dependencies
+[67/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\chain.cpp for CXX dependencies
+[68/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tests.cpp for CXX dependencies
+[69/104] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_recording.cpp.obj
+[70/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tracking_tests.cpp for CXX dependencies
+[71/104] Linking CXX static library formal_core.lib
+[72/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\cost_analysis.cpp for CXX dependencies
+[73/104] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\prelive-current-release-09\runtime_contract.cpp for CXX dependencies
+[74/104] Building CXX object CMakeFiles\own_bridge.dir\own_bridge.cpp.obj
+[75/104] Linking CXX static library own_bridge.lib
+[76/104] Generating CXX dyndep file CMakeFiles\prefix_preservation.dir\CXX.dd
+[77/104] Generating CXX dyndep file CMakeFiles\front_preservation.dir\CXX.dd
+[78/104] Generating CXX dyndep file CMakeFiles\current_tests.dir\CXX.dd
+[79/104] Generating CXX dyndep file CMakeFiles\own_prefix.dir\CXX.dd
+[80/104] Generating CXX dyndep file CMakeFiles\current_chain.dir\CXX.dd
+[81/104] Generating CXX dyndep file CMakeFiles\formal_affected.dir\CXX.dd
+[82/104] Generating CXX dyndep file CMakeFiles\cost_analysis.dir\CXX.dd
+[83/104] Building CXX object CMakeFiles\current_front.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front.cpp.obj
+[84/104] Linking CXX static library current_front.lib
+[85/104] Building CXX object CMakeFiles\current_bridge.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge.cpp.obj
+[86/104] Linking CXX static library current_bridge.lib
+[87/104] Building CXX object CMakeFiles\current_rails.dir\current.cpp.obj
+[88/104] Linking CXX static library current_rails.lib
+[89/104] Building CXX object CMakeFiles\front_preservation.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_tests.cpp.obj
+[90/104] Building CXX object CMakeFiles\prefix_preservation.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp.obj
+[91/104] Building CXX object CMakeFiles\current_tests.dir\current_tests.cpp.obj
+[92/104] Building CXX object CMakeFiles\own_prefix.dir\own_prefix.cpp.obj
+[93/104] Building CXX object CMakeFiles\current_chain.dir\chain.cpp.obj
+[94/104] Building CXX object CMakeFiles\formal_affected.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tracking_tests.cpp.obj
+[95/104] Linking CXX executable prefix_preservation.exe
+[96/104] Linking CXX executable front_preservation.exe
+[97/104] Building CXX object CMakeFiles\formal_affected.dir\runtime_contract.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-release-01\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-release-01\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-release-01\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-release-01\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[98/104] Building CXX object CMakeFiles\cost_analysis.dir\cost_analysis.cpp.obj
+[99/104] Linking CXX executable current_tests.exe
+[100/104] Linking CXX executable own_prefix.exe
+[101/104] Linking CXX executable current_chain.exe
+[102/104] Linking CXX executable cost_analysis.exe
+[103/104] Building CXX object CMakeFiles\formal_affected.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tests.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-release-01\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-release-01\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-release-01\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-release-01\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tests.cpp(135): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[104/104] Linking CXX executable formal_affected.exe
+TRACE Build END exit=0

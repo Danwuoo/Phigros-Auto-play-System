@@ -1,0 +1,8 @@
+{
+  "noise_path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\analysis-release-aa-freeze.json",
+  "noise_sha": "a87db45accfa41d33b38dba239d68ad2fdfff7e90387215c6b91b227bf7f3eed",
+  "status": "not_run: frozen AA gate NOT_READY",
+  "candidate_results_used_in_noise": 0,
+  "comparison_allowed": false,
+  "planned_runs": 36
+}

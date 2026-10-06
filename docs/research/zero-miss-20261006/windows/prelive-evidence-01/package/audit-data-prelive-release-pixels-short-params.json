@@ -1,0 +1,23 @@
+{
+  "arguments": {
+    "GateReceipt": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\native-qualification-01\\native-gate.json",
+    "Arguments": [
+      "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-02.json",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\audit-pixels-short.json"
+    ],
+    "Inputs": [
+      "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-02.json",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-audit-release-01\\prelive_audit.exe",
+      "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-02.json.events.jsonl",
+      "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-02.json.rows.jsonl",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\audit.cpp",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\CMakeLists.txt",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_audit\\run.ps1"
+    ],
+    "Executable": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-audit-release-01\\prelive_audit.exe",
+    "StageName": "audit-data-prelive-release-pixels-short",
+    "TotalSeconds": 300,
+    "ExpectedNative": 0
+  },
+  "script": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1"
+}

@@ -1,0 +1,23 @@
+{
+  "all_input_processed": true,
+  "complete_prefix_evidence": true,
+  "declared_writer_loss": false,
+  "device_endpoints": 0,
+  "errors": [],
+  "event_rows": 10401,
+  "game_adoption": "unknown",
+  "integrity": true,
+  "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-4.json",
+  "phases": [
+    32,
+    0,
+    32
+  ],
+  "plan_basis_rows": {
+    "live_pixels_short_linear_fit_tap": 59
+  },
+  "receipts": 64,
+  "release_calls": 6,
+  "schema": "pas.prelive-independent-integrity.v1",
+  "unknown_release": []
+}

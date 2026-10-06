@@ -1,0 +1,67 @@
+{
+  "normal_stopped": true,
+  "not_run": [
+    {
+      "attempt": "aa-hold-2",
+      "reason": "previous necessary gate failed",
+      "status": "not_run"
+    },
+    {
+      "attempt": "aa-hold-3",
+      "reason": "previous necessary gate failed",
+      "status": "not_run"
+    },
+    {
+      "attempt": "aa-hold-4",
+      "reason": "previous necessary gate failed",
+      "status": "not_run"
+    },
+    {
+      "attempt": "aa-dense-1",
+      "reason": "previous necessary gate failed",
+      "status": "not_run"
+    },
+    {
+      "attempt": "aa-dense-2",
+      "reason": "previous necessary gate failed",
+      "status": "not_run"
+    },
+    {
+      "attempt": "aa-dense-3",
+      "reason": "previous necessary gate failed",
+      "status": "not_run"
+    },
+    {
+      "attempt": "aa-dense-4",
+      "reason": "previous necessary gate failed",
+      "status": "not_run"
+    }
+  ],
+  "runs": [
+    {
+      "scene": "tap",
+      "sha256": "6671e480c6932f3ea5735bc2ee9cbef835d35862ee2a3a17e2f503f693dc46c1",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-1.json"
+    },
+    {
+      "scene": "tap",
+      "sha256": "4b12998b5aa5c455ddce288669cc9f4e0dd6c9069ff8df6cb5f75b4628ac635f",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-2.json"
+    },
+    {
+      "scene": "tap",
+      "sha256": "7532709a27fea3bbfd93506b8ca8f5f55ea26a20efa5dd9a9c5b036c9e96012b",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-3.json"
+    },
+    {
+      "scene": "tap",
+      "sha256": "995eb6655d670692db70f4f5de0e6dde44607a4ab154aa1143ed517b02bdee8a",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-tap-4.json"
+    },
+    {
+      "scene": "hold",
+      "sha256": "0987f61fa0375240d0739df0f2aeda06e29c6d8768641c0263a8544d5ee2f03b",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\pipeline-release-aa-hold-1.json"
+    }
+  ]
+}

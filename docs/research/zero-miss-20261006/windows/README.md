@@ -1,11 +1,21 @@
 # 2026-10-06 Windows 接手與離線橋接里程碑
 
+最新本地冷準備交付見 [PRELIVE_RESULTS](PRELIVE_RESULTS.md)：current-rails-v1 typed hook
+已接正式離線 owner／scheduler，三配置113／56／113／68／186項均通過，3063幀完整自身
+receipt前綴有效。A/A在第5筆Hold無動作時停止，A/B未跑，成本與physical gate仍NOT_READY；
+沒有裝置操作，當前Chapter Legacy分母／IN解鎖與完整Miss=0仍unknown／未完成。
+收據入口為 [最終SHA索引](prelive-evidence-01/SHA256_INDEX_FINAL.json)，另附
+[重跑方式](PRELIVE_REPRODUCTION.md)、[待授權操作包](PRELIVE_OPERATION_PACKET.md)與
+[逐曲採證模板](PRELIVE_RESULT_TEMPLATE.json)。候選只有offline entry，未接live CLI。
+
+以下為先前Windows交接／sidecar驗收的歷史里程碑，封存與負結果維持原件。
+
 **產品目標未完成；實機與成本 gate 仍 NOT_READY。** 本輪完成交接核驗、Windows
 離線建置，以及隔離研究候選的 current ROI／all-lines → 正式 owner／scheduler
 橋接。凍結 v3 的七份 core source、正式 runtime、原測試與 oracle 均保留。
 沒有裝置讀取、Fixture／遊戲操作、模型工作、push、PR、merge 或新長期 Goal。
 
-最新總控獨立驗收見 [FRONT_CONTROLLER_ACCEPTANCE](FRONT_CONTROLLER_ACCEPTANCE.md)：
+前一包總控獨立驗收見 [FRONT_CONTROLLER_ACCEPTANCE](FRONT_CONTROLLER_ACCEPTANCE.md)：
 全新 Release 重建，三配置重跑56項量測／113項前綴，256幀原圖audit與三個竄改拒絕；
 簽收隔離離線幾何量測。總控新增1 STOP保留並以新attempt成功重跑；eligible仍0，
 正式採納／完整成本及實機未驗收。交付封存與原source均未覆寫。

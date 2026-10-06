@@ -1,0 +1,27 @@
+{
+  "exe": "C:\\WINDOWS\\system32\\cmd.exe",
+  "total_s": 300,
+  "stream_cap": 4194304,
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\review-cards-prelive-release-01",
+  "runner_exit": 0,
+  "stage": "review-cards-prelive-release-01",
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\review-cards-prelive-release-01-inputs\\native.cmd",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-review-release-01\\pixel_review.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_review\\CMakeLists.txt",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_review\\pixel_review.cpp",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_review\\run.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\full-prefix-selection.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800\\full-recording\\frames\\frame-001519.png",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800\\full-recording\\frames\\frame-003028.png",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800\\full-recording\\frames\\frame-003030.png"
+  ],
+  "argv": [
+    "/d",
+    "/s",
+    "/c",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\review-cards-prelive-release-01-inputs\\native.cmd"
+  ],
+  "native_exit": 0
+}

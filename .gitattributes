@@ -1,2 +1,4 @@
 # Preserve upstream license bytes, including their original whitespace.
 docs/third_party/*.txt -text -whitespace
+# Keep sealed prelive receipts and SHA indexes byte-identical across checkouts.
+docs/research/zero-miss-20261006/windows/prelive-evidence-01/** -text -whitespace

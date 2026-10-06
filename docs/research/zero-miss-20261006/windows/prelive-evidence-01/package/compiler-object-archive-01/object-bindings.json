@@ -1,0 +1,2098 @@
+{
+  "reason": "capacity preflight rejected before any cost; retain every intermediate object as zip entry",
+  "files": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "3ee892984b32a75455f6cbe1d91ac2b349c9b4cc43cc8966e51657709422e909",
+      "bytes": 2036
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\current_bridge.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/current_bridge.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge.cpp.obj",
+      "sha256": "4f12d26da264410dc9106137d9ef2591ba670e2997f99eeb7aae173baf96415c",
+      "bytes": 1892057
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "d7e0a894b7cde8384e722c09cef8d8e4db10b9092d136f7b099466c88c3a9fed",
+      "bytes": 5986135
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\current_rails.dir\\current.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/current_rails.dir/current.cpp.obj",
+      "sha256": "478238b6c133f4f888c901dafd6175d9d75439213f36728a97c905ea5ea44e78",
+      "bytes": 1725610
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "495895aabe3f4883bbdf5962bd5231e9560ca1147284a6dad82ac2cf5976ce55",
+      "bytes": 194880
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "4d956e9fd3ddd83d9e6497bf6851287c58dcfc683fab10c461c41d58d89b0b8a",
+      "bytes": 129026
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "f981a62a9ec81fa0bd8c4e7108f90a2d249d0806cf828105ec580e423dc2e3b0",
+      "bytes": 144112
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "6a0ee41b939b2f29ed2cb7c97906c0f47733571f9cfcf4bfb7937e109a298f4d",
+      "bytes": 204575
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "416aab596ad16432ab8a156fcd22ae559652d09caab13a030568def388062188",
+      "bytes": 6487967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "32fce491876e21fe4072c9f11542a942f5df4125ef47d788824d867fa4460e4f",
+      "bytes": 17581568
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "91e7ac5f54ae40660096f02f1f192983c46d5c3fdd8210637169937ded832a98",
+      "bytes": 7555070
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "81984cafd0dcc764df448f53a10b31f3201da4e56d3faf8c348f342f394271f3",
+      "bytes": 2410785
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "34052a5c2027733606b4fe8c8f412c8bb931cb3ca3e0c4a3e3be56fbb6d416dc",
+      "bytes": 12159837
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "4d700f4ac7f30e2b70eb8d6845caf7ad80be3ec7a881d4ae6aaf973fc3962459",
+      "bytes": 16797675
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "9bbf35f08a6a0d5a7f7b433abbda176eadb272bba64704f3c8388fed9feabf12",
+      "bytes": 15197088
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "2499fd29635aadd273dbe17dee720f83b8cd446ac101addd8c375f24bb951c10",
+      "bytes": 14297484
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "3348f6ba7fba302a748ff9b23d141e365e29c3c9aac8f68e3863f33985a8259a",
+      "bytes": 9495483
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "5b4cf36196d058c67397a0c98d5a008178c8eca86e41aa4748076404e72c1965",
+      "bytes": 2412978
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "5d98a45d3ddd0d393f15b677a977ba7716a828888955913fb7f787b3bdcb8b68",
+      "bytes": 2289763
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "c2f9569f791cf62866e94bcb2a6a564163defdfa956c6eda0a7f489b5214269f",
+      "bytes": 12518761
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "980eded97c57803c60a245bd49b4dcaf2ad64a2a097b7cb86663b2a07ac62e18",
+      "bytes": 7065415
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "ce40d9e8a6ed6fdc610fe64a9457c0c1705dbd3f1eb5b7cb55e31d7ebfe311af",
+      "bytes": 6692668
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "ffe54c5983291a289a5f3a03913f00bd437b0aaeef0375c5cf27567700168dd2",
+      "bytes": 8908601
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "b21c9e8e495e51493c0d572b4cb15e5b936844a5813d2bccfd4d96fd9e0de10d",
+      "bytes": 23825958
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "da37c3fdaa75ea9e73805a472633dbc4ef9f1e38f203c0d4d6c9453966a8b0a6",
+      "bytes": 3551436
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "ea8aa54c89ed28d34fc8ea699763e0bc72c7b4cf861683c774c644e10f387096",
+      "bytes": 1279573
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "afe735056f7af5d8a052f05143278f787912b961625d51aeffa59a4ddcb536a8",
+      "bytes": 6195445
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "fc3cbb3f1480b3151a21ff8cdcd45120fc51124fd55a27eb6e132c9630b70a8c",
+      "bytes": 7809363
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "cc94c439446b92aefba56e7b90f98d6eb41782951520dc19ed86541b1412aad8",
+      "bytes": 8504085
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "6ee11ba5a85759292bf7187ce2becdd679a10182d1fa218065534e064f8b4a0c",
+      "bytes": 937368
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\front_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/front_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front_tests.cpp.obj",
+      "sha256": "fcf201cc11ff2691514ef3896b8315f72c3a5ef586c762dd9a75eb775fdcc697",
+      "bytes": 5909248
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "941e42b28a8b7c352cf24911ee126500c70f404f977e7147d8bba3601cb2bbdb",
+      "bytes": 1985815
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\own_prefix.dir\\own_prefix.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/own_prefix.dir/own_prefix.cpp.obj",
+      "sha256": "8a41c1bc238e29591be1c8ee5c0956e7a5ae614e83514e7e3e57e4f3e800fed2",
+      "bytes": 7071868
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\prefix_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/prefix_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge_tests.cpp.obj",
+      "sha256": "747395720dfc4a99061eccd58c4816db6b4d1cb0e01392d8ec0ad57677c3aee8",
+      "bytes": 7069615
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-03\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-release-03/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "1295ea0e6df4d93041ae15c9686db952d0e197e4101faa3fc8db2095fdbcf841",
+      "bytes": 660
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "37dcfc6223bd9cc439ae8c473be65fec1d674fba69f9ff3d153b8a7305f8d0b6",
+      "bytes": 2036
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\current_bridge.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/current_bridge.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge.cpp.obj",
+      "sha256": "a6f08d20d89af0a50e6cefcef1a8748be885e16d5486288c18c2e016db64c069",
+      "bytes": 1892057
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\current_chain.dir\\chain.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/current_chain.dir/chain.cpp.obj",
+      "sha256": "92222e86a4c891250b0c5391c7ab0b5291f4379b49ddb1db18c8d1b2c76a480c",
+      "bytes": 13418788
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "f726b7c225e6da6ed884cfd27a952c15423e30058c16f1d36150dbe045a709be",
+      "bytes": 5986135
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\current_rails.dir\\current.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/current_rails.dir/current.cpp.obj",
+      "sha256": "90acd043f6da8263e26d3b499012403217cfa63b4b20164089dc38d5db7339d8",
+      "bytes": 1725610
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\current_tests.dir\\current_tests.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/current_tests.dir/current_tests.cpp.obj",
+      "sha256": "c7e34863d618d4a94a5fe67cded06dd826e1746e350e26bbd0418a40c7a663b9",
+      "bytes": 6175145
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "e48635b6c800fedaadae14d6a270e8fb123323f17a5f1449cecdd20e07ca72f5",
+      "bytes": 194880
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "8474fb99243730b4ff0a3ee8c397a4cef6faa4c08452596b051986c67a529eb1",
+      "bytes": 129026
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "3b56ee7d4be5a1f0e02e7b62ebed9c16e43c382f94647f6ce52e7c3367a32441",
+      "bytes": 144112
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "8797a63643a3be588d8b34ec4b14468c78ff3c6f179075a1a88d6f9724793a2c",
+      "bytes": 204575
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "b3a0ef588a2302ae8c0ed142dd790b89939b788f6a38099d84c158fe01e2b155",
+      "bytes": 6487967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "527ac4ff6ba8a21363a9767650d0050c861bb53daad03b17559106461f545442",
+      "bytes": 17581568
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "7fa3deb75075aee341e582ea06bf9a95d14ba377f6c2972e49c616a7e31b568d",
+      "bytes": 7555070
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "18cee344f0722e2a8081b8b91b89ea79af48d8f5d5928e11eed5f9592a4c8061",
+      "bytes": 2410785
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "f26e2d00232e9b551543fa9343bf1962b01001339478f1f9b5de9f5c6bd7d0bc",
+      "bytes": 12159837
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "0e583e1ee7701abdde3f92b1075c91e78c403734d086508246d85967ab13f267",
+      "bytes": 16797675
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "923c5b2006dd7eddaed0d28f4f8dac8b7d828a824fadb6ccdc85e1489f75f66c",
+      "bytes": 15197088
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "be5e101fe1a666c29fb1a20fc56fa47d989ad91c2352ded973c1fd40796b5205",
+      "bytes": 14297484
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "da0a8dd906c81b91fa2f286a7c05c4370ad7a0477766930a8a2e926f0f6535c0",
+      "bytes": 9495483
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "c0220b9fa49bd3e4a8708756b034714057ffb49ede94d193bc5da81675920337",
+      "bytes": 2412978
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "97f5467cd468d5a27fc383c5ad41a86ad289602f9084c1041e45d5e7227f5b8d",
+      "bytes": 2289763
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "cbd3a9d9dd71e307a3a8f8bb34becf461778673591659614ff948cd9f1bd24d1",
+      "bytes": 12518761
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "5db8b61ed09e084a5f0d0dad524481af53eff18e9b08c23158004d20bd46b89f",
+      "bytes": 7065415
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "cbf6bf671a05b4bcf6403b132f8cc046eb31ea0f0313db91abbbdf46118ecd30",
+      "bytes": 6692668
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "725083ab965af61d86516f227f4b09f2c4cb28ea67c575ab65140b076341a322",
+      "bytes": 8908601
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "9070a84c97d18dced509b3e139ecee3f8bba968a5e2a51964af4ccc7d6c8a7f2",
+      "bytes": 23825958
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "44c2294283b2ecc3f1784f23c30cd266e8c5656c39d619d77be3841120d144ab",
+      "bytes": 3551436
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "cddaab3aac5828b7b1febd8b2b35d4ca8449c32ef01762f7bad81113dcfa5e57",
+      "bytes": 1279573
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "607e251b3dd89d4b8c2f55348e2ae1e7f2be168e93fe5af1b0d151181da362f9",
+      "bytes": 6195445
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "5ee7da8d58784579cf1fae60a2770c9c041c5bdee5a665680cecb972057f5ce1",
+      "bytes": 7809363
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "0fd3220972f46135f92fa25429fda4591debd34bc8a7d54170f595978523d923",
+      "bytes": 8504085
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "e1dc3fa3ac0360830f5ab0aa8b52ffcf382f462a05c847775dbdd80801fdce1f",
+      "bytes": 937368
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\front_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/front_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front_tests.cpp.obj",
+      "sha256": "09c47afea31f95725c32f88b686defa78837b97b48cfad94fd0c46043168e4cf",
+      "bytes": 5909248
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "269de6774ddc294e98f435e077041b5bffe41a04c3b8d303ba651abea367279e",
+      "bytes": 1985815
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\own_prefix.dir\\own_prefix.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/own_prefix.dir/own_prefix.cpp.obj",
+      "sha256": "e7d32cce56709f20ff4a3a0f7b494e19a193c5a47bdd746905fbb4c70cd8cad2",
+      "bytes": 7071868
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\prefix_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/prefix_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge_tests.cpp.obj",
+      "sha256": "c1d1b6f2cf7ec668abec1b449afcdefc776dbd60dda878b67f75047bc3d0ad1e",
+      "bytes": 7069615
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-04\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-release-04/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "b866214ff7fdf5dc48ed5aa64b734fffc7ee5cf9cf79b404110775292b4d2e24",
+      "bytes": 660
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "286332e808d36f2eb395aabc52622f9f4dcf1be28e31a18682d4025d42c51f77",
+      "bytes": 2036
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "5616ce05af531e6d276dd3c438d0d2d9e9a53175824a56a9f3be2d629cd1031a",
+      "bytes": 5986135
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "182da373bf179e1dd96bd15031f870e3d5e107ff9b326f792828f411fbe5ff45",
+      "bytes": 194880
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "6acbceb9ff32a3731f3af87355944b5b37819ac49102b90efaec2698385f608f",
+      "bytes": 129026
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "645150ca7f9b0288423dc3860541c60b871c1c48ae3cb231240d1d3990c813d5",
+      "bytes": 144112
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "4f0334f9efba0a1fac49087eea52ead5d907158616b466d9bb4809c1462334f7",
+      "bytes": 204575
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "9337ea29fb526abfec007f4044bb9681650b6311787f40fcd426795050713729",
+      "bytes": 6487967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "60fed788b3ab36cacdf76b84031339f8bf2102ff2a49c63cfd219943fc25222b",
+      "bytes": 17581568
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "d5febd5df417b547b7c0b9d61931cd906e6a83dc69d470d9153619aab65519e9",
+      "bytes": 7555070
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "9289b031be385f24b67aee9e326849c0271ce2505e8fd3621147c7bce95e9ed5",
+      "bytes": 2410785
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "fcb7f047065444315baae55edf311d1da62db1d02223435b7427648afc65dbe1",
+      "bytes": 12160069
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "7eaeaced5fc3ef9164f4cd0702681ab8d1806afd7aad0d90a255c31eaee18200",
+      "bytes": 16797928
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "d9a5a31f67a253d556f9312bb0f8d3dc487b9c4709ce0bb129d714147a58beb8",
+      "bytes": 15197332
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "de2df21b814ad16713ff1b41cd79124f6195c59baffec251da7249c3eaa4bbf2",
+      "bytes": 14297740
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "c4a41c19f21f2a6bf7af13ea943b361bced859e5a8d19d269fa22de65ea881f5",
+      "bytes": 9495743
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "6425abc0e1d38a26ccc3e8e04f801f044c4d1053a485bc897bfd97e86abcdf97",
+      "bytes": 2412978
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "0b1058fe1f71b510800b8b228a346a14728d88aced5e07d2a88c5dbd7418c45f",
+      "bytes": 2290038
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "8788e68744657dfbfe79ae0e5ee3d8fa4fd4ce3edf5e3012d6e29cb52317222e",
+      "bytes": 12519017
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "24be873da0be274cc33b958fb78a5b22b7bda7bab45a3df6b934c304f2cc78e9",
+      "bytes": 7065701
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "15d85fa6fb9e9fef16ef62e971221286dad5f1457ba70656efe6701858866547",
+      "bytes": 6692908
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "4ba50775b0dda81fc2ec6d83e0b2d876ef0bf8f1901728af513a3b9e53b05ba2",
+      "bytes": 8908812
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "64926aff3ef1f9d9015463a4a70ebc83fb678efe3835a4371d51fbdb6e3a4df0",
+      "bytes": 23832166
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "b8301561e7a22ebe7f8d2c0047929be04cbef637eb58d119f0ea102acb33d9f6",
+      "bytes": 3551436
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "4e7729fa452b2e5e07ca33338154bf33bf74090acaa7166ed910b7313ce1a9fc",
+      "bytes": 1279573
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "ea59c8521000b903ca9f9b33c8e6f29b2ce368085a8be7628ac924ea55632813",
+      "bytes": 6195445
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "61b92d7054978b189bee3aa05364d4a7e5c0b82a57b42eb8bd53e5e483a21f4e",
+      "bytes": 7809591
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "1bbaa50c94685cd9a71fd1eae46aca45e970af40ac3c60bf18a7705655528660",
+      "bytes": 8504085
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "527e383044691ba9079236a35294151c6cad70c13a7aa79b350063bf47a4dd4e",
+      "bytes": 937368
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "f3c08b2eebf5d3238b9b2d3eb68dc8b04872f6e257ee1659157e613ea12b45a8",
+      "bytes": 1986110
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-05\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-release-05/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "0d819db2febc85c1847726e78130ba93917c528a3316bb32216fcb400ae0e0bd",
+      "bytes": 660
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "2dcf39f2e31b3e783a97f2c1c937aa55d348f728fb66c62e511227d0c73cb14a",
+      "bytes": 2036
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\cost_analysis.dir\\cost_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/cost_analysis.dir/cost_analysis.cpp.obj",
+      "sha256": "49fab825bb070776c2e8bebab25df1e5a73a285295ff844256e109474cb7444c",
+      "bytes": 9097173
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\current_bridge.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/current_bridge.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge.cpp.obj",
+      "sha256": "941a5fc1ccdd24dc912411c45bae24228d80c77406fec980eacef9ecb1e4232d",
+      "bytes": 1892352
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\current_chain.dir\\chain.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/current_chain.dir/chain.cpp.obj",
+      "sha256": "d4af4966205b148ee29a412780ca296a73a89459111425607f7ab82d56ba134c",
+      "bytes": 13715665
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "046d487b05267b370e3e5c788fdd7875a7cfa87f61b279edc90c055923731769",
+      "bytes": 5986135
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\current_rails.dir\\current.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/current_rails.dir/current.cpp.obj",
+      "sha256": "fd998c340dd0f6e43833a1d467e9960a6e5fb7152c9815553747200c8977eef4",
+      "bytes": 1729432
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\current_tests.dir\\current_tests.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/current_tests.dir/current_tests.cpp.obj",
+      "sha256": "100934f9ca6c1557e8081e0e20c040bb0e129f4d8bef3edc093ea51af0a24e51",
+      "bytes": 6252314
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "b87aba74d6c98a0d9d4bdf7803428235cfdc9025e207ff60164526ae4bfccb35",
+      "bytes": 194880
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "106d2aea346842b7df1131f55e87e11b5035a5d4bc4a3e8832c193198d4b7658",
+      "bytes": 129026
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "1481155deab7a339b4e697874d0e64d2a62a3a5a77be3a93a97bcf9bf3630e69",
+      "bytes": 144112
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "418738ba969ae1c08e121e64536460a14704d23e108e3255750aa59ea4805f97",
+      "bytes": 204575
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_affected.dir\\runtime_contract.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_affected.dir/runtime_contract.cpp.obj",
+      "sha256": "95e4d559e59f996de353c2096e2e1527bc82f9d5839863d6348ebcdd9d2a23fd",
+      "bytes": 9055076
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tests.cpp.obj",
+      "sha256": "5677743480c4b87cf6b6f9ffd273005ecbaacdc37e14d7aedd005bfcd64c8968",
+      "bytes": 30673312
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tracking_tests.cpp.obj",
+      "sha256": "40fcd55e15ee5aba19baeaef837c8051f6add17da3d4be452267582688e16059",
+      "bytes": 8969416
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "5d4fb533aff9b3602ef00601fbdeaf9a1865acc335b3c66922518cb3706d1e7c",
+      "bytes": 6487967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "48bc90e3dc886f847defe68a7f13b3e75374b76656d38400072a463ddf22fe70",
+      "bytes": 17581568
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "c63aeedb8097f1cb84e719d748b3ae0999bb4c960f9645607fca32c503aa20e2",
+      "bytes": 7555070
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "2e21028ec22fed64703f355adc968a4b229a45edbc651517c7aeab129693d13f",
+      "bytes": 2410785
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "fe95a7547eed963e0ad285820203ce18d3c25219229d02cb7e05a3fa40ae0568",
+      "bytes": 12160069
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "e3deb7677ac0f8fbe473ce20612f2d8c9e434ad6dc0b532383ee24b6e4a7f75f",
+      "bytes": 16797928
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "4e40d98bf056920772ca0c12b01a7541576a0188ec5cd8f4a2e08f66a400491c",
+      "bytes": 15197332
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "49f6398654c2fd2f82a23109a86ddeadea50f77fb3c582ab970efdb84731f3e2",
+      "bytes": 14297740
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "d52fc9223c7768ce59872703f1191e8841367391fcf500199e8b667bc6b4b524",
+      "bytes": 9495743
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "22144bb30c75045d54a1fbb820c494ecd33bdc90bf4356cc47c211f57c389c63",
+      "bytes": 2412978
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "e912eb92d3662596e1328c75381e84ae00a04df3971cb7391dcc5d9255c15a0e",
+      "bytes": 2290038
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "a420411adeae5fc84de1f11985fcaac31ce72c555ee950a7102c5c0c562dfe7e",
+      "bytes": 12519017
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "0d23ec340071053051d95447dc66ec40fb5c920b58af55beb60f6245101007f9",
+      "bytes": 7065701
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "a5b260260439fbe36d0cd0fac97ef76ed3d1c52c6962b20cf68951d54614f4c5",
+      "bytes": 6692908
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "c470aa78fd52ce7d6c8e8f59b92ad76a07b79dfe14846165a65b3a4d17411893",
+      "bytes": 8908812
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "2245a54fdde9c2b293b099d06b65ad7802ee20bfe04119c175a72df174a008a1",
+      "bytes": 23832166
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "e88dd427a7b4018f6a9cbd12ae370102b02a83a098f32da046568bfb358f40a3",
+      "bytes": 3551436
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "372a6fe811e62ba338ce56df3489bf51c78417a089f7ebb2828a85dc02fc311b",
+      "bytes": 1279573
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "3c307730bd71b0f358ccce637b6466ac851db63801bf1c1ef041f5e89bbdbdca",
+      "bytes": 6195445
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "ebefa56269a4484916415754963b927c27c07d0fe55bdfb65bdffd0edae8caef",
+      "bytes": 7809591
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "bc65be4ebb5b747f5556f9774c01cf1813a26d84c023f1739f731b22a42c17b1",
+      "bytes": 8504085
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "7190f30d2d59802ae7021dc5fbb5ee678c980d2b16a1e7991c5490289e8ac306",
+      "bytes": 937368
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\front_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/front_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front_tests.cpp.obj",
+      "sha256": "80bfd8ef6374a6fc266fb34572f7026114b09a3d5a64c7400caf56c357f0c35d",
+      "bytes": 5909252
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "c6fb2226eea31353c0537bbd7f24f515c55f1b90400eac3b4cbcd8395bee1fc5",
+      "bytes": 1986110
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\own_prefix.dir\\own_prefix.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/own_prefix.dir/own_prefix.cpp.obj",
+      "sha256": "1a0be8301cde6065a973cf62829d68282d7f6680676fae70a1721944cef1ff29",
+      "bytes": 7072220
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\prefix_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/prefix_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge_tests.cpp.obj",
+      "sha256": "c5082c082d95111af373a63bc4b9badf4688246226d0a175fb6214e2623832af",
+      "bytes": 7069967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-06\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-release-06/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "75ca8bc4f6a4da6b048d30466148c5da790b5a7fda0d3ae9d8a52e29647cc0e0",
+      "bytes": 660
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "7332a8a08a86831c58a54cb634c96a21f57d7a20f50a7c2e5c47f07e085f8375",
+      "bytes": 2036
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\cost_analysis.dir\\cost_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/cost_analysis.dir/cost_analysis.cpp.obj",
+      "sha256": "be898f83cb01e5908cbed3e789e32d9db09d80dda2a2d8a6312219227af141ae",
+      "bytes": 9097173
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\current_bridge.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/current_bridge.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge.cpp.obj",
+      "sha256": "885774262eb10b5c907f0efa7fadd9c30bb24d4d9b816e31f0dacda13cee86f4",
+      "bytes": 1892352
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\current_chain.dir\\chain.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/current_chain.dir/chain.cpp.obj",
+      "sha256": "561fbc61ad354707d73d179f902d9241b69123756995ee88a3192c92772c2e56",
+      "bytes": 13823760
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "a8579b08910431a2ce98ff25093abbcd5e4c8a6ac3fa681132731fbfcb733c2a",
+      "bytes": 5986135
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\current_rails.dir\\current.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/current_rails.dir/current.cpp.obj",
+      "sha256": "ec1cfe22805ba4607019a211ee06e9640a89f980153e55612fe9775d46585784",
+      "bytes": 1736322
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\current_tests.dir\\current_tests.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/current_tests.dir/current_tests.cpp.obj",
+      "sha256": "b699f189b91c0fefbd2f9b49760f33c044b7212f8fa40c8ca77b863e14dcb350",
+      "bytes": 6890987
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "5ab6be5f4b9ccfdfb7a6ecca69c6aaa7b624bef5bc13b159e1537aa797a4df84",
+      "bytes": 194880
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "36a7b6fc13245ac76597b0fc9139232925fe4379b7ea2aa59fdd75e267eea5dd",
+      "bytes": 129026
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "f17d790a2227aa3a3dfb3933998b1fd319de1bd6e22b8cf908e2fcbcf599737f",
+      "bytes": 144112
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "b9744d274e9de48ac36d2837e1ea624e89838090af4c612486d1c593834fe1bd",
+      "bytes": 204575
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_affected.dir\\runtime_contract.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_affected.dir/runtime_contract.cpp.obj",
+      "sha256": "abf3fb36dbbb45aa64789e1458ae33c5d64dc61e7c436e8626391c8cf521e63d",
+      "bytes": 9055076
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tests.cpp.obj",
+      "sha256": "e81c1d469836ba40c7ab550df0be5c92e2404599466617a66350398066c71a0c",
+      "bytes": 30673312
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tracking_tests.cpp.obj",
+      "sha256": "0a1f7709d26d446f684c7c4359f45020bab0a6cafaf6ee4fe4d7501f607d7ee6",
+      "bytes": 8969416
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "f2dd8b19ee41cef7ca5ee1628ab242bd2f9d080ce5d315faea7b7a515051d4f9",
+      "bytes": 6487967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "a6be866606835050beb8ae1c032369c4ca463a03b1792c9bf6012d4c1c0d7b40",
+      "bytes": 17581568
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "1f70535d3d78f78b4e889bdd210074224de6da175010e6bb71cb7f2de75222cb",
+      "bytes": 7555070
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "083274cc080cf9a49e0ea022c2f8fe86fb891e622c42941849c3080921c60a47",
+      "bytes": 2410785
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "e4d64b65c50dfdf25099b5624fd328b1f85fe28f0e0982fc97795f3e05f247a0",
+      "bytes": 12160069
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "0224a69576df0600146f8f44043d7e52dff7880fb66b3a14fba55d11da89b83c",
+      "bytes": 16797928
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "09adcce98a76797aa147d60b47cd831f3a0bd5bf1e6f26d85f4eb0e7cb19540c",
+      "bytes": 15197332
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "b66f045294c66ddf14c90ba56cdb924eb3a78972889571657886337ffc63edc9",
+      "bytes": 14297740
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "4576083329ae97315a476c7932e2f3d7e23acc88043492946527fa5360d11ebe",
+      "bytes": 9495743
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "85c720a62e4dc9078bbb9b1c30238cb5b29dc0875609bba4f904e83cb4549701",
+      "bytes": 2412978
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "1b6a060ede95c31e6561710a042780a7dfb33b9d3f8455e525f082fdad47d3d5",
+      "bytes": 2290038
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "19b924d0239887ec3b1ca09919f5194d693427210734cca02a5a151efd285cd1",
+      "bytes": 12519017
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "1e1f9dccb131578867883b89ce4288c8c04052b5c15d44172ce87bc071036aad",
+      "bytes": 7065701
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "11a53d6aa3f7f2972ec54f4a360b9d7d961dd3c042469cf9ab42760235d5e485",
+      "bytes": 6692908
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "158450cb69c6c30e10b690967cf996553727ee62575f1f622c769fdc458f8c48",
+      "bytes": 8908812
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "d9d33ac558f8a11ceb8eb0933cdbbd2431e60ae6d47f784f4b70c419a282db8f",
+      "bytes": 23833432
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "a15dcc735764da826753b19500c9081983762665ac052a2d374832e218cc656a",
+      "bytes": 3551436
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "b798c9fb6ec6bf4e86c7b900e4daaa14c6022e33238e545602e2156f13e7a38e",
+      "bytes": 1279573
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "a889168e88af1156d5cd234a4efbcc033d1c832c8dd97b2215a3f3223873ce27",
+      "bytes": 6195445
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "300940057afdfb9485538b5f220c5834fbc39bd389e31cdd9380422bf1c31545",
+      "bytes": 7809591
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "59ed4c12e5828d21ca1d9afd0631735e2e7e2b66aeea15877f5c5c588249fe16",
+      "bytes": 8504085
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "a778e9894f26b87a61ae18ede514c37f9fe2160081a708ea27ab207ea63d1531",
+      "bytes": 937368
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\front_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/front_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front_tests.cpp.obj",
+      "sha256": "0d91684aa9be392693d111eb0dbba72135474ac5ef6db1abf388a6e12e4d7cc5",
+      "bytes": 5909252
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "94251b783c8ac432f10cfac4d3272b4086f7cb22cdd63adc684c5ecbff14c7ca",
+      "bytes": 1986110
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\own_prefix.dir\\own_prefix.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/own_prefix.dir/own_prefix.cpp.obj",
+      "sha256": "8a8535b35d103740ed899f5c6fe655494160038d5a70004ed3245930602cd4aa",
+      "bytes": 7072220
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\prefix_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/prefix_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge_tests.cpp.obj",
+      "sha256": "10241bb2343b657a27b0705b9249b28b9e681f94759f952cd0df8acfd7d79a7b",
+      "bytes": 7069967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-07\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-release-07/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "e8f5c88af498b40f481e219758358630a6105becf36afb7ff45bc91a8b3cbf0a",
+      "bytes": 660
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "76410e502c3b495cfc24ed946af775edf563e292f40e491374c88587cb208344",
+      "bytes": 2036
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\cost_analysis.dir\\cost_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/cost_analysis.dir/cost_analysis.cpp.obj",
+      "sha256": "12b9c675e29eab656a755581c57ad4c9f36670ef9d64f22e70d5774ef80e3270",
+      "bytes": 9097173
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\current_bridge.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/current_bridge.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge.cpp.obj",
+      "sha256": "8dd1ff63bdec96c7bf9a4deb743414beac9112eec0655e6aa500c7462ef34dcb",
+      "bytes": 1892352
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\current_chain.dir\\chain.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/current_chain.dir/chain.cpp.obj",
+      "sha256": "9017956668fec69994798961db2fca72688e3493a4542f96da22f25179fc3c64",
+      "bytes": 13905350
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "e19e819ee86edb478199347aeef0bbdf474996da5a36c566d91c87aecf9d98c5",
+      "bytes": 5986135
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\current_rails.dir\\current.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/current_rails.dir/current.cpp.obj",
+      "sha256": "d03c9f640b077805cf0aa00418f26ebd381b486901984553a15250c9ada6bbed",
+      "bytes": 1738660
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\current_tests.dir\\current_tests.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/current_tests.dir/current_tests.cpp.obj",
+      "sha256": "ff3e25827f53befac2e665df600446e5b6fb6534ad7bbdf42bb60b8e5f669b1d",
+      "bytes": 6897487
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "94e675a03109fd39814b9f5bdf3806f7237c88641a54b46a68d25c59c6bab389",
+      "bytes": 194880
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "bf2a97952518b8d2e70092d8b770dca51ca34078e8215eb29492241f06e1ef24",
+      "bytes": 129026
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "199a565f78093800593e6490b1c24a16f1abca3db8e0c3e13fd545aeb3d78552",
+      "bytes": 144112
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "f68c5f0a6c845ce58ca658e3fdbedfca4b6dbc72b0be32f7599277ef3e0f20a8",
+      "bytes": 204575
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_affected.dir\\runtime_contract.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_affected.dir/runtime_contract.cpp.obj",
+      "sha256": "d3418ae94f7413986031c1ba39c9e7a21f3ffc6bd8b646b91a38d85dc046515d",
+      "bytes": 9055076
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tests.cpp.obj",
+      "sha256": "34da60fbcb388421730287a35911f32c41150444cbd8cd85dca9e1c330f6c6bf",
+      "bytes": 30673312
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tracking_tests.cpp.obj",
+      "sha256": "6f0a972bd9ae0a7990030f005a9556b1f7fb5f62629a14f941a660a86d1ff7f3",
+      "bytes": 8969416
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "382d06f5fe59f98d401e62c677cb5130844fe8d84d23ddacb8d594c1026f8049",
+      "bytes": 6487967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "ae54791be8fc8680431719c97a6938c1ffe173acf4dedf3e7a85176ff031e69a",
+      "bytes": 17581568
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "5db5cde708fd0f2807ab40ab1d5e298ab915477bdf4a382ef0657e7f16a43dba",
+      "bytes": 7555070
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "3014192b525f819b047eff10c72a705d9a07795c40b3e878539091a4f2216a6e",
+      "bytes": 2410785
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "e8be7f831351571fbd209f1e24cae1ab727719be09429ca5e8c4e76c4fd73bd1",
+      "bytes": 12160069
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "2cc528483ad4cb66414d550d3a802f653895231c3873c36a6b147b4794c95ae7",
+      "bytes": 16797928
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "f351096d9678eed1a0637d36b7172b12963a08ef30f148097d294822dac7e4c5",
+      "bytes": 15197332
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "6f7afda96ad7cedec91a0426ba7d390eddfae163a1921b5f07b1d26e707699a2",
+      "bytes": 14297740
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "4ffdebfbac4e3ee06e09178738b6cdc84226b543d6413f50bec5d1e21f03aa0c",
+      "bytes": 9495743
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "00d45d59a7102eafccbd86643702eb9b1efc4b3f7af7426a41f41be317569487",
+      "bytes": 2412978
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "2d4f0fe1be1a27d1ee03ca4f9e81afb15a98a69cb93177f2e4c748cb8247f696",
+      "bytes": 2290038
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "e2afd11692fad7a4e0e76aaef3f61248530a8de14f2d8a2a390dc47f14cce7a3",
+      "bytes": 12519017
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "ac756f84c16195a59922939c789deac0c6995e8dfbacd572a929eaaa41152b93",
+      "bytes": 7065701
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "2b20700555a1da17fb36d6cf301b26ecf1f836fac864e5b652d5591681366342",
+      "bytes": 6692908
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "5f4cac98c655847c789a57f2cee9f5c64ba25add20878deb85885cf85caf7151",
+      "bytes": 8908812
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "7d7c0690a413adce3443aa1b56d12f738fabe8bc434afcfc11ecd37d45385209",
+      "bytes": 23833432
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "a8603dfdbb74e12a1c5f15ef5d8e8e74d97e32037958acedef97aac52caa8ea4",
+      "bytes": 3551436
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "04db60467503102753af6ae9acc2a0530bb5b340f646bca2cfbec9f42ab59961",
+      "bytes": 1279573
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "315921baa31de1d4b24b4af152cc260886ea434fa734ff9c6058673caa976953",
+      "bytes": 6195445
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "9cd95e8136b5a135b668f507337b7f77402067ab579284a2f49f87d8bf59772c",
+      "bytes": 7809591
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "54a574867175153ebe9ec9ab0a313238b97fc638b3628b10ae3f7ea404c02a63",
+      "bytes": 8504085
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "15b79926f4397c431bbab35a677ac11d06f9964ab36fbcb0ed22574f22a633e0",
+      "bytes": 937368
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\front_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/front_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front_tests.cpp.obj",
+      "sha256": "1d9a795e74da32111ece3500959f06e30b7423cac1d6d4952f7f018834a2f4ba",
+      "bytes": 5909252
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "4eac8ae5acfb5777f618dbee6db8817c6daddd8afd609d4af14656903aeeb9e0",
+      "bytes": 1988196
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\own_prefix.dir\\own_prefix.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/own_prefix.dir/own_prefix.cpp.obj",
+      "sha256": "3be5a79be28b3f82503e59b6137834227e37195832d9e380bc2cc2429bb7ac05",
+      "bytes": 7072248
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\prefix_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/prefix_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge_tests.cpp.obj",
+      "sha256": "97ee996d0c00bf63f58cb8bf381059bf75805b778283938b77ebcf5609ff214b",
+      "bytes": 7069967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-08\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-release-08/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "bddbfdf577f43d0e9f82c9af731d6eeb6e4ce2d9190cdbfb842bac0c7e95acdb",
+      "bytes": 660
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "7ce80e90009d7b50a8cb70031784269ba8e2efb136512fe8a5bb964f03a27fd3",
+      "bytes": 2036
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\cost_analysis.dir\\cost_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/cost_analysis.dir/cost_analysis.cpp.obj",
+      "sha256": "52b9318c77a2acca3084df5ab3365de78afc4be82fac2ada91b03152fbb1ecd2",
+      "bytes": 9094833
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\current_bridge.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/current_bridge.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge.cpp.obj",
+      "sha256": "cc8f75d7c7a764789c836780c502f5f50c8727005bbb970a2dac01f7aaa1956e",
+      "bytes": 1892352
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\current_chain.dir\\chain.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/current_chain.dir/chain.cpp.obj",
+      "sha256": "105c3c8d128171e53279b07c4b7ca85815979b4f98179d13c42379a1a2efcc56",
+      "bytes": 14496710
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "f26ceaa5a138ba606b9105cf81e3845df41c351b52a34886a155794fc82aeaba",
+      "bytes": 5986135
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\current_rails.dir\\current.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/current_rails.dir/current.cpp.obj",
+      "sha256": "02a00744caa573224ffba8ea0664517e212221dac4bca85dabad2b574b86930d",
+      "bytes": 1738708
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\current_tests.dir\\current_tests.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/current_tests.dir/current_tests.cpp.obj",
+      "sha256": "1a7d961ad41ce7277f3db8db6b22cc870189ee1dea812eb1a4569ffe37a5422a",
+      "bytes": 6898955
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "15342ba9bab43e919650ed65fd6fff5fd04211ab0a466916d2b29f38bd68c70a",
+      "bytes": 194880
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "09be9c487925c7865b35f7fc8043ae277a40db86fb345905ca51e8ecfee27fc2",
+      "bytes": 129026
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "e887c94665b223b40de9b83e2808d2e88cfa6ca5242418d8c75cd6c3c5662c73",
+      "bytes": 144112
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "4bdebe8cd181917d9e683b01fea3eafd06c22001b0db23962199b21cb8602e6b",
+      "bytes": 204575
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_affected.dir\\runtime_contract.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_affected.dir/runtime_contract.cpp.obj",
+      "sha256": "556fcc115bb260d7367d18a43c581693eb7637f44796eaa9c39f72255a8cac76",
+      "bytes": 9055076
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tests.cpp.obj",
+      "sha256": "227654c57f809885ceab352667571ff8f2fe4aeb8a18c96c49f47b52913e9af0",
+      "bytes": 30673312
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tracking_tests.cpp.obj",
+      "sha256": "38960e2712f6e4069d0700869f54c1484ff24a23bf48b875e12ba4eeca3d7301",
+      "bytes": 8969416
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "76dabd37014d9a1a447c169d981bab33b9c84b7ca4e72851fb3acd17ca2cc44a",
+      "bytes": 6487967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "9d1fd54f599ea76f1f2aa9ddd9cf2bf4e3acd0dd873ed35468b4a2fcc3d45879",
+      "bytes": 17581568
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "bce97e826f5893fe1f472633a8f4a60a421986c2990e76f23a5db9ab57b93fb8",
+      "bytes": 7555070
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "4991e1553f5443894f4bcebd406c3cc1f4635ebd7e3b5737d9943519a3037d6b",
+      "bytes": 2410785
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "4b162bdbcd5b2fbd3d0e64d5eebe8b010068c97987b1060fa6169fedcc903497",
+      "bytes": 12160069
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "a58548f00b831cca76f4b6acdd1ae10f11e1c1e25cfdd6021fd9bf3fe3660df9",
+      "bytes": 16797928
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "f08a0ad0aeee4f9c21aeeea93b26ff64f083e8393c05e58f4164e09284a232c0",
+      "bytes": 15197332
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "00f44dfe33a333f59630aef42e0e4778afe3cd0b05cde0ee7663ee42f05bcdf2",
+      "bytes": 14297740
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "e9bf12b11cb5967a00a64e1442aae207c4d574eca893e08b34009bafb92484a2",
+      "bytes": 9495743
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "a0b4cd9afab2434006a7423f1c19727222a1b35bbf14f8e2326adab90e335b61",
+      "bytes": 2412978
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "0827d216bbec4062123c62e125efbe2c3ee5daca98e92d9539577ec534d64fdf",
+      "bytes": 2290038
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "3656f1f6549e0c0942481af6e2c48504c26580217f7f3f2609e24bd3f5a5298f",
+      "bytes": 12519017
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "ed7d4adb860e18efdc6f6fd4b0511088e83a548d067d5294ffec6eef5515d977",
+      "bytes": 7065701
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "fa71020aeed74cdddddf18081edb101524e0ae311352ee2c8e14c08d8cab20a0",
+      "bytes": 6692908
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "b5268a7c6cfea42a0b7eff6c1bccdafae3add155e4cfe4e29429a216f78c9084",
+      "bytes": 8908812
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "ae0cb4694a4c9d556eff7a8932d575eeb1254a602a8066176f50dd3e074f4054",
+      "bytes": 23833432
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "2e2f3adf937b741cb1e1ffd901acc56972e2b11cdcec99d71dad000babdd5caa",
+      "bytes": 3551436
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "fe1ba387d429a16feea9b26c73caf48ba54161f3f43b6106a8334c84e58dbbb8",
+      "bytes": 1279573
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "b40d12ba40921d742eda70606982997d8c7a958a9c67641074e7484757acd609",
+      "bytes": 6195445
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "bba473825cf9fc55b7196e07aa70d695818d75739aa7ecd0298f9ee5008693b9",
+      "bytes": 7809591
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "acd5c5769042dde04f5b4090d53c581a15a42f7da4edcb86f023634111f31cca",
+      "bytes": 8504085
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "3c8ab74f010f3ecb7ea369a64cfd946128de3139cd71513b0dd7b88e6569816f",
+      "bytes": 937368
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\front_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/front_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front_tests.cpp.obj",
+      "sha256": "b5067f03f86e3808f748493b62837b7aa9f063fa4603413b2df95f3b0da2ff82",
+      "bytes": 5909252
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "d04ae551fbcd19ecbbe264001b7e57b2975601fd4ce3670855af9c6b02408cfe",
+      "bytes": 1992453
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\own_prefix.dir\\own_prefix.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/own_prefix.dir/own_prefix.cpp.obj",
+      "sha256": "3f0b35631823ca04e9cef40ed0dfa8df8d10cbe22b7d04fc34fd29da6158c1ec",
+      "bytes": 7072300
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\prefix_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/prefix_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge_tests.cpp.obj",
+      "sha256": "2119cf1aec23f4f140441021d262f9502cebc05f60ccc9b788a792e662b4689f",
+      "bytes": 7069967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-09\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-release-09/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "8c2d58866497193793d6223383ce9df1bc6876a32345382ffc59e30164a91e76",
+      "bytes": 660
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "e40cfa7b501310fb228dfedb2e89894a4d35379dbb0a6e727d0146e9fd3ef2ca",
+      "bytes": 2032
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\cost_analysis.dir\\cost_analysis.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/cost_analysis.dir/cost_analysis.cpp.obj",
+      "sha256": "dd2321071ff6e21ceea935034f9c9426129c819809eec234dd48fe0535d8afaa",
+      "bytes": 10073842
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\current_bridge.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/current_bridge.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge.cpp.obj",
+      "sha256": "1dfae085b4bfe904b23bede40f37eee770cc65a667919f769db26ea02dda0245",
+      "bytes": 2051309
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\current_chain.dir\\chain.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/current_chain.dir/chain.cpp.obj",
+      "sha256": "8478dc4a17421794d9f2abdc8f6e678a336d05d45c8ff349b5727aacb92c5174",
+      "bytes": 14897773
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "793488685beba5275a098b69a9b2f12bafcfe48d04eee5e6617475cc5dbcd224",
+      "bytes": 6543375
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\current_rails.dir\\current.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/current_rails.dir/current.cpp.obj",
+      "sha256": "aae5031f2d1feedb9e1aabc685168852d9ad63b7762ab39bec855813acad64ab",
+      "bytes": 1915345
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\current_tests.dir\\current_tests.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/current_tests.dir/current_tests.cpp.obj",
+      "sha256": "edba752a23b16978a20485755965958091befa5acadb15b45336ef6e71c47a96",
+      "bytes": 7464963
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "cc7372b6e8d9a4fdede2d28fe76dea331d32eca8d0c55094d1c0af4bd60d013f",
+      "bytes": 200245
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "be108d8536f24029496b69a3d5ffd9d1604e5e75a41ae85601f8276a01a62623",
+      "bytes": 128466
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "3a6cba6a5207166d585cda31160747d8b9bc8581a04c7e8dc8fd7a7b4426f987",
+      "bytes": 136676
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "ec173b54bfa6321a5ced336bbf2b8b3a43c417ad7b6f8116b232fb83f61b6ad8",
+      "bytes": 205369
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_affected.dir\\runtime_contract.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_affected.dir/runtime_contract.cpp.obj",
+      "sha256": "9f9c8a1b2bf31f6f07f3a06642341e0e396d98d09e062b11d85e595c0c57c5ee",
+      "bytes": 9883542
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tests.cpp.obj",
+      "sha256": "e4feee11fb4f12b2345c06bbc3542e953855e5c08a4ba044968529e30e25eec5",
+      "bytes": 29258491
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tracking_tests.cpp.obj",
+      "sha256": "6b6aa1a2cc6d20d01f512c61184c0d7d29721bd558df8b2520f7f52512922245",
+      "bytes": 9232302
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "147d9c3e56f4bbd2ba77a164978dba21de47e73606d2bb5ddd39003861b9db64",
+      "bytes": 7140823
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "c4698bdc3faa1753e8b01be07be2acc038eff960646ea2d40e1a749a7d25f888",
+      "bytes": 17794673
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "299b47db8bcd91780c852144b3a9fbe39e6b496de18fd4cb22d0e697dbcb1e50",
+      "bytes": 8716337
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "27a1aa4d2c7e0c222c3b3b702ed2bdf1be0b63f32d7137f379c898cb4dead828",
+      "bytes": 2811358
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "b8fa6b336fcc3d81cf2f783d1551c18fa3c7159a35687ad496c4080330816196",
+      "bytes": 12943518
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "50214dfc7caa8c1ac3d705fc35910d3f23fc081b8e97a55c2f5e51313a517d0c",
+      "bytes": 18418967
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "238cdf71a00ba7e049c8d7723c23ff83c2091daf52580e0e0baec90109a21a82",
+      "bytes": 15762092
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "1ec7d5de2711698b04dce2b68852f09cfe9a438a24d3d05bb8d3df5ce34c805c",
+      "bytes": 15329046
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "0ce5425e69201572d934af278a1f59da4d26f4993c0401ad27c8ec19e65ece3a",
+      "bytes": 10157494
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "803617890caa31b648c173673a79388c9e2ca3673e79f0da4facef8bd6d55fdd",
+      "bytes": 2615276
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "97c20676b893e32e13f31c50ded745b102af4a5bae3761e35c833e89bef93c45",
+      "bytes": 2562545
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "d18aadf0a4401c1bf3af0e4d3c53f01b62a00651396f27d773899b16d3bf06ba",
+      "bytes": 13680230
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "5e3aea61913cc58e7b8066203898b1edf6c0d437dbe8b9e0f23b7a9b33327c8b",
+      "bytes": 7796781
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "f9cdce0b0e6a87e26240371e9841f3d9615d4f5404f1ebdbd98f05871193dd56",
+      "bytes": 7369931
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "ed62220a945206b2b04e9810c5207a85393e278817619ec7f8705d883aa51ea6",
+      "bytes": 10027337
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "ea96198ecc5d11e4ad3a8bdf1ea68994e43dde112c3bb199521148c5710ed61d",
+      "bytes": 24150020
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "ebade63ff801139c5e5760eaa1bd7a24fd1b73d1c98e1d886bf24535c92f6fbf",
+      "bytes": 4232478
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "bd42b1ac4fda6ed4c388ea6c99daa6984b0270c5d3d5b1b97e2ba2ad8edd59da",
+      "bytes": 1353461
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "e0492ff99d8c5f37722d802b0c9a2c9548e081e6ea6d4532203aeec8014897a6",
+      "bytes": 6775755
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "37b555e167d4cab9bd6ac57ccf2f790f5e490c7e6a3d5b31eb67f73f9a9108d3",
+      "bytes": 8370565
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "98f9803958dbbba1d46cee950b7c7d2a6cc75b3a4e846c9a26a3d91e787d1f71",
+      "bytes": 9053996
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "eed0dee7d5bd626e433b2ff56d1b23dfd01ed608568430ef460d4b24121a43b5",
+      "bytes": 1079017
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\front_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/front_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front_tests.cpp.obj",
+      "sha256": "b256f921d861fc870c41124a89e436ebf76cb501380430a2174ccd5e93ea5b27",
+      "bytes": 6498870
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "f31282978fda0000ecb82ea9e0f099457e496760b2d9197779d931a59d234b32",
+      "bytes": 2178209
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\own_prefix.dir\\own_prefix.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/own_prefix.dir/own_prefix.cpp.obj",
+      "sha256": "74df7daefafc3023e151d00bec7671c93c32fc5c7e0629d9690e367cc0254d69",
+      "bytes": 7610223
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\prefix_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/prefix_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge_tests.cpp.obj",
+      "sha256": "658042447ff0e3ed6746076766f4637927ffd25b1c714c823ea14fe59d10f983",
+      "bytes": 7607215
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-01\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-debug-01/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "cbe248979075fac9e3c186c52c37da1af72678e4929db996f921543baa018e78",
+      "bytes": 656
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CMakeCXXCompilerId.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/4.2.1/CompilerIdCXX/CMakeCXXCompilerId.obj",
+      "sha256": "b53bb1b575b9fc896a5bcdfe20c1cc1ce5ac25a16b472d4a3317b1fae7862b33",
+      "bytes": 2032
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\cost_analysis.dir\\cost_analysis.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/cost_analysis.dir/cost_analysis.cpp.obj",
+      "sha256": "755c7f91aaa85ea5a6c8daafb4fc1b38cf01e2bcec8c289d13cd61266f3c728a",
+      "bytes": 10440105
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\current_bridge.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/current_bridge.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge.cpp.obj",
+      "sha256": "dc0b8e7aeb3f7191d2131eaebd79eb1c7d855bffe7eb2f2e18dc00747563ec0b",
+      "bytes": 2193827
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\current_chain.dir\\chain.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/current_chain.dir/chain.cpp.obj",
+      "sha256": "0fe8986cbbe30bf91d8decb483c6273c974d3086be5dab4fb10fb5441cc9cbdc",
+      "bytes": 15470977
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\current_front.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/current_front.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front.cpp.obj",
+      "sha256": "144013041f52ee1fab1e352f8f7e448621e4efc76bc6ecc6a94a69736482d0c3",
+      "bytes": 6595238
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\current_rails.dir\\current.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/current_rails.dir/current.cpp.obj",
+      "sha256": "b634f2b76bce2314eb6186cfe0196c7356229752f188d92d23666013efeea7fc",
+      "bytes": 2052166
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\current_tests.dir\\current_tests.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/current_tests.dir/current_tests.cpp.obj",
+      "sha256": "aafcf81f75eae79e64749247cc04f9cb47fd24c7ca48b5db3d798cc5b4e1f927",
+      "bytes": 7694805
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/bvi.cpp.obj",
+      "sha256": "69f5be9fdcfc82e47950db21949555818f072a8c59cee5a3b434750846d1fce3",
+      "bytes": 229388
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/constraint_policy.cpp.obj",
+      "sha256": "adf2fd6057b2778570bf8dd3ca750bc1c27e18f25fd43516838664d48ae50c5e",
+      "bytes": 138106
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/contact_policy.cpp.obj",
+      "sha256": "8a8799f617b4025cc53d83854b805e09860093323ad16fcce23ec5c614171637",
+      "bytes": 147972
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\exact_bvi_v3.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/exact_bvi_v3.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_cold_v3/relation_policy.cpp.obj",
+      "sha256": "7d213fa1dad0db0cf6d9b5453853b992853cb781290351b0d0ceb603e738a98f",
+      "bytes": 238443
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_affected.dir\\runtime_contract.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_affected.dir/runtime_contract.cpp.obj",
+      "sha256": "f8f26d66968db2651696e05b75140125bf03aa486babc2f4e94627b55a6a6fb3",
+      "bytes": 9944405
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tests.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tests.cpp.obj",
+      "sha256": "d493d1bb4b46db890b2292042e23c02fdcc3900ffce3791b47f052e2002fa674",
+      "bytes": 32434878
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_affected.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\game_tracking_tests.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_affected.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/tests/game_tracking_tests.cpp.obj",
+      "sha256": "adaeba840a77ece496c20b07bc74146157f761af0b2b19afe7b1df0c8d0e5482",
+      "bytes": 9666378
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/adb.cpp.obj",
+      "sha256": "3e8d6d84fdcc1848c860f6413efca287dd349ed2bef62ed92f215eea5a653072",
+      "bytes": 7286100
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/analysis.cpp.obj",
+      "sha256": "5d48a2243388f3548a8d7768152f533d71f4d954a2ce916173553e4c87293a32",
+      "bytes": 18518206
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/config.cpp.obj",
+      "sha256": "20c462382e57f65e0310c52b147cb2abc421d5b7713253cdfd1b7a03c376d539",
+      "bytes": 9183004
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/core.cpp.obj",
+      "sha256": "c238d51b3f688b6d587ab219aad1d6b5af16cf1322374735bb9ef0e8973ddc32",
+      "bytes": 3058612
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_clip_replay.cpp.obj",
+      "sha256": "c3e64d89a568e4b369e1746bc8cd46fab68460baf90dd35eb4f747c4cc8c605b",
+      "bytes": 13410626
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_corpus.cpp.obj",
+      "sha256": "4048017a9d73bfc24f2488ebc080ca70480fb108f777ed2f4da3d450435b9d93",
+      "bytes": 19024196
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_cold_pipeline.cpp.obj",
+      "sha256": "0de2d4d9444c6c3f7615484167bee89b5db3abe6f1bbbc32083cf08c0c9e580f",
+      "bytes": 16276109
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset_tools.cpp.obj",
+      "sha256": "1c0025ed98daf09f5f3e29cd2918cbc6c4efb46a4ca39f2680826e0145b13cab",
+      "bytes": 15952179
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_dataset.cpp.obj",
+      "sha256": "dded71b9e29631e95bf088b73551125cf817c6ace7448845ed3039323dc8df46",
+      "bytes": 10500379
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_motion.cpp.obj",
+      "sha256": "dce650717b01de0a536d85d3b2bdbd80b6e171bd56b07c315d411526db47f0ad",
+      "bytes": 2743340
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_session.cpp.obj",
+      "sha256": "1e58f619c6027f013277ccbbdecce259419ce93f3688d00cf735083e1cd4ada1",
+      "bytes": 2621537
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_analysis.cpp.obj",
+      "sha256": "37d942625325bc299e507034ba348ed52035674fd6493d970798a626d7d0d517",
+      "bytes": 14110671
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_methods.cpp.obj",
+      "sha256": "16690dfad441dfd5816a417db3f59f67828ba358d7148bb08e2f67461c7f8bb5",
+      "bytes": 7952083
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking_shadow.cpp.obj",
+      "sha256": "4d2c23302f09489e00b516e8e1ba17778d32353176b114a1753f7d923fa45e97",
+      "bytes": 7540652
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game_tracking.cpp.obj",
+      "sha256": "8ba0a417ee05df6dbbd28f3f82c5f99bf16fc8e9e0b4f125a29e11cfabf3908f",
+      "bytes": 10169083
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/game.cpp.obj",
+      "sha256": "9feedfc2b1bff07b80d28f1010be81832a5ffa94764851180b489aca26565a38",
+      "bytes": 25078034
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/journal.cpp.obj",
+      "sha256": "6a59bad9edd5beb6c63a48d4b84e90c67440aee34e4ebce3ca17d618a9dd7dc8",
+      "bytes": 4409012
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/preview.cpp.obj",
+      "sha256": "fbe52f3ad51cfdb618d090c57efb37697b5317bd446e390f51a6e3a57c31dd04",
+      "bytes": 1422095
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_archive.cpp.obj",
+      "sha256": "38a73de6234852970b0fc2caf1f39a678c52a17da7683caa8ed72743fe767d45",
+      "bytes": 6964041
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_pixel_clips.cpp.obj",
+      "sha256": "2d61e17feddca6fbf8fa15366ac11b778d748e25f6c3cbcb6f2780fd874434a6",
+      "bytes": 8609764
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/session_recording.cpp.obj",
+      "sha256": "aa3160a50236b7026d12ec7f8ff41b753e3db80f37cae81df73b0a086e29934d",
+      "bytes": 9327239
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\formal_core.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/formal_core.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/src/touch_evidence.cpp.obj",
+      "sha256": "0c329fb8eeee3e18587c2c23a6158189b34e5264de222c868a0c4ed7b945c5a8",
+      "bytes": 1146180
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\front_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/front_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/hold_front_current/front_tests.cpp.obj",
+      "sha256": "81e5d6d3368421f045ac6dab8be3e0faf00ee6f702f575808cdc3ef9ee4caba9",
+      "bytes": 6705617
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\own_bridge.dir\\own_bridge.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/own_bridge.dir/own_bridge.cpp.obj",
+      "sha256": "19437c57ef219cdc0d25f7c12094c79dd853cda18aef8840cdcdab18af6c5360",
+      "bytes": 2346235
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\own_prefix.dir\\own_prefix.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/own_prefix.dir/own_prefix.cpp.obj",
+      "sha256": "e301d787e089af3450dca9a0e34bc269d91d1f4f69dcc79dde667516cb7f786d",
+      "bytes": 7858178
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\prefix_preservation.dir\\C_\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/prefix_preservation.dir/C_/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/research/bvi_windows/bridge/bridge_tests.cpp.obj",
+      "sha256": "72c661acfa329d34a9914ea1dbacf13080cf9ec97ed233f290dde6c54ab2671a",
+      "bytes": 7855001
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-01\\CMakeFiles\\ShowIncludes\\main.obj",
+      "archive_path": "prelive-current-asan-01/CMakeFiles/ShowIncludes/main.obj",
+      "sha256": "08af95e758cef5aa7c8cf4828adf32249bd090f8fc6f874fc18913487a31c57d",
+      "bytes": 656
+    }
+  ],
+  "donor_final_roots_excluded": true,
+  "raw_measurement_files": 0,
+  "lossless": true,
+  "experiment_receipts_removed": 0,
+  "schema": "pas.owned-intermediate-object-archive.v1"
+}

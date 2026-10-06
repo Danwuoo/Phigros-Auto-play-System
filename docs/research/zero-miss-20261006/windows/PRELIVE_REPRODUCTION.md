@@ -37,11 +37,13 @@ owner／ledger／latest／FakeTouch／Journal與instrumentation相同，來源ag
 RGB generator/source hash與binary SHA固定輸入定義，不讀歌曲／譜／舊按鍵。
 保留1GiB raw餘量、全分母、全部失敗及critical writer停止；不放寬coverage／lateness／RSS門檻。
 
-metadata入口 `prelive-evidence-01/SHA256_INDEX.json` → `closure.json` →
+metadata入口 `prelive-evidence-01/SHA256_INDEX_FINAL.json` → `closure-final.json`／`closure.json` →
 `candidate-manifest.json`／`external-new-out.json`。`package/`含結果、capacity、原PNG selection
 及source snapshots；`receipts/`含每stage params、spec、freeze、command、stdout/stderr、
 native/runner/verifier、state/checkpoints。大Journal／attempts／events／PNG／binary／dependencies
 保留external path/bytes/SHA，不在metadata中重複複製。loaded modules是backing-file SHA，不是memory image。
+首版index沒有覆寫；final index包含它與最後writer audit的追加收據。舊大raw external index
+及追加external files共同構成完整清單。封存path設定Git `-text`，不以autocrlf改變receipt bytes。
 
 早期本包`.obj`在`out/prelive-20261006/compiler-object-archive-01/objects.zip`無損保存；
 `object-bindings.json`列原absolute path、entry、bytes/SHA。重建早期中間物件時先核ZIP與逐entry SHA，

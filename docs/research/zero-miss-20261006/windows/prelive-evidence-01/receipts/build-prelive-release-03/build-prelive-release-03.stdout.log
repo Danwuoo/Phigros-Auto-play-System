@@ -1,0 +1,166 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-prelive-release-03-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\config.cpp for CXX dependencies
+[2/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\journal.cpp for CXX dependencies
+[3/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\touch_evidence.cpp for CXX dependencies
+[4/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\core.cpp for CXX dependencies
+[5/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp for CXX dependencies
+[6/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\adb.cpp for CXX dependencies
+[7/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\preview.cpp for CXX dependencies
+[8/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp for CXX dependencies
+[9/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_clip_replay.cpp for CXX dependencies
+[10/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp for CXX dependencies
+[11/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp for CXX dependencies
+[12/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking.cpp for CXX dependencies
+[13/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_pipeline.cpp for CXX dependencies
+[14/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_methods.cpp for CXX dependencies
+[15/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_shadow.cpp for CXX dependencies
+[16/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset_tools.cpp for CXX dependencies
+[17/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_analysis.cpp for CXX dependencies
+[18/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_session.cpp for CXX dependencies
+[19/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset.cpp for CXX dependencies
+[20/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_archive.cpp for CXX dependencies
+[21/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_pixel_clips.cpp for CXX dependencies
+[22/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp for CXX dependencies
+[23/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_recording.cpp for CXX dependencies
+[24/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp for CXX dependencies
+[25/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp for CXX dependencies
+[26/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp for CXX dependencies
+[27/92] Generating CXX dyndep file CMakeFiles\exact_bvi_v3.dir\CXX.dd
+[28/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front.cpp for CXX dependencies
+[29/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.cpp for CXX dependencies
+[30/92] Generating CXX dyndep file CMakeFiles\formal_core.dir\CXX.dd
+[31/92] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp.obj
+[32/92] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp.obj
+[33/92] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp.obj
+[34/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\core.cpp.obj
+[35/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\config.cpp.obj
+[36/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\adb.cpp.obj
+[37/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\journal.cpp.obj
+[38/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\touch_evidence.cpp.obj
+[39/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\preview.cpp.obj
+[40/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(311): warning C4244: 'argument': conversion from '__int64' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(312): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(315): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(317): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(324): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(325): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(328): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+[41/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_clip_replay.cpp.obj
+[42/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_pipeline.cpp.obj
+[43/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp(420): warning C4456: declaration of 'id' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp(390): note: see declaration of 'id'
+[44/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(773): warning C4456: declaration of 'gap' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(681): note: see declaration of 'gap'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(921): warning C4456: declaration of 'minor' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(880): note: see declaration of 'minor'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(952): warning C4456: declaration of 'gap' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(681): note: see declaration of 'gap'
+[45/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp(478): warning C4456: declaration of 'closure' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp(382): note: see declaration of 'closure'
+[46/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_methods.cpp.obj
+[47/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking.cpp.obj
+[48/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_shadow.cpp.obj
+[49/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_analysis.cpp.obj
+[50/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_session.cpp.obj
+[51/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset.cpp.obj
+[52/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset_tools.cpp.obj
+[53/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_archive.cpp.obj
+[54/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge.cpp for CXX dependencies
+[55/92] Generating CXX dyndep file CMakeFiles\current_front.dir\CXX.dd
+[56/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current.cpp for CXX dependencies
+[57/92] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp.obj
+[58/92] Generating CXX dyndep file CMakeFiles\own_bridge.dir\CXX.dd
+[59/92] Linking CXX static library exact_bvi_v3.lib
+[60/92] Generating CXX dyndep file CMakeFiles\current_bridge.dir\CXX.dd
+[61/92] Generating CXX dyndep file CMakeFiles\current_rails.dir\CXX.dd
+[62/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_pixel_clips.cpp.obj
+[63/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp for CXX dependencies
+[64/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_tests.cpp for CXX dependencies
+[65/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp for CXX dependencies
+[66/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_prefix.cpp for CXX dependencies
+[67/92] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\chain.cpp for CXX dependencies
+[68/92] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_recording.cpp.obj
+[69/92] Linking CXX static library formal_core.lib
+[70/92] Building CXX object CMakeFiles\own_bridge.dir\own_bridge.cpp.obj
+[71/92] Linking CXX static library own_bridge.lib
+[72/92] Generating CXX dyndep file CMakeFiles\prefix_preservation.dir\CXX.dd
+[73/92] Generating CXX dyndep file CMakeFiles\front_preservation.dir\CXX.dd
+[74/92] Generating CXX dyndep file CMakeFiles\current_tests.dir\CXX.dd
+[75/92] Generating CXX dyndep file CMakeFiles\own_prefix.dir\CXX.dd
+[76/92] Generating CXX dyndep file CMakeFiles\current_chain.dir\CXX.dd
+[77/92] Building CXX object CMakeFiles\current_front.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front.cpp.obj
+[78/92] Linking CXX static library current_front.lib
+[79/92] Building CXX object CMakeFiles\current_bridge.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge.cpp.obj
+[80/92] Linking CXX static library current_bridge.lib
+[81/92] Building CXX object CMakeFiles\current_rails.dir\current.cpp.obj
+[82/92] Linking CXX static library current_rails.lib
+[83/92] Building CXX object CMakeFiles\current_tests.dir\current_tests.cpp.obj
+FAILED: [code=2] CMakeFiles/current_tests.dir/current_tests.cpp.obj 
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\msvc-isolated-probe-01\bin\cl.exe  /nologo /TP  -IC:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current -IC:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current -IC:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\include -IC:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3 -external:IC:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD -Z7 /W4 /permissive- /EHsc /showIncludes @CMakeFiles\current_tests.dir\current_tests.cpp.obj.modmap /FoCMakeFiles\current_tests.dir\current_tests.cpp.obj /FdCMakeFiles\current_tests.dir\ /FS -c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(27): error C2872: 'Evaluation': ambiguous symbol
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: could be 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current.hpp(12): note: or       'pas::current_rails::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(27): error C2440: 'return': cannot convert from 'pas::current_rails::Evaluation' to 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(27): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(30): error C2039: 'valid': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(30): error C2039: 'accepted': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(30): error C2660: 'Tests::check': function does not take 1 arguments
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(8): note: see declaration of 'Tests::check'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(30): note: while trying to match the argument list '(std::basic_string<char,std::char_traits<char>,std::allocator<char>>)'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(34): error C2039: 'accepted': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(34): error C2039: 'support': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(34): error C2660: 'Tests::check': function does not take 1 arguments
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(8): note: see declaration of 'Tests::check'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(34): note: while trying to match the argument list '(std::basic_string<char,std::char_traits<char>,std::allocator<char>>)'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(36): error C2039: 'accepted': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(36): error C2039: 'support': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(36): error C2660: 'Tests::check': function does not take 1 arguments
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(8): note: see declaration of 'Tests::check'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(36): note: while trying to match the argument list '(const char [33])'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(41): error C2872: 'Evaluation': ambiguous symbol
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: could be 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current.hpp(12): note: or       'pas::current_rails::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(41): error C2039: 'accepted': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(41): error C2660: 'Tests::check': function does not take 1 arguments
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(8): note: see declaration of 'Tests::check'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(41): note: while trying to match the argument list '(std::basic_string<char,std::char_traits<char>,std::allocator<char>>)'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(42): error C2872: 'Evaluation': ambiguous symbol
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: could be 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current.hpp(12): note: or       'pas::current_rails::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(54): error C2039: 'accepted': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(54): error C2660: 'Tests::check': function does not take 1 arguments
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(8): note: see declaration of 'Tests::check'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(54): note: while trying to match the argument list '(std::basic_string<char,std::char_traits<char>,std::allocator<char>>)'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(56): error C2039: 'valid': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(56): error C2660: 'Tests::check': function does not take 1 arguments
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(8): note: see declaration of 'Tests::check'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(56): note: while trying to match the argument list '(const char [27])'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(57): error C2039: 'valid': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(57): error C2660: 'Tests::check': function does not take 1 arguments
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(8): note: see declaration of 'Tests::check'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(57): note: while trying to match the argument list '(const char [17])'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(58): error C2039: 'accepted': is not a member of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.hpp(79): note: see declaration of 'pas::current_execution::Evaluation'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(58): error C2660: 'Tests::check': function does not take 1 arguments
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(8): note: see declaration of 'Tests::check'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp(58): note: while trying to match the argument list '(const char [27])'
+[84/92] Building CXX object CMakeFiles\front_preservation.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_tests.cpp.obj
+[85/92] Building CXX object CMakeFiles\prefix_preservation.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp.obj
+[86/92] Building CXX object CMakeFiles\own_prefix.dir\own_prefix.cpp.obj
+ninja: build stopped: subcommand failed.
+TRACE Build END exit=2

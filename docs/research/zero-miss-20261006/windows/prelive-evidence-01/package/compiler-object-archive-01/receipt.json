@@ -1,0 +1,12 @@
+{
+  "measurement_raw_modified": false,
+  "utc": "2026-10-06T11:51:11.8689373Z",
+  "archive_entries_verified": 348,
+  "archive_sha256": "4ffec459f52721c0b64939e825aad6a5a9e6dc9e609ae7cdec6af836c5017752",
+  "original_bytes": 2555465788.0,
+  "all_attempt_roots_retained": true,
+  "archive_bytes": 355097490,
+  "only_owned_compiler_objects_relocated": true,
+  "minimum_free": 181929332736,
+  "files": 348
+}

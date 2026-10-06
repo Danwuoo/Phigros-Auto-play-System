@@ -1,0 +1,2487 @@
+{
+  "formal_sources": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\adb.hpp",
+      "bytes": 1196,
+      "sha256": "375fa0d9e7f565bde964846bb0eb2f0925de75266b970914efa9bb574098f867"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\analysis.hpp",
+      "bytes": 693,
+      "sha256": "58b9e419c1e27778a029e078257fdfaa05ad0ebab2129ab24c92416c7306eb93"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\bench_workloads.hpp",
+      "bytes": 299,
+      "sha256": "73a12c3223bda2ed2e371a1065053b2b0d62fce36ef664901d69beb3d44f4444"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\bench.hpp",
+      "bytes": 2848,
+      "sha256": "d63240db7cd00f0856df554b3f6f539c72a4d314c7709716e9751db69c494703"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\config.hpp",
+      "bytes": 1107,
+      "sha256": "a4c71503c684326681b2e024ce24e31512e64a2a8068f347afa2a335b4a49173"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\core.hpp",
+      "bytes": 10646,
+      "sha256": "f6fbb40394755e82f16c55f32df40c0ed307468ff4423008d4ac488514a1dbf7"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\emulator.hpp",
+      "bytes": 3975,
+      "sha256": "2565e2c87eb090a3bd66c292007cd3337822e46a7e34e7e47bb97d751d05bd31"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_dataset.hpp",
+      "bytes": 2581,
+      "sha256": "b9c76e29a35405d1d7148156bf8f2240aad8a842b927aafe1ce67ac76368bb98"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_motion.hpp",
+      "bytes": 871,
+      "sha256": "248bdc956088d5fd96fef398b751d824c9b5cb5ed2a05e1ebf271d875a46c146"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_session.hpp",
+      "bytes": 2541,
+      "sha256": "5c5d3d11fee6b68f3166a83e19f99e7057449b3af5b7d7ed7d99f083b644ad84"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_tracking_shadow.hpp",
+      "bytes": 1147,
+      "sha256": "a7c4d74aacb183ca7775511e02bd632236e62b0771bfbb9631657429d3b91121"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_tracking.hpp",
+      "bytes": 2777,
+      "sha256": "f6fdf5dcc6d891cedd46c9d3997bc5787ec4e95aaedfc04dccc7d3aabc94b728"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game.hpp",
+      "bytes": 13420,
+      "sha256": "f17a9f03fc385d30dc3bc1b04aa6fcdd3fe8e1a2bb642e9aec0e2b4f0128c4b6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\grpc_transport.hpp",
+      "bytes": 383,
+      "sha256": "cd04c37c481ac4db5f94f4b531fd3c97b163419cbb95afecd43b35199072031c"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\journal.hpp",
+      "bytes": 1080,
+      "sha256": "491745aa5f9f94b79d5c6b2196912a3a97283858d4469ba0fcad87ce1090a260"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\native_capture.hpp",
+      "bytes": 2125,
+      "sha256": "d1f1faf3f64adf79a3925e973e60d0728dabe2a2582d58afad5f51028915e8f8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\preview.hpp",
+      "bytes": 516,
+      "sha256": "592e3561267f92dc6f7cba92ac8d7e693ce52fef8cb21053a03c0025aeb1f833"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\result_ui_labels.hpp",
+      "bytes": 4283,
+      "sha256": "f481437c517895499886831716211a51a2562b79e6fa74205e93783cef716bec"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\runtime.hpp",
+      "bytes": 2052,
+      "sha256": "7ca8b0fdf3e7fb466e4508ffd7ddc877f5b4716e1bfcb410ab4ad2983bb2f32e"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\scrcpy_capture.hpp",
+      "bytes": 1714,
+      "sha256": "b23a6e077d51813215bd99f5348eeed3c0022321229982c5ef0744585e2b4a16"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\session_archive.hpp",
+      "bytes": 1290,
+      "sha256": "263de5b3b096e573f2c9b94c9ca8b696d9647551ab36334991a8531407e4aa58"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\session_pixel_clips.hpp",
+      "bytes": 2067,
+      "sha256": "9a8be59d3a00bda5ea35b93275ee99808758de2c73e45b522766a8f254250cf5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\session_recording.hpp",
+      "bytes": 2147,
+      "sha256": "b23a1fd880712266227ef4c175c314a2a59a366922675e44bf28ccea7ae5e460"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\strategy_version.hpp",
+      "bytes": 486,
+      "sha256": "b0fecc4348edc9365c1733a06775099d61fadd59cdac5e6397e849a435a28229"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\touch_bench.hpp",
+      "bytes": 857,
+      "sha256": "f95e39584fd20ed96bfc7798446aa5707be7be51da20ac7e6e5f27ee2633cc75"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\touch_evidence.hpp",
+      "bytes": 1141,
+      "sha256": "dbc3cc55a593f9acc6e6aae463852fd1de91929a7e8ea6fb88a077adba2e6643"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\vision_cpu.hpp",
+      "bytes": 1118,
+      "sha256": "7daf320079f434bb74d91cef3b5112a41010cb7c6d208bccb92dff2325884916"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\adb.cpp",
+      "bytes": 15969,
+      "sha256": "25e17894596f7e4c2936aae03a90c1cbf950e41aa270ea038ac87720fbb855a2"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\analysis.cpp",
+      "bytes": 47079,
+      "sha256": "493aa4a7fdd0b92b5e590084ceede706bf6f20d1b0be2e8f759f308d93d9a443"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\bench_workloads.cpp",
+      "bytes": 5948,
+      "sha256": "aa8057f761d01e8c56256ca06e6c2d7bc1b05fbd4fac0c43380f5fd63db0b748"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\bench.cpp",
+      "bytes": 71554,
+      "sha256": "d4c051bda42ac50f3deef18eb1f064947f66c8eaac7debae2e80a289a783e9f3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\config.cpp",
+      "bytes": 9038,
+      "sha256": "a3064d6673d6d11924e42318f10975ba9ec7174ff98f184b80865ee557d28c23"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\core.cpp",
+      "bytes": 24136,
+      "sha256": "7b6ae89deca1501da2cd5a777c28c13cf3f086add1eb816070fbd325442952b3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\emulator.cpp",
+      "bytes": 25073,
+      "sha256": "a58c7ccb77afee37dba54c7ad67000a71635e825753932e4c04e6506c9e3c518"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_clip_replay.cpp",
+      "bytes": 13416,
+      "sha256": "7941f4179d37afe6938534a786802ae547d346ca798bf97943a27dc20eaa97e2"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_corpus.cpp",
+      "bytes": 39467,
+      "sha256": "d9298d4b81f65d4de42176814f2f8f2a38fba0ce66eb5ba6d8b24fc933926931"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_cold_pipeline.cpp",
+      "bytes": 41827,
+      "sha256": "0f659f6262e2fffed29a0cf8faf920ae84b39ba930e81eb3c55bd99f73fca83d"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset_tools.cpp",
+      "bytes": 17761,
+      "sha256": "71e6ac1c3a30b3c63d835b711020cc426133b0072966ca1270d9238ed4a26af5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_dataset.cpp",
+      "bytes": 19294,
+      "sha256": "cd741f79b62064de266880b38d813ae04fa28b3e761b7c2ab8c8c7228f9826bf"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_motion.cpp",
+      "bytes": 33455,
+      "sha256": "04b67571a1631f7036d1f12235ac30d2e7d744bf1b1dce2dcfb746d0221e7093"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_session.cpp",
+      "bytes": 8032,
+      "sha256": "bbe00dff49e14bb15e14ea27698300c8ccdb6ce55cbe3c91ef912bf40070390f"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_analysis.cpp",
+      "bytes": 12186,
+      "sha256": "be8dd2da300f48642f6c3560c9353b2c1832e5df972f673c098479575f1a2378"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_methods.cpp",
+      "bytes": 21098,
+      "sha256": "dea3d4256315b099d5481543aca5fd6db6b059325a8aea5255e621ff330741c8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking_shadow.cpp",
+      "bytes": 3978,
+      "sha256": "f59d26829f9d7fd88703651b12656b97605bf43153ce1dff269b7fbc72d2cf76"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game_tracking.cpp",
+      "bytes": 42660,
+      "sha256": "4e212b0302723ef36e8f5a34a3ebb4285927f0f7cfec97b97e4c50b73775afba"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp",
+      "bytes": 157216,
+      "sha256": "7cd3b8379c963ae709975c99dde0d605fa36ba7a82fd752f0c6b34c85799edc8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\grpc_transport.cpp",
+      "bytes": 1410,
+      "sha256": "eba1160246608eff472be3fc950f0d14a451e42b7d27bdde5ba20ff3e14a44a0"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\journal.cpp",
+      "bytes": 2317,
+      "sha256": "ace6ef2b41e6dba1c8e843606ea9252c85e4e7617c00b8e249f0f445581b9d43"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\manual_session.cpp",
+      "bytes": 24681,
+      "sha256": "cd35685beb86ca024502fa4f74548ee4d02efa440789824b5b83abfc1dee3fa9"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\native_capture.cpp",
+      "bytes": 32437,
+      "sha256": "645bb83fe2a0b1d4eb1696408e2d517145daa5e01b0fcd90d4fc52f43e0ef15d"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\preview.cpp",
+      "bytes": 9305,
+      "sha256": "9c08dcf6cba9ca153f25456c15ad4509ffdab7e12f7c892f7c2049f64a9107a8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\runtime.cpp",
+      "bytes": 43578,
+      "sha256": "652727e8a5e2fa481fc7e12db54bbfe5a022f0f1174b20281e0bb3435a9a3302"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\scrcpy_capture.cpp",
+      "bytes": 20610,
+      "sha256": "a9d5abc617a44c7d1c81910c0beebaf1440d2ff03259eeb194fd2cbe5ff26dff"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_archive.cpp",
+      "bytes": 6808,
+      "sha256": "8cdc6bf782fe66db117085e7b449f53420804f1677d02db603214089975f8acc"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_pixel_clips.cpp",
+      "bytes": 7817,
+      "sha256": "8f6facd5906dc24490c5f1a940c2feafc984229cd9007e64135a649219404bd9"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\session_recording.cpp",
+      "bytes": 15400,
+      "sha256": "568f11f19fc8b84b2090e001c0a4fcb6c0742093a4e820a5b6524e615457857c"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_bench.cpp",
+      "bytes": 40224,
+      "sha256": "c7a74607dd06e7c4af0230d9271d11c51901314a5399d76a5345dc582c236663"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\touch_evidence.cpp",
+      "bytes": 8392,
+      "sha256": "cac6121faaca2d24665010701da7a4b907392a421445c86159adfd20be667422"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\vision_cpu.cpp",
+      "bytes": 31744,
+      "sha256": "5834dbd2b27c77a58d91f69468eea3c032404caae3ed9d93d772d8650adfffd6"
+    }
+  ],
+  "files": [
+    {
+      "sha256": "375fa0d9e7f565bde964846bb0eb2f0925de75266b970914efa9bb574098f867",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\adb.hpp",
+      "bytes": 1196
+    },
+    {
+      "sha256": "58b9e419c1e27778a029e078257fdfaa05ad0ebab2129ab24c92416c7306eb93",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\analysis.hpp",
+      "bytes": 693
+    },
+    {
+      "sha256": "a4c71503c684326681b2e024ce24e31512e64a2a8068f347afa2a335b4a49173",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\config.hpp",
+      "bytes": 1107
+    },
+    {
+      "sha256": "f6fbb40394755e82f16c55f32df40c0ed307468ff4423008d4ac488514a1dbf7",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\core.hpp",
+      "bytes": 10646
+    },
+    {
+      "sha256": "2565e2c87eb090a3bd66c292007cd3337822e46a7e34e7e47bb97d751d05bd31",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\emulator.hpp",
+      "bytes": 3975
+    },
+    {
+      "sha256": "b9c76e29a35405d1d7148156bf8f2240aad8a842b927aafe1ce67ac76368bb98",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_dataset.hpp",
+      "bytes": 2581
+    },
+    {
+      "sha256": "248bdc956088d5fd96fef398b751d824c9b5cb5ed2a05e1ebf271d875a46c146",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_motion.hpp",
+      "bytes": 871
+    },
+    {
+      "sha256": "5c5d3d11fee6b68f3166a83e19f99e7057449b3af5b7d7ed7d99f083b644ad84",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_session.hpp",
+      "bytes": 2541
+    },
+    {
+      "sha256": "a7c4d74aacb183ca7775511e02bd632236e62b0771bfbb9631657429d3b91121",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_tracking_shadow.hpp",
+      "bytes": 1147
+    },
+    {
+      "sha256": "f6fdf5dcc6d891cedd46c9d3997bc5787ec4e95aaedfc04dccc7d3aabc94b728",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game_tracking.hpp",
+      "bytes": 2777
+    },
+    {
+      "sha256": "f17a9f03fc385d30dc3bc1b04aa6fcdd3fe8e1a2bb642e9aec0e2b4f0128c4b6",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game.hpp",
+      "bytes": 13420
+    },
+    {
+      "sha256": "cd04c37c481ac4db5f94f4b531fd3c97b163419cbb95afecd43b35199072031c",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\grpc_transport.hpp",
+      "bytes": 383
+    },
+    {
+      "sha256": "491745aa5f9f94b79d5c6b2196912a3a97283858d4469ba0fcad87ce1090a260",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\journal.hpp",
+      "bytes": 1080
+    },
+    {
+      "sha256": "592e3561267f92dc6f7cba92ac8d7e693ce52fef8cb21053a03c0025aeb1f833",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\preview.hpp",
+      "bytes": 516
+    },
+    {
+      "sha256": "f481437c517895499886831716211a51a2562b79e6fa74205e93783cef716bec",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\result_ui_labels.hpp",
+      "bytes": 4283
+    },
+    {
+      "sha256": "7ca8b0fdf3e7fb466e4508ffd7ddc877f5b4716e1bfcb410ab4ad2983bb2f32e",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\runtime.hpp",
+      "bytes": 2052
+    },
+    {
+      "sha256": "263de5b3b096e573f2c9b94c9ca8b696d9647551ab36334991a8531407e4aa58",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\session_archive.hpp",
+      "bytes": 1290
+    },
+    {
+      "sha256": "9a8be59d3a00bda5ea35b93275ee99808758de2c73e45b522766a8f254250cf5",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\session_pixel_clips.hpp",
+      "bytes": 2067
+    },
+    {
+      "sha256": "b23a1fd880712266227ef4c175c314a2a59a366922675e44bf28ccea7ae5e460",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\session_recording.hpp",
+      "bytes": 2147
+    },
+    {
+      "sha256": "b0fecc4348edc9365c1733a06775099d61fadd59cdac5e6397e849a435a28229",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\strategy_version.hpp",
+      "bytes": 486
+    },
+    {
+      "sha256": "dbc3cc55a593f9acc6e6aae463852fd1de91929a7e8ea6fb88a077adba2e6643",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\touch_evidence.hpp",
+      "bytes": 1141
+    },
+    {
+      "sha256": "77a9bf5894b8a0c017c89c61eea3ffb5d9d68b6985b72756c19e69e18e3338f8",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-release-01\\generated\\emulator_controller.grpc.pb.h",
+      "bytes": 649003
+    },
+    {
+      "sha256": "240fc61736977248002f60836558356a5ee7d04ae2e99bb0acaa1b10c660afa5",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-release-01\\generated\\emulator_controller.pb.h",
+      "bytes": 1001367
+    },
+    {
+      "sha256": "565e7c058328d01b11b75e7bf05a96a96dcdd378b42f000a422c000957671d5f",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.hpp",
+      "bytes": 3031
+    },
+    {
+      "sha256": "08f48f197ef36449bc04b81cdd27005c50e56bc4766fde9e5d3bc58c38ccb691",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.hpp",
+      "bytes": 336
+    },
+    {
+      "sha256": "bbb47373899ac0531e424849aaa3d32638348ea25e8ebf682ddfaf906ac9feb0",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.hpp",
+      "bytes": 400
+    },
+    {
+      "sha256": "728f77d4aa843a84a25c4f91398d30e91c7a991fce74ec7a7b46fc94f539377e",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.hpp",
+      "bytes": 3317
+    },
+    {
+      "sha256": "a917a40d1cff466355d166d6bbe22892c261048d2b1731091b82495c64273905",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.hpp",
+      "bytes": 2531
+    },
+    {
+      "sha256": "2b45dcf1d316476a53ebdee310f0ad53c749aff57c315285030ad3eb6f20d50c",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\current.hpp",
+      "bytes": 1279
+    },
+    {
+      "sha256": "0f72a64803b3abf74b8bbce3be9643163a17d128b54feb5a281fc4aeab20cf35",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\own_bridge.hpp",
+      "bytes": 3805
+    },
+    {
+      "sha256": "1cfdb4d5b2829916e9c45a76b8e9d79dfdb9e37051948533198c69c5f5b733b9",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\runtime.hpp",
+      "bytes": 4568
+    },
+    {
+      "sha256": "28dbb3c76247037cd74f54a952b060cdb6b36dc19dd2ebb24d18c8a81133a370",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\algorithm\\algorithm.h",
+      "bytes": 2212
+    },
+    {
+      "sha256": "6cddabb6d0ad9153b9ec94f0b190acde979aca8b836f5972a0069e3f093f20ae",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\algorithm\\container.h",
+      "bytes": 84003
+    },
+    {
+      "sha256": "ec226a55093fe852f19a5284c24feb23c96484b507eb3d96f5800368bf0e3d2c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\attributes.h",
+      "bytes": 43359
+    },
+    {
+      "sha256": "9f65cf0aa3632a53eb3c162ebe1badc89b86d3d33fab3bc05da93853fa911e4f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\call_once.h",
+      "bytes": 8372
+    },
+    {
+      "sha256": "61917e117a918fe91a3d94959a80556a1e9ee7435a1cd188c454030b07b59cce",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\casts.h",
+      "bytes": 12457
+    },
+    {
+      "sha256": "e45ae053f829af8b7826c4c420ef806b500bfd0b9e7b870773ea32839ebf8167",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\config.h",
+      "bytes": 33654
+    },
+    {
+      "sha256": "570a004baf8b9657bb4d6eaa3ca3b7122d0c03e086a7a52a58e739319694679a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\const_init.h",
+      "bytes": 3431
+    },
+    {
+      "sha256": "a3496b81361bae203aa9e836f132d83781c3a43127a0606d675cb46df07b01a7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\dynamic_annotations.h",
+      "bytes": 19155
+    },
+    {
+      "sha256": "49fdbb61be568af48ba4cb460dc38b508e751197674495f58f58ea2693caf293",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\atomic_hook.h",
+      "bytes": 7511
+    },
+    {
+      "sha256": "0a360f18247178201d92080467a47689e6a91acc0fcad648c6a712f8da03070e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\dynamic_annotations.h",
+      "bytes": 15843
+    },
+    {
+      "sha256": "f3fb5c3eafc6c84614b9f46f23bef48eefdeb6ee6a52de45dfcd8c2a529a93cf",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\endian.h",
+      "bytes": 9262
+    },
+    {
+      "sha256": "01d6842cdb906e98426c03b7fbe24f0deff53c97c449c9aef53ace66079c20fb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\errno_saver.h",
+      "bytes": 1321
+    },
+    {
+      "sha256": "7ef037d45324a298164a1088c4c80ead15c284275753d3f492a2e3c995281b4c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\iterator_traits.h",
+      "bytes": 2529
+    },
+    {
+      "sha256": "81c291becefdfdfa55adc782a4b53bb1e133e5deee1dcf22c2759e0a89e303c6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\low_level_scheduling.h",
+      "bytes": 4827
+    },
+    {
+      "sha256": "e22d04465943f60511e1957fb47e570dd5ff53eb1e3385f084047d3881dcf3a3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\per_thread_tls.h",
+      "bytes": 1758
+    },
+    {
+      "sha256": "90e01dac7375efc520f5df65c9a03e5c5dc723e5d96fafea4df07c8d8255c510",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\raw_logging.h",
+      "bytes": 10256
+    },
+    {
+      "sha256": "dd30f104eb676a1c75dde910d991792b8516a4dc83a6f008e8f2ff13a646077b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\scheduling_mode.h",
+      "bytes": 2410
+    },
+    {
+      "sha256": "0e3013e9da116026a283f881583f767dae9cc8547e8cbe7cb57acc9f2a659048",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\spinlock_wait.h",
+      "bytes": 3850
+    },
+    {
+      "sha256": "bac6d5c57872a6bdc3e7b2fbaa1635366ab895dc74bbcc570a85031d17df4c51",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\thread_identity.h",
+      "bytes": 11750
+    },
+    {
+      "sha256": "262387ec0241ee1ccabaf7c77e2dd3c420435e40e2c3b5573bc09ea82dac5bab",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\throw_delegate.h",
+      "bytes": 3331
+    },
+    {
+      "sha256": "99a9eef2a559df697297db9682fd873fa8c18d6c27c309f49d081af1a550eaa9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\tsan_mutex_interface.h",
+      "bytes": 2521
+    },
+    {
+      "sha256": "1987b24054656ebf285c6d04a954791671bf9d8f453dfbf23e836631dca2fc6b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\internal\\unaligned_access.h",
+      "bytes": 2543
+    },
+    {
+      "sha256": "4de7b421b2b2780416a6e37e7472f68d9e70fff3a96c2318921ae98c2870b6c4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\log_severity.h",
+      "bytes": 7074
+    },
+    {
+      "sha256": "1004e3ca91e82e4ee1dbe1f069844fcc78cffbab2d9b916a44c8ad6ff6419947",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\macros.h",
+      "bytes": 9256
+    },
+    {
+      "sha256": "b2df454a31f91d721406b8638ac76f745f46e0b8ba1406756a04a26ac3fc41ee",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\nullability.h",
+      "bytes": 13764
+    },
+    {
+      "sha256": "eb2d8a4445daf08c64916c24f790cfa7131d242736ce8d59f5274b8325219513",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\optimization.h",
+      "bytes": 12150
+    },
+    {
+      "sha256": "e9c0f752aab24a86a06ca80190c81100d09905be3920a9873fc3d1da70cfe9ec",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\options.h",
+      "bytes": 8019
+    },
+    {
+      "sha256": "6148c6dc7e98624ddc57b6e2dfe160f530706e407f4aa2e2132da9fbe4d64407",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\policy_checks.h",
+      "bytes": 4321
+    },
+    {
+      "sha256": "6d2a30c81a0b65ece88ce16086d9402913c5ed1cb8e42e28f508fcd1ba954d93",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\port.h",
+      "bytes": 896
+    },
+    {
+      "sha256": "6b7e3ad48183f659ff7a11a226d6c9a3a9081a2632e41ce4b1ef11d025dcbfe4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\prefetch.h",
+      "bytes": 7210
+    },
+    {
+      "sha256": "9d67d4e81e058bdf59c775c5a507e20937b573223493932574036161341b2344",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\base\\thread_annotations.h",
+      "bytes": 11918
+    },
+    {
+      "sha256": "b2573728ae065ff73ed79a790b0dfd66389c88add65711cdef9f08d968861f14",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\btree_map.h",
+      "bytes": 35204
+    },
+    {
+      "sha256": "a62ec0f366d40661853e63459b83db1d829776b6ccf7556f317217a2c0175e1a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\fixed_array.h",
+      "bytes": 20157
+    },
+    {
+      "sha256": "87d546828e03eeff3cfa9963abdb79664fc50e91d08bca07cd16211133aa218a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\flat_hash_map.h",
+      "bytes": 27739
+    },
+    {
+      "sha256": "e50b8895bf8b311951a9eb3664b48e966952257760873101f3dcf370c3db4df5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\hash_container_defaults.h",
+      "bytes": 1801
+    },
+    {
+      "sha256": "e3dbee89dacb3e2c4479b9d0d80dbe1e95bfeaafb8e88ef01dba397ac01362b6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\inlined_vector.h",
+      "bytes": 40387
+    },
+    {
+      "sha256": "58ecfa2bac054cdbd799ad62bc790d65b8cd608c8dcab22a1b590cc7828f871a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\btree_container.h",
+      "bytes": 37380
+    },
+    {
+      "sha256": "40547146572673e633953c1f85bf75ea8cdd6e9beca7b1d959b0dddd859e4c62",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\btree.h",
+      "bytes": 119546
+    },
+    {
+      "sha256": "1fb892663d0cf98cf7c5a6674caf3f30c17fad99542cbf5a384637617cceb4d0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\common_policy_traits.h",
+      "bytes": 5522
+    },
+    {
+      "sha256": "293ec7c117d84f3b093e570732cfa93ef17811f42bb22252a5376e629489b7c4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\common.h",
+      "bytes": 9379
+    },
+    {
+      "sha256": "d6279e4d5b95357893458c7910a7de429aca64f72f7dda21afdaedd6559267a6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\compressed_tuple.h",
+      "bytes": 10210
+    },
+    {
+      "sha256": "e57a7bf1b0e8178e25afd8c8fbbe2b071a1d2bd9b571d6a4f39b9fe811b6180c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\container_memory.h",
+      "bytes": 21441
+    },
+    {
+      "sha256": "7257743a5462a0f11ebed36670799883cff1a6eb5a931db475af086a77a1edc4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\hash_function_defaults.h",
+      "bytes": 9662
+    },
+    {
+      "sha256": "78151d1d6186b9bbc208b5ca2c94f7b12929f764d1c6e25a69efcc7f63e3d3bb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\hash_policy_traits.h",
+      "bytes": 7782
+    },
+    {
+      "sha256": "7c47b787c27eb1d1287cffdd1a8e9a10839bb24caa5e7d2fba39a8b182860aa1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\hashtable_control_bytes.h",
+      "bytes": 19808
+    },
+    {
+      "sha256": "5057778a79e6675919aa11652a2de71ff76674f0fe0bd26ee43be87046b9772a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\hashtable_debug_hooks.h",
+      "bytes": 2976
+    },
+    {
+      "sha256": "b16620e3dabcb6adcbb9b0ab0a7f3cce50e3f2459925b4475b8153ae44dfb39b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\hashtablez_sampler.h",
+      "bytes": 11812
+    },
+    {
+      "sha256": "4cbf2984b55eacf53889d15ab411e0df3abc06c68141c5c6ccf2759e79a71093",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\inlined_vector.h",
+      "bytes": 39347
+    },
+    {
+      "sha256": "81e6c5a64b4ae904f238ef8b7f50479702c69bf580e3fa3ce8699922ebcae268",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\layout.h",
+      "bytes": 31726
+    },
+    {
+      "sha256": "48d51d24dede9ddfdb0487700165b602cea4dfa1286858878368eb4ac9974c2a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\raw_hash_map.h",
+      "bytes": 18294
+    },
+    {
+      "sha256": "b1181f4d4f80130bf5a72bfd4d209e755721270f2e1b8fc1e182e28b42f940bc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\container\\internal\\raw_hash_set.h",
+      "bytes": 150814
+    },
+    {
+      "sha256": "531e1af627386e9a0ce09e14140076941d61ca336bdf4a01bad6a9d81361ac4a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\crc\\crc32c.h",
+      "bytes": 7309
+    },
+    {
+      "sha256": "3d6abd21c8c1192af6a524362de757ee09a8f2c6b6d9229f755dc3848349d255",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\crc\\internal\\crc_cord_state.h",
+      "bytes": 5873
+    },
+    {
+      "sha256": "a7644987cc72a49d2d971a858561a0bcb361a0e04a0ab39f119c1afb3f7c7945",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\crc\\internal\\crc32_x86_arm_combined_simd.h",
+      "bytes": 8456
+    },
+    {
+      "sha256": "5c6b58971ccd25ea76025fd19acb2458f96f259c97121371911c61a91a64db84",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\crc\\internal\\crc32c_inline.h",
+      "bytes": 2108
+    },
+    {
+      "sha256": "9fb0c694d02f262efb81f4f310a2f318a516cc7939e2da275e9070a50929135c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\debugging\\internal\\demangle.h",
+      "bytes": 3001
+    },
+    {
+      "sha256": "342736ec6e10a811cc83a8de1789e7af1c590c41ecdf305beefdeeef9c4904af",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\functional\\any_invocable.h",
+      "bytes": 13097
+    },
+    {
+      "sha256": "8d41e5ce944fecc7dfe8c85444db596f27726c275a3923f09a8711ba83253bfa",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\functional\\function_ref.h",
+      "bytes": 10084
+    },
+    {
+      "sha256": "460b7c5fe69402ecb0e5ad61b4da5c208db9df3aa1fe79f9fed01630d346ad67",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\functional\\internal\\any_invocable.h",
+      "bytes": 35954
+    },
+    {
+      "sha256": "de3e4c200d32a11f0817f91f67e19eef9842474e2c3045748c52e7177adcaea2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\functional\\internal\\function_ref.h",
+      "bytes": 5567
+    },
+    {
+      "sha256": "32e9baa333c51bc677105849f26e34fbe4e99ac882ebe8f759fc75251d969125",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\hash\\hash.h",
+      "bytes": 18428
+    },
+    {
+      "sha256": "e2cb4e6364f594daa0264510989a1d7827e0af247b9a5be64dc6a7f9180d8be2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\hash\\internal\\city.h",
+      "bytes": 3060
+    },
+    {
+      "sha256": "95c8dd7f3f0ca0bba568a452ef70e9fca9f820b6705845cfd0b93b1347a7434e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\hash\\internal\\hash.h",
+      "bytes": 63073
+    },
+    {
+      "sha256": "5a6c4b178fb2245ba0d6de82d0c4c903f615b74f24fadc1b955d3dfa60e2c246",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\hash\\internal\\weakly_mixed_integer.h",
+      "bytes": 1298
+    },
+    {
+      "sha256": "ff8ff6bf90de07dd7d3d223b3fafa888c88c9efb9698e475e29f1aec5cd2c702",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\absl_check.h",
+      "bytes": 5458
+    },
+    {
+      "sha256": "7836b9ba7a9e470bd825ecfdb21b3fe7e3052877107a39762e438d291cd7966a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\absl_log.h",
+      "bytes": 5316
+    },
+    {
+      "sha256": "88253408608b2c42bbb348f2c6739a336b82f7a595a3ec53ef733e0190022fe7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\absl_vlog_is_on.h",
+      "bytes": 4283
+    },
+    {
+      "sha256": "624e90599e82569103d8f8bb21add6b8916cdcf616684aec4311ca7c66e36476",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\check_impl.h",
+      "bytes": 8241
+    },
+    {
+      "sha256": "04db6c1a0a10d8cb87da002824a0d6da322490decb03124c31a7c17a7cd25e3b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\check_op.h",
+      "bytes": 27495
+    },
+    {
+      "sha256": "fc7ba13cd5b0dba0cf5ec134742b42acbf4060192b39eb59d8a3498035bf3553",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\conditions.h",
+      "bytes": 12024
+    },
+    {
+      "sha256": "e5e06a681876c7d42d134f3d3e525313d32309bcce1f831a4705652b4ad98a52",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\config.h",
+      "bytes": 1214
+    },
+    {
+      "sha256": "8741e951c5e6ba5cbc0d54524c123df6156f753ff1109cc68c7f9b826d80d186",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\log_impl.h",
+      "bytes": 13892
+    },
+    {
+      "sha256": "3a55a8a2c5696b34305b09f13304a5f218b09a37976b486fd4861fe52996a122",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\log_message.h",
+      "bytes": 18782
+    },
+    {
+      "sha256": "577210940b709666de6ea95f86d285cef80c1ae93b6ab956f798b11175ae117e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\nullguard.h",
+      "bytes": 2846
+    },
+    {
+      "sha256": "e9e5e906cd10d08572ac5719c307ee324e76e3c4d56b2381eaa211f5a5467a04",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\nullstream.h",
+      "bytes": 4022
+    },
+    {
+      "sha256": "c4478378039534ab1a6312000f843cfe51c74a9187d8eea6649d5832e62c4879",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\proto.h",
+      "bytes": 13257
+    },
+    {
+      "sha256": "726f14c8ed2912fd10e4740c73a489de1ea92b179000ca7cd369c89c9c4e4c98",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\strip.h",
+      "bytes": 4815
+    },
+    {
+      "sha256": "4630d63cfaecc6112ecbfe092a8dfc9c79ebeec56fd64bbdf69bcdaf7f2408b3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\structured_proto.h",
+      "bytes": 3729
+    },
+    {
+      "sha256": "8fa324e6fd3ae155711f04fed0376354fa3a8bf62d62527d7f3cdd6f24f93d89",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\vlog_config.h",
+      "bytes": 6204
+    },
+    {
+      "sha256": "ff43956815217aff155e0a159e012e72b6871caa9e1173256ba50d2a1dbeac4e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\internal\\voidify.h",
+      "bytes": 1735
+    },
+    {
+      "sha256": "d810e66ed7de822080ca6e4a7eae8cab9eedaaca7ae5794c34b9c6ce9e2f978b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\log_entry.h",
+      "bytes": 8336
+    },
+    {
+      "sha256": "ec965ecac10708f5ac7f79d724d89ec2abdf50e74b3d9f7197587a5f000886a9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\log\\log_sink.h",
+      "bytes": 2345
+    },
+    {
+      "sha256": "92e9ac99b4db0ed44b04b79ff509255c9fea321bda665f85e26fd2c13130ef0d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\memory\\memory.h",
+      "bytes": 11324
+    },
+    {
+      "sha256": "4679c0444f490580ed419442adf54cc4fb5330a5178031eb028a9c6a2b3017d3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\meta\\type_traits.h",
+      "bytes": 21804
+    },
+    {
+      "sha256": "c4b22990d346b8dd344cddc62b42d2e348793c59d603dededa2626ecc99c72ea",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\numeric\\bits.h",
+      "bytes": 8013
+    },
+    {
+      "sha256": "780b6df6f584f99dd1b3406984b0a898b92f016acf322e47c849ec988f036afb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\numeric\\int128_no_intrinsic.inc",
+      "bytes": 12055
+    },
+    {
+      "sha256": "08dd53ac6aca43d4f1418959ad720b405e2166d063e604d9293c6a57e63ece1f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\numeric\\int128.h",
+      "bytes": 41116
+    },
+    {
+      "sha256": "83ea6d1ba44c35a822abde1f161c9c23e7454d12049e9f6ad0694b85070cc76d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\numeric\\internal\\bits.h",
+      "bytes": 13509
+    },
+    {
+      "sha256": "540cb99e8907101a7c48c75845649f811c04b3d8302d4f5f4907810149835095",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\profiling\\internal\\sample_recorder.h",
+      "bytes": 8267
+    },
+    {
+      "sha256": "de5b0807943fa2b8b99c9ed1fdbf930d11ed5d6bf42d52d4eb5702511c4fd3f9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\status\\internal\\status_internal.h",
+      "bytes": 4401
+    },
+    {
+      "sha256": "4c79b00b0267968a9374bd7c26092597ae841761ee2f27cdfb58a6bd2c19247e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\status\\internal\\statusor_internal.h",
+      "bytes": 22321
+    },
+    {
+      "sha256": "a52c40fae2128e2c24872c7b74e89df9dbdd5e97b1343773ca325cbbf87df852",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\status\\status.h",
+      "bytes": 36596
+    },
+    {
+      "sha256": "b44b0b21d2bd021549b2b86dc9209a286320dd9c5d736a4069ec8124a4961797",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\status\\statusor.h",
+      "bytes": 28953
+    },
+    {
+      "sha256": "3dd5dc0cd1aff4e433878042b1d5442cea7b8390240085005323b54c75809d76",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\cord_analysis.h",
+      "bytes": 2500
+    },
+    {
+      "sha256": "c322a7b6529f8c7f36e0da03eff34705deb17f66562d27832544b29061cf6916",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\cord_buffer.h",
+      "bytes": 22786
+    },
+    {
+      "sha256": "c17f9fce81464e7f56c23c5531191c55313eb8d0d32ee82282a0680094dd1b2f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\cord.h",
+      "bytes": 65675
+    },
+    {
+      "sha256": "9c385e0a0f92efa6ac0445528fdd35966ff5dcf0efccee3cfe8e7ee4299beb58",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\has_absl_stringify.h",
+      "bytes": 2059
+    },
+    {
+      "sha256": "8ce0a95a2a542a59df1e67e90c8fdbf2d7f77bbcecb2526d6a9238d38bec098d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\has_ostream_operator.h",
+      "bytes": 1330
+    },
+    {
+      "sha256": "a702428c024dea0917dfd744a744282716c72a17432418f1a7e5d6ed8910ec08",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cord_data_edge.h",
+      "bytes": 2274
+    },
+    {
+      "sha256": "752a0f466a49ebce7b27746b4157d1214574d43064e366342213a3d535a47a10",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cord_internal.h",
+      "bytes": 33346
+    },
+    {
+      "sha256": "dc1b79a7b4a8dc5c21c46b442473af4e35898016e2822a6a7e5a738601d0bfc1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cord_rep_btree_navigator.h",
+      "bytes": 10173
+    },
+    {
+      "sha256": "913265d50edfe74bd6ff3202d73fac4d93dc813a8c3a1262d6064626cd8b98c4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cord_rep_btree_reader.h",
+      "bytes": 8620
+    },
+    {
+      "sha256": "8fedd566a009ca2c0f37ad3de24066db8a8c7173e945387322b0a328662d1b07",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cord_rep_btree.h",
+      "bytes": 41264
+    },
+    {
+      "sha256": "abf52010f2e23ca0ba2451a52587c9c7782f56c8cfcb6bc47cca78e7379632eb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cord_rep_crc.h",
+      "bytes": 3349
+    },
+    {
+      "sha256": "edb57250ddc315c9b7a9f2e213f32b3f6d82dc250630d87fc771c696654c2292",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cord_rep_flat.h",
+      "bytes": 7758
+    },
+    {
+      "sha256": "c66c913ca89fcfa0bdfee706edfde6f435eb617b216835cd0e5f548aca075af7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cordz_functions.h",
+      "bytes": 2839
+    },
+    {
+      "sha256": "8cd9f156b2e44f9e95548bc015c6e1e30a0e1e9f02658a27f785ad4f5de49b9d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cordz_handle.h",
+      "bytes": 4079
+    },
+    {
+      "sha256": "4c4f2ca5022c3c07f5184cf3d0d817c9decdf8a2041417f58b5c658e2dd64c12",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cordz_info.h",
+      "bytes": 12439
+    },
+    {
+      "sha256": "4108fc55b83dcce1d525e1135a946d4488a6be4d2399c01f38da05a80ecfcd21",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cordz_statistics.h",
+      "bytes": 3451
+    },
+    {
+      "sha256": "65439da7de0ca3c79e89eeb2e890e4b12db97037d6059738d05533cca68fabbe",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cordz_update_scope.h",
+      "bytes": 2307
+    },
+    {
+      "sha256": "94562ed349ae1d48e0eb422d6462cda32a782bd355fcb1594453c4fd84d69af3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\cordz_update_tracker.h",
+      "bytes": 3857
+    },
+    {
+      "sha256": "3bcf81c223dec771066c3fd239ff5f4178f5c407e19cfce33c5db245777949ff",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\resize_uninitialized.h",
+      "bytes": 3960
+    },
+    {
+      "sha256": "59aab2f06e122ce38f009f516d3d1bd9e3a7af4658e20640818ecbd08541bf0f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\str_format\\arg.h",
+      "bytes": 27471
+    },
+    {
+      "sha256": "327b87fe2af9965f57812e8ef7aa1fcdff6dc3b11adf42c1c459f5836e29d391",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\str_format\\bind.h",
+      "bytes": 8142
+    },
+    {
+      "sha256": "7a0e65455dec749175429390b16999f14ed34df662f5866001372948e6d6fef7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\str_format\\checker.h",
+      "bytes": 3096
+    },
+    {
+      "sha256": "22be968eef75bffe59f3c6ee629b7910fa8039768c39fb47960b4090eda0b6e9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\str_format\\constexpr_parser.h",
+      "bytes": 13587
+    },
+    {
+      "sha256": "e6d59a10dd31968bee26d48f52e1fd5a7bbe3ec0b39e8a9a3e9132fc62985704",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\str_format\\extension.h",
+      "bytes": 14341
+    },
+    {
+      "sha256": "a8c72004a2280585d696dbd5a5f60954fd7b201b87b90723e930188936fb465c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\str_format\\output.h",
+      "bytes": 2916
+    },
+    {
+      "sha256": "e3970242669350c2ba43836dbf616e173a9427b16b8b8dc7749319793f05f4be",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\str_format\\parser.h",
+      "bytes": 9951
+    },
+    {
+      "sha256": "c10000a12e17d17b1d2afa69e85eaecae6ec7d3da8d90ce1815f88b2c98ec46a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\string_constant.h",
+      "bytes": 2439
+    },
+    {
+      "sha256": "585bf8dc88079babb7aeca873df8c61cbbd59ddd5bc5ec8354d8a1fef445696f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\internal\\stringify_sink.h",
+      "bytes": 1526
+    },
+    {
+      "sha256": "7d8bf4edb4b51f83b5211a1c55f595c60bb99d95788a04f37cf567cfaf684a9c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\numbers.h",
+      "bytes": 15287
+    },
+    {
+      "sha256": "c26a16fea04c18589c18fed1bf2cd394005369725b51bf140e6d259b5718aaae",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\resize_and_overwrite.h",
+      "bytes": 7292
+    },
+    {
+      "sha256": "9a3f113c2691e21649a7c16018217a867056ebdb65df3e4b50882d145476f439",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\str_cat.h",
+      "bytes": 24243
+    },
+    {
+      "sha256": "fcd54077f7487f3398952b6137319ee181b790f0bf1fc518c25dd1d993f93610",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\str_format.h",
+      "bytes": 36063
+    },
+    {
+      "sha256": "9ff498098fd890a7d9c215d321b814325fa0b0c2525e88e3fc7a2c298b6f125f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\strings\\string_view.h",
+      "bytes": 2103
+    },
+    {
+      "sha256": "97d4b58dc2fc67ffb3388380499f421bbbea070d1d9f92c28a7d60fdb51827b3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\synchronization\\internal\\create_thread_identity.h",
+      "bytes": 2160
+    },
+    {
+      "sha256": "b9315bd10bca7bf9bf1d0d7483d48e9fbb45bb319ef98010000a24e64ffd348f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\synchronization\\internal\\kernel_timeout.h",
+      "bytes": 8233
+    },
+    {
+      "sha256": "10725664afc1d045cb521263d46c1654dc64c91d2b15e4f1e2db18707d25be93",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\synchronization\\internal\\per_thread_sem.h",
+      "bytes": 4897
+    },
+    {
+      "sha256": "22759a404ab3a6f317a00e99c9fcabf81520add19b09c45013dd9869a2b74975",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\synchronization\\mutex.h",
+      "bytes": 53620
+    },
+    {
+      "sha256": "e76d12f5d9a14c8447d439e47e8239446a01d82fa7000f930b372e46d5ca2417",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\time\\civil_time.h",
+      "bytes": 22736
+    },
+    {
+      "sha256": "9cfc354efc18837f4f7b02a8f289465e7fd1f52e9f6230faeb3ade872d9b38fc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\time\\clock.h",
+      "bytes": 2778
+    },
+    {
+      "sha256": "32f4a93948a852cf1be123ac82f85d4b55f215bcfe4461b1bb1dde803789dff0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\time\\internal\\cctz\\include\\cctz\\civil_time_detail.h",
+      "bytes": 22249
+    },
+    {
+      "sha256": "68f9179c20d49aff1a1e7f78476b83151e927c2a6ca1191fdf0a48345a156fe2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\time\\internal\\cctz\\include\\cctz\\civil_time.h",
+      "bytes": 13616
+    },
+    {
+      "sha256": "64643d54ac307640b17937d108012577e2153dae141092f17078001563867565",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\time\\internal\\cctz\\include\\cctz\\time_zone.h",
+      "bytes": 19732
+    },
+    {
+      "sha256": "6e13a2f54b671965e967664069f29d62f49e8d06bce0371b28964c19990d5da0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\time\\time.h",
+      "bytes": 75835
+    },
+    {
+      "sha256": "66dfed6b35e606e91c97f2b73d7c5a914dc321db445b9532e53ac3dc45dc19eb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\types\\compare.h",
+      "bytes": 19745
+    },
+    {
+      "sha256": "b5a2c0b6106872abac3e428a1813b20259f99efe4686adf1b085b5b46eaea2b3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\types\\internal\\span.h",
+      "bytes": 4673
+    },
+    {
+      "sha256": "538fb6f5c3baacc33851916dbe3bc0a18963b332357240b20d5f57150dd476ae",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\types\\optional.h",
+      "bytes": 1377
+    },
+    {
+      "sha256": "3195772b8f7d7b95633b637d2235b9d719451b9d6082e65eea335118bacdc0db",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\types\\span.h",
+      "bytes": 31460
+    },
+    {
+      "sha256": "10af88c42f94e2e66846383f090a02aefa7349e510b7b0a1c6e8e6eeaa4689cd",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\types\\variant.h",
+      "bytes": 2624
+    },
+    {
+      "sha256": "32d5c7e8e729b8b1dfe3f37953d174686084c556dcf6c56007405882fc7e2080",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\absl\\utility\\utility.h",
+      "bytes": 2041
+    },
+    {
+      "sha256": "4a163b62a637fc6187eb344f495ebc20cd3078891b6dc64741fdbb42e05041d6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\any.h",
+      "bytes": 6264
+    },
+    {
+      "sha256": "fb8976608b821eb0b6fb850e753da7458ff842fdc46d0794f50ec4ccd12ce65f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\any.pb.h",
+      "bytes": 19042
+    },
+    {
+      "sha256": "23c5047721fe471725933ec4487a199baa943f0af558a48f8675f25224aa63eb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\arena_align.h",
+      "bytes": 6448
+    },
+    {
+      "sha256": "30bbe9bdae47abb76ed8989b685bf260b7e49bb6e4e752c9408ef78781881ec9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\arena_allocation_policy.h",
+      "bytes": 3060
+    },
+    {
+      "sha256": "e073a4f05b51e846ad502c05b908f33b49d20ff77e6ead0a26c88176fe5b9b84",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\arena_cleanup.h",
+      "bytes": 3521
+    },
+    {
+      "sha256": "729b8c036bf160a3817c287bc0a66c573b8097be09a51a5b2cbbf9524656825e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\arena.h",
+      "bytes": 33473
+    },
+    {
+      "sha256": "a480fc9864372fe858ee00e67f1bfb7c48697aac17cb81d34c04cde0342595d1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\arenastring.h",
+      "bytes": 21746
+    },
+    {
+      "sha256": "791b527c1c78145e77ab3acdcef7f21df041b96abab511b84c9cf41a57eabbbd",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\arenaz_sampler.h",
+      "bytes": 8484
+    },
+    {
+      "sha256": "f76a2fd101eb3cc8b7895a645dc36fe5f4fd98c0d9acea611be4ad4007099d8b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\descriptor_database.h",
+      "bytes": 19773
+    },
+    {
+      "sha256": "700591f9bc5a8c752fd1a7ec46b52e12277d8c28f989c42833acde6b7023032f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\descriptor_lite.h",
+      "bytes": 3803
+    },
+    {
+      "sha256": "fffef4c21667432bbba6344d24664284a3d6173659bfec237044d501bf932e2d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\descriptor.h",
+      "bytes": 133634
+    },
+    {
+      "sha256": "9fa35876ab46c808e1ae6af7a700ea293d392cbbca6e91c717fdf316dc142f40",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\descriptor.pb.h",
+      "bytes": 1036379
+    },
+    {
+      "sha256": "1c9407cbd08531b99b2d7167dc717e99d21d9092d648ee7f88fba3542a1d6ddc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\empty.pb.h",
+      "bytes": 8220
+    },
+    {
+      "sha256": "37f8dc47598ff1a012614e9b438f1f53024b5e11432abaa338bc221cdb4bf23d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\endian.h",
+      "bytes": 3817
+    },
+    {
+      "sha256": "414e762d0dd1a5ceb853b4e506689a3e0e5090de823b61e166ef8fdcedd2cf3c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\explicitly_constructed.h",
+      "bytes": 2204
+    },
+    {
+      "sha256": "2a1e824554d3d6ef302f92ba1d53626a5f6fd1c81211f8a84e111fa61888baaf",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\extension_set.h",
+      "bytes": 80203
+    },
+    {
+      "sha256": "f826e6f374bb72eacce5debc5a0a4cf70d1cce616ace428a63047aedde28ec6a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\generated_enum_reflection.h",
+      "bytes": 2668
+    },
+    {
+      "sha256": "1b6401585f7c42520de57a42c5e4d019d3da53815cf4374c51783c1dbe06ab87",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\generated_enum_util.h",
+      "bytes": 3911
+    },
+    {
+      "sha256": "7847dbb2b99ee607204a93d012123ae6264e43b2446a4280f600fd747e081dfa",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\generated_message_bases.h",
+      "bytes": 2343
+    },
+    {
+      "sha256": "ecf11d23ed440aaa441bd6951b67835958911d7e03ece49266aa054f7e7dd44d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\generated_message_reflection.h",
+      "bytes": 15087
+    },
+    {
+      "sha256": "e64b65969594671f2a155bc9b04d98b5c3b2022a5271179c2491bdfde8f60114",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\generated_message_tctable_decl.h",
+      "bytes": 23683
+    },
+    {
+      "sha256": "3bed77116949111dfa41877afc105b23eee441ff215969761b24cab820ffe07a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\generated_message_util.h",
+      "bytes": 14911
+    },
+    {
+      "sha256": "979c94ea0eaeec416872d60e60fc2554870a5201b1ff6f0683f5273fbee8b9a7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\has_bits.h",
+      "bytes": 3378
+    },
+    {
+      "sha256": "706b7169e2e6914407fe196f934c5ab041f4c8ff1f49dea45cff6c088cb2cc83",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\implicit_weak_message.h",
+      "bytes": 8320
+    },
+    {
+      "sha256": "15e18960ba05d6a3a602173de8def112b7c3f92787885c4512ed236c189253bf",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\inlined_string_field.h",
+      "bytes": 21499
+    },
+    {
+      "sha256": "585b17575b69a2f2911e9fc7d4427ddfb858f8defbd9626e89abffde4b90e310",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\internal_visibility.h",
+      "bytes": 1372
+    },
+    {
+      "sha256": "c1bac7e89aedf6048e1d41a23c31bf2b7c3fa734399234b2dcaec55917e841d0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\io\\coded_stream.h",
+      "bytes": 75276
+    },
+    {
+      "sha256": "9c11e09cc928a18efdd06618a5de1cf040a7a8aca629376046b918e6ae7346c9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\io\\zero_copy_stream_impl_lite.h",
+      "bytes": 21442
+    },
+    {
+      "sha256": "2d64ee0cb0acb006f071f0c5feb6ebc655873bf8ae9db584f317d6c86e6619ba",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\io\\zero_copy_stream.h",
+      "bytes": 10497
+    },
+    {
+      "sha256": "3f05bbceb3da7c77525b7725e4657a1a10f06f30f522fb123c37cf09e8d6c7b9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\json\\json.h",
+      "bytes": 8812
+    },
+    {
+      "sha256": "79e0f47de04ad71e41f9ed6566846ce99c21c48d29d48332b2689aad5f468548",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\map_entry.h",
+      "bytes": 5120
+    },
+    {
+      "sha256": "d178316b55dc225fa86a44ca5389e2b31ed5fcef2df7c230fb59ee753af42cbc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\map_field.h",
+      "bytes": 31359
+    },
+    {
+      "sha256": "daa00a2e65e5cf4c6f5973a2cab5dbb63816550e9699faf6e30b0fee15591dc8",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\map_type_handler.h",
+      "bytes": 15934
+    },
+    {
+      "sha256": "ca0fb12dd6ccc65e5139730c6210298e73b1d3f3391f7f808b4366ab5cba1313",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\map.h",
+      "bytes": 54435
+    },
+    {
+      "sha256": "7b994661b2a75dcf40bd90603ea445c9a88faa0d0f79eccf8b4726168d8c6ec9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\message_lite.h",
+      "bytes": 61515
+    },
+    {
+      "sha256": "08f866f357476e39cbe1fc1ded0ff4d34c0ea9031fc4a35186a049b6dbbb1b9d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\message.h",
+      "bytes": 84261
+    },
+    {
+      "sha256": "69dee4e3231463df0ce7a6204364d9677886f452c2e09b1c04a7182fb0c637ad",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\metadata_lite.h",
+      "bytes": 8546
+    },
+    {
+      "sha256": "a3bf19c8653b493fc43e54c57319cc89e3d19fbc0937043cdece57b7e57f113b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\micro_string.h",
+      "bytes": 23317
+    },
+    {
+      "sha256": "d2c776f60a6cf0696cfcecd09e33610e0796680e187e95bb2f0b2d7625b68b8e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\os_macros_restore.inc",
+      "bytes": 2715
+    },
+    {
+      "sha256": "e72447a2027295106828b4f2453929d3f12e1f937e37df760dfb7f766aa4d70d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\os_macros_undef.inc",
+      "bytes": 4488
+    },
+    {
+      "sha256": "59609e66f47ab1e0d4e85280858149f38d13dd0a85f97e82f9c1ee8119e34460",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\parse_context.h",
+      "bytes": 65413
+    },
+    {
+      "sha256": "f35cbd0cbe1b5e0df339f8fea7880ea15e548a9167f7929010c3bc4b09955d1f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\port_def.inc",
+      "bytes": 34496
+    },
+    {
+      "sha256": "b4f47699fdeb7bced7b1162fc7fd5b4a64e2c97c3bc55742bd6de4611e78421d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\port_undef.inc",
+      "bytes": 2812
+    },
+    {
+      "sha256": "97db6d2824c0fd2d0ec0e3cebcc69b5b46c58605889747ff14682b9d97e9eaec",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\port.h",
+      "bytes": 26732
+    },
+    {
+      "sha256": "3e212b414438ab836ad562d1df6700b1c386b486a2ddf79527e4ccc9fcbaad5a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\reflection.h",
+      "bytes": 22847
+    },
+    {
+      "sha256": "824069910eae43c4e45d8ae4e58ccc96d3acfe468bf8e01706530416f612844d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\repeated_field.h",
+      "bytes": 54378
+    },
+    {
+      "sha256": "987635f6ce8eab34fe56f02373e49b274151e5ed8984dcd1d2d9af52ec5e1036",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\repeated_ptr_field.h",
+      "bytes": 82059
+    },
+    {
+      "sha256": "c8afb236dab3db5e9a495c28926a66932aee7cf458d65c776e73eedcc4c1eaea",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\runtime_version.h",
+      "bytes": 851
+    },
+    {
+      "sha256": "4f144630b9829512d832d304b8956f7af31267effe1ec09806df362b9f0628d1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\serial_arena.h",
+      "bytes": 16771
+    },
+    {
+      "sha256": "ca3836b108c49d87f54adeb75f2a12c22b3f254a83c7e7eb067ed5af2dd2b257",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\source_context.pb.h",
+      "bytes": 14060
+    },
+    {
+      "sha256": "b81e38ff07d96135ca690f5c3f2a23ecee88f6d95360d1e05a0cb582fdba9ba9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\string_block.h",
+      "bytes": 6546
+    },
+    {
+      "sha256": "69fba0e1b05ce5cfa97e60093b0b440d0ecb9f466b41fba560c75d311be3222a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\stubs\\common.h",
+      "bytes": 3102
+    },
+    {
+      "sha256": "4b8f13aa85f568933b29bbf780b3496e9a8a22b181951a2e78afdaa3227fd483",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\stubs\\platform_macros.h",
+      "bytes": 3768
+    },
+    {
+      "sha256": "4e57cae0b33be9037681851ce5bc9541e4b9597e23042ca4b4c62ea3115350da",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\stubs\\port.h",
+      "bytes": 6320
+    },
+    {
+      "sha256": "f01cd6dba8e8f8d446f74aac17ac1fd024beb49d5687dfac9d0174f368d0966e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\thread_safe_arena.h",
+      "bytes": 10693
+    },
+    {
+      "sha256": "841e65b1c43bab8c7a98a9b29ff417fac0cc2c74cef775b38494cd4f89068eb3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\type.pb.h",
+      "bytes": 131810
+    },
+    {
+      "sha256": "78241fb4730b1af3ac99089d63e99386019ae61109454819b2371a8972d05cd9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\unknown_field_set.h",
+      "bytes": 15109
+    },
+    {
+      "sha256": "5a043dc363ea1abe3002893ab81f5ff99a932a073e1d27d11183028dac80feb9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\util\\json_util.h",
+      "bytes": 1149
+    },
+    {
+      "sha256": "6a9eaba757924a22b184b14c2a1f65ea6b09f4619c9c600b1708bd9cf76df2d8",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\util\\type_resolver_util.h",
+      "bytes": 1521
+    },
+    {
+      "sha256": "64d5b7b2a416143983ca5358d302864cc0a0968fbe28a61f48d5c69aaefb7c97",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\util\\type_resolver.h",
+      "bytes": 1708
+    },
+    {
+      "sha256": "317020845dbf2709b8bba63e5f7a947af364df37daa495bb2b7828ff5f220db7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\google\\protobuf\\wire_format_lite.h",
+      "bytes": 72475
+    },
+    {
+      "sha256": "1bc40245c5906fbcd3fb5c663683bbd730dafa149f437b2bbaa18211d5d592b4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\byte_buffer_reader.h",
+      "bytes": 1173
+    },
+    {
+      "sha256": "be6b2aa74a6990359f95e975e13a439412ed6b12347a7c93cf5651601abce919",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\byte_buffer.h",
+      "bytes": 4130
+    },
+    {
+      "sha256": "fc0f76616426a6caf8081a594f952726f1de5996f4dacec49b053dbb5b0a9eb7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\compression.h",
+      "bytes": 2704
+    },
+    {
+      "sha256": "1e9a94bb9b80c36231af6eeac72576b8f1cc227b510bb7b3d8c73ce1ca4fc6eb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\context_types.h",
+      "bytes": 802
+    },
+    {
+      "sha256": "5d5a5fb2e74c02c2fdc722652950d293f659a9162741d47af1c3989fde40caaf",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\credentials.h",
+      "bytes": 56431
+    },
+    {
+      "sha256": "b93a40201934997b1a527c22e4cb3322093c6b7df91e2ed393af56cacb19b5bc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\endpoint_config.h",
+      "bytes": 1905
+    },
+    {
+      "sha256": "27ec5eaf199ca393c6a333965d0ce131f0cc2c9842edac345163aea9c65f62ad",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\event_engine.h",
+      "bytes": 33212
+    },
+    {
+      "sha256": "5e6ffd5280c3231c0aa0a380aa4d2d3fde9259c956a090a85c8ecc74cf10399c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\extensible.h",
+      "bytes": 2442
+    },
+    {
+      "sha256": "cc12ecb8197e00dda95859b8b58ed8b2e2cf162fa651fb27acc1336738cae265",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\internal\\memory_allocator_impl.h",
+      "bytes": 2692
+    },
+    {
+      "sha256": "8cb2d8dfd38e13c33d233c11da64b88c8952be8aa440465dd67b03fe7e338408",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\internal\\slice_cast.h",
+      "bytes": 3433
+    },
+    {
+      "sha256": "d88383bd34bf1658d262fe3d5342750ef47f0a7de806a999f27a8394100f1aad",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\internal\\write_event.h",
+      "bytes": 1109
+    },
+    {
+      "sha256": "df58f194a65fb06723a3300c2c21eb218e73846b832806487bb3c199b26f21d3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\memory_allocator.h",
+      "bytes": 7615
+    },
+    {
+      "sha256": "f1053f6dd7dcfa042c2c23202a99548e5798ca8c422134bdc18fe75bd5eb8b3d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\memory_request.h",
+      "bytes": 2329
+    },
+    {
+      "sha256": "720d1511c2c9baea4c85214257951e4947080d0f08eaf0ece4cd254486dbc282",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\port.h",
+      "bytes": 1372
+    },
+    {
+      "sha256": "7ad9733c3baffc45f681338af9657b48857ea2b959aa62c544cc21dc0a15a42b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\slice_buffer.h",
+      "bytes": 5845
+    },
+    {
+      "sha256": "1f9ca04fbadf3829fdca6cddb383fbf9022c567cf0ce921b1d39350e7e852fc5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\event_engine\\slice.h",
+      "bytes": 10113
+    },
+    {
+      "sha256": "aae2f8be57de451235d91b09d9b0aa4304bec0fb89aab546cd267eb6acb7518d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\grpc_crl_provider.h",
+      "bytes": 3392
+    },
+    {
+      "sha256": "2202e3711254d5e3b60a0045b9cd08c01244ba5e4b5e4734e0b524ecd8464d1b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\grpc_security_constants.h",
+      "bytes": 6978
+    },
+    {
+      "sha256": "d95506ed5b7d4c8d06448346d1c42dfad9636b280003fbfa4a0ec4fab145e7f0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\grpc_security.h",
+      "bytes": 5760
+    },
+    {
+      "sha256": "075ea8f1e9a3c07920bbf7015b4bf689d69778daf91ca8d92c904774dd37fffe",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\grpc.h",
+      "bytes": 27222
+    },
+    {
+      "sha256": "9a1bbb2ca2012ea8d6e78440f2517c6fd8475f8cbb2124d35e433cb5661032af",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\call.h",
+      "bytes": 1418
+    },
+    {
+      "sha256": "466d102db7ce41ddb548c2c796e71b2bb4d45e56b1f180c90f1d0393881bc666",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\channel_arg_names.h",
+      "bytes": 25995
+    },
+    {
+      "sha256": "1aee868b0d2798a531a5d1108a14936bf466e496180d1befd0d225a7c5362613",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\codegen\\gpr_types.h",
+      "bytes": 948
+    },
+    {
+      "sha256": "bed57b7a38b5457e3d3f2dcee44af071fb85b1667cd449051c4a2d8b9d47cfbe",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\codegen\\port_platform.h",
+      "bytes": 868
+    },
+    {
+      "sha256": "f98a2dd7e203a5316052229527b1298b3e4c4e06a3d260e8923391a1a2d0680f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\codegen\\slice.h",
+      "bytes": 879
+    },
+    {
+      "sha256": "ae7f2991662e7e8a874cf3b9be8054da19e11c671c4b58111d5921222acb6174",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\compression_types.h",
+      "bytes": 3999
+    },
+    {
+      "sha256": "0959d918ee04b3aed9708c531612e49dfdc4e5996d9675c01ce972420d8955d3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\connectivity_state.h",
+      "bytes": 1301
+    },
+    {
+      "sha256": "9a088a87411c387e1132f697a870ef71438b77732e0ea0ff9c6a7f921d67603a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\grpc_types.h",
+      "bytes": 19497
+    },
+    {
+      "sha256": "9934b6990e442749c43bd0fa8b88b288fe47cca67d2a8fba9c2b506dcc89c72c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\propagation_bits.h",
+      "bytes": 1914
+    },
+    {
+      "sha256": "1249d35300248bc5418d03eeccd91f68b057552ff3e42654af4c7db19b05fbf7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\impl\\slice_type.h",
+      "bytes": 4108
+    },
+    {
+      "sha256": "ca0ddce510dd68faaf3deeb035e93b83f01fff63c032917bbc290965f475f0e6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\passive_listener.h",
+      "bytes": 2054
+    },
+    {
+      "sha256": "afadfd9dc673cc390d9ef39d7bc935576ca7f9635ae0862caee32a572a88b0c0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\private_key_signer.h",
+      "bytes": 3761
+    },
+    {
+      "sha256": "c81862cb96f56ab302f1abcded13ae941b416126e1a9bf4e3f8a0b6986f26a06",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\slice_buffer.h",
+      "bytes": 3907
+    },
+    {
+      "sha256": "8341871bbca2cc3e08fe930dd86ea76f144eb5d7b0412233eaf2df4c44eaec13",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\slice.h",
+      "bytes": 6585
+    },
+    {
+      "sha256": "40e0c773aaac5067e0e1cc5e5c0b7711be4148c11677a6f2df7ba0601ca49b82",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\status.h",
+      "bytes": 6268
+    },
+    {
+      "sha256": "dff07ac82f37b5d631c540839e8195133b094df8a449ed82b0860be59f41c40f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\alloc.h",
+      "bytes": 1534
+    },
+    {
+      "sha256": "f86937721ebb854b9b1b532c71923e881e406756f65c381693b70a0f65229a52",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\atm_windows.h",
+      "bytes": 4263
+    },
+    {
+      "sha256": "a5aefac828910abc2a3730474b1f0bf29584051ac80215eacb45a55e7c7b109a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\atm.h",
+      "bytes": 3092
+    },
+    {
+      "sha256": "1205fcea8dfe6ccdd8985fee5947f11565b9fdf020c620923cb501eaac2cb8a5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\cpu.h",
+      "bytes": 1339
+    },
+    {
+      "sha256": "1885f25921c7e648379f87e6b4342880ef27f8f2d740aa7e15604d77e26f12e6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\port_platform.h",
+      "bytes": 24835
+    },
+    {
+      "sha256": "d48912c01c340f2b1077cee0147976f59854087c587531b3cc48c79a0294f9d8",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\sync_abseil.h",
+      "bytes": 929
+    },
+    {
+      "sha256": "b828ea6ec165181607d3320ed6d299b3dff6b9bb81c54866e6abe8a54c6c24a0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\sync_generic.h",
+      "bytes": 1105
+    },
+    {
+      "sha256": "0e0aa2c5efd16cc095870a9eb5054eb49282f0720824a5dc152f230b1f8e46cd",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\sync.h",
+      "bytes": 12243
+    },
+    {
+      "sha256": "4628b98aadf4673d6202588b8ef08993fe5b008e3cf747d1465bc0d28d74b05e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\time.h",
+      "bytes": 4115
+    },
+    {
+      "sha256": "8d044005a71d3273be2edd626d0d9586e8c699336d1303b83de00b993fc065e5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpc\\support\\workaround_list.h",
+      "bytes": 953
+    },
+    {
+      "sha256": "41405b3b8776ab391da022ca0864bde1c906a592442e3d121df81b4b6525b958",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\call_context_types.h",
+      "bytes": 899
+    },
+    {
+      "sha256": "f5ce77bfa04088086d56b747040f5d47a3c28a7365ad11f9380367d5578f8581",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\channel.h",
+      "bytes": 5172
+    },
+    {
+      "sha256": "a4dc360c6c6a40ef1b1d9c115796ecb79d9d0492c833515c893a2018a9a7628a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\client_context.h",
+      "bytes": 19468
+    },
+    {
+      "sha256": "e308aff73bcf21c3453e378bb0d1abad4340b596b8fa9b1c76c7df0310693d08",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\completion_queue.h",
+      "bytes": 18092
+    },
+    {
+      "sha256": "90c5a5b5ffbaf8de8608f77de2a94e9edb4f752a76972d2dddde8f065fbb655d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\create_channel_posix.h",
+      "bytes": 3998
+    },
+    {
+      "sha256": "aad4261547c5030ede19d0e95670a913760aeb2164d52fe70f6bcd4b9b8e8240",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\create_channel.h",
+      "bytes": 2862
+    },
+    {
+      "sha256": "7750afa7a4c7eb8fd020f048358e7530225f68e1be2504a73964dd2718f3a3d5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\generic\\async_generic_service.h",
+      "bytes": 2720
+    },
+    {
+      "sha256": "aa6476bfd56600490cd51aa74b775857c4ba5b468277ac38f54b2b606951a1b4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\generic\\callback_generic_service.h",
+      "bytes": 2745
+    },
+    {
+      "sha256": "a99b1e621c2109a5728be35c64afc1839e726bedc9126e9998d0b2e6cfe10e89",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\grpcpp.h",
+      "bytes": 2371
+    },
+    {
+      "sha256": "56cbbb5dfbb32e6e58338c7e305f87c01f55a15b66ea26782bee97bd2d48a570",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\health_check_service_interface.h",
+      "bytes": 1943
+    },
+    {
+      "sha256": "74ac3deb8bf47cdc928c66a616ed3470cdc4540af6706f1ed505ff0ba61d0ebe",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\allowed_call_context_types.h",
+      "bytes": 1086
+    },
+    {
+      "sha256": "4c97259c654785b56b95a0ca86b78b5decb71477567cb22be1447a8d9b0de925",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\call_context_registry.h",
+      "bytes": 2692
+    },
+    {
+      "sha256": "3f907710130ec47868b6a577df0e883be45109966056be47f95f3c9b8598def9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\call_op_set_interface.h",
+      "bytes": 2072
+    },
+    {
+      "sha256": "d92d8a1b4bb57ca1109d9760287ce3c11dd79be1ad9f7345d4bcae6dec511b11",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\call_op_set.h",
+      "bytes": 34837
+    },
+    {
+      "sha256": "3d196bd014ed163d0735693b835572b975e3a36c643232b121abb2b0c0b97e08",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\call.h",
+      "bytes": 2304
+    },
+    {
+      "sha256": "bf39e85c076739543457f94394842c71df7beccd14c113288c813c6e70ec7b20",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\channel_argument_option.h",
+      "bytes": 1246
+    },
+    {
+      "sha256": "a421573512246a6fc317b7f807d81b02d3d10b51decdd4c096168f5ed8f9279d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\channel_interface.h",
+      "bytes": 6916
+    },
+    {
+      "sha256": "d02dbd5ef9fa5064b849fd8cdb3d9c105403cbe3147f967c547c8ea472e774bf",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\channel_interface.h",
+      "bytes": 886
+    },
+    {
+      "sha256": "12de90c79cec503e5fa4467a8b74cead22119ef68e57df8ac8b0da6dbf554750",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\config_protobuf.h",
+      "bytes": 4416
+    },
+    {
+      "sha256": "6fcd3b025dc11e1e88807ad33b3433f0c63bb61a3967a4ea8b4d740150b01f60",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\config.h",
+      "bytes": 845
+    },
+    {
+      "sha256": "3081401f9a0320e0fbef47d6370d83e5defc39ce99f35fe3151143b3a037c363",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\create_auth_context.h",
+      "bytes": 894
+    },
+    {
+      "sha256": "732f84d2e9717ca87181b1b35921bbe1effe99295c4e513d51f1f9e6dd803ead",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\intercepted_channel.h",
+      "bytes": 894
+    },
+    {
+      "sha256": "c34ce5d3b7c134f66fac7a764052a1d4c36d954feb98c258ed9942ee9678e29d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\interceptor_common.h",
+      "bytes": 890
+    },
+    {
+      "sha256": "f17c5f11f3c45c3611c84d875a314c5dce956bfce64b67402a10ae4a74bc5f58",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\metadata_map.h",
+      "bytes": 866
+    },
+    {
+      "sha256": "d9df2b958c8cf62913bba7434e6c165c32b924b80eddda47bf529f2c724e1856",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\rpc_service_method.h",
+      "bytes": 890
+    },
+    {
+      "sha256": "f1c374175aea454644f05d5a409ff97098ba531c3452ee2ead6bafdacb7bcf84",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\sync.h",
+      "bytes": 834
+    },
+    {
+      "sha256": "2482dd5148ad1031e84ddef282b237f670ad1c503829aa84914a52fa1d50e919",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\codegen\\time.h",
+      "bytes": 837
+    },
+    {
+      "sha256": "97d2b4633a851f25a54572515c110ecc6f5ed76e532646377f54dad8f959f9d5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\completion_queue_tag.h",
+      "bytes": 2062
+    },
+    {
+      "sha256": "c27f4337b8594f3b3a0906a229da20deda2e5ccb778346945a67114dbabb4405",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\create_auth_context.h",
+      "bytes": 1008
+    },
+    {
+      "sha256": "9edf222fb49288ead593656a92604399b94b6b7ea4249c95fcc1697a8ec26c43",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\generic_serialize.h",
+      "bytes": 3918
+    },
+    {
+      "sha256": "be264af7ef99d97beba528dd127434d6c9759cd2371b952c9ff60a0eb8ff451a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\grpc_library.h",
+      "bytes": 1290
+    },
+    {
+      "sha256": "cfec5ca7b158de9743940a16a4c2015ab44de9a7438920eafcc855cafc419731",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\intercepted_channel.h",
+      "bytes": 2922
+    },
+    {
+      "sha256": "979325ff395ef8e5e88a686a329ce3c90cc196ccfd7b5536d4b45acc7ad15d76",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\interceptor_common.h",
+      "bytes": 17598
+    },
+    {
+      "sha256": "b1207d8ddc638a0df809e90ea199cec11baa46d602cb759505bc689072c74b72",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\metadata_map.h",
+      "bytes": 2902
+    },
+    {
+      "sha256": "8a5152937b713d3bb93b55c4d58e18bfed1e5fdc2f42806a11629eb4443dc3ce",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\proto_utils.h",
+      "bytes": 2139
+    },
+    {
+      "sha256": "f0c68af48fe98220e5f09185caecfde9c1bf53742d0136d62ad9d111111b1b38",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\rpc_method.h",
+      "bytes": 2431
+    },
+    {
+      "sha256": "9bc3c58bf98c697f2879dbe01c2639f9bdd810dcaeee10777e2e37283d985be0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\rpc_service_method.h",
+      "bytes": 5379
+    },
+    {
+      "sha256": "74612287b957dc7d28d9d3193d231141ea383abc03b222c3f0f1ec4b724afb6f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\serialization_traits.h",
+      "bytes": 4822
+    },
+    {
+      "sha256": "5f956b8611685cbaaec5cf419e6d45b4b6c6912edd9816e7e9625756587c4e1f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\server_builder_option.h",
+      "bytes": 1359
+    },
+    {
+      "sha256": "159abeca28b6d64d14a6809d919bdd75e1989196de775611ae45f2d070e32cfb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\server_builder_plugin.h",
+      "bytes": 2246
+    },
+    {
+      "sha256": "d44b6b18ad795ba3b26cfa52f7eb716421f96be9a7544058d18da1d2645643b1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\server_callback_handlers.h",
+      "bytes": 45823
+    },
+    {
+      "sha256": "4561950489af80ce7ab23165e5060136caf7a175b3d7574f46be3bb3ee07e8b7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\service_type.h",
+      "bytes": 9176
+    },
+    {
+      "sha256": "cc186e45d2cc0c976769258abde62623ebff206c223e610e7e4cb8b15d43801b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\status.h",
+      "bytes": 5828
+    },
+    {
+      "sha256": "a34b6bf2570ba3ca2fbb8dd92ecc15a65ee7c3a0729cb91c3e4018fd3c6656df",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\impl\\sync.h",
+      "bytes": 3649
+    },
+    {
+      "sha256": "7377370296201b6017415bd2beb9d1e4e8337466a47dc7d35f14a3322d5edfe5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\passive_listener.h",
+      "bytes": 878
+    },
+    {
+      "sha256": "7e39728f33ecf8c899dc1e7060334be1bceb497cebacbd024d5bcdf7f2bcfc11",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\ports_def.inc",
+      "bytes": 3775
+    },
+    {
+      "sha256": "70088c822f76124982c1761d2f1197b5d3c1647e1fcd5f95749210dce6d83d7f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\ports_undef.inc",
+      "bytes": 2229
+    },
+    {
+      "sha256": "abf076235a11733233e840ae3a61473c463ab3ff1e6d677256e2a523abeb8d34",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\resource_quota.h",
+      "bytes": 2542
+    },
+    {
+      "sha256": "a810909d5987005e19b70dba9a13bb7af8d79cdbaac3e5028fcacdadd1b9d594",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\auth_context.h",
+      "bytes": 3086
+    },
+    {
+      "sha256": "5371c8577c5da41195720f9d5e3855f1d77521cbb0b070d74aa8d55c4a5a887d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\auth_metadata_processor.h",
+      "bytes": 3199
+    },
+    {
+      "sha256": "c2af9aee207942d55ecbc3ce1d0414eead55ae00d78726442f07207bd7ef0d3e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\authorization_policy_provider.h",
+      "bytes": 2997
+    },
+    {
+      "sha256": "fb2a46566f90d84b823b3312da5ab406a3cefd84ef347ae7b87684569f8e2771",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\credentials.h",
+      "bytes": 14175
+    },
+    {
+      "sha256": "55605e398229f0706e9c2ac1b57b0962c550a9411269f85be936f2526efef656",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\server_credentials.h",
+      "bytes": 4335
+    },
+    {
+      "sha256": "c022e746ad1c4baa650d335174c8adf8b2f94d6a708b17201c7b4396ca125a46",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\tls_certificate_provider.h",
+      "bytes": 8873
+    },
+    {
+      "sha256": "eb30e370ff629d958a7cfd01f517625bd5492c2a35fdc0c8737d90d536f05608",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\tls_certificate_verifier.h",
+      "bytes": 10774
+    },
+    {
+      "sha256": "4ac7a2944fa6e666fe1687d5d619d7a04b1cdc45093241b526555ca994cba88e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\tls_credentials_options.h",
+      "bytes": 10914
+    },
+    {
+      "sha256": "220862c2aa10fc2c8e8d0eda31c292103c7c75575d90776967e4b760b02950c9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\tls_crl_provider.h",
+      "bytes": 1298
+    },
+    {
+      "sha256": "cb5a37642e0ee6ad8ec22675c5b162d3e69141fd9b91f5a47ef2799ad70b0ea2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\security\\tls_private_key_signer.h",
+      "bytes": 1027
+    },
+    {
+      "sha256": "dd8b85b251dbf9a06ebc896c7b69985c50604aa3b189b392b4fb356bda0433d3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\server_builder.h",
+      "bytes": 17480
+    },
+    {
+      "sha256": "e8175a18527a4b19b9c38fdcd69d7c9debcefee2d91ae81961b4ba45ef2af2a4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\server_context.h",
+      "bytes": 27233
+    },
+    {
+      "sha256": "ec7db670f9d4a51605c931033879a2cde272ee53948a760f7b07cf15e703c756",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\server_interface.h",
+      "bytes": 15407
+    },
+    {
+      "sha256": "66e297a3f23f083b17478032749f4727637d071fe0b3dbce3dc9ffc2fd952f39",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\server_posix.h",
+      "bytes": 1156
+    },
+    {
+      "sha256": "3931158c5e73b57918d5492625341105d295b12886901267008255c244371cca",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\server.h",
+      "bytes": 14066
+    },
+    {
+      "sha256": "345f072b541633503aa17d97fda6f1fb65f130f09546898f85d01a31b8ea92be",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\async_stream.h",
+      "bytes": 46379
+    },
+    {
+      "sha256": "9c015118ccf2c127aa8e3f941f1576c0409793a32f28f3c0e51c65a91e1965be",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\async_unary_call.h",
+      "bytes": 17541
+    },
+    {
+      "sha256": "899f6fd853b3838dfa5b770a76509f4f1854aab88fbc0db8e9495f285cc37270",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\byte_buffer.h",
+      "bytes": 8219
+    },
+    {
+      "sha256": "f97c96bb3249784696db8200e420e098f3c3667b3264b9d6b0c720cbb8ded5ee",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\callback_common.h",
+      "bytes": 8826
+    },
+    {
+      "sha256": "2877926db77f63a1cdb243d4d33e6aedce73af563e52b3ba674b5434050de276",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\channel_arguments.h",
+      "bytes": 5264
+    },
+    {
+      "sha256": "aceba00b9496645a8bcdebd7d7ef5cc24c8e278c14fff12bc1c371b33b597b0b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\client_callback.h",
+      "bytes": 54897
+    },
+    {
+      "sha256": "6b3ab95bba7532e319536177e1b506c3a4ddb2d2912eb4edac0ff4a5578eee9d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\client_interceptor.h",
+      "bytes": 8077
+    },
+    {
+      "sha256": "feac17981447b960e9d58ee2c486c5401b7d08920899b361c917d880d10e0d8c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\config.h",
+      "bytes": 1429
+    },
+    {
+      "sha256": "d07f7d7a6d5c5ff35d31764ea96830c8b4532d4d29fca181270bf4485e7bdf2f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\global_callback_hook.h",
+      "bytes": 1836
+    },
+    {
+      "sha256": "e9361fa6bbb17f6c3fea81f112f892093483ec676ebf9354f572aa1378093753",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\interceptor.h",
+      "bytes": 10920
+    },
+    {
+      "sha256": "8196175a1f82abf5084ae3ef1b8fa8ab8985cc68b16bc5daa5eee09a71134e2c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\message_allocator.h",
+      "bytes": 2527
+    },
+    {
+      "sha256": "e6b136f37b838328fb36ccb9f0eb1bd0de9a5e5eec73446675b5327b96ed79dc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\method_handler.h",
+      "bytes": 15719
+    },
+    {
+      "sha256": "0f2a9fe51655641d9741ab164de83d4b1b6738024364cfdfddc5617009824d5c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\proto_buffer_reader.h",
+      "bytes": 8520
+    },
+    {
+      "sha256": "9dc2ab6f5e23ef233b2f2df034b1334d875f61a01db667beb4053a57b6c5259a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\proto_buffer_writer.h",
+      "bytes": 9888
+    },
+    {
+      "sha256": "c533feeafcd197ae433d8a636564adce8ad08d7ce71e1ed75948cea69dfd2e5e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\server_callback.h",
+      "bytes": 33540
+    },
+    {
+      "sha256": "155bda5b7ca3ef0cef16f99b076a9269660e04e254f9c807fcc761804f2c384e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\server_interceptor.h",
+      "bytes": 4982
+    },
+    {
+      "sha256": "b8a521bed8ebf3f3370ccadaadf9d6d3f26ae4ea9f2855bc66b9d5d2b9ec95dd",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\slice.h",
+      "bytes": 5025
+    },
+    {
+      "sha256": "9db6b838123d9ba3f5cff0d2d332496b09f4392d7702376c4a346b8293af4c2c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\status_code_enum.h",
+      "bytes": 6056
+    },
+    {
+      "sha256": "d156cd376e369ffcd01db87161c8c76abc66c230b5548729e5ef427735b65533",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\status.h",
+      "bytes": 760
+    },
+    {
+      "sha256": "934b6dfb70da93fa292fd3b8c2f1c98cfdbb7ec03899d0dbc4da7fecde9c1f60",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\string_ref.h",
+      "bytes": 4674
+    },
+    {
+      "sha256": "9c6caa1002df952706d2e29d443488ea20bdffd9fec71bbc6660180ef86a1db2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\stub_options.h",
+      "bytes": 1192
+    },
+    {
+      "sha256": "68a0531f1f65ad0e6f25d994cae819273f190f39247f7be3f2b853b2569bd9ad",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\sync_stream.h",
+      "bytes": 36639
+    },
+    {
+      "sha256": "49d9f2c223db38e4da1f7a55158aa15adc5367a341d129fd3135431e70d6df02",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\support\\time.h",
+      "bytes": 4576
+    },
+    {
+      "sha256": "edce8285eb50cb72ace32ce631e0895a9f98f96fe81b394f38db07e1bff0da9e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\grpcpp\\version_info.h",
+      "bytes": 948
+    },
+    {
+      "sha256": "85e850e735a42ebb5f9a01a018708c1c0b9b7d83c94b14b7d5d29512c00b6ffd",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest_pred_impl.h",
+      "bytes": 12783
+    },
+    {
+      "sha256": "3c6301ef533db8686e474dd5a0de4d98a31cbb630e2273f712472d1be25aa261",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest_prod.h",
+      "bytes": 2502
+    },
+    {
+      "sha256": "c6264d766e880c30452da03c1cf783230f7152233612f13cebff6177f6527cec",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest-assertion-result.h",
+      "bytes": 9569
+    },
+    {
+      "sha256": "d70139e593088f79c9f25ba528ce212fab3cdf9c350fb3cceaa91e1e94d6af00",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest-death-test.h",
+      "bytes": 14945
+    },
+    {
+      "sha256": "52237795383591ac476c731a10e69963f8fad2e017d168bf43e0361983328200",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest-matchers.h",
+      "bytes": 35465
+    },
+    {
+      "sha256": "26f2e9ea9dc21b63eb78d4d3eed423ed00f28bdc6fccc735cff94da0e9c8c55f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest-message.h",
+      "bytes": 9133
+    },
+    {
+      "sha256": "7a246e017cb84010ae4bad5b6f789fb16941b4e46a130ffb8de9f328fa19ee78",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest-param-test.h",
+      "bytes": 26376
+    },
+    {
+      "sha256": "69428a5fa909fd7f8f3bfe1d4f1a8be9a260375bceab738b8813fa4c2f5c9ff4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest-printers.h",
+      "bytes": 44558
+    },
+    {
+      "sha256": "2ba7bcb638f82889a619d52a5e28d4f9dc0aefd718a590beabd35cce8c27550a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest-test-part.h",
+      "bytes": 7228
+    },
+    {
+      "sha256": "d5c7a2853a4f250cd172f7d4218298f6aa9aa2df219210231e4877cd91bc7790",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest-typed-test.h",
+      "bytes": 15837
+    },
+    {
+      "sha256": "c6f886e33c2e426d6f634112b12b0041aa0bad85b9f897be853b083c14aea169",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\gtest.h",
+      "bytes": 93202
+    },
+    {
+      "sha256": "5e06747c9e8b86e9d841fabd61c2f045b2bb1133716f127be4a963ced1c44e01",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\custom\\gtest-port.h",
+      "bytes": 1873
+    },
+    {
+      "sha256": "b95afda2426e8c4f09c11d3296d522fb336b248c0da7e078388db4bb072c2166",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\custom\\gtest-printers.h",
+      "bytes": 2094
+    },
+    {
+      "sha256": "5a81ad35daf1049940c677b38c908945040cc25f07366b3ddf577ce72d8c44f1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\gtest-death-test-internal.h",
+      "bytes": 14178
+    },
+    {
+      "sha256": "584be91365316bf97fa7e3fd9f21f595919c48691f0c87071d2b7f739aaabcc0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\gtest-filepath.h",
+      "bytes": 10566
+    },
+    {
+      "sha256": "57b904e1b1763a9ac5f381db3717a92e285e707adf093d0f17c5cfc9603a6f34",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\gtest-internal.h",
+      "bytes": 62069
+    },
+    {
+      "sha256": "869ec29efd36f14b75446b06de5bd58491da2b77575d092e67cab3583bb10e7a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\gtest-param-util.h",
+      "bytes": 40004
+    },
+    {
+      "sha256": "58ca63b3540d7752466cd34b6c87f9fb5605f5aa620fdabe0179e82f0c12e556",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\gtest-port-arch.h",
+      "bytes": 4452
+    },
+    {
+      "sha256": "19d5e5bfcba9fb952e46352218d626f6e1778ed5f6186cc6770bcfc7d8a672d0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\gtest-port.h",
+      "bytes": 88992
+    },
+    {
+      "sha256": "794b59f7afd2fbfb9fdfd133244903b4904e39d16d45253a85f1b89c196285ac",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\gtest-string.h",
+      "bytes": 7328
+    },
+    {
+      "sha256": "94336b1703807db6d9d2b729b5a30cf53016fd236b14774af118467d27f94ad8",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\gtest\\internal\\gtest-type-util.h",
+      "bytes": 7324
+    },
+    {
+      "sha256": "80742b0081e0ac5094ad4d7a3549e969b004bb7ed86807911a8177c843701262",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\adl_serializer.hpp",
+      "bytes": 2281
+    },
+    {
+      "sha256": "2b75a051d2f82fd95f613c70472b85a281d085f1973791c1118244099bf38942",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\byte_container_with_subtype.hpp",
+      "bytes": 3535
+    },
+    {
+      "sha256": "cebb5441f1ce851444f47a7d8ea0446339ee499df83215ebd873c8347a191bd7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\abi_macros.hpp",
+      "bytes": 4121
+    },
+    {
+      "sha256": "c8ac5448a602b03d18c29eeae7eae989d1b5bed49ab3fbb5ff996fb7e8514d6b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\conversions\\from_json.hpp",
+      "bytes": 21648
+    },
+    {
+      "sha256": "20b9bc4469ee490bc626d8dbcdee060a494292473df4bdbcecfe2f2145ed562d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\conversions\\to_chars.hpp",
+      "bytes": 38578
+    },
+    {
+      "sha256": "8cc8523b7ba2b549a0a08a0611765155a63ee81653ad3e414decfd656a520a56",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\conversions\\to_json.hpp",
+      "bytes": 17642
+    },
+    {
+      "sha256": "5c9b21e0a13ac0bab8dea676b9804d739dfd2adc24f036f97ab243ef70e2aae7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\exceptions.hpp",
+      "bytes": 10590
+    },
+    {
+      "sha256": "a025807281c5d92fdfddcc993b2b2a9658146435cc10b003723b130698445c80",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\hash.hpp",
+      "bytes": 4018
+    },
+    {
+      "sha256": "9e617825317910352f2a2025bb8749898287fa3003e81ce22a57b52c535d0eab",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\input\\binary_reader.hpp",
+      "bytes": 104932
+    },
+    {
+      "sha256": "01fa7af8fdd1ba7b1c12089bf92783f70d09a93db7564e4df70544fc85304de6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\input\\input_adapters.hpp",
+      "bytes": 19635
+    },
+    {
+      "sha256": "0ed6fdb0ef91f163cca312b7ffd6e0842f12e1b8340204ab2d0c05277e0d1f18",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\input\\json_sax.hpp",
+      "bytes": 31133
+    },
+    {
+      "sha256": "a8b73e55242731375c088133f3a355af7b1bb82d6b9531678cb20560d3733c1d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\input\\lexer.hpp",
+      "bytes": 55523
+    },
+    {
+      "sha256": "b4a762967b174de0c43896b465e4a7c8c92c3a8636f669debdec836050f7912a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\input\\parser.hpp",
+      "bytes": 19712
+    },
+    {
+      "sha256": "0239037872b622a5f3f42fa1b453d201f977d21829b2dc4a19abe2594515eada",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\input\\position_t.hpp",
+      "bytes": 960
+    },
+    {
+      "sha256": "bf015623518c5aab4762d9a4d21af0e85a26cdcb3fc6e69e464c8575a3b87aba",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\iterators\\internal_iterator.hpp",
+      "bytes": 1073
+    },
+    {
+      "sha256": "c6f0664c4965287154505837dde4ae13e7625978745e8876951fc90da61b5068",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\iterators\\iter_impl.hpp",
+      "bytes": 24869
+    },
+    {
+      "sha256": "3c562f1783e1fc9476ed53d8054bc50309caa425d993996a9ddf9194fb2129cc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\iterators\\iteration_proxy.hpp",
+      "bytes": 8073
+    },
+    {
+      "sha256": "960d1fefbe7cb220292b07e4ec047bfa9a3ccbd753adaf62e5d583f746e71e47",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\iterators\\iterator_traits.hpp",
+      "bytes": 1751
+    },
+    {
+      "sha256": "6f072fb2b9e151ad9645cb03a9aa23231480bf447e53b2e0ecb41f45fb7503e1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\iterators\\json_reverse_iterator.hpp",
+      "bytes": 3863
+    },
+    {
+      "sha256": "40a03177d519ba378e59bed0a53a9be8022fd3d0ee701409781c0e856d5bf510",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\iterators\\primitive_iterator.hpp",
+      "bytes": 3229
+    },
+    {
+      "sha256": "e622910868b019ba09460c96a6092c1018ed501f34cce4ed633641400c2d2500",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\json_custom_base_class.hpp",
+      "bytes": 1180
+    },
+    {
+      "sha256": "9c5b54a455e96c63788c157d914b70cde6a3f36ef1e5df037f4fc17bb92f235d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\json_pointer.hpp",
+      "bytes": 37199
+    },
+    {
+      "sha256": "5d133945d0859acaa82c50c1a044b1e1f806c0a38107eae24bf07ff5944fc1e3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\json_ref.hpp",
+      "bytes": 1813
+    },
+    {
+      "sha256": "76012b860dc76e7c28efead61311d588596417f5b476fc20f762b1ad81858ae0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\macro_scope.hpp",
+      "bytes": 51847
+    },
+    {
+      "sha256": "626b7e10290a2bb558634b8bbfbc5118b5ce696151b5bc87418142c578bd501e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\macro_unscope.hpp",
+      "bytes": 1281
+    },
+    {
+      "sha256": "4629b547aa6b6629c266b1b474f576cbde5ce898c96502c828a72d99212b9f34",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\call_std\\begin.hpp",
+      "bytes": 455
+    },
+    {
+      "sha256": "e09dd80f2263ff192d60bad19bdbdc5402866d0b0c8caeb9c2759b26ba864a39",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\call_std\\end.hpp",
+      "bytes": 453
+    },
+    {
+      "sha256": "71e606c586174ff875f5996a00bc6e84a49e0919eafd6fb38c7cb928dfdf5795",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\cpp_future.hpp",
+      "bytes": 5173
+    },
+    {
+      "sha256": "d144ac2ab6bb92be35bfda7eec560b9d030760e4330b7f951a2aca63469488a1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\detected.hpp",
+      "bytes": 2111
+    },
+    {
+      "sha256": "37ff788879d4b14ffa2e79bdc75b470d2c2ca5ebadafef649312f653455d45fa",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\identity_tag.hpp",
+      "bytes": 528
+    },
+    {
+      "sha256": "e60398b282767374747db20ab06101804c7345eea0761a313a298bf87b913f91",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\is_sax.hpp",
+      "bytes": 6962
+    },
+    {
+      "sha256": "257716f0958e9fd6c1dc3f0335716d779550353c58bc929e8dda1c79bd336701",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\std_fs.hpp",
+      "bytes": 791
+    },
+    {
+      "sha256": "d5da966796c089fa89cba5474309fd2124b083d99adf17991084a6a532fdf55d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\type_traits.hpp",
+      "bytes": 29415
+    },
+    {
+      "sha256": "c340e7b148543b0abfd719ddbc3759e23c2feffc63656136a15fd80b98ca8bf8",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\meta\\void_t.hpp",
+      "bytes": 599
+    },
+    {
+      "sha256": "cdf56265d14b80505796dfb94d79896a226e8888e4f730ff6e92c31a2b891cd1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\output\\binary_writer.hpp",
+      "bytes": 71657
+    },
+    {
+      "sha256": "3322dce8f63e69930806bd8691c2cd9ece8a76b54b34f617641329c44559bbb5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\output\\output_adapters.hpp",
+      "bytes": 4069
+    },
+    {
+      "sha256": "4c079acb8f6936c4f787fd5706a52c77a1751dd34787a821705845698ec8540e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\output\\serializer.hpp",
+      "bytes": 40155
+    },
+    {
+      "sha256": "fb30fb50c325a1b5610a62a9061a1966b4e850dd964635c1ad1c4c9da48f7daa",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\string_concat.hpp",
+      "bytes": 5953
+    },
+    {
+      "sha256": "cb12b0e5903b1ec90aaa96a4a71e0cf7106440ca9cedcff6495677d01f244733",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\string_escape.hpp",
+      "bytes": 2170
+    },
+    {
+      "sha256": "85e2fbdfe07f1a44b90d5422ee1b951d1053f32e429dc4aee36274fb03fd9354",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\string_utils.hpp",
+      "bytes": 840
+    },
+    {
+      "sha256": "67ed7b164db48556bb4ae409a645401faba459081570f9b9f9ff977fd32c6114",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\detail\\value_t.hpp",
+      "bytes": 4328
+    },
+    {
+      "sha256": "8777a878c20a412dd04c8011c87c3d72d74e48a4dda5e52f7948e26dd2168931",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\json_fwd.hpp",
+      "bytes": 2543
+    },
+    {
+      "sha256": "88d7eb42b19599cab48856576dd4ea52538df72ad7c57200c50de98bda246458",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\json.hpp",
+      "bytes": 201924
+    },
+    {
+      "sha256": "2d4e2d9f6e6a0c2d2adadcb620da1f49585fa4e54e54cfa16b6d20e01d857d61",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\ordered_map.hpp",
+      "bytes": 11686
+    },
+    {
+      "sha256": "ddf06784ca9448b4899db96a409ec1cbc65a0f682db9c966c011f00b77ae75c4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\thirdparty\\hedley\\hedley_undef.hpp",
+      "bytes": 5502
+    },
+    {
+      "sha256": "1547b367895f8be9f8283ae21f583182db572ad990236220002b632a15238712",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\nlohmann\\thirdparty\\hedley\\hedley.hpp",
+      "bytes": 86072
+    },
+    {
+      "sha256": "2c965fa98ce06f423d51661c822e9bf3cf6b87e1b9fd0f2f0203f7839e1ab52a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\utf8_range.h",
+      "bytes": 540
+    },
+    {
+      "sha256": "aa4778e2456b804f7ed5a42f127be60e5d1e6f737e4b94076ae9c3fccf69e972",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\utf8_validity.h",
+      "bytes": 866
+    },
+    {
+      "sha256": "1c791583488f5f5af507cb798c41e2cd86325ea3f7adddf6408d0da42be3d089",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\zconf.h",
+      "bytes": 17564
+    },
+    {
+      "sha256": "818667d6ab6a37fe7469cb06a7f0cb2c2cb2f2c948a03e5accf1a4a74bf3020a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed\\x64-windows\\include\\zlib.h",
+      "bytes": 103848
+    }
+  ],
+  "donor": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-11"
+}

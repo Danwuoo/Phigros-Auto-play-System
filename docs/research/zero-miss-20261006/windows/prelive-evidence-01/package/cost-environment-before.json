@@ -1,0 +1,566 @@
+{
+  "background": [
+    {
+      "Name": "ApplicationFrameHost",
+      "Count": 1
+    },
+    {
+      "Name": "audiodg",
+      "Count": 1
+    },
+    {
+      "Name": "cef_subprocess",
+      "Count": 3
+    },
+    {
+      "Name": "ChatGPT",
+      "Count": 14
+    },
+    {
+      "Name": "chrome",
+      "Count": 15
+    },
+    {
+      "Name": "cmd",
+      "Count": 4
+    },
+    {
+      "Name": "codex",
+      "Count": 2
+    },
+    {
+      "Name": "codex-code-mode-host",
+      "Count": 1
+    },
+    {
+      "Name": "codex-computer-use-swift",
+      "Count": 1
+    },
+    {
+      "Name": "codex-windows-sandbox-service",
+      "Count": 1
+    },
+    {
+      "Name": "conhost",
+      "Count": 17
+    },
+    {
+      "Name": "CrossDeviceResume",
+      "Count": 1
+    },
+    {
+      "Name": "CrossDeviceService",
+      "Count": 1
+    },
+    {
+      "Name": "csrss",
+      "Count": 2
+    },
+    {
+      "Name": "ctfmon",
+      "Count": 1
+    },
+    {
+      "Name": "DCv2",
+      "Count": 1
+    },
+    {
+      "Name": "DefenderSessionHelper",
+      "Count": 1
+    },
+    {
+      "Name": "dllhost",
+      "Count": 2
+    },
+    {
+      "Name": "dwm",
+      "Count": 1
+    },
+    {
+      "Name": "ErrorMonitor",
+      "Count": 1
+    },
+    {
+      "Name": "explorer",
+      "Count": 1
+    },
+    {
+      "Name": "fontdrvhost",
+      "Count": 2
+    },
+    {
+      "Name": "GameBarPresenceWriter",
+      "Count": 1
+    },
+    {
+      "Name": "GameManagerService3",
+      "Count": 1
+    },
+    {
+      "Name": "gameoverlayui64",
+      "Count": 1
+    },
+    {
+      "Name": "GoodixSessionService",
+      "Count": 1
+    },
+    {
+      "Name": "Idle",
+      "Count": 1
+    },
+    {
+      "Name": "IgoAudioService_x64",
+      "Count": 1
+    },
+    {
+      "Name": "iGoSwServer",
+      "Count": 2
+    },
+    {
+      "Name": "Intel_PIE_Service",
+      "Count": 1
+    },
+    {
+      "Name": "IntelAudioService",
+      "Count": 1
+    },
+    {
+      "Name": "ipf_helper",
+      "Count": 1
+    },
+    {
+      "Name": "ipf_uf",
+      "Count": 1
+    },
+    {
+      "Name": "jusched",
+      "Count": 1
+    },
+    {
+      "Name": "KAPS",
+      "Count": 1
+    },
+    {
+      "Name": "KAPSService",
+      "Count": 1
+    },
+    {
+      "Name": "KillerAnalyticsService",
+      "Count": 1
+    },
+    {
+      "Name": "KillerIntelligenceCenter",
+      "Count": 1
+    },
+    {
+      "Name": "KillerNetworkService",
+      "Count": 1
+    },
+    {
+      "Name": "KNDBWM",
+      "Count": 1
+    },
+    {
+      "Name": "KNDBWMService",
+      "Count": 1
+    },
+    {
+      "Name": "LsaIso",
+      "Count": 1
+    },
+    {
+      "Name": "lsass",
+      "Count": 1
+    },
+    {
+      "Name": "Memory Compression",
+      "Count": 1
+    },
+    {
+      "Name": "MicrosoftStartFeedProvider",
+      "Count": 1
+    },
+    {
+      "Name": "MidiSrv",
+      "Count": 1
+    },
+    {
+      "Name": "MoNotificationUx",
+      "Count": 1
+    },
+    {
+      "Name": "MpDefenderCoreService",
+      "Count": 1
+    },
+    {
+      "Name": "msedgewebview2",
+      "Count": 12
+    },
+    {
+      "Name": "MSI_AmbientSilent",
+      "Count": 1
+    },
+    {
+      "Name": "MSI_Central_Service",
+      "Count": 1
+    },
+    {
+      "Name": "MSI.CentralServer",
+      "Count": 1
+    },
+    {
+      "Name": "MSI.TerminalServer",
+      "Count": 1
+    },
+    {
+      "Name": "MSIAPService",
+      "Count": 1
+    },
+    {
+      "Name": "MSIService",
+      "Count": 1
+    },
+    {
+      "Name": "MsMpEng",
+      "Count": 1
+    },
+    {
+      "Name": "NgcIso",
+      "Count": 1
+    },
+    {
+      "Name": "NisSrv",
+      "Count": 1
+    },
+    {
+      "Name": "node",
+      "Count": 6
+    },
+    {
+      "Name": "node_repl",
+      "Count": 4
+    },
+    {
+      "Name": "NVDisplay.Container",
+      "Count": 2
+    },
+    {
+      "Name": "OffloadItemService",
+      "Count": 1
+    },
+    {
+      "Name": "OmApSvcBroker",
+      "Count": 1
+    },
+    {
+      "Name": "OneApp.IGCC.WinService",
+      "Count": 1
+    },
+    {
+      "Name": "OneApp.IGCC.WinService.LACE",
+      "Count": 1
+    },
+    {
+      "Name": "PhoneExperienceHost",
+      "Count": 1
+    },
+    {
+      "Name": "platform_runtime_RGB_service",
+      "Count": 1
+    },
+    {
+      "Name": "pwsh",
+      "Count": 2
+    },
+    {
+      "Name": "Registry",
+      "Count": 1
+    },
+    {
+      "Name": "RstMwService",
+      "Count": 1
+    },
+    {
+      "Name": "RtkAudUService64",
+      "Count": 1
+    },
+    {
+      "Name": "RuntimeBroker",
+      "Count": 7
+    },
+    {
+      "Name": "RustDesk",
+      "Count": 2
+    },
+    {
+      "Name": "SearchFilterHost",
+      "Count": 1
+    },
+    {
+      "Name": "SearchHost",
+      "Count": 1
+    },
+    {
+      "Name": "SearchIndexer",
+      "Count": 1
+    },
+    {
+      "Name": "SearchProtocolHost",
+      "Count": 1
+    },
+    {
+      "Name": "Secure System",
+      "Count": 1
+    },
+    {
+      "Name": "Sendevsvc",
+      "Count": 1
+    },
+    {
+      "Name": "services",
+      "Count": 1
+    },
+    {
+      "Name": "ShellExperienceHost",
+      "Count": 1
+    },
+    {
+      "Name": "ShellHost",
+      "Count": 1
+    },
+    {
+      "Name": "sihost",
+      "Count": 1
+    },
+    {
+      "Name": "smss",
+      "Count": 1
+    },
+    {
+      "Name": "spoolsv",
+      "Count": 1
+    },
+    {
+      "Name": "StartMenuExperienceHost",
+      "Count": 1
+    },
+    {
+      "Name": "steam",
+      "Count": 1
+    },
+    {
+      "Name": "steamservice",
+      "Count": 1
+    },
+    {
+      "Name": "steamwebhelper",
+      "Count": 7
+    },
+    {
+      "Name": "svchost",
+      "Count": 93
+    },
+    {
+      "Name": "System",
+      "Count": 1
+    },
+    {
+      "Name": "SystemSettings",
+      "Count": 1
+    },
+    {
+      "Name": "taskhostw",
+      "Count": 1
+    },
+    {
+      "Name": "TextInputHost",
+      "Count": 1
+    },
+    {
+      "Name": "Tobii.Service",
+      "Count": 1
+    },
+    {
+      "Name": "UserOOBEBroker",
+      "Count": 1
+    },
+    {
+      "Name": "WidgetBoard",
+      "Count": 1
+    },
+    {
+      "Name": "WidgetService",
+      "Count": 1
+    },
+    {
+      "Name": "wininit",
+      "Count": 1
+    },
+    {
+      "Name": "winlogon",
+      "Count": 1
+    },
+    {
+      "Name": "wlanext",
+      "Count": 1
+    },
+    {
+      "Name": "WmiPrvSE",
+      "Count": 2
+    },
+    {
+      "Name": "WMIRegistrationService",
+      "Count": 1
+    },
+    {
+      "Name": "WorldOfWarships64",
+      "Count": 1
+    },
+    {
+      "Name": "wslservice",
+      "Count": 1
+    },
+    {
+      "Name": "WUDFCompanionHost",
+      "Count": 3
+    },
+    {
+      "Name": "WUDFHost",
+      "Count": 6
+    }
+  ],
+  "qpc_frequency": 10000000,
+  "utc": "2026-10-06T11:54:19.0750053Z",
+  "schema": "pas.current-rails-cost-environment.v1",
+  "os": {
+    "Caption": "Microsoft Windows 11 Pro",
+    "Version": "10.0.26200",
+    "BuildNumber": "26200",
+    "TotalVisibleMemorySize": 33239632
+  },
+  "head": "602d7566b8c582cd2df30f8008fd9f7bd6808d13",
+  "thermal_power_policy": "existing host settings; no changes; turbo/thermal state unmeasured",
+  "binaries": [
+    {
+      "bytes": 167936,
+      "sha256": "bf52c849fa3f42f7c409fd6d4c2e13197ce25db7499a3be3fdc69c3cd527e1cc",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\cost_analysis.exe"
+    },
+    {
+      "bytes": 860879,
+      "sha256": "8cd10b6562374b7cbda723bed190df326c3622f35d806ca6af6c5e1259507b50",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\cost_analysis.map"
+    },
+    {
+      "bytes": 1997158,
+      "sha256": "f90b302d8d54d658f048473a7bdbf4170685a06e68e7505b1485e27e99619096",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_bridge.lib"
+    },
+    {
+      "bytes": 636928,
+      "sha256": "cedfc190875e0fb31e1f9cbb573f0ad070240fecfc82a62e153b488554e4e61b",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_chain.exe"
+    },
+    {
+      "bytes": 2224989,
+      "sha256": "36e1398d6000fb7278c3017f4270365ec7a75424ad42a8f8c84678fa11c59125",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_chain.map"
+    },
+    {
+      "bytes": 7302760,
+      "sha256": "d8b3bc1b06d8eee1e4be0153af4b1ee200daddb284a06eda0867b6be7e42860c",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_front.lib"
+    },
+    {
+      "bytes": 1822924,
+      "sha256": "ab64bd085003c5289ac169766f0561077c595b823a59dcf50752622b17425746",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_rails.lib"
+    },
+    {
+      "bytes": 298496,
+      "sha256": "de84c30e12ba0536be8d7d7800280be1a88692dbf4a62b1f498cf4e8cad31b74",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_tests.exe"
+    },
+    {
+      "bytes": 787467,
+      "sha256": "25f24111f425d3ca64c601173bb030eadfcc99d53a50f31d9a754c9881eec9b4",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_tests.map"
+    },
+    {
+      "bytes": 684246,
+      "sha256": "3313c1ab8d95fb8f0031427ebe4b5bf7d808ea533fe5b7c281b205ad06edf02f",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\exact_bvi_v3.lib"
+    },
+    {
+      "bytes": 1764352,
+      "sha256": "c9e9fad10f76f10714838ab96a001f8c47575d55136c963b45dea4a75bbc5655",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\formal_affected.exe"
+    },
+    {
+      "bytes": 4859915,
+      "sha256": "ed6369e56b84d58b0b607f97d3349cb71afecc4eb6d88d23f391a22127851c70",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\formal_affected.map"
+    },
+    {
+      "bytes": 121344,
+      "sha256": "59e57ec6ae7c291b207d42656539822d93a6cb1418c53611162995ba1718731c",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\front_preservation.exe"
+    },
+    {
+      "bytes": 346335,
+      "sha256": "74952fea2053fd23be5765ca0dff8bb85a7f7302dcc54ea78b1157ca98048a29",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\front_preservation.map"
+    },
+    {
+      "bytes": 73728,
+      "sha256": "9592da9be7500d0b39b30bfc3110fbb9c562fd26f9f8a823049eab63f203bacc",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\gtest_main.dll"
+    },
+    {
+      "bytes": 454144,
+      "sha256": "3064380e3c1129d5974607cd2b50fe279189970802899b20b40fca89041614d8",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\gtest.dll"
+    },
+    {
+      "bytes": 2118938,
+      "sha256": "1187ff62a4b97f257fbb9505e4c9bc0184db7e77382a45aa4f810daab06f8363",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\own_bridge.lib"
+    },
+    {
+      "bytes": 272896,
+      "sha256": "e51e2607042334ea6f5d66bc8c5d78d1703858ebaa6f13c7091a78608878a596",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\own_prefix.exe"
+    },
+    {
+      "bytes": 728254,
+      "sha256": "16b7a3e6ea003bb3dac0d862dcf659e13c4a16d314865e9f25694e49aa564316",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\own_prefix.map"
+    },
+    {
+      "bytes": 271360,
+      "sha256": "5599892c8286230773f90b2739aad355f9fd862bc28cd0bbfeb75c3cb1513669",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\prefix_preservation.exe"
+    },
+    {
+      "bytes": 729104,
+      "sha256": "1feef25a3b34b07cdce7ec102ef7797d0c0d451953f39f6b09fb4df58f5c369b",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\prefix_preservation.map"
+    }
+  ],
+  "corpus": "C++ source stimulus() 12 RGB frames; fixed 2560/20ms; no PNG/song input",
+  "cpu": [
+    {
+      "Name": "Intel(R) Core(TM) Ultra 5 125H",
+      "NumberOfCores": 14,
+      "NumberOfLogicalProcessors": 18,
+      "MaxClockSpeed": 3600
+    }
+  ],
+  "dirty": [],
+  "roots": {
+    "debug": "prelive-current-debug-05",
+    "asan": "prelive-current-asan-04",
+    "release": "prelive-current-release-13"
+  },
+  "protocol_sha": "58d6136fcbce1ebf6c25a23795f10aab78013d46318c2b6261b7f6206abe91e6"
+}

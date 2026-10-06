@@ -1,0 +1,110 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-prelive-asan-04-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp for CXX dependencies
+[2/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp for CXX dependencies
+[3/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp for CXX dependencies
+[4/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp for CXX dependencies
+[5/58] Generating CXX dyndep file CMakeFiles\exact_bvi_v3.dir\CXX.dd
+[6/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front.cpp for CXX dependencies
+[7/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_bridge.cpp for CXX dependencies
+[8/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge.cpp for CXX dependencies
+[9/58] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp.obj
+[10/58] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp.obj
+[11/58] Generating CXX dyndep file CMakeFiles\current_front.dir\CXX.dd
+[12/58] Generating CXX dyndep file CMakeFiles\own_bridge.dir\CXX.dd
+[13/58] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp.obj
+[14/58] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp.obj
+[15/58] Generating CXX dyndep file CMakeFiles\current_bridge.dir\CXX.dd
+[16/58] Linking CXX static library exact_bvi_v3.lib
+[17/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current.cpp for CXX dependencies
+[18/58] Generating CXX dyndep file CMakeFiles\current_rails.dir\CXX.dd
+[19/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp for CXX dependencies
+[20/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_tests.cpp for CXX dependencies
+[21/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\current_tests.cpp for CXX dependencies
+[22/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\own_prefix.cpp for CXX dependencies
+[23/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\chain.cpp for CXX dependencies
+[24/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tracking_tests.cpp for CXX dependencies
+[25/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tests.cpp for CXX dependencies
+[26/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\prelive_current\cost_analysis.cpp for CXX dependencies
+[27/58] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\prelive-current-asan-04\runtime_contract.cpp for CXX dependencies
+[28/58] Building CXX object CMakeFiles\own_bridge.dir\own_bridge.cpp.obj
+[29/58] Linking CXX static library own_bridge.lib
+[30/58] Generating CXX dyndep file CMakeFiles\prefix_preservation.dir\CXX.dd
+[31/58] Generating CXX dyndep file CMakeFiles\front_preservation.dir\CXX.dd
+[32/58] Generating CXX dyndep file CMakeFiles\current_tests.dir\CXX.dd
+[33/58] Building CXX object CMakeFiles\current_front.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front.cpp.obj
+[34/58] Generating CXX dyndep file CMakeFiles\own_prefix.dir\CXX.dd
+[35/58] Generating CXX dyndep file CMakeFiles\current_chain.dir\CXX.dd
+[36/58] Linking CXX static library current_front.lib
+[37/58] Generating CXX dyndep file CMakeFiles\formal_affected.dir\CXX.dd
+[38/58] Generating CXX dyndep file CMakeFiles\cost_analysis.dir\CXX.dd
+[39/58] Building CXX object CMakeFiles\current_rails.dir\current.cpp.obj
+[40/58] Linking CXX static library current_rails.lib
+[41/58] Building CXX object CMakeFiles\current_bridge.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge.cpp.obj
+[42/58] Linking CXX static library current_bridge.lib
+[43/58] Building CXX object CMakeFiles\front_preservation.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_tests.cpp.obj
+[44/58] Building CXX object CMakeFiles\prefix_preservation.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp.obj
+[45/58] Building CXX object CMakeFiles\current_tests.dir\current_tests.cpp.obj
+[46/58] Building CXX object CMakeFiles\own_prefix.dir\own_prefix.cpp.obj
+[47/58] Building CXX object CMakeFiles\current_chain.dir\chain.cpp.obj
+[48/58] Building CXX object CMakeFiles\formal_affected.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tracking_tests.cpp.obj
+[49/58] Linking CXX executable prefix_preservation.exe
+[50/58] Building CXX object CMakeFiles\cost_analysis.dir\cost_analysis.cpp.obj
+[51/58] Building CXX object CMakeFiles\formal_affected.dir\runtime_contract.cpp.obj
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[52/58] Linking CXX executable front_preservation.exe
+[53/58] Linking CXX executable current_tests.exe
+[54/58] Linking CXX executable own_prefix.exe
+[55/58] Linking CXX executable current_chain.exe
+[56/58] Linking CXX executable cost_analysis.exe
+[57/58] Building CXX object CMakeFiles\formal_affected.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tests.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tests.cpp(135): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[58/58] Linking CXX executable formal_affected.exe
+TRACE Build END exit=0

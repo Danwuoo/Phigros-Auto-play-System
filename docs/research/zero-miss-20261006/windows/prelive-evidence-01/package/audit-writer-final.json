@@ -1,0 +1,21 @@
+{
+  "all_input_processed": true,
+  "complete_prefix_evidence": false,
+  "declared_writer_loss": true,
+  "device_endpoints": 0,
+  "errors": [],
+  "event_rows": 3,
+  "game_adoption": "unknown",
+  "integrity": true,
+  "path": "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-writer-01.json",
+  "phases": [
+    0,
+    0,
+    0
+  ],
+  "plan_basis_rows": {},
+  "receipts": 0,
+  "release_calls": 0,
+  "schema": "pas.prelive-independent-integrity.v1",
+  "unknown_release": []
+}

@@ -1,0 +1,253 @@
+{
+  "assertions": 58,
+  "checks": [
+    {
+      "id": "hold_warming_00",
+      "pass": true
+    },
+    {
+      "id": "hold_warming_10",
+      "pass": true
+    },
+    {
+      "id": "hold_warming_20",
+      "pass": true
+    },
+    {
+      "id": "own_hold_down",
+      "pass": true
+    },
+    {
+      "id": "rotating_active_body_0",
+      "pass": true
+    },
+    {
+      "id": "rotating_active_body_1",
+      "pass": true
+    },
+    {
+      "id": "rotating_active_body_2",
+      "pass": true
+    },
+    {
+      "id": "rotating_active_body_3",
+      "pass": true
+    },
+    {
+      "id": "current_support_moves_same_contact",
+      "pass": true
+    },
+    {
+      "id": "body_patch_continues_own_receipt",
+      "pass": true
+    },
+    {
+      "id": "evidence_expiry_releases",
+      "pass": true
+    },
+    {
+      "id": "completed_return_cannot_down",
+      "pass": true
+    },
+    {
+      "id": "final_release_verified",
+      "pass": true
+    },
+    {
+      "id": "hold_warming_01",
+      "pass": true
+    },
+    {
+      "id": "hold_warming_11",
+      "pass": true
+    },
+    {
+      "id": "hold_warming_21",
+      "pass": true
+    },
+    {
+      "id": "own_unknown_down",
+      "pass": true
+    },
+    {
+      "id": "unknown_down_not_retried",
+      "pass": true
+    },
+    {
+      "id": "unknown_release_retained",
+      "pass": true
+    },
+    {
+      "id": "cyan_variant_entry_155",
+      "pass": true
+    },
+    {
+      "id": "cyan_variant_entry_192",
+      "pass": true
+    },
+    {
+      "id": "cyan_variant_entry_40",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_0",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_1",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_2",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_3",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_4",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_5",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_6",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_7",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_8",
+      "pass": true
+    },
+    {
+      "id": "negative_never_down_9",
+      "pass": true
+    },
+    {
+      "id": "129_complete_batch_invalid",
+      "pass": true
+    },
+    {
+      "id": "17_lines_invalid",
+      "pass": true
+    },
+    {
+      "id": "nonfinite_geometry_no_down",
+      "pass": true
+    },
+    {
+      "id": "neighbour_not_filtered_out_for_entry",
+      "pass": true
+    },
+    {
+      "id": "line_loss_no_new_down",
+      "pass": true
+    },
+    {
+      "id": "line_reconnect_completed_no_replay",
+      "pass": true
+    },
+    {
+      "id": "late_note_alignment_entry",
+      "pass": true
+    },
+    {
+      "id": "line_rotates_during_hold_same_down",
+      "pass": true
+    },
+    {
+      "id": "five_own_contacts_bounded",
+      "pass": true
+    },
+    {
+      "id": "five_finish_release",
+      "pass": true
+    },
+    {
+      "id": "irregular_dt_measured_entry",
+      "pass": true
+    },
+    {
+      "id": "reversing_front_no_entry",
+      "pass": true
+    },
+    {
+      "id": "untyped_current_reason_no_down",
+      "pass": true
+    },
+    {
+      "id": "own_tail_current_supported_00",
+      "pass": true
+    },
+    {
+      "id": "own_tail_current_supported_10",
+      "pass": true
+    },
+    {
+      "id": "normal_tail_up_receipt",
+      "pass": true
+    },
+    {
+      "id": "tail_completion_no_down_retry_0",
+      "pass": true
+    },
+    {
+      "id": "own_tail_current_supported_01",
+      "pass": true
+    },
+    {
+      "id": "own_tail_current_supported_11",
+      "pass": true
+    },
+    {
+      "id": "unknown_tail_up_fault",
+      "pass": true
+    },
+    {
+      "id": "tail_completion_no_down_retry_1",
+      "pass": true
+    },
+    {
+      "id": "fault_no_down_retry_2",
+      "pass": true
+    },
+    {
+      "id": "unknown_injection_fault_explicit_2",
+      "pass": true
+    },
+    {
+      "id": "fault_no_down_retry_5",
+      "pass": true
+    },
+    {
+      "id": "unknown_release_explicit",
+      "pass": true
+    },
+    {
+      "id": "ledger_retirement_150_own_completed",
+      "pass": false
+    }
+  ],
+  "details": {
+    "ledger_retirement": {
+      "down": 129,
+      "ledger_reason": "repeated_down",
+      "old_present": false,
+      "owner_rejection": "",
+      "scheduler_fault": "",
+      "size": 128,
+      "up": 129,
+      "valid": false
+    }
+  },
+  "device_endpoints": 0,
+  "failed": 1,
+  "physical_gold": 0,
+  "schema": "pas.current-rails-v1.contract.v1"
+}

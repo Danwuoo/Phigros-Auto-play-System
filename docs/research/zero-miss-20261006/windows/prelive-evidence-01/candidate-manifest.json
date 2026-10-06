@@ -1,0 +1,671 @@
+{
+  "endpoint_count": 0,
+  "head_at_seal": "b47e99de402e4a92e0dbd34b4bafe0f715b9285a",
+  "loaded_module_backing_files": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\clang_rt.asan_dynamic-x86_64.dll",
+      "sha256": "52580b50dadca40f8f04e21c0b61e8ff272b31379270116377f47449c52ef758",
+      "bytes": 1208352
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\current_chain.exe",
+      "sha256": "6d79c1edfc2d621ccd00c1076ddefa5d26d3f1fc9dba22ccc5c245a550c5f258",
+      "bytes": 6524928
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\current_chain.exe",
+      "sha256": "d92650fbb22bd20a7713e4a63331d08996e1471133c9d472d85a7971b8d66d5d",
+      "bytes": 4152320
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-10\\current_chain.exe",
+      "sha256": "75665bb3e67bc749c4de60b9bc00a0e48b6da8e2217e57d158f1fc9930a18445",
+      "bytes": 636928
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_chain.exe",
+      "sha256": "cedfc190875e0fb31e1f9cbb573f0ad070240fecfc82a62e153b488554e4e61b",
+      "bytes": 636928
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+      "sha256": "e036c9baecd170d7ef4759a5a7eb76036158cacc4cd9e3f697dbf410a3457224",
+      "bytes": 778344
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\apphelp.dll",
+      "sha256": "6915f018bd5261cccbbda0f50d8585a0d86172e8aac54b2642cdd3efeca75e74",
+      "bytes": 662640
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\bcrypt.dll",
+      "sha256": "b5691584e857caf0c6c590dda13779966b383d66be3c87d5b3cbbc2f5005495b",
+      "bytes": 183376
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\bcryptPrimitives.dll",
+      "sha256": "46c06a0f0323d25a32c2b16da1a4a09e9234d282be7714469b7985bb98031ab6",
+      "bytes": 716408
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\clbcatq.dll",
+      "sha256": "4059070f234d10b4f8446eb6a27d35523861cd9564333574013c2ab5da51d1c0",
+      "bytes": 712264
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\combase.dll",
+      "sha256": "39a2e2ba1ca6012953c94c10011fff5a18783120a2a34f5b66deb2d374a362c9",
+      "bytes": 3716184
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\dbghelp.dll",
+      "sha256": "cbb0c77b812e09f6ae66f482e8eae94fd2e232bbbc3825d12668f3d2ed97e78e",
+      "bytes": 2307568
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\GDI32.dll",
+      "sha256": "772c73e294a4c5f5e0d4146288af95287a85c074d3aee3fa9f320dc010d7dbfe",
+      "bytes": 187456
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\gdi32full.dll",
+      "sha256": "bde2077a56c90f68c5fa1ce5ebd4a40755c97a5080b91a87d2beff47349dd01e",
+      "bytes": 1220496
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\IMM32.DLL",
+      "sha256": "7e45f12c1c555e2407c5ca082bd925b34655278fde4dbfac53a0468cc1e77411",
+      "bytes": 212288
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\kernel.appcore.dll",
+      "sha256": "ed6d62f2555d260547cc94a5cdfe2a6fcb684f18b8e182f78f9e4de224321fc9",
+      "bytes": 121360
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+      "sha256": "8f8629741558b5df71def4e1dd8ef9645d4f806b949762c47757c50fea1a9e6d",
+      "bytes": 844496
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+      "sha256": "becad014fb8efa8cb5e314931cca92778ad42c649b12a6909632cacd68af4f40",
+      "bytes": 4212112
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\msvcp_win.dll",
+      "sha256": "c50165e6aaf74395c059564d65fa78b0911844828cbcf791d78f80d964a60f4e",
+      "bytes": 642016
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\MSVCP140_ATOMIC_WAIT.dll",
+      "sha256": "3d0cbfaa1bf3eecf5a3f4491d2960ee803cb994f30292c6adc4a07c498f60e2b",
+      "bytes": 57792
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\MSVCP140.dll",
+      "sha256": "7c26614e1d733892c2deac7e245ce115504b1d80592dd0a01b08e3e5a55f89ca",
+      "bytes": 643512
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\MSVCP140D_ATOMIC_WAIT.dll",
+      "sha256": "0c5c194078138548fea061c560c41f3008c285f7b79873f34fc461c7446a06de",
+      "bytes": 102328
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\MSVCP140D.dll",
+      "sha256": "7de55061770829e3958576f4c737b9805f7153a0e5933bb2ecd9ab9adc61b3e3",
+      "bytes": 891832
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\msvcrt.dll",
+      "sha256": "a1bd0acd64e1a60368b8878d3987f603d966ed45be2252d2d4d0f92feb10fa8e",
+      "bytes": 699848
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+      "sha256": "a74f7482085eab125ccc09152ab7e0b5994bcb13e1a7b29880bdbb24179ecb8b",
+      "bytes": 2522080
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\ole32.dll",
+      "sha256": "4b81e4a4cb982915ceb3ebef0148227689306c274d5b2f6068ea143ae4db3e40",
+      "bytes": 1695680
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\OLEAUT32.dll",
+      "sha256": "e276bb09983606469c50f0f03c9604bbeffd7d669d996526c8c1af89042fbae0",
+      "bytes": 898200
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\RPCRT4.dll",
+      "sha256": "89af87b6387bde4243306036fce2be89c67a328f93c25c53542e4c665b114747",
+      "bytes": 1162656
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\sechost.dll",
+      "sha256": "c760d6c0dfa2705446aa7a2260206c9076182d92231854c04aa526403217eb9a",
+      "bytes": 704008
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\shcore.dll",
+      "sha256": "e7b47e7b381849dd1b32fd67deedd16ad46b50aaf614cdd28e03a7bac7fd72c8",
+      "bytes": 1022152
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\ucrtbase.dll",
+      "sha256": "5c52e3a303baaac0e0af8bd9b96134993da34bc9d834a31ef37e1d2cdc7fe192",
+      "bytes": 1377512
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\ucrtbased.dll",
+      "sha256": "3bd8c11641a5e98d1edff2cb36c9b5f021b94bd05929b8295380786c5458ba46",
+      "bytes": 2120024
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\USER32.dll",
+      "sha256": "93a4310e66a47fa359f588c2ebda64fe3651771c6f9ff30d462a77215a2e558e",
+      "bytes": 1914656
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\VCRUNTIME140_1.dll",
+      "sha256": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e",
+      "bytes": 50112
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\VCRUNTIME140_1D.dll",
+      "sha256": "b8316d415d4cfab42cdfa6f59e3f5d7dac5b998ae681a1d83368342f07ffea6a",
+      "bytes": 61368
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\VCRUNTIME140.dll",
+      "sha256": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7",
+      "bytes": 178616
+    },
+    {
+      "path": "C:\\WINDOWS\\SYSTEM32\\VCRUNTIME140D.dll",
+      "sha256": "ab6d0cc02fa70bb739fbae00e5de7544cb2dad33a563731a91fb692158d21160",
+      "bytes": 200120
+    },
+    {
+      "path": "C:\\WINDOWS\\System32\\win32u.dll",
+      "sha256": "9cd636e8a1b300e2f4b16f339d650eda71fa02b92b100e4b2f89ce7c04811767",
+      "bytes": 170952
+    },
+    {
+      "path": "C:\\Windows\\System32\\windowscodecs.dll",
+      "sha256": "fbd4409a98e8dae912a2a157d2f7d84883c4ad06f0541f1d878d0cf512ac12e9",
+      "bytes": 2352648
+    }
+  ],
+  "source": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\chain.cpp",
+      "sha256": "7eebd9308afbb0c7d3afbddf6494063e09325768050a813106b45c18eeb41550",
+      "bytes": 18944
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\cmake-stage.ps1",
+      "sha256": "7e6591a124a3a0fe207b0bb5c42aacb0c34fb05a041e085c1e74dc2bc42cde17",
+      "bytes": 4386
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\CMakeLists.txt",
+      "sha256": "fafbd526620e2801ee3126eba70293c2a62e33661c6ad5a5773b871128b0eaa3",
+      "bytes": 5797
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\cost_analysis.cpp",
+      "sha256": "9851a3a1f5c76cc6c0013ddb7bc4cd936b06829a792ce40ca40c061a99c9ba8a",
+      "bytes": 3451
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\current_tests.cpp",
+      "sha256": "c3e9745f2e073a4fe5c8556bb2cb36f58174521e364d3b361a8b4235211f0737",
+      "bytes": 15349
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\current.cpp",
+      "sha256": "b936c452660ec80ac963f02f78c15dd7ef3845a659fa658f5bba21a67f1ffe0c",
+      "bytes": 12015
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\current.hpp",
+      "sha256": "2b45dcf1d316476a53ebdee310f0ad53c749aff57c315285030ad3eb6f20d50c",
+      "bytes": 1279
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\own_bridge.cpp",
+      "sha256": "47cd26eee07360d204a97211d99fe3ca7e607a90491fa75de62dbb8542bebddb",
+      "bytes": 15633
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\own_bridge.hpp",
+      "sha256": "0f72a64803b3abf74b8bbce3be9643163a17d128b54feb5a281fc4aeab20cf35",
+      "bytes": 3805
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\own_prefix.cpp",
+      "sha256": "29c172a2fa9f62e7e3baed3b63ae0fab16358a27e0cf105734d45477ab0f635c",
+      "bytes": 16023
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\PLAN.md",
+      "sha256": "6d4f410da0321f6a0c6fd863397854a546814a564f3016130b1474607058fc37",
+      "bytes": 3829
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\run.ps1",
+      "sha256": "1390b7977468eca5abba4c7323d14870a25032cce99117f8b93edde40c406bd8",
+      "bytes": 11883
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\prelive_current\\runtime.hpp",
+      "sha256": "1cfdb4d5b2829916e9c45a76b8e9d79dfdb9e37051948533198c69c5f5b733b9",
+      "bytes": 4568
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\include\\pas\\game.hpp",
+      "sha256": "f17a9f03fc385d30dc3bc1b04aa6fcdd3fe8e1a2bb642e9aec0e2b4f0128c4b6",
+      "bytes": 13420
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\src\\game.cpp",
+      "sha256": "7cd3b8379c963ae709975c99dde0d605fa36ba7a82fd752f0c6b34c85799edc8",
+      "bytes": 157216
+    }
+  ],
+  "module_memory_image_hash_not_measured": true,
+  "build_recipe_commit": "be7ee7e",
+  "cold_only": true,
+  "schema": "pas.current-rails-candidate-closure.v1",
+  "algorithm_commit": "54c0e86",
+  "live_cli_hook": false,
+  "product_goal_complete": false,
+  "binaries": [
+    {
+      "ninja": {
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\build.ninja",
+        "sha256": "15ba73b78b825aeddac9ec2aee7bb4057939530fb663cf80b13361794829b478",
+        "bytes": 124682
+      },
+      "cache": {
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\CMakeCache.txt",
+        "sha256": "0fdad727e73b912ea9b2c54f0b781fcd31018ff5dcce86c8010bbf275ee99725",
+        "bytes": 23099
+      },
+      "files": [
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\cost_analysis.exe",
+          "sha256": "bf52c849fa3f42f7c409fd6d4c2e13197ce25db7499a3be3fdc69c3cd527e1cc",
+          "bytes": 167936
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\cost_analysis.map",
+          "sha256": "8cd10b6562374b7cbda723bed190df326c3622f35d806ca6af6c5e1259507b50",
+          "bytes": 860879
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_bridge.lib",
+          "sha256": "f90b302d8d54d658f048473a7bdbf4170685a06e68e7505b1485e27e99619096",
+          "bytes": 1997158
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_chain.exe",
+          "sha256": "cedfc190875e0fb31e1f9cbb573f0ad070240fecfc82a62e153b488554e4e61b",
+          "bytes": 636928
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_chain.map",
+          "sha256": "36e1398d6000fb7278c3017f4270365ec7a75424ad42a8f8c84678fa11c59125",
+          "bytes": 2224989
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_front.lib",
+          "sha256": "d8b3bc1b06d8eee1e4be0153af4b1ee200daddb284a06eda0867b6be7e42860c",
+          "bytes": 7302760
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_rails.lib",
+          "sha256": "ab64bd085003c5289ac169766f0561077c595b823a59dcf50752622b17425746",
+          "bytes": 1822924
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_tests.exe",
+          "sha256": "de84c30e12ba0536be8d7d7800280be1a88692dbf4a62b1f498cf4e8cad31b74",
+          "bytes": 298496
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\current_tests.map",
+          "sha256": "25f24111f425d3ca64c601173bb030eadfcc99d53a50f31d9a754c9881eec9b4",
+          "bytes": 787467
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\exact_bvi_v3.lib",
+          "sha256": "3313c1ab8d95fb8f0031427ebe4b5bf7d808ea533fe5b7c281b205ad06edf02f",
+          "bytes": 684246
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\formal_affected.exe",
+          "sha256": "c9e9fad10f76f10714838ab96a001f8c47575d55136c963b45dea4a75bbc5655",
+          "bytes": 1764352
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\formal_affected.map",
+          "sha256": "ed6369e56b84d58b0b607f97d3349cb71afecc4eb6d88d23f391a22127851c70",
+          "bytes": 4859915
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\front_preservation.exe",
+          "sha256": "59e57ec6ae7c291b207d42656539822d93a6cb1418c53611162995ba1718731c",
+          "bytes": 121344
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\front_preservation.map",
+          "sha256": "74952fea2053fd23be5765ca0dff8bb85a7f7302dcc54ea78b1157ca98048a29",
+          "bytes": 346335
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\gtest_main.dll",
+          "sha256": "9592da9be7500d0b39b30bfc3110fbb9c562fd26f9f8a823049eab63f203bacc",
+          "bytes": 73728
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\gtest.dll",
+          "sha256": "3064380e3c1129d5974607cd2b50fe279189970802899b20b40fca89041614d8",
+          "bytes": 454144
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\own_bridge.lib",
+          "sha256": "1187ff62a4b97f257fbb9505e4c9bc0184db7e77382a45aa4f810daab06f8363",
+          "bytes": 2118938
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\own_prefix.exe",
+          "sha256": "e51e2607042334ea6f5d66bc8c5d78d1703858ebaa6f13c7091a78608878a596",
+          "bytes": 272896
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\own_prefix.map",
+          "sha256": "16b7a3e6ea003bb3dac0d862dcf659e13c4a16d314865e9f25694e49aa564316",
+          "bytes": 728254
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\prefix_preservation.exe",
+          "sha256": "5599892c8286230773f90b2739aad355f9fd862bc28cd0bbfeb75c3cb1513669",
+          "bytes": 271360
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13\\prefix_preservation.map",
+          "sha256": "1feef25a3b34b07cdce7ec102ef7797d0c0d451953f39f6b09fb4df58f5c369b",
+          "bytes": 729104
+        }
+      ],
+      "core_donor": "prelive-current-release-11",
+      "root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-release-13",
+      "mode": "release"
+    },
+    {
+      "ninja": {
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\build.ninja",
+        "sha256": "da611c979b1637f9e83c87fbc09dba760a4a7e4aa51365cc5ab0d7c560060acc",
+        "bytes": 124878
+      },
+      "cache": {
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\CMakeCache.txt",
+        "sha256": "57b53e1b07c29de69666cfe50aa94bc73349bb3120cf6e2e748d234dcb0086b9",
+        "bytes": 23087
+      },
+      "files": [
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\cost_analysis.exe",
+          "sha256": "7cf4395e0935839c67585d19cd8832314e2d6c49ee11cef1e98a23beb5c41786",
+          "bytes": 1426944
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\cost_analysis.map",
+          "sha256": "8f34bd2ee63429786db7fb84d6b42dc514a2dc9e3788892c9592ff420046fb12",
+          "bytes": 4741358
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\current_bridge.lib",
+          "sha256": "4a77fd6bfc430fc94b43f4046bd5d9c1baa022ec2aaa155de314f9f923770767",
+          "bytes": 2158044
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\current_chain.exe",
+          "sha256": "d92650fbb22bd20a7713e4a63331d08996e1471133c9d472d85a7971b8d66d5d",
+          "bytes": 4152320
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\current_chain.map",
+          "sha256": "504d97eb1c858d8d5d54e3a44b3556f7e912c7d82151489024af05bc26f5ff3b",
+          "bytes": 27780728
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\current_front.lib",
+          "sha256": "dd0c54d3ac4d4240227cf61d11a99dba81f60ce122ef3c1d84ef29e85ce41b98",
+          "bytes": 7878796
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\current_rails.lib",
+          "sha256": "d8782b4f290a5068671d2ce24e52ccdf9c2c9d3cb8fd865961464ae659fd4776",
+          "bytes": 2005842
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\current_tests.exe",
+          "sha256": "bc3ff4807024b4084c3d1f538ac076bf5304b3687d24944de08faeb4cc4d5631",
+          "bytes": 3933184
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\current_tests.map",
+          "sha256": "53109ed7cbbfa6473cb0fd7654a2f48192cc258a5ebfcdd07a28b6ac06bab23d",
+          "bytes": 24315965
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\exact_bvi_v3.lib",
+          "sha256": "6292ffbe26b60f35e18210cbab8308e8d80942c4e6e1de1b1a6c204e4f385e78",
+          "bytes": 681930
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\formal_affected.exe",
+          "sha256": "06385df1216bdb9281903d5b529ca1911fa1b84670aa3ba87cc60ceb29e0ac07",
+          "bytes": 6610432
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\formal_affected.map",
+          "sha256": "75b3ff6ffa5910c42fbbd60d8d8c8c162bad641b71ea6b2b448d78fe883ea545",
+          "bytes": 35949301
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\front_preservation.exe",
+          "sha256": "7d6631c1a2bca764df74f55380838056587a5029c13a4a806eca04a78edcc7b3",
+          "bytes": 604160
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\front_preservation.map",
+          "sha256": "94399d9786d1f427800bc5393de0b091083ac403a2d0de6dd769852824c7d06f",
+          "bytes": 4011623
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\gtest_main.dll",
+          "sha256": "0bff61f774366b988d5f30cca665878e6bb3f15a70249b77f0bfa98d8032cf4e",
+          "bytes": 241152
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\gtest.dll",
+          "sha256": "df5b43f365b3ad3c407718233c4b88854c4ce4823d6674b1eac2afec711d81ad",
+          "bytes": 1963520
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\own_bridge.lib",
+          "sha256": "ac7336a6d71faa9f9ca5d89a96516b8abede41633f684298f5d9f41b12212af3",
+          "bytes": 2305370
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\own_prefix.exe",
+          "sha256": "f6e6f7419b7011fd99b8dd3ed92d20169519969865543a05745c4e6f32e12490",
+          "bytes": 3792896
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\own_prefix.map",
+          "sha256": "284ee216fd0809032a7615d5f1ca57e8928677befe852fab496d1cfcb58ce97a",
+          "bytes": 22570426
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\prefix_preservation.exe",
+          "sha256": "b275adf24f8e6ca5a76a1ccdeeeb27a046513463eb29d891e05ef6feb124c009",
+          "bytes": 3783168
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05\\prefix_preservation.map",
+          "sha256": "9dfa34db1d0383a9d3186ace77c480cc0b77051604a8a8845b1b35d3207c9f4c",
+          "bytes": 22547406
+        }
+      ],
+      "core_donor": "prelive-current-debug-04",
+      "root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-debug-05",
+      "mode": "debug"
+    },
+    {
+      "ninja": {
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\build.ninja",
+        "sha256": "96eabdde1117db736fd86bcd7fd409891f372300241eb75c64e03fd59e7a7bd4",
+        "bytes": 133299
+      },
+      "cache": {
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\CMakeCache.txt",
+        "sha256": "9bb474781a23b117c1e5357141cd03b793bcaced5ac5bcccf9a1490f10380300",
+        "bytes": 23260
+      },
+      "files": [
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\clang_rt.asan_dbg_dynamic-x86_64.dll",
+          "sha256": "f56d5ff0b9fcb1c99e84201268d84df0c3406aa3710173f44446cf24cf2f857e",
+          "bytes": 1296920
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\clang_rt.asan_dynamic-x86_64.dll",
+          "sha256": "52580b50dadca40f8f04e21c0b61e8ff272b31379270116377f47449c52ef758",
+          "bytes": 1208352
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\cost_analysis.exe",
+          "sha256": "fe0671bdbbe5dbce561de554c1131d31d4db698da145383387842da86c54e240",
+          "bytes": 1748992
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\cost_analysis.map",
+          "sha256": "2599d50992ff906e486dd55b86b457ae9bda810f8ddfd3d37f5d13ce3547c371",
+          "bytes": 4585461
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\current_bridge.lib",
+          "sha256": "cfcc76862f8e81f5c1c585bc82311aeb0fd677c8ab16f9b135c763b096953a52",
+          "bytes": 2300542
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\current_chain.exe",
+          "sha256": "6d79c1edfc2d621ccd00c1076ddefa5d26d3f1fc9dba22ccc5c245a550c5f258",
+          "bytes": 6524928
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\current_chain.map",
+          "sha256": "5c6090fcdfd9ab04a96e7dc64a397fb986eb38221b4e6a041dda17223fc43863",
+          "bytes": 25716616
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\current_front.lib",
+          "sha256": "f857d83d6c02238eb7cf7434cc08f823ac50cdcfb1d2669545eed15744cdd090",
+          "bytes": 7930658
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\current_rails.lib",
+          "sha256": "6ab243621e120b43b82c2b90b6bd775e5cf75eb0ebdf46e34cf60bf5e9075da0",
+          "bytes": 2142978
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\current_tests.exe",
+          "sha256": "1437fdcbf2db8f7b1f607570990ad2c4a4dd7bc2a395bfbd819c2dc37f934a6f",
+          "bytes": 6157312
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\current_tests.map",
+          "sha256": "346abe8b870cf6936efea5209803e5622c917becc09a8741e68eb7fbdac6d81c",
+          "bytes": 22469070
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\exact_bvi_v3.lib",
+          "sha256": "215d647e010252c65450186e3b79b207047d67fddb9b4ddaf096881b6050bb22",
+          "bytes": 765082
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\formal_affected.exe",
+          "sha256": "0ca1f00ec7679cefdee79c066713f9bb78dcb2263a969f7e35ed87e8f28e732b",
+          "bytes": 10492416
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\formal_affected.map",
+          "sha256": "2346d9eb72d25524bab1c6977d097ed883a52b5168a6d9f94f3fd3b7a92ba5c9",
+          "bytes": 34511448
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\front_preservation.exe",
+          "sha256": "0f7100b8ec070c6a8eef6ac04514270b4a2b8add2ad555cdf6fc48a807763805",
+          "bytes": 945152
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\front_preservation.map",
+          "sha256": "8ee2eb5649bf5240a60cc721b4532298b35775a1a50016545de4dda388a19fd9",
+          "bytes": 3836571
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\gtest_main.dll",
+          "sha256": "0bff61f774366b988d5f30cca665878e6bb3f15a70249b77f0bfa98d8032cf4e",
+          "bytes": 241152
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\gtest.dll",
+          "sha256": "df5b43f365b3ad3c407718233c4b88854c4ce4823d6674b1eac2afec711d81ad",
+          "bytes": 1963520
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\own_bridge.lib",
+          "sha256": "a62c75822505d0b7494cec2cb931eadbd09c15917ca98fe27e3dad0dc8454eb6",
+          "bytes": 2473400
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\own_prefix.exe",
+          "sha256": "ebf0c36c7057eef920c9ce7773c1dee88b0e881228b870df673dbc8f095612c9",
+          "bytes": 5914112
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\own_prefix.map",
+          "sha256": "9d3f93787559c27ae92787646973f023c8ec914de790721e3aa44e786bab611f",
+          "bytes": 20867813
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\prefix_preservation.exe",
+          "sha256": "9db354e9acaeb44d6789c02445b3e73605e274dd9d8b3e56c1028e4eef354f65",
+          "bytes": 5894144
+        },
+        {
+          "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04\\prefix_preservation.map",
+          "sha256": "529f3e34bf8dec2854fdb8b126e438a07786a28321c31bddac96d37c0d2206af",
+          "bytes": 20845616
+        }
+      ],
+      "core_donor": "prelive-current-asan-03",
+      "root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-current-asan-04",
+      "mode": "asan"
+    }
+  ],
+  "intermediate_snapshot_08": "late hash-only receipt, not exact pre-run source snapshot; do not use for source reconstruction",
+  "profile": {
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\configs\\phigros-hd-assist-five-lead35.json",
+    "sha256": "d2b5cfdc6be023c715fe402a7124ccd1977f5956b8d9fa74466643a575dbd0e0",
+    "bytes": 917
+  },
+  "normal_cost_gate": "NOT_READY",
+  "cost_controller_commit": "602d756"
+}

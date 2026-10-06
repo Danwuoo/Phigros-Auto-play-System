@@ -1,0 +1,28 @@
+{
+  "all_input_processed": true,
+  "complete_prefix_evidence": true,
+  "declared_writer_loss": false,
+  "device_endpoints": 0,
+  "errors": [],
+  "event_rows": 9889,
+  "game_adoption": "unknown",
+  "integrity": true,
+  "path": "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-prefix-03.json",
+  "phases": [
+    55,
+    121,
+    51
+  ],
+  "plan_basis_rows": {
+    "current_rails_v1_measured_hold_front_overlap": 1,
+    "live_note_recent_confirmed_line_projection": 13,
+    "live_pixels_current_drag_overlap": 4,
+    "live_pixels_held_body_continuation": 1,
+    "live_pixels_short_linear_fit_drag": 104,
+    "live_pixels_short_linear_fit_flick": 155
+  },
+  "receipts": 227,
+  "release_calls": 140,
+  "schema": "pas.prelive-independent-integrity.v1",
+  "unknown_release": []
+}

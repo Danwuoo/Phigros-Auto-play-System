@@ -1,0 +1,6 @@
+{
+  "original_raw_modified": false,
+  "reason": "C++ independent raw auditor rejected altered reported own_down",
+  "passed": true,
+  "device_endpoints": 0
+}

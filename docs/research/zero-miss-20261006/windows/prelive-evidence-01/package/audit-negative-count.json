@@ -1,0 +1,26 @@
+{
+  "all_input_processed": true,
+  "complete_prefix_evidence": true,
+  "declared_writer_loss": false,
+  "device_endpoints": 0,
+  "errors": [
+    "receipt_phase_counts"
+  ],
+  "event_rows": 818,
+  "game_adoption": "unknown",
+  "integrity": false,
+  "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\prelive-20261006\\negative-audit-receipt-count.json",
+  "phases": [
+    3,
+    7,
+    1
+  ],
+  "plan_basis_rows": {
+    "live_pixels_short_linear_fit_drag": 1,
+    "live_pixels_short_linear_fit_flick": 9
+  },
+  "receipts": 11,
+  "release_calls": 24,
+  "schema": "pas.prelive-independent-integrity.v1",
+  "unknown_release": []
+}
