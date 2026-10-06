@@ -24,6 +24,35 @@ J pixel_rgb(const Frame& frame,double x,double y) {
     const auto offset=static_cast<std::size_t>(py)*frame.stride+static_cast<std::size_t>(px)*3;
     return J::array({frame.rgb[offset],frame.rgb[offset+1],frame.rgb[offset+2]});
 }
+// Post-dispatch review only. Never passed to extract/relate/owner. Fixed 37
+// normal offsets x five tangent positions, at most 925 pixels per query.
+J witness_review(const Frame& frame,const bvi::Query& q) {
+    J rows=J::array();
+    const double ux=std::cos(q.angle),uy=std::sin(q.angle),nx=-uy,ny=ux;
+    for(int normal=-16;normal<=20;++normal) {
+        J points=J::array();
+        for(double along:{-q.width/2,-.35*q.width,0.,.35*q.width,q.width/2}) {
+            const double x=q.front.x+along*ux+normal*nx,y=q.front.y+along*uy+normal*ny;
+            const auto rgb=pixel_rgb(frame,x,y);J failures=J::array();
+            bool blue=false,white=false,black=false;
+            if(rgb.is_null())failures.push_back("outside_frame");
+            else {
+                const int r=rgb[0],g=rgb[1],b=rgb[2];
+                if(r<20||r>100)failures.push_back("R20..100");
+                if(g<130||g>230)failures.push_back("G130..230");
+                if(b<180||b>255)failures.push_back("B180..255");
+                if(b<g+20)failures.push_back("B>=G+20");
+                blue=failures.empty();white=r>=240&&g>=240&&b>=240;
+                black=r<=12&&g<=12&&b<=12;
+            }
+            points.push_back({{"along",along},{"pixel",{std::llround(x),std::llround(y)}},
+                {"rgb",rgb},{"v3_blue",blue},{"v3_blue_failures",failures},
+                {"v3_white",white},{"v3_black",black}});
+        }
+        rows.push_back({{"normal",normal},{"points",points}});
+    }
+    return rows;
+}
 J loaded_modules() {
     std::array<HMODULE,128> modules{};DWORD needed=0;
     if(!K32EnumProcessModules(GetCurrentProcess(),modules.data(),sizeof(modules),&needed)||needed>sizeof(modules))
@@ -158,6 +187,7 @@ int main(int argc,char** argv) {
         peak_contacts=std::max(peak_contacts,window->backend.active_count());
         decode.push_back((ready-start)/1e6);compute.push_back((complete-ready)/1e6);
         total.push_back((complete-start)/1e6);bridge.push_back((bridge_end-bridge_start)/1e6);
+        const auto ordinal=input.at("index").at("ordinal").get<int>();
         J roi=J::array();for(std::size_t i=0;i<result.input.count;++i) {
             const auto& d=result.observation.parts[i];const auto* a=window->ledger.find(result.input.note_ids[i]);
             const auto& q=result.input.queries[i];
@@ -178,6 +208,8 @@ int main(int argc,char** argv) {
                 {"rail_mid_right_rgb",sample(q.width/2,-q.depth/2)},
                 {"front_exterior_left3_rgb",sample(-.35*q.width,3)},
                 {"front_exterior_right3_rgb",sample(.35*q.width,3)}});
+            if(ordinal==1519||ordinal==3030)
+                roi.back()["post_dispatch_witness_review"]=witness_review(frame,q);
         }
         // Diagnostic sidecars retain the complete current proposal denominator,
         // including body patches and unsupported kinds rejected by the adapter.
