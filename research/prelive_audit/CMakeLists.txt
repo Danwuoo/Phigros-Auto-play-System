@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.28)
+project(PasPreliveAudit LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+find_package(nlohmann_json CONFIG REQUIRED)
+add_executable(prelive_audit audit.cpp)
+target_link_libraries(prelive_audit PRIVATE nlohmann_json::nlohmann_json)
+target_compile_options(prelive_audit PRIVATE /W4 /permissive- /EHsc)
