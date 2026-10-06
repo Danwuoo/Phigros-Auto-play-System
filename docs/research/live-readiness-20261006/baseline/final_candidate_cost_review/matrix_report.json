@@ -1,0 +1,64 @@
+{
+  "schema": "pas.final-candidate-cost-control-replay.v1",
+  "modes": [
+    {
+      "mode": "release",
+      "seed_checks": 36,
+      "admission_checks": 152,
+      "source_checks": 123,
+      "admission_semantic_checks": 29,
+      "input_closure_checks": 35,
+      "input_closure_negative_controls": 31,
+      "actual_auditor_synthetic_cases": 14,
+      "all_pass": true,
+      "actual_cost_ready": false
+    },
+    {
+      "mode": "debug",
+      "seed_checks": 36,
+      "admission_checks": 152,
+      "source_checks": 123,
+      "admission_semantic_checks": 29,
+      "input_closure_checks": 35,
+      "input_closure_negative_controls": 31,
+      "actual_auditor_synthetic_cases": 14,
+      "all_pass": true,
+      "actual_cost_ready": false
+    },
+    {
+      "mode": "sanitizers",
+      "seed_checks": 36,
+      "admission_checks": 152,
+      "source_checks": 123,
+      "admission_semantic_checks": 29,
+      "input_closure_checks": 35,
+      "input_closure_negative_controls": 31,
+      "actual_auditor_synthetic_cases": 14,
+      "all_pass": true,
+      "actual_cost_ready": false
+    }
+  ],
+  "all_pass": true,
+  "source_manifest": "source-before.sha256",
+  "reused_locally_compiled_binaries": true,
+  "reuse_proof": "compiler-dependency-reuse-proof.json",
+  "actual_gcc_dependency_proofs": 15,
+  "compiler_translation_units_and_dependencies_unchanged": true,
+  "new_runtime_header": "owner_candidate_step.hpp expired-first change is data for these control programs, separately recompiled/tested by full runtime lane",
+  "Windows_recipe_runtime_not_run": true,
+  "native_freeze_limit": 65536,
+  "cost_thresholds_relaxed": false,
+  "Windows_cost_runs": 0,
+  "live_ready": false,
+  "archive": {
+    "path": "synthetic-evidence.zip",
+    "bytes": 6323110,
+    "sha256": "049cc0516d42dcd2e213847484f3b5eee39f82aa02a9bc8a56874b2b2dda3471",
+    "payload_files": 1943,
+    "expanded_bytes": 69105638,
+    "CRC_SHA_verified": true
+  },
+  "previous_full_compile_matrix": "../live_seam_producer_review/matrix_report.json",
+  "restoration": "../../capacity/final-cost-binary-lossless-archive.json",
+  "after_replay_dematerialization": "../../capacity/final-expiry-cost-replay-dematerialization.json"
+}

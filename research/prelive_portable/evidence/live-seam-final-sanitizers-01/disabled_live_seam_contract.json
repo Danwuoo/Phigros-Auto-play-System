@@ -1,0 +1,199 @@
+{
+  "assertions": 47,
+  "changed_Windows_branch_executed": false,
+  "checks": [
+    {
+      "id": "typed_UNQUALIFIED_rejects",
+      "pass": true
+    },
+    {
+      "id": "load_preflight_discovery_backend_spies_zero",
+      "pass": true
+    },
+    {
+      "id": "same_consumed_frame_eligible",
+      "pass": true
+    },
+    {
+      "id": "scene_or_round_mismatch_0",
+      "pass": true
+    },
+    {
+      "id": "scene_or_round_mismatch_1",
+      "pass": true
+    },
+    {
+      "id": "scene_or_round_mismatch_2",
+      "pass": true
+    },
+    {
+      "id": "scene_or_round_mismatch_3",
+      "pass": true
+    },
+    {
+      "id": "scene_or_round_mismatch_4",
+      "pass": true
+    },
+    {
+      "id": "scene_or_round_mismatch_5",
+      "pass": true
+    },
+    {
+      "id": "scene_or_round_mismatch_6",
+      "pass": true
+    },
+    {
+      "id": "scene_or_round_mismatch_7",
+      "pass": true
+    },
+    {
+      "id": "batch_from_different_frame_denied",
+      "pass": true
+    },
+    {
+      "id": "inconsistent_gate_denied",
+      "pass": true
+    },
+    {
+      "id": "result_evidence_denied",
+      "pass": true
+    },
+    {
+      "id": "ended_packet_denied",
+      "pass": true
+    },
+    {
+      "id": "stale_packet_denied",
+      "pass": true
+    },
+    {
+      "id": "future_pixels_denied",
+      "pass": true
+    },
+    {
+      "id": "batch_overflow_denied",
+      "pass": true
+    },
+    {
+      "id": "pool_publish1",
+      "pass": true
+    },
+    {
+      "id": "pool_publish2",
+      "pass": true
+    },
+    {
+      "id": "pool_publish3",
+      "pass": true
+    },
+    {
+      "id": "three_physical_leases_exhaust_pool",
+      "pass": true
+    },
+    {
+      "id": "immutable_lease_retains_old_pixels",
+      "pass": true
+    },
+    {
+      "id": "released_slot_reused_and_latest_overwritten",
+      "pass": true
+    },
+    {
+      "id": "slow_consumer_reads_only_latest",
+      "pass": true
+    },
+    {
+      "id": "full_receipt_buffer_blocks_new_injection",
+      "pass": true
+    },
+    {
+      "id": "overflow_cannot_prevent_release",
+      "pass": true
+    },
+    {
+      "id": "receipt_stream_hard_bound64",
+      "pass": true
+    },
+    {
+      "id": "overflow_sticky_after_drain",
+      "pass": true
+    },
+    {
+      "id": "unknown_or_wrong_returned_command_sticky_0",
+      "pass": true
+    },
+    {
+      "id": "unknown_or_wrong_returned_command_sticky_1",
+      "pass": true
+    },
+    {
+      "id": "first_unknown_release_never_retried",
+      "pass": true
+    },
+    {
+      "id": "cached_release_call_has_raw_non_dispatch_record",
+      "pass": true
+    },
+    {
+      "id": "unknown_release_permanent_no_reset",
+      "pass": true
+    },
+    {
+      "id": "verified_step_starts_actual_owner",
+      "pass": true
+    },
+    {
+      "id": "verified_own_down_joined",
+      "pass": true
+    },
+    {
+      "id": "verified_implicit_dispatch_guard_release_captured",
+      "pass": true
+    },
+    {
+      "id": "verified_finish_sticky_verdict",
+      "pass": true
+    },
+    {
+      "id": "verified_repeat_finish_no_release",
+      "pass": true
+    },
+    {
+      "id": "verified_new_round_verified_only",
+      "pass": true
+    },
+    {
+      "id": "unknown_step_starts_actual_owner",
+      "pass": true
+    },
+    {
+      "id": "unknown_own_down_joined",
+      "pass": true
+    },
+    {
+      "id": "unknown_implicit_dispatch_guard_release_captured",
+      "pass": true
+    },
+    {
+      "id": "unknown_finish_sticky_verdict",
+      "pass": true
+    },
+    {
+      "id": "unknown_repeat_finish_no_release",
+      "pass": true
+    },
+    {
+      "id": "unknown_new_round_verified_only",
+      "pass": true
+    },
+    {
+      "id": "unknown_guard_release_no_extra_underlying_call",
+      "pass": true
+    }
+  ],
+  "device_endpoints": 0,
+  "failed": 0,
+  "live_admission": "UNQUALIFIED",
+  "physical_gold": 0,
+  "schema": "pas.disabled-live-seam.contract.v1"
+}

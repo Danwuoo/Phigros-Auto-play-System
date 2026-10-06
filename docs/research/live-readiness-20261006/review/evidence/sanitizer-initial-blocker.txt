@@ -1,0 +1,9 @@
+Fresh attempt: /workspace/shared/phigros-audit-sanitizers-20261006-01
+Command: AUDIT_SANITIZERS=1 research/live_readiness_review/test_audit_v2.sh /workspace/shared/phigros-live-deps-20261006 <fresh-attempt>
+The first instrumented execution failed in the host LeakSanitizer runtime:
+  LeakSanitizer has encountered a fatal error.
+  LeakSanitizer does not work under ptrace (strace, gdb, etc)
+This attempt is not a pass. Its root and binaries were preserved.
+A separate fresh attempt used ASAN_OPTIONS=detect_leaks=0 with AddressSanitizer and
+UndefinedBehaviorSanitizer still enabled. No leak-detection qualification is claimed.
+These are Linux software checks only, not Windows MSVC ASan or live qualification.

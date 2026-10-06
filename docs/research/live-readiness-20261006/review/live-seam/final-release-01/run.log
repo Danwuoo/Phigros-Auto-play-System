@@ -1,0 +1,4 @@
+/workspace/shared/phigros-live-readiness-20261006/out/prelive-live-seam-release.s96p5C/portable_current.a: OK
+/workspace/shared/phigros-live-deps-20261006-patched/nlohmann/json.hpp: OK
+packet exit=0
+runtime exit=0

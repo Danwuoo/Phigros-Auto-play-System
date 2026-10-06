@@ -109,8 +109,14 @@ SessionStatus PlaySessionLifecycle::observe(const SceneContext& c,const SessionU
 }
 SessionGameOwner::SessionGameOwner(const Clock& c,TouchBackend& b,int contacts,GameActionOptions options)
     :clock_(c),backend_(b),contacts_(contacts),options_(options) {}
-SessionObservation SessionPerception::process(const Frame& f) {
+SessionObservation SessionPerception::process(const Frame& f,bool retain_candidate_batch) {
     SessionObservation p;p.scene=observer_.process(f);
+    candidate_batch_.reset();
+    if(retain_candidate_batch) {
+        const auto& b=observer_.candidate_batch();
+        if(b.candidates.size()<=128&&b.lines.size()<=16)candidate_batch_=b;
+        else {candidate_batch_.emplace();candidate_batch_->capacity_valid=false;}
+    }
     p.evidence=session_ui_pixels(f,p.scene);
     p.status=lifecycle_.observe(p.scene.context,p.evidence,p.scene.playing_gate,clock_.now_ns());
     if(p.status.new_round) {

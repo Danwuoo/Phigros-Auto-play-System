@@ -1,0 +1,20 @@
+{
+  "spec": {
+    "argv": [
+      "pipeline",
+      "A",
+      "hold",
+      "2560",
+      "/workspace/shared/phigros-cost-review-final-20261006-05/release/fixtures/campaign.json",
+      "fixture-aa-5",
+      "/workspace/shared/phigros-cost-review-final-20261006-05/release/fixtures/fixture-aa-5.json"
+    ],
+    "exe": "/workspace/shared/phigros-cost-review-final-20261006-05/release/seed-tests",
+    "name": "fixture-aa-5",
+    "native_exit": 0,
+    "runner_exit": 0,
+    "stream_cap": 4194304,
+    "total_s": 900
+  },
+  "stage": "fixture-aa-5"
+}

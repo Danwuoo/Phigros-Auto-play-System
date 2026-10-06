@@ -1,0 +1,46 @@
+{
+  "active_final": 0,
+  "all_png_sha_verified": true,
+  "business_domain": "exact archived source QPC values via FakeClock; single continuous prefix no receipt seeds",
+  "compute_ms": {
+    "jitter_p95_minus_p5": 3.4512171,
+    "max": 29.295324,
+    "n": 3063,
+    "p50": 5.951144,
+    "p95": 8.4477627,
+    "p99": 10.439557660000004
+  },
+  "decoder": "installed libpng1.6.48; bounded one compressed PNG plus one RGB frame",
+  "device_endpoints": 0,
+  "event_bytes": 27241451,
+  "event_count": 9889,
+  "final_release": {
+    "failed": [],
+    "requested": [
+      0
+    ],
+    "return": 23136435548900,
+    "start": 23136435548900,
+    "unknown": []
+  },
+  "frames": 3063,
+  "game_adoption": "unknown",
+  "ledger_reason": "verified",
+  "ledger_valid": true,
+  "own_down": 55,
+  "own_move": 121,
+  "own_up": 51,
+  "physical_gold": 0,
+  "platform": "Linux GCC14.2; libpng1.6.48; not Windows",
+  "pool_slots": 3,
+  "processed": 3063,
+  "release_verified": true,
+  "runtime_cost_gate": "NOT_READY",
+  "safe": true,
+  "schema": "pas.prelive-current-pixels.v1",
+  "source_png_bytes": 931373644,
+  "source_selection_sha256": "a2f91ae9e121a713283a0017e7fef012f307cd8557b80c1b71f4f7e1d2aabe44",
+  "stop": "",
+  "timing_domain": "Linux steady_clock diagnostic only; decode and hashing excluded; no Windows cost qualification",
+  "trace_bytes": 1002867
+}

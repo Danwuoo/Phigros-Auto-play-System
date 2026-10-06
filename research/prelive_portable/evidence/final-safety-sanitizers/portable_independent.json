@@ -1,0 +1,240 @@
+{
+  "assertions": 57,
+  "checks": [
+    {
+      "id": "capacity_1_exact_contact_bound",
+      "pass": true
+    },
+    {
+      "id": "capacity_1_excess_conflict_retired",
+      "pass": true
+    },
+    {
+      "id": "capacity_1_own_up_all",
+      "pass": true
+    },
+    {
+      "id": "capacity_2_exact_contact_bound",
+      "pass": true
+    },
+    {
+      "id": "capacity_2_excess_conflict_retired",
+      "pass": true
+    },
+    {
+      "id": "capacity_2_own_up_all",
+      "pass": true
+    },
+    {
+      "id": "capacity_3_exact_contact_bound",
+      "pass": true
+    },
+    {
+      "id": "capacity_3_excess_conflict_retired",
+      "pass": true
+    },
+    {
+      "id": "capacity_3_own_up_all",
+      "pass": true
+    },
+    {
+      "id": "capacity_4_exact_contact_bound",
+      "pass": true
+    },
+    {
+      "id": "capacity_4_excess_conflict_retired",
+      "pass": true
+    },
+    {
+      "id": "capacity_4_own_up_all",
+      "pass": true
+    },
+    {
+      "id": "capacity_5_exact_contact_bound",
+      "pass": true
+    },
+    {
+      "id": "capacity_5_excess_conflict_retired",
+      "pass": true
+    },
+    {
+      "id": "capacity_5_own_up_all",
+      "pass": true
+    },
+    {
+      "id": "independent_target_expiry_boundary_-1",
+      "pass": true
+    },
+    {
+      "id": "independent_target_expiry_boundary_0",
+      "pass": true
+    },
+    {
+      "id": "independent_target_expiry_boundary_1",
+      "pass": true
+    },
+    {
+      "id": "pending_deadline_no_down_-1",
+      "pass": true
+    },
+    {
+      "id": "pending_deadline_no_down_0",
+      "pass": true
+    },
+    {
+      "id": "pending_deadline_no_down_1",
+      "pass": true
+    },
+    {
+      "id": "128_pending_admitted",
+      "pass": true
+    },
+    {
+      "id": "129th_pending_fail_closed",
+      "pass": true
+    },
+    {
+      "id": "executed_down_immutable",
+      "pass": true
+    },
+    {
+      "id": "future_move_revision_accepted",
+      "pass": true
+    },
+    {
+      "id": "revision_same_contact_no_down_replay",
+      "pass": true
+    },
+    {
+      "id": "terminal_intent_revision_rejected",
+      "pass": true
+    },
+    {
+      "id": "unknown_phase_1_latched_no_retry",
+      "pass": true
+    },
+    {
+      "id": "unknown_phase_1_release_duty",
+      "pass": true
+    },
+    {
+      "id": "unknown_phase_2_latched_no_retry",
+      "pass": true
+    },
+    {
+      "id": "unknown_phase_2_release_duty",
+      "pass": true
+    },
+    {
+      "id": "unknown_phase_3_latched_no_retry",
+      "pass": true
+    },
+    {
+      "id": "unknown_phase_3_release_duty",
+      "pass": true
+    },
+    {
+      "id": "receipt_field_0_tamper_rejected",
+      "pass": true
+    },
+    {
+      "id": "receipt_field_1_tamper_rejected",
+      "pass": true
+    },
+    {
+      "id": "receipt_field_2_tamper_rejected",
+      "pass": true
+    },
+    {
+      "id": "receipt_field_3_tamper_rejected",
+      "pass": true
+    },
+    {
+      "id": "receipt_field_4_tamper_rejected",
+      "pass": true
+    },
+    {
+      "id": "receipt_field_5_tamper_rejected",
+      "pass": true
+    },
+    {
+      "id": "receipt_field_6_tamper_rejected",
+      "pass": true
+    },
+    {
+      "id": "unjoined_receipt_rejected",
+      "pass": true
+    },
+    {
+      "id": "final_release_fixture_0",
+      "pass": true
+    },
+    {
+      "id": "final_release_0_missing_or_unknown_denied",
+      "pass": true
+    },
+    {
+      "id": "final_release_fixture_1",
+      "pass": true
+    },
+    {
+      "id": "final_release_1_missing_or_unknown_denied",
+      "pass": true
+    },
+    {
+      "id": "64_backend_events_within_bound",
+      "pass": true
+    },
+    {
+      "id": "65_backend_events_overflow_explicit",
+      "pass": true
+    },
+    {
+      "id": "three_leases_force_pool_drop",
+      "pass": true
+    },
+    {
+      "id": "leased_pixels_never_overwritten",
+      "pass": true
+    },
+    {
+      "id": "released_buffer_reusable",
+      "pass": true
+    },
+    {
+      "id": "blank_current_runtime_no_down",
+      "pass": true
+    },
+    {
+      "id": "blank_current_runtime_raw_diagnostic_denominator",
+      "pass": true
+    },
+    {
+      "id": "blank_current_runtime_final_release",
+      "pass": true
+    },
+    {
+      "id": "decision_schema4_explicit",
+      "pass": true
+    },
+    {
+      "id": "reason_alone_serializes_no_typed_proof",
+      "pass": true
+    },
+    {
+      "id": "typed_current_contact_serializes_hold_front_rails",
+      "pass": true
+    },
+    {
+      "id": "typed_proof_distinguishable_with_identical_reason",
+      "pass": true
+    }
+  ],
+  "clock": "FakeClock business; Linux steady_clock diagnostic shim only",
+  "cost_qualification": false,
+  "device_endpoints": 0,
+  "failed": 0,
+  "physical_gold": 0,
+  "schema": "pas.prelive-portable-independent.v1",
+  "windows_acceptance": false
+}

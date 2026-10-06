@@ -1,0 +1,121 @@
+{
+  "all_phase_lateness_ms": {
+    "jitter_p95_minus_p5": 0,
+    "max": 0.1,
+    "n": 2,
+    "p50": 0.1,
+    "p95": 0.1,
+    "p99": 0.1
+  },
+  "attempts": 2560,
+  "cadence_ms": 20,
+  "capture_to_owner_ms": {
+    "jitter_p95_minus_p5": 0,
+    "max": 1.0,
+    "n": 2560,
+    "p50": 1.0,
+    "p95": 1.0,
+    "p99": 1.0
+  },
+  "clock_domain": "host_QPC",
+  "device_endpoints": 0,
+  "final_release": {
+    "failed": [],
+    "unknown": []
+  },
+  "injection_failed": 0,
+  "journal_admission_failed": false,
+  "measurement": {
+    "attempts": 2304,
+    "capture_to_owner_ms": {
+      "jitter_p95_minus_p5": 0,
+      "max": 1.0,
+      "n": 2304,
+      "p50": 1.0,
+      "p95": 1.0,
+      "p99": 1.0
+    },
+    "hook_ms": {
+      "jitter_p95_minus_p5": 0,
+      "max": 0.2,
+      "n": 2304,
+      "p50": 0.2,
+      "p95": 0.2,
+      "p99": 0.2
+    },
+    "observer_ms": {
+      "jitter_p95_minus_p5": 0,
+      "max": 0.3,
+      "n": 2304,
+      "p50": 0.3,
+      "p95": 0.3,
+      "p99": 0.3
+    },
+    "owner_ms": {
+      "jitter_p95_minus_p5": 0,
+      "max": 0.1,
+      "n": 2304,
+      "p50": 0.1,
+      "p95": 0.1,
+      "p99": 0.1
+    },
+    "owner_seen": 2304,
+    "owner_seen_fraction": 1
+  },
+  "mode": "A",
+  "own_down": 1,
+  "own_up": 1,
+  "owner_seen": 2560,
+  "owner_seen_fraction": 1,
+  "pool_drops": 0,
+  "provenance": {
+    "campaign_id": "unit-test-only-not-measurement",
+    "campaign_sha256": "da580e11676bccb285bacc5f0caeacfc40d8c1f78d2006c727ab9fd51db17dfe",
+    "candidate_binary_sha256": "fe51f2114eafafe864cb10ec3c8d985d2cef6932c598ab6d4cbb535c426081da",
+    "cost_protocol_sha256": "58d6136fcbce1ebf6c25a23795f10aab78013d46318c2b6261b7f6206abe91e6",
+    "effective_profile": {
+      "capture": "offline_memory_stub",
+      "device_endpoints": 0,
+      "enabled_type_bits": 15,
+      "evidence_max_age_ns": 100000000,
+      "height": 720,
+      "horizon_ns": 350000000,
+      "lead_ns": 35000000,
+      "max_contacts": 5,
+      "max_plans": 128,
+      "max_steps": 16,
+      "rgb_stride": 3840,
+      "rotation": 1,
+      "touch": "ReplayBackend",
+      "uncertainty_ns": 30000000,
+      "width": 1280
+    },
+    "environment_sha256": "556cf58627b0d77f99ff00aa69d9e2a13053a1ccb68af23403ca3d3039868735",
+    "mode": "A",
+    "process": {
+      "creation_filetime": 1002,
+      "pid": 3,
+      "run_start_ns": 3000000000
+    },
+    "profile_sha256": "9a6639f89f78e0f448d7629c71848c181a32e72bc020a5a4e2186d14b2fd8474",
+    "report_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3.json",
+    "requested": 2560,
+    "run_id": "fixture-aa-3",
+    "scene": "tap",
+    "schema": "pas.current-rails-run-provenance.v1",
+    "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_manifest_sha256": "8e46722072b1e80cbd22ed864dfba281888fabf344550c798bad709c7eb6c19e"
+  },
+  "release_verified": true,
+  "requested": 2560,
+  "rss_peak_os": 1024,
+  "safe": true,
+  "scene": "tap",
+  "schema": "pas.prelive-complete-chain-cost.v1",
+  "source_absolute_age": null,
+  "supervisor_stopped": false,
+  "unit_test_fixture": "fixture-aa-3",
+  "warmup_attempts": 256,
+  "writer_drops": 0,
+  "writer_fault": false
+}

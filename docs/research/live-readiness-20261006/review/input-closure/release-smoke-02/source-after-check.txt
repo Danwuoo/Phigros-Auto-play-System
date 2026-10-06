@@ -1,0 +1,7 @@
+research/prelive_current/input_closure.hpp: OK
+research/prelive_current/cost_analysis.cpp: OK
+research/prelive_current/campaign_provenance.hpp: OK
+research/prelive_current/evidence_hash.hpp: OK
+research/prelive_current/tests/cost_analysis_tests.cpp: OK
+research/prelive_current/tests/input_closure_review_tests.cpp: OK
+/workspace/shared/phigros-live-deps-20261006-patched/single_include/nlohmann/json.hpp: OK

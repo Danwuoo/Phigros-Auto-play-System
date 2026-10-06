@@ -1,6 +1,7 @@
 #pragma once
 #include "pas/config.hpp"
 #include "pas/emulator.hpp"
+#include "pas/candidate_admission.hpp"
 
 namespace pas {
 // Session lifetime only; never supplied to note decisions or touch plans.
@@ -18,6 +19,11 @@ private:
     std::optional<Nanoseconds> origin_;
 };
 void run_manual_session(const std::string& config_path,const std::string& capability_path,
+                        bool no_preview,Nanoseconds round_watchdog=0,bool pixel_clips=false,bool full_recording=false,bool one_round=false);
+// Explicit current-candidate request never falls back to the donor path. The
+// only current admission is typed UNQUALIFIED and rejects before any I/O.
+void run_current_candidate_manual_session(const CandidateLiveAdmission&,
+                        const std::string& config_path,const std::string& capability_path,
                         bool no_preview,Nanoseconds round_watchdog=0,bool pixel_clips=false,bool full_recording=false,bool one_round=false);
 CaptureOptions runtime_capture_options(const RuntimeConfig& config);
 nlohmann::json match_touch_capability(const RuntimeConfig& config, const nlohmann::json& report,

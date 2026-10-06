@@ -1329,6 +1329,17 @@ std::vector<nlohmann::json> GamePlanOwner::take_plan_cancellations() {
 std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming) {
     auto s=incoming; // <=128 current observations; aliases never change observer history.
     std::vector<TouchReceipt> receipts;
+    const auto terminal_intent=[](const GameTarget& t){
+        return t.current_contact==GameTarget::CurrentContact::hold_tail_only||t.tail_terminal_proof.has_value()||
+            t.reason=="current_rails_v1_tail_only_release";
+    };
+    const bool has_terminal_only=std::any_of(s.targets.begin(),s.targets.end(),terminal_intent);
+    if(has_terminal_only&&(s.context.capture_ns<0||clock_.now_ns()<0||
+       s.context.capture_ns>clock_.now_ns()||
+       clock_.now_ns()>std::numeric_limits<Nanoseconds>::max()-350'000'000)) {
+        // Covers the existing scheduler horizon addition as well as Up+20ms.
+        scheduler_.cancel("terminal_time_bounds");last_rejection_="terminal_time_bounds";return receipts;
+    }
     if(s.sequence<=last_snapshot_) {last_rejection_="snapshot_order"; return receipts;}
     if(s.context.epoch<epoch_ || (s.context.epoch==epoch_&&
        (s.context.generation<context_.generation || s.context.geometry<context_.geometry))) {
@@ -1395,6 +1406,102 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             (changed_body_anchor?(std::abs(across)<=48||patch_transition):
                                   std::abs(across)<=(same_line?80:48));
     };
+    // Terminal-only evidence has a dedicated path before alias/birth/visibility
+    // and body renewal. Neither its presence nor its evidence refreshes a lease.
+    std::set<std::uint64_t> terminal_seen;
+    std::set<std::uint64_t> terminal_conflicts;
+    for(const auto& t:s.targets)if(terminal_intent(t)&&
+       (t.current_contact!=GameTarget::CurrentContact::hold_tail_only||!t.tail_terminal_proof||
+        std::count_if(s.targets.begin(),s.targets.end(),[&](const auto& other){return other.note_id==t.note_id;})!=1))
+        terminal_conflicts.insert(t.note_id);
+    for(const auto& t:s.targets) if(t.current_contact==GameTarget::CurrentContact::hold_tail_only) {
+        auto found=identities_.find(t.note_id);
+        if(found==identities_.end()||!t.tail_terminal_proof||terminal_conflicts.contains(t.note_id))continue;
+        auto& id=found->second;const auto& proof=*t.tail_terminal_proof;
+        const auto cursor=scheduler_.executed_steps(id.intent);
+        if(t.evidence_ns<0||t.evidence_ns>std::numeric_limits<Nanoseconds>::max()-100'000'000||
+           id.plan.evidence_ns<0||id.plan.evidence_ns>std::numeric_limits<Nanoseconds>::max()-100'000'000||
+           clock_.now_ns()<id.plan.evidence_ns)continue;
+        if(id.kind!=NoteKind::hold||!id.submitted||id.drag_leader||id.shared_drag||
+           !cursor||*cursor<=id.plan.prefix_offset||id.hold_tail_release_ns||
+           !scheduler_.fault().empty()||!t.note.tail||t.note.kind!=NoteKind::hold||
+           t.note.held_body_patch||!t.note.rails_geometry||t.line_projection_only||
+           t.samples<=0||t.evidence_ns!=s.context.capture_ns||t.expires_ns<=clock_.now_ns()||
+           t.evidence_ns<id.plan.evidence_ns||clock_.now_ns()-id.plan.evidence_ns>=60'000'000||
+           t.reason=="association_ambiguous"||t.reason=="line_unobservable"||
+           t.reason=="multiple_line_association_unvalidated"||!compatible_body(id,t))continue;
+        if(!s.context.epoch||!s.context.generation||!s.context.geometry||!s.context.frame||
+           proof.context!=s.context||proof.note_id!=t.note_id||proof.line_id!=t.line_id||
+           !proof.candidate_id||!proof.line_aware||!t.line_id||id.line_id!=t.line_id||
+           proof.pixels_ready_ns<t.evidence_ns||proof.pixels_ready_ns>clock_.now_ns()||
+           proof.current_line_count!=s.lines.size()||s.lines.empty()||s.lines.size()>16||
+           proof.probes!=975||proof.terminal_clusters!=1||proof.left_rail_rows<6||
+           proof.left_rail_rows>9||proof.right_rail_rows<6||proof.right_rail_rows>9||
+           proof.boundary.x!=t.note.tail->x||proof.boundary.y!=t.note.tail->y||
+           !std::isfinite(t.note.width)||t.note.width<16||t.note.width>512||
+           !std::isfinite(t.note.center.x)||!std::isfinite(t.note.center.y)||
+           !std::isfinite(proof.boundary.x)||!std::isfinite(proof.boundary.y)||
+           proof.boundary.x<0||proof.boundary.x>=s.context.width||
+           proof.boundary.y<0||proof.boundary.y>=s.context.height||
+           std::abs(std::hypot(t.note.tangent.x,t.note.tangent.y)-1)>.001)continue;
+        int competitors=0;const LineCandidate* selected=nullptr;bool lines_valid=true;
+        for(const auto& line:s.lines) {
+            if(line.observed_ns!=s.context.capture_ns||!std::isfinite(line.center.x)||
+               !std::isfinite(line.center.y)||!std::isfinite(line.length)||line.length<=0||
+               !std::isfinite(line.tangent.x)||!std::isfinite(line.tangent.y)||
+               std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)>.001){lines_valid=false;break;}
+            const Vec2 delta{proof.boundary.x-line.center.x,proof.boundary.y-line.center.y};
+            if(std::abs(-delta.x*line.tangent.y+delta.y*line.tangent.x)<=32&&
+               std::abs(delta.x*line.tangent.x+delta.y*line.tangent.y)<=line.length*.5)
+                {++competitors;selected=&line;}
+        }
+        if(!lines_valid||competitors!=1||!selected||!selected->association_valid||
+           selected->track_id!=t.line_id)continue;
+        const Vec2 normal{-selected->tangent.y,selected->tangent.x};
+        const double depth=(t.note.center.x-proof.boundary.x)*normal.x+
+                           (t.note.center.y-proof.boundary.y)*normal.y;
+        const double passed=((proof.boundary.x-selected->center.x)*normal.x+
+                             (proof.boundary.y-selected->center.y)*normal.y)*(depth<0?-1:1);
+        if(!std::isfinite(depth)||std::abs(depth)<2||std::abs(depth)>4095||passed<0||
+           (id.terminal_last_evidence_ns&&t.evidence_ns<=id.terminal_last_evidence_ns)||
+           (id.terminal_last_frame&&s.context.frame<=id.terminal_last_frame))continue;
+        terminal_seen.insert(t.note_id);
+        if(!id.terminal_first_pass_ns||t.evidence_ns-id.terminal_last_evidence_ns>40'000'000)
+            id.terminal_first_pass_ns=t.evidence_ns;
+        id.terminal_last_evidence_ns=t.evidence_ns;
+        id.terminal_last_frame=s.context.frame;
+        if(t.evidence_ns-*id.terminal_first_pass_ns<10'000'000)continue;
+        const auto executed=static_cast<std::size_t>(*cursor-id.plan.prefix_offset);
+        if(!executed||executed>id.plan.steps.size())continue;
+        if(id.plan.revision==std::numeric_limits<std::uint64_t>::max())continue;
+        auto plan=id.plan;plan.revision++;plan.basis="current_rails_v1_tail_only_release";
+        // Preserve body evidence/source/expiry and the exact executed prefix.
+        // There is no new Down, Move, position change or body-lease extension.
+        plan.steps.resize(executed);const auto at=plan.steps.back();
+        const auto release=std::min(t.evidence_ns+20'000'000,id.plan.evidence_ns+100'000'000);
+        plan.steps.push_back({Phase::up,at.x,at.y,std::max(clock_.now_ns(),release)});
+        if(!scheduler_.submit(plan))continue;
+        id.plan=plan;id.hold_tail_release_ns=release;id.terminal_only_closing=true;
+        if(accepted_plans_.size()>=256||coverage_updates_.size()>=128)
+            throw std::runtime_error("tail-only diagnostic capacity");
+        accepted_plans_.push_back(std::move(plan));
+        coverage_updates_.push_back({{"event","game_hold_tail_confirmed"},{"note_id",t.note_id},
+            {"intent_id",id.intent},{"source_frame",s.context.frame},{"evidence_ns",t.evidence_ns},
+            {"release_ns",release},{"basis","current_line_aware_terminal_only"},
+            {"body_evidence_ns",id.plan.evidence_ns},{"body_source_frame",id.plan.source_frame_sequence},
+            {"terminal_only",true},{"game_effect","unknown"}});
+    }
+    for(auto& [note,id]:identities_)if(!terminal_seen.contains(note)) {
+        id.terminal_first_pass_ns.reset();id.terminal_last_evidence_ns=0;id.terminal_last_frame=0;
+    }
+    std::erase_if(s.targets,[&](const GameTarget& t){
+        const auto found=identities_.find(t.note_id);
+        const auto alias=contact_aliases_.find(t.note_id);
+        const auto leader=alias==contact_aliases_.end()?identities_.end():identities_.find(alias->second.owner);
+        return t.current_contact==GameTarget::CurrentContact::hold_tail_only||terminal_conflicts.contains(t.note_id)||
+            (found!=identities_.end()&&found->second.terminal_only_closing)||
+            (leader!=identities_.end()&&leader->second.terminal_only_closing);
+    });
     std::set<std::uint64_t> claimed;
     std::vector<bool> ignored(s.targets.size());
     for(const auto& t:s.targets) if(identities_.contains(t.note_id)&&held_support(t)) claimed.insert(t.note_id);
@@ -1408,7 +1515,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             // Aliases are identity hints, never a substitute for CURRENT
             // support. Invalid duplicate descriptions must not cancel the
             // independently visible owner, nor become a fresh Down.
-            if(owner==identities_.end()||!cursor||*cursor<=owner->second.plan.prefix_offset||
+            if(owner==identities_.end()||owner->second.terminal_only_closing||!cursor||*cursor<=owner->second.plan.prefix_offset||
                claimed.contains(key)||!held_support(t)||!compatible_body(owner->second,t)||
                clock_.now_ns()-owner->second.plan.evidence_ns>=60'000'000) {
                 ignored[ti]=true;continue;
@@ -1423,7 +1530,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         std::uint64_t sole=0;bool ambiguous=false;
         for(const auto& [key,id]:identities_) {
             const auto cursor=scheduler_.executed_steps(id.intent);
-            if(claimed.contains(key)||id.kind!=NoteKind::hold||!id.submitted||!cursor||
+            if(claimed.contains(key)||id.terminal_only_closing||id.kind!=NoteKind::hold||!id.submitted||!cursor||
                *cursor<=id.plan.prefix_offset||id.hold_tail_release_ns||!id.last_note.rails_geometry||
                clock_.now_ns()-id.plan.evidence_ns>=60'000'000||!compatible_body(id,t)) continue;
             if(sole){ambiguous=true;break;}sole=key;
@@ -1665,7 +1772,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
     std::set<std::uint64_t> visible;
     for(const auto& t:s.targets) visible.insert(t.note_id);
     for(const auto leader:group_alive) visible.insert(leader);
-    for(auto& [id,identity]:identities_) if(!identity.drag_leader&&
+    for(auto& [id,identity]:identities_) if(!identity.drag_leader&&!identity.terminal_only_closing&&
         (identity.shared_drag?!group_alive.contains(id):!visible.contains(id))) {
         // A newer complete snapshot with no current Note must withdraw a
         // pending Down immediately. Missing grace applies only after a
@@ -1690,7 +1797,9 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             if(identities_.size()==128) {last_rejection_="identity_capacity"; scheduler_.cancel(last_rejection_); break;}
             found=identities_.emplace(t.note_id,Identity{0,0,t.expires_ns+250'000'000,false}).first;
         }
-        auto& id=found->second; id.expires=t.expires_ns+250'000'000;
+        auto& id=found->second;
+        if(id.terminal_only_closing)continue; // Recheck after any current alias resolution.
+        id.expires=t.expires_ns+250'000'000;
         if(id.submitted) {
             if(id.drag_leader||id.shared_drag) continue;
             const auto cursor=scheduler_.executed_steps(id.intent);
@@ -1977,6 +2086,17 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"expires_ns",t.expires_ns},{"crossing_ns",t.crossing_ns?json(*t.crossing_ns):json(nullptr)},
         {"uncertainty_ns",t.uncertainty_ns},{"hit_x",t.hit.x},{"hit_y",t.hit.y},
         {"line_id",t.line_id},{"hit_vx",t.hit_velocity.x},{"hit_vy",t.hit_velocity.y},
+        {"current_contact",t.current_contact==GameTarget::CurrentContact::hold_front_rails?"hold_front_rails":
+            t.current_contact==GameTarget::CurrentContact::hold_tail_only?"hold_tail_only":"none"},
+        {"tail_terminal_proof",t.tail_terminal_proof?json{{"frame",t.tail_terminal_proof->context.frame},
+            {"capture_ns",t.tail_terminal_proof->context.capture_ns},{"epoch",t.tail_terminal_proof->context.epoch},
+            {"generation",t.tail_terminal_proof->context.generation},{"geometry",t.tail_terminal_proof->context.geometry},
+            {"note_id",t.tail_terminal_proof->note_id},{"line_id",t.tail_terminal_proof->line_id},
+            {"candidate_id",t.tail_terminal_proof->candidate_id},{"x",t.tail_terminal_proof->boundary.x},
+            {"y",t.tail_terminal_proof->boundary.y},{"pixels_ready_ns",t.tail_terminal_proof->pixels_ready_ns},
+            {"left_rail_rows",t.tail_terminal_proof->left_rail_rows},{"right_rail_rows",t.tail_terminal_proof->right_rail_rows},
+            {"terminal_clusters",t.tail_terminal_proof->terminal_clusters},{"current_line_count",t.tail_terminal_proof->current_line_count},
+            {"probes",t.tail_terminal_proof->probes},{"line_aware",t.tail_terminal_proof->line_aware}}:json(nullptr)},
         {"line_projection_only",t.line_projection_only},
         {"last_line_observed_ns",t.last_line_observed_ns},
         {"projected_line_along_px",t.projected_line_along_px},
@@ -1992,7 +2112,7 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"residual_px",t.residual},{"prediction_error_px",t.prediction_error_px},
         {"fit_residual_limit_px",t.fit_residual_limit_px},{"samples",t.samples},
         {"history_span_ns",t.history_span_ns},{"reason",t.reason}});
-    json result={{"event","game_decision"},{"decision_schema",3},{"sequence",s.sequence},
+    json result={{"event","game_decision"},{"decision_schema",4},{"sequence",s.sequence},
         {"note_anchor_semantics","tap_flick_core_center_hold_leading_edge"},
         {"epoch",s.context.epoch},{"generation",s.context.generation},{"geometry_version",s.context.geometry},
         {"frame_sequence",s.context.frame},{"capture_complete_ns",s.context.capture_ns},

@@ -1,0 +1,389 @@
+{
+  "assertions": 57,
+  "checks": [
+    {
+      "id": "pixel_terminal_without_body_permission",
+      "pass": true
+    },
+    {
+      "id": "pixel_terminal_finishes_only_own_contact",
+      "pass": true
+    },
+    {
+      "id": "pixel_positive_release",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_no_own_down",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_no_own_down",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_source_invalid",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_source_invalid",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_batch_frame_mismatch",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_batch_frame_mismatch",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_scene_line_mismatch",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_scene_line_mismatch",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_no_current_line",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_no_current_line",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_association_invalid",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_association_invalid",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_projected_line",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_projected_line",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_competing_line",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_competing_line",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_duplicate_candidate",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_duplicate_candidate",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_duplicate_target",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_duplicate_target",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_overlapping_candidate",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_overlapping_candidate",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_missing_right_rail",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_missing_right_rail",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_no_cyan_fill",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_no_cyan_fill",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_yellow_effect",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_yellow_effect",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_white_only_fill",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_white_only_fill",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_tail_unknown",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_tail_unknown",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_body_patch",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_body_patch",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_tail_roi_clipped",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_tail_roi_clipped",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_left_roi_clipped",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_left_roi_clipped",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_multiple_terminals",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_multiple_terminals",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_expired_frame",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_expired_frame",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_context_changed",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_context_changed",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_tail_neighbour",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_tail_neighbour",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_wrong_line_id",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_wrong_line_id",
+      "pass": true
+    },
+    {
+      "id": "pixels_deny_stale_line",
+      "pass": true
+    },
+    {
+      "id": "pixels_release_stale_line",
+      "pass": true
+    },
+    {
+      "id": "rotating_line_tail_current_local_coordinates_0",
+      "pass": true
+    },
+    {
+      "id": "rotating_line_tail_current_local_coordinates_1",
+      "pass": true
+    },
+    {
+      "id": "rotating_tail_same_contact_up",
+      "pass": true
+    },
+    {
+      "id": "rotating_tail_release",
+      "pass": true
+    }
+  ],
+  "details": {
+    "association_invalid": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "batch_frame_mismatch": {
+      "accepted": 0,
+      "support_count": 0,
+      "tail_only": false,
+      "valid": false
+    },
+    "body_patch": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "competing_line": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "context_changed": {
+      "accepted": 0,
+      "support_count": 0,
+      "tail_only": false,
+      "valid": false
+    },
+    "duplicate_candidate": {
+      "accepted": 0,
+      "support_count": 0,
+      "tail_only": false,
+      "valid": false
+    },
+    "duplicate_target": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "expired_frame": {
+      "accepted": 0,
+      "support_count": 0,
+      "tail_only": false,
+      "valid": false
+    },
+    "left_roi_clipped": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "missing_right_rail": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "multiple_terminals": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "no_current_line": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "no_cyan_fill": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "no_own_down": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "overlapping_candidate": {
+      "accepted": 0,
+      "support_count": 2,
+      "tail_only": false,
+      "valid": true
+    },
+    "projected_line": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "scene_line_mismatch": {
+      "accepted": 0,
+      "support_count": 0,
+      "tail_only": false,
+      "valid": false
+    },
+    "source_invalid": {
+      "accepted": 0,
+      "support_count": 0,
+      "tail_only": false,
+      "valid": false
+    },
+    "stale_line": {
+      "accepted": 0,
+      "support_count": 0,
+      "tail_only": false,
+      "valid": false
+    },
+    "tail_neighbour": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "tail_roi_clipped": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "tail_unknown": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "white_only_fill": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "wrong_line_id": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    },
+    "yellow_effect": {
+      "accepted": 0,
+      "support_count": 1,
+      "tail_only": false,
+      "valid": true
+    }
+  },
+  "device_endpoints": 0,
+  "failed": 0,
+  "physical_gold": 0,
+  "schema": "pas.independent-typed-tail-pixels-review.v1"
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "pas.recoverable-own-ELF-archive.v1",
+  "archive": "out/portable-own-ELF-archives-20261006/checkpoint-own-ELF-byte-exact.zip",
+  "archive_sha256": "49def70f9e3a84cd1da2f93282bb13c022414c804ee074608335e1fa4c4874f9",
+  "entries": 70,
+  "original_bytes": 495687152,
+  "archive_bytes": 71411011,
+  "available_after_bytes": 22178586624,
+  "CRC_verified": true,
+  "each_entry_SHA_verified": true,
+  "all_3_libraries_retained": true,
+  "raw_source_reports_modified": false,
+  "restore": "From repository root: unzip -n ARCHIVE to recover exact original paths; then sha256sum -c original-ELF.sha256"
+}

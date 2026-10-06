@@ -1,0 +1,630 @@
+{
+  "assertions": 112,
+  "checks": [
+    {
+      "id": "own_terminal_without_body_positive",
+      "pass": true
+    },
+    {
+      "id": "single_terminal_cannot_confirm",
+      "pass": true
+    },
+    {
+      "id": "first_terminal_keeps_plan_evidence",
+      "pass": true
+    },
+    {
+      "id": "second_fresh_terminal_confirms",
+      "pass": true
+    },
+    {
+      "id": "tail_revision_retains_body_evidence_and_expiry",
+      "pass": true
+    },
+    {
+      "id": "tail_only_due_plus20ms_at_old_contact_position",
+      "pass": true
+    },
+    {
+      "id": "no_early_normal_up",
+      "pass": true
+    },
+    {
+      "id": "one_same_contact_normal_up",
+      "pass": true
+    },
+    {
+      "id": "positive_release",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_reason_without_enum",
+      "pass": true
+    },
+    {
+      "id": "negative_release_reason_without_enum",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_enum_without_payload",
+      "pass": true
+    },
+    {
+      "id": "negative_release_enum_without_payload",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_not_line_aware",
+      "pass": true
+    },
+    {
+      "id": "negative_release_not_line_aware",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_wrong_proof_note",
+      "pass": true
+    },
+    {
+      "id": "negative_release_wrong_proof_note",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_wrong_proof_line",
+      "pass": true
+    },
+    {
+      "id": "negative_release_wrong_proof_line",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_wrong_proof_frame",
+      "pass": true
+    },
+    {
+      "id": "negative_release_wrong_proof_frame",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_future_pixels_ready",
+      "pass": true
+    },
+    {
+      "id": "negative_release_future_pixels_ready",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_edited_boundary",
+      "pass": true
+    },
+    {
+      "id": "negative_release_edited_boundary",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_wrong_line_count",
+      "pass": true
+    },
+    {
+      "id": "negative_release_wrong_line_count",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_insufficient_left_rail",
+      "pass": true
+    },
+    {
+      "id": "negative_release_insufficient_left_rail",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_ambiguous_terminal_clusters",
+      "pass": true
+    },
+    {
+      "id": "negative_release_ambiguous_terminal_clusters",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_zero_probes",
+      "pass": true
+    },
+    {
+      "id": "negative_release_zero_probes",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_projected_line",
+      "pass": true
+    },
+    {
+      "id": "negative_release_projected_line",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_changed_note_id",
+      "pass": true
+    },
+    {
+      "id": "negative_release_changed_note_id",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_changed_line_id",
+      "pass": true
+    },
+    {
+      "id": "negative_release_changed_line_id",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_changed_tangent",
+      "pass": true
+    },
+    {
+      "id": "negative_release_changed_tangent",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_changed_width",
+      "pass": true
+    },
+    {
+      "id": "negative_release_changed_width",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_neighbour_anchor",
+      "pass": true
+    },
+    {
+      "id": "negative_release_neighbour_anchor",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_body_patch",
+      "pass": true
+    },
+    {
+      "id": "negative_release_body_patch",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_stale_evidence",
+      "pass": true
+    },
+    {
+      "id": "negative_release_stale_evidence",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_expired_target",
+      "pass": true
+    },
+    {
+      "id": "negative_release_expired_target",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_invalid_current_line",
+      "pass": true
+    },
+    {
+      "id": "negative_release_invalid_current_line",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_competing_current_line",
+      "pass": true
+    },
+    {
+      "id": "negative_release_competing_current_line",
+      "pass": true
+    },
+    {
+      "id": "owner_rejects_wrong_context",
+      "pass": true
+    },
+    {
+      "id": "negative_release_wrong_context",
+      "pass": true
+    },
+    {
+      "id": "timing_producer_positive_equal_time",
+      "pass": true
+    },
+    {
+      "id": "two_distinct_fresh_at_least10ms_equal_time",
+      "pass": true
+    },
+    {
+      "id": "timing_release_equal_time",
+      "pass": true
+    },
+    {
+      "id": "timing_producer_positive_same_frame",
+      "pass": true
+    },
+    {
+      "id": "two_distinct_fresh_at_least10ms_same_frame",
+      "pass": true
+    },
+    {
+      "id": "timing_release_same_frame",
+      "pass": true
+    },
+    {
+      "id": "timing_producer_positive_nine_ms",
+      "pass": true
+    },
+    {
+      "id": "two_distinct_fresh_at_least10ms_nine_ms",
+      "pass": true
+    },
+    {
+      "id": "timing_release_nine_ms",
+      "pass": true
+    },
+    {
+      "id": "timing_producer_positive_ten_ms",
+      "pass": true
+    },
+    {
+      "id": "two_distinct_fresh_at_least10ms_ten_ms",
+      "pass": true
+    },
+    {
+      "id": "exact10ms_no_up_before20ms",
+      "pass": true
+    },
+    {
+      "id": "exact10ms_normal_up_at20ms",
+      "pass": true
+    },
+    {
+      "id": "timing_release_ten_ms",
+      "pass": true
+    },
+    {
+      "id": "unknown_gap_resets_first_witness_absent",
+      "pass": true
+    },
+    {
+      "id": "gap_release_absent",
+      "pass": true
+    },
+    {
+      "id": "unknown_gap_resets_first_witness_line_occluded",
+      "pass": true
+    },
+    {
+      "id": "gap_release_line_occluded",
+      "pass": true
+    },
+    {
+      "id": "unknown_gap_resets_first_witness_region_lost",
+      "pass": true
+    },
+    {
+      "id": "gap_release_region_lost",
+      "pass": true
+    },
+    {
+      "id": "unknown_gap_resets_first_witness_invalid_payload",
+      "pass": true
+    },
+    {
+      "id": "gap_release_invalid_payload",
+      "pass": true
+    },
+    {
+      "id": "unowned_fixture_has_actual_producer_proof",
+      "pass": true
+    },
+    {
+      "id": "typed_tail_without_own_down_cannot_birth_or_confirm",
+      "pass": true
+    },
+    {
+      "id": "unowned_release",
+      "pass": true
+    },
+    {
+      "id": "pending_precondition_is_own_zero_cursor",
+      "pass": true
+    },
+    {
+      "id": "typed_tail_state_denied_pending",
+      "pass": true
+    },
+    {
+      "id": "state_release_pending",
+      "pass": true
+    },
+    {
+      "id": "typed_tail_state_denied_completed",
+      "pass": true
+    },
+    {
+      "id": "state_release_completed",
+      "pass": true
+    },
+    {
+      "id": "typed_tail_state_denied_cancelled",
+      "pass": true
+    },
+    {
+      "id": "state_release_cancelled",
+      "pass": true
+    },
+    {
+      "id": "typed_tail_state_denied_unknown",
+      "pass": true
+    },
+    {
+      "id": "unknown_first_release_retained",
+      "pass": true
+    },
+    {
+      "id": "donor_release",
+      "pass": true
+    },
+    {
+      "id": "tail_hit_is_never_move_permission",
+      "pass": true
+    },
+    {
+      "id": "untrusted_tail_hit_cannot_replace_release_position",
+      "pass": true
+    },
+    {
+      "id": "hit_mutation_release",
+      "pass": true
+    },
+    {
+      "id": "closing_identity_cannot_regain_move_shifted_body",
+      "pass": false
+    },
+    {
+      "id": "closing_identity_cannot_renew_or_retarget_shifted_body",
+      "pass": false
+    },
+    {
+      "id": "closing_identity_keeps_normal_up20ms_shifted_body",
+      "pass": true
+    },
+    {
+      "id": "closing_identity_release_shifted_body",
+      "pass": true
+    },
+    {
+      "id": "closing_identity_cannot_regain_move_returned_rotated_body",
+      "pass": false
+    },
+    {
+      "id": "closing_identity_cannot_renew_or_retarget_returned_rotated_body",
+      "pass": false
+    },
+    {
+      "id": "closing_identity_keeps_normal_up20ms_returned_rotated_body",
+      "pass": true
+    },
+    {
+      "id": "closing_identity_release_returned_rotated_body",
+      "pass": true
+    },
+    {
+      "id": "ambiguous_duplicate_cannot_confirm_typed_tail_same_tail_twice",
+      "pass": false
+    },
+    {
+      "id": "duplicate_release_same_tail_twice",
+      "pass": true
+    },
+    {
+      "id": "ambiguous_duplicate_cannot_confirm_typed_tail_conflicting_tail",
+      "pass": false
+    },
+    {
+      "id": "duplicate_release_conflicting_tail",
+      "pass": true
+    },
+    {
+      "id": "ambiguous_duplicate_cannot_confirm_typed_tail_tail_and_body",
+      "pass": false
+    },
+    {
+      "id": "duplicate_release_tail_and_body",
+      "pass": true
+    },
+    {
+      "id": "extreme_time_fixture_has_current_proof",
+      "pass": true
+    },
+    {
+      "id": "extreme_direct_tail_is_rejected",
+      "pass": true
+    },
+    {
+      "id": "extreme_time_release",
+      "pass": true
+    }
+  ],
+  "details": {
+    "ambiguous_terminal_clusters": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "body_patch": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "changed_line_id": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "changed_note_id": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "changed_tangent": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "changed_width": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "competing_current_line": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "duplicate_conflicting_tail": {
+      "confirmed": 1,
+      "downs": 1,
+      "moves": 1
+    },
+    "duplicate_same_tail_twice": {
+      "confirmed": 1,
+      "downs": 1,
+      "moves": 1
+    },
+    "duplicate_tail_and_body": {
+      "confirmed": 1,
+      "downs": 1,
+      "moves": 2
+    },
+    "edited_boundary": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "enum_without_payload": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "expired_target": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "future_pixels_ready": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "insufficient_left_rail": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "invalid_current_line": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "neighbour_anchor": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "not_line_aware": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "post_confirm_returned_rotated_body": {
+      "accepted": 1,
+      "confirmed": 1,
+      "moves_after": 2,
+      "moves_before": 1
+    },
+    "post_confirm_shifted_body": {
+      "accepted": 1,
+      "confirmed": 1,
+      "moves_after": 2,
+      "moves_before": 1
+    },
+    "projected_line": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "reason_without_enum": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "stale_evidence": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "wrong_context": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": false
+    },
+    "wrong_line_count": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "wrong_proof_frame": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "wrong_proof_line": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "wrong_proof_note": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    },
+    "zero_probes": {
+      "confirmed": 0,
+      "downs": 1,
+      "moves": 1,
+      "producer_positive_before_mutation": true
+    }
+  },
+  "device_endpoints": 0,
+  "failed": 7,
+  "physical_gold": 0,
+  "schema": "pas.independent-typed-tail-owner-review.v1"
+}

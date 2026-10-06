@@ -1,0 +1,263 @@
+{
+  "Windows_qualification": false,
+  "assertions": 63,
+  "checks": [
+    {
+      "id": "only_constructible_live_state_UNQUALIFIED",
+      "pass": true
+    },
+    {
+      "id": "cold_tag_cannot_convert_to_live_admission",
+      "pass": true
+    },
+    {
+      "id": "live_barrier_rejects_before_continuation",
+      "pass": true
+    },
+    {
+      "id": "repeated_live_admission_remains_disabled_0",
+      "pass": true
+    },
+    {
+      "id": "repeated_live_admission_remains_disabled_1",
+      "pass": true
+    },
+    {
+      "id": "repeated_live_admission_remains_disabled_2",
+      "pass": true
+    },
+    {
+      "id": "actual_same_frame_complete_packet_positive",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_missing_lease",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_epoch",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_generation",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_geometry",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_sequence",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_capture",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_width",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_height",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_rotation",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_stride",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_RGB_size",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_frame_invalid_source",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_batch_context",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_scene_context",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_round_identity",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_new_round",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_inactive_round",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_not_playing",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_allow_down_false",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_batch_invalid_source",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_batch_invalid_capacity",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_scene_invalid_capacity",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_batch_candidate_overflow",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_batch_line_overflow",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_scene_target_overflow",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_expired_at_100ms",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_future_pixels",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_negative_capture",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_capture_overflow",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_scene_gate_false",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_result_UI_true",
+      "pass": true
+    },
+    {
+      "id": "packet_denies_round_ended",
+      "pass": true
+    },
+    {
+      "id": "nonmonotonic_same_frame_cannot_refresh_hook",
+      "pass": true
+    },
+    {
+      "id": "incomplete_line_subset_denied_by_owner_filter",
+      "pass": true
+    },
+    {
+      "id": "pool_first_publish",
+      "pass": true
+    },
+    {
+      "id": "retained_packet_three_slot_pool_bounded",
+      "pass": true
+    },
+    {
+      "id": "retained_immutable_lease_not_overwritten",
+      "pass": true
+    },
+    {
+      "id": "packet_survives_closed_mailbox",
+      "pass": true
+    },
+    {
+      "id": "consumer_lease_released_when_packet_drops",
+      "pass": true
+    },
+    {
+      "id": "decorator_records_issued_and_returned_once",
+      "pass": true
+    },
+    {
+      "id": "decorator_first_unknown_release_sticky",
+      "pass": true
+    },
+    {
+      "id": "decorator_unknown_release_not_retried",
+      "pass": true
+    },
+    {
+      "id": "decorator_repeat_report_marks_no_dispatch",
+      "pass": true
+    },
+    {
+      "id": "decorator_unknown_cannot_reset_round",
+      "pass": true
+    },
+    {
+      "id": "overflow_stops_before_backend_injection",
+      "pass": true
+    },
+    {
+      "id": "overflow_does_not_suppress_safety_release",
+      "pass": true
+    },
+    {
+      "id": "overflow_receipt_capacity_never_expands",
+      "pass": true
+    },
+    {
+      "id": "mismatched_return_keeps_worst_case_contact",
+      "pass": true
+    },
+    {
+      "id": "mismatched_return_never_rewrites_issued",
+      "pass": true
+    },
+    {
+      "id": "backend_throw_records_original_unknown_Down",
+      "pass": true
+    },
+    {
+      "id": "backend_throw_unknown_Down_cannot_retry",
+      "pass": true
+    },
+    {
+      "id": "known_release_after_unknown_command_cannot_reset",
+      "pass": true
+    },
+    {
+      "id": "backend_release_throw_preserves_bounded_unknown_report",
+      "pass": true
+    },
+    {
+      "id": "backend_release_throw_not_retried_by_catch_path",
+      "pass": true
+    },
+    {
+      "id": "full_receipt_buffer_keeps_first_unknown_release",
+      "pass": true
+    },
+    {
+      "id": "full_buffer_unknown_release_cannot_retry_after_drain",
+      "pass": true
+    }
+  ],
+  "details": [],
+  "device_endpoints": 0,
+  "failed": 0,
+  "physical_gold": 0,
+  "schema": "pas.independent-disabled-live-packet-review.v1"
+}

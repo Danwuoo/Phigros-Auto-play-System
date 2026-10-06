@@ -1,0 +1,98 @@
+In file included from /usr/include/c++/14/bits/stl_algobase.h:71,
+                 from /usr/include/c++/14/array:43,
+                 from include/pas/core.hpp:3,
+                 from include/pas/game.hpp:2,
+                 from include/pas/game_motion.hpp:2,
+                 from src/game_motion.cpp:1:
+In member function ‘constexpr bool __gnu_cxx::__ops::_Iter_less_iter::operator()(_Iterator1, _Iterator2) const [with _Iterator1 = int*; _Iterator2 = int*]’,
+    inlined from ‘constexpr void std::__move_median_to_first(_Iterator, _Iterator, _Iterator, _Iterator, _Compare) [with _Iterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:88:17,
+    inlined from ‘constexpr _RandomAccessIterator std::__unguarded_partition_pivot(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1855:34,
+    inlined from ‘constexpr void std::__introsort_loop(_RandomAccessIterator, _RandomAccessIterator, _Size, _Compare) [with _RandomAccessIterator = int*; _Size = long int; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1889:38,
+    inlined from ‘constexpr void std::__sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1905:25,
+    inlined from ‘constexpr void std::sort(_RAIter, _RAIter) [with _RAIter = int*]’ at /usr/include/c++/14/bits/stl_algo.h:4772:18,
+    inlined from ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’ at src/game_motion.cpp:403:18:
+/usr/include/c++/14/bits/predefined_ops.h:45:23: warning: array subscript [8, 1152921504606846975] is outside array bounds of ‘std::array<int, 7> [1]’ [-Warray-bounds=]
+   45 |       { return *__it1 < *__it2; }
+      |                ~~~~~~~^~~~~~~~
+src/game_motion.cpp: In function ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’:
+src/game_motion.cpp:392:27: note: at offset [32, 4611686018427387900] into object ‘edge_offsets’ of size 28
+  392 |         std::array<int,7> edge_offsets{};int edge_count=0;
+      |                           ^~~~~~~~~~~~
+In file included from /usr/include/c++/14/bits/stl_pair.h:61,
+                 from /usr/include/c++/14/bits/stl_algobase.h:64:
+In function ‘constexpr std::_Require<std::__not_<std::__is_tuple_like<_Tp> >, std::is_move_constructible<_Tp>, std::is_move_assignable<_Tp> > std::swap(_Tp&, _Tp&) [with _Tp = int]’,
+    inlined from ‘constexpr void std::iter_swap(_ForwardIterator1, _ForwardIterator2) [with _ForwardIterator1 = int*; _ForwardIterator2 = int*]’ at /usr/include/c++/14/bits/stl_algobase.h:185:11,
+    inlined from ‘constexpr void std::__move_median_to_first(_Iterator, _Iterator, _Iterator, _Iterator, _Compare) [with _Iterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:102:16,
+    inlined from ‘constexpr _RandomAccessIterator std::__unguarded_partition_pivot(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1855:34,
+    inlined from ‘constexpr void std::__introsort_loop(_RandomAccessIterator, _RandomAccessIterator, _Size, _Compare) [with _RandomAccessIterator = int*; _Size = long int; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1889:38,
+    inlined from ‘constexpr void std::__sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1905:25,
+    inlined from ‘constexpr void std::sort(_RAIter, _RAIter) [with _RAIter = int*]’ at /usr/include/c++/14/bits/stl_algo.h:4772:18,
+    inlined from ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’ at src/game_motion.cpp:403:18:
+/usr/include/c++/14/bits/move.h:236:11: warning: array subscript [8, 1152921504606846975] is outside array bounds of ‘std::array<int, 7> [1]’ [-Warray-bounds=]
+  236 |       __b = _GLIBCXX_MOVE(__tmp);
+      |           ^
+src/game_motion.cpp: In function ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’:
+src/game_motion.cpp:392:27: note: at offset [32, 4611686018427387900] into object ‘edge_offsets’ of size 28
+  392 |         std::array<int,7> edge_offsets{};int edge_count=0;
+      |                           ^~~~~~~~~~~~
+In function ‘constexpr std::_Require<std::__not_<std::__is_tuple_like<_Tp> >, std::is_move_constructible<_Tp>, std::is_move_assignable<_Tp> > std::swap(_Tp&, _Tp&) [with _Tp = int]’,
+    inlined from ‘constexpr void std::iter_swap(_ForwardIterator1, _ForwardIterator2) [with _ForwardIterator1 = int*; _ForwardIterator2 = int*]’ at /usr/include/c++/14/bits/stl_algobase.h:185:11,
+    inlined from ‘constexpr void std::__move_median_to_first(_Iterator, _Iterator, _Iterator, _Iterator, _Compare) [with _Iterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:91:20,
+    inlined from ‘constexpr _RandomAccessIterator std::__unguarded_partition_pivot(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1855:34,
+    inlined from ‘constexpr void std::__introsort_loop(_RandomAccessIterator, _RandomAccessIterator, _Size, _Compare) [with _RandomAccessIterator = int*; _Size = long int; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1889:38,
+    inlined from ‘constexpr void std::__sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1905:25,
+    inlined from ‘constexpr void std::sort(_RAIter, _RAIter) [with _RAIter = int*]’ at /usr/include/c++/14/bits/stl_algo.h:4772:18,
+    inlined from ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’ at src/game_motion.cpp:403:18:
+/usr/include/c++/14/bits/move.h:236:11: warning: array subscript [8, 1152921504606846975] is outside array bounds of ‘std::array<int, 7> [1]’ [-Warray-bounds=]
+  236 |       __b = _GLIBCXX_MOVE(__tmp);
+      |           ^
+src/game_motion.cpp: In function ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’:
+src/game_motion.cpp:392:27: note: at offset [32, 4611686018427387900] into object ‘edge_offsets’ of size 28
+  392 |         std::array<int,7> edge_offsets{};int edge_count=0;
+      |                           ^~~~~~~~~~~~
+In file included from /usr/include/c++/14/bits/stl_algo.h:61,
+                 from /usr/include/c++/14/algorithm:61,
+                 from /workspace/shared/phigros-live-deps-20261006-patched/nlohmann/json.hpp:21,
+                 from include/pas/game.hpp:7:
+In function ‘constexpr void std::__adjust_heap(_RandomAccessIterator, _Distance, _Distance, _Tp, _Compare) [with _RandomAccessIterator = int*; _Distance = long int; _Tp = int; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’,
+    inlined from ‘constexpr void std::__make_heap(_RandomAccessIterator, _RandomAccessIterator, _Compare&) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_heap.h:356:22,
+    inlined from ‘constexpr void std::__heap_select(_RandomAccessIterator, _RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1593:23,
+    inlined from ‘constexpr void std::__partial_sort(_RandomAccessIterator, _RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1868:25,
+    inlined from ‘constexpr void std::__introsort_loop(_RandomAccessIterator, _RandomAccessIterator, _Size, _Compare) [with _RandomAccessIterator = int*; _Size = long int; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1884:27,
+    inlined from ‘constexpr void std::__sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1905:25,
+    inlined from ‘constexpr void std::sort(_RAIter, _RAIter) [with _RAIter = int*]’ at /usr/include/c++/14/bits/stl_algo.h:4772:18,
+    inlined from ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’ at src/game_motion.cpp:403:18:
+/usr/include/c++/14/bits/stl_heap.h:241:36: warning: array subscript [15, 2305843009213693949] is outside array bounds of ‘std::array<int, 7> [1]’ [-Warray-bounds=]
+  241 |           *(__first + __holeIndex) = _GLIBCXX_MOVE(*(__first
+      |                                    ^
+src/game_motion.cpp: In function ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’:
+src/game_motion.cpp:392:27: note: at offset [60, 9223372036854775796] into object ‘edge_offsets’ of size 28
+  392 |         std::array<int,7> edge_offsets{};int edge_count=0;
+      |                           ^~~~~~~~~~~~
+In function ‘constexpr void std::__adjust_heap(_RandomAccessIterator, _Distance, _Distance, _Tp, _Compare) [with _RandomAccessIterator = int*; _Distance = long int; _Tp = int; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’,
+    inlined from ‘constexpr void std::__make_heap(_RandomAccessIterator, _RandomAccessIterator, _Compare&) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_heap.h:356:22,
+    inlined from ‘constexpr void std::__heap_select(_RandomAccessIterator, _RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1593:23,
+    inlined from ‘constexpr void std::__partial_sort(_RandomAccessIterator, _RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1868:25,
+    inlined from ‘constexpr void std::__introsort_loop(_RandomAccessIterator, _RandomAccessIterator, _Size, _Compare) [with _RandomAccessIterator = int*; _Size = long int; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1884:27,
+    inlined from ‘constexpr void std::__sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1905:25,
+    inlined from ‘constexpr void std::sort(_RAIter, _RAIter) [with _RAIter = int*]’ at /usr/include/c++/14/bits/stl_algo.h:4772:18,
+    inlined from ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’ at src/game_motion.cpp:403:18:
+/usr/include/c++/14/bits/stl_heap.h:241:36: warning: array subscript 7 is outside array bounds of ‘std::array<int, 7> [1]’ [-Warray-bounds=]
+  241 |           *(__first + __holeIndex) = _GLIBCXX_MOVE(*(__first
+      |                                    ^
+src/game_motion.cpp: In function ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’:
+src/game_motion.cpp:392:27: note: at offset 28 into object ‘edge_offsets’ of size 28
+  392 |         std::array<int,7> edge_offsets{};int edge_count=0;
+      |                           ^~~~~~~~~~~~
+In function ‘constexpr void std::__final_insertion_sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’,
+    inlined from ‘constexpr void std::__final_insertion_sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1812:5,
+    inlined from ‘constexpr void std::__sort(_RandomAccessIterator, _RandomAccessIterator, _Compare) [with _RandomAccessIterator = int*; _Compare = __gnu_cxx::__ops::_Iter_less_iter]’ at /usr/include/c++/14/bits/stl_algo.h:1908:31,
+    inlined from ‘constexpr void std::sort(_RAIter, _RAIter) [with _RAIter = int*]’ at /usr/include/c++/14/bits/stl_algo.h:4772:18,
+    inlined from ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’ at src/game_motion.cpp:403:18:
+/usr/include/c++/14/bits/stl_algo.h:1817:32: warning: array subscript 16 is outside array bounds of ‘std::array<int, 7> [1]’ [-Warray-bounds=]
+ 1817 |           std::__insertion_sort(__first, __first + int(_S_threshold), __comp);
+      |           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/game_motion.cpp: In function ‘std::optional<pas::NoteCandidate> pas::observe_moving_held_front(const Frame&, const NoteCandidate&, const LineCandidate&)’:
+src/game_motion.cpp:392:27: note: at offset 64 into object ‘edge_offsets’ of size 28
+  392 |         std::array<int,7> edge_offsets{};int edge_count=0;
+      |                           ^~~~~~~~~~~~

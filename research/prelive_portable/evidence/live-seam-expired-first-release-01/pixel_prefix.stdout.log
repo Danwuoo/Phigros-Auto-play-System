@@ -1,0 +1,7 @@
+processed=500 own_down=0
+processed=1000 own_down=0
+processed=1500 own_down=1
+processed=2000 own_down=16
+processed=2500 own_down=37
+processed=3000 own_down=54
+processed=3063 down=55 move=121 up=51 released=1

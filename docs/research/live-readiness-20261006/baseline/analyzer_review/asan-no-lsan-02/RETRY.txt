@@ -1,0 +1,1 @@
+Original ASan+UBSan seed passed all 36 assertions but LeakSanitizer failed under ptrace. This is a fresh retry with identical seed binary and detect_leaks=0. Leak checking is unsupported, not passed.

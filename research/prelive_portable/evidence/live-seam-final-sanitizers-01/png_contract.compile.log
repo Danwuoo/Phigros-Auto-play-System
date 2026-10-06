@@ -1,0 +1,8 @@
+In file included from /workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/png_contract_tests.cpp:1:
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/portable_png.hpp: In function ‘std::vector<unsigned char> pas::portable_png::decode(std::span<const unsigned char>)’:
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/portable_png.hpp:24:3: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   24 |   if(++chunks>4096||b.size()-at<12)throw std::runtime_error("PNG chunk bound");const auto n=be(b.data()+at);if(n>b.size()-at-12)throw std::runtime_error("PNG chunk length");
+      |   ^~
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/portable_png.hpp:24:80: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   24 |   if(++chunks>4096||b.size()-at<12)throw std::runtime_error("PNG chunk bound");const auto n=be(b.data()+at);if(n>b.size()-at-12)throw std::runtime_error("PNG chunk length");
+      |                                                                                ^~~~~

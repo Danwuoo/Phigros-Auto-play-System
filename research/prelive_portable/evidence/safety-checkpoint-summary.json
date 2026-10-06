@@ -1,0 +1,36 @@
+{
+  "schema": "pas.portable-safety-checkpoint.v1",
+  "current_cpp_sha256": "96ef1254fd9045d7f89f1861e6d40c95f0dea6609f02b4c1705dd751435392d9",
+  "runtime_hpp_sha256": "d895b8f59fb844f0d0df361ad0355d39234c6d0312a8a0f1256066d5e5c8c7bd",
+  "configurations": [
+    "release",
+    "debug_assertions",
+    "asan_ubsan"
+  ],
+  "checks_per_configuration": 712,
+  "family_independent_checks_per_configuration": 104,
+  "flick_cases_per_configuration": 1,
+  "decoder_checks_per_configuration": 11,
+  "old_WIC_sample_checks": 108,
+  "checkpoint_prefix": {
+    "frames": 3063,
+    "processed": 3063,
+    "own_down": 55,
+    "own_move": 121,
+    "own_up": 51,
+    "release_verified": true,
+    "active_final": 0,
+    "ledger_valid": true,
+    "raw_event_count": 9889,
+    "raw_event_bytes": 27241451,
+    "report_sha256": "11818c7e60013b32e09ac8497c7f94a251c42c168db0c8ae2ecfcf7834e97faa",
+    "independent_audit_integrity": true
+  },
+  "failed_final_checks": 0,
+  "LSan": "unsupported_ptrace",
+  "windows_validated": false,
+  "cost_qualified": false,
+  "physical_gold": 0,
+  "device_endpoints": 0,
+  "next_candidate_coverage": false
+}

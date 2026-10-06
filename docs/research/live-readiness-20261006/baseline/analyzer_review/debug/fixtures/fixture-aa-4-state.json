@@ -1,0 +1,15 @@
+{
+  "contract_sha": "b1ce3111887f964c07ad88548561ecbb9d27b2a9a4aa5c26f8a145d490a5cb02",
+  "freeze_sha": "9e8bfd211f6d28205a6b806d3bcd37ff9aaecaaa8fd70f327bb58b0e1ab8022f",
+  "native_launches_known": 1,
+  "native_stages_consumed": 1,
+  "receipts": [
+    {
+      "bytes": 623,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-4-verification.json",
+      "sha256": "5c4353b836ba13b1b6e73b3a040bf95ae0f148518e9dceb7552a46f2fc2346f4"
+    }
+  ],
+  "running": null,
+  "status": "COMPLETE"
+}

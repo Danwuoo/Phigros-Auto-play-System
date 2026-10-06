@@ -1,0 +1,30 @@
+{
+  "colour_limit": "terminal producer requires six cyan interior support rows; neutral/gray body continuation does not prove terminal eligibility",
+  "device_endpoints": 0,
+  "errors": [],
+  "event_rows": 9889,
+  "events": {
+    "bytes": 27594746,
+    "path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-tail-final-prefix-3063/report.json.events.jsonl",
+    "sha256": "25d2d4c031cb4e2f772bec5db503610f25404624d8488dc8e1025797da1891bc"
+  },
+  "failed_injection_receipts": 0,
+  "frames": 3063,
+  "interpretation": "actual archived-pixel replay counts, not physical opportunity denominators or game adoption; synthetic family counts are separate",
+  "own_receipt_joins_valid": true,
+  "physical_gold": 0,
+  "processed": 3063,
+  "report": {
+    "bytes": 1346,
+    "path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-tail-final-prefix-3063/report.json",
+    "sha256": "c35e755e0da8fcefd5fc40ced4c73bc9f2f7f4dfaff7b40bd19786f7f40c4c01"
+  },
+  "schema": "pas.independent-actual-prefix-tail-counts.v1",
+  "successful_normal_tail_up_events": 0,
+  "successful_typed_normal_tail_up_events": 0,
+  "tail_confirmed_events": 0,
+  "typed_tail_confirmed_events": 0,
+  "typed_tail_plan_revisions": 0,
+  "typed_tail_targets": 0,
+  "witnesses": []
+}

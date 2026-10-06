@@ -2,3 +2,14 @@
 docs/third_party/*.txt -text -whitespace
 # Keep sealed prelive receipts and SHA indexes byte-identical across checkouts.
 docs/research/zero-miss-20261006/windows/prelive-evidence-01/** -text -whitespace
+# Cloud readiness receipts and source snapshots are byte-sealed evidence.
+docs/research/live-readiness-20261006/** -text -whitespace
+research/prelive_portable/evidence/** -text -whitespace
+research/prelive_portable/MANIFEST.sha256 -text -whitespace
+research/prelive_current/workload_evidence/** -text -whitespace
+research/prelive_current/workload_family_evidence/** -text -whitespace
+research/prelive_current/analysis_evidence/** -text -whitespace
+research/prelive_current/windows_recipe_evidence/** -text -whitespace
+# Preserve final and historical portable summary seals on Windows too.
+research/prelive_portable/*MANIFEST* -text -whitespace
+research/prelive_portable/*RESULTS* -text -whitespace

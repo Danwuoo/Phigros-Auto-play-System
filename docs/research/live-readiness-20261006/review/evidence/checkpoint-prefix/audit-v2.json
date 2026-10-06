@@ -1,0 +1,75 @@
+{
+  "all_input_processed": true,
+  "complete_prefix_evidence": true,
+  "coordinate_join_complete": true,
+  "declared_writer_loss": false,
+  "device_endpoints": 0,
+  "errors": [],
+  "event_rows": 9889,
+  "game_adoption": "unknown",
+  "input_bindings": {
+    "events": {
+      "bytes": 27241451,
+      "path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-final-prefix-3063/report.json.events.jsonl",
+      "sha256": "c07f1f0d83c2056dddc9f46583424c278b35dd555fdd2175306ecf29d4edd68b"
+    },
+    "report": {
+      "bytes": 1345,
+      "path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-final-prefix-3063/report.json",
+      "sha256": "11818c7e60013b32e09ac8497c7f94a251c42c168db0c8ae2ecfcf7834e97faa"
+    },
+    "rows": {
+      "bytes": 1002867,
+      "path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-final-prefix-3063/report.json.rows.jsonl",
+      "sha256": "853ceeec08146e77bae82ad49814ef3862b981cca95d580e6cfbf5d5c4543252"
+    }
+  },
+  "integrity": true,
+  "measurement_all_phase_lateness_ms": {
+    "n": 0
+  },
+  "measurement_phase_counts": [
+    0,
+    0,
+    0
+  ],
+  "measurement_window_start_ns": 0,
+  "metrics_verified": true,
+  "path": "out/portable-final-prefix-3063/report.json",
+  "phases": [
+    55,
+    121,
+    51
+  ],
+  "plan_basis_rows": {
+    "current_rails_v1_measured_hold_front_overlap": 1,
+    "live_note_recent_confirmed_line_projection": 13,
+    "live_pixels_current_drag_overlap": 4,
+    "live_pixels_held_body_continuation": 1,
+    "live_pixels_short_linear_fit_drag": 104,
+    "live_pixels_short_linear_fit_flick": 155
+  },
+  "plan_join_complete": true,
+  "provenance_join_complete": false,
+  "receipts": 227,
+  "recomputed_distributions": {
+    "compute_ms": {
+      "jitter_p95_minus_p5": 3.4512171,
+      "max": 29.295324,
+      "n": 3063,
+      "p50": 5.951144,
+      "p95": 8.4477627,
+      "p99": 10.439557660000004
+    }
+  },
+  "release_calls": 140,
+  "release_uncertainty_seen": false,
+  "run_provenance": null,
+  "schema": "pas.prelive-independent-integrity.v2",
+  "unknown_release": [],
+  "verifier_binary": {
+    "bytes": 387424,
+    "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/bin/audit-v2",
+    "sha256": "1124a836a8f9eb8edf2870644a2eac5cde1de8f22e45ba881ce279a727395fb7"
+  }
+}

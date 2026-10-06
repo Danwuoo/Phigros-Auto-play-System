@@ -1,0 +1,10 @@
+research/prelive_current/cost_analysis.cpp: OK
+research/prelive_current/campaign_provenance.hpp: OK
+research/prelive_current/evidence_hash.hpp: OK
+research/prelive_current/current.cpp: OK
+research/prelive_current/runtime.hpp: OK
+research/prelive_current/run.ps1: OK
+research/prelive_audit/audit.cpp: OK
+src/game.cpp: OK
+research/prelive_current/tests/cost_analysis_tests.cpp: OK
+research/prelive_current/tests/cost_analysis_review_tests.cpp: OK

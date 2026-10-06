@@ -1,0 +1,4 @@
+/workspace/shared/phigros-live-readiness-20261006/out/prelive-portable-tail-release-v3.d5OYSM/portable_current.a: OK
+/workspace/shared/phigros-live-deps-20261006-patched/nlohmann/json.hpp: OK
+research/live_readiness_review/tail_only_owner_review.cpp: OK
+research/live_readiness_review/tail_only_pixels_review.cpp: OK

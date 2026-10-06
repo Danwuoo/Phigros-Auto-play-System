@@ -1,0 +1,524 @@
+{
+  "Windows_qualification": false,
+  "assertions": 97,
+  "checks": [
+    {
+      "id": "verified_prior_0_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "verified_prior_0_structured_finish",
+      "pass": true
+    },
+    {
+      "id": "verified_prior_0_original_contact_report",
+      "pass": true
+    },
+    {
+      "id": "verified_prior_0_release_record_once",
+      "pass": true
+    },
+    {
+      "id": "verified_prior_0_contact_and_ledger_fail_closed",
+      "pass": true
+    },
+    {
+      "id": "verified_prior_0_second_no_retry_no_upgrade",
+      "pass": true
+    },
+    {
+      "id": "verified_prior_0_no_undrained_receipt",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_0_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_0_structured_finish",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_0_original_contact_report",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_0_release_record_once",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_0_contact_and_ledger_fail_closed",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_0_second_no_retry_no_upgrade",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_0_no_undrained_receipt",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_1_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_1_structured_finish",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_1_original_contact_report",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_1_first_uncertain_report_exact",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_1_release_record_once",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_1_contact_and_ledger_fail_closed",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_1_second_no_retry_no_upgrade",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_1_no_undrained_receipt",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_2_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_2_structured_finish",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_2_original_contact_report",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_2_first_uncertain_report_exact",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_2_release_record_once",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_2_contact_and_ledger_fail_closed",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_2_second_no_retry_no_upgrade",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior_2_no_undrained_receipt",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_no_diagnostic_output_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_no_diagnostic_output_ledger_consumes_implicit_release",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_no_diagnostic_output_diagnostics_are_not_admission",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_no_diagnostic_output_no_receipt_left_behind",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_no_diagnostic_output_finish_stays_safe",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_output_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_output_ledger_consumes_implicit_release",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_output_diagnostics_are_not_admission",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_output_no_receipt_left_behind",
+      "pass": true
+    },
+    {
+      "id": "implicit_0_output_finish_stays_safe",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_no_diagnostic_output_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_no_diagnostic_output_ledger_consumes_implicit_release",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_no_diagnostic_output_diagnostics_are_not_admission",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_no_diagnostic_output_no_receipt_left_behind",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_no_diagnostic_output_finish_stays_safe",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_output_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_output_ledger_consumes_implicit_release",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_output_diagnostics_are_not_admission",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_output_no_receipt_left_behind",
+      "pass": true
+    },
+    {
+      "id": "implicit_1_output_finish_stays_safe",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_no_diagnostic_output_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_no_diagnostic_output_ledger_consumes_implicit_release",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_no_diagnostic_output_diagnostics_are_not_admission",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_no_diagnostic_output_no_receipt_left_behind",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_no_diagnostic_output_finish_stays_safe",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_output_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_output_ledger_consumes_implicit_release",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_output_diagnostics_are_not_admission",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_output_no_receipt_left_behind",
+      "pass": true
+    },
+    {
+      "id": "implicit_2_output_finish_stays_safe",
+      "pass": true
+    },
+    {
+      "id": "positive_fixed_81_phase_safe",
+      "pass": true
+    },
+    {
+      "id": "positive_unchanged_corpus_entry_denominator",
+      "pass": true
+    },
+    {
+      "id": "positive_normal_tail_fresh_support",
+      "pass": true
+    },
+    {
+      "id": "positive_verified_zero_active_close",
+      "pass": true
+    },
+    {
+      "id": "absence_fixed_81_phase_safe",
+      "pass": true
+    },
+    {
+      "id": "absence_unchanged_corpus_entry_denominator",
+      "pass": true
+    },
+    {
+      "id": "absence_negative_no_false_normal_tail",
+      "pass": true
+    },
+    {
+      "id": "absence_verified_zero_active_close",
+      "pass": true
+    },
+    {
+      "id": "effect_fixed_81_phase_safe",
+      "pass": true
+    },
+    {
+      "id": "effect_unchanged_corpus_entry_denominator",
+      "pass": true
+    },
+    {
+      "id": "effect_negative_no_false_normal_tail",
+      "pass": true
+    },
+    {
+      "id": "effect_verified_zero_active_close",
+      "pass": true
+    },
+    {
+      "id": "no_tail_cap_fixed_81_phase_safe",
+      "pass": true
+    },
+    {
+      "id": "no_tail_cap_unchanged_corpus_entry_denominator",
+      "pass": true
+    },
+    {
+      "id": "no_tail_cap_negative_no_false_normal_tail",
+      "pass": true
+    },
+    {
+      "id": "no_tail_cap_verified_zero_active_close",
+      "pass": true
+    },
+    {
+      "id": "actual_receipt_command_mismatch_rejected",
+      "pass": true
+    },
+    {
+      "id": "mismatch_finish_cannot_claim_success",
+      "pass": true
+    },
+    {
+      "id": "sync_diagnostic_exception_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "sync_diagnostic_exception_output_failure_reached",
+      "pass": true
+    },
+    {
+      "id": "sync_diagnostic_exception_ledger_release_not_suppressed",
+      "pass": true
+    },
+    {
+      "id": "sync_diagnostic_exception_finalization_survives_output_fault",
+      "pass": true
+    },
+    {
+      "id": "finish_diagnostic_exception_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "finish_diagnostic_exception_output_failure_reached",
+      "pass": true
+    },
+    {
+      "id": "finish_diagnostic_exception_ledger_release_not_suppressed",
+      "pass": true
+    },
+    {
+      "id": "finish_diagnostic_exception_finalization_survives_output_fault",
+      "pass": true
+    },
+    {
+      "id": "finish_diagnostic_exception_repeat_report_not_overwritten",
+      "pass": true
+    },
+    {
+      "id": "known_scheduler_fault_actual_RGB_owner_Down",
+      "pass": true
+    },
+    {
+      "id": "known_scheduler_fault_has_verified_safety_release",
+      "pass": true
+    },
+    {
+      "id": "known_fault_finish_does_not_retry",
+      "pass": true
+    },
+    {
+      "id": "verified_report_cannot_reset_live_faulted_owner",
+      "pass": true
+    },
+    {
+      "id": "shared_accept_direct_fixed_expiry_actual_owned_Down_boundary_fixture",
+      "pass": true
+    },
+    {
+      "id": "shared_accept_direct_fixed_expiry_expired_first_release_before_body_renewal",
+      "pass": true
+    },
+    {
+      "id": "shared_accept_direct_fixed_expiry_no_replayed_Down_and_verified_finish",
+      "pass": true
+    },
+    {
+      "id": "runtime_outer_poll_fixed_expiry_actual_owned_Down_boundary_fixture",
+      "pass": true
+    },
+    {
+      "id": "runtime_outer_poll_fixed_expiry_expired_first_release_before_body_renewal",
+      "pass": true
+    },
+    {
+      "id": "runtime_outer_poll_fixed_expiry_no_replayed_Down_and_verified_finish",
+      "pass": true
+    }
+  ],
+  "corpus": "unchanged cost_family_v2 81 phases offset0",
+  "details": [
+    {
+      "id": "verified_prior_0",
+      "output_count": 1,
+      "report": {
+        "failed": [],
+        "requested": [
+          0
+        ],
+        "return": 1621000000,
+        "start": 1621000000,
+        "unknown": []
+      },
+      "verified": true
+    },
+    {
+      "id": "unknown_prior_0",
+      "output_count": 1,
+      "report": {
+        "failed": [],
+        "requested": [
+          0
+        ],
+        "return": 1621000000,
+        "start": 1621000000,
+        "unknown": [
+          0
+        ]
+      },
+      "verified": false
+    },
+    {
+      "id": "unknown_prior_1",
+      "output_count": 1,
+      "report": {
+        "failed": [],
+        "requested": [
+          0
+        ],
+        "return": 1621000000,
+        "start": 1621000000,
+        "unknown": [
+          0
+        ]
+      },
+      "verified": false
+    },
+    {
+      "id": "unknown_prior_2",
+      "output_count": 0,
+      "report": {
+        "failed": [],
+        "requested": [
+          0
+        ],
+        "return": 1621000000,
+        "start": 1621000000,
+        "unknown": [
+          0
+        ]
+      },
+      "verified": false
+    },
+    {
+      "active_tail_support": 8,
+      "confirmations": 1,
+      "down": 1,
+      "id": "positive",
+      "move": 0,
+      "normal_ups": 1,
+      "tail_only_plans": 1,
+      "up": 1
+    },
+    {
+      "active_tail_support": 4,
+      "confirmations": 0,
+      "down": 1,
+      "id": "absence",
+      "move": 0,
+      "normal_ups": 0,
+      "tail_only_plans": 0,
+      "up": 1
+    },
+    {
+      "active_tail_support": 4,
+      "confirmations": 0,
+      "down": 1,
+      "id": "effect",
+      "move": 0,
+      "normal_ups": 0,
+      "tail_only_plans": 0,
+      "up": 1
+    },
+    {
+      "active_tail_support": 0,
+      "confirmations": 0,
+      "down": 0,
+      "id": "no_tail_cap",
+      "move": 0,
+      "normal_ups": 0,
+      "tail_only_plans": 0,
+      "up": 0
+    },
+    {
+      "Down": 1,
+      "active_final": 0,
+      "id": "shared_accept_direct_fixed_expiry",
+      "old_due": 1720000000,
+      "owner_now": 1720000000,
+      "packet_age": 80000000,
+      "packet_capture": 1640000000,
+      "prior_body_evidence": 1620000000
+    },
+    {
+      "Down": 1,
+      "active_final": 0,
+      "id": "runtime_outer_poll_fixed_expiry",
+      "old_due": 1720000000,
+      "owner_now": 1720000000,
+      "packet_age": 80000000,
+      "packet_capture": 1640000000,
+      "prior_body_evidence": 1620000000
+    }
+  ],
+  "device_endpoints": 0,
+  "failed": 0,
+  "ownership_fixture": "actual RGB observer lifecycle Hook sole owner and backend receipts",
+  "physical_gold": 0,
+  "schema": "pas.independent-disabled-live-runtime-review.v2"
+}

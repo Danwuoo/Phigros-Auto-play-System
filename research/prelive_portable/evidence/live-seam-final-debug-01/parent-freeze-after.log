@@ -1,0 +1,13 @@
+include/pas/candidate_admission.hpp: OK
+include/pas/candidate_packet.hpp: OK
+include/pas/game_session.hpp: OK
+src/game_session.cpp: OK
+include/pas/runtime.hpp: OK
+src/manual_session.cpp: OK
+CMakeLists.txt: OK
+research/prelive_current/owner_candidate_step.hpp: OK
+research/prelive_current/receipt_stream.hpp: OK
+research/prelive_current/own_bridge.hpp: OK
+research/prelive_current/own_bridge.cpp: OK
+research/prelive_current/runtime.hpp: OK
+research/prelive_current/disabled_live_seam_tests.cpp: OK

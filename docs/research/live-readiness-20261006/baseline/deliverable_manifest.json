@@ -1,0 +1,46 @@
+{
+  "schema": "pas.live-readiness.baseline-deliverable.v1",
+  "tests": {
+    "unit_tests": 4,
+    "pass": true,
+    "disposable_tamper_rejected": true,
+    "original_evidence_unchanged": true
+  },
+  "files": [
+    {
+      "path": "audit_compact_zip.py",
+      "bytes": 7992,
+      "sha256": "5d3dfb5068940240bcade1ceafec59b02d6e159f963b56229a3080bf2d69d742"
+    },
+    {
+      "path": "audit_baseline.py",
+      "bytes": 18845,
+      "sha256": "48599f91405e410359bc9dbe79f0fc7e691a4eacd54d74f91c73deaf9769ac40"
+    },
+    {
+      "path": "test_maintenance_audits.py",
+      "bytes": 2634,
+      "sha256": "387a4d0b5e4982cfd27a71b8fe5b38fca4ef8e85290e3d5b6e3c625d33f79c5a"
+    },
+    {
+      "path": "compact_zip_audit.json",
+      "bytes": 2689,
+      "sha256": "71ba6106975fbab0a5fc030f87c23c0830e037346e9a20be3608ca0f30e4c620"
+    },
+    {
+      "path": "provenance_baseline.json",
+      "bytes": 266792,
+      "sha256": "e81011d1a5cba2ebf813692d0d43e0ef1e3dd8fe4799d4014ee845e26777c715"
+    },
+    {
+      "path": "maintenance_tests.log",
+      "bytes": 594,
+      "sha256": "82f1a4c0b942976845e7a85f052292351e304c31c9ca65b0232d8ccb165b8417"
+    },
+    {
+      "path": "README.md",
+      "bytes": 7285,
+      "sha256": "29ca2df986ee914d2bc8d1dd7a483a7130378c6b720a3b902c98f043c482f773"
+    }
+  ]
+}

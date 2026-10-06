@@ -1,5 +1,7 @@
 #include "pas/runtime.hpp"
 #include "pas/game_session.hpp"
+#include "pas/candidate_packet.hpp"
+#include "owner_candidate_step.hpp"
 #include "pas/session_archive.hpp"
 #include "pas/session_pixel_clips.hpp"
 #include "pas/session_recording.hpp"
@@ -47,7 +49,11 @@ public:
     }
 private:HANDLE event_{},timer_{};
 };
+enum class ManualVariant {legacy,current_candidate};
 struct Packet : SessionObservation {
+    std::optional<CandidatePacketEvidence> candidate;
+    Nanoseconds published_ns=0;
+    std::uint64_t packet_sequence=0;
     std::shared_ptr<const Frame> result;
     std::optional<std::int64_t> source_time;
     std::optional<std::uint64_t> source_sequence;
@@ -59,7 +65,8 @@ json release_json(const ReleaseReport& r,const std::string& reason) {
         {"effect_verified",false}};
 }
 }
-void run_manual_session(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round) {
+static void run_manual_session_impl(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round,ManualVariant variant) {
+    const bool candidate_mode=variant==ManualVariant::current_candidate;
     const auto config=load_config(config_path);
     if(config.capture_kind!="emulator-grpc"||config.touch_kind!="emulator-grpc"||
        config.width!=1280||config.height!=720||config.source_rotation!=1||config.grpc_read_chunk_kib!=256||
@@ -101,6 +108,12 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
         {"pixel_clip_policy",pixel_clips?"at most 20 rounds x (8 uniform + 2 complex-line) x 3 full 1280x720 RGB888 frames; 4-frame writer mailbox; no runtime feedback":"disabled"},
         {"result_image_policy","one_same_capture_frame_per_confirmed_round_after_owner_release"},
         {"result_ui_profile","English six static labels / 1280x720 / translation <=3px"}};
+    if(candidate_mode) {
+        manifest["mode"]="manual-session-current-candidate";manifest["candidate_variant"]="current-rails-shared-owner-step-disabled";
+        manifest["candidate_live_admission"]="UNQUALIFIED";manifest["changed_windows_branch_executed"]=false;
+        manifest["candidate_packet_slots"]=1;manifest["candidate_receipt_capacity"]=64;
+        manifest["candidate_packet_policy"]="same immutable consumed frame lease and complete observer batch; transition/context mismatch ineligible";
+    }
     SessionArchive archive(root,manifest);
     std::unique_ptr<SessionPixelClips> clips;
     if(pixel_clips)clips=std::make_unique<SessionPixelClips>(root/"pixel-clips",clock,config.width,config.height);
@@ -123,6 +136,7 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
     std::atomic<Nanoseconds> active_round_start=0;
     std::mutex packet_mutex,fault_mutex;
     std::shared_ptr<const Packet> packet;
+    std::atomic<std::uint64_t> candidate_packet_published=0,candidate_packet_overwritten=0,candidate_packet_consumed=0,candidate_packet_skips=0;
     std::shared_ptr<const Frame> display;
     std::exception_ptr fault;
     const auto fail=[&] {
@@ -149,7 +163,8 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
             while(!stopping&&!stop.stop_requested()) {
                 auto f=latest.read_after(sequence,10'000'000);if(!f)continue;sequence=f->sequence;
                 if(clock.now_ns()-f->capture_complete_ns>=100'000'000){live_gate=false;continue;}
-                auto p=std::make_shared<Packet>();static_cast<SessionObservation&>(*p)=perception.process(*f);
+                auto p=std::make_shared<Packet>();static_cast<SessionObservation&>(*p)=perception.process(*f,candidate_mode);
+                if(candidate_mode&&perception.candidate_batch())p->candidate=CandidatePacketEvidence{f,*perception.candidate_batch()};
                 if(clips)clips->observe(*f,*p);
                 if(p->status.new_round) {
                     round_epoch=p->status.round;result_frame.reset();
@@ -157,7 +172,8 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                 }
                 if(recording&&p->status.ended)recording->finish(p->status.round);
                 // This independent latch closes dispatch before the action owner consumes the packet.
-                live_gate=p->allow_down&&f->capture_complete_ns>invalid_through.load();
+                live_gate=p->allow_down&&f->capture_complete_ns>invalid_through.load()&&
+                    (!candidate_mode||(p->candidate&&p->candidate->eligible(*p,clock.now_ns())));
                 if(p->status.ended&&p->status.state==PlaySessionState::result&&!result_frame)
                     result_frame=std::make_shared<Frame>(*f); // One bounded copy; never a pool lease.
                 p->result=result_frame;p->source_time=f->source_timestamp_us;p->source_sequence=f->source_sequence;
@@ -166,24 +182,42 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                     auto view=std::make_shared<Frame>(*f);draw_game_overlay(*view,p->scene);
                     std::lock_guard lock(packet_mutex);display=std::move(view);preview_at=now;
                 }
-                {std::lock_guard lock(packet_mutex);packet=std::move(p);}
+                p->published_ns=clock.now_ns();
+                {std::lock_guard lock(packet_mutex);
+                    if(candidate_mode) {
+                        p->packet_sequence=++candidate_packet_published;
+                        if(packet&&packet->packet_sequence>candidate_packet_consumed.load())++candidate_packet_overwritten;
+                    }
+                    packet=std::move(p);
+                }
                 wake.notify();
             }
         } catch(...) {fail();}
     });
     std::jthread action_worker([&](std::stop_token stop) {
         std::unique_ptr<GrpcTouch> backend;
+        current_execution::ReceiptStream candidate_receipts;
+        std::unique_ptr<current_execution::RecordingBackend> candidate_backend;
+        std::unique_ptr<SessionGameOwner> game_storage;
+        std::unique_ptr<current_rails::OwnerCandidateStep> candidate_step;
         std::uint64_t active=0,completed=0,seen=0,rev=0,commands=0,frames=0;
         Nanoseconds round_start=0,previous=0,previous_playing=0;
         std::vector<double> intervals,playing_intervals,recognition,residency;
         PlaySessionState last_state=PlaySessionState::standby;
+        const auto record=[&](json value){archive.event(active,std::move(value));};
         try {
             backend=std::make_unique<GrpcTouch>(clock,endpoint,PixelCoordinateMap(config.width,config.height,config.touch_width,config.touch_height,config.touch_rotation),
                 config.touch_width,config.touch_height,config.max_contacts,std::chrono::milliseconds(config.touch_timeout_ms));
-            SessionGameOwner game(clock,*backend,config.max_contacts,
-                {config.game_type_mask,static_cast<Nanoseconds>(config.game_lead_ms)*1'000'000,
+            if(candidate_mode)candidate_backend=std::make_unique<current_execution::RecordingBackend>(*backend,candidate_receipts,clock);
+            game_storage=std::make_unique<SessionGameOwner>(clock,candidate_mode?static_cast<TouchBackend&>(*candidate_backend):static_cast<TouchBackend&>(*backend),config.max_contacts,
+                GameActionOptions{config.game_type_mask,static_cast<Nanoseconds>(config.game_lead_ms)*1'000'000,
                  static_cast<Nanoseconds>(config.game_uncertainty_ms)*1'000'000});
-            const auto record=[&](json value){archive.event(active,std::move(value));};
+            auto& game=*game_storage;
+            if(candidate_mode)candidate_step=std::make_unique<current_rails::OwnerCandidateStep>(clock,game,candidate_receipts);
+            if(candidate_step) {
+                candidate_step->event_output=record;
+                candidate_step->receipt_output=[&](const current_execution::BackendEvent& e){if(!e.release)++commands;record(current_execution::backend_event_json(e));};
+            }
             const auto receipts=[&](const std::vector<TouchReceipt>& rs) {
                 for(const auto& r:rs) {
                     ++commands;record({{"event","game_touch_receipt"},{"intent_id",r.command.intent_id},{"contact_id",r.command.contact_id},
@@ -193,7 +227,10 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                 }
             };
             const auto finish=[&](const std::string& reason,bool result,std::shared_ptr<const Frame> image) {
-                live_gate=false;const auto release=game.finish();record(release_json(release,reason));
+                live_gate=false;ReleaseReport release;
+                if(candidate_step) {if(!candidate_step->finish())throw std::runtime_error("candidate first release not verified");release=candidate_step->final_release;}
+                else release=game.finish();
+                record(release_json(release,reason));
                 record({{"event","round_finished"},{"state",result?"RESULT":"ABORTED"},{"reason",reason},{"monotonic_ns",clock.now_ns()}});
                 archive.complete(active,{{"status",result?"result_confirmed":"aborted"},{"stop_reason",reason},
                     {"round_start_ns",round_start},{"round_stop_ns",clock.now_ns()},{"commands",commands},{"decisions",frames},
@@ -210,14 +247,24 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
             while(!stopping&&!stop.stop_requested()) {
                 std::shared_ptr<const Packet> p;{std::lock_guard lock(packet_mutex);p=packet;}
                 if(rev!=revocation.load()) {
-                    rev=revocation.load();if(active)record(release_json(game.suspend("source_or_supervisor_revoke"),"source_or_supervisor_revoke"));
+                    rev=revocation.load();if(active) {
+                        if(candidate_step) {if(!candidate_step->suspend("source_or_supervisor_revoke"))throw std::runtime_error("candidate revoke not verified");}
+                        else record(release_json(game.suspend("source_or_supervisor_revoke"),"source_or_supervisor_revoke"));
+                    }
                 }
                 if(p&&p->scene.context.frame>seen) {
+                    if(candidate_mode) {
+                        const auto consumed=candidate_packet_consumed.exchange(p->packet_sequence);
+                        if(p->packet_sequence>consumed+1)candidate_packet_skips+=p->packet_sequence-consumed-1;
+                    }
                     seen=p->scene.context.frame;
                     if(p->status.state==PlaySessionState::fault)throw std::runtime_error(p->status.reason);
                     if(active&&p->status.round!=active)throw std::runtime_error("round transition missed by action owner");
                     if(!active&&p->status.active&&p->status.round>completed) {
-                        active=p->status.round;game.start(active);round_start=p->scene.context.capture_ns;
+                        active=p->status.round;
+                        if(candidate_step) {if(!candidate_step->start(active))throw std::runtime_error("candidate round cannot reset without verified release");}
+                        else game.start(active);
+                        round_start=p->scene.context.capture_ns;
                         active_round_start=round_start;
                         intervals.clear();playing_intervals.clear();recognition.clear();residency.clear();
                         previous=previous_playing=0;commands=frames=0;
@@ -249,6 +296,18 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                             // Result state is already released. A later fresh packet controls new Down.
                         } else {
                             const bool allow=p->allow_down&&s.context.capture_ns>invalid_through.load();
+                            if(candidate_step) {
+                                const auto owner_start=clock.now_ns();const bool eligible=p->candidate&&p->candidate->eligible(*p,owner_start);
+                                record({{"event","candidate_packet_owner_qpc"},{"source_frame",seen},{"capture_complete_ns",s.context.capture_ns},
+                                    {"packet_sequence",p->packet_sequence},{"packet_published_ns",p->published_ns},{"owner_start_ns",owner_start},{"eligible",eligible}});
+                                if(!eligible) {
+                                    record({{"event","current_observer_scene"},{"scene",decision_json(s)}});
+                                    if(p->candidate)record({{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(p->candidate->batch)}});
+                                    if(!candidate_step->suspend("candidate_same_consumed_frame_ineligible"))throw std::runtime_error("candidate ineligible packet release not verified");}
+                                else if(!candidate_step->accept(*p->candidate->frame,p->candidate->batch,s,allow))throw std::runtime_error("candidate shared owner step failed");
+                                record({{"event","candidate_owner_return_qpc"},{"source_frame",seen},{"owner_return_ns",clock.now_ns()},
+                                    {"hook_compute_ns",candidate_step->hook_compute},{"owner_compute_ns",candidate_step->owner_compute}});
+                            } else {
                             const bool was_armed=game.scheduler()->armed();
                             receipts(game.accept(s,allow));
                             if(was_armed&&!allow)record(release_json(game.scheduler()->last_release(),"current_UI_gate_lost"));
@@ -261,10 +320,20 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
                                     {"steps",steps},{"basis",plan.basis},{"real_input",true}});
                             }
                             for(auto e:game.owner()->take_plan_cancellations())record(std::move(e));
+                            }
                         }
                     }
                 }
-                receipts(game.poll());
+                if(candidate_step) {
+                    if(!candidate_step->poll())throw std::runtime_error("candidate owner poll failed");
+                    json attachments=json::array();
+                    for(const auto& a:candidate_step->ledger.attachments())attachments.push_back({{"note",a.note},{"intent",a.intent},
+                        {"revision",a.revision},{"prefix_offset",a.prefix_offset},{"cursor",a.cursor?json(*a.cursor):json(nullptr)},
+                        {"contact",a.contact},{"state",int(a.state)},{"last_contact_ns",a.last_contact},{"deadline_ns",a.deadline}});
+                    record({{"event","candidate_execution_ledger"},{"source_frame",seen},{"owner_qpc_ns",clock.now_ns()},
+                        {"valid",candidate_step->ledger.valid()},{"reason",candidate_step->ledger.reason()},{"attachments",attachments}});
+                }
+                else receipts(game.poll());
                 if(game.scheduler()) {
                     if(!game.scheduler()->fault().empty())throw std::runtime_error("gameplay input fault: "+game.scheduler()->fault());
                     for(auto e:game.owner()->take_coverage_updates())record(std::move(e));
@@ -277,7 +346,17 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
             archive.event(0,{{"event","session_state"},{"state","STOPPED"},{"monotonic_ns",clock.now_ns()}});
         } catch(...) {
             fail();
-            if(backend)try {
+            if(candidate_mode) {
+                // Outer lifetime preserves the shared first-uncertain-release
+                // state. No raw backend emergency retry after its first report.
+                if(candidate_step)try {
+                    const bool verified=candidate_step->finish();
+                    archive.event(active,release_json(candidate_step->final_release,"candidate_fault_first_release"));
+                    if(active)archive.complete(active,{{"status","aborted"},{"stop_reason","candidate_fault"},{"round_start_ns",round_start},
+                        {"round_stop_ns",clock.now_ns()},{"release_verified",verified},{"release_unknown_ids",candidate_step->final_release.unknown_ids},
+                        {"release_failed_ids",candidate_step->final_release.failed_ids}});
+                }catch(...){}
+            } else if(backend)try {
                 const auto r=backend->emergency_release_all();archive.event(active,release_json(r,"fault_emergency_release"));
                 if(active)archive.complete(active,{{"status","aborted"},{"stop_reason","fault"},{"round_start_ns",round_start},
                     {"round_stop_ns",clock.now_ns()},{"release_unknown_ids",r.unknown_ids},{"release_failed_ids",r.failed_ids}});
@@ -326,10 +405,22 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
         {"consumer_skips",latest.counters().consumer_skips},{"journal_peak_queue",archive.peak_queue()},
         {"automatic_play_enabled",false},{"pixel_clips",clips?clips->summary():json{{"enabled",false}}},
         {"full_recording",recording?recording->summary():json{{"enabled",false}}}};
+    if(candidate_mode)summary["candidate_packet_counters"]={{"published",candidate_packet_published.load()},
+        {"overwritten",candidate_packet_overwritten.load()},{"consumed_latest_sequence",candidate_packet_consumed.load()},
+        {"consumer_skips",candidate_packet_skips.load()},{"physical_pool_drops",latest.counters().pool_drops}};
     if(error)try{std::rethrow_exception(error);}catch(const std::exception& e){summary["fault"]=e.what();}
     std::ofstream file(root/"summary.json");file<<summary.dump(2)<<'\n';file.close();
     if(!file)throw std::runtime_error("session summary write failed");
     std::cout<<summary.dump(2)<<'\n';if(error)std::rethrow_exception(error);
     if(archive.faulted())throw std::runtime_error(archive.error());
 }
+void run_manual_session(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round) {
+    run_manual_session_impl(config_path,capability_path,no_preview,watchdog,pixel_clips,full_recording,one_round,ManualVariant::legacy);
+}
+void run_current_candidate_manual_session(const CandidateLiveAdmission& admission,const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round) {
+    enter_current_candidate_manual_session(admission,[&]{
+        run_manual_session_impl(config_path,capability_path,no_preview,watchdog,pixel_clips,full_recording,one_round,ManualVariant::current_candidate);
+    });
+}
+
 }

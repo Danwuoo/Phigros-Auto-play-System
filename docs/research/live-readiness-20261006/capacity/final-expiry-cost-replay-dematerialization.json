@@ -1,0 +1,114 @@
+{
+  "scope": "only12 restored own Linux executables after final expiry-source-data cost replay; bytes retained in originalverifiedarchives",
+  "rows": [
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/sanitizers/producer-review",
+      "sha256": "7a17f7166e24832c9f3b65b77d24d52be8a323811ff30e38166c6e9208c505ce",
+      "bytes": 20636960,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/7a17f7166e24832c9f3b65b77d24d52be8a323811ff30e38166c6e9208c505ce.zip",
+      "archive_sha256": "2aa0330fb21cf1b66331c2285802381dfed730beb3a58cd0f47102eb0dccf0ef",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/sanitizers/input-closure-review",
+      "sha256": "8afd9646f4eb527a4678a50d350628274700d49cf5bfa482c6361bf3ddf4c7ef",
+      "bytes": 11887728,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/8afd9646f4eb527a4678a50d350628274700d49cf5bfa482c6361bf3ddf4c7ef.zip",
+      "archive_sha256": "2e55e549151ec74ab4afb4cb626533559b6fa6a3ace20775ecc77ddf63d1497a",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/sanitizers/seed",
+      "sha256": "9134554ba39442a74b3357bc33e193848d7e7c51289dadd4608c5f906e49f893",
+      "bytes": 11681440,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/9134554ba39442a74b3357bc33e193848d7e7c51289dadd4608c5f906e49f893.zip",
+      "archive_sha256": "b068f72139a453a45cf16bed18351afe1094aeceaded11b9acfeb329a852541e",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/sanitizers/admission-review",
+      "sha256": "19f59c1d74f5da1ea61466c7ad2a36e5e4aff695b4d6f585816f23b851e53b78",
+      "bytes": 11542312,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/19f59c1d74f5da1ea61466c7ad2a36e5e4aff695b4d6f585816f23b851e53b78.zip",
+      "archive_sha256": "59690a481cbf8a404be28167c1f34dd27eb73e5caa3d22a5fcfe6529d2cb29a5",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/debug/producer-review",
+      "sha256": "894ec9fde91678ef7fd4b9264d96157460e5e33fbc5bece0a42c92eb31b6074b",
+      "bytes": 5270792,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/894ec9fde91678ef7fd4b9264d96157460e5e33fbc5bece0a42c92eb31b6074b.zip",
+      "archive_sha256": "46291a577bc1e5e7f828a16c0033999a72225ceb33c169552dd6b40a39a94452",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/debug/seed",
+      "sha256": "c619a3cc72777ad6a3ecd32b771c9826d9e3e73b51bb674e318b7079d2b9bf2d",
+      "bytes": 3895288,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/c619a3cc72777ad6a3ecd32b771c9826d9e3e73b51bb674e318b7079d2b9bf2d.zip",
+      "archive_sha256": "9a61ec26d7997ddfe725bd1e117b69605d08db55077b6d91498832d837728c3c",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/debug/input-closure-review",
+      "sha256": "6d49495d22031fb849458600769ac3c1a9541371f1df1fed7b46ea48483f204c",
+      "bytes": 3761264,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/6d49495d22031fb849458600769ac3c1a9541371f1df1fed7b46ea48483f204c.zip",
+      "archive_sha256": "f2636d21aab92a3090678195c3a111bf91dbc3d1e1f417595fdbe868436c7ad9",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/debug/admission-review",
+      "sha256": "560b0dec7f32d17d23c27ce89af29b14a53b625da4be667a00857abc927eb540",
+      "bytes": 3754456,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/560b0dec7f32d17d23c27ce89af29b14a53b625da4be667a00857abc927eb540.zip",
+      "archive_sha256": "7c2650dabaa420b1464e20d878575fd5864e6e1fc98c1f2a0ba0899516376f4f",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/release/producer-review",
+      "sha256": "94019f145228cba2913f1811a2e7564625ee910c16af1aa4f8f5c6a9853cf5d3",
+      "bytes": 630608,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/94019f145228cba2913f1811a2e7564625ee910c16af1aa4f8f5c6a9853cf5d3.zip",
+      "archive_sha256": "0f7e2ef382cfa589019814dd2d038d736a4d0a877fc6544483a82223c215f4af",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/release/seed",
+      "sha256": "5746ea88b7ec2409d1276cf03ada5ee51e334d9c29c24253668ec8161435a552",
+      "bytes": 505104,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/5746ea88b7ec2409d1276cf03ada5ee51e334d9c29c24253668ec8161435a552.zip",
+      "archive_sha256": "24146e7f7d64cd0564949d6eb6259065accfba6e80c16695d0c7a5299a9571aa",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/release/input-closure-review",
+      "sha256": "64359792d33349cd1b2693e34162d843d08be8cfae7a3fd167e752c0496ad253",
+      "bytes": 458712,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/64359792d33349cd1b2693e34162d843d08be8cfae7a3fd167e752c0496ad253.zip",
+      "archive_sha256": "5471ecfaa842ccbf4ab68147630f2c5cef7bd3237ea02b716609a71761703381",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    },
+    {
+      "path": "/workspace/shared/phigros-producer-seam-final-20261006-02/release/admission-review",
+      "sha256": "5b94473732bfb1b246b3dc40aa5908553ff94a2850ee5701b5fc1d7e511b7767",
+      "bytes": 457592,
+      "archive_path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-binary-preservation/5b94473732bfb1b246b3dc40aa5908553ff94a2850ee5701b5fc1d7e511b7767.zip",
+      "archive_sha256": "f8ceb749ef16c58d28184af31f746704d3a1d5d02c8da77db32f0ae188c81d59",
+      "verified_after_final_expiry_source_replay": true,
+      "materialized": false
+    }
+  ],
+  "free_after": 22113341440
+}

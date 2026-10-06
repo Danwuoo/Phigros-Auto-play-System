@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "bytes": 494,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-spec.json",
+      "sha256": "2c51a02332d673467ff0f7f974cdb799d77c8174a664cfae4456f092f05fdf97"
+    },
+    {
+      "bytes": 4629,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/campaign.json",
+      "sha256": "da580e11676bccb285bacc5f0caeacfc40d8c1f78d2006c727ab9fd51db17dfe"
+    },
+    {
+      "bytes": 10916568,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan/seed-tests",
+      "sha256": "fe51f2114eafafe864cb10ec3c8d985d2cef6932c598ab6d4cbb535c426081da"
+    }
+  ]
+}

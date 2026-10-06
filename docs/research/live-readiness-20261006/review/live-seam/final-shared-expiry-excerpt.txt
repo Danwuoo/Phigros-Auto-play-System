@@ -1,0 +1,8 @@
+47: bool accept(const Frame& f,const CandidateBatch& batch,const DecisionSnapshot& s,bool allow,bool candidate=true) {
+48-  owner_processed=false;hook_compute=owner_compute=0;if(blocked())return false;
+49-  // Linearize due/expired work before a fresh-but-delayed observation can
+50-  // revise an old lease. All callers share this expired-first boundary.
+51-  if(!poll())return false;
+52-  raw+=batch.candidates.size();
+53-  if(event_output){event_output({{"event","current_observer_scene"},{"scene",decision_json(s)}});event_output({{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(batch)}});}
+54-  HostClock meter;auto t0=meter.now_ns();DecisionSnapshot filtered;

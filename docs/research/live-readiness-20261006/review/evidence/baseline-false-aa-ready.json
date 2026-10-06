@@ -1,0 +1,307 @@
+{
+  "candidate_results_used": 0,
+  "comparison_allowed": true,
+  "noise": {
+    "dense": {
+      "adequate": true,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            14.688004999999992,
+            14.688004999999992,
+            14.688004999999992,
+            14.688004999999992
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            18.810529999999964,
+            18.810529999999964,
+            18.810529999999964,
+            18.810529999999964
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            5.3389099999999985,
+            5.3389099999999985,
+            5.3389099999999985,
+            5.3389099999999985
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            7.399224999999974,
+            7.399224999999974,
+            7.399224999999974,
+            7.399224999999974
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.0129,
+            0.0129,
+            0.0129,
+            0.0129
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.040593999999999957,
+            0.040593999999999957,
+            0.040593999999999957,
+            0.040593999999999957
+          ]
+        }
+      }
+    },
+    "hold": {
+      "adequate": true,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            14.688004999999992,
+            14.688004999999992,
+            14.688004999999992,
+            14.688004999999992
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            18.810529999999964,
+            18.810529999999964,
+            18.810529999999964,
+            18.810529999999964
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            5.3389099999999985,
+            5.3389099999999985,
+            5.3389099999999985,
+            5.3389099999999985
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            7.399224999999974,
+            7.399224999999974,
+            7.399224999999974,
+            7.399224999999974
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.0129,
+            0.0129,
+            0.0129,
+            0.0129
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.040593999999999957,
+            0.040593999999999957,
+            0.040593999999999957,
+            0.040593999999999957
+          ]
+        }
+      }
+    },
+    "tap": {
+      "adequate": true,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            14.688004999999992,
+            14.688004999999992,
+            14.688004999999992,
+            14.688004999999992
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            18.810529999999964,
+            18.810529999999964,
+            18.810529999999964,
+            18.810529999999964
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            5.3389099999999985,
+            5.3389099999999985,
+            5.3389099999999985,
+            5.3389099999999985
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            7.399224999999974,
+            7.399224999999974,
+            7.399224999999974,
+            7.399224999999974
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.0129,
+            0.0129,
+            0.0129,
+            0.0129
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.040593999999999957,
+            0.040593999999999957,
+            0.040593999999999957,
+            0.040593999999999957
+          ]
+        }
+      }
+    }
+  },
+  "normal_runs": [
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/zero-miss-20261006/windows/prelive-evidence-01/package/pipeline-release-aa-tap-1.json",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    }
+  ],
+  "ready": true,
+  "schema": "pas.current-rails-noise-freeze.v1"
+}

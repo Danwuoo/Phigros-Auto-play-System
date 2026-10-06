@@ -19,6 +19,82 @@ bool same_command(const TouchCommand& a,const TouchCommand& b) {
         a.source_frame_sequence==b.source_frame_sequence;
 }
 }
+namespace {
+ReleaseReport bounded_report(const ReleaseReport& input,bool& malformed) {
+    ReleaseReport r;r.start_ns=input.start_ns;r.return_ns=input.return_ns;
+    const auto copy=[&](const auto& source,auto& destination) {
+        malformed|=source.size()>5;
+        destination.assign(source.begin(),source.begin()+std::min<std::size_t>(source.size(),5));
+        for(const auto id:destination)if(id<0||id>=5)malformed=true;
+    };
+    copy(input.requested_ids,r.requested_ids);copy(input.failed_ids,r.failed_ids);copy(input.unknown_ids,r.unknown_ids);
+    return r;
+}
+}
+bool ReceiptStream::can_inject() {
+    if(overflow_||uncertain_release_||command_uncertain_||count_==events_.size()) {overflow_|=count_==events_.size();return false;}
+    return true;
+}
+std::size_t ReceiptStream::active_count() const {return std::count(active_.begin(),active_.end(),true);}
+void ReceiptStream::record_injection(const TouchCommand& command,const TouchReceipt& receipt) {
+    command_uncertain_|=!receipt.success||!same_command(command,receipt.command)||command.contact_id<0||command.contact_id>=5;
+    if(command.contact_id>=0&&command.contact_id<5) {
+        auto& active=active_[static_cast<std::size_t>(command.contact_id)];
+        if(command.phase==Phase::down)active=true;
+        if(command.phase==Phase::up&&receipt.success&&same_command(command,receipt.command))active=false;
+    }
+    if(count_==events_.size()) {overflow_=true;return;}
+    TouchReceipt r{receipt.command,receipt.injection_start_ns,receipt.injection_return_ns,receipt.success,receipt.reason.substr(0,512)};
+    overflow_|=receipt.reason.size()>512;
+    events_[count_++]={false,command,std::move(r),{},true};
+}
+void ReceiptStream::record_release(const ReleaseReport& report,bool dispatched) {
+    bool malformed=false;auto r=bounded_report(report,malformed);
+    overflow_|=malformed;
+    const bool uncertain=malformed||!r.failed_ids.empty()||!r.unknown_ids.empty();
+    if(uncertain&&!uncertain_release_)uncertain_release_=r;
+    for(const auto id:r.requested_ids)if(id>=0&&id<5&&
+       std::find(r.failed_ids.begin(),r.failed_ids.end(),id)==r.failed_ids.end()&&
+       std::find(r.unknown_ids.begin(),r.unknown_ids.end(),id)==r.unknown_ids.end()&&!malformed)
+        active_[static_cast<std::size_t>(id)]=false;
+    if(count_==events_.size()) {overflow_=true;return;}
+    events_[count_++]={true,{},{},std::move(r),dispatched};
+}
+std::vector<BackendEvent> ReceiptStream::take_events() {
+    std::vector<BackendEvent> events;events.reserve(count_);
+    for(std::size_t i=0;i<count_;++i) {events.push_back(std::move(events_[i]));events_[i]={};}
+    count_=0;return events;
+}
+bool ReceiptStream::reset_after_verified_round() {
+    if(!healthy()||active_count()!=0||count_!=0)return false;
+    return true;
+}
+TouchReceipt RecordingBackend::inject(const TouchCommand& c) {
+    if(!stream_.can_inject())return {c,clock_.now_ns(),clock_.now_ns(),false,"receipt_capacity_or_uncertain_release"};
+    TouchReceipt r;
+    try {r=backend_.inject(c);}
+    catch(...) {r={c,clock_.now_ns(),clock_.now_ns(),false,"backend_injection_exception_unknown"};stream_.record_injection(c,r);throw;}
+    stream_.record_injection(c,r);return r;
+}
+ReleaseReport RecordingBackend::release_all() {
+    if(stream_.first_uncertain_release()) {
+        const auto r=*stream_.first_uncertain_release();stream_.record_release(r,false);return r;
+    }
+    ReleaseReport r;
+    try {r=backend_.release_all();}
+    catch(...) {r.start_ns=r.return_ns=clock_.now_ns();for(int i=0;i<5;++i){r.requested_ids.push_back(i);r.unknown_ids.push_back(i);}stream_.record_release(r);throw;}
+    stream_.record_release(r);return r;
+}
+nlohmann::json backend_event_json(const BackendEvent& e) {
+    if(e.release)return {{"event","candidate_backend_release"},{"dispatched",e.dispatched},
+        {"requested_ids",e.report.requested_ids},{"failed_ids",e.report.failed_ids},{"unknown_ids",e.report.unknown_ids},
+        {"start_ns",e.report.start_ns},{"return_ns",e.report.return_ns},{"effect_verified",false}};
+    const auto command=[](const TouchCommand& c){return nlohmann::json{{"intent",c.intent_id},{"contact",c.contact_id},
+        {"phase",int(c.phase)},{"x",c.x},{"y",c.y},{"scheduled",c.scheduled_ns},{"source_frame",c.source_frame_sequence}};};
+    return {{"event","candidate_backend_receipt"},{"issued",command(e.issued)},{"returned",command(e.receipt.command)},
+        {"injection_start_ns",e.receipt.injection_start_ns},{"injection_return_ns",e.receipt.injection_return_ns},
+        {"success",e.receipt.success},{"reason",e.receipt.reason},{"dispatched",e.dispatched},{"effect_verified",false}};
+}
 Prepared prepare(const Frame& f,const CandidateBatch& batch,const DecisionSnapshot& scene,Nanoseconds now) {
     Prepared p;
     auto reject=[&](std::string_view reason){p.reason=reason;return p;};
@@ -82,7 +158,7 @@ Prepared prepare(const Frame& f,const CandidateBatch& batch,const DecisionSnapsh
 std::size_t ReplayBackend::active_count() const {return std::count(active_.begin(),active_.end(),true);}
 TouchReceipt ReplayBackend::inject(const TouchCommand& command) {
     TouchReceipt r{command,clock_.now_ns(),clock_.now_ns(),true,"offline_fake_success"};
-    if(event_count_==events_.size()) {overflow_=true;r.success=false;r.reason="receipt_capacity";return r;}
+    if(!receipts_.can_inject()) {r.success=false;r.reason="receipt_capacity";return r;}
     if(command.contact_id<0||command.contact_id>=5) {r.success=false;r.reason="invalid_contact";}
     else {
         const auto c=static_cast<std::size_t>(command.contact_id);
@@ -105,22 +181,23 @@ TouchReceipt ReplayBackend::inject(const TouchCommand& command) {
     if(delay_ms<0||delay_ms>50)throw std::invalid_argument("offline delay bound");
     if(delay_ms)std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
     r.injection_return_ns=clock_.now_ns();
-    events_[event_count_++]={false,command,r,{}};return r;
+    receipts_.record_injection(command,r);return r;
 }
 ReleaseReport ReplayBackend::release_all() {
+    if(receipts_.first_uncertain_release()) {
+        const auto r=*receipts_.first_uncertain_release();receipts_.record_release(r,false);return r;
+    }
     ReleaseReport r;r.start_ns=r.return_ns=clock_.now_ns();
     for(int c=0;c<5;++c)if(active_[c]) {
         r.requested_ids.push_back(c);
         if(failure==Failure::release_unknown)r.unknown_ids.push_back(c);
         else active_[c]=false;
     }
-    if(event_count_==events_.size())overflow_=true;
-    else events_[event_count_++]={true,{},{},r};
+    receipts_.record_release(r);
     return r;
 }
 std::vector<BackendEvent> ReplayBackend::take_events() {
-    std::vector<BackendEvent> result(events_.begin(),events_.begin()+event_count_);
-    event_count_=0;return result;
+    return receipts_.take_events();
 }
 int phase_prefix(Execution state,std::optional<std::uint64_t> cursor) {
     if(state==Execution::completed)return 2; // explicit successful Up receipt

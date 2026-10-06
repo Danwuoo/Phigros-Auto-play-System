@@ -4,6 +4,9 @@
 #include <psapi.h>
 #include <wrl/client.h>
 #include "runtime.hpp"
+#include "campaign_provenance.hpp"
+#include "offline_output.hpp"
+#include "streaming_workload.hpp"
 #include "pas/journal.hpp"
 #include <algorithm>
 #include <atomic>
@@ -49,10 +52,12 @@ std::array<std::vector<std::uint8_t>,12> stimulus(std::string_view scene){std::a
   if(scene=="hold"){box(p,350,y-100,451,y+1,{155,233,255});box(p,350,y-100,352,y+1,{255,255,255});box(p,449,y-100,451,y+1,{255,255,255});}
   else box(p,491,y-4,569,y+5,{40,190,255});}
  }return images;}
-struct Sample {Nanoseconds capture=0,published=0,recognition=0,complete=0,observer=0,hook=0,owner=0;bool published_ok=false,consumed=false,owned=false,writer=false;};
-J pipeline(std::string mode,std::string scene,int n,const std::string& report){
- if(n<1000||n>10000||(mode!="A"&&mode!="B")||(scene!="tap"&&scene!="hold"&&scene!="dense"&&scene!="slow"&&scene!="writer"&&scene!="rpc"&&scene!="fault"))throw std::runtime_error("pipeline bounds");
- const auto images=stimulus(scene);HostClock clock;LatestFrame latest(1280,720,3,&clock);Runtime rt(clock);
+struct Sample {Nanoseconds capture=0,published=0,recognition=0,complete=0,observer=0,hook=0,owner=0,producer_due=0,render_start=0,render_end=0,publication_return=0;bool published_ok=false,consumed=false,owned=false,writer=false;};
+J pipeline(std::string mode,std::string scene,int n,const std::string& report,const J& provenance=nullptr){
+ if(n<1000||n>10000||(mode!="A"&&mode!="B")||(scene!="tap"&&scene!="hold"&&scene!=streaming_workload::scene&&scene!="dense"&&scene!="slow"&&scene!="writer"&&scene!="rpc"&&scene!="fault"))throw std::runtime_error("pipeline bounds");
+ const bool streaming=scene==streaming_workload::scene;
+ const auto images=streaming?std::array<std::vector<std::uint8_t>,12>{}:stimulus(scene);
+ std::vector<std::uint8_t> generated(streaming?streaming_workload::bytes:0);HostClock clock;LatestFrame latest(1280,720,3,&clock);Runtime rt(clock);
  const int writer_capacity=scene=="writer"?2:8192;Journal journal(report+".journal.jsonl",writer_capacity,[&]{if(scene=="writer")std::this_thread::sleep_for(std::chrono::milliseconds(30));});
  std::vector<Sample> samples(n+1);std::atomic<bool> done=false;std::atomic<int> publish_attempts=0;
  if(scene=="rpc")rt.backend.delay_ms=5;
@@ -60,6 +65,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report){
  std::vector<double> injection,late,evidence_to_injection;std::size_t receipt_count=0,release_calls=0;
  std::array<std::vector<double>,3> phase_late;std::uint64_t journal_bytes=0,journal_records=0;bool admission_failed=false;
  auto emit=[&](J record,bool critical=true){const auto bytes=record.dump().size()+128;if(bytes>262144||journal_records>=65536||journal_bytes+bytes>1073741824){admission_failed=true;return false;}journal_bytes+=bytes;++journal_records;const bool ok=journal.push(std::move(record),critical);if(!ok&&critical)admission_failed=true;return ok;};
+ if(!provenance.is_null()&&!emit({{"event","current_chain_provenance"},{"provenance",provenance}}))throw std::runtime_error("provenance Journal admission");
  rt.event_output=[&](J value){emit(std::move(value));};
  rt.receipt_output=[&](const auto& event){
   if(event.release){++release_calls;emit({{"event","release_receipt"},{"requested",event.report.requested_ids},{"failed",event.report.failed_ids},{"unknown",event.report.unknown_ids},{"start",event.report.start_ns},{"return",event.report.return_ns}});return;}
@@ -68,12 +74,14 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report){
   injection.push_back((r.injection_return_ns-r.injection_start_ns)/1e6);late.push_back((r.injection_start_ns-c.scheduled_ns)/1e6);
   phase_late.at(int(c.phase)).push_back(late.back());
   if(c.source_frame_sequence<samples.size()&&samples[c.source_frame_sequence].capture)evidence_to_injection.push_back((r.injection_start_ns-samples[c.source_frame_sequence].capture)/1e6);
-  emit({{"event","own_injection_receipt"},{"intent",c.intent_id},{"source_frame",c.source_frame_sequence},{"contact",c.contact_id},{"phase",static_cast<int>(c.phase)},{"scheduled",c.scheduled_ns},{"injection_start",r.injection_start_ns},{"injection_return",r.injection_return_ns},{"success",r.success},{"reason",r.reason}});
+  emit({{"event","own_injection_receipt"},{"intent",c.intent_id},{"source_frame",c.source_frame_sequence},{"contact",c.contact_id},{"x",c.x},{"y",c.y},{"phase",static_cast<int>(c.phase)},{"scheduled",c.scheduled_ns},{"injection_start",r.injection_start_ns},{"injection_return",r.injection_return_ns},{"success",r.success},{"reason",r.reason}});
  };
  const auto begin=clock.now_ns();std::uint64_t initial_rss=rss(),peak_rss=initial_rss;std::size_t consumed=0,invalid=0;std::atomic<bool> safe=true;std::string stop;
  // Latest-only producer uses an 8ms cadence; no waiting for the consumer.
  const int cadence=scene=="slow"||n==10000?8:20;
- std::jthread producer([&]{auto start=std::chrono::steady_clock::now();try{for(int i=1;i<=n;++i){std::this_thread::sleep_until(start+std::chrono::milliseconds((i-1)*cadence));Frame f;f.sequence=i;f.epoch=f.generation=f.geometry_version=1;f.width=1280;f.height=720;f.stride=3840;f.source_rotation=1;f.capture_backend="offline_memory_stub";f.capture_complete_ns=f.pixels_ready_ns=clock.now_ns();samples[i].capture=f.capture_complete_ns;samples[i].published_ok=latest.publish(images[(i-1)%12].data(),1280*720*3,f);++publish_attempts;}}catch(...){safe=false;}done=true;});
+ const auto due_epoch=clock.now_ns();const auto producer_start=std::chrono::steady_clock::now();
+ if(!emit({{"event","producer_schedule"},{"epoch_ns",due_epoch},{"cadence_ms",cadence},{"requested",n},{"generator",streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB"}}))throw std::runtime_error("producer schedule Journal admission");
+ std::jthread producer([&]{const auto start=producer_start;try{for(int i=1;i<=n;++i){std::this_thread::sleep_until(start+std::chrono::milliseconds((i-1)*cadence));auto& sample=samples[i];sample.producer_due=due_epoch+Nanoseconds(i-1)*cadence*1'000'000;sample.render_start=clock.now_ns();if(streaming)streaming_workload::render(generated,i);sample.render_end=clock.now_ns();Frame f;f.sequence=i;f.epoch=f.generation=f.geometry_version=1;f.width=1280;f.height=720;f.stride=3840;f.source_rotation=1;f.capture_backend="offline_memory_stub";f.capture_complete_ns=f.pixels_ready_ns=sample.render_end;sample.capture=f.capture_complete_ns;const auto* pixels=streaming?generated.data():images[(i-1)%12].data();sample.published_ok=latest.publish(pixels,1280*720*3,f);sample.publication_return=clock.now_ns();++publish_attempts;}}catch(...){safe=false;}done=true;});
  bool supervisor_stopped=false;std::uint64_t seen=0;while(true){auto f=latest.read_after(seen,10'000'000);if(!f){if(done)break;continue;}seen=f->sequence;auto& s=samples[seen];s.consumed=true;s.published=f->published_ns;
   if(scene=="slow")std::this_thread::sleep_for(std::chrono::milliseconds(12));
   if(!supervisor_stopped&&!rt.dispatch(*f,mode=="B")){safe=false;stop=rt.owner.scheduler()&&!rt.owner.scheduler()->fault().empty()?rt.owner.scheduler()->fault():std::string(rt.ledger.reason());supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
@@ -84,19 +92,31 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report){
   s.complete=clock.now_ns();if(consumed%100==0)peak_rss=std::max(peak_rss,rss());
  }
  producer.join();const auto counters=latest.counters();latest.close();const auto release_start=clock.now_ns();const bool released=rt.finish();const auto release_end=clock.now_ns();journal.close();const auto end=clock.now_ns();
- std::vector<double> total,recognition,publish,all_attempt_latency;J raw=J::array();std::size_t writer_ok=0,not_consumed=0;
- for(int i=1;i<=n;++i){const auto& s=samples[i];if(s.consumed){total.push_back((s.complete-s.capture)/1e6);recognition.push_back((s.recognition-s.capture)/1e6);publish.push_back((s.published-s.capture)/1e6);writer_ok+=s.writer;}else ++not_consumed;
-  raw.push_back({{"attempt",i},{"capture",s.capture},{"published_ok",s.published_ok},{"consumed",s.consumed},{"owned",s.owned},{"published",s.published},{"owner_complete",s.recognition},{"journal_enqueue_complete",s.complete},{"observer_ns",s.observer},{"hook_ns",s.hook},{"owner_ns",s.owner},{"writer_ok",s.writer}});}
+ std::vector<double> total,recognition,publish,render_times,producer_late,render_owner,render_publication;std::size_t producer_overruns=0,publication_overruns=0;J raw=J::array();std::size_t writer_ok=0,not_consumed=0;
+ for(int i=1;i<=n;++i){const auto& s=samples[i];if(s.render_end){render_times.push_back((s.render_end-s.render_start)/1e6);producer_late.push_back((s.render_start-s.producer_due)/1e6);producer_overruns+=s.render_end>s.producer_due+Nanoseconds(cadence)*1'000'000;if(s.publication_return){render_publication.push_back((s.publication_return-s.render_start)/1e6);publication_overruns+=s.publication_return>s.producer_due+Nanoseconds(cadence)*1'000'000;}if(s.owned)render_owner.push_back((s.recognition-s.render_start)/1e6);}if(s.consumed){total.push_back((s.complete-s.capture)/1e6);recognition.push_back((s.recognition-s.capture)/1e6);publish.push_back((s.published-s.capture)/1e6);writer_ok+=s.writer;}else ++not_consumed;
+  raw.push_back({{"attempt",i},{"producer_due_ns",s.producer_due},{"render_start_ns",s.render_start},{"render_end_ns",s.render_end},{"publication_return_ns",s.publication_return},{"capture",s.capture},{"published_ok",s.published_ok},{"consumed",s.consumed},{"owned",s.owned},{"published",s.published},{"owner_complete",s.recognition},{"journal_enqueue_complete",s.complete},{"observer_ns",s.observer},{"hook_ns",s.hook},{"owner_ns",s.owner},{"writer_ok",s.writer}});}
  std::ofstream rows(report+".attempts.json");rows<<raw.dump()<<'\n';if(!rows)throw std::runtime_error("attempt write");
  J result={{"schema","pas.prelive-complete-chain-cost.v1"},{"mode",mode},{"scene",scene},{"attempts",publish_attempts.load()},{"requested",n},{"consumed",consumed},{"owner_seen",consumed},{"owner_seen_fraction",double(consumed)/n},{"published",counters.published},{"pool_drops",counters.pool_drops},{"consumer_skips",counters.consumer_skips},{"unconsumed",not_consumed},{"writer_ok",writer_ok},{"writer_drops",journal.debug_drops()},{"writer_fault",journal.faulted()},{"raw_proposals",rt.raw},{"eligible",rt.accepted},{"unknown",rt.unknown},{"invalid",invalid},{"own_down",rt.backend.downs},{"own_move",rt.backend.moves},{"own_up",rt.backend.ups},{"injection_failed",rt.backend.failed},{"safe",safe.load()},{"stop",stop},{"release_verified",released},{"release_ms",(release_end-release_start)/1e6},{"capture_to_owner_journal_ms",distribution(total)},{"capture_to_owner_ms",distribution(recognition)},{"capture_to_publish_ms",distribution(publish)},{"wall_ms",(end-begin)/1e6},{"rss_initial",initial_rss},{"rss_peak_sampled",peak_rss},{"rss_sampling_frames",100},{"pool_slots",3},{"latest_capacity",1},{"writer_capacity",writer_capacity},{"sample_storage_bound",n+1},{"hook_storage_bytes",Hook::storage_bytes()},{"clock_domain","host_QPC"},{"source_absolute_age",nullptr},{"device_endpoints",0},{"transport","offline FakeTouch receipts; no real capture/RPC cost"},{"physical_opportunities",nullptr},{"runtime_cost_gate","NOT_READY until frozen AA/AB and complete safety review"}};
  std::size_t owned=0;std::vector<double> owned_total;for(const auto&s:samples)if(s.owned){++owned;owned_total.push_back((s.recognition-s.capture)/1e6);}result["owner_seen"]=owned;result["owner_seen_fraction"]=double(owned)/n;result["capture_to_owner_ms"]=distribution(owned_total);
  J measurement;std::vector<double> mt,mo,mh,mr;std::size_t mn=0;for(int i=257;i<=n;++i){const auto& s=samples[i];if(!s.owned)continue;++mn;mt.push_back((s.recognition-s.capture)/1e6);mo.push_back(s.owner/1e6);mh.push_back(s.hook/1e6);mr.push_back(s.observer/1e6);}measurement={{"attempts",n-256},{"owner_seen",mn},{"owner_seen_fraction",double(mn)/(n-256)},{"capture_to_owner_ms",distribution(mt)},{"observer_ms",distribution(mr)},{"hook_ms",distribution(mh)},{"owner_ms",distribution(mo)}};
  result["measurement"]=measurement;result["warmup_attempts"]=256;result["cadence_ms"]=cadence;
  result["phase_lateness_ms"]={{"down",distribution(phase_late[0])},{"move",distribution(phase_late[1])},{"up",distribution(phase_late[2])}};result["journal_admitted_bytes"]=journal_bytes;result["journal_records"]=journal_records;result["journal_admission_failed"]=admission_failed;result["supervisor_stopped"]=supervisor_stopped;result["final_release"]={{"requested",rt.final_release.requested_ids},{"failed",rt.final_release.failed_ids},{"unknown",rt.final_release.unknown_ids},{"start",rt.final_release.start_ns},{"return",rt.final_release.return_ns}};
- result["injection_ms"]=distribution(injection);result["all_phase_lateness_ms"]=distribution(late);result["evidence_to_injection_ms"]=distribution(evidence_to_injection);result["receipt_count"]=receipt_count;result["release_calls"]=release_calls;return result;
+ result["injection_ms"]=distribution(injection);result["all_phase_lateness_ms"]=distribution(late);result["evidence_to_injection_ms"]=distribution(evidence_to_injection);result["receipt_count"]=receipt_count;result["release_calls"]=release_calls;result["provenance"]=provenance;
+ result["producer_epoch_ns"]=due_epoch;result["producer_render_ms"]=distribution(render_times);result["producer_schedule_lateness_ms"]=distribution(producer_late);result["render_start_to_owner_ms"]=distribution(render_owner);result["producer_deadline_overruns"]=producer_overruns;result["render_start_to_publication_return_ms"]=distribution(render_publication);result["publication_deadline_overruns"]=publication_overruns;
+ result["renderer_storage_bytes"]=streaming?streaming_workload::bytes:12*streaming_workload::bytes;result["generator"]=streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB";result["render_timing_scope"]="render start/end separately measured; capture_complete is end of synthetic render; render_start_to_owner includes render; no real capture/RPC qualification";
+ return result;
 }
 }
-int main(int argc,char**argv){try{if(argc<4)throw std::runtime_error("usage pixels selection report OR pipeline A/B scene n report");const std::string report=argv[argc-1];if(std::filesystem::exists(report)||std::filesystem::exists(report+".journal.jsonl"))throw std::runtime_error("fresh report");J result;
- if(std::string_view(argv[1])=="pixels"&&argc==4)result=pixels(argv[2],report);else if(std::string_view(argv[1])=="pipeline"&&argc==6)result=pipeline(argv[2],argv[3],std::stoi(argv[4]),report);else throw std::runtime_error("offline CLI only; no endpoint argument");
+int main(int argc,char**argv){try{if(argc<4)throw std::runtime_error("usage pixels selection report OR pipeline A/B scene n report");const std::string report=argv[argc-1];reserve_fresh_offline_report(report);J result;
+ if(std::string_view(argv[1])=="pixels"&&argc==4)result=pixels(argv[2],report);else if(std::string_view(argv[1])=="pipeline"&&argc==6)result=pipeline(argv[2],argv[3],std::stoi(argv[4]),report);
+ else if(std::string_view(argv[1])=="pipeline"&&argc==8){
+  FILETIME created{},exited{},kernel{},user{};if(!GetProcessTimes(GetCurrentProcess(),&created,&exited,&kernel,&user))throw std::runtime_error("producer process time");
+  const auto created_ticks=(std::uint64_t(created.dwHighDateTime)<<32)|created.dwLowDateTime;
+  wchar_t executable[32768];const auto length=GetModuleFileNameW(nullptr,executable,32768);if(length==0||length>=32768)throw std::runtime_error("producer module path");
+  HostClock clock;const J process={{"pid",GetCurrentProcessId()},{"creation_filetime",created_ticks},{"run_start_ns",clock.now_ns()}};
+  const auto provenance=pas::cost_provenance::producer(argv[5],argv[6],executable,argv[2],argv[3],std::stoi(argv[4]),report,process);
+  result=pipeline(argv[2],argv[3],std::stoi(argv[4]),report,provenance);
+  if(pas::cost_provenance::producer(argv[5],argv[6],executable,argv[2],argv[3],std::stoi(argv[4]),report,process)!=provenance)throw std::runtime_error("producer freeze changed during run");
+ }else throw std::runtime_error("offline CLI only; no endpoint argument");
  result["loaded_module_paths"]=modules();result["rss_peak_os"]=peak_rss_os();std::ofstream out(report);out<<result.dump(2)<<'\n';if(!out)return 2;std::cout<<result.at("schema")<<'\n';return result.value("release_verified",false)?0:1;
  }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}

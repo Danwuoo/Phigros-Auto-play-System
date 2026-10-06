@@ -1,0 +1,8 @@
+{
+  "path": "/workspace/shared/phigros-audit-counterexamples-20261006-02/cases/500ms-raw-latency-green-summary.json",
+  "schema": "pas.current-rails-run-gate.v1",
+  "validity": {
+    "failures": [],
+    "pass": true
+  }
+}

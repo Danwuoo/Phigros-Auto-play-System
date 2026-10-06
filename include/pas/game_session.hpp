@@ -39,9 +39,11 @@ struct SessionObservation {
 class SessionPerception final {
 public:
     SessionPerception(const Clock& clock,Nanoseconds watchdog=0):clock_(clock),observer_(clock),lifecycle_(watchdog) {}
-    SessionObservation process(const Frame&);
+    SessionObservation process(const Frame&,bool retain_candidate_batch=false);
+    const CandidateBatch* candidate_batch() const {return candidate_batch_?&*candidate_batch_:nullptr;}
 private:
     const Clock& clock_;GameObserver observer_;PlaySessionLifecycle lifecycle_;
+    std::optional<CandidateBatch> candidate_batch_;
 };
 // Wraps the linked gameplay strategy; a new owner is created only for a new round.
 // Gate/source revocations cancel contacts while retaining completion identity.

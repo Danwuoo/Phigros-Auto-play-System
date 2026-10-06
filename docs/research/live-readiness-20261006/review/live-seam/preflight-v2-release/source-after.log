@@ -1,0 +1,17 @@
+src/game_session.cpp: OK
+include/pas/game_session.hpp: OK
+include/pas/candidate_admission.hpp: OK
+include/pas/candidate_packet.hpp: OK
+research/prelive_current/current.cpp: OK
+research/prelive_current/current.hpp: OK
+research/prelive_current/runtime.hpp: OK
+research/prelive_current/owner_candidate_step.hpp: OK
+research/prelive_current/receipt_stream.hpp: OK
+research/prelive_current/own_bridge.cpp: OK
+research/prelive_current/own_bridge.hpp: OK
+research/prelive_current/cost_workload_family_v2.hpp: OK
+research/live_readiness_review/live_seam_runtime_review_v2.cpp: OK
+out/disabled-live-seam-release.Sk02tN/src_game_session.cpp.o: OK
+out/disabled-live-seam-release.Sk02tN/research_prelive_current_own_bridge.cpp.o: OK
+out/prelive-portable-release.aA8eHf/portable_current.a: OK
+/workspace/shared/phigros-live-deps-20261006-patched/nlohmann/json.hpp: OK

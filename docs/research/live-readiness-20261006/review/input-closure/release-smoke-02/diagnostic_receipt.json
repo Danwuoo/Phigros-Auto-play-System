@@ -1,0 +1,33 @@
+{
+  "schema": "pas.input-closure-independent-diagnostic.v1",
+  "configuration": "Linux GCC Release",
+  "pass": true,
+  "checks": 35,
+  "negative_controls": 31,
+  "all_seed_artifacts_unchanged": true,
+  "seed_files_checked": 202,
+  "actual_source_and_campaign_bindings_checked": 131,
+  "test_source": {
+    "bytes": 14895,
+    "path": "/workspace/shared/phigros-live-readiness-20261006/research/prelive_current/tests/input_closure_review_tests.cpp",
+    "sha256": "99f3c0ad5149af78f864ca5da3c4f42f21cb6526b502ae200616a72a959fcbbb"
+  },
+  "binary": {
+    "path": "/workspace/shared/phigros-input-closure-review-smoke-20261006-02/review-tests",
+    "bytes": 458792,
+    "sha256": "03ccc813fa3362fb57ed83c54aa5902ba4f15d7c67ed684fd937df2f5743223c"
+  },
+  "result": {
+    "path": "/workspace/shared/phigros-input-closure-review-smoke-20261006-02/controls/review_result.json",
+    "bytes": 246377,
+    "sha256": "bba07e6b6e72a33362969c896f91d66d799d4951607f7c8b86f31d0841c60d75"
+  },
+  "fixture_root": "/workspace/shared/phigros-closure-smoke-20261006-02/fixtures",
+  "generated_control_root": "/workspace/shared/phigros-input-closure-review-smoke-20261006-02/controls",
+  "compile_exit": 0,
+  "run_exit": 0,
+  "actual_cost_ready": false,
+  "live_ready": false,
+  "source_sha_check": "all OK",
+  "scope": "Small diagnostic only. The final three-mode same-tuple matrix remains the parent task responsibility."
+}

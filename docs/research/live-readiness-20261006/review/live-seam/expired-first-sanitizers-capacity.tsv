@@ -1,0 +1,6 @@
+stage	available_bytes	guard
+compile_before	21860700160	96MiB compile reserve plus 20GiB floor
+compile_after	21804679168	16MiB write reserve plus 20GiB floor
+compile_before	21804654592	96MiB compile reserve plus 20GiB floor
+compile_after	21774716928	16MiB write reserve plus 20GiB floor
+completed	21744955392	16MiB write reserve plus 20GiB floor

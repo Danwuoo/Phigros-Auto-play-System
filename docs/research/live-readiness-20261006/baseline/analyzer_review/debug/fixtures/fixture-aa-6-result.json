@@ -1,0 +1,19 @@
+{
+  "facts": {
+    "active_final": 0,
+    "created": true,
+    "creation_filetime": 1005,
+    "errors": [],
+    "errors_overflow": false,
+    "exit_code": 0,
+    "held_all_signaled": true,
+    "identity_trusted": true,
+    "natural_quiescence": true,
+    "pid": 6,
+    "root_image": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/seed-tests",
+    "runner_exit": 0,
+    "streams_completed": true
+  },
+  "pending": false,
+  "stage": "fixture-aa-6"
+}

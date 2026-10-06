@@ -1,0 +1,13 @@
+COMPILE src/core.cpp
+COMPILE src/game.cpp
+COMPILE src/game_motion.cpp
+COMPILE src/game_tracking.cpp
+COMPILE src/game_session.cpp
+COMPILE research/bvi_cold_v3/bvi.cpp
+COMPILE research/bvi_cold_v3/contact_policy.cpp
+COMPILE research/bvi_cold_v3/relation_policy.cpp
+COMPILE research/bvi_cold_v3/constraint_policy.cpp
+COMPILE research/bvi_windows/bridge/bridge.cpp
+COMPILE research/hold_front_current/front.cpp
+COMPILE research/prelive_current/own_bridge.cpp
+COMPILE research/prelive_current/current.cpp

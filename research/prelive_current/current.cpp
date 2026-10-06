@@ -1,4 +1,5 @@
 #include "current.hpp"
+#include "tail_current.hpp"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -105,21 +106,73 @@ Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionS
     }
    }
   }
+  // A terminal-only proof is independent of body-at-line/Move permission.
+  // It can only refer to this candidate's own already active contact.
+  std::optional<GameTarget> terminal_only;
+  if(s.active&&n.tail&&!n.held_body_patch&&c.head_visible&&target->samples>0&&
+     !target->line_projection_only&&target->evidence_ns==f.capture_complete_ns){
+   auto rear_candidate=c;rear_candidate.note.center=*n.tail;rear_candidate.note.tail=front;
+   const auto rear=current_tail::measure(f,b,rear_candidate);out.probes+=rear.probes;
+   if(rear.boundary){
+    bool competing_note=false;
+    for(const auto& other:b.candidates)if(&other!=&c){
+     if(!finite(other.note.center)||!std::isfinite(other.note.width)){competing_note=true;continue;}
+     const auto near=[&](Vec2 p){const auto d=sub(p,*rear.boundary);return
+       std::abs(dot(d,n.tangent))<(n.width+other.note.width)/2&&
+       std::abs(dot(d,normal))<=hold_front::radius;};
+     competing_note|=near(other.note.center)||(other.note.tail&&near(*other.note.tail));
+    }
+    int count=0;const LineCandidate* line=nullptr;
+    for(const auto& l:b.lines){const auto d=sub(*rear.boundary,l.center);
+     if(std::abs(dot(d,Vec2{-l.tangent.y,l.tangent.x}))<=hold_front::radius&&
+        std::abs(dot(d,l.tangent))<=l.length/2){++count;line=&l;}}
+    if(!competing_note&&count==1&&line&&line->association_valid&&line->track_id&&
+       line->track_id==target->line_id){
+     const Vec2 ln{-line->tangent.y,line->tangent.x};
+     const double depth=dot(sub(n.center,*rear.boundary),ln);
+     const double passed=dot(sub(*rear.boundary,line->center),ln)*(depth<0?-1:1);
+     if(std::abs(depth)>=2&&passed>=0){
+      auto t=*target;t.note.tail=*rear.boundary;t.crossing_ns.reset();t.tail_crossing_ns.reset();
+      t.note.held_body_evidence=false;t.note.head_on_line=false;
+      t.hit=add(*rear.boundary,ln,-dot(sub(*rear.boundary,line->center),ln));
+      t.current_contact=GameTarget::CurrentContact::hold_tail_only;
+      t.tail_terminal_proof=GameTarget::TailTerminalProof{expected,f.pixels_ready_ns,s.note,
+        line->track_id,c.candidate_id,*rear.boundary,rear.left_rail_rows,rear.right_rail_rows,
+        rear.terminal_clusters,b.lines.size(),rear.probes,true};
+      t.reason="current_rails_v1_tail_only_release";
+      terminal_only=std::move(t);
+     }
+    }
+   }
+  }
+  const auto emit_terminal_only=[&](){
+   if(!terminal_only)return false;
+   s.line=terminal_only->line_id;s.unique=true;s.tail=true;s.accepted=true;
+   s.reason="own_active_current_tail_only_release";
+   out.filtered.targets.push_back(std::move(*terminal_only));++out.accepted;return true;
+  };
   // A body patch uses its current interior region; it never invents a head.
   int competitors=0;const LineCandidate* selected=nullptr;
   for(const auto& l:b.lines){
    const Vec2 ln{-l.tangent.y,l.tangent.x};const double denominator=dot(normal,ln);
    if(std::abs(denominator)<1e-6)continue;
    const double k=-dot(sub(front,l.center),ln)/denominator;const auto hit=add(front,normal,k);
-   const double body_depth=n.tail?dot(sub(front,*n.tail),normal):0;
+   // The formal moving-held-front observer measures local rail depth but
+   // deliberately omits a tail until a current transverse closure supports it.
+   // An OWN active contact may use that finite depth only as a coarse spatial
+   // bound. Every continuation still needs current RGB body/rails below; this
+   // neither creates an entry nor turns the depth endpoint into tail evidence.
+   const bool measured_active_depth=s.active&&n.held_body_evidence&&n.rails_geometry&&
+       !n.held_body_patch&&!n.tail&&std::isfinite(n.height)&&n.height>0&&n.height<=4095;
+   const double body_depth=n.tail?dot(sub(front,*n.tail),normal):measured_active_depth?n.height:0;
    const bool in_body=n.held_body_patch?std::abs(k)<=16:(body_depth>=0?k<=4&&k>=-body_depth-4:k>=-4&&k<=-body_depth+4);
    if(!in_body||std::abs(dot(sub(hit,l.center),l.tangent))>l.length/2)continue;
    ++competitors;selected=&l;s.hit=hit;
   }
   s.unique=competitors==1&&selected&&selected->association_valid&&selected->track_id&&selected->track_id==target->line_id&&!target->line_projection_only;
-  if(!s.unique){s.reason="all_lines_compete_or_invalid";++out.unknown;continue;}s.line=selected->track_id;
+  if(!s.unique){if(emit_terminal_only())continue;s.reason="all_lines_compete_or_invalid";++out.unknown;continue;}s.line=selected->track_id;
   s.rows=body_rows(read,n,s.hit,b,s.effect);s.body=s.rows>=6&&!s.effect;
-  if(!s.body){s.reason=s.effect?"effect_not_current_body":"body_support_insufficient";++out.unknown;continue;}
+  if(!s.body){if(emit_terminal_only())continue;s.reason=s.effect?"effect_not_current_body":"body_support_insufficient";++out.unknown;continue;}
   auto t=*target;t.hit=s.hit;t.evidence_ns=f.capture_complete_ns;t.expires_ns=f.capture_complete_ns+100*ms;t.note.rails_geometry=true;
   if(s.active){
    t.note.held_body_evidence=true;t.note.head_on_line=false;
@@ -127,7 +180,17 @@ Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionS
    // Tail remains measured only if the opposite terminal is supported now.
    if(n.tail&&!n.held_body_patch){auto tail=c;tail.note.center=*n.tail;tail.note.tail=front;
     const auto rear=hold_front::measure(f,b.context,tail);out.probes+=rear.probes;
-    if(rear.boundary){t.note.tail=*rear.boundary;s.tail=true;}else {t.note.tail.reset();t.tail_crossing_ns.reset();}}
+    // The immutable front donor is line-blind. Its strongest rear edge may
+    // actually be the judgment line, so masked WHITE witnesses cannot become
+    // a tail. Actual cyan/black witnesses remain pixel evidence inside a mask.
+    const bool rear_clear=rear.boundary&&std::all_of(rear.lanes.begin(),rear.lanes.end(),[&](const auto& lane){
+     const auto masked_white=[&](const auto& pixel){
+      return white({pixel.rgb[0],pixel.rgb[1],pixel.rgb[2]})&&
+             line_mask({double(pixel.x),double(pixel.y)},b);
+     };
+     return !masked_white(lane.inside)&&!masked_white(lane.outside);
+    });
+    if(rear_clear){t.note.tail=*rear.boundary;s.tail=true;}else {t.note.tail.reset();t.tail_crossing_ns.reset();}}
    else {t.note.tail.reset();t.tail_crossing_ns.reset();}
    s.accepted=true;s.reason="own_down_current_body_move";
   }else{

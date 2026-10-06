@@ -1,0 +1,27 @@
+In file included from research/prelive_current/tests/offline_output_tests.cpp:1:
+research/prelive_current/tests/../offline_output.hpp: In function ‘void pas::current_rails::require_fresh_offline_report(const std::filesystem::__cxx11::path&)’:
+research/prelive_current/tests/../offline_output.hpp:16:79: error: a function-definition is not allowed here before ‘{’ token
+   16 | inline void reserve_fresh_offline_report(const std::filesystem::path& report) {
+      |                                                                               ^
+research/prelive_current/tests/offline_output_tests.cpp: In lambda function:
+research/prelive_current/tests/offline_output_tests.cpp:24:86: error: ‘reserve_fresh_offline_report’ is not a member of ‘pas::current_rails’; did you mean ‘require_fresh_offline_report’?
+   24 |  auto reserve=[&]{while(!go.load())std::this_thread::yield();try{pas::current_rails::reserve_fresh_offline_report(concurrent);++accepted;}catch(const std::exception&) {}};
+      |                                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                      require_fresh_offline_report
+research/prelive_current/tests/offline_output_tests.cpp: In function ‘int main(int, char**)’:
+research/prelive_current/tests/offline_output_tests.cpp:26:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   26 |  if(accepted!=1||!fs::is_directory(concurrent.string()+".reservation"))throw std::runtime_error("atomic reservation failed");++checks;
+      |  ^~
+research/prelive_current/tests/offline_output_tests.cpp:26:126: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   26 |  if(accepted!=1||!fs::is_directory(concurrent.string()+".reservation"))throw std::runtime_error("atomic reservation failed");++checks;
+      |                                                                                                                              ^~
+research/prelive_current/tests/offline_output_tests.cpp:27:43: error: ‘reserve_fresh_offline_report’ is not a member of ‘pas::current_rails’; did you mean ‘require_fresh_offline_report’?
+   27 |  bool rerun=false;try{pas::current_rails::reserve_fresh_offline_report(concurrent);}catch(...){rerun=true;}
+      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                           require_fresh_offline_report
+research/prelive_current/tests/offline_output_tests.cpp:28:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   28 |  if(!rerun)throw std::runtime_error("reservation reopened");++checks;
+      |  ^~
+research/prelive_current/tests/offline_output_tests.cpp:28:61: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   28 |  if(!rerun)throw std::runtime_error("reservation reopened");++checks;
+      |                                                             ^~

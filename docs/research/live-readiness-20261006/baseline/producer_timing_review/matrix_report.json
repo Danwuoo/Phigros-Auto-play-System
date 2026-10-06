@@ -1,0 +1,90 @@
+{
+  "schema": "pas.producer-admission-independent-matrix.v1",
+  "matrix": [
+    {
+      "mode": "release",
+      "flags": "-O2 -DNDEBUG",
+      "seed_checks": 36,
+      "seed_pass": true,
+      "admission_checks": 137,
+      "admission_semantic_checks": 21,
+      "source_checks": 116,
+      "admission_pass": true,
+      "fixture_restore_checks": 32,
+      "producer_cases": 14,
+      "producer_pass": true,
+      "matrix_exit": 0,
+      "actual_cost_ready": false
+    },
+    {
+      "mode": "debug",
+      "flags": "-O0 -g1 -D_GLIBCXX_ASSERTIONS",
+      "seed_checks": 36,
+      "seed_pass": true,
+      "admission_checks": 137,
+      "admission_semantic_checks": 21,
+      "source_checks": 116,
+      "admission_pass": true,
+      "fixture_restore_checks": 32,
+      "producer_cases": 14,
+      "producer_pass": true,
+      "matrix_exit": 0,
+      "actual_cost_ready": false
+    },
+    {
+      "mode": "sanitizers",
+      "flags": "-O1 -g1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+      "seed_checks": 36,
+      "seed_pass": true,
+      "admission_checks": 137,
+      "admission_semantic_checks": 21,
+      "source_checks": 116,
+      "admission_pass": true,
+      "fixture_restore_checks": 32,
+      "producer_cases": 14,
+      "producer_pass": true,
+      "matrix_exit": 0,
+      "actual_cost_ready": false
+    }
+  ],
+  "identical_source_bindings_all_modes": true,
+  "common_source_files": 116,
+  "explicit_frozen_key_files": 17,
+  "archive": {
+    "path": "synthetic-evidence.zip",
+    "bytes": 4279043,
+    "sha256": "0296b8274b3f379e3ddb1b8ba9a5f52df8938e73c57380b5d1592f0b48472592",
+    "payload_files": 731,
+    "expanded_payload_bytes": 61759402,
+    "all_payload_sha_and_crc_verified": true,
+    "compiler_products_excluded": [
+      "admission-review",
+      "audit.o",
+      "producer-review",
+      "seed"
+    ]
+  },
+  "historical_counterexample": {
+    "source_sha256": "041b374d045be3beed055bf578d60451df035c75c4a6c927cc43333be0e1e559",
+    "result": {
+      "counterexample_only": true,
+      "original_overruns": 3,
+      "shifted_lateness_ms": [
+        -999.0,
+        -999.0,
+        -999.0
+      ],
+      "shifted_overruns": 0
+    },
+    "reconstructed_snapshot_hash_matched_existing_manifest": true
+  },
+  "scope": "Synthetic raw evidence is processed by actual C++ auditor and numeric analyzer; seeded campaign/process records are explicit test doubles. No Windows candidate pipeline or device run.",
+  "leak_check": "unsupported under ptrace; disabled for ASan+UBSan",
+  "Windows_MSVC_build": "not_run",
+  "actual_cost_ready": false,
+  "live_ready": false,
+  "source_test": {
+    "path": "research/prelive_current/tests/producer_admission_review_tests.cpp",
+    "sha256": "52724fd3116d708c7f7b0e8a1d0a6ebc8d45c343e4f8cc4c80c8f85b85dadddf"
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "schema": "pas.cloud-prelive-readiness.v1",
+  "date": "2026-10-06",
+  "base_commit": "e9e305e3aba13f05a786c74540419428610b2f76",
+  "verdict": "COLD_VERIFIED_FOR_WINDOWS_QUALIFICATION",
+  "live_ready": false,
+  "product_goal_complete": false,
+  "source_identity": {
+    "final_cpp_sha256": {
+      "src/game.cpp": "e6b8412e0c923321b19b8962df9159ca60d23c585f4a0943cc5a61c30e4a48f8",
+      "include/pas/game.hpp": "5334b6d35696d09cb15d2a3482a3116ea3c737286a1bd16e7cd4ec2b48ee23c1",
+      "research/prelive_current/current.cpp": "810c60301604770dbcde12d312a60784489ea0bedcf5db95bbb761761c486691",
+      "research/prelive_current/tail_current.hpp": "45523b5c805569654721a53b3d2a24f016689f761bfa2f613c2f6d8419ac7d0e",
+      "research/prelive_current/runtime.hpp": "e4d7132030c363efe6ac815f0945c8145babfff4f9214a6adff94714f4aeb570",
+      "research/prelive_current/chain.cpp": "7dc89bf9318e1e57faa9d288c8a9f22aaccefa3e086ac88b600afcde92988cd4",
+      "research/prelive_current/campaign_provenance.hpp": "6bbc8580e83bedb67830dca0d6be02110e8de455cdd9a979687e56d16406c7f0",
+      "research/prelive_current/cost_analysis.cpp": "ba7b9ba1473818899ea4e0cd78f5e5fe8f049fbeea05f0d4e9091ca525b762fd",
+      "research/prelive_current/streaming_workload.hpp": "1601f5cf17d253ce7f51ae8d75a9ca5e6af99b9caa6a0757c56913c64446b407",
+      "research/prelive_current/producer_timing.hpp": "23e575ef9c61fd082a197cb7dd46904d05717b0aa1eda82117d52ca39722b32f",
+      "research/prelive_current/offline_output.hpp": "52ec5412fa9aa1d3335748771a2dc4360d010e64f54f6c64db2831f9ddb81d61",
+      "research/prelive_audit/audit.cpp": "49fac8a480e9828ada16d8833253071f8d8c21c341073b5f6ef4706dce6d2024",
+      "research/prelive_current/owner_candidate_step.hpp": "d4c6b3cdc26369fbce7e7e3c772942e745555ca5e8b99810282902a14f9e9573",
+      "research/prelive_current/receipt_stream.hpp": "2666262c5f38b37f3342ccf61fa5117e508be3964ce6f12bf661855bfc073233",
+      "research/prelive_current/input_closure.hpp": "96a1cf40e7ab39cd0fcd76978a893373b564bd599632a59c730b5978ae426a7a",
+      "include/pas/candidate_admission.hpp": "200d103b3c9126b0729d090f304ed6b81903ce62d25e20cf68c73ea912fd936f",
+      "include/pas/candidate_packet.hpp": "330055aee90994d7c99162079e906b7ad1f5242e7e1d0cd9dae53698cf1dad50",
+      "src/manual_session.cpp": "c4d79bb5f27b03e373c447716fae305542ef4ce8f0489cac71ec9d8a320641f5",
+      "src/game_session.cpp": "3a1565fe9c6b75feb791882fe322d5e9dfbdec9f9de7c61c91b9b31df6eb059a",
+      "include/pas/game_session.hpp": "3a0975c82096f1cf59f278a002acd527c4e6aa7979a556561d395f8f44d512ba",
+      "include/pas/runtime.hpp": "232a237b85928191fa4e946a8a1726a2cae58f9142062907b769006f6ee5e118",
+      "CMakeLists.txt": "d96c70f1cb03547cfe9853258df811007df7c6ee1d89fdbe2308b8ed3d230a43"
+    },
+    "commit_and_tree": "See HANDOFF_MANIFEST.json in the delivery package; no self-referential commit field in this tracked report"
+  },
+  "software_cold_verification": {
+    "status": "PASS_COLD_SHARED_CORE_WITH_EXPLICIT_WINDOWS_LIMITS",
+    "configurations": [
+      "release",
+      "debug_assertions",
+      "asan_ubsan"
+    ],
+    "portable_checks_per_configuration": 1339,
+    "check_executions": 4017,
+    "flick_cases_per_configuration": 1,
+    "producer_admission_checks_per_configuration": {
+      "seed": 36,
+      "admission_source": 123,
+      "admission_semantic": 29,
+      "input_closure_total": 35,
+      "input_closure_negative": 31,
+      "actual_auditor_synthetic_cases": 14
+    },
+    "helper_checks_per_configuration": {
+      "streaming_pixels": 252,
+      "producer_arithmetic": 15,
+      "output_reservation": 9
+    },
+    "decoder_controls_per_configuration": 11,
+    "original_WIC_samples_byte_exact": 108,
+    "real_prefix": {
+      "report_sha256": "1c41c6a2842284d6c1bc5e28ad92fa2fb41dab55059003aaaffcd3db830d4683",
+      "frames": 3063,
+      "processed": 3063,
+      "event_rows": 9889,
+      "event_bytes": 27594746,
+      "receipts": 227,
+      "phases": [
+        55,
+        121,
+        51
+      ],
+      "release_calls": 140,
+      "raw_integrity": true,
+      "all_input_processed": true,
+      "full_plan_coordinate_prefix_joins": true,
+      "release_uncertainty": false,
+      "release_verified": true,
+      "active_final": 0,
+      "ledger_valid": true,
+      "typed_tail_targets": 0,
+      "typed_tail_plans": 0,
+      "tail_confirmations": 0,
+      "normal_tail_ups": 0,
+      "failed_injection_receipts": 0,
+      "physical_opportunity_denominator": null
+    },
+    "same_final_cpp_sources": true,
+    "Windows_recipe_execution": "NOT_RUN: latest source-only static receipt passes; no PowerShell parser, CMake configure or Windows execution claimed",
+    "leak_scanner": "unsupported under ptrace; disabled, initial failure retained",
+    "original_frozen_3938_assertions_rerun": false,
+    "original_Windows_186_affected_tests_rerun": false,
+    "groups_per_configuration": {
+      "existing_core_scheduler_tail_family": 1132,
+      "focused_shared_seam": 47,
+      "independent_packet": 63,
+      "independent_runtime_including_expiry": 97
+    },
+    "complete_test_and_prefix_executables_rebuilt": true,
+    "library_reuse": "13 TU library reused only after actual per-mode GCC-MM non-system dependency, flags/toolchain, source and member-byte identity proof; all tests/prefix rebuilt and full matrices rerun",
+    "historical_system_header_SHA_attestation": false,
+    "Windows_production_branch_compiled": false,
+    "producer_admission_reuse": "Cost control binaries restored with CRC/SHA; actual15 compiler dependency expansions prove C++ inputs unchanged; all final source-data fixtures/cases rerun in3modes",
+    "expired_first_fixed_counterexample": {
+      "old_evidence_ms": 1620,
+      "old_lease_due_ms": 1720,
+      "next_capture_ms": 1640,
+      "owner_now_ms": 1720,
+      "before_accept_first_active": 1,
+      "after_both_orders_active": 0,
+      "both_orders_down": 1,
+      "new_assertions": 6,
+      "old_91_assertions_preserved": true
+    },
+    "Windows_recipe_static_receipt": "research/prelive_current/windows_recipe_evidence/static-review-10.json",
+    "Windows_recipe_static_checks": 119
+  },
+  "measurement_design": {
+    "status": "FIXED_CORPUS_AND_ADMISSION_TOOLING_VERIFIED_NOT_COST_QUALIFIED",
+    "original_generator_preserved": true,
+    "new_scene": "hold-closed-reset-v2",
+    "phases": 81,
+    "offsets": [
+      -2,
+      0,
+      2
+    ],
+    "RGB_variants_byte_exact": 243,
+    "RGB_buffer_bytes": 2764800,
+    "baseline_A": "shared entry and safety release; no normal-tail claim",
+    "candidate_B": "shared entry plus sustained body and typed normal-tail work",
+    "equivalent_full_Hold_work": false,
+    "synthetic_normal_tail_completions_per_configuration": 24,
+    "real_prefix_typed_tail_targets": 0,
+    "real_prefix_normal_tail_ups": 0,
+    "real_prefix_physical_opportunity_denominator": null,
+    "tail_colour_scope": "requires six cyan interior support rows; neutral/gray body continuation alone does not establish terminal eligibility",
+    "thresholds_relaxed": false,
+    "all_attempt_producer_timestamps": true,
+    "same_host_windows_cost_runs": 0,
+    "current_candidate_B": "shared entry, sustained body, typed normal-tail and expired-first owner-step ordering",
+    "production_packet_hop_cost": "NOT_MEASURED: real Win32 perception/packet/action hop differs from endpoint-free producer",
+    "current_source_cost_qualified": false
+  },
+  "same_host_windows_qualification": {
+    "status": "NOT_RUN",
+    "required": [
+      "fresh source-migrated MSVC Release/Debug/ASan endpoint-free builds/tests/families",
+      "separate fresh root production build covering complete Win32 manual-session/runtime branches",
+      "fresh native-process/tool/dependency/source/profile closure and original3063 WIC replay/audit",
+      "predeclared same-host Release A/A with adequate noise; only then freeze T and necessary bounded ABBA",
+      "qualify the actual Win32 perception/packet/action/wake/pool/diagnostic chain and real capture/RPC before physical use"
+    ],
+    "original_AA_hold_zero_actions_STOP_preserved": true,
+    "original_Tap_noise_inadequate_preserved": true,
+    "original_ABBA_not_run_preserved": true,
+    "source_migration_manifest": "SOURCE_MIGRATION.json with final commit and canonical old/new LF/CRLF proofs in delivery",
+    "native_freeze_cap_unchanged_bytes": 65536,
+    "bounded_input_closure": {
+      "leaves_max": 128,
+      "files_per_leaf_max": 64,
+      "files_total_max": 8192,
+      "before_after_receipt_required": true,
+      "underlying_core_COMPLETE_alone_sufficient": false
+    }
+  },
+  "live_and_physical": {
+    "status": "NOT_READY",
+    "live_cli_integrated": false,
+    "device_read_commands": 0,
+    "device_touch_commands": 0,
+    "new_live_runs": 0,
+    "permission_granted_for_device_work": false,
+    "physical_gold": 0,
+    "actual_game_adoption": "unknown",
+    "required": [
+      "derive and implement admission validator only from actual approved Windows qualification receipts; AA ready never enables live",
+      "explicit permission for bounded device-specific commands and touch",
+      "current device/app/profile/capability/five-contact mapping",
+      "physical Hold entry/body/tail, gray/neutral tails, line occlusion and unresolved identity semantics",
+      "same frozen candidate safe release, full evidence audit and actual game adoption"
+    ],
+    "production_candidate_CXX_API_integrated": true,
+    "shared_action_step_cold_verified": true,
+    "existing_donor_CLI_unchanged": true,
+    "live_admission": "UNQUALIFIED",
+    "qualified_live_admission_validator_implemented": false,
+    "admission_side_effect_spy_calls": 0,
+    "Windows_production_adapter_executed": false
+  },
+  "product": {
+    "goal": "Chapter Legacy all tracks unlocked at IN and same frozen candidate complete IN Miss=0 per track",
+    "current_roster": null,
+    "current_all_IN_unlocks": null,
+    "complete_all_track_results": false,
+    "AP_required": false,
+    "three_consecutive_successes_required": false
+  },
+  "preservation": {
+    "latest_seal_entries_verified": 4104,
+    "historical_seal_entries_verified": 3715,
+    "compact_payload_entries_verified": 13670,
+    "compact_CRC_entries_verified": 13679,
+    "old_STOP_raw_files_not_in_compact": 71,
+    "old_STOP_sealed_identities_preserved": true,
+    "old_36_oracle_failures_preserved": true,
+    "timeouts_and_skips_preserved": true,
+    "windows_reserved_AUX_path": "preserved in isolated Linux restore; ordinary Windows extraction not certified",
+    "old_own_Linux_binaries": "some recoverably archived; exact restoration receipts in capacity/; archives not part of minimal source handoff"
+  },
+  "handoff": "WINDOWS_HANDOFF.md",
+  "scope": "Authorized cloud source changes, necessary offline validation and local commits only; no push/PR/merge, device work, paid compute or automatic local task",
+  "overall_readiness": "NOT_READY_FOR_LIVE",
+  "evidence": {
+    "final_runtime": "research/prelive_portable/EXPIRED_FIRST_FINAL_RESULTS.md",
+    "independent_seam": "docs/research/live-readiness-20261006/review/live-seam/RESULTS.md",
+    "cost_controls": "docs/research/live-readiness-20261006/baseline/final_candidate_cost_review/matrix_report.json",
+    "Windows_commands": "research/prelive_current/windows_recipe_evidence/WINDOWS_COMMANDS.md",
+    "original_provenance": "docs/research/live-readiness-20261006/baseline/README.md"
+  }
+}

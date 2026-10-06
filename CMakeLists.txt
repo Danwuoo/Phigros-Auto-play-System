@@ -52,9 +52,23 @@ if(MSVC)
   target_compile_options(pas_core PRIVATE /W4 /permissive- /EHsc)
 endif()
 
+# Exact current candidate action closure. Uses the sole existing pas_core;
+# this is built into production but typed live admission remains hard closed.
+add_library(pas_current_candidate STATIC
+  research/bvi_cold_v3/bvi.cpp research/bvi_cold_v3/contact_policy.cpp
+  research/bvi_cold_v3/relation_policy.cpp research/bvi_cold_v3/constraint_policy.cpp
+  research/hold_front_current/front.cpp research/prelive_current/own_bridge.cpp
+  research/prelive_current/current.cpp)
+target_include_directories(pas_current_candidate PUBLIC research/bvi_cold_v3
+  research/hold_front_current research/prelive_current)
+target_link_libraries(pas_current_candidate PUBLIC pas_core)
+if(MSVC)
+  target_compile_options(pas_current_candidate PRIVATE /W4 /permissive- /EHsc)
+endif()
+
 add_library(pas_emulator STATIC src/emulator.cpp src/grpc_transport.cpp src/runtime.cpp src/manual_session.cpp)
 target_include_directories(pas_emulator PUBLIC include)
-target_link_libraries(pas_emulator PUBLIC pas_core pas_proto)
+target_link_libraries(pas_emulator PUBLIC pas_core pas_proto pas_current_candidate)
 execute_process(COMMAND git rev-parse HEAD WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
                 OUTPUT_VARIABLE PAS_BUILD_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND git status --porcelain WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -67,7 +81,14 @@ endif()
 set(PAS_BUILD_HASH_JSON "{")
 foreach(PAS_BUILD_FILE src/game.cpp src/game_clip_replay.cpp src/game_cold_pipeline.cpp src/game_cold_corpus.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp
     src/core.cpp src/emulator.cpp src/config.cpp src/analysis.cpp include/pas/analysis.hpp include/pas/core.hpp include/pas/game.hpp include/pas/strategy_version.hpp src/game_session.cpp src/manual_session.cpp src/runtime.cpp src/session_archive.cpp
-    src/journal.cpp include/pas/journal.hpp include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp include/pas/session_pixel_clips.hpp src/session_pixel_clips.cpp apps/pas/main.cpp include/pas/session_recording.hpp src/session_recording.cpp include/pas/runtime.hpp)
+    src/journal.cpp include/pas/journal.hpp include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp include/pas/session_pixel_clips.hpp src/session_pixel_clips.cpp apps/pas/main.cpp include/pas/session_recording.hpp src/session_recording.cpp include/pas/runtime.hpp
+    include/pas/candidate_admission.hpp include/pas/candidate_packet.hpp
+    research/prelive_current/owner_candidate_step.hpp research/prelive_current/receipt_stream.hpp
+    research/prelive_current/current.hpp research/prelive_current/current.cpp research/prelive_current/tail_current.hpp
+    research/prelive_current/own_bridge.hpp research/prelive_current/own_bridge.cpp
+    research/hold_front_current/front.hpp research/hold_front_current/front.cpp
+    research/bvi_cold_v3/bvi.hpp research/bvi_cold_v3/bvi.cpp research/bvi_cold_v3/contact_policy.hpp research/bvi_cold_v3/relation_policy.hpp
+    research/bvi_cold_v3/contact_policy.cpp research/bvi_cold_v3/relation_policy.cpp research/bvi_cold_v3/constraint_policy.cpp)
   file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/${PAS_BUILD_FILE}" PAS_BUILD_HASH)
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${PAS_BUILD_FILE}")
   string(APPEND PAS_BUILD_HASH_JSON "\"${PAS_BUILD_FILE}\":\"${PAS_BUILD_HASH}\",")
@@ -119,6 +140,8 @@ if(MSVC)
 endif()
 
 enable_testing()
+add_executable(pas_disabled_live_seam_tests research/prelive_current/disabled_live_seam_tests.cpp)
+target_link_libraries(pas_disabled_live_seam_tests PRIVATE pas_current_candidate)
 add_executable(pas_grpc_latency apps/grpc_latency/main.cpp)
 target_link_libraries(pas_grpc_latency PRIVATE pas_emulator pas_core CLI11::CLI11 winmm)
 if(MSVC)

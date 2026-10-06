@@ -1,0 +1,11 @@
+// Storage-only maintenance for this lane's immutable generated Linux artifacts.
+// Every original pathname and byte survives. No user/restored payload is touched.
+#include "evidence_hash.hpp"
+#include <nlohmann/json.hpp>
+#include <map>
+#include <sys/stat.h>
+#include <iostream>
+using J=nlohmann::json;namespace fs=std::filesystem;
+int main(int argc,char**argv){try{if(argc!=3||fs::exists(argv[2]))throw std::runtime_error("usage OWN_BINARY_SHA_LIST FRESH_RECEIPT");std::ifstream in(argv[1]);std::ofstream out(argv[2]);std::map<std::string,fs::path>canonical;std::string hash,path;std::uint64_t saved=0;int count=0;
+ while(in>>hash>>path){if(!path.starts_with("out/prelive-portable-")||path.find("..")!=std::string::npos||path.ends_with(".o")||fs::is_symlink(path)||!fs::is_regular_file(path))throw std::runtime_error("owned immutable artifact scope");if(pas::evidence::sha256(path)!=hash)throw std::runtime_error("input hash changed");auto[it,new_group]=canonical.emplace(hash,path);if(new_group||fs::equivalent(path,it->second))continue;struct stat before{},source{};if(stat(path.c_str(),&before)||stat(it->second.c_str(),&source))throw std::runtime_error("stat");if(before.st_mode!=source.st_mode||before.st_uid!=source.st_uid||before.st_gid!=source.st_gid)throw std::runtime_error("metadata differs");if(pas::evidence::sha256(it->second)!=hash)throw std::runtime_error("canonical hash changed");const auto temp=path+".hardlink-temp";if(fs::exists(temp))throw std::runtime_error("fresh temporary link");fs::create_hard_link(it->second,temp);fs::rename(temp,path);struct stat after{};if(stat(path.c_str(),&after)||!fs::equivalent(path,it->second)||pas::evidence::sha256(path)!=hash)throw std::runtime_error("dedup postcondition");out<<J{{"canonical",it->second.string()},{"duplicate_path_retained",path},{"sha256",hash},{"bytes",before.st_size},{"old_inode",before.st_ino},{"new_inode",after.st_ino},{"canonical_inode",source.st_ino},{"all_paths_retained",true},{"all_bytes_retained",true}}.dump()<<'\n';if(!out)throw std::runtime_error("receipt write");++count;if(before.st_nlink==1)saved+=before.st_size;
+ }std::cout<<"hardlinked_duplicates="<<count<<" logical_duplicate_bytes_reclaimed="<<saved<<" all_paths_and_hashes_preserved=true\n";return 0;}catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}

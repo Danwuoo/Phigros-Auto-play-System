@@ -1,0 +1,211 @@
+{
+  "assertions": 32,
+  "cases": [
+    {
+      "active_final": 0,
+      "first_report": {
+        "failed": [],
+        "requested": [
+          0
+        ],
+        "return": 20000000,
+        "start": 20000000,
+        "unknown": []
+      },
+      "id": "known_prior0",
+      "ledger_valid": true,
+      "release_events": 1,
+      "release_verified": true,
+      "threw": false
+    },
+    {
+      "active_final": 1,
+      "first_report": {
+        "failed": [],
+        "requested": [],
+        "return": 0,
+        "start": 0,
+        "unknown": []
+      },
+      "id": "unknown_prior0",
+      "ledger_valid": false,
+      "release_events": 0,
+      "release_verified": false,
+      "threw": true
+    },
+    {
+      "active_final": 1,
+      "first_report": {
+        "failed": [],
+        "requested": [
+          0
+        ],
+        "return": 20000000,
+        "start": 20000000,
+        "unknown": [
+          0
+        ]
+      },
+      "id": "unknown_prior1",
+      "ledger_valid": false,
+      "release_events": 0,
+      "release_verified": false,
+      "threw": false
+    },
+    {
+      "active_final": 1,
+      "first_report": {
+        "failed": [],
+        "requested": [
+          0
+        ],
+        "return": 20000000,
+        "start": 20000000,
+        "unknown": [
+          0
+        ]
+      },
+      "id": "unknown_prior2",
+      "ledger_valid": false,
+      "release_events": 0,
+      "release_verified": false,
+      "threw": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "known_prior0_own_typed_down_fixture",
+      "pass": true
+    },
+    {
+      "id": "known_prior0_finish_returns_structured_result",
+      "pass": true
+    },
+    {
+      "id": "known_prior0_first_report_preserved",
+      "pass": true
+    },
+    {
+      "id": "known_prior0_release_event_drained_exactly_once",
+      "pass": true
+    },
+    {
+      "id": "known_prior0_ledger_and_contact_fail_closed",
+      "pass": true
+    },
+    {
+      "id": "known_prior0_repeat_does_not_retry_or_upgrade",
+      "pass": true
+    },
+    {
+      "id": "known_prior0_no_undrained_release_record",
+      "pass": true
+    },
+    {
+      "id": "known_prior0_down_not_replayed",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior0_own_typed_down_fixture",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior0_finish_returns_structured_result",
+      "pass": false
+    },
+    {
+      "id": "unknown_prior0_first_report_preserved",
+      "pass": false
+    },
+    {
+      "id": "unknown_prior0_release_event_drained_exactly_once",
+      "pass": false
+    },
+    {
+      "id": "unknown_prior0_ledger_and_contact_fail_closed",
+      "pass": false
+    },
+    {
+      "id": "unknown_prior0_repeat_does_not_retry_or_upgrade",
+      "pass": false
+    },
+    {
+      "id": "unknown_prior0_no_undrained_release_record",
+      "pass": false
+    },
+    {
+      "id": "unknown_prior0_down_not_replayed",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior1_own_typed_down_fixture",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior1_finish_returns_structured_result",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior1_first_report_preserved",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior1_release_event_drained_exactly_once",
+      "pass": false
+    },
+    {
+      "id": "unknown_prior1_ledger_and_contact_fail_closed",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior1_repeat_does_not_retry_or_upgrade",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior1_no_undrained_release_record",
+      "pass": false
+    },
+    {
+      "id": "unknown_prior1_down_not_replayed",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior2_own_typed_down_fixture",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior2_finish_returns_structured_result",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior2_first_report_preserved",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior2_release_event_drained_exactly_once",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior2_ledger_and_contact_fail_closed",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior2_repeat_does_not_retry_or_upgrade",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior2_no_undrained_release_record",
+      "pass": true
+    },
+    {
+      "id": "unknown_prior2_down_not_replayed",
+      "pass": true
+    }
+  ],
+  "device_endpoints": 0,
+  "failed": 8,
+  "fixture": "typed synthetic scene through actual owner, Runtime sync/finish",
+  "own_accepted_down_only": true,
+  "physical_gold": 0,
+  "schema": "pas.runtime-finish-evidence.contract.v1"
+}

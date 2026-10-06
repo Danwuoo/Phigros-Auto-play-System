@@ -1,0 +1,7 @@
+420:void run_current_candidate_manual_session(const CandidateLiveAdmission& admission,const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round) {
+421-    enter_current_candidate_manual_session(admission,[&]{
+422-        run_manual_session_impl(config_path,capability_path,no_preview,watchdog,pixel_clips,full_recording,one_round,ManualVariant::current_candidate);
+423-    });
+424-}
+425-
+426-}

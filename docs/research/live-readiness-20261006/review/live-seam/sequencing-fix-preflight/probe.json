@@ -1,0 +1,43 @@
+{
+  "case_count": 1,
+  "device_endpoints": 0,
+  "input": "unchanged family-v2 offset0 positive",
+  "physical_gold": 0,
+  "runs": [
+    {
+      "Down": 1,
+      "Up": 0,
+      "active_after": 0,
+      "fresh_frame_capture": 1640000000,
+      "last_accepted": 0,
+      "last_valid": true,
+      "ledger_deadline": 1650000000,
+      "ledger_state": 4,
+      "ledger_valid": true,
+      "old_next_due": 1720000000,
+      "order": "production_accept_before_poll",
+      "owner_now": 1720000000,
+      "packet_age": 80000000,
+      "prior_body_evidence": 1620000000,
+      "step_ok": true
+    },
+    {
+      "Down": 1,
+      "Up": 0,
+      "active_after": 0,
+      "fresh_frame_capture": 1640000000,
+      "last_accepted": 0,
+      "last_valid": true,
+      "ledger_deadline": 1650000000,
+      "ledger_state": 4,
+      "ledger_valid": true,
+      "old_next_due": 1720000000,
+      "order": "Runtime_poll_before",
+      "owner_now": 1720000000,
+      "packet_age": 80000000,
+      "prior_body_evidence": 1620000000,
+      "step_ok": true
+    }
+  ],
+  "schema": "pas.disabled-live-seam-order-probe.v1"
+}

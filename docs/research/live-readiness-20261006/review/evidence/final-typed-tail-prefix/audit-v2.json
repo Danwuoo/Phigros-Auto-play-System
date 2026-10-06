@@ -1,0 +1,76 @@
+{
+  "all_input_processed": true,
+  "complete_prefix_evidence": true,
+  "coordinate_join_complete": true,
+  "declared_writer_loss": false,
+  "device_endpoints": 0,
+  "errors": [],
+  "event_rows": 9889,
+  "game_adoption": "unknown",
+  "input_bindings": {
+    "events": {
+      "bytes": 27594746,
+      "path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-tail-final-prefix-3063/report.json.events.jsonl",
+      "sha256": "25d2d4c031cb4e2f772bec5db503610f25404624d8488dc8e1025797da1891bc"
+    },
+    "report": {
+      "bytes": 1346,
+      "path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-tail-final-prefix-3063/report.json",
+      "sha256": "c35e755e0da8fcefd5fc40ced4c73bc9f2f7f4dfaff7b40bd19786f7f40c4c01"
+    },
+    "rows": {
+      "bytes": 1002884,
+      "path": "/workspace/shared/phigros-live-readiness-20261006/out/portable-tail-final-prefix-3063/report.json.rows.jsonl",
+      "sha256": "c94ecd21cbcf1fbd860d5ae84bc89a52489a4843c2fec6416add0efa83a1c6fd"
+    }
+  },
+  "integrity": true,
+  "measurement_all_phase_lateness_ms": {
+    "n": 0
+  },
+  "measurement_phase_counts": [
+    0,
+    0,
+    0
+  ],
+  "measurement_window_start_ns": 0,
+  "metrics_verified": true,
+  "path": "out/portable-tail-final-prefix-3063/report.json",
+  "phases": [
+    55,
+    121,
+    51
+  ],
+  "plan_basis_rows": {
+    "current_rails_v1_measured_hold_front_overlap": 1,
+    "live_note_recent_confirmed_line_projection": 13,
+    "live_pixels_current_drag_overlap": 4,
+    "live_pixels_held_body_continuation": 1,
+    "live_pixels_short_linear_fit_drag": 104,
+    "live_pixels_short_linear_fit_flick": 155
+  },
+  "plan_join_complete": true,
+  "producer_metrics_verified": false,
+  "provenance_join_complete": false,
+  "receipts": 227,
+  "recomputed_distributions": {
+    "compute_ms": {
+      "jitter_p95_minus_p5": 2.9044025000000007,
+      "max": 16.260944,
+      "n": 3063,
+      "p50": 5.565247,
+      "p95": 7.8226686,
+      "p99": 9.51409746
+    }
+  },
+  "release_calls": 140,
+  "release_uncertainty_seen": false,
+  "run_provenance": null,
+  "schema": "pas.prelive-independent-integrity.v2",
+  "unknown_release": [],
+  "verifier_binary": {
+    "bytes": 348936,
+    "path": "/workspace/shared/phigros-live-readiness-20261006/out/independent-final-prefix-auditor-01/audit-v2",
+    "sha256": "107902c7a21413bacbb16a67db877ea37e7c3fb87daaa4fc5582e92f77f6d92f"
+  }
+}

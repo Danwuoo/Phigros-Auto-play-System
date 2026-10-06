@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "bytes": 470,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-1-spec.json",
+      "sha256": "5a971ef859f8d4c614f59d9a48a874f15f79327af8b31be2ab5820fcec4618cc"
+    },
+    {
+      "bytes": 4489,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/campaign.json",
+      "sha256": "ebb34443b713786c9820155c4abc234320cfe887645237f444a1071196b9b30f"
+    },
+    {
+      "bytes": 3694872,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/seed-tests",
+      "sha256": "607532ec807da004f53a261db216063b42978bed164d3004c787184458f5cdd9"
+    }
+  ],
+  "foreign_freeze": true
+}

@@ -1,0 +1,71 @@
+{
+  "negative_cases": 13,
+  "incorrect_integrity_true": 13,
+  "cases": [
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/500ms-raw-latency-green-summary.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/attempts-field-mismatch.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/compacted-prefix-step-mismatch.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/completed-intent-rebirth.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/cross-intent-up.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/fabricated-cost-distribution.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/pixel-incomplete.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/provenance-duplicate-event.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/provenance-event-missing.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/provenance-report-event-mismatch.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/receipt-plan-mismatch.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/same-note-new-intent-rebirth.json",
+      "integrity": true,
+      "errors": []
+    },
+    {
+      "path": "/workspace/shared/phigros-audit-counterexamples-20261006-07/cases/unknown-release-overwritten.json",
+      "integrity": true,
+      "errors": []
+    }
+  ]
+}

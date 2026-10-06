@@ -1,0 +1,6 @@
+existing_matrix_assertions=1132
+flick_cases=1
+new_seam_assertions=47
+new_seam_assertions_report=/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/evidence/live-seam-expired-first-release-01/disabled_live_seam_contract.json
+png_controls_assertions=11
+original_WIC_samples=108

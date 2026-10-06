@@ -1,5 +1,11 @@
 # Phigros Auto-play System
 
+最新雲端 readiness 候選由 [10/6 續作入口](docs/research/live-readiness-20261006/README.md) 進入。
+起點為 main `e9e305e3aba13f05a786c74540419428610b2f76`，本分支只有 local commits，未 push。
+本輪補強成本原始證據／campaign 身分、活動 Hold 的當前 body 與不確定釋放證據；
+共享 renderer 與 tail 缺口分層揭露。軟體冷驗證不能授予 Windows 成本或實機資格，
+目前仍 **NOT_READY**；產品 Chapter Legacy 全曲完整 IN Miss=0 未完成。
+
 Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程序多執行緒處理最新畫面、音符／判定線追蹤、撞線預測與可撤銷多指觸控；不讀譜或遊戲內部狀態。
 
 2026-10-06 current-rails-v1 已整合至 main 的正式離線 observer／owner／scheduler；

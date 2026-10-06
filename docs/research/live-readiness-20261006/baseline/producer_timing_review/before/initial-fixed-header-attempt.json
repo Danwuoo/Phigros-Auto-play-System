@@ -1,0 +1,6 @@
+{
+  "exit": 134,
+  "stdout_empty": true,
+  "stderr": "terminate called after throwing an instance of std::runtime_error: producer current render order",
+  "explanation": "The header fix was applied before the first compiler read. This attempt tested the corrected header, not the historical counterexample."
+}

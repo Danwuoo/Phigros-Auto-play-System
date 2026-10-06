@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "bytes": 466,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/release/fixtures/fixture-aa-1-result.json",
+      "sha256": "776113203a3364d653ac5109906e8322daf8d0323ce92276d2b452efdf0ae4e0"
+    },
+    {
+      "bytes": 548,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/release/fixtures/fixture-aa-1-command.json",
+      "sha256": "b11b9f5bfd3f84d46c391037bce7f76de3a24e5e1ae134ce93e10e3084b76164"
+    }
+  ],
+  "native_exit": 0,
+  "pending": false,
+  "producer_complete": true,
+  "runner_exit": 0,
+  "stage": "fixture-aa-1",
+  "verification_exit": 0
+}

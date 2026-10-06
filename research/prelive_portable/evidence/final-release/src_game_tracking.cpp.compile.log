@@ -1,0 +1,37 @@
+src/game_tracking.cpp: In lambda function:
+src/game_tracking.cpp:150:9: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  150 |         if(a.note!=b.note) return a.note<b.note; return a.track<b.track;
+      |         ^~
+src/game_tracking.cpp:150:50: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  150 |         if(a.note!=b.note) return a.note<b.note; return a.track<b.track;
+      |                                                  ^~~~~~
+src/game_tracking.cpp: In function ‘void pas::track_legacy_batch(DecisionSnapshot&, const std::vector<NoteCandidate>&, const std::vector<std::optional<NoteCandidate> >&, std::vector<GameTrackHistory>&, uint64_t&, const std::vector<int>*, std::vector<long unsigned int>*)’:
+src/game_tracking.cpp:205:29: warning: missing initializer for member ‘pas::GameTrackHistory::rail_anchor’ [-Wmissing-field-initializers]
+  205 |             tracks.push_back({++next_id,0,n.kind,n.center,now,{},n}); match=&tracks.back();
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/game_tracking.cpp: In function ‘pas::NoteCandidate pas::{anonymous}::parse_note(const json&)’:
+src/game_tracking.cpp:559:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  559 |  if(!found)throw std::invalid_argument("note kind");n.center=point(j.at("center"));n.tangent=point(j.at("tangent"));
+      |  ^~
+src/game_tracking.cpp:559:53: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  559 |  if(!found)throw std::invalid_argument("note kind");n.center=point(j.at("center"));n.tangent=point(j.at("tangent"));
+      |                                                     ^
+src/game_tracking.cpp: In function ‘pas::CandidateBatch pas::parse_candidate_batch(const {anonymous}::json&)’:
+src/game_tracking.cpp:594:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  594 |  if(!found)throw std::invalid_argument("candidate UI");b.playing_gate=j.at("playing_gate");b.capacity_valid=j.at("capacity_valid");b.source_valid=j.at("source_valid");
+      |  ^~
+src/game_tracking.cpp:594:56: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  594 |  if(!found)throw std::invalid_argument("candidate UI");b.playing_gate=j.at("playing_gate");b.capacity_valid=j.at("capacity_valid");b.source_valid=j.at("source_valid");
+      |                                                        ^
+src/game_tracking.cpp:608:3: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  608 |   if(!std::isfinite(line.length)||line.length<=0||!std::isfinite(line.thickness)||line.thickness<=0||!std::isfinite(line.confidence)||std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)>.01)throw std::invalid_argument("line geometry");b.lines.push_back(line);}
+      |   ^~
+src/game_tracking.cpp:608:238: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  608 |   if(!std::isfinite(line.length)||line.length<=0||!std::isfinite(line.thickness)||line.thickness<=0||!std::isfinite(line.confidence)||std::abs(std::hypot(line.tangent.x,line.tangent.y)-1)>.01)throw std::invalid_argument("line geometry");b.lines.push_back(line);}
+      |                                                                                                                                                                                                                                              ^
+src/game_tracking.cpp:610:3: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  610 |   if(!t.candidate_id||!ids.insert(t.candidate_id).second)throw std::invalid_argument("duplicate candidate id");t.note=parse_note(v.at("note"));
+      |   ^~
+src/game_tracking.cpp:610:112: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  610 |   if(!t.candidate_id||!ids.insert(t.candidate_id).second)throw std::invalid_argument("duplicate candidate id");t.note=parse_note(v.at("note"));
+      |                                                                                                                ^

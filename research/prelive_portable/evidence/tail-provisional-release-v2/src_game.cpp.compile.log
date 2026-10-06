@@ -1,0 +1,39 @@
+src/game.cpp: In function ‘std::vector<pas::{anonymous}::Component> pas::{anonymous}::components(const pas::Frame&, bool&, std::vector<unsigned char>&, std::vector<int>&, bool)’:
+src/game.cpp:172:28: warning: loop variable ‘<structured bindings>’ creates a copy from type ‘const std::pair<int, int>’ [-Wrange-loop-construct]
+  172 |             for(const auto [dx,dy] : {std::pair{-1,0},{1,0},{0,-1},{0,1}}) {
+      |                            ^~~~~~~
+src/game.cpp:172:28: note: use reference type to prevent copying
+  172 |             for(const auto [dx,dy] : {std::pair{-1,0},{1,0},{0,-1},{0,1}}) {
+      |                            ^~~~~~~
+      |                            &
+src/game.cpp: In function ‘int pas::{anonymous}::combo_digit_shapes(const pas::Frame&)’:
+src/game.cpp:236:28: warning: loop variable ‘<structured bindings>’ creates a copy from type ‘const std::pair<int, int>’ [-Wrange-loop-construct]
+  236 |             for(const auto [dx,dy]:{std::pair{-1,0},{1,0},{0,-1},{0,1}}) {
+      |                            ^~~~~~~
+src/game.cpp:236:28: note: use reference type to prevent copying
+  236 |             for(const auto [dx,dy]:{std::pair{-1,0},{1,0},{0,-1},{0,1}}) {
+      |                            ^~~~~~~
+      |                            &
+src/game.cpp: In member function ‘pas::DecisionSnapshot pas::GameObserver::process(const pas::Frame&)’:
+src/game.cpp:900:79: warning: missing initializer for member ‘pas::NoteCandidate::tail’ [-Wmissing-field-initializers]
+  900 |         NoteCandidate candidate{{(c.x0+c.x1)/2.0,(c.y0+c.y1)/2.0},kind,w,h,.55};
+      |                                                                               ^
+src/game.cpp: In member function ‘std::vector<pas::TouchReceipt> pas::GamePlanOwner::accept(const pas::DecisionSnapshot&)’:
+src/game.cpp:1792:92: warning: missing initializer for member ‘pas::GamePlanOwner::Identity::plan’ [-Wmissing-field-initializers]
+ 1792 |             found=identities_.emplace(t.note_id,Identity{0,0,t.expires_ns+250'000'000,false}).first;
+      |                                                                                            ^
+src/game.cpp:1792:92: warning: missing initializer for member ‘pas::GamePlanOwner::Identity::hold_tail_release_ns’ [-Wmissing-field-initializers]
+src/game.cpp:1792:92: warning: missing initializer for member ‘pas::GamePlanOwner::Identity::last_note’ [-Wmissing-field-initializers]
+src/game.cpp:1792:92: warning: missing initializer for member ‘pas::GamePlanOwner::Identity::tail_first_pass_ns’ [-Wmissing-field-initializers]
+src/game.cpp:1792:92: warning: missing initializer for member ‘pas::GamePlanOwner::Identity::terminal_first_pass_ns’ [-Wmissing-field-initializers]
+src/game.cpp:2000:57: warning: missing initializer for member ‘pas::ContactPlan::predicted_down_ns’ [-Wmissing-field-initializers]
+ 2000 |              {Phase::up,t.hit.x,t.hit.y,due+18'000'000}}};
+      |                                                         ^
+src/game.cpp: In member function ‘std::optional<pas::ContactPlan> pas::PlayButtonPlanner::take(const pas::DecisionSnapshot&, pas::Nanoseconds)’:
+src/game.cpp:2061:100: warning: missing initializer for member ‘pas::ContactPlan::predicted_down_ns’ [-Wmissing-field-initializers]
+ 2061 |         "pixels_song_selection_PLAY",{{Phase::down,p.x,p.y,now},{Phase::up,p.x,p.y,now+20'000'000}}};
+      |                                                                                                    ^
+src/game.cpp: In function ‘nlohmann::json_abi_v3_12_0::json pas::analyze_game_segments(const std::vector<std::filesystem::__cxx11::path>&)’:
+src/game.cpp:2305:132: warning: missing initializer for member ‘pas::analyze_game_segments(const std::vector<std::filesystem::__cxx11::path>&)::IntentEvidence::predicted_down’ [-Wmissing-field-initializers]
+ 2305 |                 intent_evidence.emplace(intent,IntentEvidence{e.value("basis","unknown"),{}, {},e.value("note_id",std::uint64_t{0})});
+      |                                                                                                                                    ^

@@ -1,0 +1,11 @@
+research/prelive_current/runtime.hpp: OK
+research/prelive_current/owner_candidate_step.hpp: OK
+research/prelive_current/receipt_stream.hpp: OK
+research/prelive_current/own_bridge.cpp: OK
+research/prelive_current/own_bridge.hpp: OK
+include/pas/game_session.hpp: OK
+src/game_session.cpp: OK
+research/prelive_current/current.cpp: OK
+research/prelive_current/tail_current.hpp: OK
+src/game.cpp: OK
+include/pas/game.hpp: OK

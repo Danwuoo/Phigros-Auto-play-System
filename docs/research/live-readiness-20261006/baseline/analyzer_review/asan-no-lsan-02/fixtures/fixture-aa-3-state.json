@@ -1,0 +1,15 @@
+{
+  "contract_sha": "4688f1b1fa2f0beaa2744425bd1ca3e43ab1bb711c2d66fd8fae9362c16b56c5",
+  "freeze_sha": "ed1e55111d24f7af6106188cd919324a6f6a758895189bf7887e00f34e58b904",
+  "native_launches_known": 1,
+  "native_stages_consumed": 1,
+  "receipts": [
+    {
+      "bytes": 643,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-verification.json",
+      "sha256": "c27d8860950d0c90ecb3e8a221a853a2f46a41e42816b6094f60af484a53dbe5"
+    }
+  ],
+  "running": null,
+  "status": "COMPLETE"
+}

@@ -1,0 +1,5 @@
+{"event":"filtered_owner_scene","scene":{"frame_sequence":42,"targets":[{"current_contact":"hold_tail_only","note_id":1}]},"window":0}
+{"basis":"current_rails_v1_tail_only_release","event":"own_accepted_plan","intent":1,"window":0}
+{"event":"game_hold_tail_confirmed","intent_id":1,"terminal_only":true,"window":0}
+{"event":"own_injection_receipt","injection_return":150,"intent":1,"phase":2,"success":true,"window":0}
+{"event":"game_contact_up","injection_return_ns":150,"intent_id":1,"reason":"visible_tail_completed","success":true,"window":0}

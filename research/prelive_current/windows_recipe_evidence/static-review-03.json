@@ -1,0 +1,501 @@
+{
+  "schema": "pas.windows-offline-recipe-static-review.v1",
+  "scope": "Source inspection, CLI-arity checks, simple delimiter lint, safety-core SHA parity and in-memory negative controls only.",
+  "pass": true,
+  "checks": [
+    {
+      "id": "cmake_target:cost_analysis_tests",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:cost_analysis_review_tests",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:producer_admission_review_tests",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:cost_workload_family",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:cost_workload_family_v2",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:cost_workload_family_verify",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:cost_workload_family_v2_verify",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:verify_tail_family_goal",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:prelive_audit",
+      "pass": true
+    },
+    {
+      "id": "cmake_target:disabled_live_seam_tests",
+      "pass": true
+    },
+    {
+      "id": "auditor_object_uses_exact_source",
+      "pass": true
+    },
+    {
+      "id": "only_auditor_object_entry_is_renamed",
+      "pass": true
+    },
+    {
+      "id": "producer_review_links_real_auditor_object",
+      "pass": true
+    },
+    {
+      "id": "no_portable_shim_added_to_windows_build",
+      "pass": true
+    },
+    {
+      "id": "current_source_delimiter_sanity",
+      "pass": true
+    },
+    {
+      "id": "current_explicit_gate_parameter",
+      "pass": true
+    },
+    {
+      "id": "current_explicit_tool_parameter",
+      "pass": true
+    },
+    {
+      "id": "current_no_historical_gate_default",
+      "pass": true
+    },
+    {
+      "id": "current_gate_schema_and_controls",
+      "pass": true
+    },
+    {
+      "id": "current_gate_input_entries_verified",
+      "pass": true
+    },
+    {
+      "id": "current_tool_copies_hash_checked",
+      "pass": true
+    },
+    {
+      "id": "current_complete_owned_receipt_checked",
+      "pass": true
+    },
+    {
+      "id": "current_process_identity_quiescence_streams_held",
+      "pass": true
+    },
+    {
+      "id": "current_exact_build_binding_and_all_artifacts",
+      "pass": true
+    },
+    {
+      "id": "current_all_build_freeze_dependencies_in_inputs",
+      "pass": true
+    },
+    {
+      "id": "current_unchanged_owned_core_invocation",
+      "pass": true
+    },
+    {
+      "id": "current_retained_capacity_and_free_floor",
+      "pass": true
+    },
+    {
+      "id": "current_create_new_metadata",
+      "pass": true
+    },
+    {
+      "id": "current_no_destructive_cleanup_or_device_invocation",
+      "pass": true
+    },
+    {
+      "id": "audit_source_delimiter_sanity",
+      "pass": true
+    },
+    {
+      "id": "audit_explicit_gate_parameter",
+      "pass": true
+    },
+    {
+      "id": "audit_explicit_tool_parameter",
+      "pass": true
+    },
+    {
+      "id": "audit_no_historical_gate_default",
+      "pass": true
+    },
+    {
+      "id": "audit_gate_schema_and_controls",
+      "pass": true
+    },
+    {
+      "id": "audit_gate_input_entries_verified",
+      "pass": true
+    },
+    {
+      "id": "audit_tool_copies_hash_checked",
+      "pass": true
+    },
+    {
+      "id": "audit_complete_owned_receipt_checked",
+      "pass": true
+    },
+    {
+      "id": "audit_process_identity_quiescence_streams_held",
+      "pass": true
+    },
+    {
+      "id": "audit_exact_build_binding_and_all_artifacts",
+      "pass": true
+    },
+    {
+      "id": "audit_all_build_freeze_dependencies_in_inputs",
+      "pass": true
+    },
+    {
+      "id": "audit_unchanged_owned_core_invocation",
+      "pass": true
+    },
+    {
+      "id": "audit_retained_capacity_and_free_floor",
+      "pass": true
+    },
+    {
+      "id": "audit_create_new_metadata",
+      "pass": true
+    },
+    {
+      "id": "audit_no_destructive_cleanup_or_device_invocation",
+      "pass": true
+    },
+    {
+      "id": "preserved_initial_source_audit_guard",
+      "pass": true
+    },
+    {
+      "id": "preserved_bridge_source_before_guard",
+      "pass": true
+    },
+    {
+      "id": "current_native_root_and_gate_tool_frozen",
+      "pass": true
+    },
+    {
+      "id": "all_native_roots_are_current_sealed_binaries",
+      "pass": true
+    },
+    {
+      "id": "current_unit_exact_cli",
+      "pass": true
+    },
+    {
+      "id": "current_review_exact_cli",
+      "pass": true
+    },
+    {
+      "id": "review_fixtures_restored_and_rechecked",
+      "pass": true
+    },
+    {
+      "id": "current_producer_exact_cli",
+      "pass": true
+    },
+    {
+      "id": "fixtures_produced_before_review",
+      "pass": true
+    },
+    {
+      "id": "nested_test_and_auditor_sources_in_build_inputs",
+      "pass": true
+    },
+    {
+      "id": "unit_profile_source_and_protocol_frozen",
+      "pass": true
+    },
+    {
+      "id": "explicit_fresh_family_operation",
+      "pass": true
+    },
+    {
+      "id": "v1_family_verifier_exact_cli",
+      "pass": true
+    },
+    {
+      "id": "v2_family_verifier_exact_cli",
+      "pass": true
+    },
+    {
+      "id": "normal_tail_goal_exact_cli",
+      "pass": true
+    },
+    {
+      "id": "family_inputs_frozen_between_producer_and_verifier",
+      "pass": true
+    },
+    {
+      "id": "fresh_five_family_outputs",
+      "pass": true
+    },
+    {
+      "id": "analysis_uses_direct_current_binary",
+      "pass": true
+    },
+    {
+      "id": "pixels_and_pipeline_use_direct_current_binary",
+      "pass": true
+    },
+    {
+      "id": "pixel_bytes_in_owned_inputs",
+      "pass": true
+    },
+    {
+      "id": "auditor_uses_fresh_same_tree_build",
+      "pass": true
+    },
+    {
+      "id": "auditor_direct_exact_cli",
+      "pass": true
+    },
+    {
+      "id": "auditor_report_raw_sidecars_frozen",
+      "pass": true
+    },
+    {
+      "id": "auditor_capacity_and_receipt_after_stage",
+      "pass": true
+    },
+    {
+      "id": "source_cli_arity:research/prelive_current/tests/cost_analysis_tests.cpp",
+      "pass": true
+    },
+    {
+      "id": "source_cli_arity:research/prelive_current/tests/cost_analysis_review_tests.cpp",
+      "pass": true
+    },
+    {
+      "id": "source_cli_arity:research/prelive_current/tests/producer_admission_review_tests.cpp",
+      "pass": true
+    },
+    {
+      "id": "source_cli_arity:research/prelive_current/cost_workload_family.cpp",
+      "pass": true
+    },
+    {
+      "id": "source_cli_arity:research/prelive_current/cost_workload_family_v2.cpp",
+      "pass": true
+    },
+    {
+      "id": "source_cli_arity:research/prelive_current/cost_workload_family_verify.cpp",
+      "pass": true
+    },
+    {
+      "id": "source_cli_arity:research/prelive_current/cost_workload_family_v2_verify.cpp",
+      "pass": true
+    },
+    {
+      "id": "source_cli_arity:research/prelive_portable/verify_tail_family_goal.cpp",
+      "pass": true
+    },
+    {
+      "id": "static_negative_control:missing_real_auditor_object",
+      "pass": true
+    },
+    {
+      "id": "static_negative_control:missing_unit_invocation",
+      "pass": true
+    },
+    {
+      "id": "static_negative_control:missing_review_fixture_freeze",
+      "pass": true
+    },
+    {
+      "id": "static_negative_control:missing_normal_tail_goal",
+      "pass": true
+    },
+    {
+      "id": "static_negative_control:missing_explicit_gate",
+      "pass": true
+    },
+    {
+      "id": "static_negative_control:old_auditor_binary",
+      "pass": true
+    },
+    {
+      "id": "unchanged_safety_core:tools/zero_miss_windows/invoke.ps1",
+      "pass": true
+    },
+    {
+      "id": "unchanged_safety_core:tools/zero_miss_windows/process.ps1",
+      "pass": true
+    },
+    {
+      "id": "unchanged_safety_core:tools/zero_miss_windows/native-stage.ps1",
+      "pass": true
+    },
+    {
+      "id": "unchanged_safety_core:research/x10d_o_bvi_build/common.ps1",
+      "pass": true
+    },
+    {
+      "id": "unchanged_safety_core:research/x10d_o_bvi_build/transaction.ps1",
+      "pass": true
+    },
+    {
+      "id": "unchanged_safety_core:research/x10d_o_bvi_build/identity.ps1",
+      "pass": true
+    },
+    {
+      "id": "unchanged_safety_core:research/x10d_o_bvi_build/base.ps1",
+      "pass": true
+    },
+    {
+      "id": "unchanged_safety_core:research/x10d_o_bvi_build/owned.cs",
+      "pass": true
+    }
+  ],
+  "source_bindings": [
+    {
+      "relative_path": "research/prelive_current/CMakeLists.txt",
+      "bytes": 9496,
+      "sha256": "f22cd1e628a824eef39f9fcbf3d6a5c50be6d7b3d3292fb93de73fbc1e8e15fd"
+    },
+    {
+      "relative_path": "research/prelive_current/run.ps1",
+      "bytes": 21533,
+      "sha256": "3b6629ae25abade2aa27a398443c0cad6c030c2a0eef017f9ab60eee1bf99b52"
+    },
+    {
+      "relative_path": "research/prelive_audit/run.ps1",
+      "bytes": 6791,
+      "sha256": "dc963b05fc4585c027008523737c4e1c79a7ff726f7aa016a771dbac09ccbe02"
+    },
+    {
+      "relative_path": "research/prelive_current/windows_recipe_evidence/validate.py",
+      "bytes": 13674,
+      "sha256": "8fac4a7040f03ac3d0da7564cd28d350eea96ea94f8ab8672634f99ab08dab39"
+    },
+    {
+      "relative_path": "research/prelive_current/windows_recipe_evidence/WINDOWS_COMMANDS.md",
+      "bytes": 11828,
+      "sha256": "a44215e0ad4b17491eb594fdd4ef67d1f92d9788f3686cce2f3dd8d49bda4ab5"
+    },
+    {
+      "relative_path": "research/prelive_current/cost_analysis.cpp",
+      "bytes": 18130,
+      "sha256": "e09071a0646e5312e1e53b737db502216e8e9a113928ab6bcc421595eba1f50a"
+    },
+    {
+      "relative_path": "research/prelive_current/campaign_provenance.hpp",
+      "bytes": 7263,
+      "sha256": "d78857bfe6390ae30166ff16745b2a486fc012d7a386f4706e3b53bfad1489f4"
+    },
+    {
+      "relative_path": "research/prelive_current/chain.cpp",
+      "bytes": 22583,
+      "sha256": "7dc89bf9318e1e57faa9d288c8a9f22aaccefa3e086ac88b600afcde92988cd4"
+    },
+    {
+      "relative_path": "research/prelive_current/producer_timing.hpp",
+      "bytes": 2030,
+      "sha256": "23e575ef9c61fd082a197cb7dd46904d05717b0aa1eda82117d52ca39722b32f"
+    },
+    {
+      "relative_path": "research/prelive_current/offline_output.hpp",
+      "bytes": 1188,
+      "sha256": "52ec5412fa9aa1d3335748771a2dc4360d010e64f54f6c64db2831f9ddb81d61"
+    },
+    {
+      "relative_path": "research/prelive_current/streaming_workload.hpp",
+      "bytes": 1205,
+      "sha256": "1601f5cf17d253ce7f51ae8d75a9ca5e6af99b9caa6a0757c56913c64446b407"
+    },
+    {
+      "relative_path": "research/prelive_current/tests/cost_analysis_tests.cpp",
+      "bytes": 11445,
+      "sha256": "ff372b3f07e5a7dd5ac2b57974f76a1a69437a96f6e73285309a9e9ae4efe01f"
+    },
+    {
+      "relative_path": "research/prelive_current/tests/cost_analysis_review_tests.cpp",
+      "bytes": 12847,
+      "sha256": "134ee43b2b6a9e7e00ec267f22ee135d3e7e399ce807387b2ccbd62eca3949e1"
+    },
+    {
+      "relative_path": "research/prelive_current/tests/producer_admission_review_tests.cpp",
+      "bytes": 11595,
+      "sha256": "52724fd3116d708c7f7b0e8a1d0a6ebc8d45c343e4f8cc4c80c8f85b85dadddf"
+    },
+    {
+      "relative_path": "research/prelive_current/cost_workload_family.cpp",
+      "bytes": 4735,
+      "sha256": "495ff0e9635c7a00070424aa47afa38e0f46fddd7060cbd7733883bf8da645b0"
+    },
+    {
+      "relative_path": "research/prelive_current/cost_workload_family_v2.cpp",
+      "bytes": 4765,
+      "sha256": "70f15e40d8e74bee0234b09fbac488592db17d2ea7606de7874644fe0cb292fc"
+    },
+    {
+      "relative_path": "research/prelive_current/cost_workload_family_verify.cpp",
+      "bytes": 4972,
+      "sha256": "db504c4ed88618ab8beb8a8522b5cf0de876848cede408ec16532f452c9e81f8"
+    },
+    {
+      "relative_path": "research/prelive_current/cost_workload_family_v2_verify.cpp",
+      "bytes": 4770,
+      "sha256": "a05e8223562693c2a9ec71d764559ced12b8420cd23546243454ee84c258b699"
+    },
+    {
+      "relative_path": "research/prelive_portable/verify_tail_family_goal.cpp",
+      "bytes": 2142,
+      "sha256": "3df5a7bf2afd68e709a3c9f1909978d830bc925d9622dfdd662e0d5223766cec"
+    },
+    {
+      "relative_path": "research/prelive_audit/audit.cpp",
+      "bytes": 21060,
+      "sha256": "49fac8a480e9828ada16d8833253071f8d8c21c341073b5f6ef4706dce6d2024"
+    },
+    {
+      "relative_path": "tools/zero_miss_windows/invoke.ps1",
+      "bytes": 1964,
+      "sha256": "7f11079a23efba87f00641e39731aba625d1e292039c7963bd31881b6872c9a5"
+    },
+    {
+      "relative_path": "tools/zero_miss_windows/process.ps1",
+      "bytes": 5627,
+      "sha256": "b0857b3f77b8a0263f1f71d033372621227473770523e657cd239321096513ff"
+    },
+    {
+      "relative_path": "tools/zero_miss_windows/native-stage.ps1",
+      "bytes": 1945,
+      "sha256": "a16c4db270e1b4d55300dfa78f27f5084ec4e96a7acb261e9d12446786c46f85"
+    },
+    {
+      "relative_path": "research/x10d_o_bvi_build/owned.cs",
+      "bytes": 16301,
+      "sha256": "41cb0ac22659e7bec2b3a5cb399a1f270694c30f07d1e21ff43e03172c785a84"
+    }
+  ],
+  "powershell_parser_run": false,
+  "cmake_configure_run": false,
+  "windows_build_run": false,
+  "windows_tests_run": false,
+  "windows_cost_qualified": false,
+  "live_ready": false,
+  "limitations": [
+    "Windows/PowerShell/MSVC are not available on this Linux host.",
+    "The protected initial audit, formal-source-before and bridge-build freezes must be present and valid on Windows; none are bypassed.",
+    "Actual compiler/SDK/vcpkg dependency closure, generated protobuf files, workstation paths and fresh native qualification must be independently verified before building.",
+    "Static checks do not prove Windows execution, source-to-binary compilation, measured cost, physical acceptance or game adoption."
+  ]
+}

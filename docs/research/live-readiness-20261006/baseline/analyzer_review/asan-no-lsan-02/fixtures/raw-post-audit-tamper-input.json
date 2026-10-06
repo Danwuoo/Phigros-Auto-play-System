@@ -1,0 +1,563 @@
+{
+  "campaign": {
+    "bytes": 4629,
+    "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/campaign.json",
+    "sha256": "da580e11676bccb285bacc5f0caeacfc40d8c1f78d2006c727ab9fd51db17dfe"
+  },
+  "normal_stopped": false,
+  "runs": [
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1-audit.json",
+      "audit_sha256": "1e71237290fcdad92661bbcaa6c5e5ae94a4a223e4b3e4bd32b8ef11c1e75cc5",
+      "bytes": 3174,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 561,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1-command.json",
+          "sha256": "112ccaeda9c93f59cbbf44528f3277701d0149f2b816d37ca8204c31705a3688"
+        },
+        "contract": {
+          "bytes": 561,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1-contract.json",
+          "sha256": "2f11bf25ed8199e5386a0c24840166503d2e850ba5c1a2e133cef562d32e7878"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1-freeze.json",
+          "sha256": "880bbdd173e6f10e82375eefdfdadee046770b8751d32d73fb9cc7789a6c67f2"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1-result.json",
+          "sha256": "fd09c5683357999be2db38883552ec72a5363ea192b3d65d8928fe3b0155c64d"
+        },
+        "specification": {
+          "bytes": 489,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1-spec.json",
+          "sha256": "e1ab09eac30266acea94799f884bbaab42840b0b2e4da5228fae7f0c81b6dcf8"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1-state.json",
+          "sha256": "2374c91727d4784aa2d637fe7b041ff2c1cd0183c3c70a37278f2bc3802bfdb5"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1-verification.json",
+          "sha256": "d2beb568c331a795cf8f170dc7180aff7ca2f830fb1238d74b5e54a151dbf428"
+        }
+      },
+      "run_id": "fixture-aa-1",
+      "scene": "tap",
+      "sha256": "c4c94525533b5052a13c0537575f2f8eebc1c1595f00f9a7b8e83beaf60c38c6"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-audit.json",
+      "audit_sha256": "1bcf6b350c4c249b82546cad044b4dfd50c5c8df8a9f67961a53bd60fc498f9a",
+      "bytes": 3174,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 561,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-command.json",
+          "sha256": "50616320eec1d79f375c9a1a0680d6e2fb6851c2724d1f1d8d8aad8cdbe5eb74"
+        },
+        "contract": {
+          "bytes": 561,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-contract.json",
+          "sha256": "7e25258638bdb4c4bc01050ca7ec5a76e0687324f6c94578c66277186b76aeaa"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-freeze.json",
+          "sha256": "b7e90f2a1fdf41da84a23813107075338419003b35a9990e4b01b289e1767ec8"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-result.json",
+          "sha256": "d1321860f7c53f7035289ddf43f3857cce216f67f524c6cf9fb30e137d2aab85"
+        },
+        "specification": {
+          "bytes": 489,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-spec.json",
+          "sha256": "6b49a0f1e8e24106014fb51138b2f0de6ca9803a3cf330979a53438530b949ad"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-state.json",
+          "sha256": "8cfe9df42b9199396153a71fb4ec0df3c4bf63114d1d069ccc79ec63f4e8a093"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-verification.json",
+          "sha256": "279d244a30013c28928565bc77b2d68a280381694ffb427f5cc9b814426acd25"
+        }
+      },
+      "run_id": "fixture-aa-2",
+      "scene": "tap",
+      "sha256": "3fee5e6180a5bc5022d92715190aae140e6bbc41498ee242cdcc629b081d63cf"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-audit.json",
+      "audit_sha256": "0bdc43f3ed9f3bcec0de862f6880adf7f9c59e8a285604ae536c639445a489a1",
+      "bytes": 3174,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 561,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-command.json",
+          "sha256": "ac8757dcb26f3a9d622ab102b83443d20d3bcd4ca05b04c4c2c1384e9c8f1bee"
+        },
+        "contract": {
+          "bytes": 561,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-contract.json",
+          "sha256": "4688f1b1fa2f0beaa2744425bd1ca3e43ab1bb711c2d66fd8fae9362c16b56c5"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-freeze.json",
+          "sha256": "ed1e55111d24f7af6106188cd919324a6f6a758895189bf7887e00f34e58b904"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-result.json",
+          "sha256": "14ac5cd4e4eb03d56302790ea3b45ea4b78035e94650e41cce506c4bd9de46ef"
+        },
+        "specification": {
+          "bytes": 489,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-spec.json",
+          "sha256": "11b0a877dec0badebe8cade77667f0a28b0253d0464305ff651f2a98a1440602"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-state.json",
+          "sha256": "2bbab6586dc7f84f22912361065bbebe0bf057e33307fbc6c78fd00dedda53c6"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3-verification.json",
+          "sha256": "c27d8860950d0c90ecb3e8a221a853a2f46a41e42816b6094f60af484a53dbe5"
+        }
+      },
+      "run_id": "fixture-aa-3",
+      "scene": "tap",
+      "sha256": "224ac05f29744e90e5d7930beacb877dbb169e4ef02ee99e743e163bd374ce65"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4-audit.json",
+      "audit_sha256": "327b965824c43d15f0385b51bc89fade505fa22e120e2d002a3216e5aba18721",
+      "bytes": 3174,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 561,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4-command.json",
+          "sha256": "42959e63e578af7922b2a017fb80fca79726984011ddff5da7de44b5432aa1c7"
+        },
+        "contract": {
+          "bytes": 561,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4-contract.json",
+          "sha256": "bd5e909ace37f0142f432358bd913eff390a3b877b1fa88c0525c2a58e81aa35"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4-freeze.json",
+          "sha256": "bc63086889967fd3ae42f012366e81f07cf8ef730ab781f83a78e75b6008bd4e"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4-result.json",
+          "sha256": "d1c2a01db8a1fddc01399d8e4c22ad44451f7cd18ec16fb18f7eaf26cbd69ded"
+        },
+        "specification": {
+          "bytes": 489,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4-spec.json",
+          "sha256": "1cba8fd8ba16b04fab751c49ee06865cd6ad518fe3362616e2ab57e9e3298201"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4-state.json",
+          "sha256": "57c41ce0fc561bc71eb50c6bb04e42700a6966a13920cba88b5f5ad4811de89a"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4-verification.json",
+          "sha256": "12211834e091bfc08a94b378c15d61f5c279d23376300c65d548d292356facfa"
+        }
+      },
+      "run_id": "fixture-aa-4",
+      "scene": "tap",
+      "sha256": "5170cb0725805a19a6459cd89125594ebd5736e390841f988174938ccbcd440d"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5-audit.json",
+      "audit_sha256": "63829b530a393944c83bf57f017cde7c25bbeb140e508a2e5f93c5b08f56bfe7",
+      "bytes": 3176,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 562,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5-command.json",
+          "sha256": "2744b476653938e2d79f5599685f4b4b1dc02f44abbd3acecd3633f0edde6a06"
+        },
+        "contract": {
+          "bytes": 562,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5-contract.json",
+          "sha256": "d48f5ce9b513265d4cdd4134133620b14eeeb4b309a22574e9964315d0c732b3"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5-freeze.json",
+          "sha256": "c931ef8e1b1b67f0d5033a51ad2e7647ce2b6b762382c4220ea10978374e255d"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5-result.json",
+          "sha256": "7a2b90e09cc3b72f7d8f06805e357291adb849e5fa5808dfde2de590cd301888"
+        },
+        "specification": {
+          "bytes": 490,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5-spec.json",
+          "sha256": "a5a1b2fc8145562207d15a464414894bf19135cd3215e3c9dfbf87febfb3ef94"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5-state.json",
+          "sha256": "aed9874b07de3b63eb9dcde86bdd2758450c70377ca365a36abd31d677874cc9"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5-verification.json",
+          "sha256": "8f8bb08a2300d7996bac63275845d79304ac2dfe4aa556294aebab7785f57206"
+        }
+      },
+      "run_id": "fixture-aa-5",
+      "scene": "hold",
+      "sha256": "2ff0d2d8db06cf031d84b03f0c3733e446c3d1a4c5674e970b5e78124b6a9c47"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6-audit.json",
+      "audit_sha256": "3ba01307f76c9b45dc0574371b035942ebefe1c4c1f5502962783e2eb85188fb",
+      "bytes": 3176,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 562,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6-command.json",
+          "sha256": "648b9ffa69c8efc4067a3c538240c83e7366edf35e727f7a858b03153c15e798"
+        },
+        "contract": {
+          "bytes": 562,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6-contract.json",
+          "sha256": "8571dc443e704678849e3bc8191159f86e34f5df79e91fa6738a2bb0eba72e0c"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6-freeze.json",
+          "sha256": "cc3535a894e041a57548e015a4e168b4f1fee5da8148d5e3d5766d263f366a91"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6-result.json",
+          "sha256": "9f536bcbc1441ec8a86e59b43b20926f3a460c2b03767923fb2d4857a15ec7f2"
+        },
+        "specification": {
+          "bytes": 490,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6-spec.json",
+          "sha256": "26f6d1b4792a31fcbadde42ffc44cc2821848c20c79782ee4389bdbf6bd4cdd5"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6-state.json",
+          "sha256": "3fc136da5b91310ea72812e56f88c6d5ce48fd4f825d57b5ce96eb3c2a7dca39"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6-verification.json",
+          "sha256": "2e1bab83adc7be20968400ecaa2aa8e0f870100e89e01f1988d65939d76079d6"
+        }
+      },
+      "run_id": "fixture-aa-6",
+      "scene": "hold",
+      "sha256": "556acd39dc380c5cb59f8e49a57c8707e4432cf88b1d21a7f22075c8638c01c2"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7-audit.json",
+      "audit_sha256": "d58851e82d6911df22a1f41383f1c6d70c1bb2d920b72e8fbf23956ef5474b42",
+      "bytes": 3176,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 562,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7-command.json",
+          "sha256": "be902b02217e55cd14a6b6d8cd3f533c7522a1bbe77c870d0cbbdaa5af31a3f2"
+        },
+        "contract": {
+          "bytes": 562,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7-contract.json",
+          "sha256": "76248f46b3e0a3483c19b400365b6575ea4de86f04ed02cbafcaa8ca4b402310"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7-freeze.json",
+          "sha256": "5f7cc263188e47e6ed24d9df352d23a21fd0d0dc22d811050415e5f90bb9dafc"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7-result.json",
+          "sha256": "b02911090b5606ad371cc9a308ca0271f48c496610ee1dddb5cdc70d98ff3105"
+        },
+        "specification": {
+          "bytes": 490,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7-spec.json",
+          "sha256": "9741a9c57916be353e4bf84ce2359705043ebe2803660a6081ac98ce0f817f0a"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7-state.json",
+          "sha256": "081b55dc73caf4d3e01e4103ccd320155bba4bf207a18c7152b41c48ef29f07c"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7-verification.json",
+          "sha256": "48141536ded0a40b8a983ce554fb8261830fa2bf49d74e844a984c393ee72f84"
+        }
+      },
+      "run_id": "fixture-aa-7",
+      "scene": "hold",
+      "sha256": "1aba005ef36c23421fd47e322ea52de4eb6e5ee8907b1b5ee0658517cfeba23d"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8-audit.json",
+      "audit_sha256": "b5ecf85375e86dc16076ff06966bc6631432229547bc1031ea5d0d582243c26b",
+      "bytes": 3176,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 562,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8-command.json",
+          "sha256": "9c46eefdf282105148376ac6da192435394b661921226d912c3d56bf0ca125f7"
+        },
+        "contract": {
+          "bytes": 562,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8-contract.json",
+          "sha256": "0019c36d1ce257c262f35e767385aa4f007a024a4f599fd0daab55f07eaa7f66"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8-freeze.json",
+          "sha256": "4c39a14ac13d560a7df67a766adedb3daaa70c6318e23725c2adad90f76498d8"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8-result.json",
+          "sha256": "7716adc098ae47ee5ba8a711d21100fac122a227e6b83626db604ecfdcb82f13"
+        },
+        "specification": {
+          "bytes": 490,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8-spec.json",
+          "sha256": "06375c7cc22307a9fa3e16c0ba972ab0f2653074a6c6e91d495fddd8c5dee25f"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8-state.json",
+          "sha256": "ed56d0dfc3c7bf9ccc58653d505d8e8b1a42c612c73116cab4b24a8984913ac0"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8-verification.json",
+          "sha256": "59962fe7525b9b9772f5ea984d6c657627a9af45d0273438549bce2e1d3ac68f"
+        }
+      },
+      "run_id": "fixture-aa-8",
+      "scene": "hold",
+      "sha256": "ad90242d401918fc467796ee8d5cfea4b91662cc1c63b2ad144690f21e8764a2"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9-audit.json",
+      "audit_sha256": "4d4fdb0e66f34bdb9ff4c1b93fd7a8f16fde22a3548a09782af8ea254e805f7e",
+      "bytes": 3178,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 563,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9-command.json",
+          "sha256": "deac26dad8a7a1518c1563bbbdc5ec055fa56a4d345939e9837cc0c3f0366582"
+        },
+        "contract": {
+          "bytes": 563,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9-contract.json",
+          "sha256": "516dedcaadc4fa97b6b0860df2ebbae394ba6ec851571f21474e09f59ffeef53"
+        },
+        "freeze": {
+          "bytes": 696,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9-freeze.json",
+          "sha256": "9f0b2a8043caf0338be8b5d536be5295752c9e346a812b9c5d20d6486eb3103a"
+        },
+        "result": {
+          "bytes": 463,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9-result.json",
+          "sha256": "cec53b300a2fe612986accae4beb60c2bbd8d4ca7c7d3747b0b68ddc49b31b81"
+        },
+        "specification": {
+          "bytes": 491,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9-spec.json",
+          "sha256": "b9dbd498e1ab4df9db8b64b7e674218c153cafc58feb2fce840376ad203afc11"
+        },
+        "state": {
+          "bytes": 542,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9-state.json",
+          "sha256": "10699090cfc2a707e0ea3b8fe6b745ef9f07b2147946e628d4676c4c93aa1402"
+        },
+        "verification": {
+          "bytes": 643,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9-verification.json",
+          "sha256": "115e9f8c48ffe969a14c28d5761f94122a6a6b6570110694c3ad6db89d9bf5d3"
+        }
+      },
+      "run_id": "fixture-aa-9",
+      "scene": "dense",
+      "sha256": "a0fc08cdc19f2ce68a893b1becf2bdf3d7cb21ff10ec921326b1e9bb52fcee5e"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10-audit.json",
+      "audit_sha256": "617dcfdc761b731b7cb689ab1431c75b3e1aa6c47a14837f3f0617c9ed0e9173",
+      "bytes": 3183,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 567,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10-command.json",
+          "sha256": "014c5934453495e6d5b20381035b335029fbf70556a004d15856f6d03557469e"
+        },
+        "contract": {
+          "bytes": 566,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10-contract.json",
+          "sha256": "65d918ff9104d7215638b6d96973974a1b91b8ff44eba91a28b50f93c1dfc48f"
+        },
+        "freeze": {
+          "bytes": 697,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10-freeze.json",
+          "sha256": "a68acc3ea28c3a1e26bc4e756ec4e55604ad2ae513b0c7c3ca3f4f3af754d65d"
+        },
+        "result": {
+          "bytes": 465,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10-result.json",
+          "sha256": "044af0a4ae05b995b3e8370f4c95b1f5e1a76333876d3c2f31296199da882aa6"
+        },
+        "specification": {
+          "bytes": 494,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10-spec.json",
+          "sha256": "12ab113f08d7b74fae05d30a5ccffcac45b27f6f816dce17e9b1d49a4f3d0c02"
+        },
+        "state": {
+          "bytes": 543,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10-state.json",
+          "sha256": "8c1bd8032cab5ad91ed4de2024668ddfd12583c331c8bca59c7ccbfadf5b30a3"
+        },
+        "verification": {
+          "bytes": 646,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10-verification.json",
+          "sha256": "c5f3b64471dec9995fba1fea74ba0bf1cc6973257c2d417bea9a9ec94b30b9ec"
+        }
+      },
+      "run_id": "fixture-aa-10",
+      "scene": "dense",
+      "sha256": "f38f14b97b0abe1a5e1377271e7a31b7511db6555d8f74a22e00239eef00d278"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-audit.json",
+      "audit_sha256": "34df2c405fe95fb8e835b34df4f3b486f149fe4c466de6cdcb60e248438ac5ff",
+      "bytes": 3183,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 567,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-command.json",
+          "sha256": "134f111988c09196af4cfab372dc75b152b8bcf37eaa25d19ce7da4587a4e255"
+        },
+        "contract": {
+          "bytes": 566,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-contract.json",
+          "sha256": "9c3dbc0035780ff95ab59fe7aafa0e5fd53e258620c44aa8d7182c89b2764aeb"
+        },
+        "freeze": {
+          "bytes": 697,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-freeze.json",
+          "sha256": "5cfc979d9afa625c5aec48e7bb0d49fe2bda347bd7963290bbb301088633f687"
+        },
+        "result": {
+          "bytes": 465,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-result.json",
+          "sha256": "e1322722f5072d1cd70c4c73d802db873b987de1ef19d653465fe14d605b7377"
+        },
+        "specification": {
+          "bytes": 494,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-spec.json",
+          "sha256": "2c51a02332d673467ff0f7f974cdb799d77c8174a664cfae4456f092f05fdf97"
+        },
+        "state": {
+          "bytes": 543,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-state.json",
+          "sha256": "2966c7badbbb8e0db3f10fb5fda8f510f60fb0afd9767ed3b931019a0f599f6d"
+        },
+        "verification": {
+          "bytes": 646,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11-verification.json",
+          "sha256": "d96d4a4653921a8e531b5fb70c5dbb6c120ac3a092f29085911b954feb33a413"
+        }
+      },
+      "run_id": "fixture-aa-11",
+      "scene": "dense",
+      "sha256": "875831ab054d6daedf654cf86b9087d2cae49757ac1eb45386833582480e6133"
+    },
+    {
+      "audit_path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12-audit.json",
+      "audit_sha256": "f1a72a98a872301275697856b5dc3bffe456fe5e7f9011739d3f0d145c5d54f9",
+      "bytes": 3183,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12.json",
+      "process_evidence": {
+        "command": {
+          "bytes": 567,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12-command.json",
+          "sha256": "1da796250e32753a769b9455d95cb707f4d1120cf2340e794092cf33c0d4e1ca"
+        },
+        "contract": {
+          "bytes": 566,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12-contract.json",
+          "sha256": "a4513104b0507ad5e6ba84b7846e2cfaee3eccd2585e7d253181b8bfda4ad583"
+        },
+        "freeze": {
+          "bytes": 697,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12-freeze.json",
+          "sha256": "b55bec88ac8daa16db5fd56cbafeef3fef206b81d62ca1a8b09ec35f91684d74"
+        },
+        "result": {
+          "bytes": 465,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12-result.json",
+          "sha256": "3632c73e76a5a00d03872a032c418aa58ef37356f5277cde8850216df13a3e11"
+        },
+        "specification": {
+          "bytes": 494,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12-spec.json",
+          "sha256": "67acd71092b94221d9460c8e2822b9f5304a98fb69aeffbddc67b766b3c3f9be"
+        },
+        "state": {
+          "bytes": 543,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12-state.json",
+          "sha256": "7b81b883da60d5b21c98f6c1e8ffb33ba27f2fe8b486c4faa5e0b945f20bb6c6"
+        },
+        "verification": {
+          "bytes": 646,
+          "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-12-verification.json",
+          "sha256": "93ce9ceeb6b0e5c262007098e4fb07a3daf3b51cb958c80185fcd492bb91973e"
+        }
+      },
+      "run_id": "fixture-aa-12",
+      "scene": "dense",
+      "sha256": "ee1deeedca7ff31222621e959a6e18ac752e8a3fb4eea7a7b070d258e64e4636"
+    }
+  ],
+  "schema": "pas.current-rails-cost-input.v2"
+}

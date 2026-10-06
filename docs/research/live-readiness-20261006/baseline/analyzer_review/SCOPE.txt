@@ -1,0 +1,1 @@
+Pure C++ contract test matrix. Simulated process/auditor fixtures only; no pipeline execution, Windows cost qualification, device, model, or provider.

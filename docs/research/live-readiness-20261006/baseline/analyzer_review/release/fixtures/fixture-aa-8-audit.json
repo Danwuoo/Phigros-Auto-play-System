@@ -1,0 +1,85 @@
+{
+  "all_input_processed": true,
+  "complete_prefix_evidence": true,
+  "coordinate_join_complete": true,
+  "input_bindings": {
+    "attempts": {
+      "bytes": 41,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/release/fixtures/fixture-aa-8.json.attempts.json",
+      "sha256": "7d1b2e94194a1b62212712ecad338308b1617a34c80d72745304bb2ceecf0355"
+    },
+    "journal": {
+      "bytes": 41,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/release/fixtures/fixture-aa-8.json.journal.jsonl",
+      "sha256": "7d1b2e94194a1b62212712ecad338308b1617a34c80d72745304bb2ceecf0355"
+    },
+    "report": {
+      "bytes": 3168,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/release/fixtures/fixture-aa-8.json",
+      "sha256": "749963d4b68824bb3fae06dbed9c53dfa1d4d5ea7c3ea2a28fa1ca1616baf936"
+    }
+  },
+  "integrity": true,
+  "measurement_all_phase_lateness_ms": {
+    "jitter_p95_minus_p5": 0,
+    "max": 0.1,
+    "n": 2,
+    "p50": 0.1,
+    "p95": 0.1,
+    "p99": 0.1
+  },
+  "measurement_phase_counts": [
+    1,
+    0,
+    1
+  ],
+  "metrics_verified": true,
+  "plan_join_complete": true,
+  "provenance_join_complete": true,
+  "release_uncertainty_seen": false,
+  "run_provenance": {
+    "campaign_id": "unit-test-only-not-measurement",
+    "campaign_sha256": "11f14456473454ef03eeb739dfa81834732eaa9452c7599fc0fb607b7c5a89ac",
+    "candidate_binary_sha256": "b968d705043e8e6ee125123ec57defd7d0be803a3c9b6520f8b0590ffc63fb5a",
+    "cost_protocol_sha256": "58d6136fcbce1ebf6c25a23795f10aab78013d46318c2b6261b7f6206abe91e6",
+    "effective_profile": {
+      "capture": "offline_memory_stub",
+      "device_endpoints": 0,
+      "enabled_type_bits": 15,
+      "evidence_max_age_ns": 100000000,
+      "height": 720,
+      "horizon_ns": 350000000,
+      "lead_ns": 35000000,
+      "max_contacts": 5,
+      "max_plans": 128,
+      "max_steps": 16,
+      "rgb_stride": 3840,
+      "rotation": 1,
+      "touch": "ReplayBackend",
+      "uncertainty_ns": 30000000,
+      "width": 1280
+    },
+    "environment_sha256": "556cf58627b0d77f99ff00aa69d9e2a13053a1ccb68af23403ca3d3039868735",
+    "mode": "A",
+    "process": {
+      "creation_filetime": 1007,
+      "pid": 8,
+      "run_start_ns": 8000000000
+    },
+    "profile_sha256": "9a6639f89f78e0f448d7629c71848c181a32e72bc020a5a4e2186d14b2fd8474",
+    "report_path": "/workspace/shared/phigros-cost-review-final-20261006-05/release/fixtures/fixture-aa-8.json",
+    "requested": 2560,
+    "run_id": "fixture-aa-8",
+    "scene": "hold",
+    "schema": "pas.current-rails-run-provenance.v1",
+    "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_manifest_sha256": "07ee51d9d49cf14af891378fa07e70a500588ae77b3c1f37be0e23aefef138ff"
+  },
+  "schema": "pas.prelive-independent-integrity.v2",
+  "unit_test_double": true,
+  "verifier_binary": {
+    "bytes": 477280,
+    "path": "/workspace/shared/phigros-cost-review-final-20261006-05/release/seed-tests",
+    "sha256": "b968d705043e8e6ee125123ec57defd7d0be803a3c9b6520f8b0590ffc63fb5a"
+  }
+}

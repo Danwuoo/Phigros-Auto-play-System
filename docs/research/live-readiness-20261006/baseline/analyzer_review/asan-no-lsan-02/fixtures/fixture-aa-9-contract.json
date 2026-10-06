@@ -1,0 +1,20 @@
+{
+  "device_allowed": false,
+  "spec": {
+    "argv": [
+      "pipeline",
+      "A",
+      "dense",
+      "2560",
+      "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/campaign.json",
+      "fixture-aa-9",
+      "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9.json"
+    ],
+    "exe": "/workspace/shared/phigros-cost-review-final-20261006-05/asan/seed-tests",
+    "name": "fixture-aa-9",
+    "native_exit": 0,
+    "runner_exit": 0,
+    "stream_cap": 4194304,
+    "total_s": 900
+  }
+}

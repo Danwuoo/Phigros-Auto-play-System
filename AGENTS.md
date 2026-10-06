@@ -4,6 +4,13 @@
 
 ## 現行方向
 
+2026-10-06 雲端續作入口：[readiness 工作](docs/research/live-readiness-20261006/README.md)。
+指定起點 e9e305e，ignored compact 與直接父提交 f07dc40 的來源映射已核；不要回套舊 v3 patch。
+本輪只雲端實作／必要離線驗證／local commits，未 push、未操作裝置；Windows 成本、physical
+與全曲 IN Goal 分開保持 NOT_READY。先讀最新 RESULTS／READINESS／WINDOWS_HANDOFF，再讀
+下列歷史方向；保留原 oracle、所有負結果與 STOP。新 candidate 必須以完整 source/build/profile/
+evidence 身分銜接，不能用原已簽收 binary 或 donor CLI 冒稱新候選 live-ready。
+
 2026-10-04 最新入口為[Chapter Legacy IN zero miss總帳](docs/catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)與[逐曲JSON](docs/catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)。產品目標是所有曲目解鎖IN並以完整IN結算Miss=0驗收，HD為解鎖／回歸，P/G/B照報、不增AP前置。現行章節分母及各曲目前解鎖unknown；不能由HD分數代推。main HEAD f83c7ea、50/27/11/live0是comparison／donor，C36h tint1仍behavioural／experimental baseline。X1已獨立验收；X10d-P冷契約通過但X11/R1/R2/R3成本not-ready，suppression OFF、X10d-O未開始。順序工作包見總帳，當前包只整理證據與入口，不啟動emulator／觸控／manual-session／模型、runtime/cost/stress/full replay或長期goal。較早授權依當時範圍閱讀，後續live仍需既有gate及總控續派。
 
 2026-10-01歷史整合commit `9fea67e248411f7c2309f220daf989f652b27d15`。C36h同號observer37/planner19與歷史main不同binary，主要Miss未改善。閱讀[狀態J5–J32](docs/catalog/01-project/PROJECT_STATUS_NEXT_STEPS_20261001.md)、[歷史整理帳本](docs/catalog/06-engineering/CLEANUP_AUDIT_20261001.md)及[整合交接](docs/catalog/06-engineering/MAIN_INTEGRATION_HANDOFF_20261001.md)；A–I及早期「最新」字樣為歷史。模型只離線。10/4舊recovery LibTorch／CPU runtime路徑已不存在，cache引用是歷史，不默認可build或重裝。

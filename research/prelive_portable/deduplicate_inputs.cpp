@@ -1,0 +1,9 @@
+// Remove only this lane's redundant temporary PNG copies after matching both
+// original quarantine bytes and the original selected SHA; originals read-only.
+#include "evidence_hash.hpp"
+#include <nlohmann/json.hpp>
+#include <iostream>
+using J=nlohmann::json;namespace fs=std::filesystem;
+int main(int argc,char**argv){try{if(argc!=5||fs::exists(argv[4]))throw std::runtime_error("usage SELECTION DUPLICATE_ROOT ORIGINAL_ROOT FRESH_RECEIPT");std::ifstream in(argv[1]);const auto selected=J::parse(in);if(selected.at("frames").size()!=3063)throw std::runtime_error("3063 denominator");std::ofstream out(argv[4]);std::size_t removed=0;std::uint64_t bytes=0;
+ for(const auto&item:selected.at("frames")){const auto rel=item.at("index").at("path").get<std::string>();if(!rel.starts_with("frames/frame-")||rel.find("..")!=std::string::npos)throw std::runtime_error("relative path");const auto duplicate=fs::path(argv[2])/rel,original=fs::path(argv[3])/rel;const auto expected=item.at("sha256").get<std::string>();const auto a=pas::evidence::sha256(duplicate,4*1024*1024),b=pas::evidence::sha256(original,4*1024*1024);const auto n=fs::file_size(duplicate);if(a!=expected||b!=expected||fs::file_size(original)!=n||n!=item.at("bytes"))throw std::runtime_error("duplicate/original/selection mismatch");if(!fs::remove(duplicate))throw std::runtime_error("duplicate removal failed");if(!fs::is_regular_file(original)||fs::exists(duplicate))throw std::runtime_error("dedup postcondition");out<<J{{"ordinal",item.at("index").at("ordinal")},{"original",original.string()},{"removed_duplicate",duplicate.string()},{"sha256",expected},{"bytes",n},{"original_retained",true}}.dump()<<'\n';if(!out)throw std::runtime_error("receipt write");++removed;bytes+=n;
+ }std::cout<<"duplicates_removed="<<removed<<" bytes_reclaimed="<<bytes<<" originals_retained=3063\n";return 0;}catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}

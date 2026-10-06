@@ -49,8 +49,21 @@ struct NoteCandidate {
 struct GameTarget {
     // Typed pre-dispatch proof from the current-pixel adapter. Default callers
     // retain the original prediction contract; a measured overlap is separate.
-    enum class CurrentContact { none, hold_front_rails };
+    enum class CurrentContact { none, hold_front_rails, hold_tail_only };
     CurrentContact current_contact = CurrentContact::none;
+    // Release-only current-pixel proof, bound to the complete current frame.
+    // The enum alone, a reason string, or an ordinary predicted tail is not it.
+    struct TailTerminalProof {
+        SceneContext context;
+        Nanoseconds pixels_ready_ns=0;
+        std::uint64_t note_id=0,line_id=0,candidate_id=0;
+        Vec2 boundary;
+        int left_rail_rows=0,right_rail_rows=0,terminal_clusters=0;
+        std::size_t current_line_count=0;
+        std::uint32_t probes=0;
+        bool line_aware=false;
+    };
+    std::optional<TailTerminalProof> tail_terminal_proof;
     std::uint64_t note_id = 0, revision = 0;
     NoteCandidate note;
     Nanoseconds evidence_ns = 0, expires_ns = 0;
@@ -240,7 +253,11 @@ private:
         std::uint64_t drag_leader=0;bool shared_drag=false;
         std::optional<Nanoseconds> hold_tail_release_ns;
         NoteCandidate last_note; std::uint64_t line_id=0;
-        std::optional<Nanoseconds> tail_first_pass_ns; };
+        std::optional<Nanoseconds> tail_first_pass_ns;
+        std::optional<Nanoseconds> terminal_first_pass_ns;
+        Nanoseconds terminal_last_evidence_ns=0;
+        std::uint64_t terminal_last_frame=0;
+        bool terminal_only_closing=false; };
     struct ContactAlias {std::uint64_t owner=0;Nanoseconds last_seen_ns=0;};
     std::map<std::uint64_t,ContactAlias> contact_aliases_;
     const Clock& clock_;

@@ -1,0 +1,590 @@
+[
+  {
+    "frame": 62,
+    "measures": [
+      {
+        "raw_tail": [
+          399.0,
+          501.0
+        ],
+        "tail_boundary": [
+          399.0,
+          498.5
+        ],
+        "tail_samples": [
+          {
+            "along": -29.7,
+            "inside": {
+              "pixel": [
+                369,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                369,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": -14.85,
+            "inside": {
+              "pixel": [
+                384,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                384,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 0.0,
+            "inside": {
+              "pixel": [
+                399,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                399,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 14.85,
+            "inside": {
+              "pixel": [
+                414,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                414,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 29.7,
+            "inside": {
+              "pixel": [
+                429,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                429,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "frame": 63,
+    "measures": [
+      {
+        "raw_tail": [
+          399.0,
+          502.0
+        ],
+        "tail_boundary": [
+          399.0,
+          498.5
+        ],
+        "tail_samples": [
+          {
+            "along": -29.7,
+            "inside": {
+              "pixel": [
+                369,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 3,
+            "outside": {
+              "pixel": [
+                369,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": -14.85,
+            "inside": {
+              "pixel": [
+                384,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 3,
+            "outside": {
+              "pixel": [
+                384,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 0.0,
+            "inside": {
+              "pixel": [
+                399,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 3,
+            "outside": {
+              "pixel": [
+                399,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 14.85,
+            "inside": {
+              "pixel": [
+                414,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 3,
+            "outside": {
+              "pixel": [
+                414,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 29.7,
+            "inside": {
+              "pixel": [
+                429,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 3,
+            "outside": {
+              "pixel": [
+                429,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "frame": 64,
+    "measures": [
+      {
+        "raw_tail": [
+          399.0,
+          501.0
+        ],
+        "tail_boundary": [
+          399.0,
+          498.5
+        ],
+        "tail_samples": [
+          {
+            "along": -29.7,
+            "inside": {
+              "pixel": [
+                369,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                369,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": -14.85,
+            "inside": {
+              "pixel": [
+                384,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                384,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 0.0,
+            "inside": {
+              "pixel": [
+                399,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                399,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 14.85,
+            "inside": {
+              "pixel": [
+                414,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                414,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 29.7,
+            "inside": {
+              "pixel": [
+                429,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                429,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "frame": 65,
+    "measures": [
+      {
+        "raw_tail": [
+          399.0,
+          501.0
+        ],
+        "tail_boundary": [
+          399.0,
+          498.5
+        ],
+        "tail_samples": [
+          {
+            "along": -29.7,
+            "inside": {
+              "pixel": [
+                369,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                369,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": -14.85,
+            "inside": {
+              "pixel": [
+                384,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                384,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 0.0,
+            "inside": {
+              "pixel": [
+                399,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                399,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 14.85,
+            "inside": {
+              "pixel": [
+                414,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                414,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "along": 29.7,
+            "inside": {
+              "pixel": [
+                429,
+                499
+              ],
+              "rgb": [
+                255,
+                255,
+                255
+              ]
+            },
+            "last_inside_offset": 2,
+            "outside": {
+              "pixel": [
+                429,
+                498
+              ],
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

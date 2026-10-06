@@ -1,0 +1,335 @@
+{
+  "campaign_id": "unit-test-only-not-measurement",
+  "campaign_sha256": "ebb34443b713786c9820155c4abc234320cfe887645237f444a1071196b9b30f",
+  "candidate_results_used": 0,
+  "comparison_allowed": false,
+  "live_ready": false,
+  "noise": {
+    "dense": {
+      "adequate": true,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        }
+      }
+    },
+    "hold": {
+      "adequate": true,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        }
+      }
+    },
+    "tap": {
+      "adequate": true,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        }
+      }
+    }
+  },
+  "normal_runs": [
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-1.json",
+      "run_id": "fixture-aa-1",
+      "sha256": "dd43b82f38c07d8e5d91f47846c1d419e198e8541d4d3e0196482050f90243ff",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-2.json",
+      "run_id": "fixture-aa-2",
+      "sha256": "c550a0089090ddf4c299887fdc199a7dcd7c470cc6cfe723b5ea5be185443874",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-3.json",
+      "run_id": "fixture-aa-3",
+      "sha256": "d57e618274d038f0fcc7d965251642a8a0e949533c9d2aef256a0743f1a35f5b",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-4.json",
+      "run_id": "fixture-aa-4",
+      "sha256": "f8b0aaa322a5cccf3da5a1f3b65d2d5d82f3977cf403aef2361171bea34a3731",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-5.json",
+      "run_id": "fixture-aa-5",
+      "sha256": "13defbd58c639803ea5e1ec42bdb5bad98cfc6c2e270e7ce7fcbcbc37df6f6c1",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-6.json",
+      "run_id": "fixture-aa-6",
+      "sha256": "72fc0794deecbb598b1bf659bd4b15da9ab9e891ea846a849883400a1fdd9dfb",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-7.json",
+      "run_id": "fixture-aa-7",
+      "sha256": "bc835a872507b2d473a74cb24c0a87f8a7511fc00da75a70b18d62235bb79d69",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-8.json",
+      "run_id": "fixture-aa-8",
+      "sha256": "d0b0da978ad58b2869001fcdff61c8cbb68a56ca6c805af24b24e655d3521b37",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-9.json",
+      "run_id": "fixture-aa-9",
+      "sha256": "8fd7a840e61417f8b33524934c75901d537fd99e239519268bcc69f2ad6aa21b",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-10.json",
+      "run_id": "fixture-aa-10",
+      "sha256": "d183affa9836d48e843272eaa6745c38d0a198f795a3a9ce69806e737eb6ecc8",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-11.json",
+      "run_id": "fixture-aa-11",
+      "sha256": "f3a3d64799620c44e98ac09afd5423fe90c5ab8ba23c5811c9dee2ce6574e7df",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/debug/fixtures/fixture-aa-12.json",
+      "run_id": "fixture-aa-12",
+      "sha256": "d2435c7dbef59606d201bdac89d08541b9086a582942fd198615dae0d15966c0",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    }
+  ],
+  "ready": false,
+  "schema": "pas.current-rails-noise-freeze.v2",
+  "scope": "bound offline cold cost evidence only; Windows process qualification and physical/live gates are separate"
+}

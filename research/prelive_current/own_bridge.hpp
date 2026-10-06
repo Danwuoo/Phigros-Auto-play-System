@@ -1,7 +1,8 @@
 #pragma once
-// Offline adapter only. No capture, device, network or injection implementation.
+// Endpoint-free current-evidence/owner adapter. No capture or device discovery.
 #include "pas/game.hpp"
 #include "bvi.hpp"
+#include "receipt_stream.hpp"
 #include <array>
 #include <optional>
 #include <span>
@@ -19,12 +20,6 @@ struct Prepared {
 };
 Prepared prepare(const Frame&,const CandidateBatch&,const DecisionSnapshot&,Nanoseconds);
 
-struct BackendEvent {
-    bool release=false;
-    TouchCommand issued{};
-    TouchReceipt receipt{};
-    ReleaseReport report;
-};
 // Each frame drains <=64 events. Five physical slots; no unbounded receipt log.
 class ReplayBackend final : public TouchBackend {
 public:
@@ -33,7 +28,8 @@ public:
     ReleaseReport release_all() override;
     std::vector<BackendEvent> take_events();
     std::size_t active_count() const;
-    bool overflow() const {return overflow_;}
+    bool overflow() const {return receipts_.overflow();}
+    ReceiptStream& receipts() {return receipts_;}
     enum class Failure {none,unknown_down,unknown_move,unknown_up,wrong_contact,release_unknown};
     Failure failure=Failure::none; // deterministic offline failure controls
     int delay_ms=0; // bounded offline transport stub; no endpoint
@@ -41,9 +37,7 @@ public:
 private:
     const Clock& clock_;
     std::array<bool,5> active_{};
-    std::array<BackendEvent,64> events_{};
-    std::size_t event_count_=0;
-    bool overflow_=false;
+    ReceiptStream receipts_;
 };
 enum class Execution {pending,active,completed,unknown,cancelled};
 struct Attachment {
@@ -69,6 +63,7 @@ public:
     bvi::Guard guard(std::uint64_t note,int query,Nanoseconds now,Nanoseconds gate_deadline,
                      Nanoseconds plan_deadline,int free_contacts) const;
     std::size_t size() const {return count_;}
+    std::span<const Attachment> attachments() const {return {attachments_.data(),count_};}
     std::size_t reservations() const;
     bool valid() const {return valid_;}
     std::string_view reason() const {return reason_;}

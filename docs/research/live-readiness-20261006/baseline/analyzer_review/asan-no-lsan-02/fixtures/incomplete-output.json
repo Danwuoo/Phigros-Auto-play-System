@@ -1,0 +1,260 @@
+{
+  "campaign_id": "unit-test-only-not-measurement",
+  "campaign_sha256": "da580e11676bccb285bacc5f0caeacfc40d8c1f78d2006c727ab9fd51db17dfe",
+  "candidate_results_used": 0,
+  "comparison_allowed": false,
+  "live_ready": false,
+  "noise": {
+    "dense": {
+      "adequate": false,
+      "n": 3,
+      "reason": "four_frozen_A_runs_missing"
+    },
+    "hold": {
+      "adequate": true,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        }
+      }
+    },
+    "tap": {
+      "adequate": true,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 3.0,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 0.5,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.3,
+            0.3,
+            0.3,
+            0.3
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0,
+          "values": [
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        }
+      }
+    }
+  },
+  "normal_runs": [
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-1.json",
+      "run_id": "fixture-aa-1",
+      "sha256": "c4c94525533b5052a13c0537575f2f8eebc1c1595f00f9a7b8e83beaf60c38c6",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2.json",
+      "run_id": "fixture-aa-2",
+      "sha256": "3fee5e6180a5bc5022d92715190aae140e6bbc41498ee242cdcc629b081d63cf",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-3.json",
+      "run_id": "fixture-aa-3",
+      "sha256": "224ac05f29744e90e5d7930beacb877dbb169e4ef02ee99e743e163bd374ce65",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-4.json",
+      "run_id": "fixture-aa-4",
+      "sha256": "5170cb0725805a19a6459cd89125594ebd5736e390841f988174938ccbcd440d",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-5.json",
+      "run_id": "fixture-aa-5",
+      "sha256": "2ff0d2d8db06cf031d84b03f0c3733e446c3d1a4c5674e970b5e78124b6a9c47",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-6.json",
+      "run_id": "fixture-aa-6",
+      "sha256": "556acd39dc380c5cb59f8e49a57c8707e4432cf88b1d21a7f22075c8638c01c2",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-7.json",
+      "run_id": "fixture-aa-7",
+      "sha256": "1aba005ef36c23421fd47e322ea52de4eb6e5ee8907b1b5ee0658517cfeba23d",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-8.json",
+      "run_id": "fixture-aa-8",
+      "sha256": "ad90242d401918fc467796ee8d5cfea4b91662cc1c63b2ad144690f21e8764a2",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-9.json",
+      "run_id": "fixture-aa-9",
+      "sha256": "a0fc08cdc19f2ce68a893b1becf2bdf3d7cb21ff10ec921326b1e9bb52fcee5e",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-10.json",
+      "run_id": "fixture-aa-10",
+      "sha256": "f38f14b97b0abe1a5e1377271e7a31b7511db6555d8f74a22e00239eef00d278",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    },
+    {
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-11.json",
+      "run_id": "fixture-aa-11",
+      "sha256": "875831ab054d6daedf654cf86b9087d2cae49757ac1eb45386833582480e6133",
+      "validity": {
+        "failures": [],
+        "pass": true
+      }
+    }
+  ],
+  "ready": false,
+  "schema": "pas.current-rails-noise-freeze.v2",
+  "scope": "bound offline cold cost evidence only; Windows process qualification and physical/live gates are separate"
+}

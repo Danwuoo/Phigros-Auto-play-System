@@ -1,0 +1,151 @@
+{
+  "assertions": 35,
+  "checks": [
+    {
+      "id": "own_down_before_no_tail_body",
+      "pass": true
+    },
+    {
+      "id": "active_no_tail_measured_depth_current_body_positive",
+      "pass": true
+    },
+    {
+      "id": "no_tail_body_cannot_grant_tail_or_new_down",
+      "pass": true
+    },
+    {
+      "id": "positive_final_release",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_0",
+      "pass": true
+    },
+    {
+      "id": "negative_release_0",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_1",
+      "pass": true
+    },
+    {
+      "id": "negative_release_1",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_2",
+      "pass": true
+    },
+    {
+      "id": "negative_release_2",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_3",
+      "pass": true
+    },
+    {
+      "id": "negative_release_3",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_4",
+      "pass": true
+    },
+    {
+      "id": "negative_release_4",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_5",
+      "pass": true
+    },
+    {
+      "id": "negative_release_5",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_6",
+      "pass": true
+    },
+    {
+      "id": "negative_release_6",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_7",
+      "pass": true
+    },
+    {
+      "id": "negative_release_7",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_8",
+      "pass": true
+    },
+    {
+      "id": "negative_release_8",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_9",
+      "pass": true
+    },
+    {
+      "id": "negative_release_9",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_10",
+      "pass": true
+    },
+    {
+      "id": "negative_release_10",
+      "pass": true
+    },
+    {
+      "id": "invalid_no_tail_body_denied_11",
+      "pass": true
+    },
+    {
+      "id": "negative_release_11",
+      "pass": true
+    },
+    {
+      "id": "unowned_body_has_no_entry_permission",
+      "pass": true
+    },
+    {
+      "id": "unowned_final_release",
+      "pass": true
+    },
+    {
+      "id": "completed_fixture_has_real_down_up",
+      "pass": true
+    },
+    {
+      "id": "completed_no_tail_body_cannot_revive",
+      "pass": true
+    },
+    {
+      "id": "completed_final_release",
+      "pass": true
+    },
+    {
+      "id": "expired_body_frame_denied",
+      "pass": true
+    },
+    {
+      "id": "expired_final_release",
+      "pass": true
+    }
+  ],
+  "device_endpoints": 0,
+  "failed": 0,
+  "new_down_permission": false,
+  "new_tail_permission": false,
+  "physical_gold": 0,
+  "schema": "pas.current-active-no-tail-body.v1"
+}

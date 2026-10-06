@@ -2,7 +2,7 @@
 
 啟動／更新：2026-10-05。起點：`a53a9b7021bcc900f498047f5cc017b42e4711b0`。
 
-**狀態：10/6 Windows 離線橋接及隔離 current-pixel Hold終端量測已獨立驗收，physical語義／合法機會與完整成本仍不足；產品目標未完成。** 這是repo內的開發目標與進度紀錄；本輪沒有建立或啟動新的系統Goal、automation或裝置工作。配套機讀狀態：[legacy-in-zero-miss-state.json](legacy-in-zero-miss-state.json)。
+**狀態：10/6 新雲端候選已完成必要冷工程、三配置與同來源 3063 幀回歸，可交接 Windows 同機資格驗證；成本／physical／live 仍 NOT_READY，產品目標未完成。** 這是 repo 內開發紀錄，沒有建立系統 Goal、automation 或裝置 task。配套：[機讀狀態](legacy-in-zero-miss-state.json)。
 
 ## 唯一完成條件
 
@@ -13,6 +13,23 @@
 3. 最終驗收包含實際遊戲／裝置測試；合成、單曲、平均改善或雲端全綠都不能完成本Goal。
 
 P/G/B與score照報，不加AP要求。先前提出的每曲連續3次是穩定性提案，**不是已核准的額外完成門檻**。
+
+## 10/6 e9e305e 後雲端 readiness 里程碑
+
+以指定 main e9e305e 獨立續作，核原 accepted receipts 與 f07 compact payload，不重套舊 patch。
+修成本 false READY、shared Hold renderer、own-ACTIVE body／typed terminal-only 接縫，以及
+第一次 uncertain release 保留。三配置各 1339 checks 加 Flick case 通過；真實 3063 幀
+完整保留 own Down55／Move121／Up51、最終 release verified 與 active0。
+
+合成固定 family 的 B 每配置 24 次正常尾端完成；真圖前綴 typed-tail 與 normal-tail Up 為 0，
+合法機會分母 unknown。未放寬門檻、未改 frozen oracle、未把 old36fail／STOP 改綠。
+新的 production C++ API 已接入共用唯一 owner，UNQUALIFIED 入口在任何裝置I/O前拒絕；
+expiry-first 固定反例已修。新 source 尚未 MSVC完整production build／實際鏈A/A成本／
+啟用validator／live CLI／physical資格驗證；沒有裝置讀取或 touch。
+完整 [結果](../research/live-readiness-20261006/RESULTS.md)、
+[四層 readiness](../research/live-readiness-20261006/READINESS.json)、
+[待手動移交 Windows prompt](../research/live-readiness-20261006/WINDOWS_HANDOFF.md)。
+後續歷史段落保留原當時狀態，不能取代這個最新 checkpoint。
 
 ## 10/6 本機接手里程碑與授權
 

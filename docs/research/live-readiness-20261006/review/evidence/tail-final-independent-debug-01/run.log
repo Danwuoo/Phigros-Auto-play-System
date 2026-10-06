@@ -1,0 +1,6 @@
+/workspace/shared/phigros-live-readiness-20261006/out/prelive-portable-debug.2HEZty/portable_current.a: OK
+/workspace/shared/phigros-live-deps-20261006-patched/nlohmann/json.hpp: OK
+mode=debug
+Linux only; leak detection=0
+owner exit=0
+pixels exit=0

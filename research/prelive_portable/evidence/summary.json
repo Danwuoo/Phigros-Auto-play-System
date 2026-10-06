@@ -1,0 +1,32 @@
+{
+  "schema": "pas.prelive-portable-validation-summary.v1",
+  "base_commit": "e9e305e3aba13f05a786c74540419428610b2f76",
+  "platform": "Linux x86_64 GCC14.2 C++20",
+  "formal_policy_modified": false,
+  "diagnostic_serialization_modified": true,
+  "game_cpp_sha256": "058c56606d0ce27937f763a57c74f5d1066a586abe2e074778b3b5910ba69709",
+  "configurations": [
+    "release",
+    "debug",
+    "address_undefined_sanitizers"
+  ],
+  "core_json_checks_per_configuration": 407,
+  "scheduler_checks_per_configuration": 66,
+  "scheduler_cases_per_configuration": 13,
+  "flick_cases_per_configuration": 1,
+  "workload_diagnosis_checks_per_configuration": 144,
+  "total_checks_per_configuration": 617,
+  "total_check_executions": 1851,
+  "failed_final_checks": 0,
+  "final_source_integrity": true,
+  "asan_findings": 0,
+  "ubsan_findings": 0,
+  "leak_check": "UNSUPPORTED_ptrace_initial_fatal_preserved",
+  "cmake_configure": "NOT_RUN_CMake_absent",
+  "windows_acceptance": false,
+  "device_endpoints": 0,
+  "physical_gold": 0,
+  "cost_qualification": false,
+  "new_cost_scene_admitted": false,
+  "original_frozen_oracle_rerun": false
+}

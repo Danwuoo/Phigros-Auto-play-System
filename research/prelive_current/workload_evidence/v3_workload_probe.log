@@ -1,0 +1,52 @@
+variant=0 frame=0 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=1 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=2 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=3 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=4 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=5 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=6 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=7 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=8 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=9 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=10 body=absent front=0 contact=absent relation=0 down=0
+variant=0 frame=11 body=absent front=0 contact=absent relation=0 down=0
+variant=0 allowed=0
+variant=1 frame=0 body=supported front=0 contact=absent relation=0 down=0
+variant=1 frame=1 body=supported front=0 contact=absent relation=0 down=0
+variant=1 frame=2 body=supported front=0 contact=absent relation=0 down=0
+variant=1 frame=3 body=supported front=0 contact=absent relation=0 down=0
+variant=1 frame=4 body=supported front=0 contact=absent relation=0 down=0
+variant=1 frame=5 body=supported front=0 contact=absent relation=0 down=0
+variant=1 frame=6 body=supported front=0 contact=absent relation=0 down=0
+variant=1 frame=7 body=supported front=0 contact=absent relation=0 down=0
+variant=1 frame=8 body=supported front=0 contact=supported relation=0 down=0
+variant=1 frame=9 body=supported front=0 contact=supported relation=0 down=0
+variant=1 frame=10 body=supported front=0 contact=supported relation=0 down=0
+variant=1 frame=11 body=supported front=0 contact=supported relation=0 down=0
+variant=1 allowed=0
+variant=2 frame=0 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=1 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=2 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=3 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=4 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=5 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=6 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=7 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=8 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=9 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=10 body=absent front=0 contact=absent relation=0 down=0
+variant=2 frame=11 body=absent front=0 contact=absent relation=0 down=0
+variant=2 allowed=0
+variant=3 frame=0 body=supported front=1 contact=absent relation=0 down=0
+variant=3 frame=1 body=supported front=1 contact=absent relation=0 down=0
+variant=3 frame=2 body=supported front=1 contact=absent relation=1 down=0
+variant=3 frame=3 body=supported front=1 contact=absent relation=1 down=0
+variant=3 frame=4 body=supported front=1 contact=absent relation=1 down=0
+variant=3 frame=5 body=supported front=1 contact=absent relation=1 down=0
+variant=3 frame=6 body=supported front=1 contact=absent relation=1 down=0
+variant=3 frame=7 body=supported front=1 contact=absent relation=1 down=0
+variant=3 frame=8 body=supported front=1 contact=supported relation=1 down=1
+variant=3 frame=9 body=supported front=1 contact=supported relation=1 down=1
+variant=3 frame=10 body=supported front=1 contact=supported relation=1 down=1
+variant=3 frame=11 body=supported front=1 contact=supported relation=1 down=1
+variant=3 allowed=4

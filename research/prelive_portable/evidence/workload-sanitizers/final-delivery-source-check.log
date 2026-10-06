@@ -1,0 +1,4 @@
+research/prelive_current/cost_workload.hpp: OK
+research/prelive_current/cost_workload_tests.cpp: OK
+/workspace/shared/phigros-live-readiness-20261006/out/prelive-portable-sanitizers.zlt17b/portable_current.a: OK
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/run_workload.sh: OK

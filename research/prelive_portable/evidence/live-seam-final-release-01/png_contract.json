@@ -1,0 +1,55 @@
+{
+  "actual_png_sha256": "fb163c16edffa6086571e0bb94f3a7db2a117b3cf184aee514f52b6e04192078",
+  "actual_rgb_sha256": "421f2d0482fd94c42019837db1ea71e48e33bae391a3076f5e8cee59ced4a7c2",
+  "assertions": 11,
+  "checks": [
+    {
+      "id": "full_rgb8_gradient_exact_top_down_channels",
+      "pass": true
+    },
+    {
+      "id": "signature",
+      "pass": true
+    },
+    {
+      "id": "truncated",
+      "pass": true
+    },
+    {
+      "id": "trailing",
+      "pass": true
+    },
+    {
+      "id": "IDAT_CRC",
+      "pass": true
+    },
+    {
+      "id": "header_CRC",
+      "pass": true
+    },
+    {
+      "id": "short_header",
+      "pass": true
+    },
+    {
+      "id": "compressed_capacity",
+      "pass": true
+    },
+    {
+      "id": "valid_CRC_wrong_bitdepth",
+      "pass": true
+    },
+    {
+      "id": "actual_archived_RGB_profile",
+      "pass": true
+    },
+    {
+      "id": "installed_library_version",
+      "pass": true
+    }
+  ],
+  "device_endpoints": 0,
+  "failed": 0,
+  "libpng_runtime": "1.6.48",
+  "schema": "pas.portable-libpng.contract.v1"
+}

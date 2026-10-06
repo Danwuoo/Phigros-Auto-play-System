@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "bytes": 463,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-result.json",
+      "sha256": "d1321860f7c53f7035289ddf43f3857cce216f67f524c6cf9fb30e137d2aab85"
+    },
+    {
+      "bytes": 561,
+      "path": "/workspace/shared/phigros-cost-review-final-20261006-05/asan-no-lsan-02/fixtures/fixture-aa-2-command.json",
+      "sha256": "50616320eec1d79f375c9a1a0680d6e2fb6851c2724d1f1d8d8aad8cdbe5eb74"
+    }
+  ],
+  "native_exit": 0,
+  "pending": false,
+  "producer_complete": true,
+  "runner_exit": 0,
+  "stage": "fixture-aa-2",
+  "verification_exit": 0
+}

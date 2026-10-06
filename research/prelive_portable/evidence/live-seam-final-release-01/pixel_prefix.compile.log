@@ -1,0 +1,27 @@
+In file included from /workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/pixel_prefix.cpp:2:
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/portable_png.hpp: In function ‘std::vector<unsigned char> pas::portable_png::decode(std::span<const unsigned char>)’:
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/portable_png.hpp:24:3: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   24 |   if(++chunks>4096||b.size()-at<12)throw std::runtime_error("PNG chunk bound");const auto n=be(b.data()+at);if(n>b.size()-at-12)throw std::runtime_error("PNG chunk length");
+      |   ^~
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/portable_png.hpp:24:80: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   24 |   if(++chunks>4096||b.size()-at<12)throw std::runtime_error("PNG chunk bound");const auto n=be(b.data()+at);if(n>b.size()-at-12)throw std::runtime_error("PNG chunk length");
+      |                                                                                ^~~~~
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/pixel_prefix.cpp: In function ‘int main(int, char**)’:
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/pixel_prefix.cpp:12:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   12 |  if(argc!=4)throw std::runtime_error("usage EXACT_SELECTION EXTRACTED_FULL_RECORDING_ROOT FRESH_REPORT");const fs::path selection=argv[1],root=argv[2],report=argv[3];
+      |  ^~
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/pixel_prefix.cpp:12:106: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   12 |  if(argc!=4)throw std::runtime_error("usage EXACT_SELECTION EXTRACTED_FULL_RECORDING_ROOT FRESH_REPORT");const fs::path selection=argv[1],root=argv[2],report=argv[3];
+      |                                                                                                          ^~~~~
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/pixel_prefix.cpp:14:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   14 |  if(fs::file_size(selection)>16*1024*1024)throw std::runtime_error("selection bound");std::ifstream input(selection);const auto selected=J::parse(input);const auto&frames=selected.at("frames");if(frames.size()!=3063)throw std::runtime_error("exact 3063 prefix required");
+      |  ^~
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/pixel_prefix.cpp:14:87: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   14 |  if(fs::file_size(selection)>16*1024*1024)throw std::runtime_error("selection bound");std::ifstream input(selection);const auto selected=J::parse(input);const auto&frames=selected.at("frames");if(frames.size()!=3063)throw std::runtime_error("exact 3063 prefix required");
+      |                                                                                       ^~~
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/pixel_prefix.cpp:28:3: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   28 |   if(f.sequence<=prior_source||f.capture_complete_ns<=prior_capture||f.pixels_ready_ns<f.capture_complete_ns)throw std::runtime_error("archived clock/source order");prior_source=f.sequence;prior_capture=f.capture_complete_ns;f.rgb=portable_png::decode(compressed);clock.set(f.pixels_ready_ns);
+      |   ^~
+/workspace/shared/phigros-live-readiness-20261006/research/prelive_portable/pixel_prefix.cpp:28:166: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   28 |   if(f.sequence<=prior_source||f.capture_complete_ns<=prior_capture||f.pixels_ready_ns<f.capture_complete_ns)throw std::runtime_error("archived clock/source order");prior_source=f.sequence;prior_capture=f.capture_complete_ns;f.rgb=portable_png::decode(compressed);clock.set(f.pixels_ready_ns);
+      |                                                                                                                                                                      ^~~~~~~~~~~~

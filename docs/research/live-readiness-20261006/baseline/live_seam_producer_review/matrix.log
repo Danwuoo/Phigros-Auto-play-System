@@ -1,0 +1,12 @@
+Compile and run release seeded admission
+Compile and run release bounded input-closure independent review
+Compile and run release real-auditor synthetic raw review
+release done
+Compile and run debug seeded admission
+Compile and run debug bounded input-closure independent review
+Compile and run debug real-auditor synthetic raw review
+debug done
+Compile and run sanitizers seeded admission
+Compile and run sanitizers bounded input-closure independent review
+Compile and run sanitizers real-auditor synthetic raw review
+sanitizers done

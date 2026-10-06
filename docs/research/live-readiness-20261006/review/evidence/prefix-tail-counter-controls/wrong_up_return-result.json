@@ -1,0 +1,61 @@
+{
+  "colour_limit": "terminal producer requires six cyan interior support rows; neutral/gray body continuation does not prove terminal eligibility",
+  "device_endpoints": 0,
+  "errors": [
+    "normal_tail_up_missing_own_join"
+  ],
+  "event_rows": 6,
+  "events": {
+    "bytes": 628,
+    "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/live-readiness-20261006/review/evidence/prefix-tail-counter-controls/wrong_up_return.json.events.jsonl",
+    "sha256": "2a6c5337bd28dfa280960d9d3409b6d299c3e947f9a6588c3d9c1f77fb00873a"
+  },
+  "failed_injection_receipts": 0,
+  "frames": 2,
+  "interpretation": "actual archived-pixel replay counts, not physical opportunity denominators or game adoption; synthetic family counts are separate",
+  "own_receipt_joins_valid": false,
+  "physical_gold": 0,
+  "processed": 2,
+  "report": {
+    "bytes": 68,
+    "path": "/workspace/shared/phigros-live-readiness-20261006/docs/research/live-readiness-20261006/review/evidence/prefix-tail-counter-controls/wrong_up_return.json",
+    "sha256": "1cd811bcd1c4c39d0632cc00e5821ecc29113bf0e94f53919d18438b696fe8e6"
+  },
+  "schema": "pas.independent-actual-prefix-tail-counts.v1",
+  "successful_normal_tail_up_events": 1,
+  "successful_typed_normal_tail_up_events": 1,
+  "tail_confirmed_events": 1,
+  "typed_tail_confirmed_events": 1,
+  "typed_tail_plan_revisions": 1,
+  "typed_tail_targets": 1,
+  "witnesses": [
+    {
+      "frame": 42,
+      "kind": "typed_tail_target",
+      "note": 1,
+      "window": 0
+    },
+    {
+      "event": {
+        "event": "game_hold_tail_confirmed",
+        "intent_id": 1,
+        "terminal_only": true,
+        "window": 0
+      },
+      "kind": "tail_confirmed",
+      "window": 0
+    },
+    {
+      "event": {
+        "event": "game_contact_up",
+        "injection_return_ns": 999,
+        "intent_id": 1,
+        "reason": "visible_tail_completed",
+        "success": true,
+        "window": 0
+      },
+      "kind": "successful_normal_tail_up",
+      "window": 0
+    }
+  ]
+}

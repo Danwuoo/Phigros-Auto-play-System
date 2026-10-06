@@ -1,0 +1,7 @@
+research/prelive_current/tests/offline_output_tests.cpp: In function ‘int main(int, char**)’:
+research/prelive_current/tests/offline_output_tests.cpp:18:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   18 |  if(!link_rejected)throw std::runtime_error("dangling sidecar symlink accepted");++checks;
+      |  ^~
+research/prelive_current/tests/offline_output_tests.cpp:18:82: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   18 |  if(!link_rejected)throw std::runtime_error("dangling sidecar symlink accepted");++checks;
+      |                                                                                  ^~

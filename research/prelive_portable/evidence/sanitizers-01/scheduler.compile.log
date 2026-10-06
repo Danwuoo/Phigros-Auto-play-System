@@ -1,0 +1,13 @@
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp: In function ‘int main()’:
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp:50:3: warning: this ‘for’ clause does not guard... [-Wmisleading-indentation]
+   50 |   for(int i=1;i<=6;++i)require(s.submit(plan(i,0,10*ms,60*ms)),"capacity submit");c.set(10*ms);
+      |   ^~~
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp:50:83: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
+   50 |   for(int i=1;i<=6;++i)require(s.submit(plan(i,0,10*ms,60*ms)),"capacity submit");c.set(10*ms);
+      |                                                                                   ^
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp:71:3: warning: this ‘for’ clause does not guard... [-Wmisleading-indentation]
+   71 |   for(auto& x:r)std::cout<<x.injection_start_ns/ms<<",";std::cout<<" (synthetic, not measured gRPC)\n";}
+      |   ^~~
+docs/research/zero-miss-20261005/evidence/touch-scheduler/scheduler_probe.cpp:71:57: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
+   71 |   for(auto& x:r)std::cout<<x.injection_start_ns/ms<<",";std::cout<<" (synthetic, not measured gRPC)\n";}
+      |                                                         ^~~

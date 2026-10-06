@@ -1,0 +1,12 @@
+{
+  "schema": "pas.recoverable-own-ELF-gzip-archive.v1",
+  "entries": 70,
+  "original_bytes": 495682592,
+  "compressed_bytes": 71399455,
+  "available_after_bytes": 21995151360,
+  "CRC_ISIZE_verified": true,
+  "each_uncompressed_entry_SHA_verified": true,
+  "all_3_libraries_retained": true,
+  "raw_source_reports_modified": false,
+  "restore": "For each members.tsv entry from repository root: refuse an existing original path; gzip -cd archive_member > original_path; verify with original-ELF.sha256. Restore executability only for these SHA-verified own ELF binaries if needed."
+}

@@ -1,0 +1,238 @@
+{
+  "reports": 20,
+  "integrity_true": 19,
+  "metrics_verified_true": 19,
+  "incomplete": [
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-debug-load-tap-01.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-tap-1.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-tap-2.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-tap-3.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-tap-4.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-long-tap-01.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-fault-01.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-rpc-01.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-slow-01.json",
+      "errors": [],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": false
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-writer-01.json",
+      "errors": [],
+      "declared_writer_loss": true,
+      "coordinate_join_complete": true
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-prefix-01.json",
+      "errors": [
+        "note_identity_rebirth",
+        "pixel_input_incomplete"
+      ],
+      "declared_writer_loss": false,
+      "coordinate_join_complete": true
+    }
+  ],
+  "measurement_actions": [
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-asan-load-hold-01.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-asan-load-tap-01.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-debug-load-hold-01.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-debug-load-tap-01.json",
+      "measurement_phase_counts": [
+        3,
+        0,
+        3
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-hold-1.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-tap-1.json",
+      "measurement_phase_counts": [
+        24,
+        0,
+        24
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-tap-2.json",
+      "measurement_phase_counts": [
+        31,
+        0,
+        31
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-tap-3.json",
+      "measurement_phase_counts": [
+        23,
+        0,
+        23
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-aa-tap-4.json",
+      "measurement_phase_counts": [
+        29,
+        0,
+        29
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-long-dense-01.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-long-dense-02.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-long-tap-01.json",
+      "measurement_phase_counts": [
+        269,
+        0,
+        269
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-fault-01.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-rpc-01.json",
+      "measurement_phase_counts": [
+        7,
+        0,
+        7
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-slow-01.json",
+      "measurement_phase_counts": [
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pipeline-release-stress-writer-01.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-prefix-01.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-prefix-03.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-01.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/workspace/shared/phigros-live-restored-20261006/PAS-zero-miss-r4-20261006/out/prelive-20261006/pixels-release-short-02.json",
+      "measurement_phase_counts": [
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}
