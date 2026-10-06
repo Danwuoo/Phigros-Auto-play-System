@@ -2,7 +2,7 @@
 
 啟動／更新：2026-10-05。起點：`a53a9b7021bcc900f498047f5cc017b42e4711b0`。
 
-**狀態：10/6 Windows 離線接手及橋接里程碑完成，停在真圖語義／合法機會與完整成本資格；產品目標未完成。** 這是repo內的開發目標與進度紀錄；本輪沒有建立或啟動新的系統Goal、automation或裝置工作。配套機讀狀態：[legacy-in-zero-miss-state.json](legacy-in-zero-miss-state.json)。
+**狀態：10/6 Windows 離線橋接及隔離 current-pixel Hold終端量測已獨立驗收，physical語義／合法機會與完整成本仍不足；產品目標未完成。** 這是repo內的開發目標與進度紀錄；本輪沒有建立或啟動新的系統Goal、automation或裝置工作。配套機讀狀態：[legacy-in-zero-miss-state.json](legacy-in-zero-miss-state.json)。
 
 ## 唯一完成條件
 
@@ -32,11 +32,18 @@ current front 表示存在可核落差；沒有人工合法物件分母，不能
 必要候選／typed adapter。需要裝置時先列指定裝置、目的、命令、風險、停止條件，
 取得相應授權；安全及成本 gate 未成立不進遊戲。
 
-10/6後續派送已撤回，改由本 task 自行開發。最新 source774f3e7完成有界診斷防護及
+10/6前一輪派送已撤回，改由本 task 自行開發。source774f3e7完成有界診斷防護及
 独立原 PNG audit；三配置113項前綴、32項診斷、256幀／1,665取樣核驗，兩個竄改控制
 被拒絕；首次程序查核 STOP 保留。使用者僅確認3030可見 Hold head前緣一筆，
 1519物件身分、合法機會與實際接觸採納仍 unknown；沒有更改策略或凍結 oracle。
 詳見 [自行開發驗收](../research/zero-miss-20261006/windows/WITHDRAWAL_ACCEPTANCE.md)。
+
+使用者之後另授權新的GPT-6.1 Sol／xhigh task開發，由總控依「驗收」完成獨立review。
+source `e26231e` 的隔離終端量測、typed no-action seam已簽收；全新Release重建，
+三配置重跑56項契約與113項前綴，256幀原圖核1,910新取樣及1,665舊取樣，三個竄改
+控制被拒絕。191筆終端仍proposed、eligible=0。worker3 STOP及總控1 STOP原件保留，
+不重開舊STOP；正式接觸、全鏈成本與實機仍NOT_READY。原36fail及timeouts/skips本次
+未重跑、未刪除。詳見 [總控獨立驗收](../research/zero-miss-20261006/windows/FRONT_CONTROLLER_ACCEPTANCE.md)。
 
 ## 10/5 雲端持續範圍與工作路由（歷史）
 

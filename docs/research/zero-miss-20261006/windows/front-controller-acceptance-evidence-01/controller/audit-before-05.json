@@ -1,0 +1,416 @@
+{
+  "zip_sha256": "18040114639c560c0ed33d6d7949affd1a4fb1ce2be807adf1f53b948656ee9b",
+  "source_files": 9,
+  "source": "e26231ec5acef9634df007770c1f06031d5326d4",
+  "schema": "pas.front-controller-provenance-audit.v1",
+  "physical_legal_opportunity_gold": 0,
+  "paid_compute": 0,
+  "aux_sha256": "e5c78a1d90a5e430c4f7c5328c7e9a8b3571800b0b8fc698d082b1cbe16d5501",
+  "free_bytes": 195942821888,
+  "delivery": "055ec799d53ccc842ee7a2fa3033369ccc389f8d",
+  "device_commands": 0,
+  "original_pngs": 256,
+  "original_HEAD": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "core_entries": 7,
+  "passed": true,
+  "original_dirty": [
+    " M apps/runtime_x11_p/aux/CMakeLists.txt",
+    "?? phigros-zero-miss-handoff-round4-9dc99d6.zip"
+  ],
+  "external": {
+    "binaries": 34,
+    "negative_traces": 3,
+    "libraries": 12
+  },
+  "new_tasks": 0,
+  "worker_stages": [
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "audit-hold-front-asan-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "audit-hold-front-debug-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "audit-hold-front-release-01"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "audit-hold-front-release-03"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 1,
+      "status": "COMPLETE",
+      "runner": 1,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "audit-hold-front-release-neg-epoch"
+    },
+    {
+      "identity_trusted": false,
+      "held_signaled": true,
+      "native": 1,
+      "status": "STOP",
+      "runner": 125,
+      "verification": 1,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "audit-hold-front-release-neg-front-rgb"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 1,
+      "status": "COMPLETE",
+      "runner": 1,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "audit-hold-front-release-neg-front-rgb-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 1,
+      "status": "COMPLETE",
+      "runner": 1,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "audit-hold-front-release-neg-geometry"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "build-hold-front-asan-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "build-hold-front-debug-01"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "build-hold-front-debug-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "build-hold-front-release-01"
+    },
+    {
+      "identity_trusted": false,
+      "held_signaled": true,
+      "native": 0,
+      "status": "STOP",
+      "runner": 125,
+      "verification": 1,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "build-hold-front-release-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "build-hold-front-release-03"
+    },
+    {
+      "identity_trusted": false,
+      "held_signaled": true,
+      "native": 0,
+      "status": "STOP",
+      "runner": 125,
+      "verification": 1,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "configure-hold-front-asan-01"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "configure-hold-front-asan-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "configure-hold-front-debug-01"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "configure-hold-front-debug-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "configure-hold-front-release-01"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "configure-hold-front-release-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "configure-hold-front-release-03"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "front-hold-front-asan-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "front-hold-front-debug-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "front-hold-front-release-01"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "front-hold-front-release-03"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "pixels-hold-front-asan-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "pixels-hold-front-debug-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "pixels-hold-front-release-01"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "pixels-hold-front-release-03"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "prefix-hold-front-asan-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "prefix-hold-front-debug-02"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "prefix-hold-front-release-01"
+    },
+    {
+      "identity_trusted": true,
+      "held_signaled": true,
+      "native": 0,
+      "status": "COMPLETE",
+      "runner": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "active_final": 0,
+      "stage": "prefix-hold-front-release-03"
+    }
+  ],
+  "final_build_inputs_verified": 764,
+  "protected_diff": false,
+  "archives": [
+    {
+      "files": 2112,
+      "bytes": 45551206,
+      "name": "evidence",
+      "entries": 2111,
+      "index_sha256": "a517fe19a795f7fb2eaf90636985ded77cb67946306065891e2972cb2ff331f4"
+    },
+    {
+      "files": 535,
+      "bytes": 12324539,
+      "name": "withdrawal-acceptance-evidence-01",
+      "entries": 534,
+      "index_sha256": "5c2be9b0b468d45658f9fca76f35e9b8538b5a843c263194bed9f3a977c01bc9"
+    },
+    {
+      "files": 750,
+      "bytes": 12567463,
+      "name": "front-candidate-evidence-01",
+      "entries": 749,
+      "index_sha256": "03bdc52737bc2e0afb6a0ab4c41ede24e3ab3ea63db480d253ce949e095d4fb3"
+    }
+  ]
+}

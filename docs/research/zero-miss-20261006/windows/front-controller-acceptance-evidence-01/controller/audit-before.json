@@ -1,0 +1,10 @@
+{
+  "error": "archive-denominator",
+  "new_tasks": 0,
+  "device_commands": 0,
+  "schema": "pas.front-controller-provenance-audit.v1",
+  "source": "e26231ec5acef9634df007770c1f06031d5326d4",
+  "passed": false,
+  "paid_compute": 0,
+  "delivery": "055ec799d53ccc842ee7a2fa3033369ccc389f8d"
+}

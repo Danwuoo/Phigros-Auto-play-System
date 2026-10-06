@@ -1,0 +1,30 @@
+{
+  "script": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1",
+  "arguments": {
+    "GateReceipt": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\native-qualification-01\\native-gate.json",
+    "Inputs": [
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\.gitattributes",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\CMakeLists.txt",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_audit.cpp",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_chain.cpp",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.hpp",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\README.md",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\run.ps1",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-hold-front-debug-02\\freeze.json",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\closure-debug-02.json",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\current_front.lib",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\front_audit.exe",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\front_tests.exe",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\pixel_chain.exe",
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\prefix_preservation.exe"
+    ],
+    "Arguments": [
+      "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\front-debug-controller-01.json"
+    ],
+    "StageName": "front-hold-front-debug-controller-01",
+    "TotalSeconds": 300,
+    "Executable": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\front_tests.exe"
+  }
+}

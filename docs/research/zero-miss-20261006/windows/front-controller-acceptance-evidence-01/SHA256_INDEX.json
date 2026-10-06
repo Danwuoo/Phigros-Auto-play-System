@@ -1,0 +1,1616 @@
+{
+  "files": [
+    {
+      "bytes": 8,
+      "relative": ".gitattributes",
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "bytes": 59510,
+      "relative": "build-maps/build.ninja",
+      "sha256": "33912379d3d50604eefc8755b778cbb8f850eceb593a8c4ea877fd5e8e870937"
+    },
+    {
+      "bytes": 19029,
+      "relative": "build-maps/CMakeCache.txt",
+      "sha256": "d0bcdf7a491157ae19556dfc91ff88e989f99c12eeac1cef8c7508eb0e26ffae"
+    },
+    {
+      "bytes": 13450,
+      "relative": "controller/acceptance.json",
+      "sha256": "b546019b9da8989ae398f7d03b70954f86f3af238bf508d6f189c00d6c0cb749"
+    },
+    {
+      "bytes": 10909,
+      "relative": "controller/audit-after-02.json",
+      "sha256": "1a68ad4d472cc9d72e3eac724e744eba2dd8d2c523dcca80ba660f43b25a123d"
+    },
+    {
+      "bytes": 1131,
+      "relative": "controller/audit-after.json",
+      "sha256": "69c262efa5bab477fa03672db755e5ab9bb1e199c886d867243486d7d99dd5a4"
+    },
+    {
+      "bytes": 1020,
+      "relative": "controller/audit-before-02.json",
+      "sha256": "2d6a1f7317afcab25526adbf522f99956e2577d1549ef9bf212e7092642dce5f"
+    },
+    {
+      "bytes": 1322,
+      "relative": "controller/audit-before-03.json",
+      "sha256": "aec6678266e2377366bee2e7a05327cfd5c51ccc7a2215262568720f54e49534"
+    },
+    {
+      "bytes": 1188,
+      "relative": "controller/audit-before-04.json",
+      "sha256": "4e01e6163a0f86a5e00a53c53f6ecf8e5cc9c07c364cc799655cae7819f99c00"
+    },
+    {
+      "bytes": 10875,
+      "relative": "controller/audit-before-05.json",
+      "sha256": "62853782614b70f160359960c95dbfacd9b8e247aecec07ae97b71c8b61a5927"
+    },
+    {
+      "bytes": 298,
+      "relative": "controller/audit-before.json",
+      "sha256": "8e6475c8944bdd7194f1fb49076f5e568ad866cdfcec0b7ca1a45bb5a5262ae9"
+    },
+    {
+      "bytes": 9210,
+      "relative": "controller/audit.ps1",
+      "sha256": "b662281615772656a48636939961120f3739d0a77734c9cb15e09972d11cabb0"
+    },
+    {
+      "bytes": 502,
+      "relative": "controller/capacity-start.json",
+      "sha256": "880146f63eed84ee357575f67f4bd442250d176f7993c8a968d3c7795fc36172"
+    },
+    {
+      "bytes": 2524,
+      "relative": "controller/control-audit.ps1",
+      "sha256": "94a2ce9136448110d69b734fde4b14b9acc8fb956aad75df432f7fc9bcbc370c"
+    },
+    {
+      "bytes": 1119,
+      "relative": "controller/control-input-audit.json",
+      "sha256": "ff4b45ef2685fe968bdd8aaa9e4fd1645ca319863313cd94306e02097bf8e797"
+    },
+    {
+      "bytes": 11541,
+      "relative": "controller/finalize-pre-variable-fix.ps1",
+      "sha256": "7638eb5c088af7fe6db78d0ce4cc072da26c1e457e92baa47528363ea0e4df67"
+    },
+    {
+      "bytes": 398,
+      "relative": "controller/finalize-variable-error.json",
+      "sha256": "6ad6b705b2075c3f0009d3e09d1f18c30a6f8aec9a48cdd7eb20b4ccb1b75578"
+    },
+    {
+      "bytes": 11573,
+      "relative": "controller/finalize.ps1",
+      "sha256": "280779b4cddb4ab17e44619ccc383b5b9bb94aecc8c6ffd6135f2cef1e798590"
+    },
+    {
+      "bytes": 392,
+      "relative": "controller/retry-allocation.json",
+      "sha256": "d9ee70ba7565a08add649c361a8bb29ddcf8327a7ad11e863c036033081f0ef9"
+    },
+    {
+      "bytes": 4150,
+      "relative": "controller/source-and-binaries-external.json",
+      "sha256": "043232e17d9778e1daff0a3a3fc34fbc4fabbca32ab6f2fbe1d66a6a70fbfbd8"
+    },
+    {
+      "bytes": 2059,
+      "relative": "controller/trace-compare.ps1",
+      "sha256": "4f2bf202a5ac66c0aa9eefdf7bbe22c27003fc3a8a7e32bc3d2e04d2173d4d81"
+    },
+    {
+      "bytes": 1968,
+      "relative": "controller/trace-comparison.json",
+      "sha256": "e238173450e1b37491bb40d45300b3b0308796341974f4be12fbc9a43a59411b"
+    },
+    {
+      "bytes": 4066,
+      "relative": "package/audit-hold-front-release-controller-02-params.json",
+      "sha256": "d1512687bf9a80e06374042f9c4abb809825c0ecefeaa7c8acb7bd6f0fac608d"
+    },
+    {
+      "bytes": 4034,
+      "relative": "package/audit-hold-front-release-controller-epoch-params.json",
+      "sha256": "4cb70a07022019ac0daaa79414359173e6ce82c544de514b0424015076d631a2"
+    },
+    {
+      "bytes": 4046,
+      "relative": "package/audit-hold-front-release-controller-geometry-params.json",
+      "sha256": "6cc58d6cd029826d2394362d1cdec7db324e0212e921b5bb7f2badff068bfcd3"
+    },
+    {
+      "bytes": 4038,
+      "relative": "package/audit-hold-front-release-controller-rgb-params.json",
+      "sha256": "d97b91a6a7a347c5d1726ad388636a5a2e9ae244ce57fd1b67ba4421086d15c0"
+    },
+    {
+      "bytes": 5112,
+      "relative": "package/audit-release-controller-02.json",
+      "sha256": "23333fc5010e3befbb4ed05e9d41c8d72c17f67f3e9d55124efcd215a881a178"
+    },
+    {
+      "bytes": 286,
+      "relative": "package/audit-release-controller-epoch.json",
+      "sha256": "e1e8e1d194296118d00451a21f8fac1cb04e917a6cb87c50705b4d7dfb1cd836"
+    },
+    {
+      "bytes": 286,
+      "relative": "package/audit-release-controller-geometry.json",
+      "sha256": "e1e8e1d194296118d00451a21f8fac1cb04e917a6cb87c50705b4d7dfb1cd836"
+    },
+    {
+      "bytes": 270,
+      "relative": "package/audit-release-controller-rgb.json",
+      "sha256": "11976ea1284c3a13b54c7fc5ab53609d936ed6d282e279a62d2509c2bb26c240"
+    },
+    {
+      "bytes": 29732,
+      "relative": "package/build-hold-front-release-controller-01-params.json",
+      "sha256": "150890eb14adee25b514c8f44cdb0e6555f8794c322c1cc56e3a1bb9f10c62c5"
+    },
+    {
+      "bytes": 1960,
+      "relative": "package/closure-release-controller-01.json",
+      "sha256": "ce16e8d7e35e97de59136d4933bde326302f0191796ce85ecac4d1bc066652a7"
+    },
+    {
+      "bytes": 30245,
+      "relative": "package/configure-hold-front-release-controller-01-params.json",
+      "sha256": "9b8a3d9b2dd6a139d6a7cdba5d979b8b54a7cd26fd34675fb1e4f998ec39ab52"
+    },
+    {
+      "bytes": 4402,
+      "relative": "package/front-asan-controller-01.json",
+      "sha256": "211c199562c3d3b8b4f1da99cf5185532ef013e16d655f0ee1d43c1385aff008"
+    },
+    {
+      "bytes": 4402,
+      "relative": "package/front-debug-controller-01.json",
+      "sha256": "211c199562c3d3b8b4f1da99cf5185532ef013e16d655f0ee1d43c1385aff008"
+    },
+    {
+      "bytes": 2670,
+      "relative": "package/front-hold-front-asan-controller-01-params.json",
+      "sha256": "9a3ea078ac1d050e348dbf279905e596a34c7f002aa4116449c922676dfc1467"
+    },
+    {
+      "bytes": 2432,
+      "relative": "package/front-hold-front-debug-controller-01-params.json",
+      "sha256": "87caa6657e5798e01d1b5a7c36da22150b846be02ff8ab778f97924057b21183"
+    },
+    {
+      "bytes": 2540,
+      "relative": "package/front-hold-front-release-controller-01-params.json",
+      "sha256": "608d746895659a2cb51ea428048dc868e749adc7ba42bebdbb3e738b14547d95"
+    },
+    {
+      "bytes": 4402,
+      "relative": "package/front-release-controller-01.json",
+      "sha256": "211c199562c3d3b8b4f1da99cf5185532ef013e16d655f0ee1d43c1385aff008"
+    },
+    {
+      "bytes": 830,
+      "relative": "package/pixels-hold-front-release-controller-01-params.json",
+      "sha256": "b0ef39416152ec7e92ad6ae20d70688662b0d9eef01163fd1719cc310ef88512"
+    },
+    {
+      "bytes": 830,
+      "relative": "package/pixels-hold-front-release-controller-02-params.json",
+      "sha256": "95fa294d39adb34a9a7b1860a085e8b38b27de5f72e9892c09b6e75539d78028"
+    },
+    {
+      "bytes": 4458,
+      "relative": "package/pixels-release-controller-01.json",
+      "sha256": "ff4192acdd8e4aaca8ac8809c7aacd8c801a3a50f1a716df49459fb93bf0b8b3"
+    },
+    {
+      "bytes": 2055537,
+      "relative": "package/pixels-release-controller-01.json.rows.jsonl",
+      "sha256": "405a1adc5eea43860fb782081d32c85875aaaf032b5f1b22feafb59a6bcb00b6"
+    },
+    {
+      "bytes": 4423,
+      "relative": "package/pixels-release-controller-02.json",
+      "sha256": "974842c3c9433cfceb4a7ca017ede215faf86b94f34ab17ac77aae8bb8a22f20"
+    },
+    {
+      "bytes": 2055537,
+      "relative": "package/pixels-release-controller-02.json.rows.jsonl",
+      "sha256": "c60f596b9bc5cd73d1b2285dd1fcc9491b1856fe6705e63094381384ce22619c"
+    },
+    {
+      "bytes": 10101,
+      "relative": "package/prefix-asan-controller-01.json",
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39"
+    },
+    {
+      "bytes": 10101,
+      "relative": "package/prefix-debug-controller-01.json",
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39"
+    },
+    {
+      "bytes": 2680,
+      "relative": "package/prefix-hold-front-asan-controller-01-params.json",
+      "sha256": "aaf96e9113f9ffc57d9ba620d1be82ad346dd987c3d2753129716becd5d91e02"
+    },
+    {
+      "bytes": 2442,
+      "relative": "package/prefix-hold-front-debug-controller-01-params.json",
+      "sha256": "453f94d56f4096eb0c399995b817c0df7321c26e9b53ef02340fa95e36140186"
+    },
+    {
+      "bytes": 2550,
+      "relative": "package/prefix-hold-front-release-controller-01-params.json",
+      "sha256": "44a0d3424a4d9241390c163bb079db403f6c5e8e3b0b069e3ffb587c482959e2"
+    },
+    {
+      "bytes": 10101,
+      "relative": "package/prefix-release-controller-01.json",
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/audit-hold-front-release-controller-02/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 928,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-checkpoint-0.json",
+      "sha256": "eba4be3c558b393c388d7058c9213f31981f7eeb32abc7904e5b4e38ff7ddc4b"
+    },
+    {
+      "bytes": 934,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-checkpoint-1.json",
+      "sha256": "5260c976c241104666a0fb7ad8b55e18f998a72c709a4f6339c65e640b0cf947"
+    },
+    {
+      "bytes": 921,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-checkpoint-2.json",
+      "sha256": "d3979d243e5a3645580c6f5e4f729a5a32ada9d0e21e458e109dd3d9c7d8a96d"
+    },
+    {
+      "bytes": 1367,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-checkpoint-3.json",
+      "sha256": "558a559c78a8044f9e5a84a6d45365eeaeb732fe0f80bab3e0bcba350b297369"
+    },
+    {
+      "bytes": 1365,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-checkpoint-4.json",
+      "sha256": "168bd6fee9f4cd6a171e5db5c6c6bd05bbe24dd6a839d39080da2147fefb1013"
+    },
+    {
+      "bytes": 1563,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-checkpoint-5.json",
+      "sha256": "4f2cf202fcfa496852774ff5957aeb178c2519c98ac5fb341a5c84be4d532763"
+    },
+    {
+      "bytes": 1769,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-checkpoint-6.json",
+      "sha256": "fcf29404f4407ed2e09f636579b25c204e791d995528d65ffdc73ce5d07b14b0"
+    },
+    {
+      "bytes": 2122,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-checkpoint-7.json",
+      "sha256": "60a878432173c6b5adf300ff67291a78ed5961e131e13b2d8cda602d7151e9fe"
+    },
+    {
+      "bytes": 744,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-command.json",
+      "sha256": "d8e819fe460442bd880f5aedafb9d92551c6e36c7bfcec40fe1d8f5f3c729298"
+    },
+    {
+      "bytes": 2106,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-result.json",
+      "sha256": "7e0b6053516e5168714b7be839e33b356fb1c365797721730f8358fbc5616a10"
+    },
+    {
+      "bytes": 3527,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02-verification.json",
+      "sha256": "5fba815abbf673e02b5c02f830873a65607a14df82c16dc2c2591081bfecf161"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 82,
+      "relative": "receipts/audit-hold-front-release-controller-02/audit-hold-front-release-controller-02.stdout.log",
+      "sha256": "a19ca5792094b9323b68b4972e51651ebf1fa1ea919e1e2fbb2125946fba88bf"
+    },
+    {
+      "bytes": 507,
+      "relative": "receipts/audit-hold-front-release-controller-02/contract.json",
+      "sha256": "ee19609924542da1b55b61ebec5c15cf47afe12328b6f5ac02f1fc40eaa9eafe"
+    },
+    {
+      "bytes": 7188,
+      "relative": "receipts/audit-hold-front-release-controller-02/freeze.json",
+      "sha256": "8adb53c94efa051fc30651fec99a1449200d62fcd99c45bddca0eccb120ef98c"
+    },
+    {
+      "bytes": 799,
+      "relative": "receipts/audit-hold-front-release-controller-02/state.json",
+      "sha256": "bf5a1337a6a57ee7ca8e40002bfe4be93e88049edffed81d8aeaa49bbc470d53"
+    },
+    {
+      "bytes": 858,
+      "relative": "receipts/audit-hold-front-release-controller-02-inputs/native.cmd",
+      "sha256": "06ad2fff704f2de848899b5daa8e3f6a7f0c094baa00829d176dfc064c847d6b"
+    },
+    {
+      "bytes": 3659,
+      "relative": "receipts/audit-hold-front-release-controller-02-inputs/spec.json",
+      "sha256": "24d3d95bb77fcf47c68770fb9962370006d8bfc6ca3a6f22e914350b2ef9b0ff"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 931,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-checkpoint-0.json",
+      "sha256": "477508cab6e18ba1ceba1587bcea4f83c5d68ba5fce28bf7683d0d49c761d5a7"
+    },
+    {
+      "bytes": 937,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-checkpoint-1.json",
+      "sha256": "d63f880896ad65be2b5518caad3cfc8f46539ef149cc2237a8ba13a23234cf88"
+    },
+    {
+      "bytes": 924,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-checkpoint-2.json",
+      "sha256": "93c6d56b913be81c173d3e99f727259ba0a78fa980fe9fde2930f3c2f931dc19"
+    },
+    {
+      "bytes": 1371,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-checkpoint-3.json",
+      "sha256": "dbcb1d04effcec0bedbe054e264ec2c2374ecc5e99b35a500f61b09d114f5c99"
+    },
+    {
+      "bytes": 1369,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-checkpoint-4.json",
+      "sha256": "102c6cf0191b3dc19262877437422640a7f443c2298302ee640ec7e14584c81a"
+    },
+    {
+      "bytes": 1566,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-checkpoint-5.json",
+      "sha256": "a93d283063cbf5418fa83b97fb7f19661e44d9c22aeef581484939afd7d97772"
+    },
+    {
+      "bytes": 1772,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-checkpoint-6.json",
+      "sha256": "444cd0404bbd882c331260b8b90c9629c14fbe3c7caa604dbdc91f9acb8f90b4"
+    },
+    {
+      "bytes": 2124,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-checkpoint-7.json",
+      "sha256": "303af4346cc2a1068d65ab65b5fbe499298317b2a3a3c289a3d0b0ea494dc9be"
+    },
+    {
+      "bytes": 756,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-command.json",
+      "sha256": "17d4af37b91f29f64761d13af2e2f99ec86d4ac6a373fefe757a087e5b2ca81a"
+    },
+    {
+      "bytes": 2108,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-result.json",
+      "sha256": "5e09ccb059f4f2886e03ac8bb37755beeb8964a479bebad9af2e82e223aa3167"
+    },
+    {
+      "bytes": 3602,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch-verification.json",
+      "sha256": "9ee27bac5b4421beace7bb32198bfc50a10813bc7a1d22ad84d9efadc7cf81b2"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 83,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/audit-hold-front-release-controller-epoch.stdout.log",
+      "sha256": "746a16ee69ac438f5916679c065fb17136e71ca986735142511437db367dba7a"
+    },
+    {
+      "bytes": 513,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/contract.json",
+      "sha256": "2319a42810b61123515ba2723336c95c9c57c17b6ac0a1b5ad239326d0fb0424"
+    },
+    {
+      "bytes": 7175,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/freeze.json",
+      "sha256": "e26be39bee5db3de4f7c2dd63453e534c30f2a5277cf6480d42b6f47bf8cf46d"
+    },
+    {
+      "bytes": 805,
+      "relative": "receipts/audit-hold-front-release-controller-epoch/state.json",
+      "sha256": "685c57ca21fdb8a12e807f385e4be5178f4ef7dfc4c8fed69f642e803f0546b4"
+    },
+    {
+      "bytes": 842,
+      "relative": "receipts/audit-hold-front-release-controller-epoch-inputs/native.cmd",
+      "sha256": "013136c4d633f4a84b064caf81079d4db950f7ec122bc10f831a34331556cc76"
+    },
+    {
+      "bytes": 3652,
+      "relative": "receipts/audit-hold-front-release-controller-epoch-inputs/spec.json",
+      "sha256": "b66595473ec3c7fbf268cadb17232e370f342feed59d0f52a2c6173e3a5d9de7"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 934,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-checkpoint-0.json",
+      "sha256": "c75c157f04d9e382598c6da37dd3bc84c2bab2f997e29f43702fea88ce4d5333"
+    },
+    {
+      "bytes": 940,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-checkpoint-1.json",
+      "sha256": "91c93ad976a1a75702389b249a2e21888361794235f78f156ba2e36afccf2d81"
+    },
+    {
+      "bytes": 926,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-checkpoint-2.json",
+      "sha256": "2c98d34d8621f18e203107eb33baf4057cf7090289de60c80ec9eca2c814507d"
+    },
+    {
+      "bytes": 1372,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-checkpoint-3.json",
+      "sha256": "354284cf4c350d6d60bf75d82301aec7ba29a7128f0e33f87f1b407e20377700"
+    },
+    {
+      "bytes": 1370,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-checkpoint-4.json",
+      "sha256": "5b8571840f8348f89cf0122f087ab69b4c4a8a396cb1ce4e9687b463fcdd4ca5"
+    },
+    {
+      "bytes": 1568,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-checkpoint-5.json",
+      "sha256": "019ff003ebd742d97597fce335f29998f0f08e268c31485d00acf6c514f38068"
+    },
+    {
+      "bytes": 1774,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-checkpoint-6.json",
+      "sha256": "3b84ff4afb7a04516373eefc0ff759e28b61095b9bb197d5153d3848ef8c2f2a"
+    },
+    {
+      "bytes": 2124,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-checkpoint-7.json",
+      "sha256": "0a91e6bd8b74379969dcd094a9cb5e123a9e9eb6e30f64eeb624c31eb111c124"
+    },
+    {
+      "bytes": 768,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-command.json",
+      "sha256": "c56ad58092af42cf81d22f5542bf798a82d11962b2d563655ab7987ee1e6546a"
+    },
+    {
+      "bytes": 2108,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-result.json",
+      "sha256": "a04c9f650968061818d65e55acd56ece7bdc17ee8adc873efe6892c5b253c6f5"
+    },
+    {
+      "bytes": 3677,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry-verification.json",
+      "sha256": "76ccf1afeca4cfee9f44baabfe3989426d7fdfddcc804724562827bc353c8bff"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 83,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/audit-hold-front-release-controller-geometry.stdout.log",
+      "sha256": "746a16ee69ac438f5916679c065fb17136e71ca986735142511437db367dba7a"
+    },
+    {
+      "bytes": 519,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/contract.json",
+      "sha256": "f75ad6b8fb40076c1a936c638430bef262d75f6dcb8701ac5c9009c0fb1d0af7"
+    },
+    {
+      "bytes": 7184,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/freeze.json",
+      "sha256": "70fab5f86f21f71969ca001d4c02da07e36c134414ca42fcc3de6386b5942e84"
+    },
+    {
+      "bytes": 811,
+      "relative": "receipts/audit-hold-front-release-controller-geometry/state.json",
+      "sha256": "62b416d6448b7c5f3a39b97eaeba6c1ed2dca934fa81d969d66d418ec9b35aeb"
+    },
+    {
+      "bytes": 848,
+      "relative": "receipts/audit-hold-front-release-controller-geometry-inputs/native.cmd",
+      "sha256": "1770e5d8a98281f2782e41cbb2c2f73fd3b4c282ba5d824a32040fba99625c17"
+    },
+    {
+      "bytes": 3667,
+      "relative": "receipts/audit-hold-front-release-controller-geometry-inputs/spec.json",
+      "sha256": "264d3ed3d6dbf5e547f6eb2717d45c5dcfaaa11724edae2dba97aa78d6c73e74"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 929,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-checkpoint-0.json",
+      "sha256": "7c0d5b443136b9ca21f3defb6b660159fabc46753ab1148ada6deadd840665ae"
+    },
+    {
+      "bytes": 935,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-checkpoint-1.json",
+      "sha256": "769fa6de800194eeea647f805abd186bbbdf3b67927b5f15deabc2b3f8ca3b7c"
+    },
+    {
+      "bytes": 922,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-checkpoint-2.json",
+      "sha256": "24b145141d110478206966d97e4d6b525fcb46664b31de5368fc249e57f676cf"
+    },
+    {
+      "bytes": 1369,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-checkpoint-3.json",
+      "sha256": "f1905846ed9c886465552f3450b6fcb31bb5d9d123e0f699807afcb508b1b555"
+    },
+    {
+      "bytes": 1367,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-checkpoint-4.json",
+      "sha256": "3c78c204f2a73984b8c7c17bb58befe76b9c0424cddfb5a7c6bd97befe1eded1"
+    },
+    {
+      "bytes": 1565,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-checkpoint-5.json",
+      "sha256": "40fdd4b89755c25b05c21bf937f6be204e438062402b7eeb814524dd347825ac"
+    },
+    {
+      "bytes": 1770,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-checkpoint-6.json",
+      "sha256": "d3f35691d2223dc605769a69b230913ee646165a71d1b18db40bac44d2c1d6cf"
+    },
+    {
+      "bytes": 2122,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-checkpoint-7.json",
+      "sha256": "c0b29ca87a755dc21c79945f3572cd7bfa61899bf2047d2079d0599de936abf9"
+    },
+    {
+      "bytes": 748,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-command.json",
+      "sha256": "4581e6d09bf558bacf7242057c2a8a40b6095459c9e074e7727e80ea2e26107b"
+    },
+    {
+      "bytes": 2106,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-result.json",
+      "sha256": "f34aca815ea7d48df328eec7a7c3bd182f561a9dc355bd7e473956bee087f83c"
+    },
+    {
+      "bytes": 3552,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb-verification.json",
+      "sha256": "37a5fe46d90d68338264ebe75985b484f8d7c588e6bd220737afe3e7ea2cc648"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 83,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/audit-hold-front-release-controller-rgb.stdout.log",
+      "sha256": "746a16ee69ac438f5916679c065fb17136e71ca986735142511437db367dba7a"
+    },
+    {
+      "bytes": 509,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/contract.json",
+      "sha256": "12eae35d14a91ea1c7232d8ec0ea24b526c76fc366257cd813a97c35a08c24c4"
+    },
+    {
+      "bytes": 7175,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/freeze.json",
+      "sha256": "493ca9402e24f4fef423c55912c1590d0466de81dc3536405c9493bf5b24761f"
+    },
+    {
+      "bytes": 801,
+      "relative": "receipts/audit-hold-front-release-controller-rgb/state.json",
+      "sha256": "4302316101630120896b745580577ff352e74cbf9b4ba96d9370e19961956db9"
+    },
+    {
+      "bytes": 844,
+      "relative": "receipts/audit-hold-front-release-controller-rgb-inputs/native.cmd",
+      "sha256": "410b04ad2539ca540c061b7f890e9a255c7231ccbb24ce25a2e62b81322512ee"
+    },
+    {
+      "bytes": 3648,
+      "relative": "receipts/audit-hold-front-release-controller-rgb-inputs/spec.json",
+      "sha256": "9057baa128f3c42372c1d152a22787ea58809377ef4909cdd645e938e125ab76"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/build-hold-front-release-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 928,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-checkpoint-0.json",
+      "sha256": "156a2b1f87d1c08412a6050765cabb0c96d3fccfa6dfa1026fd4e46fe71e7d57"
+    },
+    {
+      "bytes": 934,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-checkpoint-1.json",
+      "sha256": "a50126c86645fbd713314434400dfefd6f261a7c60584297faec047d3e410f08"
+    },
+    {
+      "bytes": 921,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-checkpoint-2.json",
+      "sha256": "c4f230d4145ba50871d247f680aedc6ed51c08ca9e6ea74876abd9ba3863e8c6"
+    },
+    {
+      "bytes": 1368,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-checkpoint-3.json",
+      "sha256": "850a4638d39b69ff3e1edb5ac862dc864f86bb35278e4cc7ac39e37d49df5c39"
+    },
+    {
+      "bytes": 1366,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-checkpoint-4.json",
+      "sha256": "285c85c5513cde6bb40f606f6d89eb29306a1c37fa81507c15db573b1cd9c23b"
+    },
+    {
+      "bytes": 1565,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-checkpoint-5.json",
+      "sha256": "10c9566a031d12f3e9d9106c90f7da5cf06495eaf0a3a6e03cf4a5e800b4cd46"
+    },
+    {
+      "bytes": 1772,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-checkpoint-6.json",
+      "sha256": "057b7bf6bb66ca1daa5135d93c1cc206e9928454b8bfd2055ced213e131a7990"
+    },
+    {
+      "bytes": 2135,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-checkpoint-7.json",
+      "sha256": "b3c1b0a0415fc169ed8a70a7d4b709c0d76d61054935311a1d7646bad3f85433"
+    },
+    {
+      "bytes": 743,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-command.json",
+      "sha256": "68655238c94135271671b9db071fef8ffa3d8e986809de1a0a27269e34924176"
+    },
+    {
+      "bytes": 2119,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-result.json",
+      "sha256": "dc55b17fcfe9717d86784bf8c66214495a683e71e83bbdf0c41fd42b700f7b02"
+    },
+    {
+      "bytes": 3529,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01-verification.json",
+      "sha256": "c18aa612b48d5d59aa5677a3c642178009e3167c90a65d5ddcaae68489ffe402"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1954,
+      "relative": "receipts/build-hold-front-release-controller-01/build-hold-front-release-controller-01.stdout.log",
+      "sha256": "ac82dd682e85bde355addd4b5d0a297cb3d3bd47b1c93759417acce81a7a6d6f"
+    },
+    {
+      "bytes": 507,
+      "relative": "receipts/build-hold-front-release-controller-01/contract.json",
+      "sha256": "e6f15940bbae27ae9ebc1d8052647daa5c071744e33e6ed730f7511bed229ade"
+    },
+    {
+      "bytes": 51559,
+      "relative": "receipts/build-hold-front-release-controller-01/freeze.json",
+      "sha256": "e99dd691bebdf0345fedcc49c1f64f04694c93198863bae034cf6601e8a1f1da"
+    },
+    {
+      "bytes": 799,
+      "relative": "receipts/build-hold-front-release-controller-01/state.json",
+      "sha256": "2dc7a2824050fe5c15ca6c6f8b4da4d84701f5c3cb133c8c113d820f097494a5"
+    },
+    {
+      "bytes": 747,
+      "relative": "receipts/build-hold-front-release-controller-01-inputs/build.cmd",
+      "sha256": "881825b2db4d2372fe5da0c2e6ca4eaeb90b3f7d1d89de06f50690aaf90f9273"
+    },
+    {
+      "bytes": 39492,
+      "relative": "receipts/build-hold-front-release-controller-01-inputs/spec.json",
+      "sha256": "fee01d38f5eab818b3e3fea9b55c6b2e2e78a0ecd879d8a4666a82a1970d891d"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/configure-hold-front-release-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 932,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-checkpoint-0.json",
+      "sha256": "f5ec36d695917fe4aee71140789e5a67987c89d9297dc8c80a9fb6abc730c1a1"
+    },
+    {
+      "bytes": 938,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-checkpoint-1.json",
+      "sha256": "2aa019eb8401e1e7a55a5f1b920f0f5226ac044f16b44043e9ab0b27a47597a6"
+    },
+    {
+      "bytes": 924,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-checkpoint-2.json",
+      "sha256": "38d9b89586334fd97a0c41b8d2a7c7f5978087f5bc397809db730d5686296a9f"
+    },
+    {
+      "bytes": 1370,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-checkpoint-3.json",
+      "sha256": "318f1fd624220097bff757f3d942ae814da21972633b1a0d2f321a4fcce33554"
+    },
+    {
+      "bytes": 1368,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-checkpoint-4.json",
+      "sha256": "f077269746759c3b89bb6757a6dd2931eb5c431d8f6fbd761b871e62f9c1fe2a"
+    },
+    {
+      "bytes": 1566,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-checkpoint-5.json",
+      "sha256": "3483a32f1f00944829ac1a935a5b6a62f489d910611d32aa5849360e414ce294"
+    },
+    {
+      "bytes": 1772,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-checkpoint-6.json",
+      "sha256": "70211ea3935671e62553955f9bb4a925e196a0b24e9cd9f9b8a36edbb22e95eb"
+    },
+    {
+      "bytes": 2129,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-checkpoint-7.json",
+      "sha256": "b2729e42f9a565dc83dca33a824403aa642cfd9423407cb8c530ff370de5345b"
+    },
+    {
+      "bytes": 767,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-command.json",
+      "sha256": "787c87c28eb40f1ee8618ef1ac9695c22dbe62ff83a058a1d11eea5695da6356"
+    },
+    {
+      "bytes": 2113,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-result.json",
+      "sha256": "80bee9a42f03484bbe4c3b80ec8db2d433c7da74dcb848a6ccc5489bedb7005f"
+    },
+    {
+      "bytes": 3629,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01-verification.json",
+      "sha256": "f5a54c3fa15a978ce119f2bb69710f8a8416e44eb8c4cd37ae2e82154dc9a6ab"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1198,
+      "relative": "receipts/configure-hold-front-release-controller-01/configure-hold-front-release-controller-01.stdout.log",
+      "sha256": "60c19b4008b1a56d1d5f52bb7a28584bae1a6eab60dfab71d4cc1a0578703582"
+    },
+    {
+      "bytes": 519,
+      "relative": "receipts/configure-hold-front-release-controller-01/contract.json",
+      "sha256": "52e2d68775f56a9e9fca8a28b3765eece10b2b7d5b3c5a5fb423d52ed594f3da"
+    },
+    {
+      "bytes": 51572,
+      "relative": "receipts/configure-hold-front-release-controller-01/freeze.json",
+      "sha256": "da5e8b18088f86dca2a0c75a45744de6772538cf8509341c6970ed76dbcb4fde"
+    },
+    {
+      "bytes": 807,
+      "relative": "receipts/configure-hold-front-release-controller-01/state.json",
+      "sha256": "5b12224d7ab10274e16d2a3af184c05f370343aced758de9c58aa8d2b73e32b0"
+    },
+    {
+      "bytes": 1801,
+      "relative": "receipts/configure-hold-front-release-controller-01-inputs/configure.cmd",
+      "sha256": "c7ee9f1a246b84987cc9e69b906ab016719053d90697634bff840a5de593d1c9"
+    },
+    {
+      "bytes": 39516,
+      "relative": "receipts/configure-hold-front-release-controller-01-inputs/spec.json",
+      "sha256": "5c252777d92988e2693c18cecaa1610555f5c2c844702a9f1efbb123b1ecd6af"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/front-hold-front-asan-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 501,
+      "relative": "receipts/front-hold-front-asan-controller-01/contract.json",
+      "sha256": "f70743637bf45859798763c336569d08c23a8756754d1a3cd3b94eb186141ccb"
+    },
+    {
+      "bytes": 6013,
+      "relative": "receipts/front-hold-front-asan-controller-01/freeze.json",
+      "sha256": "de3db57413983b2bc2735ff3c92ae7b0661b3a53a3b383a3e14e26b0f9271d1a"
+    },
+    {
+      "bytes": 925,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-checkpoint-0.json",
+      "sha256": "796d3d15510f702dd52464f3565a15317c2d979910f88779286433f27719842b"
+    },
+    {
+      "bytes": 931,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-checkpoint-1.json",
+      "sha256": "e524d3b304aafaa6eaffd953ea8d081aa3a84afdc48b2210536c2f032d90b842"
+    },
+    {
+      "bytes": 918,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-checkpoint-2.json",
+      "sha256": "e979e47622896633cce4518d69e7aff85992aefed31b1939244f6d5f3492b6f8"
+    },
+    {
+      "bytes": 1365,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-checkpoint-3.json",
+      "sha256": "1374ccfbf19d0f03761b090432439903463eb93b7bf3c3939481cfd681f5986b"
+    },
+    {
+      "bytes": 1363,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-checkpoint-4.json",
+      "sha256": "af2b29d93c4d90f454c05b6f8a7583f8f52a93c0c5c5e43e18fbd10f03159527"
+    },
+    {
+      "bytes": 1561,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-checkpoint-5.json",
+      "sha256": "937c1b37dd3f8001e354dcb4689e7b81145679753d1fe0c2c92e71232912b98b"
+    },
+    {
+      "bytes": 1767,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-checkpoint-6.json",
+      "sha256": "78de4617e5123bb0eced096c278df4f578d5a922c78a45e68231d11a6f087e3f"
+    },
+    {
+      "bytes": 2120,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-checkpoint-7.json",
+      "sha256": "3736714baa8df63963d1783c55e5c8b9f9e9150ee8fc8bff46f58404130f67a7"
+    },
+    {
+      "bytes": 732,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-command.json",
+      "sha256": "4090e394ebfc2cd824bef96635b19cd1a46a6e8951bed0f77903f68e5eeeb232"
+    },
+    {
+      "bytes": 2104,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-result.json",
+      "sha256": "068040b5e88be81198e8dd75952c101c504c7228fc5f1167a4031032a281115d"
+    },
+    {
+      "bytes": 3452,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01-verification.json",
+      "sha256": "42de361db622d000c5b3c465483ecd46f2d471e32275c760919336a9fc181d72"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 71,
+      "relative": "receipts/front-hold-front-asan-controller-01/front-hold-front-asan-controller-01.stdout.log",
+      "sha256": "cca89953f406d1877924cc4ccc78d7c3ef6c26b71e138c36803103aec3742447"
+    },
+    {
+      "bytes": 793,
+      "relative": "receipts/front-hold-front-asan-controller-01/state.json",
+      "sha256": "5dc9ddcfa0b24b3ca55e73ec381426ab6af3b0ad7d1ef8aeaed5c20e98a087fc"
+    },
+    {
+      "bytes": 359,
+      "relative": "receipts/front-hold-front-asan-controller-01-inputs/native.cmd",
+      "sha256": "e59e399dc70e9b91d4d798de74e17d8870f61ba78b77c2430b87feafb2259274"
+    },
+    {
+      "bytes": 2837,
+      "relative": "receipts/front-hold-front-asan-controller-01-inputs/spec.json",
+      "sha256": "0027e06465bc329022c8fdcc6533289c5ece7b79b99cd477c9e22bc244199239"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/front-hold-front-debug-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 503,
+      "relative": "receipts/front-hold-front-debug-controller-01/contract.json",
+      "sha256": "9241c25903f4573dfd7d236e14a7bf192d2f7e80da9fb548fe8aa33513561bc1"
+    },
+    {
+      "bytes": 5587,
+      "relative": "receipts/front-hold-front-debug-controller-01/freeze.json",
+      "sha256": "39d54293c06104819b4ad77ab7e03f2e751bc075b41fe3967f899d445dfc1b3e"
+    },
+    {
+      "bytes": 926,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-checkpoint-0.json",
+      "sha256": "48d99cb45558221f8dc3cba8a979198b6f4c58861e113063c7d7492642d94c6e"
+    },
+    {
+      "bytes": 932,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-checkpoint-1.json",
+      "sha256": "c8d1a3b41a14e0a2aa06932510795492adb1fcab9bb1e3c09b2685e33e7bdb2c"
+    },
+    {
+      "bytes": 919,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-checkpoint-2.json",
+      "sha256": "84c89133aeb9c3e93b009f666774cb2ae5689dbf447d3520a2849d5b41318dce"
+    },
+    {
+      "bytes": 1366,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-checkpoint-3.json",
+      "sha256": "154fa569fe1702f0733f2af3399ed781a8799cbc6ff8c3d99f9f9fc66113e60c"
+    },
+    {
+      "bytes": 1364,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-checkpoint-4.json",
+      "sha256": "7c32bfbec8ce183866ce2007a0a46b44935079ff0222d9716be510c4dc8229fa"
+    },
+    {
+      "bytes": 1562,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-checkpoint-5.json",
+      "sha256": "4372880547fa352d1a09ce414a6cc592de33b17e719d8da14be9d951134f3534"
+    },
+    {
+      "bytes": 1768,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-checkpoint-6.json",
+      "sha256": "c97f6a0eafa1b5ec2f10d8591239b426ff43fd53b776d5a600fabdc6db986a28"
+    },
+    {
+      "bytes": 2120,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-checkpoint-7.json",
+      "sha256": "f5b7f3e451ac171f8ccdf416028ff18350117c5cdc5a623b3d6ed0bf8f3074bc"
+    },
+    {
+      "bytes": 736,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-command.json",
+      "sha256": "813d8f780233efc44b4a650856132e3d68d0aed124b8033811ea5c416a81efba"
+    },
+    {
+      "bytes": 2104,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-result.json",
+      "sha256": "dc35558f09a65bf6ebe9692d2d42b2d5e21b1375ab789c53691d10aa38158ca0"
+    },
+    {
+      "bytes": 3477,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01-verification.json",
+      "sha256": "4f262b88c268f3e3ca235281cf5a3d1394680953495a2ef72deab4be87a3fcfe"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 71,
+      "relative": "receipts/front-hold-front-debug-controller-01/front-hold-front-debug-controller-01.stdout.log",
+      "sha256": "cca89953f406d1877924cc4ccc78d7c3ef6c26b71e138c36803103aec3742447"
+    },
+    {
+      "bytes": 795,
+      "relative": "receipts/front-hold-front-debug-controller-01/state.json",
+      "sha256": "d1015abd46c3f6cb2ba569a807277a282efe5a85c29cc9b5055725656e30dba4"
+    },
+    {
+      "bytes": 361,
+      "relative": "receipts/front-hold-front-debug-controller-01-inputs/native.cmd",
+      "sha256": "045587f2a9e721860171db5920524bc9964d9473d01f46050c991d47aeaa3d79"
+    },
+    {
+      "bytes": 2605,
+      "relative": "receipts/front-hold-front-debug-controller-01-inputs/spec.json",
+      "sha256": "786b1ce0e2aa95005f93eeec9726a827da6c587e1ae27074d499833e161371e7"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/front-hold-front-release-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 507,
+      "relative": "receipts/front-hold-front-release-controller-01/contract.json",
+      "sha256": "b569c03395136c5b0d6f8d46abcc461119b1495071fc57da71e925cd1c548137"
+    },
+    {
+      "bytes": 5680,
+      "relative": "receipts/front-hold-front-release-controller-01/freeze.json",
+      "sha256": "042308555ce0403ba06db6e1c356ae19bab53480866834d8eaa12fbdd771096d"
+    },
+    {
+      "bytes": 928,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-checkpoint-0.json",
+      "sha256": "6c4b1e02349274abbd0ca680a844f5d055ab568208e0bd4694a3b06b2b854566"
+    },
+    {
+      "bytes": 934,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-checkpoint-1.json",
+      "sha256": "1a609d780c890c6926686b9098c777f152c2cefdb7c50ce990498613cab55ca3"
+    },
+    {
+      "bytes": 921,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-checkpoint-2.json",
+      "sha256": "2a6e55747911cb3aa3e99ce276239c6e4070e53ddeef49b870dccd803cb850ad"
+    },
+    {
+      "bytes": 1368,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-checkpoint-3.json",
+      "sha256": "022856ef9f90b7df1d866e63616c4c31d56305f2a711c86aefa0f53e35c0e076"
+    },
+    {
+      "bytes": 1366,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-checkpoint-4.json",
+      "sha256": "e2352c806c98bb53ebbe50b4154232580c742cf6c716285261c47e404b153d2b"
+    },
+    {
+      "bytes": 1564,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-checkpoint-5.json",
+      "sha256": "ca487a9f80559a339e6e0fa58fa70cd9d6d6ae6edce704e319cfc6d3bda2a538"
+    },
+    {
+      "bytes": 1769,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-checkpoint-6.json",
+      "sha256": "9a4efdb3092d9e0fe09570ad87f7f33b63bd19015e4cf34d4af60481f11a82ce"
+    },
+    {
+      "bytes": 2120,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-checkpoint-7.json",
+      "sha256": "a8189feb70c48a19dc7bfeeb950400b5e29ad079b3e706f4f8ee1792c0a54db0"
+    },
+    {
+      "bytes": 744,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-command.json",
+      "sha256": "ba01b2734a0590f437c4bdee54050b073f46d50fd095d6a310a2022b3a51f706"
+    },
+    {
+      "bytes": 2104,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-result.json",
+      "sha256": "49b56d7b45d7e7058d93f69967cf6a66bf785ad39106e859e72e4282c2a102be"
+    },
+    {
+      "bytes": 3527,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01-verification.json",
+      "sha256": "644f04e3c59a7c6aa7d05280cec3166770facc2d2ae3ffb71e97cab66eb4349d"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 71,
+      "relative": "receipts/front-hold-front-release-controller-01/front-hold-front-release-controller-01.stdout.log",
+      "sha256": "cca89953f406d1877924cc4ccc78d7c3ef6c26b71e138c36803103aec3742447"
+    },
+    {
+      "bytes": 799,
+      "relative": "receipts/front-hold-front-release-controller-01/state.json",
+      "sha256": "a2bb76361d5ad0e0788791625db78555e02ff3c258e23c5393382370d1f92a4d"
+    },
+    {
+      "bytes": 376,
+      "relative": "receipts/front-hold-front-release-controller-01-inputs/native.cmd",
+      "sha256": "a0a2042ee07d9dbd6c67834184a60523c68f5e64569be838c57f0e996fa4a973"
+    },
+    {
+      "bytes": 2717,
+      "relative": "receipts/front-hold-front-release-controller-01-inputs/spec.json",
+      "sha256": "097106820ef6933eb754b6e1f3317a2a7d309887bda9a7feeee4fda2f713f4e6"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/pixels-hold-front-release-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 509,
+      "relative": "receipts/pixels-hold-front-release-controller-01/contract.json",
+      "sha256": "0a6ec4d9f055d70a86abfdb5f5aabdbc12f88f862dd5bd64b4c1d7aad6f42cd7"
+    },
+    {
+      "bytes": 5476,
+      "relative": "receipts/pixels-hold-front-release-controller-01/freeze.json",
+      "sha256": "3dea49173741f574a2afbc1105ac8ee6c84fdde49a7593e0e883486fd2ae1a0c"
+    },
+    {
+      "bytes": 929,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-checkpoint-0.json",
+      "sha256": "6fb1501c074a55ab12415f11ea8cbe51d36c4d604cbbd29418f7b2a6ee15923a"
+    },
+    {
+      "bytes": 935,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-checkpoint-1.json",
+      "sha256": "850888769e275b3cfbbf0c7533726c022ad3f631491ded4e905cf939785648cc"
+    },
+    {
+      "bytes": 922,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-checkpoint-2.json",
+      "sha256": "44640880c9577357d02ef1d7eac6c065a349151a008c4ef709d95013f56a6e22"
+    },
+    {
+      "bytes": 1369,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-checkpoint-3.json",
+      "sha256": "8ec46f33e33a199228a08d26a00e037fc3676d7bfbbd73d6938630c9944d8f49"
+    },
+    {
+      "bytes": 1367,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-checkpoint-4.json",
+      "sha256": "057a26294948f0583b2b838249d90f6890a8befb3c69487e313fb1426db52baf"
+    },
+    {
+      "bytes": 2793,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-checkpoint-5.json",
+      "sha256": "cac3e68687e0c6c46b63522223b9d5a1120976e3208b81f6e24c09b9da742ad8"
+    },
+    {
+      "bytes": 103,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-checkpoint-6.json",
+      "sha256": "25a381d2713652cb0cad406bb95f70512d8c5f33e56920d03fc26ee976e9b8dc"
+    },
+    {
+      "bytes": 103,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-checkpoint-7.json",
+      "sha256": "25a381d2713652cb0cad406bb95f70512d8c5f33e56920d03fc26ee976e9b8dc"
+    },
+    {
+      "bytes": 748,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-command.json",
+      "sha256": "b691026f8d29574c0b3e1aa49904a21d956f6c69305f494405d8b8f94b1d56f8"
+    },
+    {
+      "bytes": 2777,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-result.json",
+      "sha256": "7d36ce0219e393c31d1518d900c6f7948e391e162cc7c16d2edeb8a9d4a41378"
+    },
+    {
+      "bytes": 2828,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01-verification.json",
+      "sha256": "db13604efab0b954e633fa3647cc97411afbe8732761a85fa6366cf4a798954f"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 89,
+      "relative": "receipts/pixels-hold-front-release-controller-01/pixels-hold-front-release-controller-01.stdout.log",
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5"
+    },
+    {
+      "bytes": 612,
+      "relative": "receipts/pixels-hold-front-release-controller-01/state.json",
+      "sha256": "cc848468f93d7510d40701bc94c177a3c65cfcd6dcfcc15daa21e488d2848125"
+    },
+    {
+      "bytes": 488,
+      "relative": "receipts/pixels-hold-front-release-controller-01-inputs/native.cmd",
+      "sha256": "96ede092e674dc1ebffa7f9e0be7b85b1fb2e65ec229b3578db5a61fdcbce18d"
+    },
+    {
+      "bytes": 2782,
+      "relative": "receipts/pixels-hold-front-release-controller-01-inputs/spec.json",
+      "sha256": "c0b69034c01304d8ed734b77754a40ca7927a7b1b40d708a0a7962d1e33f33ca"
+    },
+    {
+      "bytes": 81346,
+      "relative": "receipts/pixels-hold-front-release-controller-01-pixel-controls/pixel-leaves.json",
+      "sha256": "2e18e436d6686303f951870a1aee52bddbf439deb406438e0d171259ec67d5a0"
+    },
+    {
+      "bytes": 417,
+      "relative": "receipts/pixels-hold-front-release-controller-01-pixel-controls/verification.json",
+      "sha256": "1c35ca8041244d6f6d5e820d281db51fe0c95b19501ba70481d60c596d41a47e"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/pixels-hold-front-release-controller-02/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 509,
+      "relative": "receipts/pixels-hold-front-release-controller-02/contract.json",
+      "sha256": "005b6ee9e1c630d75324d1789a1a4cd56a107d39a3b289cd89c8c5ba672632de"
+    },
+    {
+      "bytes": 5476,
+      "relative": "receipts/pixels-hold-front-release-controller-02/freeze.json",
+      "sha256": "e20adfaa1114f1e06365eba6700e8a814da5798b60c503f7be2bc54c4812cb8a"
+    },
+    {
+      "bytes": 929,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-checkpoint-0.json",
+      "sha256": "1657edbc601bc6477ccd412c5ef528971936419b3d009490eccfe91ca74122c5"
+    },
+    {
+      "bytes": 935,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-checkpoint-1.json",
+      "sha256": "6300d1d96a596431f7c0dac1f897c04a1804b1df94bb7126cb330150dcfb635a"
+    },
+    {
+      "bytes": 922,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-checkpoint-2.json",
+      "sha256": "a66894cdabd6da0d1b736acdabf4a4e2ea8ea58e9b1a9577e2194e85ee3a3f95"
+    },
+    {
+      "bytes": 1369,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-checkpoint-3.json",
+      "sha256": "6c5c5a1e120c4cab8e97951a53a8c46060ff498cffad7fc74e43084095c79c1d"
+    },
+    {
+      "bytes": 1367,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-checkpoint-4.json",
+      "sha256": "59b0f7e6eec45e34c3a15ddd1eddde190eb11a541c5d01927d720e9f1635ac1b"
+    },
+    {
+      "bytes": 1566,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-checkpoint-5.json",
+      "sha256": "15bf7d6852e645097141c13beb453b86e1612b6404de8a0a0f8b4bd4c76caafe"
+    },
+    {
+      "bytes": 1773,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-checkpoint-6.json",
+      "sha256": "7e8495c676b64c9bdc1823c5009ca46614c4a4716c0d4d650c23d6c81ab4e66e"
+    },
+    {
+      "bytes": 2132,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-checkpoint-7.json",
+      "sha256": "af4d0a18574f0fad96cda984c822cfcb93b489bd9eac81b2b2f43fb999e5f5c4"
+    },
+    {
+      "bytes": 748,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-command.json",
+      "sha256": "a945ed0ef29664c77963f98d76bc2eb38a8b54bedcdd6f0e6df480d1d5db0345"
+    },
+    {
+      "bytes": 2116,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-result.json",
+      "sha256": "f9631f3381851acb7db12688da305e6db63ebf9058dd1298e2e490a1943787ae"
+    },
+    {
+      "bytes": 3552,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02-verification.json",
+      "sha256": "aca5a3da9ae576fb0563e5b03ed4dd908ca13974fe2484fae74beeb371fd031a"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 89,
+      "relative": "receipts/pixels-hold-front-release-controller-02/pixels-hold-front-release-controller-02.stdout.log",
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5"
+    },
+    {
+      "bytes": 801,
+      "relative": "receipts/pixels-hold-front-release-controller-02/state.json",
+      "sha256": "412d4e1b4ccfe5600cccd51eb48fc0da4731a04e8a32e5c3d60de4d57ac4ee18"
+    },
+    {
+      "bytes": 488,
+      "relative": "receipts/pixels-hold-front-release-controller-02-inputs/native.cmd",
+      "sha256": "fc62203eab6d80fe4e1727a2c4a525b03f0addb12fe4cc317574cbe10e1f0874"
+    },
+    {
+      "bytes": 2782,
+      "relative": "receipts/pixels-hold-front-release-controller-02-inputs/spec.json",
+      "sha256": "1803a88fccfcba8332534562d103039edddbbf52eab24d52cd8c443b6ba23426"
+    },
+    {
+      "bytes": 81346,
+      "relative": "receipts/pixels-hold-front-release-controller-02-pixel-controls/pixel-leaves.json",
+      "sha256": "1a3c0448c0e2a7515cf856238b5a7c6d75cbf1493a5dd1b4be2c610142bf8dcb"
+    },
+    {
+      "bytes": 3527,
+      "relative": "receipts/pixels-hold-front-release-controller-02-pixel-controls/verification.json",
+      "sha256": "efa55191c61608c82dd155348eb151e871ee82e83f6c972c06bd266821530010"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 503,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/contract.json",
+      "sha256": "a6cfaa01661f5b385df110d4955e7a505e1dedc330b06381e360cb49e79aced6"
+    },
+    {
+      "bytes": 6015,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/freeze.json",
+      "sha256": "8ffe732b6b7345953c377c99f238418d4788577e6e6e6efe9ea7c7b931dec3cc"
+    },
+    {
+      "bytes": 926,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-checkpoint-0.json",
+      "sha256": "32d5512ed047510e38163fa66b1e1963272d07f9015f64fc3332176defcf9a3f"
+    },
+    {
+      "bytes": 932,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-checkpoint-1.json",
+      "sha256": "7b45742b6316df1efb136cc6f4e24ef37f3a9f330e00160522769ea9cafc6f2f"
+    },
+    {
+      "bytes": 919,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-checkpoint-2.json",
+      "sha256": "b4e6cc28f1c7a2033dcdb58fb262219776b882b710434c311cc6c248404f697d"
+    },
+    {
+      "bytes": 1366,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-checkpoint-3.json",
+      "sha256": "40d64844cea51b9c1bf5cf1442224422ef9ad4b697702f75f7b9420b19a138bd"
+    },
+    {
+      "bytes": 1364,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-checkpoint-4.json",
+      "sha256": "ae0cad90ab8baa7ca6ce327689354897b130427d6157c2a02757a1af974f9e45"
+    },
+    {
+      "bytes": 1770,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-checkpoint-5.json",
+      "sha256": "1d1546bae5a1914dbcf674ea6c3695203b39f79c7343f098f9e534fba0a3f763"
+    },
+    {
+      "bytes": 1976,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-checkpoint-6.json",
+      "sha256": "16925b38241b92a7a0e732fbf6371fcdb380fc1617d5536080a75ee1e89f3e10"
+    },
+    {
+      "bytes": 2460,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-checkpoint-7.json",
+      "sha256": "f1699a5794bcb4fea70a7d7beaf029584606418341b0d12d84b2fa9ba776d8ea"
+    },
+    {
+      "bytes": 736,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-command.json",
+      "sha256": "150e8a655b4e749a4d5aab0cb0c2901f75f1fd49383d084a5d9ada06f535dd21"
+    },
+    {
+      "bytes": 2444,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-result.json",
+      "sha256": "0539e18089bd8b558e2cacf2e4fa7d50143a60f51714c77339f4976c0c98a2d3"
+    },
+    {
+      "bytes": 3477,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01-verification.json",
+      "sha256": "d92038392cd2e78a6485b370aa2f249527e182d53e15c7ae346a52b8ea3d94f9"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 77,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/prefix-hold-front-asan-controller-01.stdout.log",
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3"
+    },
+    {
+      "bytes": 795,
+      "relative": "receipts/prefix-hold-front-asan-controller-01/state.json",
+      "sha256": "65edb6a82f9606658d5b1b7ef29bb17373a842f74d4a63cb93fcce8aed7e0176"
+    },
+    {
+      "bytes": 368,
+      "relative": "receipts/prefix-hold-front-asan-controller-01-inputs/native.cmd",
+      "sha256": "09fb2395e1e2b4c1fed0a1fe1823904529c4d19a825a9b4b2d933b915bfd6d0a"
+    },
+    {
+      "bytes": 2849,
+      "relative": "receipts/prefix-hold-front-asan-controller-01-inputs/spec.json",
+      "sha256": "88cfb71bc892c987e1224b597c8b50198b9f88f78cb6a4cea1a8804905122ffb"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 505,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/contract.json",
+      "sha256": "e7228f300dc7a75a381ceaca3842f159fe512d5c55c2787359337715c041c94c"
+    },
+    {
+      "bytes": 5589,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/freeze.json",
+      "sha256": "05bea4c748ddde8f709bb7f28c1a36c0f93fba7c069b61265f80533b9150fe17"
+    },
+    {
+      "bytes": 927,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-checkpoint-0.json",
+      "sha256": "e650b0d6631f42f443185603709612715593d2b1c93da878e0efd8754a1fcc57"
+    },
+    {
+      "bytes": 933,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-checkpoint-1.json",
+      "sha256": "299da854036c6da67b1660912722c153448ed01c3a4b59504d089df06c96ff10"
+    },
+    {
+      "bytes": 919,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-checkpoint-2.json",
+      "sha256": "bff6fadda5d40975bba1b102e90f38db73a7ed863a129d42da997de968d972e4"
+    },
+    {
+      "bytes": 1365,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-checkpoint-3.json",
+      "sha256": "589e5fd0e49f80ce7d752fe8f91ae3c94611a5e5a29b10a34739ca2a8e6a6faa"
+    },
+    {
+      "bytes": 1363,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-checkpoint-4.json",
+      "sha256": "5ff595c8f182669fc1597845bb8738a68d14951fd2acf44e5b6259c3975a3281"
+    },
+    {
+      "bytes": 1768,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-checkpoint-5.json",
+      "sha256": "2bb132c53def35d4e479ea63303241a891d6f9a9a66650ab43b54f3d0970f9e5"
+    },
+    {
+      "bytes": 1973,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-checkpoint-6.json",
+      "sha256": "95337df4c3bde49b23c32d0c862c8b915856d0b0286bb184b10031f28fe90192"
+    },
+    {
+      "bytes": 2457,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-checkpoint-7.json",
+      "sha256": "0385f4612874536e519e0764a5ec8bce7fc590a92f89a07c0836a4deeea8ae16"
+    },
+    {
+      "bytes": 740,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-command.json",
+      "sha256": "3522b863fc0f44ec4b98d446bef5f519c5dd3f2b38ede1923feda17b8b3be880"
+    },
+    {
+      "bytes": 2441,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-result.json",
+      "sha256": "2ca769b1ae5e5022ac5f3aed91bbc12ee7f6ec98cc6a6b31f613b0fcbc921b7d"
+    },
+    {
+      "bytes": 3502,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01-verification.json",
+      "sha256": "ba6dafb91c60b3667e852a1333355fd7c4286b8c8e1428b295417da1752fdb50"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 77,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/prefix-hold-front-debug-controller-01.stdout.log",
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3"
+    },
+    {
+      "bytes": 797,
+      "relative": "receipts/prefix-hold-front-debug-controller-01/state.json",
+      "sha256": "c1b3fe4b0e26a4c81ebceb1635b0bed44ec87be635b74f9164bb7c58b77c7bda"
+    },
+    {
+      "bytes": 370,
+      "relative": "receipts/prefix-hold-front-debug-controller-01-inputs/native.cmd",
+      "sha256": "17b2c35d6fe7910adbfe7ea410dcf196dd8433a8f897187283cd28c99a6e6bda"
+    },
+    {
+      "bytes": 2617,
+      "relative": "receipts/prefix-hold-front-debug-controller-01-inputs/spec.json",
+      "sha256": "9755690e0fadeea54cc5fedf6b1a4b961d36635898999fbe2003edf7c97345b6"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/prefix-hold-front-release-controller-01/attempt.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 509,
+      "relative": "receipts/prefix-hold-front-release-controller-01/contract.json",
+      "sha256": "be27304ab055d9d2a34dc62a8bfb02c9140679b50fefec59d810923d5b9a9273"
+    },
+    {
+      "bytes": 5682,
+      "relative": "receipts/prefix-hold-front-release-controller-01/freeze.json",
+      "sha256": "da7219a9d2af85bd7c4a2384e3965a122e6440f8902a4afdb820a8e1d7b2f704"
+    },
+    {
+      "bytes": 929,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-checkpoint-0.json",
+      "sha256": "65a8e394edcb69d9ecb14e53bfb7d34199a0819fe944cb84d79bbb69f626df1e"
+    },
+    {
+      "bytes": 935,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-checkpoint-1.json",
+      "sha256": "23c020adcca2a543df5757fb8753dff5b670583f97d0326573d1935719b034a5"
+    },
+    {
+      "bytes": 921,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-checkpoint-2.json",
+      "sha256": "578235ca42ffa4c6563e6e62ae3dbb73ab2d698f6a0b3827a0279a865e3eac57"
+    },
+    {
+      "bytes": 1367,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-checkpoint-3.json",
+      "sha256": "26b3b399c4796437c0b6c9c840c4afa14da1f8d3a29caee9a5d24a82bb18fe9b"
+    },
+    {
+      "bytes": 1365,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-checkpoint-4.json",
+      "sha256": "8b35326eaded641690a09ab9766a0d3576ae998ce2ee839dbc40857202435718"
+    },
+    {
+      "bytes": 1563,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-checkpoint-5.json",
+      "sha256": "e7283c1235404aed94cff276e3ad73df2e351a62f1fe8960428e88d19a44967c"
+    },
+    {
+      "bytes": 1769,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-checkpoint-6.json",
+      "sha256": "efa469e4b5475fdcdabbad77c815f095bce9726b1380db2a97f76b41f10d6cb3"
+    },
+    {
+      "bytes": 2120,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-checkpoint-7.json",
+      "sha256": "15cf59efd6f666d32670c666604479e93a419123f442e9a60cdfc6c339b1b2a5"
+    },
+    {
+      "bytes": 748,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-command.json",
+      "sha256": "f7b188c94b8c3288401f003525ddb5762552db5eeaafb5341032126571c62b7c"
+    },
+    {
+      "bytes": 2104,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-result.json",
+      "sha256": "4f47fc2eb7348cabef58425f2fac9e32e5698ac82e823e8ec1b90ab3b6476c9c"
+    },
+    {
+      "bytes": 3552,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01-verification.json",
+      "sha256": "3b7b5ce961990a0ed33d2b2f97f927483df8f18d35f85dd24588917daf4607a7"
+    },
+    {
+      "bytes": 0,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 77,
+      "relative": "receipts/prefix-hold-front-release-controller-01/prefix-hold-front-release-controller-01.stdout.log",
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3"
+    },
+    {
+      "bytes": 801,
+      "relative": "receipts/prefix-hold-front-release-controller-01/state.json",
+      "sha256": "50272a84b467cd959b1e5c585c2f791bb8426008fafccf375e99912be6506f06"
+    },
+    {
+      "bytes": 385,
+      "relative": "receipts/prefix-hold-front-release-controller-01-inputs/native.cmd",
+      "sha256": "172424f37706d5b727463016f9b6b9d630c06f1d5082671d95313ad39382e16e"
+    },
+    {
+      "bytes": 2729,
+      "relative": "receipts/prefix-hold-front-release-controller-01-inputs/spec.json",
+      "sha256": "e2bc94d4d2c2fcd227abf0fcafd4930815c8676203bd670bc6d71b6f989d0a58"
+    }
+  ],
+  "worker_seal_preserved": {
+    "bytes": 159033,
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261006\\windows\\front-candidate-evidence-01\\SHA256_INDEX.json",
+    "sha256": "03bdc52737bc2e0afb6a0ab4c41ede24e3ab3ea63db480d253ce949e095d4fb3"
+  },
+  "excluded_self": "SHA256_INDEX.json",
+  "schema": "pas.front-controller-seal.v1"
+}

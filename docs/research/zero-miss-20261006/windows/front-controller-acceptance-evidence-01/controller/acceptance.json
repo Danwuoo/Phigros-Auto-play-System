@@ -1,0 +1,511 @@
+{
+  "contracts": [
+    {
+      "fresh_build": true,
+      "front_checks": 56,
+      "prefix_checks": 113,
+      "front_failures": 0,
+      "mode": "release",
+      "prefix_failures": 0,
+      "build": "out/hold-front-release-controller-01"
+    },
+    {
+      "fresh_build": false,
+      "front_checks": 56,
+      "prefix_checks": 113,
+      "front_failures": 0,
+      "mode": "debug",
+      "prefix_failures": 0,
+      "build": "out/hold-front-debug-02"
+    },
+    {
+      "fresh_build": false,
+      "front_checks": 56,
+      "prefix_checks": 113,
+      "front_failures": 0,
+      "mode": "asan",
+      "prefix_failures": 0,
+      "build": "out/hold-front-asan-02"
+    }
+  ],
+  "worker_delivery": "055ec799d53ccc842ee7a2fa3033369ccc389f8d",
+  "boundary3030": {
+    "action_authorized": false,
+    "boundary": [
+      495.5,
+      236.5
+    ],
+    "candidate_id": 2,
+    "context": {
+      "capture_ns": 23135806534300,
+      "epoch": 1,
+      "frame": 14797,
+      "generation": 1,
+      "geometry": 1,
+      "height": 720,
+      "rotation": 1,
+      "width": 1280
+    },
+    "current_tail_roi": true,
+    "edge_samples": [
+      {
+        "along": -45.6,
+        "inside": {
+          "pixel": [
+            450,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            450,
+            237
+          ],
+          "rgb": [
+            67,
+            63,
+            75
+          ]
+        }
+      },
+      {
+        "along": -22.8,
+        "inside": {
+          "pixel": [
+            473,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            473,
+            237
+          ],
+          "rgb": [
+            68,
+            65,
+            75
+          ]
+        }
+      },
+      {
+        "along": 0.0,
+        "inside": {
+          "pixel": [
+            496,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            496,
+            237
+          ],
+          "rgb": [
+            69,
+            66,
+            76
+          ]
+        }
+      },
+      {
+        "along": 22.8,
+        "inside": {
+          "pixel": [
+            518,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            518,
+            237
+          ],
+          "rgb": [
+            70,
+            67,
+            76
+          ]
+        }
+      },
+      {
+        "along": 45.6,
+        "inside": {
+          "pixel": [
+            541,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            541,
+            237
+          ],
+          "rgb": [
+            70,
+            68,
+            77
+          ]
+        }
+      }
+    ],
+    "frozen_v3_shadow": {
+      "body": "absent",
+      "contact": "absent",
+      "flow": "extract_only_no_action",
+      "front_end": false,
+      "invalid": false
+    },
+    "head_role": "proposed",
+    "kind": "visible_terminal_proposed_head",
+    "left_rail_rows": 9,
+    "normal": [
+      -0.0,
+      1.0
+    ],
+    "observer_front": [
+      495.5,
+      228.0
+    ],
+    "offset_interval": [
+      8.0,
+      9.0
+    ],
+    "origin": "current_reconstructed_front",
+    "pixels_ready_ns": 23135807818900,
+    "probes": 975,
+    "reason": "current_rgb_terminal_and_rails",
+    "right_rail_rows": 9,
+    "support_anchor_offset": 7,
+    "tail_role": "unknown; current tail proposal or missing; not measured here",
+    "tangent": [
+      1.0,
+      0.0
+    ],
+    "terminal_clusters": 1,
+    "typed_seam_verified": true,
+    "width": 152.0
+  },
+  "out_allocated_bytes_before_seal": 57713007.0,
+  "timing_scope": "baseline chain compute excludes all post-dispatch diagnostics including new measure/consume/shadow extract; sidecar compute separately measured; both exclude dump/flush, final release, latest-frame producer, RPC and live injection",
+  "new_automations": 0,
+  "complete_stages": 13,
+  "maintenance_audit_failed_reports": [
+    "audit-before.json",
+    "audit-before-02.json",
+    "audit-before-03.json",
+    "audit-before-04.json",
+    "audit-after.json"
+  ],
+  "original_timeout_and_skip_preserved": true,
+  "free_bytes": 194787319808,
+  "worker_COMPLETE": 30,
+  "maintenance_failures_scope": "Review bookkeeping assumptions corrected; no candidate, original oracle or qualified wrapper modification; all reports preserved",
+  "own_fake_ups": 0,
+  "own_fake_moves": 0,
+  "physical_legal_opportunity_gold": 0,
+  "timing_sidecar_ms": {
+    "absolute_deviation_p95": 12.67045,
+    "jitter_p95_minus_p5": 12.799475000000001,
+    "max": 13.624,
+    "n": 256,
+    "p50": 0.16715000000000002,
+    "p95": 12.838525,
+    "p99": 13.232885
+  },
+  "other_unsupported": 523,
+  "timing_baseline_ms": {
+    "absolute_deviation_p95": 9.008200000000002,
+    "jitter_p95_minus_p5": 13.25855,
+    "max": 34.2572,
+    "n": 256,
+    "p50": 17.0355,
+    "p95": 26.047975,
+    "p99": 29.647004999999986
+  },
+  "full_trace_comparison": {
+    "bytes": 1968,
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\front-controller-acceptance-01\\trace-comparison.json",
+    "sha256": "e238173450e1b37491bb40d45300b3b0308796341974f4be12fbc9a43a59411b"
+  },
+  "source": "e26231ec5acef9634df007770c1f06031d5326d4",
+  "stages": [
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 5.08813,
+      "stage": "audit-hold-front-release-controller-02",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 3.3072499,
+      "stage": "audit-hold-front-release-controller-epoch",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 1,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 1
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 3.3142995,
+      "stage": "audit-hold-front-release-controller-geometry",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 1,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 1
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 3.386995,
+      "stage": "audit-hold-front-release-controller-rgb",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 1,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 1
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 40.4500807,
+      "stage": "build-hold-front-release-controller-01",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 9.5354464,
+      "stage": "configure-hold-front-release-controller-01",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 1.3485123,
+      "stage": "front-hold-front-asan-controller-01",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 1.077724,
+      "stage": "front-hold-front-debug-controller-01",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 0.4464497,
+      "stage": "front-hold-front-release-controller-01",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 1,
+      "streams_completed": true,
+      "elapsed_s": 10.1093314,
+      "stage": "pixels-hold-front-release-controller-01",
+      "held_signaled": true,
+      "reason": "process-integrity",
+      "runner": 125,
+      "identity_trusted": false,
+      "status": "STOP",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 10.0822362,
+      "stage": "pixels-hold-front-release-controller-02",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 1.051906,
+      "stage": "prefix-hold-front-asan-controller-01",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 0.5519341,
+      "stage": "prefix-hold-front-debug-controller-01",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    },
+    {
+      "active_final": 0,
+      "verification": 0,
+      "streams_completed": true,
+      "elapsed_s": 0.3895334,
+      "stage": "prefix-hold-front-release-controller-01",
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "identity_trusted": true,
+      "status": "COMPLETE",
+      "native": 0
+    }
+  ],
+  "own_fake_downs": 0,
+  "worker_STOP": 3,
+  "schema": "pas.front-controller-independent-acceptance.v1",
+  "visible_terminal_proposals": 191,
+  "product_completed": false,
+  "root349_rerun": false,
+  "metadata_cap_bytes": 16777216,
+  "shadow_v3_cost_additional": true,
+  "out_cap_bytes": 536870912,
+  "producer_probes_per_candidate": 975,
+  "device_commands": 0,
+  "original36_fail_preserved": true,
+  "unknown_Hold": 145,
+  "formal_runtime_adoption": "not_qualified",
+  "new_raw_points": 1910,
+  "old_raw_points": 1665,
+  "review_branch": "codex/hold-front-acceptance-20261006",
+  "push_PR_merge": 0,
+  "producer_plus_consumer_probe_batch_upper_bound": 249600,
+  "offline_geometry_acceptance": "passed",
+  "new_tasks": 0,
+  "producer_probe_batch_cap": 124800,
+  "provenance_audit": {
+    "bytes": 10909,
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\front-controller-acceptance-01\\audit-after-02.json",
+    "sha256": "1a68ad4d472cc9d72e3eac724e744eba2dd8d2c523dcca80ba660f43b25a123d"
+  },
+  "cost_gate": "NOT_READY",
+  "compared_rows": 256,
+  "stop_stages": 1,
+  "negative_controls": [
+    {
+      "report": {
+        "bytes": 286,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\audit-release-controller-epoch.json",
+        "sha256": "e1e8e1d194296118d00451a21f8fac1cb04e917a6cb87c50705b4d7dfb1cd836"
+      },
+      "kind": "epoch",
+      "expected_rejection": true,
+      "error": "audit full declared offline context mismatch"
+    },
+    {
+      "report": {
+        "bytes": 286,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\audit-release-controller-geometry.json",
+        "sha256": "e1e8e1d194296118d00451a21f8fac1cb04e917a6cb87c50705b4d7dfb1cd836"
+      },
+      "kind": "geometry",
+      "expected_rejection": true,
+      "error": "audit full declared offline context mismatch"
+    },
+    {
+      "report": {
+        "bytes": 270,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\audit-release-controller-rgb.json",
+        "sha256": "11976ea1284c3a13b54c7fc5ab53609d936ed6d282e279a62d2509c2bb26c240"
+      },
+      "kind": "rgb",
+      "expected_rejection": true,
+      "error": "audit front raw RGB mismatch"
+    }
+  ],
+  "eligible_targets": 0,
+  "raw_proposals": 859,
+  "legacy3938_rerun": false
+}

@@ -1,0 +1,38 @@
+{
+  "schema": "pas.front-controller-cross-configuration-trace-audit.v1",
+  "compared": [
+    {
+      "process_stop_preserved": false,
+      "sha256": "adb0640517ff0386885a36046aac65f1994b2a9244694caaa0c0b150f27d52ba",
+      "rows": 256,
+      "decision_and_all_sidecar_geometry_equal": true,
+      "trace": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\pixels-release-03.json.rows.jsonl"
+    },
+    {
+      "process_stop_preserved": false,
+      "sha256": "c8904b6b8682f844373128bcbc24df1ef7943fff480d85faa8995ddcb97fbc23",
+      "rows": 256,
+      "decision_and_all_sidecar_geometry_equal": true,
+      "trace": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\pixels-debug-02.json.rows.jsonl"
+    },
+    {
+      "process_stop_preserved": false,
+      "sha256": "de5bcee863f38e13f6c2f2b552a27f25edf115e7aef5e498a024ff542b6ce7af",
+      "rows": 256,
+      "decision_and_all_sidecar_geometry_equal": true,
+      "trace": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\pixels-asan-02.json.rows.jsonl"
+    },
+    {
+      "process_stop_preserved": true,
+      "sha256": "405a1adc5eea43860fb782081d32c85875aaaf032b5f1b22feafb59a6bcb00b6",
+      "rows": 256,
+      "decision_and_all_sidecar_geometry_equal": true,
+      "trace": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\pixels-release-controller-01.json.rows.jsonl"
+    }
+  ],
+  "fresh_reference": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\pixels-release-controller-02.json.rows.jsonl",
+  "excluded": "five original host timestamps and two new sidecar host timestamps only",
+  "passed": true,
+  "physical_gold": 0,
+  "fresh_reference_sha256": "c60f596b9bc5cd73d1b2285dd1fcc9491b1856fe6705e63094381384ce22619c"
+}

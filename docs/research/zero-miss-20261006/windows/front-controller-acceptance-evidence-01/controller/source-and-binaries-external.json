@@ -1,0 +1,87 @@
+{
+  "source_tree": "4893730c2ef5ad05d462428648c1fba631f4a616",
+  "existing_configurations_manifest": {
+    "bytes": 13328,
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261006\\windows\\front-candidate-evidence-01\\package\\binaries-and-controls-external.json",
+    "sha256": "4a7149c78e8f084543f18966b613274235fe90e28f6b8071777afd0511100e6f"
+  },
+  "schema": "pas.front-controller-source-and-binary-binding.v1",
+  "implementation_commit": "e26231ec5acef9634df007770c1f06031d5326d4",
+  "copied_binaries": false,
+  "fresh_release_binaries": [
+    {
+      "bytes": 7302812,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-controller-01\\current_front.lib",
+      "sha256": "44e0c05f4e76f242dc4d24cd8d41b2c3232a072a55727153684643edd1acf4a1"
+    },
+    {
+      "bytes": 205824,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-controller-01\\front_audit.exe",
+      "sha256": "33f6740db30b3bd9929e985079503bce07097c6b95398d3538763e5cc5889b15"
+    },
+    {
+      "bytes": 121344,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-controller-01\\front_tests.exe",
+      "sha256": "889f1af579d503267cbea8c1e9dcfe2348d61bf74f8f97d1adf7ccd36011ce92"
+    },
+    {
+      "bytes": 560128,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-controller-01\\pixel_chain.exe",
+      "sha256": "5c317f6398862ccfb560d333b7bf22eaf32588d3d56756a4bb3dbc5f424102ef"
+    },
+    {
+      "bytes": 270848,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-controller-01\\prefix_preservation.exe",
+      "sha256": "22fb423109f404f732c934425324e190cce06eefccfeff0bbcb3023ed4fb6e0f"
+    }
+  ],
+  "sources": [
+    {
+      "bytes": 8,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\.gitattributes",
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "bytes": 3472,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\CMakeLists.txt",
+      "sha256": "a134ab8497e0b2cd3c21ce6dc61539efcd349efc6114ecdb577a4e403a23ab95"
+    },
+    {
+      "bytes": 17304,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_audit.cpp",
+      "sha256": "fccb5db8e67ad667360b404df616a398c082f0b956ec5c1399922a54d32c7c58"
+    },
+    {
+      "bytes": 21901,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_chain.cpp",
+      "sha256": "2a592a34644602a87402dfd7f2c4448f498e05b61f45484f8c659176c2997845"
+    },
+    {
+      "bytes": 8239,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp",
+      "sha256": "f0698100e33390a7528c72c186096909e08c79c9ddc525b414d207f268e33476"
+    },
+    {
+      "bytes": 10757,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp",
+      "sha256": "e5b23ff5cdd2129ff31431bb5a1194fb7dceef7a4384dd1f5da40068965d3a7f"
+    },
+    {
+      "bytes": 2531,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.hpp",
+      "sha256": "a917a40d1cff466355d166d6bbe22892c261048d2b1731091b82495c64273905"
+    },
+    {
+      "bytes": 3680,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\README.md",
+      "sha256": "b4500d92de88a8fd1570f39ea6c7c2ace9200f077300c186aa91518ebf94e34e"
+    },
+    {
+      "bytes": 7556,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\run.ps1",
+      "sha256": "2e4f634f4c449f44ebb2dbff47abd6d580584909d678170ce79e82a97ee6f75c"
+    }
+  ],
+  "v3_core_source": "c2dda1db9fe95b46ff103300d43583857130cd8f",
+  "linked_library_source": "774f3e7020818e94c508cc1481dd0986ebe417a0"
+}

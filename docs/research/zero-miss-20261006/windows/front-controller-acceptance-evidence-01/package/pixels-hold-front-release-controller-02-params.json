@@ -1,0 +1,12 @@
+{
+  "arguments": {
+    "GateReceipt": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\native-qualification-01\\native-gate.json",
+    "BuildRoot": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-controller-01",
+    "Selection": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\real-pixels-selection-02\\selection.json",
+    "Report": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\pixels-release-controller-02.json",
+    "StageName": "pixels-hold-front-release-controller-02",
+    "BuildStage": "build-hold-front-release-controller-01",
+    "TotalSeconds": 900
+  },
+  "script": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\pixel-stage.ps1"
+}

@@ -4,7 +4,7 @@
   "created_date": "2026-10-05",
   "updated_date": "2026-10-06",
   "initial_commit": "a53a9b7021bcc900f498047f5cc017b42e4711b0",
-  "status": "own_development_diagnostic_checkpoint_verified_not_live_ready",
+  "status": "current_pixel_terminal_candidate_independently_accepted_offline_not_live_ready",
   "completed": false,
   "record_kind": "repository_development_goal_not_system_goal",
   "dedicated_goal_tool_available_in_current_environment": true,
@@ -23,7 +23,7 @@
   "latest_checkpoint": {
     "real_pixel_frames": 256,
     "relation_assertions": 74,
-    "candidate": "exact isolated BVI cold v3 plus standalone Windows current-pixels/official-owner offline bridge; no production runtime hook",
+    "candidate": "exact isolated BVI cold v3 and Windows offline owner bridge, plus post-dispatch current-pixel terminal geometry sidecar; no production runtime hook",
     "candidate_core_commit": "c2dda1db9fe95b46ff103300d43583857130cd8f",
     "owner_prefix_failed_assertions": 0,
     "physical_human_gold": 0,
@@ -41,10 +41,10 @@
     "legacy_failed_assertions": 36,
     "real_pixel_raw_proposals": 859,
     "real_pixel_eligible_targets": 0,
-    "evidence": "docs/research/zero-miss-20261006/windows/WITHDRAWAL_ACCEPTANCE.md",
+    "evidence": "docs/research/zero-miss-20261006/windows/FRONT_CONTROLLER_ACCEPTANCE.md",
     "independent_additional_controls": 5,
     "old_independent_assertions": 79,
-    "commit": "774f3e7020818e94c508cc1481dd0986ebe417a0",
+    "commit": "e26231ec5acef9634df007770c1f06031d5326d4",
     "line_ambiguity_assertions": 16,
     "contract_assertions": 339,
     "legacy_layer_cases": 356,
@@ -116,11 +116,50 @@
       "physical_legal_opportunity_gold": 0,
       "policy_use": false,
       "annotation": "docs/research/zero-miss-20261006/windows/HUMAN_REVIEW_20261006.json"
+    },
+    "current_pixel_terminal": {
+      "independent_acceptance": "passed_offline_geometry_only",
+      "delivered_three_configuration_trace_rows_verified": 256,
+      "implementation": "e26231ec5acef9634df007770c1f06031d5326d4",
+      "action_authorized": false,
+      "unknown_Hold_proposals": 145,
+      "worker_delivery": "055ec799d53ccc842ee7a2fa3033369ccc389f8d",
+      "prefix_assertions": 113,
+      "controller_raw_PNG_replay": "Release only",
+      "seal": "docs/research/zero-miss-20261006/windows/front-controller-acceptance-evidence-01/SHA256_INDEX.json",
+      "full_runtime_cost_gate": "NOT_READY",
+      "all_owned_processes_closed": true,
+      "visible_terminal_proposals": 191,
+      "new_raw_edge_points": 1910,
+      "other_unsupported": 523,
+      "worker_native_stages": {
+        "COMPLETE": 30,
+        "STOP": 3
+      },
+      "original_suites_rerun": false,
+      "old_raw_witness_points": 1665,
+      "front_contract_failed_assertions": 0,
+      "controller_native_stages": {
+        "COMPLETE": 13,
+        "STOP": 1
+      },
+      "head_role": "proposed",
+      "front_contract_assertions": 56,
+      "raw_Hold_proposals": 336,
+      "current_raw_proposals": 859,
+      "configurations": [
+        "Release",
+        "Debug",
+        "MSVC_ASan"
+      ],
+      "controller_fresh_build": "Release",
+      "physical_legal_opportunity_gold": 0,
+      "expected_negative_rejections": 3
     }
   },
   "active_work": [],
   "current_assignment_stop_condition": "Finish required local offline regressions and preserve receipts; stop at independently unresolved current-pixel semantics or device permissions. Do not use more synthetic cases as physical truth.",
-  "current_assignment_completion": "Delegation withdrawn; inherited diagnostics independently accepted and own bounded diagnostics verified; product and production/cost qualification remain incomplete",
+  "current_assignment_completion": "User-requested independent acceptance completed for the new isolated terminal geometry candidate; physical contact, production integration, full cost and product qualification remain incomplete",
   "completion_delivery": "Traditional Chinese milestone with local code/evidence commits; no push, PR or merge",
   "device_work_route": "Explicit device-specific user authorization required before any device reading, Fixture touch or game operation; gameplay only after safety/cost gates and one user-selected Play round",
   "device_state_last_reported": "not rechecked by this local task; historical capability SHA verified from existing files only",
@@ -132,11 +171,11 @@
   ],
   "blocked_acceptance": [
     "Current game version, Chapter Legacy denominator and IN unlocks remain unknown",
-    "Frame3030 visible Hold head boundary has one human semantic confirmation; exact action location, frame1519 identity, legal opportunities and actual adoption remain unknown; eligible zero in 256 frozen frames",
+    "Frame3030 approximate Hold head-front semantic confirmation is externally preserved; 191 measured terminals remain proposed, frame1519 identity and exact touch/legal adoption remain unknown; eligible zero in 256 frozen frames",
     "Production BVI owner hook, full latest-frame/RPC/journal chain and valid AA/AB/stress cost gate not qualified"
   ],
-  "current_assignment_completed": false,
-  "next_required_gate": "Derive bounded typed head boundary from current pixels without annotation-fed offsets; resolve frame1519 physical identity and legal opportunity denominator, then freeze necessary candidate and verify own contact prefix/full-chain cost before device authorization.",
+  "current_assignment_completed": true,
+  "next_required_gate": "Resolve current colour/front semantics and physical identity/legal opportunities, then freeze a necessary contact candidate and verify its own full contact prefix and latest-frame/RPC/journal cost before device-specific authorization.",
   "checkpoint_history": [
     {
       "state": {
@@ -294,6 +333,108 @@
         },
         "timing_limitations": "All 256 frames; actual host QPC compute excludes PNG IO, diagnostic serialization/flush and final release. Business time is offline FakeClock. Zero eligible actions; no latest-frame/RPC/journal or AA/AB qualification."
       }
+    },
+    {
+      "checkpoint": {
+        "real_pixel_frames": 256,
+        "relation_assertions": 74,
+        "candidate": "exact isolated BVI cold v3 plus standalone Windows current-pixels/official-owner offline bridge; no production runtime hook",
+        "candidate_core_commit": "c2dda1db9fe95b46ff103300d43583857130cd8f",
+        "owner_prefix_failed_assertions": 0,
+        "physical_human_gold": 0,
+        "independent_assertions": 101,
+        "legacy_assertions": 3938,
+        "new_live_runs": 0,
+        "original54_fixed": 18,
+        "contact_assertions": 167,
+        "legacy_windows_configurations": [
+          "Release",
+          "Debug",
+          "MSVC_ASan"
+        ],
+        "device_read_commands": 0,
+        "legacy_failed_assertions": 36,
+        "real_pixel_raw_proposals": 859,
+        "real_pixel_eligible_targets": 0,
+        "evidence": "docs/research/zero-miss-20261006/windows/WITHDRAWAL_ACCEPTANCE.md",
+        "independent_additional_controls": 5,
+        "old_independent_assertions": 79,
+        "commit": "774f3e7020818e94c508cc1481dd0986ebe417a0",
+        "line_ambiguity_assertions": 16,
+        "contract_assertions": 339,
+        "legacy_layer_cases": 356,
+        "owner_prefix_assertions": 113,
+        "runtime_cost_gate": "not_ready",
+        "real_pixel_bvi_queries": 604,
+        "new_legacy_failures": 0,
+        "formal_root_regressions": {
+          "MSVC_ASan": {
+            "timeouts": 1,
+            "skipped": 2,
+            "passed": 346,
+            "ctest_cases": 349,
+            "same_binary_targeted_thousand_passed": true
+          },
+          "aggregate_ctest_all_green": false,
+          "Release": {
+            "skipped": 2,
+            "passed": 347,
+            "ctest_cases": 349,
+            "failed": 0
+          },
+          "Debug": {
+            "timeouts": 1,
+            "skipped": 2,
+            "passed": 346,
+            "ctest_cases": 349,
+            "same_binary_targeted_thousand_passed": true
+          }
+        },
+        "legacy_aggregate_pass": false,
+        "offline_bridge_profile": {
+          "width": 1280,
+          "height": 720,
+          "stride": 3840,
+          "rotation": 1,
+          "format": "RGB888 top-down",
+          "other_rotations_rejected": true
+        },
+        "sequential_archived_release_qpc_ms": {
+          "absolute_deviation_p95": 17.43225,
+          "jitter_p95_minus_p5": 20.029125,
+          "max": 36.7595,
+          "n": 256,
+          "p50": 8.30385,
+          "p95": 25.964575,
+          "p99": 32.64545
+        },
+        "timing_limitations": "All 256 frames; actual host QPC compute excludes PNG IO, diagnostic serialization/flush and final release. Business time is offline FakeClock. Zero eligible actions; no latest-frame/RPC/journal or AA/AB qualification.",
+        "diagnostic_assertions": 32,
+        "independent_pixel_audit": {
+          "configurations": [
+            "Release",
+            "Debug",
+            "MSVC_ASan"
+          ],
+          "decision_rows": 256,
+          "raw_png_query_local_samples": 1665,
+          "inherited_and_current_trace_verified": true,
+          "expected_negative_rejections": 2,
+          "initial_release_process_stop_preserved": true,
+          "legacy_suite_rerun_in_diagnostic_change": false
+        },
+        "human_semantic_review": {
+          "confirmed_labels": 1,
+          "frame3030_hold_head_front": "human_confirmed approximate (495,237)",
+          "exact_touch_location": "unknown",
+          "frame1519_object_identity": "unknown",
+          "physical_legal_opportunity_gold": 0,
+          "policy_use": false,
+          "annotation": "docs/research/zero-miss-20261006/windows/HUMAN_REVIEW_20261006.json"
+        }
+      },
+      "date": "2026-10-06",
+      "kind": "preserved_own_diagnostic_checkpoint_before_terminal_candidate_acceptance"
     }
   ],
   "system_goal_created_by_local_task": false,
@@ -304,5 +445,16 @@
     "further_work_authorized": false,
     "source_commit_preserved": "57b00d566db805d4f62bc63f054b3b7a268e7734",
     "self_development_source": "774f3e7020818e94c508cc1481dd0986ebe417a0"
+  },
+  "current_assignment_scope": "Independent acceptance of GPT-6.1 Sol xhigh terminal geometry delivery only",
+  "terminal_candidate_development": {
+    "model": "gpt-6.1-sol",
+    "status": "completed_independently_accepted_offline_geometry_only",
+    "automatic_further_dispatch": false,
+    "source_commit": "e26231ec5acef9634df007770c1f06031d5326d4",
+    "monitoring_enabled": false,
+    "thinking": "xhigh",
+    "thread_id": "01a10fdd-1f46-7e71-a0ad-ed5b808388c3",
+    "delivery_commit": "055ec799d53ccc842ee7a2fa3033369ccc389f8d"
   }
 }

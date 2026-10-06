@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "schema": "pas.front-controller-exact-negative-input-audit.v1",
+  "original_png_changed": false,
+  "controls": [
+    {
+      "kind": "epoch",
+      "changed_rows": 1,
+      "control_sha256": "d3d5d300f5677fcaf28380a00e1d307370431c90ac556d384e34b57ee6b3430a",
+      "source_sha256": "adb0640517ff0386885a36046aac65f1994b2a9244694caaa0c0b150f27d52ba",
+      "compared_rows": 256,
+      "only_intended_field_changed": true
+    },
+    {
+      "kind": "geometry",
+      "changed_rows": 1,
+      "control_sha256": "6b4e1facd5607a2f1b64333cbe2c2159932e6355a785f829991510895c9f0f1e",
+      "source_sha256": "adb0640517ff0386885a36046aac65f1994b2a9244694caaa0c0b150f27d52ba",
+      "compared_rows": 256,
+      "only_intended_field_changed": true
+    },
+    {
+      "kind": "front-rgb",
+      "changed_rows": 1,
+      "control_sha256": "adb5769c694de85182afb694bcf23100cec3e4706ad6bd96313849a2a147483c",
+      "source_sha256": "adb0640517ff0386885a36046aac65f1994b2a9244694caaa0c0b150f27d52ba",
+      "compared_rows": 256,
+      "only_intended_field_changed": true
+    }
+  ]
+}

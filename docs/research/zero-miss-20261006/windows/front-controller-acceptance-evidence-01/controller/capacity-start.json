@@ -1,0 +1,17 @@
+{
+  "new_package_entries": "hold-front-package-01/*controller*",
+  "schema": "pas.front-controller-capacity.v1",
+  "device_commands": 0,
+  "metadata_cap_bytes": 16777216,
+  "min_free_bytes": 21474836480,
+  "out_cap_bytes": 536870912,
+  "old_allocations_preserved": true,
+  "new_stage_attempts": [
+    "controller-01",
+    "controller-epoch",
+    "controller-geometry",
+    "controller-rgb"
+  ],
+  "new_build_root": "out/hold-front-release-controller-01",
+  "free_before": 195947536384
+}

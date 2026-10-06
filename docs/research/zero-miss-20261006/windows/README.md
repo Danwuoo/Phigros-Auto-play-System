@@ -5,7 +5,12 @@
 橋接。凍結 v3 的七份 core source、正式 runtime、原測試與 oracle 均保留。
 沒有裝置讀取、Fixture／遊戲操作、模型工作、push、PR、merge 或新長期 Goal。
 
-最新隔離 Hold 終端候選見 [FRONT_CANDIDATE](FRONT_CANDIDATE.md)：
+最新總控獨立驗收見 [FRONT_CONTROLLER_ACCEPTANCE](FRONT_CONTROLLER_ACCEPTANCE.md)：
+全新 Release 重建，三配置重跑56項量測／113項前綴，256幀原圖audit與三個竄改拒絕；
+簽收隔離離線幾何量測。總控新增1 STOP保留並以新attempt成功重跑；eligible仍0，
+正式採納／完整成本及實機未驗收。交付封存與原source均未覆寫。
+
+隔離 Hold 終端候選交付見 [FRONT_CANDIDATE](FRONT_CANDIDATE.md)：
 source `e26231ec5acef9634df007770c1f06031d5326d4`，三配置56項新量測、113項未改前綴與
 256幀獨立原圖audit；191個可見終端仍proposed，完整成本及physical採納尚未驗收。
 三個新STOP、全部attempt與封存SHA保留。

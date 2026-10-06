@@ -1,0 +1,12 @@
+{
+  "source_unchanged": true,
+  "preserved_stop": "pixels-hold-front-release-controller-01",
+  "metadata_cap_bytes": 16777216,
+  "closed_owned_processes_verified": true,
+  "new_attempt": "controller-02",
+  "schema": "pas.front-controller-fresh-retry.v1",
+  "out_cap_bytes": 536870912,
+  "free_bytes": 195487174656,
+  "min_free_bytes": 21474836480,
+  "no_old_STOP_reopened": true
+}

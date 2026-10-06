@@ -1,0 +1,10 @@
+{
+  "schema": "pas.controller-maintenance-failure.v1",
+  "error": "Cannot overwrite variable Error because it is read-only or constant.",
+  "native_stages_launched": 0,
+  "operation": "file-only evidence finalization",
+  "archive_created": false,
+  "resolution": "Rename maintenance variable to task-specific negativeExpectedError",
+  "line": 48,
+  "candidate_or_wrapper_changed": false
+}

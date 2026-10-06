@@ -1,0 +1,41 @@
+{
+  "device_commands": 0,
+  "delivery": "055ec799d53ccc842ee7a2fa3033369ccc389f8d",
+  "source": "e26231ec5acef9634df007770c1f06031d5326d4",
+  "error_line": 7,
+  "error": "old-source-denominator",
+  "archives": [
+    {
+      "entries": 2111,
+      "name": "evidence",
+      "files": 2112,
+      "index_sha256": "a517fe19a795f7fb2eaf90636985ded77cb67946306065891e2972cb2ff331f4",
+      "bytes": 45551206
+    },
+    {
+      "entries": 534,
+      "name": "withdrawal-acceptance-evidence-01",
+      "files": 535,
+      "index_sha256": "5c2be9b0b468d45658f9fca76f35e9b8538b5a843c263194bed9f3a977c01bc9",
+      "bytes": 12324539
+    },
+    {
+      "entries": 749,
+      "name": "front-candidate-evidence-01",
+      "files": 750,
+      "index_sha256": "03bdc52737bc2e0afb6a0ab4c41ede24e3ab3ea63db480d253ce949e095d4fb3",
+      "bytes": 12567463
+    }
+  ],
+  "external": {
+    "binaries": 34,
+    "negative_traces": 3,
+    "libraries": 12
+  },
+  "schema": "pas.front-controller-provenance-audit.v1",
+  "core_entries": 7,
+  "paid_compute": 0,
+  "source_files": 9,
+  "passed": false,
+  "new_tasks": 0
+}
