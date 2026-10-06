@@ -1,0 +1,17 @@
+{
+  "runner_exit": 0,
+  "stream_cap": 1048576,
+  "argv": [
+    "cat-file",
+    "blob",
+    "fa3d2fed4db35676400f12b11d45a2da438cffca"
+  ],
+  "total_s": 90,
+  "stage": "materialize-supplemental-01",
+  "native_exit": 0,
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\x10d_o_bvi\\supplemental.json"
+  ],
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\materialize-supplemental-01",
+  "exe": "C:\\Program Files\\Git\\cmd\\git.exe"
+}

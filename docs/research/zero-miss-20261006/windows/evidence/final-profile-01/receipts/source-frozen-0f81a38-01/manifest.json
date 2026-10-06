@@ -1,0 +1,80 @@
+{
+  "source_commit": "0f81a387676ec67b470f537812113cbe33df8fa0",
+  "files": [
+    {
+      "path": "research/bvi_windows/CMakeLists.txt",
+      "sha256": "ed853fad7c703047c2e7194cf4e64de0d1bc78aa409a01f401a821830e1406eb",
+      "bytes": 3843
+    },
+    {
+      "path": "research/bvi_windows/README.md",
+      "sha256": "6b7479701816e6a7135ea49c4972abdb008a98a6b3737ecbe4fe09880be5aabf",
+      "bytes": 2628
+    },
+    {
+      "path": "research/bvi_windows/bridge/CMakeLists.txt",
+      "sha256": "1138e5bdee732864044d4dd628462b6378f88b64458f2f9d398d5aa6bfb8ddb5",
+      "bytes": 2980
+    },
+    {
+      "path": "research/bvi_windows/bridge/bridge.cpp",
+      "sha256": "71a20e61ad324418bf4d5d623a1c78171a127aead94fa3157b20831d5a3f2ce9",
+      "bytes": 14115
+    },
+    {
+      "path": "research/bvi_windows/bridge/bridge.hpp",
+      "sha256": "728f77d4aa843a84a25c4f91398d30e91c7a991fce74ec7a7b46fc94f539377e",
+      "bytes": 3317
+    },
+    {
+      "path": "research/bvi_windows/bridge/bridge_tests.cpp",
+      "sha256": "d27f9ef2645c7d7571953282c4937a66fa09c58ff45d476a26709d96f4224f73",
+      "bytes": 15499
+    },
+    {
+      "path": "research/bvi_windows/bridge/pixel_chain.cpp",
+      "sha256": "94d7a2d2a22d6230288ba8ea6dd1e7c68630a283db9caf14015d933eb256d4be",
+      "bytes": 18151
+    },
+    {
+      "path": "tools/zero_miss_windows/cmake-stage.ps1",
+      "sha256": "b312daf3cd637310a8a02e058ed619c8afe5421a091981f41f2d7924a6285484",
+      "bytes": 4208
+    },
+    {
+      "path": "tools/zero_miss_windows/invoke.ps1",
+      "sha256": "7f11079a23efba87f00641e39731aba625d1e292039c7963bd31881b6872c9a5",
+      "bytes": 1964
+    },
+    {
+      "path": "tools/zero_miss_windows/legacy-stage.ps1",
+      "sha256": "603cfde9989a6a8a996d776ed9f7f9870356ab638b5fb28899d6c998e941dfc3",
+      "bytes": 5685
+    },
+    {
+      "path": "tools/zero_miss_windows/native-stage.ps1",
+      "sha256": "a16c4db270e1b4d55300dfa78f27f5084ec4e96a7acb261e9d12446786c46f85",
+      "bytes": 1945
+    },
+    {
+      "path": "tools/zero_miss_windows/pixel-stage.ps1",
+      "sha256": "85c9cc0a3f42cd9c7e7207ddbe8625ee4bdd3a8446141598ad9b9fafa2f38577",
+      "bytes": 6001
+    },
+    {
+      "path": "tools/zero_miss_windows/pretest.ps1",
+      "sha256": "f651c9ee69ac21f2bc2daeb00920c1a67eb31d078aa85dff6c2433a8ae5dd27a",
+      "bytes": 3463
+    },
+    {
+      "path": "tools/zero_miss_windows/process.ps1",
+      "sha256": "b0857b3f77b8a0263f1f71d033372621227473770523e657cd239321096513ff",
+      "bytes": 5627
+    },
+    {
+      "path": "tools/zero_miss_windows/qualify.ps1",
+      "sha256": "e7a4b143235e88c7464aa53847d3b0a1fac1fbc12496192cefb78604223dc787",
+      "bytes": 5640
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+TRACE Test entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\test-bvi-asan-01-inputs\test.cmd]
+TRACE vcvars END exit=0
+Test project C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/bvi-win-asan-01
+    Start 1: contract
+1/8 Test #1: contract .........................   Passed    7.17 sec
+    Start 2: independent_old
+2/8 Test #2: independent_old ..................***Failed    0.17 sec
+=================================================================
+==2044==ERROR: AddressSanitizer: stack-overflow on address 0x7ff64bb7f2c7 (pc 0x7ff64bb7f2c7 bp 0x000000000000 sp 0x00c1198ff2f0 T0)
+==2044==ABORTING
+
+    Start 3: relation
+3/8 Test #3: relation .........................***Failed    0.15 sec
+=================================================================
+==18640==ERROR: AddressSanitizer: stack-overflow on address 0x7ff7f921a187 (pc 0x7ff7f921a187 bp 0x000000000000 sp 0x00bd2a3ff3d0 T0)
+==18640==ABORTING
+
+    Start 4: contact
+4/8 Test #4: contact ..........................   Passed   36.56 sec
+    Start 5: line_ambiguity
+5/8 Test #5: line_ambiguity ...................   Passed    3.43 sec
+    Start 6: independent_v3
+6/8 Test #6: independent_v3 ...................   Passed   20.75 sec
+    Start 7: query_noise
+7/8 Test #7: query_noise ......................   Passed    3.40 sec
+    Start 8: query_accumulation
+8/8 Test #8: query_accumulation ...............   Passed    1.01 sec
+
+75% tests passed, 2 tests failed out of 8
+
+Total Test time (real) =  72.69 sec
+
+The following tests FAILED:
+	  2 - independent_old (Failed)
+	  3 - relation (Failed)
+TRACE Test END exit=8

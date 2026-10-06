@@ -1,0 +1,12 @@
+{
+  "new_models": 0,
+  "schema": "pas.windows-local-capacity.v1",
+  "archive_bytes_before_index": 40223802.0,
+  "new_out_hard_cap_bytes": 12884901888,
+  "note": "Existing originals shared read-only; build products/dependencies/raw PNG are excluded from Git. All failed attempts remain in out.",
+  "archive_hard_cap_bytes": 67108864,
+  "free_disk_bytes": 198861508608,
+  "new_png_copies": 0,
+  "existing_selected_png_bytes": 76971667,
+  "new_out_bytes": 9818980941.0
+}

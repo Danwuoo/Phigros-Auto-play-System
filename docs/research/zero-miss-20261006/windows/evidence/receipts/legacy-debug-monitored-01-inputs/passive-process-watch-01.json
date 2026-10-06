@@ -1,0 +1,30 @@
+{
+  "diagnostic_only": true,
+  "schema": "pas.passive-owned-process-watch.v1",
+  "owned_root": 10560,
+  "utc": "2026-10-06T02:30:48.1716103Z",
+  "root_creation_filetime": 134357273506066231,
+  "processes": [
+    {
+      "ProcessId": 10560,
+      "ParentProcessId": 18752,
+      "Name": "cmd.exe",
+      "ExecutablePath": "C:\\WINDOWS\\system32\\cmd.exe",
+      "CreationDate": "2026-10-06T10:29:10.606623+08:00"
+    },
+    {
+      "ProcessId": 15228,
+      "ParentProcessId": 10560,
+      "Name": "conhost.exe",
+      "ExecutablePath": "C:\\WINDOWS\\system32\\conhost.exe",
+      "CreationDate": "2026-10-06T10:29:10.641364+08:00"
+    },
+    {
+      "ProcessId": 20908,
+      "ParentProcessId": 10560,
+      "Name": "legacy.exe",
+      "ExecutablePath": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bvi-win-debug-stack8-01\\legacy.exe",
+      "CreationDate": "2026-10-06T10:29:10.68354+08:00"
+    }
+  ]
+}

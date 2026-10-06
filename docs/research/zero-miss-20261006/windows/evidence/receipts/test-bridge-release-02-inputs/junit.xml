@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="(empty)"
+	tests="1"
+	failures="1"
+	disabled="0"
+	skipped="0"
+	hostname=""
+	time="0"
+	timestamp="2026-10-06T10:24:22"
+	>
+	<testcase name="complete_owner_prefix" classname="complete_owner_prefix" time="0.087819" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>fresh report required
+</system-out>
+	</testcase>
+</testsuite>

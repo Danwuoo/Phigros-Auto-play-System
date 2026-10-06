@@ -1,0 +1,253 @@
+{
+  "assertions": 60,
+  "backend": "bounded_offline_fake",
+  "checks": [
+    {
+      "id": "rotated_depth_comes_from_current_tail",
+      "pass": true
+    },
+    {
+      "id": "roi_id_is_not_contact_or_note_id",
+      "pass": true
+    },
+    {
+      "id": "invalid_association_line_still_masks",
+      "pass": true
+    },
+    {
+      "id": "all_lines_overflow_rejected_without_truncation",
+      "pass": true
+    },
+    {
+      "id": "different_frame_batch_rejected",
+      "pass": true
+    },
+    {
+      "id": "body_patch_cannot_be_promoted_to_seen_front",
+      "pass": true
+    },
+    {
+      "id": "ambiguous_target_binding_abstains",
+      "pass": true
+    },
+    {
+      "id": "success_no_early_down_0",
+      "pass": true
+    },
+    {
+      "id": "pixel_entry_receipts_verified_00",
+      "pass": true
+    },
+    {
+      "id": "success_no_early_down_1",
+      "pass": true
+    },
+    {
+      "id": "pixel_entry_receipts_verified_10",
+      "pass": true
+    },
+    {
+      "id": "success_own_pixel_entry_opportunity",
+      "pass": true
+    },
+    {
+      "id": "pixel_entry_receipts_verified_20",
+      "pass": true
+    },
+    {
+      "id": "known_down_from_own_successful_receipt",
+      "pass": true
+    },
+    {
+      "id": "up_receipt_verified",
+      "pass": true
+    },
+    {
+      "id": "completed_up_null_cursor_retained",
+      "pass": true
+    },
+    {
+      "id": "completed_does_not_resurrect",
+      "pass": true
+    },
+    {
+      "id": "unknown_no_early_down_0",
+      "pass": true
+    },
+    {
+      "id": "pixel_entry_receipts_verified_01",
+      "pass": true
+    },
+    {
+      "id": "unknown_no_early_down_1",
+      "pass": true
+    },
+    {
+      "id": "pixel_entry_receipts_verified_11",
+      "pass": true
+    },
+    {
+      "id": "unknown_own_pixel_entry_opportunity",
+      "pass": true
+    },
+    {
+      "id": "pixel_entry_receipts_verified_21",
+      "pass": true
+    },
+    {
+      "id": "unknown_from_own_failed_down",
+      "pass": true
+    },
+    {
+      "id": "unknown_down_null_cursor_is_not_zero",
+      "pass": true
+    },
+    {
+      "id": "unknown_down_never_retried",
+      "pass": true
+    },
+    {
+      "id": "pending_is_verified_zero",
+      "pass": true
+    },
+    {
+      "id": "five_actual_downs",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_1",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_2",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_3",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_4",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_5",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_6",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_7",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_8",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_9",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_10",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_11",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_12",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_13",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_14",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_15",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_16",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_17",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_18",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_19",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_prefix_receipts_20",
+      "pass": true
+    },
+    {
+      "id": "rotating_hold_same_contact_no_down_replay",
+      "pass": false
+    },
+    {
+      "id": "full_prefix_compacts_without_narrowing",
+      "pass": false
+    },
+    {
+      "id": "uint64_cursor_projection_above_int_max",
+      "pass": true
+    },
+    {
+      "id": "uint64_cursor_projection_at_max",
+      "pass": true
+    },
+    {
+      "id": "null_cursor_not_zero_or_known_down",
+      "pass": true
+    },
+    {
+      "id": "evidence_deadline_releases_five",
+      "pass": true
+    },
+    {
+      "id": "expiry_retains_terminal_identity",
+      "pass": true
+    },
+    {
+      "id": "wrong_contact_receipt_rejected",
+      "pass": true
+    },
+    {
+      "id": "wrong_contact_stops_and_releases",
+      "pass": true
+    },
+    {
+      "id": "unknown_release_remains_failure",
+      "pass": true
+    },
+    {
+      "id": "cancelled_pending_missing_cursor_not_zero",
+      "pass": true
+    },
+    {
+      "id": "cancelled_prefix_cannot_seed_never_executed",
+      "pass": true
+    }
+  ],
+  "device_commands": 0,
+  "failed_assertions": 2,
+  "high_uint64_cursor_tests": "conversion controls; not a claim of billions of executed moves",
+  "known_down_source": "own issued commands and returned receipts",
+  "official_owner_and_scheduler": true,
+  "physical_human_gold": 0,
+  "schema": "pas.windows-bvi-current-bridge-prefix.v1"
+}

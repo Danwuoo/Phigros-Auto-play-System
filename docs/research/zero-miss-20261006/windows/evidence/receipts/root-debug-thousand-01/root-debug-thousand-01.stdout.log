@@ -1,0 +1,14 @@
+TRACE native START
+Running main() from C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\vcpkg\blds\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = ColdRgbT2.ThousandDenseFramesKeepStableBoundedIdentityAndNoStaleTouch
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ColdRgbT2
+[ RUN      ] ColdRgbT2.ThousandDenseFramesKeepStableBoundedIdentityAndNoStaleTouch
+[       OK ] ColdRgbT2.ThousandDenseFramesKeepStableBoundedIdentityAndNoStaleTouch (127907 ms)
+[----------] 1 test from ColdRgbT2 (127908 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (127908 ms total)
+[  PASSED  ] 1 test.
+TRACE native END exit=0

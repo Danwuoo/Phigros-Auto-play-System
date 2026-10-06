@@ -1,0 +1,27 @@
+{
+  "schema": "pas.manual-handoff-delivery.v1",
+  "repository": "https://github.com/Danwuoo/Phigros-Auto-play-System",
+  "delivery_commit": "9dc99d6220a9b680d412954b5516f4dced19d029",
+  "delivery_tree": "6a4a9950423f0775992780b65b96ce8dcf2bb98e",
+  "candidate_commit": "c2dda1db9fe95b46ff103300d43583857130cd8f",
+  "incremental_base": "a53a9b7021bcc900f498047f5cc017b42e4711b0",
+  "cumulative_base": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "cloud_assignment_complete": true,
+  "product_goal_complete": false,
+  "new_live_runs": 0,
+  "delivery_state": "retained_for_user_manual_transfer_not_sent",
+  "next_required_gate": "Windows offline build and legitimate real-pixel/contact-prefix bridge before device gameplay",
+  "patches": [
+    "incremental-from-a53a9b7.patch",
+    "cumulative-from-74e5443.patch"
+  ],
+  "patch_application": "Choose one matching base; git am on a clean separate branch. Both contain original evidence and exact committed candidate. Do not apply both.",
+  "omitted": [
+    "original user evidence ZIP and PNG",
+    "build products",
+    "third-party dependencies",
+    "cache",
+    "entire repository",
+    "secrets"
+  ]
+}

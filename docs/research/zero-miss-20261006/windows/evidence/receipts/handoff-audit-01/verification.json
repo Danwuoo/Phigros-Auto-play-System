@@ -1,0 +1,96 @@
+{
+  "zip_sha256": "18040114639c560c0ed33d6d7949affd1a4fb1ce2be807adf1f53b948656ee9b",
+  "product_goal_complete": false,
+  "selected_patch_sha256": "ebe81f386943b851352ecc8aefd841789638563748b1ea5196691a44a299231c",
+  "branch": "codex/zero-miss-round4-windows-20261006",
+  "original_head": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "zip_bytes": 5187688,
+  "delivery": {
+    "schema": "pas.manual-handoff-delivery.v1",
+    "repository": "https://github.com/Danwuoo/Phigros-Auto-play-System",
+    "delivery_commit": "9dc99d6220a9b680d412954b5516f4dced19d029",
+    "delivery_tree": "6a4a9950423f0775992780b65b96ce8dcf2bb98e",
+    "candidate_commit": "c2dda1db9fe95b46ff103300d43583857130cd8f",
+    "incremental_base": "a53a9b7021bcc900f498047f5cc017b42e4711b0",
+    "cumulative_base": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+    "cloud_assignment_complete": true,
+    "product_goal_complete": false,
+    "new_live_runs": 0,
+    "delivery_state": "retained_for_user_manual_transfer_not_sent",
+    "next_required_gate": "Windows offline build and legitimate real-pixel/contact-prefix bridge before device gameplay",
+    "patches": [
+      "incremental-from-a53a9b7.patch",
+      "cumulative-from-74e5443.patch"
+    ],
+    "patch_application": "Choose one matching base; git am on a clean separate branch. Both contain original evidence and exact committed candidate. Do not apply both.",
+    "omitted": [
+      "original user evidence ZIP and PNG",
+      "build products",
+      "third-party dependencies",
+      "cache",
+      "entire repository",
+      "secrets"
+    ]
+  },
+  "user_modified_aux_sha256": "e5c78a1d90a5e430c4f7c5328c7e9a8b3571800b0b8fc698d082b1cbe16d5501",
+  "unpacked_root": "C:/Users/wurre/Desktop/Phigros-handoff-round4-9dc99d6-20261006",
+  "zip_path_safety": "1461 entries verified before extraction: containment, case-insensitive collisions, Windows reserved names, symlink/reparse rejection, bounded count/bytes",
+  "applied_delivery_commit": "18965192f43e47ce9d5f6a2d8ad372b4bdb0507b",
+  "device_commands": 0,
+  "development_source_commit": "0f81a387676ec67b470f537812113cbe33df8fa0",
+  "schema": "pas.windows-handoff-audit.v1",
+  "original_dirty_status": [
+    " M apps/runtime_x11_p/aux/CMakeLists.txt",
+    "?? phigros-zero-miss-handoff-round4-9dc99d6.zip"
+  ],
+  "working_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006",
+  "date": "2026-10-06",
+  "selected_patch": "cumulative-from-74e5443.patch",
+  "applied_delivery_tree": "6a4a9950423f0775992780b65b96ce8dcf2bb98e",
+  "candidate_core": [
+    {
+      "relative": "research/bvi_cold_v3/bvi.cpp",
+      "bytes": 8687,
+      "sha256": "866ad2440d088ec1caf360eb5d4a9c796fdfcbcf2e15aff92374baf2291ea824",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp"
+    },
+    {
+      "relative": "research/bvi_cold_v3/bvi.hpp",
+      "bytes": 3031,
+      "sha256": "565e7c058328d01b11b75e7bf05a96a96dcdd378b42f000a422c000957671d5f",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.hpp"
+    },
+    {
+      "relative": "research/bvi_cold_v3/constraint_policy.cpp",
+      "bytes": 1792,
+      "sha256": "693cb7a1fa177035e1542c772dd2e26e63cd280fcdc34067aea4f3959297c821",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp"
+    },
+    {
+      "relative": "research/bvi_cold_v3/contact_policy.cpp",
+      "bytes": 4306,
+      "sha256": "b08520d87591b914fd357205e506a5080abb690dc4efe08c6e44e1225aea1c6f",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp"
+    },
+    {
+      "relative": "research/bvi_cold_v3/contact_policy.hpp",
+      "bytes": 336,
+      "sha256": "08f48f197ef36449bc04b81cdd27005c50e56bc4766fde9e5d3bc58c38ccb691",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.hpp"
+    },
+    {
+      "relative": "research/bvi_cold_v3/relation_policy.cpp",
+      "bytes": 9465,
+      "sha256": "37a23c696654b3935a51d422991f260213094a48d1488dc45e74334b29ac1efc",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp"
+    },
+    {
+      "relative": "research/bvi_cold_v3/relation_policy.hpp",
+      "bytes": 400,
+      "sha256": "bbb47373899ac0531e424849aaa3d32638348ea25e8ebf682ddfaf906ac9feb0",
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.hpp"
+    }
+  ],
+  "checksum_files_verified": 1374,
+  "original_root": "C:/Users/wurre/Desktop/Phigros-Auto-play-System"
+}

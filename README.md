@@ -2,13 +2,15 @@
 
 Windows／C++20 的即時 pixels-to-touch 研究專案。正式程式以單程序多執行緒處理最新畫面、音符／判定線追蹤、撞線預測與可撤銷多指觸控；不讀譜或遊戲內部狀態。
 
-目前僅恢復有界雲端冷測候選修補；正式runtime整合與實機未啟動。最新入口由[文件總目錄](docs/README.md)進入。下列2026-10-04狀態保留為歷史快照。
+目前完成 Windows 離線接手與隔離研究候選橋接；正式runtime整合與實機未啟動。最新入口由[文件總目錄](docs/README.md)進入。下列2026-10-04狀態保留為歷史快照。
+
+**最新 [10/6 Windows 接手里程碑](docs/research/zero-miss-20261006/windows/README.md)：ZIP／delivery tree／v3 core SHA 已核；Windows 三配置原套件仍保留相同 36 fail，正式 owner／scheduler 前綴 113/113。256 張本地真圖橋接沒有 eligible action，顏色／front 語義及完整成本資格仍未成立；未操作裝置，產品 Goal 未完成。**
 
 2026-10-05 [首輪雲端多分支 zero-miss 研究](docs/research/zero-miss-20261005/README.md)完成程式、逐曲總帳與建置盤點，以及隔離 C++ 冷實驗；當時原 frozen suite 尚缺輸入。
 
 [補件後第二輪](docs/research/zero-miss-20261005/round2/README.md)首次完整執行356 layer-cases／3938 assertions，發現54fail並分類；C36h M77圖及Windows失敗收據已覆核。
 
-**最新[第四階段冷候選v3與交接](docs/research/zero-miss-20261005/round4/README.md)：原3938斷言43→36fail、無新增失敗；stationary／exact alias／斜交contact及正反例完成三配置。雲端委託已停在真圖／Windows必要門檻，交接先留存，未啟動實機、產品Goal未完成。**
+**10/5 [第四階段冷候選v3與交接](docs/research/zero-miss-20261005/round4/README.md)：原3938斷言43→36fail、無新增失敗；stationary／exact alias／斜交contact及正反例完成三配置。當時雲端委託停在真圖／Windows必要門檻；本機接手另見10/6入口，產品Goal未完成。**
 
 **[第三階段冷測修補](docs/research/zero-miss-20261005/round3/README.md)：新隔離候選修正rails／端部與merge資格，原同oracle54→43fail、無新增原suite失敗；新48-case契約339斷言全過，獨立35-case仍保留duplicate ROI既存2fail。** 程式在[research/bvi_cold_v2](research/bvi_cold_v2/README.md)，尚未整合正式鏈，未進live。Windows、成本、真圖及全曲分母／解鎖仍有門檻。
 

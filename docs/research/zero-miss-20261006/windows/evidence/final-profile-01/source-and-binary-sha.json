@@ -1,0 +1,349 @@
+{
+  "prior_checkpoint": "0f81a387676ec67b470f537812113cbe33df8fa0",
+  "prior_raw_source_snapshot": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\source-frozen-0f81a38-01\\manifest.json",
+  "stages": [
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 4.9759691,
+      "active_final": 0,
+      "name": "configure-bridge-profile-release-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 125.8669486,
+      "active_final": 0,
+      "name": "build-bridge-profile-release-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 0.3007131,
+      "active_final": 0,
+      "name": "prefix-bridge-profile-release-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 4.7238252,
+      "active_final": 0,
+      "name": "pixels-bridge-profile-release-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 5.0572856,
+      "active_final": 0,
+      "name": "configure-bridge-profile-debug-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 111.7906207,
+      "active_final": 0,
+      "name": "build-bridge-profile-debug-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 0.3535987,
+      "active_final": 0,
+      "name": "prefix-bridge-profile-debug-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 13.0552275,
+      "active_final": 0,
+      "name": "pixels-bridge-profile-debug-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 4.8566519,
+      "active_final": 0,
+      "name": "configure-bridge-profile-asan-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 107.4799341,
+      "active_final": 0,
+      "name": "build-bridge-profile-asan-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 0.7204188,
+      "active_final": 0,
+      "name": "prefix-bridge-profile-asan-01"
+    },
+    {
+      "state": "COMPLETE",
+      "runner_exit": 0,
+      "verification_exit": 0,
+      "native_exit": 0,
+      "elapsed_s": 51.4343497,
+      "active_final": 0,
+      "name": "pixels-bridge-profile-asan-01"
+    }
+  ],
+  "scope": "Exact v3 and original formal closure unchanged; rotation profile guard only. All current builds new, no overwritten binaries.",
+  "regressions": [
+    {
+      "mode": "release",
+      "complete_chain_ms": {
+        "absolute_deviation_p95": 5.418800000000001,
+        "jitter_p95_minus_p5": 6.589525000000001,
+        "max": 19.5908,
+        "n": 256,
+        "p50": 7.2014,
+        "p95": 12.631025000000001,
+        "p99": 15.436369999999995
+      },
+      "prefix_assertions": 113,
+      "eligible_targets": 0,
+      "final_release_verified": true,
+      "prefix_failed": 0,
+      "real_frames": 256,
+      "input_before_after_verified": true,
+      "own_fake_downs": 0
+    },
+    {
+      "mode": "debug",
+      "complete_chain_ms": {
+        "absolute_deviation_p95": 28.453900000000004,
+        "jitter_p95_minus_p5": 34.603725,
+        "max": 145.9426,
+        "n": 256,
+        "p50": 33.252399999999994,
+        "p95": 61.8087,
+        "p99": 92.10240499999978
+      },
+      "prefix_assertions": 113,
+      "eligible_targets": 0,
+      "final_release_verified": true,
+      "prefix_failed": 0,
+      "real_frames": 256,
+      "input_before_after_verified": true,
+      "own_fake_downs": 0
+    },
+    {
+      "mode": "asan",
+      "complete_chain_ms": {
+        "absolute_deviation_p95": 97.69645000000001,
+        "jitter_p95_minus_p5": 174.73899999999998,
+        "max": 406.4696,
+        "n": 256,
+        "p50": 165.49635,
+        "p95": 243.23405,
+        "p99": 305.381975
+      },
+      "prefix_assertions": 113,
+      "eligible_targets": 0,
+      "final_release_verified": true,
+      "prefix_failed": 0,
+      "real_frames": 256,
+      "input_before_after_verified": true,
+      "own_fake_downs": 0
+    }
+  ],
+  "binaries": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-release-01\\bridge_tests.exe",
+      "bytes": 270848,
+      "sha256": "6bd3c5c2a36320c4bd741f7c0e2c82915e8e98d3634907e68eac21680a7ddaed"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-release-01\\current_bridge.lib",
+      "bytes": 1996688,
+      "sha256": "a30cb5f191ff829ce8f00059f7ac2e102ee038ce08269c706527d8458c27f256"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-release-01\\exact_bvi_v3.lib",
+      "bytes": 684278,
+      "sha256": "b9f018352241f17036eb5b03b2622e37e41cca15820915a96fdd7c1b2abc0a75"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-release-01\\formal_core.lib",
+      "bytes": 200940084,
+      "sha256": "37db8ae75c93ac2d5c6e989e33b39d5772b7d72e0add91dd933afa31f3453dd3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-release-01\\pixel_chain.exe",
+      "bytes": 509952,
+      "sha256": "8c9953d9e1f73440de5181b88d1acc44968507cfa9719c4307db25e23794bbaa"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-debug-01\\bridge_tests.exe",
+      "bytes": 3780608,
+      "sha256": "44ef39078162881eb4b9fec9a19d54ded22ab1e9a2e14e758d922a2706c2f030"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-debug-01\\current_bridge.lib",
+      "bytes": 2157596,
+      "sha256": "48809904ab3e55829fa8e3d406f3cfb75267f6214a146a6263c179afabf04e08"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-debug-01\\exact_bvi_v3.lib",
+      "bytes": 682006,
+      "sha256": "61a11c09818a18dc8919b30c086c7165ff349cbff2fbd9ea92c94dde7edf2067"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-debug-01\\formal_core.lib",
+      "bytes": 215084194,
+      "sha256": "8d1ad0dea534b62899313ac3d7421709e3b0bbbab6f0378537a9ad721982386d"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-debug-01\\pixel_chain.exe",
+      "bytes": 3866624,
+      "sha256": "f2dda674a5989575c68229e24882bb9fd623cdce8a0459d82091fc83afd69161"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-asan-01\\bridge_tests.exe",
+      "bytes": 5889536,
+      "sha256": "a94e178575eeaf5198fc733b5c48b10e12c13bd5d2d8cfb4167a6fca333390ad"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-asan-01\\clang_rt.asan_dbg_dynamic-x86_64.dll",
+      "bytes": 1296920,
+      "sha256": "f56d5ff0b9fcb1c99e84201268d84df0c3406aa3710173f44446cf24cf2f857e"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-asan-01\\clang_rt.asan_dynamic-x86_64.dll",
+      "bytes": 1208352,
+      "sha256": "52580b50dadca40f8f04e21c0b61e8ff272b31379270116377f47449c52ef758"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-asan-01\\current_bridge.lib",
+      "bytes": 2299796,
+      "sha256": "00a66e45a256824702a9eb126a9a476de9002f7db5184f08bfeb09413570d9fb"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-asan-01\\exact_bvi_v3.lib",
+      "bytes": 765150,
+      "sha256": "cfe4469fab80adba1450fd27aba106ef8539014cc60b39b171d2658e6bb56400"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-asan-01\\formal_core.lib",
+      "bytes": 222242628,
+      "sha256": "a2585d53e6797f8e0f1d2406e7ae974400765f941c62c8ff2fade06bd06c5081"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-profile-asan-01\\pixel_chain.exe",
+      "bytes": 5991936,
+      "sha256": "8cabf140a63b63ce24a37e5a71d703e8c7d93e08133375a07b3bd098eba31b0a"
+    }
+  ],
+  "prior_binaries_verified_unchanged": 123,
+  "sources": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\CMakeLists.txt",
+      "bytes": 3843,
+      "sha256": "ed853fad7c703047c2e7194cf4e64de0d1bc78aa409a01f401a821830e1406eb"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\README.md",
+      "bytes": 2816,
+      "sha256": "c4ad93ef928ea17b3ecba2a495c365cb087570af568e4ff8a6da8c31972c0c24"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge_tests.cpp",
+      "bytes": 16013,
+      "sha256": "1e259c8139a535000af51faee0e3b0420188a3d8c3f40205eff7253d5ffa2c5d"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.cpp",
+      "bytes": 14137,
+      "sha256": "2065ec342e0b52835f839e2a8c3c17dbe3c7e2ea37f5dffa7b11775dd85552ff"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\bridge.hpp",
+      "bytes": 3317,
+      "sha256": "728f77d4aa843a84a25c4f91398d30e91c7a991fce74ec7a7b46fc94f539377e"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\CMakeLists.txt",
+      "bytes": 2980,
+      "sha256": "1138e5bdee732864044d4dd628462b6378f88b64458f2f9d398d5aa6bfb8ddb5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_windows\\bridge\\pixel_chain.cpp",
+      "bytes": 18151,
+      "sha256": "94d7a2d2a22d6230288ba8ea6dd1e7c68630a283db9caf14015d933eb256d4be"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\cmake-stage.ps1",
+      "bytes": 4208,
+      "sha256": "b312daf3cd637310a8a02e058ed619c8afe5421a091981f41f2d7924a6285484"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\invoke.ps1",
+      "bytes": 1964,
+      "sha256": "7f11079a23efba87f00641e39731aba625d1e292039c7963bd31881b6872c9a5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\legacy-stage.ps1",
+      "bytes": 5685,
+      "sha256": "603cfde9989a6a8a996d776ed9f7f9870356ab638b5fb28899d6c998e941dfc3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1",
+      "bytes": 1945,
+      "sha256": "a16c4db270e1b4d55300dfa78f27f5084ec4e96a7acb261e9d12446786c46f85"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\pixel-stage.ps1",
+      "bytes": 6001,
+      "sha256": "85c9cc0a3f42cd9c7e7207ddbe8625ee4bdd3a8446141598ad9b9fafa2f38577"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\pretest.ps1",
+      "bytes": 3463,
+      "sha256": "f651c9ee69ac21f2bc2daeb00920c1a67eb31d078aa85dff6c2433a8ae5dd27a"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\process.ps1",
+      "bytes": 5627,
+      "sha256": "b0857b3f77b8a0263f1f71d033372621227473770523e657cd239321096513ff"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\qualify.ps1",
+      "bytes": 5640,
+      "sha256": "e7a4b143235e88c7464aa53847d3b0a1fac1fbc12496192cefb78604223dc787"
+    }
+  ],
+  "schema": "pas.windows-final-offline-profile-identity.v1",
+  "profile": {
+    "pixel_format": "RGB888 top-down",
+    "height": 720,
+    "width": 1280,
+    "rotation": 1,
+    "stride": 3840
+  },
+  "prior_snapshot_git_blobs_verified": 15,
+  "development_source_commit": "29e3ed09ae176a93a159f3b7993c8047505e9482"
+}

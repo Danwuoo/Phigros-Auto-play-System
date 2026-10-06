@@ -1,0 +1,33 @@
+{
+  "device_read": false,
+  "schema": "pas.windows-offline-host.v1",
+  "manifest_install": false,
+  "compiler_snapshot_manifest": {
+    "bytes": 31286,
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\tool-snapshot.json",
+    "sha256": "6ed350426f5fed6b65d48ba5feec19f10415460cabf70bef8689dc8107b2e3e0"
+  },
+  "vcpkg_installed_dir": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\vcpkg_installed",
+  "cpu_vision": false,
+  "os": {
+    "build": "26200",
+    "version": "10.0.26200",
+    "total_memory_kib": 33239632,
+    "free_memory_kib": 20551256,
+    "caption": "Microsoft Windows 11 Pro"
+  },
+  "captured_utc": "2026-10-06T03:26:50.2316653Z",
+  "vcpkg_root_environment": null,
+  "cpu": [
+    {
+      "Name": "Intel(R) Core(TM) Ultra 5 125H",
+      "NumberOfCores": 14,
+      "NumberOfLogicalProcessors": 18
+    }
+  ],
+  "cmake": {
+    "bytes": 12823632,
+    "path": "C:\\Users\\wurre\\AppData\\Local\\Programs\\Python\\Python310\\Lib\\site-packages\\cmake\\data\\bin\\cmake.exe",
+    "sha256": "083a412e9a21430da453bcd9713ffa5589ea1c677cc4d5f58f9a0b55fab1f546"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "total_s": 300,
+  "stream_cap": 4194304,
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\legacy-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bvi-win-release-01\\legacy.exe",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi\\normalized-execution.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi\\oracle.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\typed-r1.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\bvi-io-adapter-01\\supplemental.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\r1-cases.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\expected-coverage.json"
+  ],
+  "stage": "legacy-release-r2-suite-01",
+  "argv": [
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi\\normalized-execution.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi\\oracle.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\typed-r1.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\bvi-io-adapter-01\\supplemental.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\r1-cases.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\expected-coverage.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-release-r2-01-inputs\\suite.json"
+  ],
+  "runner_exit": 1,
+  "native_exit": 1,
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-release-r2-suite-01",
+  "exe": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bvi-win-release-01\\legacy.exe"
+}

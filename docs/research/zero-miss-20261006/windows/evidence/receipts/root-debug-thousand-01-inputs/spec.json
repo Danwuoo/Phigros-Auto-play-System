@@ -1,0 +1,43 @@
+{
+  "exe": "C:\\WINDOWS\\system32\\cmd.exe",
+  "native_exit": 0,
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\root-debug-thousand-01-inputs\\native.cmd",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\pas_tests.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-root-ninja-debug-01\\freeze.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-root-ninja-debug-01\\build-root-ninja-debug-01-verification.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-root-ninja-debug-01\\freeze.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\abseil_dll.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\avcodec-63.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\avutil-61.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\cares.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\gtest_main.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\gtest.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\libcrypto-3-x64.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\libprotobufd.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\libssl-3-x64.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\pas_frame_review.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\pas_grpc_latency.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\pas_miss_review.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\pas_pixel_audit.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\pas_recording_check.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\pas_tests.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\pas.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\re2.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\swscale-10.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\win-r4-ninja-debug-01\\Debug\\zd.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tests\\cold_scenario_tests.cpp"
+  ],
+  "runner_exit": 0,
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\root-debug-thousand-01",
+  "stage": "root-debug-thousand-01",
+  "total_s": 900,
+  "argv": [
+    "/d",
+    "/s",
+    "/c",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\root-debug-thousand-01-inputs\\native.cmd"
+  ],
+  "stream_cap": 4194304
+}

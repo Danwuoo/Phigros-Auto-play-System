@@ -1,0 +1,507 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-root-ninja-asan-04-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/127] Generating generated/emulator_controller.pb.cc, generated/emulator_controller.pb.h, generated/emulator_controller.grpc.pb.cc, generated/emulator_controller.grpc.pb.h
+[2/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\config.cpp for CXX dependencies
+[3/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\core.cpp for CXX dependencies
+[4/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp for CXX dependencies
+[5/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.cc for CXX dependencies
+[6/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\journal.cpp for CXX dependencies
+[7/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\touch_evidence.cpp for CXX dependencies
+[8/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.grpc.pb.cc for CXX dependencies
+[9/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\adb.cpp for CXX dependencies
+[10/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\preview.cpp for CXX dependencies
+[11/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp for CXX dependencies
+[12/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_clip_replay.cpp for CXX dependencies
+[13/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp for CXX dependencies
+[14/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp for CXX dependencies
+[15/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking.cpp for CXX dependencies
+[16/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_pipeline.cpp for CXX dependencies
+[17/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_methods.cpp for CXX dependencies
+[18/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_shadow.cpp for CXX dependencies
+[19/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_analysis.cpp for CXX dependencies
+[20/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset_tools.cpp for CXX dependencies
+[21/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_session.cpp for CXX dependencies
+[22/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset.cpp for CXX dependencies
+[23/127] Generating CXX dyndep file CMakeFiles\pas_proto.dir\CXX.dd
+[24/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_archive.cpp for CXX dependencies
+[25/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_pixel_clips.cpp for CXX dependencies
+[26/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_recording.cpp for CXX dependencies
+[27/127] Generating CXX dyndep file CMakeFiles\pas_core.dir\CXX.dd
+[28/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\grpc_transport.cpp for CXX dependencies
+[29/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\emulator.cpp for CXX dependencies
+[30/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\runtime.cpp for CXX dependencies
+[31/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\manual_session.cpp for CXX dependencies
+[32/127] Building CXX object CMakeFiles\pas_core.dir\src\core.cpp.obj
+[33/127] Building CXX object CMakeFiles\pas_core.dir\src\config.cpp.obj
+[34/127] Building CXX object CMakeFiles\pas_proto.dir\generated\emulator_controller.pb.cc.obj
+[35/127] Building CXX object CMakeFiles\pas_core.dir\src\adb.cpp.obj
+[36/127] Building CXX object CMakeFiles\pas_core.dir\src\analysis.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(311): warning C4244: 'argument': conversion from '__int64' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(312): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(315): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(317): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(324): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(325): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(328): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+[37/127] Building CXX object CMakeFiles\pas_core.dir\src\journal.cpp.obj
+[38/127] Building CXX object CMakeFiles\pas_proto.dir\generated\emulator_controller.grpc.pb.cc.obj
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[39/127] Building CXX object CMakeFiles\pas_core.dir\src\touch_evidence.cpp.obj
+[40/127] Building CXX object CMakeFiles\pas_core.dir\src\preview.cpp.obj
+[41/127] Building CXX object CMakeFiles\pas_core.dir\src\game_clip_replay.cpp.obj
+[42/127] Building CXX object CMakeFiles\pas_core.dir\src\game_cold_pipeline.cpp.obj
+[43/127] Building CXX object CMakeFiles\pas_core.dir\src\game.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(773): warning C4456: declaration of 'gap' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(681): note: see declaration of 'gap'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(921): warning C4456: declaration of 'minor' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(880): note: see declaration of 'minor'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(952): warning C4456: declaration of 'gap' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(681): note: see declaration of 'gap'
+[44/127] Building CXX object CMakeFiles\pas_core.dir\src\game_cold_corpus.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp(420): warning C4456: declaration of 'id' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp(390): note: see declaration of 'id'
+[45/127] Building CXX object CMakeFiles\pas_core.dir\src\game_motion.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp(478): warning C4456: declaration of 'closure' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp(382): note: see declaration of 'closure'
+[46/127] Building CXX object CMakeFiles\pas_core.dir\src\game_tracking_methods.cpp.obj
+[47/127] Building CXX object CMakeFiles\pas_core.dir\src\game_tracking.cpp.obj
+[48/127] Building CXX object CMakeFiles\pas_core.dir\src\game_tracking_analysis.cpp.obj
+[49/127] Building CXX object CMakeFiles\pas_core.dir\src\game_tracking_shadow.cpp.obj
+[50/127] Building CXX object CMakeFiles\pas_core.dir\src\game_dataset.cpp.obj
+[51/127] Building CXX object CMakeFiles\pas_core.dir\src\game_session.cpp.obj
+[52/127] Building CXX object CMakeFiles\pas_core.dir\src\game_dataset_tools.cpp.obj
+[53/127] Generating CXX dyndep file CMakeFiles\pas_emulator.dir\CXX.dd
+[54/127] Building CXX object CMakeFiles\pas_core.dir\src\session_archive.cpp.obj
+[55/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\bench.cpp for CXX dependencies
+[56/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\bench_workloads.cpp for CXX dependencies
+[57/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\touch_bench.cpp for CXX dependencies
+[58/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\scrcpy_capture.cpp for CXX dependencies
+[59/127] Linking CXX static library pas_proto.lib
+[60/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\native_capture.cpp for CXX dependencies
+[61/127] Building CXX object CMakeFiles\pas_core.dir\src\session_pixel_clips.cpp.obj
+[62/127] Building CXX object CMakeFiles\pas_core.dir\src\session_recording.cpp.obj
+[63/127] Linking CXX static library pas_core.lib
+[64/127] Building CXX object CMakeFiles\pas_emulator.dir\src\grpc_transport.cpp.obj
+[65/127] Generating CXX dyndep file CMakeFiles\pas_bench.dir\CXX.dd
+[66/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\apps\pas\main.cpp for CXX dependencies
+[67/127] Building CXX object CMakeFiles\pas_emulator.dir\src\emulator.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[68/127] Building CXX object CMakeFiles\pas_emulator.dir\src\runtime.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\runtime.cpp(485) : warning C4702: unreachable code
+[69/127] Building CXX object CMakeFiles\pas_emulator.dir\src\manual_session.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[70/127] Linking CXX static library pas_emulator.lib
+[71/127] Building CXX object CMakeFiles\pas_bench.dir\src\bench_workloads.cpp.obj
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xutility(5094): warning C4244: '=': conversion from 'const wchar_t' to 'char', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xutility(5094): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\bench_workloads.cpp(110): note: see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)' being compiled
+        with
+        [
+            _Elem=wchar_t,
+            _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+            _Alloc=std::allocator<char>
+        ]
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\bench_workloads.cpp(110): note: see the first reference to 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string' in 'pas::sample_gpu_engines'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xstring(862): note: see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)' being compiled
+        with
+        [
+            _Size_type=unsigned __int64,
+            _Iter=const wchar_t *,
+            _Sent=const wchar_t *,
+            _Size=unsigned __int64
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xstring(1018): note: see reference to function template instantiation '_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)' being compiled
+        with
+        [
+            _OutIt=char *,
+            _Size=unsigned __int64,
+            _InIt=const wchar_t *,
+            _SizeTy=unsigned __int64
+        ]
+[72/127] Building CXX object CMakeFiles\pas_bench.dir\src\bench.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[73/127] Generating CXX dyndep file CMakeFiles\pas.dir\CXX.dd
+[74/127] Building CXX object CMakeFiles\pas_bench.dir\src\scrcpy_capture.cpp.obj
+[75/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\apps\pixel_audit\main.cpp for CXX dependencies
+[76/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\apps\miss_review\main.cpp for CXX dependencies
+[77/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\apps\recording_check\main.cpp for CXX dependencies
+[78/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\apps\recording_check\select.cpp for CXX dependencies
+[79/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\apps\grpc_latency\main.cpp for CXX dependencies
+[80/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\apps\frame_review\main.cpp for CXX dependencies
+[81/127] Generating CXX dyndep file CMakeFiles\pas_pixel_audit.dir\CXX.dd
+[82/127] Generating CXX dyndep file CMakeFiles\pas_miss_review.dir\CXX.dd
+[83/127] Generating CXX dyndep file CMakeFiles\pas_recording_check.dir\CXX.dd
+[84/127] Generating CXX dyndep file CMakeFiles\pas_grpc_latency.dir\CXX.dd
+[85/127] Generating CXX dyndep file CMakeFiles\pas_frame_review.dir\CXX.dd
+[86/127] Building CXX object CMakeFiles\pas_bench.dir\src\native_capture.cpp.obj
+[87/127] Building CXX object CMakeFiles\pas_bench.dir\src\touch_bench.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[88/127] Linking CXX static library pas_bench.lib
+[89/127] Building CXX object CMakeFiles\pas_pixel_audit.dir\apps\pixel_audit\main.cpp.obj
+[90/127] Building CXX object CMakeFiles\pas.dir\apps\pas\main.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[91/127] Building CXX object CMakeFiles\pas_recording_check.dir\apps\recording_check\main.cpp.obj
+[92/127] Building CXX object CMakeFiles\pas_miss_review.dir\apps\miss_review\main.cpp.obj
+[93/127] Building CXX object CMakeFiles\pas_recording_check.dir\apps\recording_check\select.cpp.obj
+[94/127] Linking CXX executable Debug\pas_pixel_audit.exe
+[95/127] Linking CXX executable Debug\pas_miss_review.exe
+[96/127] Building CXX object CMakeFiles\pas_frame_review.dir\apps\frame_review\main.cpp.obj
+[97/127] Linking CXX executable Debug\pas_recording_check.exe
+[98/127] Linking CXX executable Debug\pas_frame_review.exe
+[99/127] Linking CXX executable Debug\pas.exe
+[100/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\core_tests.cpp for CXX dependencies
+[101/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\grpc_loopback_tests.cpp for CXX dependencies
+[102/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\grpc_transport_tests.cpp for CXX dependencies
+[103/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\config_analysis_tests.cpp for CXX dependencies
+[104/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\capture_backend_tests.cpp for CXX dependencies
+[105/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\cli_tests.cpp for CXX dependencies
+[106/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tracking_tests.cpp for CXX dependencies
+[107/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_dataset_tests.cpp for CXX dependencies
+[108/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\cold_scenario_tests.cpp for CXX dependencies
+[109/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tests.cpp for CXX dependencies
+[110/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_session_tests.cpp for CXX dependencies
+[111/127] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\session_recording_tests.cpp for CXX dependencies
+[112/127] Generating CXX dyndep file CMakeFiles\pas_tests.dir\CXX.dd
+[113/127] Building CXX object CMakeFiles\pas_grpc_latency.dir\apps\grpc_latency\main.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[114/127] Building CXX object CMakeFiles\pas_tests.dir\tests\core_tests.cpp.obj
+[115/127] Building CXX object CMakeFiles\pas_tests.dir\tests\cli_tests.cpp.obj
+[116/127] Building CXX object CMakeFiles\pas_tests.dir\tests\grpc_transport_tests.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[117/127] Building CXX object CMakeFiles\pas_tests.dir\tests\grpc_loopback_tests.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[118/127] Building CXX object CMakeFiles\pas_tests.dir\tests\capture_backend_tests.cpp.obj
+[119/127] Building CXX object CMakeFiles\pas_tests.dir\tests\config_analysis_tests.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[120/127] Building CXX object CMakeFiles\pas_tests.dir\tests\game_tracking_tests.cpp.obj
+[121/127] Building CXX object CMakeFiles\pas_tests.dir\tests\game_dataset_tests.cpp.obj
+[122/127] Building CXX object CMakeFiles\pas_tests.dir\tests\cold_scenario_tests.cpp.obj
+[123/127] Building CXX object CMakeFiles\pas_tests.dir\tests\game_session_tests.cpp.obj
+[124/127] Building CXX object CMakeFiles\pas_tests.dir\tests\session_recording_tests.cpp.obj
+[125/127] Building CXX object CMakeFiles\pas_tests.dir\tests\game_tests.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(2695): warning C4996: 'android::emulation::control::VmConfiguration_VmHypervisorType_HAXM': was declared deprecated
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20822): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(20854): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-04\generated\emulator_controller.pb.h(22996): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\tests\game_tests.cpp(135): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): warning C4996: 'grpc::experimental::IdentityKeyCertPair::~IdentityKeyCertPair': Use IdentityKeyOrSignerCertPair instead
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(337): note: the template instantiation context (the oldest one first) is
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see reference to class template instantiation 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2089): note: while compiling class template member function 'void std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy(void) noexcept'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(832): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::_Tidy' in 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector'
+C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\x64-windows\include\grpcpp/security/tls_certificate_provider.h(75): note: see the first reference to 'std::vector<grpc::experimental::IdentityKeyCertPair,std::allocator<grpc::experimental::IdentityKeyCertPair>>::~vector' in 'grpc::experimental::StaticDataCertificateProvider::StaticDataCertificateProvider'
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\vector(2099): note: see reference to function template instantiation 'void std::_Destroy_range<std::allocator<grpc::experimental::IdentityKeyCertPair>>(grpc::experimental::IdentityKeyCertPair *,grpc::experimental::IdentityKeyCertPair *const ,_Alloc &) noexcept' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(1107): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::destroy<_Ty>(_Alloc &,_Uty *const )' being compiled
+        with
+        [
+            _Alloc=std::allocator<grpc::experimental::IdentityKeyCertPair>,
+            _Ty=grpc::experimental::IdentityKeyCertPair,
+            _Uty=grpc::experimental::IdentityKeyCertPair
+        ]
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xmemory(739): note: see reference to function template instantiation 'void std::destroy_at<_Uty>(_Ty *const ) noexcept' being compiled
+        with
+        [
+            _Uty=grpc::experimental::IdentityKeyCertPair,
+            _Ty=grpc::experimental::IdentityKeyCertPair
+        ]
+[126/127] Linking CXX executable Debug\pas_grpc_latency.exe
+[127/127] Linking CXX executable Debug\pas_tests.exe
+TRACE Build END exit=0

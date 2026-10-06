@@ -1,0 +1,3 @@
+TRACE legacy NATIVE_START
+original=69+22 new=20 schema_controls=4 layers=4 assertions=3938 failed=36 metadata=236216 probes_max=550528
+TRACE legacy NATIVE_END exit=1

@@ -1,0 +1,74 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-bvi-debug-stack8-01-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp for CXX dependencies
+[2/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp for CXX dependencies
+[3/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp for CXX dependencies
+[4/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp for CXX dependencies
+[5/50] Generating CXX dyndep file CMakeFiles\bvi_v3.dir\CXX.dd
+[6/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\contract.cpp for CXX dependencies
+[7/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\independent_old.cpp for CXX dependencies
+[8/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\relation.cpp for CXX dependencies
+[9/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\contact.cpp for CXX dependencies
+[10/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\line_ambiguity.cpp for CXX dependencies
+[11/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\query_noise.cpp for CXX dependencies
+[12/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\independent_v3.cpp for CXX dependencies
+[13/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\query_accumulation.cpp for CXX dependencies
+[14/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\bvi-io-adapter-01\main.cpp for CXX dependencies
+[15/50] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\docs\research\zero-miss-20261005\round2\evidence\bvi-frozen-suite\audit_io.cpp for CXX dependencies
+[16/50] Building CXX object CMakeFiles\bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp.obj
+[17/50] Generating CXX dyndep file CMakeFiles\contract.dir\CXX.dd
+[18/50] Generating CXX dyndep file CMakeFiles\independent_old.dir\CXX.dd
+[19/50] Building CXX object CMakeFiles\bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp.obj
+[20/50] Generating CXX dyndep file CMakeFiles\relation.dir\CXX.dd
+[21/50] Generating CXX dyndep file CMakeFiles\contact.dir\CXX.dd
+[22/50] Generating CXX dyndep file CMakeFiles\line_ambiguity.dir\CXX.dd
+[23/50] Generating CXX dyndep file CMakeFiles\independent_v3.dir\CXX.dd
+[24/50] Building CXX object CMakeFiles\bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp.obj
+[25/50] Generating CXX dyndep file CMakeFiles\query_noise.dir\CXX.dd
+[26/50] Building CXX object CMakeFiles\bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp.obj
+[27/50] Generating CXX dyndep file CMakeFiles\query_accumulation.dir\CXX.dd
+[28/50] Generating CXX dyndep file CMakeFiles\legacy.dir\CXX.dd
+[29/50] Generating CXX dyndep file CMakeFiles\audit_io.dir\CXX.dd
+[30/50] Linking CXX static library bvi_v3.lib
+[31/50] Building CXX object CMakeFiles\contact.dir\frozen-fixtures\contact.cpp.obj
+[32/50] Building CXX object CMakeFiles\relation.dir\frozen-fixtures\relation.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\relation.cpp(23): warning C4244: '=': conversion from 'int' to '_Ty', possible loss of data
+        with
+        [
+            _Ty=uint8_t
+        ]
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\relation.cpp(23): warning C4244: '=': conversion from 'int' to '_Ty', possible loss of data
+        with
+        [
+            _Ty=uint8_t
+        ]
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\relation.cpp(23): warning C4244: '=': conversion from 'int' to '_Ty', possible loss of data
+        with
+        [
+            _Ty=uint8_t
+        ]
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\relation.cpp(36): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\bvi-win-debug-stack8-01\frozen-fixtures\relation.cpp(39): warning C4267: '+=': conversion from 'size_t' to '_Ty', possible loss of data
+        with
+        [
+            _Ty=int
+        ]
+[33/50] Building CXX object CMakeFiles\independent_old.dir\frozen-fixtures\independent_old.cpp.obj
+[34/50] Building CXX object CMakeFiles\contract.dir\frozen-fixtures\contract.cpp.obj
+[35/50] Building CXX object CMakeFiles\line_ambiguity.dir\frozen-fixtures\line_ambiguity.cpp.obj
+[36/50] Building CXX object CMakeFiles\independent_v3.dir\frozen-fixtures\independent_v3.cpp.obj
+[37/50] Building CXX object CMakeFiles\query_noise.dir\frozen-fixtures\query_noise.cpp.obj
+[38/50] Linking CXX executable contract.exe
+[39/50] Building CXX object CMakeFiles\query_accumulation.dir\frozen-fixtures\query_accumulation.cpp.obj
+[40/50] Linking CXX executable independent_old.exe
+[41/50] Linking CXX executable relation.exe
+[42/50] Linking CXX executable contact.exe
+[43/50] Linking CXX executable line_ambiguity.exe
+[44/50] Linking CXX executable independent_v3.exe
+[45/50] Linking CXX executable query_noise.exe
+[46/50] Linking CXX executable query_accumulation.exe
+[47/50] Building CXX object CMakeFiles\audit_io.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\docs\research\zero-miss-20261005\round2\evidence\bvi-frozen-suite\audit_io.cpp.obj
+[48/50] Linking CXX executable audit_io.exe
+[49/50] Building CXX object CMakeFiles\legacy.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\bvi-io-adapter-01\main.cpp.obj
+[50/50] Linking CXX executable legacy.exe
+TRACE Build END exit=0

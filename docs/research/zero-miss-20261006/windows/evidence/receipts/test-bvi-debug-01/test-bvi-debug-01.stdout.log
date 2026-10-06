@@ -1,0 +1,30 @@
+TRACE Test entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\test-bvi-debug-01-inputs\test.cmd]
+TRACE vcvars END exit=0
+Test project C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/bvi-win-debug-01
+    Start 1: contract
+1/8 Test #1: contract .........................   Passed    3.88 sec
+    Start 2: independent_old
+2/8 Test #2: independent_old ..................***Exception: SegFault  5.14 sec
+
+    Start 3: relation
+3/8 Test #3: relation .........................***Exception: SegFault  4.62 sec
+
+    Start 4: contact
+4/8 Test #4: contact ..........................   Passed   23.06 sec
+    Start 5: line_ambiguity
+5/8 Test #5: line_ambiguity ...................   Passed    2.17 sec
+    Start 6: independent_v3
+6/8 Test #6: independent_v3 ...................   Passed   10.50 sec
+    Start 7: query_noise
+7/8 Test #7: query_noise ......................   Passed    1.84 sec
+    Start 8: query_accumulation
+8/8 Test #8: query_accumulation ...............   Passed    0.47 sec
+
+75% tests passed, 2 tests failed out of 8
+
+Total Test time (real) =  51.73 sec
+
+The following tests FAILED:
+	  2 - independent_old (SEGFAULT)
+	  3 - relation (SEGFAULT)
+TRACE Test END exit=8

@@ -1,0 +1,2 @@
+TRACE fixture entry C:\Users\wurre\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -File C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\native-qualification-01\source\argv-fixture.ps1 -ReturnCode 0 -Value "space token" -Trailing C:\argv-test\
+TRACE fixture end exit=0

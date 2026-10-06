@@ -1,0 +1,1464 @@
+{
+  "baseline": "acb27fdb095b82253ef9388eab52948a59663d02",
+  "cluster_counts": {
+    "C1": 5,
+    "C2": 6,
+    "C3": 2,
+    "C4": 7,
+    "C5": 24,
+    "C6": 8,
+    "C7": 2
+  },
+  "contract_revisions": [
+    {
+      "change": "Remove endpoint geometric mask veto; rail white still requires outside mask.",
+      "id": "C-V2-ENDPOINT-r2",
+      "initial_contract_sha256": "269b94f49feb003cb83e0d6c706bd1d8c8627d51b68372446574aaa9bc683c42",
+      "new_control": "RGB-co-rotation-visible-blue",
+      "oracle_expectations_changed": false,
+      "reason": "Independent P05 actual blue at distance 2.7826 was rejected by 2.8 geometric mask; actual blue/black are mutually exclusive with white."
+    },
+    {
+      "change": "Only remove !front_end exemption; preserve contains and nearest tie; no new separation threshold.",
+      "id": "C-V2-MERGE-P2",
+      "oracle_expectations_changed": false,
+      "reason": "N09 and MERGE-union-with-cap expose current cap suppressing unresolved prior alternatives; single and separated-current positives retained."
+    }
+  ],
+  "expected_changes": [],
+  "legacy_denominator": {
+    "assertions": 3938,
+    "failures": 54,
+    "layer_cases": 356
+  },
+  "legacy_suite_sha256": "8fbc37e8db4afe1d8736b2f89c17f25dc91d2213581d241279c6ab2dbda38611",
+  "mapped_failures": 54,
+  "note": "This map preserves original expectations and 54 failed rows; v2 projections are separate cold consumers, not integrated owner fixes.",
+  "open_decisions": [
+    {
+      "id": "effect-transparent-color",
+      "legacy_failures": 2,
+      "status": "pending_original_yellow_unchanged"
+    },
+    {
+      "id": "rotation-line-occlusion",
+      "legacy_failures": 7,
+      "status": "pending_original_flank_unchanged"
+    },
+    {
+      "id": "dynamic-probe-exhaustion",
+      "status": "not_measured_helper_only"
+    },
+    {
+      "id": "stationary-new-entry-dedup",
+      "status": "not_changed_no_threshold_reduction"
+    },
+    {
+      "id": "duplicate-ROI-nearest-tie",
+      "status": "existing_conservative_rejection_deferred"
+    }
+  ],
+  "rows": [
+    {
+      "actual": true,
+      "case": "V01-whole",
+      "cluster": "C1",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": false,
+      "field": "move",
+      "fixture_pointer": "/cases/2",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-no-rails-line-crossing",
+        "RGB-long-rails",
+        "RGB-two-point-rails",
+        "RGB-one-point-rails",
+        "MERGE-union-with-cap",
+        "MERGE-two-separated-current"
+      ],
+      "oracle_pointer": "/cases/2/expected/move",
+      "report_pointer": "/layers/e2e/rows/2/assertions/6",
+      "typed_case_pointer": "/cases/2",
+      "v2_contract": "C-V2-RAIL/C-V2-MERGE"
+    },
+    {
+      "actual": true,
+      "case": "V01-touching",
+      "cluster": "C1",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": false,
+      "field": "move",
+      "fixture_pointer": "/cases/3",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-no-rails-line-crossing",
+        "RGB-long-rails",
+        "RGB-two-point-rails",
+        "RGB-one-point-rails",
+        "MERGE-union-with-cap",
+        "MERGE-two-separated-current"
+      ],
+      "oracle_pointer": "/cases/3/expected/move",
+      "report_pointer": "/layers/e2e/rows/3/assertions/6",
+      "typed_case_pointer": "/cases/3",
+      "v2_contract": "C-V2-RAIL/C-V2-MERGE"
+    },
+    {
+      "actual": [
+        false
+      ],
+      "case": "V02-continuation",
+      "cluster": "C2",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": [
+        true
+      ],
+      "field": "cap",
+      "fixture_pointer": "/cases/4",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-front-line-plus4",
+        "RGB-front-line-minus4",
+        "RGB-endpoint-white-band",
+        "RGB-endpoint-single-blue-side"
+      ],
+      "oracle_pointer": "/cases/4/expected/cap",
+      "report_pointer": "/layers/e2e/rows/4/assertions/4",
+      "typed_case_pointer": "/cases/4",
+      "v2_contract": "C-V2-ENDPOINT"
+    },
+    {
+      "actual": 2,
+      "case": "V02-stationary-current",
+      "cluster": "C2",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": 3,
+      "field": "independent",
+      "fixture_pointer": "/cases/5",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-front-line-plus4",
+        "RGB-front-line-minus4",
+        "RGB-endpoint-white-band",
+        "RGB-endpoint-single-blue-side"
+      ],
+      "oracle_pointer": "/cases/5/expected/independent",
+      "report_pointer": "/layers/e2e/rows/5/assertions/7",
+      "typed_case_pointer": "/cases/5",
+      "v2_contract": "C-V2-ENDPOINT"
+    },
+    {
+      "actual": false,
+      "case": "V04-contained-effect",
+      "cluster": "C3",
+      "disposition": "pending_effect_definition_original_fail_retained",
+      "expected": true,
+      "field": "effect",
+      "fixture_pointer": "/cases/7",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/7/expected/effect",
+      "report_pointer": "/layers/e2e/rows/7/assertions/6",
+      "typed_case_pointer": "/cases/7",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": 1,
+      "case": "V07-merge",
+      "cluster": "C1",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": 2,
+      "field": "alternatives",
+      "fixture_pointer": "/cases/11",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-no-rails-line-crossing",
+        "RGB-long-rails",
+        "RGB-two-point-rails",
+        "RGB-one-point-rails",
+        "MERGE-union-with-cap",
+        "MERGE-two-separated-current"
+      ],
+      "oracle_pointer": "/cases/11/expected/alternatives",
+      "report_pointer": "/layers/e2e/rows/11/assertions/3",
+      "typed_case_pointer": "/cases/11",
+      "v2_contract": "C-V2-RAIL/C-V2-MERGE"
+    },
+    {
+      "actual": true,
+      "case": "V07-merge",
+      "cluster": "C1",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": false,
+      "field": "move",
+      "fixture_pointer": "/cases/11",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-no-rails-line-crossing",
+        "RGB-long-rails",
+        "RGB-two-point-rails",
+        "RGB-one-point-rails",
+        "MERGE-union-with-cap",
+        "MERGE-two-separated-current"
+      ],
+      "oracle_pointer": "/cases/11/expected/move",
+      "report_pointer": "/layers/e2e/rows/11/assertions/6",
+      "typed_case_pointer": "/cases/11",
+      "v2_contract": "C-V2-RAIL/C-V2-MERGE"
+    },
+    {
+      "actual": [
+        "continued"
+      ],
+      "case": "V07-merge",
+      "cluster": "C1",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": [
+        "ambiguous"
+      ],
+      "field": "relation",
+      "fixture_pointer": "/cases/11",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-no-rails-line-crossing",
+        "RGB-long-rails",
+        "RGB-two-point-rails",
+        "RGB-one-point-rails",
+        "MERGE-union-with-cap",
+        "MERGE-two-separated-current"
+      ],
+      "oracle_pointer": "/cases/11/expected/relation",
+      "report_pointer": "/layers/e2e/rows/11/assertions/7",
+      "typed_case_pointer": "/cases/11",
+      "v2_contract": "C-V2-RAIL/C-V2-MERGE"
+    },
+    {
+      "actual": [
+        "absent"
+      ],
+      "case": "V10-rotation",
+      "cluster": "C4",
+      "disposition": "pending_rotation_visibility_original_fail_retained",
+      "expected": [
+        "supported"
+      ],
+      "field": "contact",
+      "fixture_pointer": "/cases/15",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/15/expected/contact",
+      "report_pointer": "/layers/e2e/rows/15/assertions/4",
+      "typed_case_pointer": "/cases/15",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": false,
+      "case": "V10-rotation",
+      "cluster": "C4",
+      "disposition": "pending_rotation_visibility_original_fail_retained",
+      "expected": true,
+      "field": "hit_body_required",
+      "fixture_pointer": "/cases/15",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/15/expected/hit_body_required",
+      "report_pointer": "/layers/e2e/rows/15/assertions/6",
+      "typed_case_pointer": "/cases/15",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": false,
+      "case": "V10-rotation",
+      "cluster": "C4",
+      "disposition": "pending_rotation_visibility_original_fail_retained",
+      "expected": true,
+      "field": "hit_line_error_max",
+      "fixture_pointer": "/cases/15",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/15/expected/hit_line_error_max",
+      "report_pointer": "/layers/e2e/rows/15/assertions/7",
+      "typed_case_pointer": "/cases/15",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": false,
+      "case": "V10-rotation",
+      "cluster": "C4",
+      "disposition": "pending_rotation_visibility_original_fail_retained",
+      "expected": true,
+      "field": "move",
+      "fixture_pointer": "/cases/15",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/15/expected/move",
+      "report_pointer": "/layers/e2e/rows/15/assertions/8",
+      "typed_case_pointer": "/cases/15",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": true,
+      "case": "V16-regions-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/31",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-129-queries",
+        "API-128-queries"
+      ],
+      "oracle_pointer": "/cases/31/expected/current_body_preserved",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/31/assertions/3",
+      "typed_case_pointer": "/cases/31",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-regions-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "move",
+      "fixture_pointer": "/cases/31",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-129-queries",
+        "API-128-queries"
+      ],
+      "oracle_pointer": "/cases/31/expected/move",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/31/assertions/5",
+      "typed_case_pointer": "/cases/31",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V16-regions-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "fixture_pointer": "/cases/31",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-129-queries",
+        "API-128-queries"
+      ],
+      "oracle_pointer": "/cases/31/expected/qualification_invalid",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/31/assertions/6",
+      "typed_case_pointer": "/cases/31",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-regions-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "refresh",
+      "fixture_pointer": "/cases/31",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-129-queries",
+        "API-128-queries"
+      ],
+      "oracle_pointer": "/cases/31/expected/refresh",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/31/assertions/7",
+      "typed_case_pointer": "/cases/31",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-lines-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/32",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-17-lines",
+        "API-16-lines"
+      ],
+      "oracle_pointer": "/cases/32/expected/current_body_preserved",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/32/assertions/3",
+      "typed_case_pointer": "/cases/32",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-lines-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "move",
+      "fixture_pointer": "/cases/32",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-17-lines",
+        "API-16-lines"
+      ],
+      "oracle_pointer": "/cases/32/expected/move",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/32/assertions/5",
+      "typed_case_pointer": "/cases/32",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V16-lines-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "fixture_pointer": "/cases/32",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-17-lines",
+        "API-16-lines"
+      ],
+      "oracle_pointer": "/cases/32/expected/qualification_invalid",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/32/assertions/6",
+      "typed_case_pointer": "/cases/32",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-lines-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "refresh",
+      "fixture_pointer": "/cases/32",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-17-lines",
+        "API-16-lines"
+      ],
+      "oracle_pointer": "/cases/32/expected/refresh",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/32/assertions/7",
+      "typed_case_pointer": "/cases/32",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-metadata-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/33",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-metadata-1MiB",
+        "HELPER-metadata-1MiB-plus1",
+        "ABI-static-metadata"
+      ],
+      "oracle_pointer": "/cases/33/expected/current_body_preserved",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/33/assertions/3",
+      "typed_case_pointer": "/cases/33",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-metadata-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "move",
+      "fixture_pointer": "/cases/33",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-metadata-1MiB",
+        "HELPER-metadata-1MiB-plus1",
+        "ABI-static-metadata"
+      ],
+      "oracle_pointer": "/cases/33/expected/move",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/33/assertions/5",
+      "typed_case_pointer": "/cases/33",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V16-metadata-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "fixture_pointer": "/cases/33",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-metadata-1MiB",
+        "HELPER-metadata-1MiB-plus1",
+        "ABI-static-metadata"
+      ],
+      "oracle_pointer": "/cases/33/expected/qualification_invalid",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/33/assertions/6",
+      "typed_case_pointer": "/cases/33",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-metadata-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "refresh",
+      "fixture_pointer": "/cases/33",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-metadata-1MiB",
+        "HELPER-metadata-1MiB-plus1",
+        "ABI-static-metadata"
+      ],
+      "oracle_pointer": "/cases/33/expected/refresh",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/33/assertions/7",
+      "typed_case_pointer": "/cases/33",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-probes-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/34",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-probes-limit",
+        "HELPER-probes-plus1"
+      ],
+      "oracle_pointer": "/cases/34/expected/current_body_preserved",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/34/assertions/3",
+      "typed_case_pointer": "/cases/34",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-probes-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "move",
+      "fixture_pointer": "/cases/34",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-probes-limit",
+        "HELPER-probes-plus1"
+      ],
+      "oracle_pointer": "/cases/34/expected/move",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/34/assertions/5",
+      "typed_case_pointer": "/cases/34",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V16-probes-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "fixture_pointer": "/cases/34",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-probes-limit",
+        "HELPER-probes-plus1"
+      ],
+      "oracle_pointer": "/cases/34/expected/qualification_invalid",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/34/assertions/6",
+      "typed_case_pointer": "/cases/34",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-probes-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "refresh",
+      "fixture_pointer": "/cases/34",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-probes-limit",
+        "HELPER-probes-plus1"
+      ],
+      "oracle_pointer": "/cases/34/expected/refresh",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/e2e/rows/34/assertions/7",
+      "typed_case_pointer": "/cases/34",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V17-gap40",
+      "cluster": "C2",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": true,
+      "field": "usable",
+      "fixture_pointer": "/cases/46",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-front-line-plus4",
+        "RGB-front-line-minus4",
+        "RGB-endpoint-white-band",
+        "RGB-endpoint-single-blue-side"
+      ],
+      "oracle_pointer": "/cases/46/expected/usable",
+      "report_pointer": "/layers/e2e/rows/46/assertions/5",
+      "typed_case_pointer": "/cases/46",
+      "v2_contract": "C-V2-ENDPOINT"
+    },
+    {
+      "actual": 0,
+      "case": "V17-duplicate-rgb",
+      "cluster": "C2",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": 1,
+      "field": "independent",
+      "fixture_pointer": "/cases/50",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-front-line-plus4",
+        "RGB-front-line-minus4",
+        "RGB-endpoint-white-band",
+        "RGB-endpoint-single-blue-side"
+      ],
+      "oracle_pointer": "/cases/50/expected/independent",
+      "report_pointer": "/layers/e2e/rows/50/assertions/3",
+      "typed_case_pointer": "/cases/50",
+      "v2_contract": "C-V2-ENDPOINT"
+    },
+    {
+      "actual": 0,
+      "case": "V17-same-descriptor-new-background",
+      "cluster": "C2",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": 1,
+      "field": "independent",
+      "fixture_pointer": "/cases/51",
+      "layer": "e2e",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-front-line-plus4",
+        "RGB-front-line-minus4",
+        "RGB-endpoint-white-band",
+        "RGB-endpoint-single-blue-side"
+      ],
+      "oracle_pointer": "/cases/51/expected/independent",
+      "report_pointer": "/layers/e2e/rows/51/assertions/3",
+      "typed_case_pointer": "/cases/51",
+      "v2_contract": "C-V2-ENDPOINT"
+    },
+    {
+      "actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "case": "V18-V08-line-order",
+      "cluster": "C7",
+      "disposition": "new_null_eligible_projection_original_comparator_not_repaired",
+      "expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "field": "equivalent_to",
+      "fixture_pointer": "/cases/65",
+      "layer": "lifecycle",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "AMBIGUOUS-forward",
+        "AMBIGUOUS-reverse",
+        "AMBIGUOUS-order-semantic-comparison",
+        "ELIGIBILITY-valid"
+      ],
+      "oracle_pointer": "/cases/65/expected/equivalent_to",
+      "report_pointer": "/layers/lifecycle/rows/65/assertions/3",
+      "typed_case_pointer": "/cases/65",
+      "v2_contract": "C-V2-AMBIGUOUS"
+    },
+    {
+      "actual": [
+        false
+      ],
+      "case": "V02-continuation",
+      "cluster": "C2",
+      "disposition": "same_original_expected_candidate_repair",
+      "expected": [
+        true
+      ],
+      "field": "cap",
+      "fixture_pointer": "/cases/4",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "RGB-front-line-plus4",
+        "RGB-front-line-minus4",
+        "RGB-endpoint-white-band",
+        "RGB-endpoint-single-blue-side"
+      ],
+      "oracle_pointer": "/cases/4/expected/cap",
+      "report_pointer": "/layers/rgb/rows/4/assertions/4",
+      "typed_case_pointer": "/cases/4",
+      "v2_contract": "C-V2-ENDPOINT"
+    },
+    {
+      "actual": false,
+      "case": "V04-contained-effect",
+      "cluster": "C3",
+      "disposition": "pending_effect_definition_original_fail_retained",
+      "expected": true,
+      "field": "effect",
+      "fixture_pointer": "/cases/7",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/7/expected/effect",
+      "report_pointer": "/layers/rgb/rows/7/assertions/5",
+      "typed_case_pointer": "/cases/7",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": [
+        "absent"
+      ],
+      "case": "V10-rotation",
+      "cluster": "C4",
+      "disposition": "pending_rotation_visibility_original_fail_retained",
+      "expected": [
+        "supported"
+      ],
+      "field": "contact",
+      "fixture_pointer": "/cases/15",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/15/expected/contact",
+      "report_pointer": "/layers/rgb/rows/15/assertions/4",
+      "typed_case_pointer": "/cases/15",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": false,
+      "case": "V10-rotation",
+      "cluster": "C4",
+      "disposition": "pending_rotation_visibility_original_fail_retained",
+      "expected": true,
+      "field": "hit_body_required",
+      "fixture_pointer": "/cases/15",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/15/expected/hit_body_required",
+      "report_pointer": "/layers/rgb/rows/15/assertions/5",
+      "typed_case_pointer": "/cases/15",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": false,
+      "case": "V10-rotation",
+      "cluster": "C4",
+      "disposition": "pending_rotation_visibility_original_fail_retained",
+      "expected": true,
+      "field": "hit_line_error_max",
+      "fixture_pointer": "/cases/15",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [],
+      "oracle_pointer": "/cases/15/expected/hit_line_error_max",
+      "report_pointer": "/layers/rgb/rows/15/assertions/6",
+      "typed_case_pointer": "/cases/15",
+      "v2_contract": "C-V2-PENDING"
+    },
+    {
+      "actual": true,
+      "case": "V16-regions-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/31",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-129-queries",
+        "API-128-queries"
+      ],
+      "oracle_pointer": "/cases/31/expected/current_body_preserved",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/rgb/rows/31/assertions/3",
+      "typed_case_pointer": "/cases/31",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V16-regions-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "fixture_pointer": "/cases/31",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-129-queries",
+        "API-128-queries"
+      ],
+      "oracle_pointer": "/cases/31/expected/qualification_invalid",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/rgb/rows/31/assertions/4",
+      "typed_case_pointer": "/cases/31",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-lines-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/32",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-17-lines",
+        "API-16-lines"
+      ],
+      "oracle_pointer": "/cases/32/expected/current_body_preserved",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/rgb/rows/32/assertions/3",
+      "typed_case_pointer": "/cases/32",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V16-lines-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "fixture_pointer": "/cases/32",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "API-17-lines",
+        "API-16-lines"
+      ],
+      "oracle_pointer": "/cases/32/expected/qualification_invalid",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/rgb/rows/32/assertions/4",
+      "typed_case_pointer": "/cases/32",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-metadata-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/33",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-metadata-1MiB",
+        "HELPER-metadata-1MiB-plus1",
+        "ABI-static-metadata"
+      ],
+      "oracle_pointer": "/cases/33/expected/current_body_preserved",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/rgb/rows/33/assertions/3",
+      "typed_case_pointer": "/cases/33",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V16-metadata-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "fixture_pointer": "/cases/33",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-metadata-1MiB",
+        "HELPER-metadata-1MiB-plus1",
+        "ABI-static-metadata"
+      ],
+      "oracle_pointer": "/cases/33/expected/qualification_invalid",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/rgb/rows/33/assertions/4",
+      "typed_case_pointer": "/cases/33",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-probes-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/34",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-probes-limit",
+        "HELPER-probes-plus1"
+      ],
+      "oracle_pointer": "/cases/34/expected/current_body_preserved",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/rgb/rows/34/assertions/3",
+      "typed_case_pointer": "/cases/34",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": false,
+      "case": "V16-probes-overflow",
+      "cluster": "C5",
+      "declared_usage_read_by_candidate": false,
+      "disposition": "original_condition_not_applied_new_condition_separate",
+      "dynamic_probe_coverage": false,
+      "expected": true,
+      "field": "qualification_invalid",
+      "fixture_pointer": "/cases/34",
+      "layer": "rgb",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "HELPER-probes-limit",
+        "HELPER-probes-plus1"
+      ],
+      "oracle_pointer": "/cases/34/expected/qualification_invalid",
+      "original_actual_API_lines": 1,
+      "original_actual_API_queries": 1,
+      "report_pointer": "/layers/rgb/rows/34/assertions/4",
+      "typed_case_pointer": "/cases/34",
+      "v2_contract": "C-V2-CAPACITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-source",
+      "cluster": "C6",
+      "disposition": "new_raw_vs_eligible_view_original_adapter_not_repaired",
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/24",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "TYPED-invalid-source",
+        "ELIGIBILITY-valid",
+        "ELIGIBILITY-context",
+        "ELIGIBILITY-future",
+        "ELIGIBILITY-nonmonotonic",
+        "ELIGIBILITY-ordinary-gap"
+      ],
+      "oracle_pointer": "/cases/24/expected/current_body_preserved",
+      "report_pointer": "/layers/typed/rows/24/assertions/3",
+      "typed_case_pointer": "/cases/24",
+      "v2_contract": "C-V2-ELIGIBILITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-regions-overflow",
+      "cluster": "C6",
+      "disposition": "new_raw_vs_eligible_view_original_adapter_not_repaired",
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/31",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "TYPED-invalid-regions-overflow",
+        "ELIGIBILITY-valid",
+        "ELIGIBILITY-context",
+        "ELIGIBILITY-future",
+        "ELIGIBILITY-nonmonotonic",
+        "ELIGIBILITY-ordinary-gap"
+      ],
+      "oracle_pointer": "/cases/31/expected/current_body_preserved",
+      "report_pointer": "/layers/typed/rows/31/assertions/3",
+      "typed_case_pointer": "/cases/31",
+      "v2_contract": "C-V2-ELIGIBILITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-lines-overflow",
+      "cluster": "C6",
+      "disposition": "new_raw_vs_eligible_view_original_adapter_not_repaired",
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/32",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "TYPED-invalid-lines-overflow",
+        "ELIGIBILITY-valid",
+        "ELIGIBILITY-context",
+        "ELIGIBILITY-future",
+        "ELIGIBILITY-nonmonotonic",
+        "ELIGIBILITY-ordinary-gap"
+      ],
+      "oracle_pointer": "/cases/32/expected/current_body_preserved",
+      "report_pointer": "/layers/typed/rows/32/assertions/3",
+      "typed_case_pointer": "/cases/32",
+      "v2_contract": "C-V2-ELIGIBILITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-metadata-overflow",
+      "cluster": "C6",
+      "disposition": "new_raw_vs_eligible_view_original_adapter_not_repaired",
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/33",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "TYPED-invalid-metadata-overflow",
+        "ELIGIBILITY-valid",
+        "ELIGIBILITY-context",
+        "ELIGIBILITY-future",
+        "ELIGIBILITY-nonmonotonic",
+        "ELIGIBILITY-ordinary-gap"
+      ],
+      "oracle_pointer": "/cases/33/expected/current_body_preserved",
+      "report_pointer": "/layers/typed/rows/33/assertions/3",
+      "typed_case_pointer": "/cases/33",
+      "v2_contract": "C-V2-ELIGIBILITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-probes-overflow",
+      "cluster": "C6",
+      "disposition": "new_raw_vs_eligible_view_original_adapter_not_repaired",
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/34",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "TYPED-invalid-probes-overflow",
+        "ELIGIBILITY-valid",
+        "ELIGIBILITY-context",
+        "ELIGIBILITY-future",
+        "ELIGIBILITY-nonmonotonic",
+        "ELIGIBILITY-ordinary-gap"
+      ],
+      "oracle_pointer": "/cases/34/expected/current_body_preserved",
+      "report_pointer": "/layers/typed/rows/34/assertions/3",
+      "typed_case_pointer": "/cases/34",
+      "v2_contract": "C-V2-ELIGIBILITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-short-rgb",
+      "cluster": "C6",
+      "disposition": "new_raw_vs_eligible_view_original_adapter_not_repaired",
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/35",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "TYPED-invalid-short-rgb",
+        "ELIGIBILITY-valid",
+        "ELIGIBILITY-context",
+        "ELIGIBILITY-future",
+        "ELIGIBILITY-nonmonotonic",
+        "ELIGIBILITY-ordinary-gap"
+      ],
+      "oracle_pointer": "/cases/35/expected/current_body_preserved",
+      "report_pointer": "/layers/typed/rows/35/assertions/3",
+      "typed_case_pointer": "/cases/35",
+      "v2_contract": "C-V2-ELIGIBILITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-nan",
+      "cluster": "C6",
+      "disposition": "new_raw_vs_eligible_view_original_adapter_not_repaired",
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/36",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "TYPED-invalid-nan",
+        "ELIGIBILITY-valid",
+        "ELIGIBILITY-context",
+        "ELIGIBILITY-future",
+        "ELIGIBILITY-nonmonotonic",
+        "ELIGIBILITY-ordinary-gap"
+      ],
+      "oracle_pointer": "/cases/36/expected/current_body_preserved",
+      "report_pointer": "/layers/typed/rows/36/assertions/3",
+      "typed_case_pointer": "/cases/36",
+      "v2_contract": "C-V2-ELIGIBILITY"
+    },
+    {
+      "actual": true,
+      "case": "V16-infinity",
+      "cluster": "C6",
+      "disposition": "new_raw_vs_eligible_view_original_adapter_not_repaired",
+      "expected": false,
+      "field": "current_body_preserved",
+      "fixture_pointer": "/cases/39",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "TYPED-invalid-infinity",
+        "ELIGIBILITY-valid",
+        "ELIGIBILITY-context",
+        "ELIGIBILITY-future",
+        "ELIGIBILITY-nonmonotonic",
+        "ELIGIBILITY-ordinary-gap"
+      ],
+      "oracle_pointer": "/cases/39/expected/current_body_preserved",
+      "report_pointer": "/layers/typed/rows/39/assertions/3",
+      "typed_case_pointer": "/cases/39",
+      "v2_contract": "C-V2-ELIGIBILITY"
+    },
+    {
+      "actual": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              500.0
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "case": "V18-V08-line-order",
+      "cluster": "C7",
+      "disposition": "new_null_eligible_projection_original_comparator_not_repaired",
+      "expected": {
+        "contact_id": 1,
+        "invalid": false,
+        "move": false,
+        "parts": [
+          {
+            "alternatives": 1,
+            "association": "ambiguous",
+            "body": true,
+            "cap": true,
+            "contact": "supported",
+            "depth": 200.0,
+            "down": false,
+            "effect": false,
+            "first_independent_ns": 10000000,
+            "freshness_ns": 1000000,
+            "front": [
+              308.0,
+              504.0
+            ],
+            "hit": [
+              308.0,
+              499.5197438360538
+            ],
+            "independent": 3,
+            "last_independent_ns": 50000000,
+            "rear": [
+              308.0,
+              304.0
+            ],
+            "rear_cap": true,
+            "relation": "continued",
+            "span_ns": 40000000,
+            "usable": true
+          }
+        ],
+        "physical": "unknown",
+        "refresh": false,
+        "release": false
+      },
+      "field": "equivalent_to",
+      "fixture_pointer": "/cases/65",
+      "layer": "typed",
+      "legacy_expected_changed": false,
+      "legacy_fail_preserved": true,
+      "new_controls": [
+        "AMBIGUOUS-forward",
+        "AMBIGUOUS-reverse",
+        "AMBIGUOUS-order-semantic-comparison",
+        "ELIGIBILITY-valid"
+      ],
+      "oracle_pointer": "/cases/65/expected/equivalent_to",
+      "report_pointer": "/layers/typed/rows/65/assertions/3",
+      "typed_case_pointer": "/cases/65",
+      "v2_contract": "C-V2-AMBIGUOUS"
+    }
+  ],
+  "schema": "bvi.cold.contract-change-map.v2",
+  "source_classification": "../round2/BVI_FAILURE_SEMANTICS_CLASSIFICATION.json"
+}

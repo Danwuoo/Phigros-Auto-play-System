@@ -1,0 +1,21 @@
+{
+  "total_s": 90,
+  "runner_exit": 0,
+  "stage": "json-fix-4736_char8_t",
+  "stream_cap": 1048576,
+  "argv": [
+    "--fuzz=0",
+    "-p1",
+    "-d",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\json-patched-01",
+    "-i",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261005\\round2\\evidence\\bvi-frozen-suite\\fix-4736_char8_t.patch"
+  ],
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\json-fix-4736_char8_t-01",
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\json-single-header-01\\single_include\\nlohmann\\json.hpp",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261005\\round2\\evidence\\bvi-frozen-suite\\fix-4736_char8_t.patch"
+  ],
+  "exe": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+  "native_exit": 0
+}

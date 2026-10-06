@@ -1,0 +1,11 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-bridge-release-02-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/8] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp for CXX dependencies
+[2/8] Generating CXX dyndep file CMakeFiles\bridge_tests.dir\CXX.dd
+[3/8] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\pixel_chain.cpp for CXX dependencies
+[4/8] Generating CXX dyndep file CMakeFiles\pixel_chain.dir\CXX.dd
+[5/8] Building CXX object CMakeFiles\bridge_tests.dir\bridge_tests.cpp.obj
+[6/8] Linking CXX executable bridge_tests.exe
+[7/8] Building CXX object CMakeFiles\pixel_chain.dir\pixel_chain.cpp.obj
+[8/8] Linking CXX executable pixel_chain.exe
+TRACE Build END exit=0

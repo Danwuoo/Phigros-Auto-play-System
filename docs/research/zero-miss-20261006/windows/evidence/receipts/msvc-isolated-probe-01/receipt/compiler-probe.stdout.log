@@ -1,0 +1,4 @@
+TRACE compiler-probe entry [C:\Windows\System32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\msvc-isolated-probe-01\compile.cmd]
+TRACE vcvars END exit=0
+probe.cpp
+TRACE compiler END exit=0

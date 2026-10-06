@@ -1,0 +1,20 @@
+{
+  "stream_cap": 1048576,
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\json-fix-4742_std_optional-01",
+  "native_exit": 0,
+  "exe": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+  "total_s": 90,
+  "argv": [
+    "--fuzz=0",
+    "-p1",
+    "-d",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\json-patched-01",
+    "-i",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261005\\round2\\evidence\\bvi-frozen-suite\\fix-4742_std_optional.patch"
+  ],
+  "runner_exit": 0,
+  "stage": "json-fix-4742_std_optional",
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261005\\round2\\evidence\\bvi-frozen-suite\\fix-4742_std_optional.patch"
+  ]
+}

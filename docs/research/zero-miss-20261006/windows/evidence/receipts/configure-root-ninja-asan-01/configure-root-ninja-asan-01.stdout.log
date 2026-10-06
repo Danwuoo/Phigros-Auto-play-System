@@ -1,0 +1,10 @@
+TRACE Configure entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\configure-root-ninja-asan-01-inputs\configure.cmd]
+TRACE vcvars END exit=0
+-- The CXX compiler identification is MSVC 19.51.36256.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/windows-handoff/msvc-isolated-probe-01/bin/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring incomplete, errors occurred!
+TRACE Configure END exit=1

@@ -1,0 +1,720 @@
+TRACE Test entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\test-root-ninja-asan-04-inputs\test.cmd]
+TRACE vcvars END exit=0
+Test project C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/win-r4-ninja-asan-04
+        Start   1: FramePool.LatestAndLeasesStayBounded
+  1/349 Test   #1: FramePool.LatestAndLeasesStayBounded .......................................................   Passed    0.36 sec
+        Start   2: FramePool.InvalidGeometryAndPayloadNeverAllocateUnboundedStorage
+  2/349 Test   #2: FramePool.InvalidGeometryAndPayloadNeverAllocateUnboundedStorage ...........................   Passed    0.33 sec
+        Start   3: SchedulerP1.EvidenceExpiresBeforeNextCommandAndAtBoundary
+  3/349 Test   #3: SchedulerP1.EvidenceExpiresBeforeNextCommandAndAtBoundary ..................................   Passed    0.31 sec
+        Start   4: SchedulerP1.FreshGateDoesNotRefreshOldPlanAtDispatch
+  4/349 Test   #4: SchedulerP1.FreshGateDoesNotRefreshOldPlanAtDispatch .......................................   Passed    0.30 sec
+        Start   5: SchedulerP1.RevisionCannotReviveCompletedOrEvictedIntent
+  5/349 Test   #5: SchedulerP1.RevisionCannotReviveCompletedOrEvictedIntent ...................................   Passed    0.36 sec
+        Start   6: Scheduler.EpochAndGateRevocationKeepBirthIdentity
+  6/349 Test   #6: Scheduler.EpochAndGateRevocationKeepBirthIdentity ..........................................   Passed    0.33 sec
+        Start   7: Scheduler.StopBeforeDuePreventsDownAndReleases
+  7/349 Test   #7: Scheduler.StopBeforeDuePreventsDownAndReleases .............................................   Passed    0.33 sec
+        Start   8: Vision.PixelsTrackAndPredictCrossing
+  8/349 Test   #8: Vision.PixelsTrackAndPredictCrossing .......................................................   Passed    0.42 sec
+        Start   9: Coordinates.QuarterTurnsMapInclusiveEdges
+  9/349 Test   #9: Coordinates.QuarterTurnsMapInclusiveEdges ..................................................   Passed    0.30 sec
+        Start  10: TouchEvidence.PerPointerPathAndNegativeVariants
+ 10/349 Test  #10: TouchEvidence.PerPointerPathAndNegativeVariants ............................................   Passed    0.31 sec
+        Start  11: TouchEvidence.AcceptsOneAndroidResampledMoveInsideNextSegment
+ 11/349 Test  #11: TouchEvidence.AcceptsOneAndroidResampledMoveInsideNextSegment ..............................   Passed    0.30 sec
+        Start  12: TouchEvidence.NativePixelRingChecksEverySegment
+ 12/349 Test  #12: TouchEvidence.NativePixelRingChecksEverySegment ............................................   Passed    0.30 sec
+        Start  13: GrpcLoopback.PayloadPixelsAndCooperativeCancel
+ 13/349 Test  #13: GrpcLoopback.PayloadPixelsAndCooperativeCancel .............................................   Passed    0.54 sec
+        Start  14: GrpcLoopback.TruncatedPayloadFaultsBeforePublish
+ 14/349 Test  #14: GrpcLoopback.TruncatedPayloadFaultsBeforePublish ...........................................   Passed    0.54 sec
+        Start  15: GrpcLoopback.RepeatedFrozenSourceTimeFaults
+ 15/349 Test  #15: GrpcLoopback.RepeatedFrozenSourceTimeFaults ................................................   Passed    0.83 sec
+        Start  16: GrpcLoopback.SourceSequenceResetFaultsBeforeSecondPublish
+ 16/349 Test  #16: GrpcLoopback.SourceSequenceResetFaultsBeforeSecondPublish ..................................   Passed    0.59 sec
+        Start  17: GrpcLoopback.PortraitSourceRotatesCounterclockwiseIntoLandscape
+ 17/349 Test  #17: GrpcLoopback.PortraitSourceRotatesCounterclockwiseIntoLandscape ............................   Passed    0.56 sec
+        Start  18: GrpcTransport.PatchedLibraryBoundsUntrustedChannelValues
+ 18/349 Test  #18: GrpcTransport.PatchedLibraryBoundsUntrustedChannelValues ...................................   Passed    0.32 sec
+        Start  19: GrpcTransport.FullSizeFramesSmallUnaryAndCancelledSlowStreamRemainIndependent
+ 19/349 Test  #19: GrpcTransport.FullSizeFramesSmallUnaryAndCancelledSlowStreamRemainIndependent ..............   Passed    2.05 sec
+        Start  20: RuntimeBudget.DelayedManualPlayPreservesFullDurationAndCannotResetOnGateChurn
+ 20/349 Test  #20: RuntimeBudget.DelayedManualPlayPreservesFullDurationAndCannotResetOnGateChurn ..............   Passed    0.30 sec
+        Start  21: RuntimeBudget.MissingOrLatePlayTimesOutAndNonmanualDurationRemainsUnchanged
+ 21/349 Test  #21: RuntimeBudget.MissingOrLatePlayTimesOutAndNonmanualDurationRemainsUnchanged ................   Passed    0.30 sec
+        Start  22: RuntimeInput.ManualPlayCannotBypassTheExplicitTouchPreflight
+ 22/349 Test  #22: RuntimeInput.ManualPlayCannotBypassTheExplicitTouchPreflight ...............................   Passed    0.33 sec
+        Start  23: ConfigMigration.ExplicitProcessToThreadAndStrictSchema
+ 23/349 Test  #23: ConfigMigration.ExplicitProcessToThreadAndStrictSchema .....................................   Passed    0.53 sec
+        Start  24: GameConfig.ExplicitTypeSubsetAndCalibrationCannotSilentlyExpand
+ 24/349 Test  #24: GameConfig.ExplicitTypeSubsetAndCalibrationCannotSilentlyExpand ............................   Passed    0.39 sec
+        Start  25: AnalysisWindow.HalfOpenCaptureAndConsumerBoundary
+ 25/349 Test  #25: AnalysisWindow.HalfOpenCaptureAndConsumerBoundary ..........................................   Passed    0.37 sec
+        Start  26: AnalysisWindow.MalformedJsonIsRejected
+ 26/349 Test  #26: AnalysisWindow.MalformedJsonIsRejected .....................................................   Passed    0.32 sec
+        Start  27: AnalysisTransport.CampaignRejectsChangedOrMissingTransportAndKeepsLegacyContract
+ 27/349 Test  #27: AnalysisTransport.CampaignRejectsChangedOrMissingTransportAndKeepsLegacyContract ...........   Passed    0.61 sec
+        Start  28: AnalysisPause.NativeTimestampWithNullSourceSequenceRemainsAnalyzable
+ 28/349 Test  #28: AnalysisPause.NativeTimestampWithNullSourceSequenceRemainsAnalyzable .......................   Passed    0.31 sec
+        Start  29: GameAnalysis.FutureWaitAndAlreadyLateDecisionAreDifferentDistributions
+ 29/349 Test  #29: GameAnalysis.FutureWaitAndAlreadyLateDecisionAreDifferentDistributions .....................   Passed    0.34 sec
+        Start  30: GameAnalysis.LateRecoverySeparatesPredictionDeadlineFromActualDispatch
+ 30/349 Test  #30: GameAnalysis.LateRecoverySeparatesPredictionDeadlineFromActualDispatch .....................   Passed    0.29 sec
+        Start  31: GameAnalysis.PlayingEvidenceExcludesResultCoverCandidates
+ 31/349 Test  #31: GameAnalysis.PlayingEvidenceExcludesResultCoverCandidates ..................................   Passed    0.31 sec
+        Start  32: GameAnalysis.TrackOutcomesDistinguishMissingPredictionAndCanceledAcceptedIntent
+ 32/349 Test  #32: GameAnalysis.TrackOutcomesDistinguishMissingPredictionAndCanceledAcceptedIntent ............   Passed    0.35 sec
+        Start  33: GameAnalysis.ConflictDetailsFollowSuccessfulReceiptsAndExplicitOwnerReset
+ 33/349 Test  #33: GameAnalysis.ConflictDetailsFollowSuccessfulReceiptsAndExplicitOwnerReset ..................   Passed    0.37 sec
+        Start  34: GameAnalysis.SharedDragCoverageNeedsARecordedSuccessfulLocalDown
+ 34/349 Test  #34: GameAnalysis.SharedDragCoverageNeedsARecordedSuccessfulLocalDown ...........................   Passed    0.34 sec
+        Start  35: GameAnalysis.PendingPredictionCancellationIsNotATouchOrGameJudgment
+ 35/349 Test  #35: GameAnalysis.PendingPredictionCancellationIsNotATouchOrGameJudgment ........................   Passed    0.34 sec
+        Start  36: GameAnalysis.ContactReleaseDiagnosticsDoNotClaimGameJudgment
+ 36/349 Test  #36: GameAnalysis.ContactReleaseDiagnosticsDoNotClaimGameJudgment ...............................   Passed    0.33 sec
+        Start  37: GameAnalysis.StrategyMetadataUsesOneVersionSource
+ 37/349 Test  #37: GameAnalysis.StrategyMetadataUsesOneVersionSource ..........................................   Passed    0.31 sec
+        Start  38: GameAnalysis.QpcComputeFieldsAreExplicitAndOptionalForLegacyDecisions
+ 38/349 Test  #38: GameAnalysis.QpcComputeFieldsAreExplicitAndOptionalForLegacyDecisions ......................   Passed    0.30 sec
+        Start  39: GameAnalysis.VerifiedRoundStreamsAcrossSegmentsAndRejectsTampering
+ 39/349 Test  #39: GameAnalysis.VerifiedRoundStreamsAcrossSegmentsAndRejectsTampering .........................   Passed    0.38 sec
+        Start  40: GameAnalysis.HoldCancellationKeepsUnknownEffectAndExactFrameTiming
+ 40/349 Test  #40: GameAnalysis.HoldCancellationKeepsUnknownEffectAndExactFrameTiming .........................   Passed    0.36 sec
+        Start  41: GameAnalysis.PlayingIntervalsExcludeMenuBoundariesButPreserveSourceGaps
+ 41/349 Test  #41: GameAnalysis.PlayingIntervalsExcludeMenuBoundariesButPreserveSourceGaps ....................   Passed    0.37 sec
+        Start  42: GameClips.IndexedFramesAndUniqueRgbHashesHaveDifferentDenominators
+ 42/349 Test  #42: GameClips.IndexedFramesAndUniqueRgbHashesHaveDifferentDenominators .........................   Passed    0.74 sec
+        Start  43: GameClips.CrossSessionCorpusKeepsOneSongFamilyAndVerifiesDuplicateRgb
+ 43/349 Test  #43: GameClips.CrossSessionCorpusKeepsOneSongFamilyAndVerifiesDuplicateRgb ......................   Passed    3.37 sec
+        Start  44: GameClips.ReplayDiffRequiresMatchingVerifiedFrameHashesAndReportsOnlyCandidateCounts
+ 44/349 Test  #44: GameClips.ReplayDiffRequiresMatchingVerifiedFrameHashesAndReportsOnlyCandidateCounts .......   Passed    0.38 sec
+        Start  45: GameColdCoverage.PendingCasesAreNotSuccessAndProposedCannotBecomeGold
+ 45/349 Test  #45: GameColdCoverage.PendingCasesAreNotSuccessAndProposedCannotBecomeGold ......................   Passed    0.53 sec
+        Start  46: GameColdPipeline.ConsumedPublicationTimesComeFromSynchronizedFrameLeases
+ 46/349 Test  #46: GameColdPipeline.ConsumedPublicationTimesComeFromSynchronizedFrameLeases ...................   Passed    1.17 sec
+        Start  47: CliAcceptance.TrackingComparisonUsesFakeBackendAndWritesNoLiveInput
+ 47/349 Test  #47: CliAcceptance.TrackingComparisonUsesFakeBackendAndWritesNoLiveInput ........................   Passed   10.09 sec
+        Start  48: CliAcceptance.TinyFrameCaptureRemainsWithinAllocatedPixels
+ 48/349 Test  #48: CliAcceptance.TinyFrameCaptureRemainsWithinAllocatedPixels .................................   Passed    1.89 sec
+        Start  49: CliAcceptance.SyntheticPixelEffectsAndTrackingSurviveRecognitionDelay
+ 49/349 Test  #49: CliAcceptance.SyntheticPixelEffectsAndTrackingSurviveRecognitionDelay ......................   Passed    7.43 sec
+        Start  50: CaptureImages.DefaultNeverWritesOrDeletesAnExistingImage
+ 50/349 Test  #50: CaptureImages.DefaultNeverWritesOrDeletesAnExistingImage ...................................   Passed    0.36 sec
+        Start  51: CaptureImages.ExplicitKeepWritesVerifiablePngAndNeverOverwrites
+ 51/349 Test  #51: CaptureImages.ExplicitKeepWritesVerifiablePngAndNeverOverwrites ............................   Passed    0.38 sec
+        Start  52: NativeRgb.HonorsMappedRowPitchAndRejectsTruncation
+ 52/349 Test  #52: NativeRgb.HonorsMappedRowPitchAndRejectsTruncation .........................................   Passed    0.32 sec
+        Start  53: NativeGeometry.MapsNegativeDesktopOriginAndRejectsCrossMonitorCrop
+ 53/349 Test  #53: NativeGeometry.MapsNegativeDesktopOriginAndRejectsCrossMonitorCrop .........................   Passed    0.32 sec
+        Start  54: NativeGeometry.CropMustFitTheEntireClientBeyondVisibilitySamplePoints
+ 54/349 Test  #54: NativeGeometry.CropMustFitTheEntireClientBeyondVisibilitySamplePoints ......................   Passed    0.33 sec
+        Start  55: FixtureIdentity.FourIdenticalXorChipsCannotOverrideIndependentBinaryTruth
+ 55/349 Test  #55: FixtureIdentity.FourIdenticalXorChipsCannotOverrideIndependentBinaryTruth ..................   Passed    0.32 sec
+        Start  56: NativeTiming.RejectsQueuedPauseFrameThenAcceptsCurrentAndClockRegressionFails
+ 56/349 Test  #56: NativeTiming.RejectsQueuedPauseFrameThenAcceptsCurrentAndClockRegressionFails ..............   Passed    0.32 sec
+        Start  57: ScrcpyProtocol.DistinguishesSessionAndBoundedMediaPackets
+ 57/349 Test  #57: ScrcpyProtocol.DistinguishesSessionAndBoundedMediaPackets ..................................   Passed    0.33 sec
+        Start  58: GameObserver.MultiplePixelsTracksAndRelativeMovingLinePrediction
+ 58/349 Test  #58: GameObserver.MultiplePixelsTracksAndRelativeMovingLinePrediction ...........................   Passed    0.70 sec
+        Start  59: GameObserver.CrossingCurrentVerticalRidgeSurvivesConnectedHorizontalLine
+ 59/349 Test  #59: GameObserver.CrossingCurrentVerticalRidgeSurvivesConnectedHorizontalLine ...................   Passed    1.22 sec
+        Start  60: GameObserver.CurrentVerticalSearchRejectsHoldSideRailsAndBroadWhiteFill
+ 60/349 Test  #60: GameObserver.CurrentVerticalSearchRejectsHoldSideRailsAndBroadWhiteFill ....................   Passed    1.14 sec
+        Start  61: GameObserver.RotatedSplitFlickJoinsOnlyWithItsCurrentTransverseArrow
+ 61/349 Test  #61: GameObserver.RotatedSplitFlickJoinsOnlyWithItsCurrentTransverseArrow .......................   Passed    1.00 sec
+        Start  62: GameObserver.CrossingVerticalWhiteRidgeSurvivesCurrentWarmHitTintButCannotBeBornFromTint
+ 62/349 Test  #62: GameObserver.CrossingVerticalWhiteRidgeSurvivesCurrentWarmHitTintButCannotBeBornFromTint ...   Passed    1.05 sec
+        Start  63: GameObserver.RowPrescreenPreservesCompleteDecisionsOnSyntheticMotion
+ 63/349 Test  #63: GameObserver.RowPrescreenPreservesCompleteDecisionsOnSyntheticMotion .......................   Passed    1.91 sec
+        Start  64: GameObserver.RowPrescreenPreservesRecordedClipDecisionsWhenProvided
+ 64/349 Test  #64: GameObserver.RowPrescreenPreservesRecordedClipDecisionsWhenProvided ........................***Skipped   0.33 sec
+        Start  65: GameObserver.SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails
+ 65/349 Test  #65: GameObserver.SplitsPixelConnectedCrossingRidgesWithoutInventingHoldRails ...................   Passed    1.14 sec
+        Start  66: GameObserver.NotesAloneDuplicateFramesAndGeometryCannotArm
+ 66/349 Test  #66: GameObserver.NotesAloneDuplicateFramesAndGeometryCannotArm .................................   Passed    1.01 sec
+        Start  67: GameObserver.ChangingIndicatorColorKeepsTiltedLinePredictionAndNoteIdentity
+ 67/349 Test  #67: GameObserver.ChangingIndicatorColorKeepsTiltedLinePredictionAndNoteIdentity ................   Passed    0.72 sec
+        Start  68: GameObserver.UiLossCancelsAndCapacityIsBounded
+ 68/349 Test  #68: GameObserver.UiLossCancelsAndCapacityIsBounded .............................................   Passed    0.95 sec
+        Start  69: GameObserver.FreshHudAfterShortGapKeepsUiButClearsAllMotionAcrossEpoch
+ 69/349 Test  #69: GameObserver.FreshHudAfterShortGapKeepsUiButClearsAllMotionAcrossEpoch .....................   Passed    0.85 sec
+        Start  70: GameObserver.HudContinuityNeverBridgesMissingPixelsLongGapOrGeometry
+ 70/349 Test  #70: GameObserver.HudContinuityNeverBridgesMissingPixelsLongGapOrGeometry .......................   Passed    1.79 sec
+        Start  71: GameObserver.OnePixelLineJoinedToHoldBorderStaysObservable
+ 71/349 Test  #71: GameObserver.OnePixelLineJoinedToHoldBorderStaysObservable .................................   Passed    0.44 sec
+        Start  72: GameObserver.NestedRibbonsMergeButEqualWidthOverlapsRemainDistinct
+ 72/349 Test  #72: GameObserver.NestedRibbonsMergeButEqualWidthOverlapsRemainDistinct .........................   Passed    0.40 sec
+        Start  73: GameObserver.YellowOutlineDoesNotDuplicateBlueCoreAndHoldHasLeadingEdgeAndTail
+ 73/349 Test  #73: GameObserver.YellowOutlineDoesNotDuplicateBlueCoreAndHoldHasLeadingEdgeAndTail .............   Passed    0.40 sec
+        Start  74: GameObserver.DesaturatedHoldRequiresFreshParallelRailsAndDoesNotInventClippedTail
+ 74/349 Test  #74: GameObserver.DesaturatedHoldRequiresFreshParallelRailsAndDoesNotInventClippedTail ..........   Passed    1.18 sec
+        Start  75: GameObserver.CurrentHoldRailsOverrideFragmentedCoreWithoutRemovingIndependentNotes
+ 75/349 Test  #75: GameObserver.CurrentHoldRailsOverrideFragmentedCoreWithoutRemovingIndependentNotes .........   Passed    2.09 sec
+        Start  76: GameObserver.HoldRailAnchorSurvivesOneMissingRailButRequiresCurrentPairToRecover
+ 76/349 Test  #76: GameObserver.HoldRailAnchorSurvivesOneMissingRailButRequiresCurrentPairToRecover ...........   Passed    1.02 sec
+        Start  77: GameObserver.HeldTiltedBodyPreservesAnIndependentThinTapInsideItsRails
+ 77/349 Test  #77: GameObserver.HeldTiltedBodyPreservesAnIndependentThinTapInsideItsRails .....................   Passed    1.28 sec
+        Start  78: GameObserver.RecentHeldRegionRejectsEnclosedSideFragmentsWithoutRefreshingMissingRails
+ 78/349 Test  #78: GameObserver.RecentHeldRegionRejectsEnclosedSideFragmentsWithoutRefreshingMissingRails .....   Passed    0.76 sec
+        Start  79: GameObserver.ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsCore
+ 79/349 Test  #79: GameObserver.ApproachingHoldKeepsWholeGeometryWhenDecorativeLineSplitsItsCore ..............   Passed    1.01 sec
+        Start  80: GameObserver.ApproachingConnectedHoldWithInteriorHitTintKeepsOneIdentity
+ 80/349 Test  #80: GameObserver.ApproachingConnectedHoldWithInteriorHitTintKeepsOneIdentity ...................   Passed    5.67 sec
+        Start  81: GameObserver.ApproachingHoldWithEnclosedHitPatchKeepsOneIdentityAcrossSparseFrames
+ 81/349 Test  #81: GameObserver.ApproachingHoldWithEnclosedHitPatchKeepsOneIdentityAcrossSparseFrames .........   Passed    1.68 sec
+        Start  82: GameObserver.InteriorHoldDescriptionDedupPreservesThinTapAndAdjacentHold
+ 82/349 Test  #82: GameObserver.InteriorHoldDescriptionDedupPreservesThinTapAndAdjacentHold ...................   Passed    2.46 sec
+        Start  83: GameObserver.InteriorHoldDescriptionNeedsBothCurrentSideBandsAndRecentFront
+ 83/349 Test  #83: GameObserver.InteriorHoldDescriptionNeedsBothCurrentSideBandsAndRecentFront ................   Passed    5.09 sec
+        Start  84: GameObserver.ClippedTopHoldKeepsCurrentRailsAndContactAcrossTheHeightLimit
+ 84/349 Test  #84: GameObserver.ClippedTopHoldKeepsCurrentRailsAndContactAcrossTheHeightLimit .................   Passed    3.00 sec
+        Start  85: GameObserver.ClippedTopHoldCanValidateCurrentLeadingEdgeWithoutPriorAnchor
+ 85/349 Test  #85: GameObserver.ClippedTopHoldCanValidateCurrentLeadingEdgeWithoutPriorAnchor .................   Passed    1.03 sec
+        Start  86: GameObserver.RecentHeldRailsRemainVisibleThroughWarmHitTint
+ 86/349 Test  #86: GameObserver.RecentHeldRailsRemainVisibleThroughWarmHitTint ................................   Passed    2.83 sec
+        Start  87: GameObserver.ColorIndependentHeldOutlineRequiresFreshAnchorAndBothCurrentRails
+ 87/349 Test  #87: GameObserver.ColorIndependentHeldOutlineRequiresFreshAnchorAndBothCurrentRails .............   Passed    7.32 sec
+        Start  88: GameObserver.WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased
+ 88/349 Test  #88: GameObserver.WarmTintUsesCurrentNeutralRailPairWhenCoreWidthWasBiased ......................   Passed    5.63 sec
+        Start  89: GameObserver.WarmSectionCannotUseEmptyOrMismatchedWhitePair
+ 89/349 Test  #89: GameObserver.WarmSectionCannotUseEmptyOrMismatchedWhitePair ................................   Passed    6.11 sec
+        Start  90: GameObserver.ClippedBlueColumnWithoutBothRailsCannotBecomeANewHold
+ 90/349 Test  #90: GameObserver.ClippedBlueColumnWithoutBothRailsCannotBecomeANewHold .........................   Passed    0.63 sec
+        Start  91: GameObserver.CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore
+ 91/349 Test  #91: GameObserver.CurrentRailsReconstructSplitGradientBodyWithoutAnEarlierWholeCore .............   Passed    1.14 sec
+        Start  92: GameObserver.ShortWideCurrentRailsNeedDepthAndCannotJoinAdjacentBodiesOrEmptyBorders
+ 92/349 Test  #92: GameObserver.ShortWideCurrentRailsNeedDepthAndCannotJoinAdjacentBodiesOrEmptyBorders .......   Passed    0.51 sec
+        Start  93: GameObserver.CurrentHoldReconstructionRejectsLongRailGapDespiteBodyFill
+ 93/349 Test  #93: GameObserver.CurrentHoldReconstructionRejectsLongRailGapDespiteBodyFill ....................   Passed    0.40 sec
+        Start  94: GameObserver.HoldRailsCannotExpandToDecorationWithFillMissingOnOneSide
+ 94/349 Test  #94: GameObserver.HoldRailsCannotExpandToDecorationWithFillMissingOnOneSide .....................   Passed    0.45 sec
+        Start  95: GameObserver.ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt
+ 95/349 Test  #95: GameObserver.ShrinkingHoldKeepsHeadIdentityButThinNewTapCannotInheritIt ....................   Passed    1.01 sec
+        Start  96: GameObserver.SmallHitParticlesAndYellowRingsCannotBecomeNoteTargets
+ 96/349 Test  #96: GameObserver.SmallHitParticlesAndYellowRingsCannotBecomeNoteTargets ........................   Passed    0.37 sec
+        Start  97: GameObserver.ShortWideHoldUsesLineNormalAndStationaryHeadStillHasHitRegion
+ 97/349 Test  #97: GameObserver.ShortWideHoldUsesLineNormalAndStationaryHeadStillHasHitRegion .................   Passed    0.78 sec
+        Start  98: GameObserver.SplitFlickRequiresCentralArrowAndHighlightCannotBecomeDrag
+ 98/349 Test  #98: GameObserver.SplitFlickRequiresCentralArrowAndHighlightCannotBecomeDrag ....................   Passed    0.39 sec
+        Start  99: GameObserver.TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag
+ 99/349 Test  #99: GameObserver.TallSimultaneousHighlightKeepsOnlyTheCoreAndIndependentDrag ...................   Passed    0.81 sec
+        Start 100: GameObserver.ShortCaptureBurstCannotPredictAnImminentCrossingFromFarNotes
+100/349 Test #100: GameObserver.ShortCaptureBurstCannotPredictAnImminentCrossingFromFarNotes ..................   Passed    1.13 sec
+        Start 101: GameObserver.ContinuousFastFramesKeepEnoughTemporalHistoryToPredict
+101/349 Test #101: GameObserver.ContinuousFastFramesKeepEnoughTemporalHistoryToPredict ........................   Passed    2.19 sec
+        Start 102: GameObserver.TimingUncertaintySeparatesFastCaptureJitterFromSlowAmbiguousMotion
+102/349 Test #102: GameObserver.TimingUncertaintySeparatesFastCaptureJitterFromSlowAmbiguousMotion ............   Passed    1.47 sec
+        Start 103: GameObserver.CurrentPointMismatchAndLargeGeometryJumpsRemainRejectedAtHighSpeed
+103/349 Test #103: GameObserver.CurrentPointMismatchAndLargeGeometryJumpsRemainRejectedAtHighSpeed ............   Passed    0.92 sec
+        Start 104: GameObserver.FitResidualDoesNotDisplaceTheHitPointFromTheObservedLine
+104/349 Test #104: GameObserver.FitResidualDoesNotDisplaceTheHitPointFromTheObservedLine ......................   Passed    0.83 sec
+        Start 105: GameObserver.SlantedLineSurvivesIntersectionAndMatchesNoteOrientation
+105/349 Test #105: GameObserver.SlantedLineSurvivesIntersectionAndMatchesNoteOrientation ......................   Passed    1.01 sec
+        Start 106: GameObserver.OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFragments
+106/349 Test #106: GameObserver.OneCurrentRailPairCannotMultiplyHeldIdentitiesThroughCoreFragments ............   Passed    6.26 sec
+        Start 107: GameObserver.CurrentAttachedGrayRailsRetainFrontClippedBeforeOnlineClassification
+107/349 Test #107: GameObserver.CurrentAttachedGrayRailsRetainFrontClippedBeforeOnlineClassification ..........   Passed    1.95 sec
+        Start 108: GameObserver.GrayHeldFrontCanMoveAwayFromTheLineWithTheSameFingerAndCurrentHit
+108/349 Test #108: GameObserver.GrayHeldFrontCanMoveAwayFromTheLineWithTheSameFingerAndCurrentHit .............   Passed    3.38 sec
+        Start 109: GameObserver.HeldBodyKeepsItsFingerThroughAFrontOcclusionAndRecoversCurrentFront
+109/349 Test #109: GameObserver.HeldBodyKeepsItsFingerThroughAFrontOcclusionAndRecoversCurrentFront ...........   Passed    2.62 sec
+        Start 110: GameObserver.RotatingCurrentLineRetainsIdentityAndFreshLocalHitGeometry
+110/349 Test #110: GameObserver.RotatingCurrentLineRetainsIdentityAndFreshLocalHitGeometry ....................   Passed    1.07 sec
+        Start 111: GameObserver.InterruptedThinBandIsOneLineButSeparatedBandsRemainDistinct
+111/349 Test #111: GameObserver.InterruptedThinBandIsOneLineButSeparatedBandsRemainDistinct ...................   Passed    0.48 sec
+        Start 112: GameObserver.TiltedMovingDragUsesLocalCoreAndOneCurrentContact
+112/349 Test #112: GameObserver.TiltedMovingDragUsesLocalCoreAndOneCurrentContact .............................   Passed    1.26 sec
+        Start 113: GameObserver.PerpendicularColoredRibbonsKeepTheirOwnGeometryAndKind
+113/349 Test #113: GameObserver.PerpendicularColoredRibbonsKeepTheirOwnGeometryAndKind ........................   Passed    1.76 sec
+        Start 114: GameDiagnostics.CurrentCentralDigitShapesExcludeComboLabelRailsAndProgress
+114/349 Test #114: GameDiagnostics.CurrentCentralDigitShapesExcludeComboLabelRailsAndProgress .................   Passed    0.52 sec
+        Start 115: GameDiagnostics.ComboDisappearanceRequiresFreshSustainedAbsenceAndRearms
+115/349 Test #115: GameDiagnostics.ComboDisappearanceRequiresFreshSustainedAbsenceAndRearms ...................   Passed    0.35 sec
+        Start 116: GameDiagnostics.DecorativeRailConnectedToDigitDoesNotReportDisappearance
+116/349 Test #116: GameDiagnostics.DecorativeRailConnectedToDigitDoesNotReportDisappearance ...................   Passed    0.92 sec
+        Start 117: GameDiagnostics.ThinHorizontalRibbonJoiningDigitsKeepsVisibleTallInk
+117/349 Test #117: GameDiagnostics.ThinHorizontalRibbonJoiningDigitsKeepsVisibleTallInk .......................   Passed    0.53 sec
+        Start 118: GameDiagnostics.ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange
+118/349 Test #118: GameDiagnostics.ComboDiagnosticRejectsReplayUiLossLongGapAndGeometryChange .................   Passed    0.35 sec
+        Start 119: GameDiagnostics.LongHoldDisappearanceRetainsOnlyItsPriorCoordinateEvidence
+119/349 Test #119: GameDiagnostics.LongHoldDisappearanceRetainsOnlyItsPriorCoordinateEvidence .................   Passed    0.35 sec
+        Start 120: GameDiagnostics.HoldDiagnosticKeepsVisibleNewIdentityButRejectsNarrowFragments
+120/349 Test #120: GameDiagnostics.HoldDiagnosticKeepsVisibleNewIdentityButRejectsNarrowFragments .............   Passed    0.34 sec
+        Start 121: GameDiagnostics.HoldDiagnosticSkipsEndingBodyAndFrameDiscontinuities
+121/349 Test #121: GameDiagnostics.HoldDiagnosticSkipsEndingBodyAndFrameDiscontinuities .......................   Passed    0.34 sec
+        Start 122: GameDiagnostics.ApproachingBodyCannotConsumeTheHeldDisappearanceWindow
+122/349 Test #122: GameDiagnostics.ApproachingBodyCannotConsumeTheHeldDisappearanceWindow .....................   Passed    0.32 sec
+        Start 123: GameDiagnostics.CurrentHeldBodyMovingAwayFromTheLineCanReportItsDisappearance
+123/349 Test #123: GameDiagnostics.CurrentHeldBodyMovingAwayFromTheLineCanReportItsDisappearance ..............   Passed    0.32 sec
+        Start 124: GameOwner.NewTimingUncertaintyCancelsPendingDownAndFreshEvidenceCanRetryExactlyOnce
+124/349 Test #124: GameOwner.NewTimingUncertaintyCancelsPendingDownAndFreshEvidenceCanRetryExactlyOnce ........   Passed    0.32 sec
+        Start 125: GameOwner.FreshPredictionRefinesPendingDeadlineButCannotReplayActiveDown
+125/349 Test #125: GameOwner.FreshPredictionRefinesPendingDeadlineButCannotReplayActiveDown ...................   Passed    0.33 sec
+        Start 126: GameOwner.ContradictedPendingPredictionCannotInjectButFreshPredictionCanRetry
+126/349 Test #126: GameOwner.ContradictedPendingPredictionCannotInjectButFreshPredictionCanRetry ..............   Passed    0.36 sec
+        Start 127: GameOwner.ContradictionAfterDownCannotReplayOrCancelTheActiveDragWindow
+127/349 Test #127: GameOwner.ContradictionAfterDownCannotReplayOrCancelTheActiveDragWindow ....................   Passed    0.33 sec
+        Start 128: GameOwner.HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact
+128/349 Test #128: GameOwner.HoldRefreshStaysBoundedThenMissingEvidenceReleasesContact ........................   Passed    0.33 sec
+        Start 129: GameOwner.FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass
+129/349 Test #129: GameOwner.FiveHoldsKeepIndependentContactsUntilCurrentTailsActuallyPass ....................   Passed    0.37 sec
+        Start 130: GameOwner.SixthSimultaneousContactIsRejectedWithoutStealingFiveActiveFingers
+130/349 Test #130: GameOwner.SixthSimultaneousContactIsRejectedWithoutStealingFiveActiveFingers ...............   Passed    0.32 sec
+        Start 131: GameOwner.RotatingHeldBodyAndColocatedTapKeepSeparateContacts
+131/349 Test #131: GameOwner.RotatingHeldBodyAndColocatedTapKeepSeparateContacts ..............................   Passed    0.31 sec
+        Start 132: GameOwner.TailPredictionWithoutCurrentVisibleTailDoesNotEndHoldOrExtendExpiry
+132/349 Test #132: GameOwner.TailPredictionWithoutCurrentVisibleTailDoesNotEndHoldOrExtendExpiry ..............   Passed    0.34 sec
+        Start 133: GameOwner.MovingNearLineDragKeepsOneFingerWithoutRepeatedCrossingFits
+133/349 Test #133: GameOwner.MovingNearLineDragKeepsOneFingerWithoutRepeatedCrossingFits ......................   Passed    0.31 sec
+        Start 134: GameOwner.CurrentOuterBodyReassociatesHoldButCannotReviveCompletedFinger
+134/349 Test #134: GameOwner.CurrentOuterBodyReassociatesHoldButCannotReviveCompletedFinger ...................   Passed    0.32 sec
+        Start 135: GameOwner.PreviouslySeenUnsubmittedHoldDescriptionCanRetainStartedContact
+135/349 Test #135: GameOwner.PreviouslySeenUnsubmittedHoldDescriptionCanRetainStartedContact ..................   Passed    0.33 sec
+        Start 136: GameOwner.AliasesNeedCurrentSupportAndCannotOverrideOriginalOrReviveExpiredOwner
+136/349 Test #136: GameOwner.AliasesNeedCurrentSupportAndCannotOverrideOriginalOrReviveExpiredOwner ...........   Passed    0.32 sec
+        Start 137: GameOwner.MovingHoldRejectsColorFragmentProjectionAndKeepsTheOriginalMissingGrace
+137/349 Test #137: GameOwner.MovingHoldRejectsColorFragmentProjectionAndKeepsTheOriginalMissingGrace ..........   Passed    0.32 sec
+        Start 138: GameOwner.SameHoldCanRecoverItsFrontFromAnInteriorPatchWithoutChangingContact
+138/349 Test #138: GameOwner.SameHoldCanRecoverItsFrontFromAnInteriorPatchWithoutChangingContact ..............   Passed    0.35 sec
+        Start 139: GameOwner.HeldBodySupportCannotCreateANewDownEvenWithAFittedCrossing
+139/349 Test #139: GameOwner.HeldBodySupportCannotCreateANewDownEvenWithAFittedCrossing .......................   Passed    0.30 sec
+        Start 140: GameOwner.PendingHoldDeadlineRevisionsRenewFromCurrentCaptureBeforeTheNextFrameGap
+140/349 Test #140: GameOwner.PendingHoldDeadlineRevisionsRenewFromCurrentCaptureBeforeTheNextFrameGap .........   Passed    0.29 sec
+        Start 141: GameOwner.FreshYellowRegionsBridgeSuccessiveIdsWithoutRepeatingDown
+141/349 Test #141: GameOwner.FreshYellowRegionsBridgeSuccessiveIdsWithoutRepeatingDown ........................   Passed    0.32 sec
+        Start 142: GameOwner.YellowRegionSharingRejectsAcrossLineAndAmbiguousActiveCoverage
+142/349 Test #142: GameOwner.YellowRegionSharingRejectsAcrossLineAndAmbiguousActiveCoverage ...................   Passed    0.29 sec
+        Start 143: GameOwner.LongHoldBridgesFreshSparseFramesButStopsAtActualEvidenceExpiry
+143/349 Test #143: GameOwner.LongHoldBridgesFreshSparseFramesButStopsAtActualEvidenceExpiry ...................   Passed    0.31 sec
+        Start 144: GameOwner.TypeGateAndFlickUseIndependentDownMoveUpSequence
+144/349 Test #144: GameOwner.TypeGateAndFlickUseIndependentDownMoveUpSequence .................................   Passed    0.34 sec
+        Start 145: GameOwner.FlickNearLowerBoundaryKeepsFourFiniteMovesInsideScreen
+145/349 Test #145: GameOwner.FlickNearLowerBoundaryKeepsFourFiniteMovesInsideScreen ...........................   Passed    0.40 sec
+        Start 146: GameOwner.PendingFlickRevisionRebuildsFullPathFromCurrentHit
+146/349 Test #146: GameOwner.PendingFlickRevisionRebuildsFullPathFromCurrentHit ...............................   Passed    0.32 sec
+        Start 147: GameOwner.OutOfOrderNotesGetSubmissionIdsAndFullSnapshotCancelsMissing
+147/349 Test #147: GameOwner.OutOfOrderNotesGetSubmissionIdsAndFullSnapshotCancelsMissing .....................   Passed    0.29 sec
+        Start 148: GameOwner.SingleMissingDragFrameCancelsFutureDownAndFreshReturnCanReplan
+148/349 Test #148: GameOwner.SingleMissingDragFrameCancelsFutureDownAndFreshReturnCanReplan ...................   Passed    0.29 sec
+        Start 149: GameOwner.MissingPendingTapAndDragRetryWithCurrentEvidenceExactlyOnce
+149/349 Test #149: GameOwner.MissingPendingTapAndDragRetryWithCurrentEvidenceExactlyOnce ......................   Passed    0.39 sec
+        Start 150: GameOwner.InvalidPendingGeometryCanRetryOnlyFromFreshValidPrediction
+150/349 Test #150: GameOwner.InvalidPendingGeometryCanRetryOnlyFromFreshValidPrediction .......................   Passed    0.35 sec
+        Start 151: GameOwner.MissingAfterStartedOrCompletedDownCannotRetryReturnedPixels
+151/349 Test #151: GameOwner.MissingAfterStartedOrCompletedDownCannotRetryReturnedPixels ......................   Passed    0.32 sec
+        Start 152: GameOwner.DragCoverageSurvivesLateCrossingWithoutReplayingDown
+152/349 Test #152: GameOwner.DragCoverageSurvivesLateCrossingWithoutReplayingDown .............................   Passed    0.29 sec
+        Start 153: GameOwner.DenseColocatedDragsShareOneActiveContactAndKeepTapIndependent
+153/349 Test #153: GameOwner.DenseColocatedDragsShareOneActiveContactAndKeepTapIndependent ....................   Passed    0.31 sec
+        Start 154: GameOwner.ADisappearingDragMemberCannotReleaseTheStillObservedGroup
+154/349 Test #154: GameOwner.ADisappearingDragMemberCannotReleaseTheStillObservedGroup ........................   Passed    0.30 sec
+        Start 155: GameOwner.DifferentDragPositionsKeepIndependentContactsAndGateLossReleasesTheGroup
+155/349 Test #155: GameOwner.DifferentDragPositionsKeepIndependentContactsAndGateLossReleasesTheGroup .........   Passed    0.30 sec
+        Start 156: GameOwner.BoundedLatePredictionRecoversNowButOldEvidenceAndExecutedDownCannotReplay
+156/349 Test #156: GameOwner.BoundedLatePredictionRecoversNowButOldEvidenceAndExecutedDownCannotReplay ........   Passed    0.29 sec
+        Start 157: GameOwner.LateGeometrySnapshotCannotCancelCurrentPendingIntent
+157/349 Test #157: GameOwner.LateGeometrySnapshotCannotCancelCurrentPendingIntent .............................   Passed    0.32 sec
+        Start 158: GameOwner.CurrentDragOverlapStartsWithoutInventingARootAndTracksMovingLine
+158/349 Test #158: GameOwner.CurrentDragOverlapStartsWithoutInventingARootAndTracksMovingLine .................   Passed    0.31 sec
+        Start 159: GameOwner.DragOverlapRejectsMissingStaleAmbiguousAndNonCoreGeometry
+159/349 Test #159: GameOwner.DragOverlapRejectsMissingStaleAmbiguousAndNonCoreGeometry ........................   Passed    0.32 sec
+        Start 160: GameOwner.PendingDragPredictionCanBecomeACurrentSpatialContactExactlyOnce
+160/349 Test #160: GameOwner.PendingDragPredictionCanBecomeACurrentSpatialContactExactlyOnce ..................   Passed    0.31 sec
+        Start 161: GameOwner.ConsecutiveSpatialDragCoresShareTheStartedFingerWithoutAnyCrossing
+161/349 Test #161: GameOwner.ConsecutiveSpatialDragCoresShareTheStartedFingerWithoutAnyCrossing ...............   Passed    0.32 sec
+        Start 162: GameOwner.RotatingCurrentHoldKeepsItsFingerAndMovesOnlyWithCurrentBody
+162/349 Test #162: GameOwner.RotatingCurrentHoldKeepsItsFingerAndMovesOnlyWithCurrentBody .....................   Passed    0.31 sec
+        Start 163: GameOwner.UnsupportedHoldProjectionCannotMoveTheStartedFinger
+163/349 Test #163: GameOwner.UnsupportedHoldProjectionCannotMoveTheStartedFinger ..............................   Passed    0.31 sec
+        Start 164: GameOwner.PreviouslyTrackedTapCanUseNewCurrentLineAtVisibleOverlap
+164/349 Test #164: GameOwner.PreviouslyTrackedTapCanUseNewCurrentLineAtVisibleOverlap .........................   Passed    0.32 sec
+        Start 165: GameOwner.CurrentNoteKeepsConfirmedMovingLineThroughShortOcclusion
+165/349 Test #165: GameOwner.CurrentNoteKeepsConfirmedMovingLineThroughShortOcclusion .........................   Passed    0.32 sec
+        Start 166: GameOwner.DiscontinuousPixelsCancelOnlyAnUnexecutedDown
+166/349 Test #166: GameOwner.DiscontinuousPixelsCancelOnlyAnUnexecutedDown ....................................   Passed    0.32 sec
+        Start 167: GameOwner.RotatedTailNeedsTwoCurrentSamplesOnItsOwnLine
+167/349 Test #167: GameOwner.RotatedTailNeedsTwoCurrentSamplesOnItsOwnLine ....................................   Passed    0.32 sec
+        Start 168: GameOwner.CurrentTapOverlapRejectsCompetingStaleInvalidAndUnsupportedEvidence
+168/349 Test #168: GameOwner.CurrentTapOverlapRejectsCompetingStaleInvalidAndUnsupportedEvidence ..............   Passed    0.31 sec
+        Start 169: GameOwner.CurrentTapOverlapCompletesOnceAndCannotReplayAfterReturn
+169/349 Test #169: GameOwner.CurrentTapOverlapCompletesOnceAndCannotReplayAfterReturn .........................   Passed    0.32 sec
+        Start 170: GameOwner.CurrentTapOverlapUnknownDownIsNotRetried
+170/349 Test #170: GameOwner.CurrentTapOverlapUnknownDownIsNotRetried .........................................   Passed    0.38 sec
+        Start 171: GameOwner.PerpendicularCurrentTapOverlapRequiresItsActualCore
+171/349 Test #171: GameOwner.PerpendicularCurrentTapOverlapRequiresItsActualCore ..............................   Passed    0.30 sec
+        Start 172: GameOwner.PerpendicularCurrentDragOverlapNeedsCurrentCoreAndReleasesOnce
+172/349 Test #172: GameOwner.PerpendicularCurrentDragOverlapNeedsCurrentCoreAndReleasesOnce ...................   Passed    0.31 sec
+        Start 173: GameOwner.RotatingSupportedHoldKeepsTheSameContactButFragmentsCannotMoveIt
+173/349 Test #173: GameOwner.RotatingSupportedHoldKeepsTheSameContactButFragmentsCannotMoveIt .................   Passed    0.29 sec
+        Start 174: GameOwner.UnrelatedOrStaleLineCannotConfirmTheCurrentHoldTail
+174/349 Test #174: GameOwner.UnrelatedOrStaleLineCannotConfirmTheCurrentHoldTail ..............................   Passed    0.32 sec
+        Start 175: GameScheduler.ActivePrefixCompactionKeepsLastExecutedStepAndCannotDropFuture
+175/349 Test #175: GameScheduler.ActivePrefixCompactionKeepsLastExecutedStepAndCannotDropFuture ...............   Passed    0.29 sec
+        Start 176: GameScheduler.FuturePlansDoNotReserveContacts
+176/349 Test #176: GameScheduler.FuturePlansDoNotReserveContacts ..............................................   Passed    0.28 sec
+        Start 177: GameScheduler.ActiveRevisionPreservesMovesAndRejectsChangedExecutedPrefix
+177/349 Test #177: GameScheduler.ActiveRevisionPreservesMovesAndRejectsChangedExecutedPrefix ..................   Passed    0.28 sec
+        Start 178: GameScheduler.TargetExpiryReleasesOnlyThatContactAndFreshGateKeepsOther
+178/349 Test #178: GameScheduler.TargetExpiryReleasesOnlyThatContactAndFreshGateKeepsOther ....................   Passed    0.28 sec
+        Start 179: GameScheduler.ContextAndDispatchGuardRevokePendingAndActive
+179/349 Test #179: GameScheduler.ContextAndDispatchGuardRevokePendingAndActive ................................   Passed    0.29 sec
+        Start 180: GameMotion.CurrentGrayOutlineTracksTranslationButRejectsSingleRailAndMissingClosure
+180/349 Test #180: GameMotion.CurrentGrayOutlineTracksTranslationButRejectsSingleRailAndMissingClosure ........   Passed    0.31 sec
+        Start 181: GameMotion.IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSign
+181/349 Test #181: GameMotion.IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSign ................   Passed    0.30 sec
+        Start 182: GameMotion.BurstFramesCannotAmplifyLineNoiseOrReplaceCurrentGeometry
+182/349 Test #182: GameMotion.BurstFramesCannotAmplifyLineNoiseOrReplaceCurrentGeometry .......................   Passed    0.28 sec
+        Start 183: GameMotion.RotatingLineEquationsIgnoreAlongLineCropCenterDrift
+183/349 Test #183: GameMotion.RotatingLineEquationsIgnoreAlongLineCropCenterDrift .............................   Passed    0.32 sec
+        Start 184: GameMotion.FittedRotationAssociatesAfterGapWithoutInventingAMissingLine
+184/349 Test #184: GameMotion.FittedRotationAssociatesAfterGapWithoutInventingAMissingLine ....................   Passed    0.30 sec
+        Start 185: GameMotion.NonlinearLinePoseRejectsVelocityAndDuplicateLinesRemainAmbiguous
+185/349 Test #185: GameMotion.NonlinearLinePoseRejectsVelocityAndDuplicateLinesRemainAmbiguous ................   Passed    0.30 sec
+        Start 186: GameMotion.DistributedTiltedRidgeRejectsWideFillShortBarsAndMissingSupport
+186/349 Test #186: GameMotion.DistributedTiltedRidgeRejectsWideFillShortBarsAndMissingSupport .................   Passed    0.35 sec
+        Start 187: GameMotion.TiltedLineExtentUsesMeasuredFragmentsAndRejectsLargeUnsupportedGaps
+187/349 Test #187: GameMotion.TiltedLineExtentUsesMeasuredFragmentsAndRejectsLargeUnsupportedGaps .............   Passed    0.35 sec
+        Start 188: GameMotion.ApproachingAnchorNeedsCurrentRailsAttachedToTheLine
+188/349 Test #188: GameMotion.ApproachingAnchorNeedsCurrentRailsAttachedToTheLine .............................   Passed    0.30 sec
+        Start 189: GameMotion.ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash
+189/349 Test #189: GameMotion.ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash ..............   Passed    0.35 sec
+        Start 190: GameMotion.MovingHeldFrontNeedsPairedCurrentTerminationAndCannotInferFromHistory
+190/349 Test #190: GameMotion.MovingHeldFrontNeedsPairedCurrentTerminationAndCannotInferFromHistory ...........   Passed    0.58 sec
+        Start 191: GameMotion.MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior
+191/349 Test #191: GameMotion.MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior ....................   Passed    0.45 sec
+        Start 192: GameMotion.OccludedFrontCanUseOnlyAVisiblePairedBodyInterior
+192/349 Test #192: GameMotion.OccludedFrontCanUseOnlyAVisiblePairedBodyInterior ...............................   Passed    0.41 sec
+        Start 193: GameMotion.ContestedDuplicateDoesNotCreateARecurringLineage
+193/349 Test #193: GameMotion.ContestedDuplicateDoesNotCreateARecurringLineage ................................   Passed    0.32 sec
+        Start 194: GameMotion.CloseRealLinesStayDistinctAndExpiryDoesNotBridgeNinetyMilliseconds
+194/349 Test #194: GameMotion.CloseRealLinesStayDistinctAndExpiryDoesNotBridgeNinetyMilliseconds ..............   Passed    0.32 sec
+        Start 195: GameMotion.PersistentNearNewLineIsBornAfterBoundedEvidenceButFarNewLineImmediately
+195/349 Test #195: GameMotion.PersistentNearNewLineIsBornAfterBoundedEvidenceButFarNewLineImmediately .........   Passed    0.31 sec
+        Start 196: GameMotion.RotatedCurrentHoldRailsCanContinueAnOlderAnchor
+196/349 Test #196: GameMotion.RotatedCurrentHoldRailsCanContinueAnOlderAnchor .................................   Passed    0.29 sec
+        Start 197: GameMotion.SixteenLinesRemainBoundedAndContextGapStartsNewLineage
+197/349 Test #197: GameMotion.SixteenLinesRemainBoundedAndContextGapStartsNewLineage ..........................   Passed    0.32 sec
+        Start 198: GameMotion.ContestedObservationCannotSeedRecurringDuplicateTracks
+198/349 Test #198: GameMotion.ContestedObservationCannotSeedRecurringDuplicateTracks ..........................   Passed    0.30 sec
+        Start 199: GameMotion.ConvergedLineAmbiguityExpiresWithoutInventingIdentity
+199/349 Test #199: GameMotion.ConvergedLineAmbiguityExpiresWithoutInventingIdentity ...........................   Passed    0.30 sec
+        Start 200: GameMotion.RotatedCurrentHoldRailsRequireBothCurrentlyVisibleSides
+200/349 Test #200: GameMotion.RotatedCurrentHoldRailsRequireBothCurrentlyVisibleSides .........................   Passed    0.32 sec
+        Start 201: GameRuntime.ActualCaptureOptionsUseEffectiveProfileGuard
+201/349 Test #201: GameRuntime.ActualCaptureOptionsUseEffectiveProfileGuard ...................................   Passed    0.30 sec
+        Start 202: GameRuntime.HistoricalFingerprintRejectsMappingDeviceAndUnverifiedReports
+202/349 Test #202: GameRuntime.HistoricalFingerprintRejectsMappingDeviceAndUnverifiedReports ..................   Passed    0.32 sec
+        Start 203: AutoPlay.PixelsConfirmSelectionAndOneAttemptNeverBecomesGameplayInput
+203/349 Test #203: AutoPlay.PixelsConfirmSelectionAndOneAttemptNeverBecomesGameplayInput ......................   Passed    0.56 sec
+        Start 204: AutoPlay.UnknownStaleOutOfFrameAndContradictoryScenesCannotStart
+204/349 Test #204: AutoPlay.UnknownStaleOutOfFrameAndContradictoryScenesCannotStart ...........................   Passed    0.29 sec
+        Start 205: GameTracking.DistantAppearanceAngleCannotStealEstablishedLineRelation
+205/349 Test #205: GameTracking.DistantAppearanceAngleCannotStealEstablishedLineRelation ......................   Passed    0.28 sec
+        Start 206: GameTracking.CrossingLineDoesNotStealAnApproachingConfirmedNote
+206/349 Test #206: GameTracking.CrossingLineDoesNotStealAnApproachingConfirmedNote ............................   Passed    0.31 sec
+        Start 207: GameTracking.RecedingConfirmedLineDoesNotOverrideCurrentCrossing
+207/349 Test #207: GameTracking.RecedingConfirmedLineDoesNotOverrideCurrentCrossing ...........................   Passed    0.30 sec
+        Start 208: GameTracking.RelativeApproachSeparatesEquidistantUnrelatedLines
+208/349 Test #208: GameTracking.RelativeApproachSeparatesEquidistantUnrelatedLines ............................   Passed    0.30 sec
+        Start 209: GameTracking.OccupiedAlternativeIsNotAnIdentityAmbiguityWithoutFeasibleSwap
+209/349 Test #209: GameTracking.OccupiedAlternativeIsNotAnIdentityAmbiguityWithoutFeasibleSwap ................   Passed    0.29 sec
+        Start 210: GameTracking.JumpAndReversalRequireFreshMeasuredSegments
+210/349 Test #210: GameTracking.JumpAndReversalRequireFreshMeasuredSegments ...................................   Passed    0.30 sec
+        Start 211: GameTracking.EquidistantLinesRemainCandidatesWithoutAGuessedDown
+211/349 Test #211: GameTracking.EquidistantLinesRemainCandidatesWithoutAGuessedDown ...........................   Passed    0.31 sec
+        Start 212: GameTracking.NearLineFirstAppearanceDoesNotInventTapTiming
+212/349 Test #212: GameTracking.NearLineFirstAppearanceDoesNotInventTapTiming .................................   Passed    0.28 sec
+        Start 213: GameTracking.MissingLineProjectionRejectsReversalReplacementAndOldExtentExit
+213/349 Test #213: GameTracking.MissingLineProjectionRejectsReversalReplacementAndOldExtentExit ...............   Passed    0.32 sec
+        Start 214: GameTracking.RotatingOriginalLineProjectsWithinItsMeasuredExtent
+214/349 Test #214: GameTracking.RotatingOriginalLineProjectsWithinItsMeasuredExtent ...........................   Passed    0.29 sec
+        Start 215: GameTracking.ConfirmedLineProjectionExpiresWithoutNewLinePixels
+215/349 Test #215: GameTracking.ConfirmedLineProjectionExpiresWithoutNewLinePixels ............................   Passed    0.30 sec
+        Start 216: GameTracking.ExpiredOriginalLineLetsExplicitNextLineEarnFreshRelation
+216/349 Test #216: GameTracking.ExpiredOriginalLineLetsExplicitNextLineEarnFreshRelation ......................   Passed    0.30 sec
+        Start 217: GameTracking.CurrentTapOverlapNeedsPriorApproachAndCannotUseFirstAppearance
+217/349 Test #217: GameTracking.CurrentTapOverlapNeedsPriorApproachAndCannotUseFirstAppearance ................   Passed    0.29 sec
+        Start 218: GameTracking.EmergingTapAtCrossedLinesRemainsWithoutImmediateActionBasis
+218/349 Test #218: GameTracking.EmergingTapAtCrossedLinesRemainsWithoutImmediateActionBasis ...................   Passed    0.29 sec
+        Start 219: GameTracking.NormalMotionOutranksAnUnrelatedParallelDecoration
+219/349 Test #219: GameTracking.NormalMotionOutranksAnUnrelatedParallelDecoration .............................   Passed    0.29 sec
+        Start 220: GameTracking.ConfirmedCurrentLineSurvivesLateNoteAlignmentAndBrighterFork
+220/349 Test #220: GameTracking.ConfirmedCurrentLineSurvivesLateNoteAlignmentAndBrighterFork ..................   Passed    0.30 sec
+        Start 221: GameTracking.GenuineTwoLinesRetainIndependentPerpendicularNotes
+221/349 Test #221: GameTracking.GenuineTwoLinesRetainIndependentPerpendicularNotes ............................   Passed    0.31 sec
+        Start 222: GameTracking.CompetingParallelLinesAndRecedingPerpendicularNotesDoNotGuessDown
+222/349 Test #222: GameTracking.CompetingParallelLinesAndRecedingPerpendicularNotesDoNotGuessDown .............   Passed    0.31 sec
+        Start 223: GameTracking.LineChasingAStationaryPerpendicularNoteUsesRelativeMotion
+223/349 Test #223: GameTracking.LineChasingAStationaryPerpendicularNoteUsesRelativeMotion .....................   Passed    0.29 sec
+        Start 224: GameTracking.BaselinePixelSequenceAndSerializedBankAreEquivalent
+224/349 Test #224: GameTracking.BaselinePixelSequenceAndSerializedBankAreEquivalent ...........................   Passed    1.96 sec
+        Start 225: GameTracking.MovingHeldBodyEvidenceRoundTripsAndRequiresItsCurrentGeometry
+225/349 Test #225: GameTracking.MovingHeldBodyEvidenceRoundTripsAndRequiresItsCurrentGeometry .................   Passed    0.35 sec
+        Start 226: GameTracking.LinePoseFitRoundTripsAndRejectsUnboundedOrInvalidEvidence
+226/349 Test #226: GameTracking.LinePoseFitRoundTripsAndRejectsUnboundedOrInvalidEvidence .....................   Passed    0.34 sec
+        Start 227: GameTracking.HeldBodyPatchHasNoHeadOrTailPredictionAndRoundTripsItsEvidence
+227/349 Test #227: GameTracking.HeldBodyPatchHasNoHeadOrTailPredictionAndRoundTripsItsEvidence ................   Passed    0.34 sec
+        Start 228: GameTracking.WeakNewCandidatesAndPredictionCannotCreateOrRefreshActions
+228/349 Test #228: GameTracking.WeakNewCandidatesAndPredictionCannotCreateOrRefreshActions ....................   Passed    0.29 sec
+        Start 229: GameTracking.CurrentWeakRailsRequireBothSidesFreshAnchorAndVisibleHead
+229/349 Test #229: GameTracking.CurrentWeakRailsRequireBothSidesFreshAnchorAndVisibleHead .....................   Passed    0.31 sec
+        Start 230: GameTracking.ActualDtAndBoundedReupdateNeverInsertSyntheticEvidence
+230/349 Test #230: GameTracking.ActualDtAndBoundedReupdateNeverInsertSyntheticEvidence ........................   Passed    0.39 sec
+        Start 231: GameTracking.AdjacentHoldsAndThinOverlappingTapStayDistinct
+231/349 Test #231: GameTracking.AdjacentHoldsAndThinOverlappingTapStayDistinct ................................   Passed    0.32 sec
+        Start 232: GameTracking.CompetingIdentityIsVisibleAndCannotBecomeNewBirth
+232/349 Test #232: GameTracking.CompetingIdentityIsVisibleAndCannotBecomeNewBirth .............................   Passed    0.30 sec
+        Start 233: GameTracking.DuplicateNewCandidatesCannotBothCreateExecutionBirths
+233/349 Test #233: GameTracking.DuplicateNewCandidatesCannotBothCreateExecutionBirths .........................   Passed    0.30 sec
+        Start 234: GameTracking.CapacityRevokeDoesNotForgetRetiredExecutionBirth
+234/349 Test #234: GameTracking.CapacityRevokeDoesNotForgetRetiredExecutionBirth ..............................   Passed    0.29 sec
+        Start 235: GameTracking.ShortenedHoldFrontContinuesButThinTapRemainsNew
+235/349 Test #235: GameTracking.ShortenedHoldFrontContinuesButThinTapRemainsNew ...............................   Passed    0.30 sec
+        Start 236: GameTracking.SixtyNinetyAndHundredMsUseActualSourceTime
+236/349 Test #236: GameTracking.SixtyNinetyAndHundredMsUseActualSourceTime ....................................   Passed    0.32 sec
+        Start 237: GameTracking.RetiredHoldBirthPersistsThrough441msAndRevisionIsMonotonic
+237/349 Test #237: GameTracking.RetiredHoldBirthPersistsThrough441msAndRevisionIsMonotonic ....................   Passed    0.32 sec
+        Start 238: GameTracking.SourceInvalidAndReplayedTimeCannotArm
+238/349 Test #238: GameTracking.SourceInvalidAndReplayedTimeCannotArm .........................................   Passed    0.30 sec
+        Start 239: GameTracking.MissingOrPerpendicularLineCannotProvideActionEvidence
+239/349 Test #239: GameTracking.MissingOrPerpendicularLineCannotProvideActionEvidence .........................   Passed    0.29 sec
+        Start 240: GameTracking.AssignmentIndicesAndCandidateGeometryAreRejected
+240/349 Test #240: GameTracking.AssignmentIndicesAndCandidateGeometryAreRejected ..............................   Passed    0.32 sec
+        Start 241: GameTracking.TrackAndRetirementCapacityHaveConservativeFailure
+241/349 Test #241: GameTracking.TrackAndRetirementCapacityHaveConservativeFailure .............................   Passed    0.50 sec
+        Start 242: GameTracking.FakeOwnerMissingAndStopReleaseWithoutPredictedContinuation
+242/349 Test #242: GameTracking.FakeOwnerMissingAndStopReleaseWithoutPredictedContinuation ....................   Passed    0.34 sec
+        Start 243: GameTracking.ShadowAndBankAreBoundedAndHaveNoBackend
+243/349 Test #243: GameTracking.ShadowAndBankAreBoundedAndHaveNoBackend .......................................   Passed    0.70 sec
+        Start 244: GameDataset.NativeEightAndSixteenBitMasksRoundTripWithoutLoss
+244/349 Test #244: GameDataset.NativeEightAndSixteenBitMasksRoundTripWithoutLoss ..............................   Passed    0.63 sec
+        Start 245: GameDataset.MissingPreFramesUseExactlyCurrentAndTwoPostFrames
+245/349 Test #245: GameDataset.MissingPreFramesUseExactlyCurrentAndTwoPostFrames ..............................   Passed    0.88 sec
+        Start 246: GameDataset.ClipHasFixedCropAndContextChangeCutsOffRealFrames
+246/349 Test #246: GameDataset.ClipHasFixedCropAndContextChangeCutsOffRealFrames ..............................   Passed    0.66 sec
+        Start 247: GameDataset.TimeDeadlinePreservesPartialManifestAndNoFakeImage
+247/349 Test #247: GameDataset.TimeDeadlinePreservesPartialManifestAndNoFakeImage .............................   Passed    0.36 sec
+        Start 248: GameDataset.MemoryImageQuotaAndDetectorIndependentBackgroundAreBounded
+248/349 Test #248: GameDataset.MemoryImageQuotaAndDetectorIndependentBackgroundAreBounded .....................   Passed    2.21 sec
+        Start 249: GameDataset.GlobalRunQuotaPreservesPriorEvidenceAndRejectsBeforeWriting
+249/349 Test #249: GameDataset.GlobalRunQuotaPreservesPriorEvidenceAndRejectsBeforeWriting ....................   Passed    0.34 sec
+        Start 250: GameDataset.GlobalImageQuotaWritesOnlyAvailableSlotsAndReportsPartial
+250/349 Test #250: GameDataset.GlobalImageQuotaWritesOnlyAvailableSlotsAndReportsPartial ......................   Passed    0.60 sec
+        Start 251: GameDataset.PolygonLabelsObjectsAndSourceHashesAreCheckedPerPixel
+251/349 Test #251: GameDataset.PolygonLabelsObjectsAndSourceHashesAreCheckedPerPixel ..........................   Passed    1.14 sec
+        Start 252: GameDataset.SplitLeakageAndPathTraversalAreRejected
+252/349 Test #252: GameDataset.SplitLeakageAndPathTraversalAreRejected ........................................   Passed    1.32 sec
+        Start 253: ColdRgbG1.BoundedRowPrescreenMatchesFullScanWithMaximumPermittedGaps
+253/349 Test #253: ColdRgbG1.BoundedRowPrescreenMatchesFullScanWithMaximumPermittedGaps .......................   Passed    0.79 sec
+        Start 254: ColdRgbG1.ThreeSeedsFourNoteTypesThreeLineAnglesAndBothSidesHaveIndependentTruth
+254/349 Test #254: ColdRgbG1.ThreeSeedsFourNoteTypesThreeLineAnglesAndBothSidesHaveIndependentTruth ...........   Passed    6.34 sec
+        Start 255: ColdRgbG1.TopUiLookalikeLineDoesNotBecomeGameGeometryOrNote
+255/349 Test #255: ColdRgbG1.TopUiLookalikeLineDoesNotBecomeGameGeometryOrNote ................................   Passed    0.50 sec
+        Start 256: ColdRgbG1.TopUiLookalikeNeverReachesFakeTouch
+256/349 Test #256: ColdRgbG1.TopUiLookalikeNeverReachesFakeTouch ..............................................   Passed    0.74 sec
+        Start 257: ColdRgbG1.MovingTapUsesObserverPredictionOwnerAndFakeTouchWithoutDuplicateDown
+257/349 Test #257: ColdRgbG1.MovingTapUsesObserverPredictionOwnerAndFakeTouchWithoutDuplicateDown .............   Passed    3.21 sec
+        Start 258: ColdRgbG1.MovingFourNoteKindsReachFakeTouchFromPixels
+258/349 Test #258: ColdRgbG1.MovingFourNoteKindsReachFakeTouchFromPixels ......................................   Passed    2.72 sec
+        Start 259: ColdRgbG1.HoldApproachingHorizontalLineFromAboveCanStartAContact
+259/349 Test #259: ColdRgbG1.HoldApproachingHorizontalLineFromAboveCanStartAContact ...........................   Passed    1.78 sec
+        Start 260: ColdRgbG3.MovingLineChasesStationaryTapWithFreshRelativeCrossing
+260/349 Test #260: ColdRgbG3.MovingLineChasesStationaryTapWithFreshRelativeCrossing ...........................   Passed    1.30 sec
+        Start 261: ColdRgbG3.RotatingLinePairsTapThatAlignsOnlyNearCrossingWithIrregularDt
+261/349 Test #261: ColdRgbG3.RotatingLinePairsTapThatAlignsOnlyNearCrossingWithIrregularDt ....................   Passed    1.10 sec
+        Start 262: ColdRgbG3.ReversedMovingLineRevokesPendingTapBeforeItsOldDueTime
+262/349 Test #262: ColdRgbG3.ReversedMovingLineRevokesPendingTapBeforeItsOldDueTime ...........................   Passed    1.36 sec
+        Start 263: ColdRgbG3.TeleportedTapCannotCarryTheOldPendingDownToNewPixels
+263/349 Test #263: ColdRgbG3.TeleportedTapCannotCarryTheOldPendingDownToNewPixels .............................   Passed    0.91 sec
+        Start 264: ColdOracleG3.IrregularDtLateNoteAlignmentStillUsesLocalMotionNotFarAngle
+264/349 Test #264: ColdOracleG3.IrregularDtLateNoteAlignmentStillUsesLocalMotionNotFarAngle ...................   Passed    0.33 sec
+        Start 265: ColdOracleG3.NewDistantCandidateAfterTeleportCannotReviveOldRoot
+265/349 Test #265: ColdOracleG3.NewDistantCandidateAfterTeleportCannotReviveOldRoot ...........................   Passed    0.33 sec
+        Start 266: ColdOracleG3.StationaryTapHasFutureRootWhenOnlyTheLineApproaches
+266/349 Test #266: ColdOracleG3.StationaryTapHasFutureRootWhenOnlyTheLineApproaches ...........................   Passed    0.32 sec
+        Start 267: ColdOracleG3.ReversedLineWithdrawsTheUnexecutedStationaryTapRoot
+267/349 Test #267: ColdOracleG3.ReversedLineWithdrawsTheUnexecutedStationaryTapRoot ...........................   Passed    0.34 sec
+        Start 268: ColdRgbR5.ReversingLineAfterDragDownCannotReplayTheStartedContact
+268/349 Test #268: ColdRgbR5.ReversingLineAfterDragDownCannotReplayTheStartedContact ..........................   Passed    1.86 sec
+        Start 269: ColdRgbR5.ReversingLineWithCurrentDragSupportKeepsTheSameContact
+269/349 Test #269: ColdRgbR5.ReversingLineWithCurrentDragSupportKeepsTheSameContact ...........................   Passed    1.55 sec
+        Start 270: ColdRgbT1.LatestMailboxFeedsFreshPixelsThroughObserverOwnerAndFakeTouch
+270/349 Test #270: ColdRgbT1.LatestMailboxFeedsFreshPixelsThroughObserverOwnerAndFakeTouch ....................   Passed    0.82 sec
+        Start 271: ColdRgbT1.BurstSkipsOldFramesAndMissingCurrentNoteRevokesPendingDown
+271/349 Test #271: ColdRgbT1.BurstSkipsOldFramesAndMissingCurrentNoteRevokesPendingDown .......................   Passed    0.88 sec
+        Start 272: ColdOracleT1.IrregularFreshSourceTimesStillUseOneMeasuredTapRoot
+272/349 Test #272: ColdOracleT1.IrregularFreshSourceTimesStillUseOneMeasuredTapRoot ...........................   Passed    0.32 sec
+        Start 273: ColdOracleT1.UnknownFirstDownReleasesAndCannotRetryConcurrentFreshIntents
+273/349 Test #273: ColdOracleT1.UnknownFirstDownReleasesAndCannotRetryConcurrentFreshIntents ..................   Passed    0.31 sec
+        Start 274: ColdRgbT2.SixteenLinesAndOneHundredTwentyEightNotesStayBoundedOrFailClosed
+274/349 Test #274: ColdRgbT2.SixteenLinesAndOneHundredTwentyEightNotesStayBoundedOrFailClosed .................   Passed    4.62 sec
+        Start 275: ColdRgbT2.DenseSceneAcrossThreeEpochsCannotCarryOldGateOrContacts
+275/349 Test #275: ColdRgbT2.DenseSceneAcrossThreeEpochsCannotCarryOldGateOrContacts ..........................   Passed    8.60 sec
+        Start 276: ColdRgbT2.ThousandDenseFramesKeepStableBoundedIdentityAndNoStaleTouch
+276/349 Test #276: ColdRgbT2.ThousandDenseFramesKeepStableBoundedIdentityAndNoStaleTouch ......................***Timeout  60.05 sec
+Running main() from C:\Users\wurre\Desktop\Phigros-Auto-play-System\out\vcpkg_installed\vcpkg\blds\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = ColdRgbT2.ThousandDenseFramesKeepStableBoundedIdentityAndNoStaleTouch
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ColdRgbT2
+[ RUN      ] ColdRgbT2.ThousandDenseFramesKeepStableBoundedIdentityAndNoStaleTouch
+
+        Start 277: ColdOracleT2.BoundaryCapacityAccepts128CandidatesAndRejects129
+277/349 Test #277: ColdOracleT2.BoundaryCapacityAccepts128CandidatesAndRejects129 .............................   Passed    0.31 sec
+        Start 278: ColdOracleT2.SaturatedWriterDropsDebugAndFaultsOnCriticalWithoutGrowingQueue
+278/349 Test #278: ColdOracleT2.SaturatedWriterDropsDebugAndFaultsOnCriticalWithoutGrowingQueue ...............   Passed    0.30 sec
+        Start 279: ColdOracleC4.IrregularDtAndThreeRelativeSpeedsKeepMeasuredCrossingRoot
+279/349 Test #279: ColdOracleC4.IrregularDtAndThreeRelativeSpeedsKeepMeasuredCrossingRoot .....................   Passed    0.30 sec
+        Start 280: ColdOracleG1.IndependentMovingCandidatesAssociateAndPredictWithoutPixelLabels
+280/349 Test #280: ColdOracleG1.IndependentMovingCandidatesAssociateAndPredictWithoutPixelLabels ..............   Passed    0.34 sec
+        Start 281: ColdOracleG1.NearLineFirstAppearanceHasNoTimingAndCannotDown
+281/349 Test #281: ColdOracleG1.NearLineFirstAppearanceHasNoTimingAndCannotDown ...............................   Passed    0.29 sec
+        Start 282: ColdOracleR1.IndependentRotatingHoldBodyAndColocatedTapPreserveContactPriority
+282/349 Test #282: ColdOracleR1.IndependentRotatingHoldBodyAndColocatedTapPreserveContactPriority .............   Passed    0.40 sec
+        Start 283: ColdOracleR6.AngleJumpWithVisibleTailOrUnattachedFlashKeepsTheStartedHoldSafe
+283/349 Test #283: ColdOracleR6.AngleJumpWithVisibleTailOrUnattachedFlashKeepsTheStartedHoldSafe ..............   Passed    0.37 sec
+        Start 284: ColdOracleR2.IndependentOppositeSideHoldsAndFlickRespectTwoOrThreeFingerCapacity
+284/349 Test #284: ColdOracleR2.IndependentOppositeSideHoldsAndFlickRespectTwoOrThreeFingerCapacity ...........   Passed    0.30 sec
+        Start 285: ColdOracleR5.IndependentLineReversalKeepsOnlyTheStartedDragIntent
+285/349 Test #285: ColdOracleR5.IndependentLineReversalKeepsOnlyTheStartedDragIntent ..........................   Passed    0.31 sec
+        Start 286: ColdRgbN2.FourEdgeFlicksKeepFullDownMoveUpPathInsideScreen
+286/349 Test #286: ColdRgbN2.FourEdgeFlicksKeepFullDownMoveUpPathInsideScreen .................................   Passed    4.33 sec
+        Start 287: ColdRgbN2.TwoVisibleDragsMergeThenSplitWithoutExceedingPhysicalContacts
+287/349 Test #287: ColdRgbN2.TwoVisibleDragsMergeThenSplitWithoutExceedingPhysicalContacts ....................   Passed    1.52 sec
+        Start 288: ColdRgbN2.ZigzagDragStringMovesOneContactWithFreshVisibleCore
+288/349 Test #288: ColdRgbN2.ZigzagDragStringMovesOneContactWithFreshVisibleCore ..............................   Passed    4.62 sec
+        Start 289: ColdRgbN2.StaggeredTapThenFlickExecutesTwoDistinctVisibleIntents
+289/349 Test #289: ColdRgbN2.StaggeredTapThenFlickExecutesTwoDistinctVisibleIntents ...........................   Passed    2.11 sec
+        Start 290: ColdRgbN2.MissingFreshPixelsReleaseAnActiveFlickBeforeItsOldUpDeadline
+290/349 Test #290: ColdRgbN2.MissingFreshPixelsReleaseAnActiveFlickBeforeItsOldUpDeadline .....................   Passed    0.79 sec
+        Start 291: ColdOracleN2.IndependentFourEdgeFlicksCompleteBoundedPaths
+291/349 Test #291: ColdOracleN2.IndependentFourEdgeFlicksCompleteBoundedPaths .................................   Passed    0.37 sec
+        Start 292: ColdOracleN2.MissingCurrentFlickEvidenceReleasesStartedContact
+292/349 Test #292: ColdOracleN2.MissingCurrentFlickEvidenceReleasesStartedContact .............................   Passed    0.29 sec
+        Start 293: ColdRgbN1.OneThroughFiveIndependentMovingTapCoresUseDistinctContacts
+293/349 Test #293: ColdRgbN1.OneThroughFiveIndependentMovingTapCoresUseDistinctContacts .......................   Passed    2.55 sec
+        Start 294: ColdRgbN1.SixthCurrentTapCannotStealFiveStartedContacts
+294/349 Test #294: ColdRgbN1.SixthCurrentTapCannotStealFiveStartedContacts ....................................   Passed    0.75 sec
+        Start 295: ColdRgbN1.StaggeredSameLaneTapsSurviveCompletedNearLineFlash
+295/349 Test #295: ColdRgbN1.StaggeredSameLaneTapsSurviveCompletedNearLineFlash ...............................   Passed    3.14 sec
+        Start 296: ColdOracleN1.SequentialSameLaneIdentityAndCompletedFlashNeverReplayDown
+296/349 Test #296: ColdOracleN1.SequentialSameLaneIdentityAndCompletedFlashNeverReplayDown ....................   Passed    0.34 sec
+        Start 297: ColdRgbG2.ParallelAndCrossedLinesRemainSeparateWithTwoNotes
+297/349 Test #297: ColdRgbG2.ParallelAndCrossedLinesRemainSeparateWithTwoNotes ................................   Passed    0.53 sec
+        Start 298: ColdRgbG2.EquidistantCrossingRemainsUnknownAndCannotDown
+298/349 Test #298: ColdRgbG2.EquidistantCrossingRemainsUnknownAndCannotDown ...................................   Passed    1.33 sec
+        Start 299: ColdRgbG2.TwoCrossingLinesDriveIndependentCurrentPixelContacts
+299/349 Test #299: ColdRgbG2.TwoCrossingLinesDriveIndependentCurrentPixelContacts .............................   Passed    1.53 sec
+        Start 300: ColdRgbG2.JoinedVBranchesAreTwoIndependentCurrentLines
+300/349 Test #300: ColdRgbG2.JoinedVBranchesAreTwoIndependentCurrentLines .....................................   Passed    0.40 sec
+        Start 301: ColdRgbG2.ConnectedFrameAndRadialRidgesKeepDistinctLocalSegments
+301/349 Test #301: ColdRgbG2.ConnectedFrameAndRadialRidgesKeepDistinctLocalSegments ...........................   Passed    0.63 sec
+        Start 302: ColdRgbG2.TwoSeparatedCrossingCentersKeepFourCurrentRidges
+302/349 Test #302: ColdRgbG2.TwoSeparatedCrossingCentersKeepFourCurrentRidges .................................   Passed    0.43 sec
+        Start 303: ColdRgbG2.FullyOverlappedParallelLinesRemainUnknownUntilCurrentSeparation
+303/349 Test #303: ColdRgbG2.FullyOverlappedParallelLinesRemainUnknownUntilCurrentSeparation ..................   Passed    0.62 sec
+        Start 304: ColdRgbG2.LongHoldSideRailsDoNotBecomePerpendicularJudgmentLines
+304/349 Test #304: ColdRgbG2.LongHoldSideRailsDoNotBecomePerpendicularJudgmentLines ...........................   Passed    0.50 sec
+        Start 305: ColdRgbG2.IndependentlyRotatingCrossingLinesKeepTwoHoldRelations
+305/349 Test #305: ColdRgbG2.IndependentlyRotatingCrossingLinesKeepTwoHoldRelations ...........................   Passed    3.66 sec
+        Start 306: ColdRgbG2.OneOccludedRidgeCannotBecomeTwoExecutableLineIdentities
+306/349 Test #306: ColdRgbG2.OneOccludedRidgeCannotBecomeTwoExecutableLineIdentities ..........................   Passed    0.86 sec
+        Start 307: ColdRgbH1.RotatingTranslatingLineKeepsOneSupportedContactUntilVisibleTail
+307/349 Test #307: ColdRgbH1.RotatingTranslatingLineKeepsOneSupportedContactUntilVisibleTail ..................   Passed    5.30 sec
+        Start 308: ColdRgbH1.LongVisibleHoldHeadBodyAndTailUseOneContact
+308/349 Test #308: ColdRgbH1.LongVisibleHoldHeadBodyAndTailUseOneContact ......................................   Passed    5.18 sec
+        Start 309: ColdRgbH1.UnknownTailCannotExtendBodyContactAfterLineLosesCurrentPixels
+309/349 Test #309: ColdRgbH1.UnknownTailCannotExtendBodyContactAfterLineLosesCurrentPixels ....................   Passed    5.48 sec
+        Start 310: ColdRgbR1.RotatingHoldAndColocatedTapKeepIndependentContactsOrRejectAtCapacity
+310/349 Test #310: ColdRgbR1.RotatingHoldAndColocatedTapKeepIndependentContactsOrRejectAtCapacity .............   Passed    8.51 sec
+        Start 311: ColdRgbR6.AngleJumpAtIncomingTailNeedsCurrentClosureAndTwoFreshConfirmations
+311/349 Test #311: ColdRgbR6.AngleJumpAtIncomingTailNeedsCurrentClosureAndTwoFreshConfirmations ...............   Passed   11.04 sec
+        Start 312: ColdRgbR3.CrossingLinesKeepTwoHoldsOnTheirOwnVisibleLineOrRejectMissingLine
+312/349 Test #312: ColdRgbR3.CrossingLinesKeepTwoHoldsOnTheirOwnVisibleLineOrRejectMissingLine ................   Passed    5.60 sec
+        Start 313: ColdOracleG2.PermutedCandidateOrderKeepsIndependentRotatingLineRelations
+313/349 Test #313: ColdOracleG2.PermutedCandidateOrderKeepsIndependentRotatingLineRelations ...................   Passed    0.30 sec
+        Start 314: ColdOracleG2.SwappedLineIdsAtCrossingCannotStealConfirmedNoteRelation
+314/349 Test #314: ColdOracleG2.SwappedLineIdsAtCrossingCannotStealConfirmedNoteRelation ......................   Passed    0.31 sec
+        Start 315: ColdOracleR3.EstablishedHoldRelationCannotMoveToSurvivingCrossingLine
+315/349 Test #315: ColdOracleR3.EstablishedHoldRelationCannotMoveToSurvivingCrossingLine ......................   Passed    0.30 sec
+        Start 316: ColdOracleR3.TwoCrossingLinesKeepTwoIndependentHoldContacts
+316/349 Test #316: ColdOracleR3.TwoCrossingLinesKeepTwoIndependentHoldContacts ................................   Passed    0.29 sec
+        Start 317: ColdOracleR3.GeometricallyContinuousNewLineIdNeedsTwoFreshFramesAndNewFit
+317/349 Test #317: ColdOracleR3.GeometricallyContinuousNewLineIdNeedsTwoFreshFramesAndNewFit ..................   Passed    0.29 sec
+        Start 318: ColdRgbR7.SameDeadlineTapsRespectRpcReturnAndExpiredSecondPlan
+318/349 Test #318: ColdRgbR7.SameDeadlineTapsRespectRpcReturnAndExpiredSecondPlan .............................   Passed    1.55 sec
+        Start 319: ColdOracleR7.IndependentSimultaneousTapsDoNotRetryExpiredSecondDown
+319/349 Test #319: ColdOracleR7.IndependentSimultaneousTapsDoNotRetryExpiredSecondDown ........................   Passed    0.30 sec
+        Start 320: ColdRgbR4.NearLineLateDragUsesFreeFingerOrRejectsFullHoldContact
+320/349 Test #320: ColdRgbR4.NearLineLateDragUsesFreeFingerOrRejectsFullHoldContact ...........................   Passed    7.79 sec
+        Start 321: ColdOracleR4.IndependentLateDragNeedsTwoCurrentFramesAndAvailableContact
+321/349 Test #321: ColdOracleR4.IndependentLateDragNeedsTwoCurrentFramesAndAvailableContact ...................   Passed    0.40 sec
+        Start 322: ColdRgbH2.VisibleHoldAndLaterTapUseTwoContactsWithoutReplacingTheHeldFinger
+322/349 Test #322: ColdRgbH2.VisibleHoldAndLaterTapUseTwoContactsWithoutReplacingTheHeldFinger ................   Passed    5.20 sec
+        Start 323: ColdRgbH2.OneFingerHoldCannotBePreemptedByLaterEligibleFlick
+323/349 Test #323: ColdRgbH2.OneFingerHoldCannotBePreemptedByLaterEligibleFlick ...............................   Passed    5.27 sec
+        Start 324: ColdRgbH2.VisibleHoldAndLaterFlickKeepSeparateCompleteContacts
+324/349 Test #324: ColdRgbH2.VisibleHoldAndLaterFlickKeepSeparateCompleteContacts .............................   Passed    5.37 sec
+        Start 325: ColdRgbH2.VisibleHoldAndLaterDragKeepSeparateContactOwnership
+325/349 Test #325: ColdRgbH2.VisibleHoldAndLaterDragKeepSeparateContactOwnership ..............................   Passed    5.28 sec
+        Start 326: ColdRgbR2.OppositeSideHoldsAndFlickRequireThreeIndependentContacts
+326/349 Test #326: ColdRgbR2.OppositeSideHoldsAndFlickRequireThreeIndependentContacts .........................   Passed    3.58 sec
+        Start 327: ColdRgbR2.TwoFingerLimitRejectsFlickWithoutReleasingOppositeSideHolds
+327/349 Test #327: ColdRgbR2.TwoFingerLimitRejectsFlickWithoutReleasingOppositeSideHolds ......................   Passed    3.34 sec
+        Start 328: ManualLifecycle.UnlimitedStandbyNoNotesOrTimeBasedStart
+328/349 Test #328: ManualLifecycle.UnlimitedStandbyNoNotesOrTimeBasedStart ....................................   Passed    1.34 sec
+        Start 329: ManualLifecycle.TwoManualRoundsShortAndLongWithResultLatch
+329/349 Test #329: ManualLifecycle.TwoManualRoundsShortAndLongWithResultLatch .................................   Passed    0.29 sec
+        Start 330: ManualLifecycle.BlackLoadingPauseAndHudLossDoNotEndOrResetRound
+330/349 Test #330: ManualLifecycle.BlackLoadingPauseAndHudLossDoNotEndOrResetRound ............................   Passed    0.32 sec
+        Start 331: ManualLifecycle.ResultRequiresDistinctFreshFramesAndPhysicalGeometry
+331/349 Test #331: ManualLifecycle.ResultRequiresDistinctFreshFramesAndPhysicalGeometry .......................   Passed    0.29 sec
+        Start 332: ManualLifecycle.EpochRevocationDoesNotCreateANewRoundAndWatchdogAborts
+332/349 Test #332: ManualLifecycle.EpochRevocationDoesNotCreateANewRoundAndWatchdogAborts .....................   Passed    0.33 sec
+        Start 333: ManualUiPixels.AllSixLabelsPositiveMissingLabelsUniformHudAndBlankNegative
+333/349 Test #333: ManualUiPixels.AllSixLabelsPositiveMissingLabelsUniformHudAndBlankNegative .................   Passed    3.19 sec
+        Start 334: ManualUiPixels.ExistingResultAndMenuEvidenceOfflineOnly
+334/349 Test #334: ManualUiPixels.ExistingResultAndMenuEvidenceOfflineOnly ....................................***Skipped   0.32 sec
+        Start 335: ManualOwner.StartingAndStandbyNeverInjectAndStopReleasesHold
+335/349 Test #335: ManualOwner.StartingAndStandbyNeverInjectAndStopReleasesHold ...............................   Passed    0.29 sec
+        Start 336: ManualOwner.HudLossCannotReplayCompletedIntentAndNewRoundCanUseSameNote
+336/349 Test #336: ManualOwner.HudLossCannotReplayCompletedIntentAndNewRoundCanUseSameNote ....................   Passed    0.30 sec
+        Start 337: ManualOwner.StaleEvidenceCannotDownAndUnknownInputCannotRebuild
+337/349 Test #337: ManualOwner.StaleEvidenceCannotDownAndUnknownInputCannotRebuild ............................   Passed    0.36 sec
+        Start 338: ManualOwner.ConfiguredLeadMovesOnlyFreshHoldDeadlineAndReleases
+338/349 Test #338: ManualOwner.ConfiguredLeadMovesOnlyFreshHoldDeadlineAndReleases ............................   Passed    0.31 sec
+        Start 339: ManualStrategy.SamePixelsFakeClockTargetsPlansReceiptsMatchPremergeMainGolden
+339/349 Test #339: ManualStrategy.SamePixelsFakeClockTargetsPlansReceiptsMatchPremergeMainGolden ..............   Passed   22.12 sec
+        Start 340: ManualIntegration.SameProcessPixelsTwoRoundsHoldResultAndFreshReset
+340/349 Test #340: ManualIntegration.SameProcessPixelsTwoRoundsHoldResultAndFreshReset ........................   Passed    8.50 sec
+        Start 341: ManualIntegration.ResultCandidateClosesDownBeforeResultConfirmation
+341/349 Test #341: ManualIntegration.ResultCandidateClosesDownBeforeResultConfirmation ........................   Passed    1.12 sec
+        Start 342: ManualArchive.StandbyRotatesAndManyRoundsHaveIndependentHashesNoImages
+342/349 Test #342: ManualArchive.StandbyRotatesAndManyRoundsHaveIndependentHashesNoImages .....................   Passed    1.70 sec
+        Start 343: ManualArchive.OneResultImageWrittenAndIncompleteRoundRemainsAborted
+343/349 Test #343: ManualArchive.OneResultImageWrittenAndIncompleteRoundRemainsAborted ........................   Passed    0.47 sec
+        Start 344: ManualArchive.OversizedRecordFaultsRatherThanGrowingStandbyStorage
+344/349 Test #344: ManualArchive.OversizedRecordFaultsRatherThanGrowingStandbyStorage .........................   Passed    0.32 sec
+        Start 345: ManualPixelClips.FullFieldFramesKeepTimingAndStopAtRoundLimit
+345/349 Test #345: ManualPixelClips.FullFieldFramesKeepTimingAndStopAtRoundLimit ..............................   Passed    0.41 sec
+        Start 346: FullRecording.LosslessPngDecodedByIndependentWicPreservesAllRgbBytes
+346/349 Test #346: FullRecording.LosslessPngDecodedByIndependentWicPreservesAllRgbBytes .......................   Passed    0.37 sec
+        Start 347: FullRecording.PreRollAndEverySubmittedFrameKeepOrderTimingAndExactPixels
+347/349 Test #347: FullRecording.PreRollAndEverySubmittedFrameKeepOrderTimingAndExactPixels ...................   Passed    0.74 sec
+        Start 348: FullRecording.FrameAndByteLimitsFaultWithoutClaimingComplete
+348/349 Test #348: FullRecording.FrameAndByteLimitsFaultWithoutClaimingComplete ...............................   Passed    0.39 sec
+        Start 349: FullRecording.OneRoundAndExistingRootDoNotOverwriteEvidence
+349/349 Test #349: FullRecording.OneRoundAndExistingRootDoNotOverwriteEvidence ................................   Passed    0.35 sec
+
+99% tests passed, 1 tests failed out of 349
+
+Total Test time (real) = 455.23 sec
+
+The following tests did not run:
+	 64 - GameObserver.RowPrescreenPreservesRecordedClipDecisionsWhenProvided (Skipped)
+	334 - ManualUiPixels.ExistingResultAndMenuEvidenceOfflineOnly (Skipped)
+
+The following tests FAILED:
+	276 - ColdRgbT2.ThousandDenseFramesKeepStableBoundedIdentityAndNoStaleTouch (Timeout)
+TRACE Test END exit=8

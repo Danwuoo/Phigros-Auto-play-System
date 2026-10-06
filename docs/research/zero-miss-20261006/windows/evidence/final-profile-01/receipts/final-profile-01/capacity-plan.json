@@ -1,0 +1,9 @@
+{
+  "source_commit": "29e3ed09ae176a93a159f3b7993c8047505e9482",
+  "out_bytes_before": 9819081405.0,
+  "new_build_reserve_bytes": 1610612736,
+  "out_hard_cap_bytes": 12884901888,
+  "metadata_archive_hard_cap_bytes": 67108864,
+  "free_bytes": 198850633728,
+  "device_commands": 0
+}

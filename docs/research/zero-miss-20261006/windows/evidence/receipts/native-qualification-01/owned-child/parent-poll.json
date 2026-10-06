@@ -1,0 +1,1 @@
+{"attempt":"windows-round4-20261006","accepted":true,"frequency":10000000,"schema":1,"end_qpc":41325768873,"deadline_qpc":41340344672,"polls":65,"transitions":[{"qpc":41310421124,"state":"pending"},{"qpc":41324077456,"state":"ready"}],"last":"ready","start_qpc":41310344672,"counts":{"ready":1,"pending":64}}

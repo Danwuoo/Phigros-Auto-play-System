@@ -1,0 +1,29 @@
+CMake Error at C:/Users/wurre/AppData/Local/Programs/Python/Python310/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:73 (message):
+  The C++ compiler
+
+    "C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/windows-handoff/msvc-isolated-probe-01/bin/cl.exe"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: 'C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/win-r4-ninja-asan-02/CMakeFiles/CMakeScratch/TryCompile-mg9vuv'
+    
+    Run Build Command(s): C:\Users\wurre\AppData\Local\Programs\Python\Python310\Scripts\ninja.exe -v cmTC_8e13b
+    [1/2] C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\msvc-isolated-probe-01\bin\cl.exe  /nologo /TP -D_MBCS  /DWIN32 /D_WINDOWS /EHsc  /MDd /Od /Ob0 /D_DEBUG /D_DISABLE_VECTOR_ANNOTATION /D_DISABLE_STRING_ANNOTATION /D_DISABLE_OPTIONAL_ANNOTATION /fsanitize=address /FIC:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006/cmake/asan_unsanitized_dependencies.h -MDd -Z7 /showIncludes /FoCMakeFiles\cmTC_8e13b.dir\testCXXCompiler.cxx.obj /FdCMakeFiles\cmTC_8e13b.dir\ /FS -c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\win-r4-ninja-asan-02\CMakeFiles\CMakeScratch\TryCompile-mg9vuv\testCXXCompiler.cxx
+    [2/2] C:\WINDOWS\system32\cmd.exe /C "cd . && C:\Users\wurre\AppData\Local\Programs\Python\Python310\Lib\site-packages\cmake\data\bin\cmake.exe -E vs_link_exe --msvc-ver=1951 --intdir=CMakeFiles\cmTC_8e13b.dir --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\mt.exe --manifests  -- C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\msvc-isolated-probe-01\bin\link.exe /nologo CMakeFiles\cmTC_8e13b.dir\testCXXCompiler.cxx.obj  /out:cmTC_8e13b.exe /implib:cmTC_8e13b.lib /pdb:cmTC_8e13b.pdb /version:0.0 /machine:x64 /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
+    FAILED: [code=4294967295] cmTC_8e13b.exe 
+    C:\WINDOWS\system32\cmd.exe /C "cd . && C:\Users\wurre\AppData\Local\Programs\Python\Python310\Lib\site-packages\cmake\data\bin\cmake.exe -E vs_link_exe --msvc-ver=1951 --intdir=CMakeFiles\cmTC_8e13b.dir --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\mt.exe --manifests  -- C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\msvc-isolated-probe-01\bin\link.exe /nologo CMakeFiles\cmTC_8e13b.dir\testCXXCompiler.cxx.obj  /out:cmTC_8e13b.exe /implib:cmTC_8e13b.lib /pdb:cmTC_8e13b.pdb /version:0.0 /machine:x64 /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
+    LINK Pass 1: command "C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\msvc-isolated-probe-01\bin\link.exe /nologo CMakeFiles\cmTC_8e13b.dir\testCXXCompiler.cxx.obj /out:cmTC_8e13b.exe /implib:cmTC_8e13b.lib /pdb:cmTC_8e13b.pdb /version:0.0 /machine:x64 /debug /INCREMENTAL /subsystem:console kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTFILE:CMakeFiles\cmTC_8e13b.dir/intermediate.manifest CMakeFiles\cmTC_8e13b.dir/manifest.res" failed (exit code 1104) with the following output:
+    LINK : fatal error LNK1104: cannot open file 'clang_rt.asan_dynamic_runtime_thunk-x86_64.lib'
+    ninja: build stopped: subcommand failed.
+    
+    
+
+
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:2 (project)
+
+

@@ -1,0 +1,15 @@
+TRACE wrapper-v0 entry cmdcmdline=[C:\Windows\System32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\native-qualification-01\source\wrappers-v0\probe.cmd]
+TRACE L06 vcvars START
+TRACE L07 vcvars END exit=0
+TRACE L11 argv-configure START
+TRACE fixture entry C:\Users\wurre\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -File C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\native-qualification-01\source\argv-fixture.ps1 -ReturnCode 0
+TRACE fixture end exit=0
+TRACE L12 argv-configure END exit=0
+TRACE L16 argv-build START
+TRACE fixture entry C:\Users\wurre\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -File C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\native-qualification-01\source\argv-fixture.ps1 -ReturnCode 7
+TRACE fixture end exit=7
+TRACE L17 argv-build END exit=7
+cmake version 4.2.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+TRACE DIAGNOSTIC_POSITIVE wrapper-v0

@@ -1,0 +1,3 @@
+TRACE native START
+prefix assertions=80 failed=2
+TRACE native END exit=1

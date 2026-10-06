@@ -2,7 +2,7 @@
 
 啟動／更新：2026-10-05。起點：`a53a9b7021bcc900f498047f5cc017b42e4711b0`。
 
-**狀態：本次雲端開發／必要冷回歸完成，交接已準備留存；停在真圖與Windows證據門檻。產品目標未完成。** 這是repo內的開發目標與進度紀錄；本執行環境沒有可用的專用Goal工具，不冒稱已建立系統Goal。配套機讀狀態：[legacy-in-zero-miss-state.json](legacy-in-zero-miss-state.json)。
+**狀態：10/6 Windows 離線接手及橋接里程碑完成，停在真圖語義／合法機會與完整成本資格；產品目標未完成。** 這是repo內的開發目標與進度紀錄；本輪沒有建立或啟動新的系統Goal、automation或裝置工作。配套機讀狀態：[legacy-in-zero-miss-state.json](legacy-in-zero-miss-state.json)。
 
 ## 唯一完成條件
 
@@ -14,7 +14,25 @@
 
 P/G/B與score照報，不加AP要求。先前提出的每曲連續3次是穩定性提案，**不是已核准的額外完成門檻**。
 
-## 持續範圍與工作路由
+## 10/6 本機接手里程碑與授權
+
+依使用者本機交接 prompt 核驗 ZIP、DELIVERY、SHA256SUMS，在獨立 branch／worktree
+只套 cumulative patch，交付 tree 與 v3 七份 core SHA 精確相同。原 main、使用者
+dirty 修改、證據、frozen inputs、oracle 與 STOP 保留。Windows 建置及回歸、隔離
+current ROI／all-lines 橋接及正式 owner／scheduler 的自身 receipt 前綴驗證已實作；
+詳見 [Windows 收據與限制](../research/zero-miss-20261006/windows/README.md)。
+
+原 3938 assertions 三配置仍 36 fail、沒有新增原套件失敗；前綴 113/113；256 張
+原真圖前後 SHA 相符，卻没有 eligible action。Hold 真色與 frozen blue predicate、
+current front 表示存在可核落差；沒有人工合法物件分母，不能以冷測或安全拒絕驗收。
+正式 BVI runtime hook、latest-frame／journal／RPC 壓力及有效 A/A→A/B 成本尚未完成。
+
+本 prompt 授權本地實作、離線測試及本地 commit；沒有授權裝置讀取、Fixture 或遊戲。
+下一步先對既有少量真圖進行可追溯語義 review，保留 proposed／unknown，再另 freeze
+必要候選／typed adapter。需要裝置時先列指定裝置、目的、命令、風險、停止條件，
+取得相應授權；安全及成本 gate 未成立不進遊戲。
+
+## 10/5 雲端持續範圍與工作路由（歷史）
 
 - 能在雲端安全完成的研究、必要程式修補、契約、正反例、整合／FakeTouch回歸及有界成本查核持續做；小型可恢復失敗修復後重跑，不為每個小階段再停下等批准。
 - 每一組改動小範圍凍結、獨立覆核並階段性本機commit。舊frozen inputs、oracle、失敗、STOP與歷史source保留；新契約要有可觀測依據，不改gold追綠。
@@ -22,7 +40,7 @@ P/G/B與score照報，不加AP要求。先前提出的每曲連續3次是穩定�
 - 不以「所有想得到的雲端問題都修完」延長本次委託；依可驗證的下一個必要門檻決定交接，而非省略必要冷回歸。
 - 不自行push／PR／merge、付費運算、修改系統安全／遊戲存檔／裝置設定，不建立定時automation。
 
-## 現況與活動順序
+## 10/5 雲端現況與活動順序（歷史）
 
 最終候選cold v3在c2dda1db9fe95b46ff103300d43583857130cd8f，只整合於隔離研究目錄。原3938斷言仍36fail（原54修18、新失敗0）；原契約339、原獨立79、新relation74／contact167／line-ambiguity16／獨立101及另5controls三配置通過。沒有新實戰，Chapter Legacy目前分母與IN解鎖仍unknown。詳見[第四階段](../research/zero-miss-20261005/round4/README.md)。
 

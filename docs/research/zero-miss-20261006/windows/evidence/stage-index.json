@@ -1,0 +1,1228 @@
+{
+  "schema": "pas.windows-local-attempt-index.v1",
+  "note": "All top-level actual attempts; nested file-only and native qualification controls retained separately. Oracle FAIL native1 with verification0 is not aggregate pass.",
+  "stages": [
+    {
+      "directory": "build-bridge-asan-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 763,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-asan-01\\state.json",
+        "sha256": "aacc019e0ebf7aec1ea3a60a251805ee776b41e8c40cefc043bc45c131aec4e1"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-asan-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 763,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-asan-02\\state.json",
+        "sha256": "e7b430fe81f374e0e866b21cf61fb329017cd73c2be494d3f1c4aeb11c98843b"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-asan-03",
+      "reason": null,
+      "state_file": {
+        "bytes": 763,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-asan-03\\state.json",
+        "sha256": "d31b447b64b55ac87a0979bf44fc2551815e3e89fa57decd31145c044bce60e4"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-asan-04",
+      "reason": null,
+      "state_file": {
+        "bytes": 763,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-asan-04\\state.json",
+        "sha256": "210a8ec534eab9d2eaeecdb3af43275976c75fa9cf03c71d41e352ab3c89a95d"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-asan-05",
+      "reason": null,
+      "state_file": {
+        "bytes": 763,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-asan-05\\state.json",
+        "sha256": "6e1808ba6a7bff346e6a5918b7f05b6af85299d7689568c704d097c8351042aa"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-debug-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-debug-01\\state.json",
+        "sha256": "d46ed81648abc4803955ca36a7132c00c266031338b3d305bbb57db8068661d3"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-debug-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-debug-02\\state.json",
+        "sha256": "254bef96de0e4651439ca3e0e37021cd280d9caf0c2401d65962a456314b4035"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-debug-03",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-debug-03\\state.json",
+        "sha256": "a3d638cdbf17ea5a886bf40ceea0a9d1d1c396c3d2df8feff5c3005f469cf395"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-debug-04",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-debug-04\\state.json",
+        "sha256": "4942981b84d1fa0da235a126355f5e1ba901e61bbe34a9a14b63f04d80f4882d"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-debug-05",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-debug-05\\state.json",
+        "sha256": "05190326da657261536aa601d958d2f433577105d48d78aad62e2e6e121c07bb"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-release-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-release-01\\state.json",
+        "sha256": "cdffdd663ff59194f0f43a16f996de2324daf37bafc4eb5d274437b36469d64e"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-release-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-release-02\\state.json",
+        "sha256": "ffc66223871892c15bc33bc9dd1dcefda291d6f59ae8e75ea7e28faf06c2ed8b"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-release-03",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-release-03\\state.json",
+        "sha256": "313fb4467b854d64b2bb580008fc92d2c1e30ba2c574f6628ba9ae45fccdffea"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-release-04",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-release-04\\state.json",
+        "sha256": "4a632b97fb5ccaf4f1b18f28b37d588dc657be8b2598a289c290e0232f908fc8"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-release-05",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-release-05\\state.json",
+        "sha256": "1b456146a349e23c61d38af52efd93506939a73083dfb6bc3eee83996facaf52"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-release-06",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-release-06\\state.json",
+        "sha256": "8b6e3cc716182ca99444e779f5394846327bb39b396e483ef11d6a0d35625f7e"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-release-07",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-release-07\\state.json",
+        "sha256": "46ff15887df482ad3fb9013f7c326e94fd1d61ddbc6e9b2c1a146fd1ed4dfbde"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bridge-release-08",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-release-08\\state.json",
+        "sha256": "010a3148a2bb5910020a1e5f3e6d2f8e0bee7e6024525df915552b306f9e8acc"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bvi-asan-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 757,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bvi-asan-01\\state.json",
+        "sha256": "ef6d700a49772134eb2fff3f93995aadbea599b0a9a882f7e349458b9647bfa1"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bvi-asan-stack8-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bvi-asan-stack8-01\\state.json",
+        "sha256": "1472e765b291a934b30eccdd188590217a20e02a49e340b067b4f0088ed40ffe"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bvi-debug-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 759,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bvi-debug-01\\state.json",
+        "sha256": "89089ee65d14a2c1612da90356dc445ace7c67ac905962e39ef469fc018a5ea8"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bvi-debug-stack8-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 773,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bvi-debug-stack8-01\\state.json",
+        "sha256": "02839662b0df8a18d1e9777daf4fe359def4b1be63d3ab474d72f57f937a2e3a"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-bvi-release-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 763,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bvi-release-01\\state.json",
+        "sha256": "372f3efdf81ed666767e139e17ee4f50334e7f61640651c0ed027f847343a881"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-root-ninja-asan-04",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-root-ninja-asan-04\\state.json",
+        "sha256": "f458f4bf3c6486355fe47bd832eda54a13398e46ec61d5321f37d207e1cfbadc"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-root-ninja-debug-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 773,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-root-ninja-debug-01\\state.json",
+        "sha256": "1592fa2ab00d688a5c55c195f840d08c2d3a9d234e80f57054011bb2524ea451"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "build-root-ninja-release-01",
+      "reason": "source-input-sha",
+      "state_file": {
+        "bytes": 587,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-root-ninja-release-01\\state.json",
+        "sha256": "cbfc9c034773197b5aaaf10b4cf6a269e7f84f2a2179a7c0d5a35d834e7a7937"
+      },
+      "runner_exit": 0,
+      "state": "STOP",
+      "native_exit": 0,
+      "verification_exit": 1
+    },
+    {
+      "directory": "build-root-ninja-release-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 777,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-root-ninja-release-02\\state.json",
+        "sha256": "dce04292e640075df44f33f962d65f57d8018a235b2187efc9e0e77a8e5af04a"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "bvi-io-patch-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 750,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\bvi-io-patch-01\\state.json",
+        "sha256": "abd6c5ec0f12e13b7e475c151fb9d15879c2849dd9c0462769793643e8803761"
+      },
+      "runner_exit": null,
+      "state": "COMPLETE",
+      "native_exit": null,
+      "verification_exit": null
+    },
+    {
+      "directory": "configure-bridge-asan-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-asan-01\\state.json",
+        "sha256": "26e47b60275cadff641b2b4e4ea322c78b83e7d3084c2e41bc7bbef4616552ce"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-bridge-debug-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 773,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-debug-01\\state.json",
+        "sha256": "29ac764ed91f2869f73a865edcf0577d592e64f4b85424a208205b4a8afffe06"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-bridge-release-04",
+      "reason": null,
+      "state_file": {
+        "bytes": 777,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-release-04\\state.json",
+        "sha256": "217bd78108a2cacd27dc608dd00d19ec2c6fb7e1e6c402929333d5071b4aa3a3"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-bvi-asan-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bvi-asan-01\\state.json",
+        "sha256": "d46b709af28eda2fd582ad1aeccf5dc8b149e3e504218bfba98ff2b7300e2906"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-bvi-asan-stack8-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 779,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bvi-asan-stack8-01\\state.json",
+        "sha256": "b6626b936d19b5f798929b1a636b7118cc0588c93e3b9758670b3059b26db7d5"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-bvi-debug-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 767,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bvi-debug-01\\state.json",
+        "sha256": "9ef063721d7621364c4e9e1697209f2f498539df2815c1b0954260d9935af7b1"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-bvi-debug-stack8-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 781,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bvi-debug-stack8-01\\state.json",
+        "sha256": "1cd0585bae1e73357c6929a90e269a73803498e2a3bf39deaa3ad07592d3b3c0"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-bvi-release-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bvi-release-01\\state.json",
+        "sha256": "94b19ccea70a2747aa6b618e1ee7134cab8851e1c69cd53e710ee4e830ebd883"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-root-ninja-asan-01",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 587,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-asan-01\\state.json",
+        "sha256": "37c3014ddb33d74408669b99f56ba2c8abd63063e6c774f0c5094eb56a8d7c8f"
+      },
+      "runner_exit": 1,
+      "state": "STOP",
+      "native_exit": 1,
+      "verification_exit": 1
+    },
+    {
+      "directory": "configure-root-ninja-asan-02",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 587,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-asan-02\\state.json",
+        "sha256": "382bae3398eefdc1c059c16452386e7c803ccf03d8dc3dc17a4f65b776b9c503"
+      },
+      "runner_exit": 1,
+      "state": "STOP",
+      "native_exit": 1,
+      "verification_exit": 1
+    },
+    {
+      "directory": "configure-root-ninja-asan-03",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 587,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-asan-03\\state.json",
+        "sha256": "192193ea95a0a625e432edf7ee4974dffed745e3a93efb3614f07d8326a37473"
+      },
+      "runner_exit": 1,
+      "state": "STOP",
+      "native_exit": 1,
+      "verification_exit": 1
+    },
+    {
+      "directory": "configure-root-ninja-asan-04",
+      "reason": null,
+      "state_file": {
+        "bytes": 779,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-asan-04\\state.json",
+        "sha256": "22cad3e11e6b41c9244ee9e9e1e72e31fa5ae7c6c0e79e5395eebd0f8cf9e582"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-root-ninja-debug-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 781,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-debug-01\\state.json",
+        "sha256": "3b4bba67418bebffef160299cc79bff0d7a0c67c4aaeb372d6d03f44350e13ab"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-root-ninja-release-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 785,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-release-01\\state.json",
+        "sha256": "8572576c02e4d00f7672eaabd92174ac289245b3b5f2f87d7d5a198e4290b2a2"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "configure-root-release-01",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 575,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-release-01\\state.json",
+        "sha256": "f3bfc9b87a6e30cc1598b02027dc82b80682ab678490df3af93af6d6855a4eb0"
+      },
+      "runner_exit": null,
+      "state": "STOP",
+      "native_exit": null,
+      "verification_exit": null
+    },
+    {
+      "directory": "configure-root-release-02",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 575,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-release-02\\state.json",
+        "sha256": "7899129f65c0bb617a474b16f4e1d09eb06da4cffdf234643b15021f4477c1f0"
+      },
+      "runner_exit": null,
+      "state": "STOP",
+      "native_exit": null,
+      "verification_exit": null
+    },
+    {
+      "directory": "json-fix-4736_char8_t-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 768,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\json-fix-4736_char8_t-01\\state.json",
+        "sha256": "156f7fd0aa43f7899ba0200d72ccede0872d383a23e6975cec90bb8169960e7e"
+      },
+      "runner_exit": null,
+      "state": "COMPLETE",
+      "native_exit": null,
+      "verification_exit": null
+    },
+    {
+      "directory": "json-fix-4742_std_optional-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 778,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\json-fix-4742_std_optional-01\\state.json",
+        "sha256": "2269227d0ee35d526dec455eb8ef2d70c33d81350ab95778dc1ba50c6956aeae"
+      },
+      "runner_exit": null,
+      "state": "COMPLETE",
+      "native_exit": null,
+      "verification_exit": null
+    },
+    {
+      "directory": "legacy-asan-monitored-audit-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 783,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-monitored-audit-01\\state.json",
+        "sha256": "426f16d81b15617c60fbf08863aa1ceb1fc1378d6538712228ca537f5accdf2a"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-asan-monitored-suite-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 783,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-monitored-suite-01\\state.json",
+        "sha256": "3607265248c90971a9e261798d74665dacfe8219b4d344365aafad5aa7cc7749"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-asan-monitored-wrong-contact-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 799,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-monitored-wrong-contact-01\\state.json",
+        "sha256": "c9a02837b8ff3ee0897f9253bc803e89901696ec890d9d2a77fedce93e9507b7"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-asan-stack8-suite-01",
+      "reason": "process-integrity",
+      "state_file": {
+        "bytes": 588,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-stack8-suite-01\\state.json",
+        "sha256": "33bc226e00847697420cae35546d4bbc5b67431b5627d3afd64f670b4874f4a9"
+      },
+      "runner_exit": 125,
+      "state": "STOP",
+      "native_exit": null,
+      "verification_exit": 1
+    },
+    {
+      "directory": "legacy-asan-stack8-wrong-contact-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 793,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-stack8-wrong-contact-01\\state.json",
+        "sha256": "a93f42601d623c345c93d20fb42a36280d230cfe26d48ad3a912e19df5a42dbf"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-debug-monitored-audit-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 785,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-debug-monitored-audit-01\\state.json",
+        "sha256": "96e3187b8ad3c9e6447bf51a22e408ebbcab136130f86a0b27c13c98b01af1d9"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-debug-monitored-suite-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 785,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-debug-monitored-suite-01\\state.json",
+        "sha256": "192157b59b1ca75f6f1a444de1a6627d9d24ca1caf7daa25187124771172b3fb"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-debug-monitored-wrong-contact-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 801,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-debug-monitored-wrong-contact-01\\state.json",
+        "sha256": "1d4db7529ad523554cc2e292a9597631f4788ac0c93f065d2d2cd0bf3131b60d"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-debug-stack8-suite-01",
+      "reason": "process-integrity",
+      "state_file": {
+        "bytes": 590,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-debug-stack8-suite-01\\state.json",
+        "sha256": "d531590992b2a942566de9f2fdaed629d9de353892a49beb7a03b666e12151cb"
+      },
+      "runner_exit": 125,
+      "state": "STOP",
+      "native_exit": 1,
+      "verification_exit": 1
+    },
+    {
+      "directory": "legacy-debug-stack8-wrong-contact-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 795,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-debug-stack8-wrong-contact-01\\state.json",
+        "sha256": "2c46aee4a4e32498757d0e1258e019e71d8ef90ab0d3f79f702b1362533e3565"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-release-r2-suite-01",
+      "reason": "process-integrity",
+      "state_file": {
+        "bytes": 586,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-release-r2-suite-01\\state.json",
+        "sha256": "2335bc1a131003ae2e41937654312a61f8f2b80438707a3060caa8497f7faf2f"
+      },
+      "runner_exit": 125,
+      "state": "STOP",
+      "native_exit": 1,
+      "verification_exit": 1
+    },
+    {
+      "directory": "legacy-release-r2-wrong-contact-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 791,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-release-r2-wrong-contact-01\\state.json",
+        "sha256": "fd7ecd1a094beeb6ca9c2d67bad66490d7b371136c0423b1dc9323de6f6278b9"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-release-r3-audit-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 775,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-release-r3-audit-01\\state.json",
+        "sha256": "43dbc07d6daba5b7459de038b6535b0f3e56961c08f55411b9bbefb1b6c1c7e8"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-release-r3-suite-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 775,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-release-r3-suite-01\\state.json",
+        "sha256": "ff3ccaebd1a4c114f196fc546c7595c8a8d7fa09439c20850e56f4d689a0dfed"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "legacy-release-r3-wrong-contact-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 791,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-release-r3-wrong-contact-01\\state.json",
+        "sha256": "24bc4d8e13a592467ff9f7a557bc856aac890a4590979383fa4a48983e55fced"
+      },
+      "runner_exit": 1,
+      "state": "COMPLETE",
+      "native_exit": 1,
+      "verification_exit": 0
+    },
+    {
+      "directory": "materialize-supplemental-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 777,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\materialize-supplemental-01\\state.json",
+        "sha256": "1c9d05ca4a74cbec764da4cb530622197aefd764ef2670747f6a8254c7904a49"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "pixels-bridge-asan-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-asan-01\\state.json",
+        "sha256": "5ccd751c1368d6640285373c74308398bdb6388f5b1af408ed71f82ec6d4e095"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "pixels-bridge-asan-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-asan-02\\state.json",
+        "sha256": "12981c88e1c0afbe15b1d5366e5d179006e62d89a5afac6b6b7a87f4d6fa7943"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "pixels-bridge-debug-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 767,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-debug-01\\state.json",
+        "sha256": "eb6dc803dffbfc02b672770637e7a9ef7894a34069bbe4a137605431c4ce6553"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "pixels-bridge-debug-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 767,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-debug-02\\state.json",
+        "sha256": "681f4b51a7d467e71a6f919513ff77eba4761a78b5f28403c7fab62df2c9539d"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "pixels-bridge-debug-03",
+      "reason": null,
+      "state_file": {
+        "bytes": 767,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-debug-03\\state.json",
+        "sha256": "5baea00aa65b888d906eeb89f06dd0400da39abd803c982217e7dc395c5453cc"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "pixels-bridge-release-03",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-release-03\\state.json",
+        "sha256": "30a3174677ad724ac354153d9e6eb09bc5a86a2565ed31ac8e9d8b5db8d1b65a"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "pixels-bridge-release-04",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-release-04\\state.json",
+        "sha256": "d06f059d754239ccaa3dd03548e010c1949e95f41f5938a97c36356848814dc5"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "pixels-bridge-release-05",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-release-05\\state.json",
+        "sha256": "a5b90765b242aae00a571d49a0bfdc12495b53440e2da079e752df3a912918e3"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "prefix-bridge-asan-01",
+      "reason": "process-integrity",
+      "state_file": {
+        "bytes": 576,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-asan-01\\state.json",
+        "sha256": "2c757d5bb835b71c14ef107e5a07a135abe5a724e203491542e74eaf2b265554"
+      },
+      "runner_exit": 125,
+      "state": "STOP",
+      "native_exit": 0,
+      "verification_exit": 1
+    },
+    {
+      "directory": "prefix-bridge-asan-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-asan-02\\state.json",
+        "sha256": "adb0b05fa026d04b31001c9db260ab56f7a02d38b3d426176270a41eecfc0652"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "prefix-bridge-asan-03",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-asan-03\\state.json",
+        "sha256": "620d3eb10a8d7337399c9bff60980603b4307f6ff36dcffb348b8f6ac433058e"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "prefix-bridge-debug-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 767,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-debug-01\\state.json",
+        "sha256": "6ce012f0e3d7d85d4647cc11afdfcde8373716de8aac30e67bbd91d81eeb1636"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "prefix-bridge-debug-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 767,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-debug-02\\state.json",
+        "sha256": "77ecb464104149972dca6ceb7061e8f6c965509f1d431f850a2de199fa4f561b"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "prefix-bridge-debug-03",
+      "reason": null,
+      "state_file": {
+        "bytes": 767,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-debug-03\\state.json",
+        "sha256": "66b42425919dafa8467517d43a9687e66257d57f0e79177455c31adf3c9d74c3"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "prefix-bridge-release-03",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 579,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-release-03\\state.json",
+        "sha256": "3390eba374e0df0cafbd511a08d9ddaa289d64ad76351593f9c445d490b9b6af"
+      },
+      "runner_exit": 1,
+      "state": "STOP",
+      "native_exit": 1,
+      "verification_exit": 1
+    },
+    {
+      "directory": "prefix-bridge-release-04",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-release-04\\state.json",
+        "sha256": "8e52fca7e23b0fb3d9e2e5bd1627f967bfef9477fc52021d65c586217a3245a3"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "prefix-bridge-release-05",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-release-05\\state.json",
+        "sha256": "3311ad69052e1b8eaabc0f2b77ac05ad309d866ef7cfc570e7c16d7041acbe54"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "prefix-bridge-release-06",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-release-06\\state.json",
+        "sha256": "1647b59cbf4719030641c059f574062711cf8514245d9639e41b0322c5b250fe"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "process-pretest-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 407,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\process-pretest-01\\state.json",
+        "sha256": "960de2df0fe4016ee6c202621ff973325beb0cc427aa6a912ab9b3fa24720de5"
+      },
+      "runner_exit": null,
+      "state": "INIT_PENDING",
+      "native_exit": null,
+      "verification_exit": null
+    },
+    {
+      "directory": "process-pretest-02",
+      "reason": null,
+      "state_file": {
+        "bytes": 407,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\process-pretest-02\\state.json",
+        "sha256": "6e7ff1b0fc29aa5695837e89ecaca61aae970b205136cda885ba923a0d10c92c"
+      },
+      "runner_exit": null,
+      "state": "INIT_PENDING",
+      "native_exit": null,
+      "verification_exit": null
+    },
+    {
+      "directory": "root-asan-thousand-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 765,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\root-asan-thousand-01\\state.json",
+        "sha256": "5b43ece3a6ad52e73c037d3bf85591de922f7f4331976845b25b903219e5b992"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "root-debug-thousand-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 767,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\root-debug-thousand-01\\state.json",
+        "sha256": "b42932619d55ed03f875ab6723457d3d211a5a1e353eab63e58b1a5ea2434dd9"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "test-bridge-release-01",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 575,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bridge-release-01\\state.json",
+        "sha256": "e409cd9c6b8c6336ee7b7a9314ca5a3b229c45bbf44ed018f5959d473a0a0dae"
+      },
+      "runner_exit": 8,
+      "state": "STOP",
+      "native_exit": 8,
+      "verification_exit": 1
+    },
+    {
+      "directory": "test-bridge-release-02",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 575,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bridge-release-02\\state.json",
+        "sha256": "5e13caf368e52736cc8c4029e830aa5cf498b2537b541ed9328e76d23ae67ff8"
+      },
+      "runner_exit": 8,
+      "state": "STOP",
+      "native_exit": 8,
+      "verification_exit": 1
+    },
+    {
+      "directory": "test-bvi-asan-01",
+      "reason": "process-integrity",
+      "state_file": {
+        "bytes": 566,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bvi-asan-01\\state.json",
+        "sha256": "8f01cdb40c5336ab17416c5210779c5a9d00102aa028433fc777288aacc16682"
+      },
+      "runner_exit": 125,
+      "state": "STOP",
+      "native_exit": 8,
+      "verification_exit": 1
+    },
+    {
+      "directory": "test-bvi-asan-stack8-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 769,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bvi-asan-stack8-01\\state.json",
+        "sha256": "15734401a37b58af893af9033e722190ad64fdcbb9b38409a2ca30f3735c2723"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "test-bvi-debug-01",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 565,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bvi-debug-01\\state.json",
+        "sha256": "0a099b3902a52f3c229ea4eb394ef4e31527e8422965ea30f8109ea291f32197"
+      },
+      "runner_exit": 8,
+      "state": "STOP",
+      "native_exit": 8,
+      "verification_exit": 1
+    },
+    {
+      "directory": "test-bvi-debug-stack8-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 771,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bvi-debug-stack8-01\\state.json",
+        "sha256": "4e3825da91100735f91c2b474ea0babbd6516c88eb3a41d5d53cc5e03e6d9626"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "test-bvi-release-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 761,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bvi-release-01\\state.json",
+        "sha256": "515c60cf40f19b3e5f87614f825b722605ee47304fcba8b554bf82a878850eb9"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    },
+    {
+      "directory": "test-root-ninja-asan-04",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 577,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-root-ninja-asan-04\\state.json",
+        "sha256": "4983efd4a296eb200c8c0b02f384bda8b1044fd8b9c52eb93d479529069a8c7c"
+      },
+      "runner_exit": 8,
+      "state": "STOP",
+      "native_exit": 8,
+      "verification_exit": 1
+    },
+    {
+      "directory": "test-root-ninja-debug-01",
+      "reason": "exit-predicate",
+      "state_file": {
+        "bytes": 579,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-root-ninja-debug-01\\state.json",
+        "sha256": "c16790b3d0ec20cb165ea0d65f4641a4a5b5acb9459f0dd3c79745a2b8a27a2d"
+      },
+      "runner_exit": 8,
+      "state": "STOP",
+      "native_exit": 8,
+      "verification_exit": 1
+    },
+    {
+      "directory": "test-root-ninja-release-01",
+      "reason": null,
+      "state_file": {
+        "bytes": 775,
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-root-ninja-release-01\\state.json",
+        "sha256": "092e0eed50ee577a72b5ab7b7ae7d2c2997c754f549c528adcdf87a3a0a04c37"
+      },
+      "runner_exit": 0,
+      "state": "COMPLETE",
+      "native_exit": 0,
+      "verification_exit": 0
+    }
+  ]
+}

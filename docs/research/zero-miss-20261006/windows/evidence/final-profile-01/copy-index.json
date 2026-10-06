@@ -1,0 +1,1409 @@
+{
+  "copies": [
+    {
+      "relative": "receipts/pixels-profile-asan-01.json",
+      "sha256": "0b5775c76e6051e375562fef571725e63dc7c43af6f3d28cab8f377b6ea039d5",
+      "bytes": 4152,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-profile-asan-01.json"
+    },
+    {
+      "relative": "receipts/pixels-profile-asan-01.json.rows.jsonl",
+      "sha256": "6b27c4f15d516206bd2a769a48989612c0e80440273532ac7baafee90b2e7c65",
+      "bytes": 918644,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-profile-asan-01.json.rows.jsonl"
+    },
+    {
+      "relative": "receipts/pixels-profile-debug-01.json",
+      "sha256": "d25ddac1267e9f38e2921320d12920bd453fe9fb6832e4715b14fca0d07423a6",
+      "bytes": 3791,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-profile-debug-01.json"
+    },
+    {
+      "relative": "receipts/pixels-profile-debug-01.json.rows.jsonl",
+      "sha256": "a2f21168527d853e35347d6a8dbde21acbfdecf79252612e955588b025c42dd0",
+      "bytes": 918644,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-profile-debug-01.json.rows.jsonl"
+    },
+    {
+      "relative": "receipts/pixels-profile-release-01.json",
+      "sha256": "1c4d4fc87e73597021325f168ec641c31424e4cbd70c6928ce9e32cc6e3bea44",
+      "bytes": 3653,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-profile-release-01.json"
+    },
+    {
+      "relative": "receipts/pixels-profile-release-01.json.rows.jsonl",
+      "sha256": "877bc57e49022237864ef855f1566ee05760eea4f1d1a1c98cdd638164684a0a",
+      "bytes": 918644,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-profile-release-01.json.rows.jsonl"
+    },
+    {
+      "relative": "receipts/prefix-profile-asan-01.json",
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39",
+      "bytes": 10101,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-profile-asan-01.json"
+    },
+    {
+      "relative": "receipts/prefix-profile-debug-01.json",
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39",
+      "bytes": 10101,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-profile-debug-01.json"
+    },
+    {
+      "relative": "receipts/prefix-profile-release-01.json",
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39",
+      "bytes": 10101,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-profile-release-01.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-0.json",
+      "sha256": "68f73fcb53b60a4d9b73a43c62c8c5ca05c2c1eddc38b31caf0c050d6d0f18de",
+      "bytes": 918,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-1.json",
+      "sha256": "2931fd83ae6edcdf9db0149af298a98128ee4125392c4afea6fe34c0491cc091",
+      "bytes": 924,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-2.json",
+      "sha256": "37d8b3d96595d8ee5db34079a62c88a5efb75f0f766f10781cf30254264aa068",
+      "bytes": 911,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-3.json",
+      "sha256": "a6e6644c9ad6f0e6263e86def7c5fb19148df93230bdf416c9544f405bc289d5",
+      "bytes": 1358,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-4.json",
+      "sha256": "e79baae0401f213ff438e3976a24331d91b9ff68e15308b6ddaf579964dbb865",
+      "bytes": 1356,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-5.json",
+      "sha256": "3035eb0d90e9a33ec0913d70af32b82cb1483401df06f06f2d9b9579f3535f37",
+      "bytes": 1556,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-6.json",
+      "sha256": "ffc7fbe748e78bfed6b1a7bacd2640a93ea78117ad5d583a1dc415283dd3a507",
+      "bytes": 1764,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-7.json",
+      "sha256": "20503d1900b0cbc94b6183e1697dd23ddfc413d7d1912e40a1e1a6279efe036a",
+      "bytes": 2132,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-command.json",
+      "sha256": "a28eb859afd265eaa94f298291a3f8b5022651293dd965e1d0c7e2dd745fb6b2",
+      "bytes": 703,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-command.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-result.json",
+      "sha256": "803fc8e3ec65e1281f58c8ae2f31a1a9b6b00914e50aa8ee0e10f62bd5ccf0f8",
+      "bytes": 2116,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-result.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01-verification.json",
+      "sha256": "a09cdbdb78288d5e6a76b672b8f40dd61fa458fd24d083cc10746692858df566",
+      "bytes": 3280,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01-verification.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01.stderr.log"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\build-bridge-profile-asan-01.stdout.log",
+      "sha256": "01abac3b6be6349582b463c2a700e7538566655d8b37db965edac0ee11360952",
+      "bytes": 10187,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\build-bridge-profile-asan-01.stdout.log"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\contract.json",
+      "sha256": "5205425349dd5d6e869b18787f08439cd806b9d54a25897888e80ca6df3f57aa",
+      "bytes": 487,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\contract.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\freeze.json",
+      "sha256": "ed435f63f75832663bf99f71871ce70314ed1f9fa7c257641b69f74eb0e515e7",
+      "bytes": 53357,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01\\state.json",
+      "sha256": "5583009b100df4a4a583bef2056479e6904645e008cd8b82c828ddb1ea29beeb",
+      "bytes": 779,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01\\state.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-asan-01-inputs\\spec.json",
+      "sha256": "1c9dc0b7a01b3e43bf5a8d7c2e9f39e4837041aa2c3ff0aed36c4c6a7e52020d",
+      "bytes": 39825,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-asan-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-0.json",
+      "sha256": "6045f6c3f569550163ab5ed03af234353a0cb05c8b3f679557ab81c85d2dfeee",
+      "bytes": 919,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-1.json",
+      "sha256": "99e8cc1878704c873be6a08d54f6e3ef2a7f40cf488766fe7ca2845dc1e5e16f",
+      "bytes": 925,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-2.json",
+      "sha256": "2afe646e1486facc92eec4940f88057eb2b4701817b5ff14778ebea1506d5582",
+      "bytes": 912,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-3.json",
+      "sha256": "9865c74716fb381b56dd51038cdf042d0f5e414549a2763819a80d78660ca147",
+      "bytes": 1359,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-4.json",
+      "sha256": "12feda804eddbeadd423d5ff334b6e55b61a8cd46bdeacca34897e035c4ddc4e",
+      "bytes": 1357,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-5.json",
+      "sha256": "5edd8b73e6fe66b60fdbac4c695f37efd0a3ac8e519e79433015bb433053bcc5",
+      "bytes": 1557,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-6.json",
+      "sha256": "c74f89456bda382e1b9c641fb3e5fb570958a0975fed83780681d19926f48e28",
+      "bytes": 1765,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-7.json",
+      "sha256": "1160b4cf8c236e73438a468be8cd4a3eab2a571549db1e2b4d8690db985ac3fc",
+      "bytes": 2136,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-command.json",
+      "sha256": "2a912d720e694f963a35d5ebe284ab9c665a06acea01d6bd3b33d314fb1eb0fd",
+      "bytes": 707,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-command.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-result.json",
+      "sha256": "d53f7467097011cbc00c4b95c34217b675de1ab61cf6fd9b95f12664e211f95c",
+      "bytes": 2120,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-result.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01-verification.json",
+      "sha256": "8b4990e1d90c82ce3050c2765ebf1f92f1586c6322572e2bc8ffdbd8d537ef4f",
+      "bytes": 3305,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01-verification.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01.stderr.log"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\build-bridge-profile-debug-01.stdout.log",
+      "sha256": "4d79be378027d806f404956d0fe5f0ff228f63c2d58c7d542bbe4cdd9d37fe7e",
+      "bytes": 10188,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\build-bridge-profile-debug-01.stdout.log"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\contract.json",
+      "sha256": "f495a4454acee4b9c36dc077b5bf7817139329b394818bf6f68541c18a6badfd",
+      "bytes": 489,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\contract.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\freeze.json",
+      "sha256": "95b0dddb3503b569738aaa5022a0f3dcdd403beeb960243e7f4469638feb7510",
+      "bytes": 47352,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01\\state.json",
+      "sha256": "373cc5b680e4a48d0f57941863ac423ea10df393ac50248436786dda3fde6fda",
+      "bytes": 781,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01\\state.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-debug-01-inputs\\spec.json",
+      "sha256": "40a7e911ee792fe489ee2fb285667d49383bba48fae6b364092948b552700c9c",
+      "bytes": 36248,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-debug-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-0.json",
+      "sha256": "49a2ae8f4563fc6093a6e342d4f7b6d2319161a7a89f7beeba7122f24ea2eaf9",
+      "bytes": 921,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-1.json",
+      "sha256": "f2f97103a311a77e295d16a9b0ea593fff8c239c13d588b80e527e495b44fb0a",
+      "bytes": 927,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-2.json",
+      "sha256": "f79a79316cd7e94f3faf01a9876ea640ee942b43e6a87b0f32854298b25229a6",
+      "bytes": 914,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-3.json",
+      "sha256": "2d8fc6013e98e84f5636ed431e615757fbfb6a130d4f8dffc9d6849937989ba1",
+      "bytes": 1361,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-4.json",
+      "sha256": "73dee986d71aa6b697faa532838139e2e6d7af0100f7bf57c5095aa87500efb1",
+      "bytes": 1359,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-5.json",
+      "sha256": "63b1eae00cb803d0316a4e2159435a3fe3e1cb907b23795bcb1c2be2591797ca",
+      "bytes": 1558,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-6.json",
+      "sha256": "297ab5331b769732ab4c8d9a06199dc5c7cd04b2550159281d88183df8cc99a0",
+      "bytes": 1765,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-7.json",
+      "sha256": "11c441ecef52dd0c93d4be6255382a12818c9d7f861f42092202eabc82bfcb02",
+      "bytes": 2136,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-command.json",
+      "sha256": "e0634ac19ee2e35d1533e882c2dfcb21c3ad473e5029f84270e3ac683ff81ec6",
+      "bytes": 715,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-command.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-result.json",
+      "sha256": "37d68ebb3c0b7f65f89cb43e638a7d9388a06ee3ecedd07b146ed6752ee8cd43",
+      "bytes": 2120,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-result.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01-verification.json",
+      "sha256": "88b841fd3556e7d7e95026f769ca8aeebce86ff49d2f1ebf9fd1d48423581bee",
+      "bytes": 3355,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01-verification.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01.stderr.log"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\build-bridge-profile-release-01.stdout.log",
+      "sha256": "932efef9755f79e123577bcf2d3a5d39988722e488613f6129a0a46d177d8b41",
+      "bytes": 10190,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\build-bridge-profile-release-01.stdout.log"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\contract.json",
+      "sha256": "fb83e2dc42c57bdc9871651d3722edf72b28257192ce3a217c9493932a0230c3",
+      "bytes": 493,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\contract.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\freeze.json",
+      "sha256": "683d456d4d7cfef58356fe4e727c26d611ab73f362d6e525150e9b22bca8affb",
+      "bytes": 47356,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01\\state.json",
+      "sha256": "ffa795511da54e96b1dcb09b721c03f7679737f03272f81f34e46e4516ed7c04",
+      "bytes": 785,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01\\state.json"
+    },
+    {
+      "relative": "receipts/build-bridge-profile-release-01-inputs\\spec.json",
+      "sha256": "5cb15c61e2869c906ec6448e035a1ea6df2291b5d98108db48477ecbc9a96d9e",
+      "bytes": 36256,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-profile-release-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-0.json",
+      "sha256": "37b834eee9fb237bad7f7d58d1d82df4c815efc0ca6b838f073831b4d3859cda",
+      "bytes": 922,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-1.json",
+      "sha256": "203bb0ed3d281ece45f7be54db33130f552d7378f4209b071a750026d258f117",
+      "bytes": 928,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-2.json",
+      "sha256": "faa726a6550763fe2e859d28f40d2dd8c8dbd04e496c480109c9cfdefd7c1e6c",
+      "bytes": 914,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-3.json",
+      "sha256": "cb9bd2b6f0c8603ae38e5a5ca4f9446fc67891024cdd0d05de27b61d5d268b74",
+      "bytes": 1359,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-4.json",
+      "sha256": "28e58eef2c18fa4592c9875a6f8b8d76a7c2f263aa65bc9aa1925f64f7d7f6bd",
+      "bytes": 1357,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-5.json",
+      "sha256": "d75bf05d3641bba1ae588a6ba0d0aa55df6e629c1e2cf12d737af7b58984fc5b",
+      "bytes": 1555,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-6.json",
+      "sha256": "5552007ceb7633f4aeba65352a0330df4f1e2b8c4ec2d44d064bfa8b02139c99",
+      "bytes": 1761,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-7.json",
+      "sha256": "aa871dcf1e250d8a0e94a4303c0daf540426456feb3b4ae2336f806e1fc1e812",
+      "bytes": 2116,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-command.json",
+      "sha256": "bce710c652ee34c0bfc52a207dd2657aea17e93f2e261f1df4ea0f9507cccf84",
+      "bytes": 727,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-command.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-result.json",
+      "sha256": "3f1e64250c18393b3e76e4a8e245129d28b9d3bf821aea9eae124f6447736e5b",
+      "bytes": 2100,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-result.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-verification.json",
+      "sha256": "718094fbe013434eeee146622138c4e954ac595fe8d81bcc694bd87618835b7e",
+      "bytes": 3379,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01-verification.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01.stderr.log"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01.stdout.log",
+      "sha256": "1a0aa2536dfd5ea74e5d78ff970ec25f9b09b107cd5546e61b73c3fcb74b2f3c",
+      "bytes": 1182,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\configure-bridge-profile-asan-01.stdout.log"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\contract.json",
+      "sha256": "da80b672985d2cfb5793d408cb42c7290e22aac86cd79a3ec5541bad57491a60",
+      "bytes": 499,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\contract.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\freeze.json",
+      "sha256": "da51b391c9a9fa7b24f2d341dc25a2365040afd29babeb9abc84933dfb535d5c",
+      "bytes": 53370,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01\\state.json",
+      "sha256": "675cc6f1f0774a8e65743d9da52a1bb93bf5580f828f3571c2914da492afb292",
+      "bytes": 787,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01\\state.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-asan-01-inputs\\spec.json",
+      "sha256": "a9eaedb15f9fdb2eb22d3b9859173cefc40506715fa8e6d33630b5c0eaca3991",
+      "bytes": 39849,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-asan-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-0.json",
+      "sha256": "d11055ef3a06081f5bc6aba9fcf7131566d0a6f38fe86ac3d98f6b631f067877",
+      "bytes": 923,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-1.json",
+      "sha256": "ebd85f4604360e0bb5100d249206c0d4e9f88eac4c9e204cd0f1686c0976b9f2",
+      "bytes": 929,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-2.json",
+      "sha256": "f115fffbf56e66a878241d0254c744a4281ceacb51d0faf8d35947bb9762ddd8",
+      "bytes": 916,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-3.json",
+      "sha256": "c9541d50cb8eab5c9d6ec20bfd6ddc6a862a8381bd66c99bebe6795ef07e1c25",
+      "bytes": 1363,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-4.json",
+      "sha256": "d6def781826bf8ef127bb8ac6309899ae24e0e98780f0d770d601bb14b2ab7ab",
+      "bytes": 1361,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-5.json",
+      "sha256": "7fb8e61e23df93a51b0d2cce4f2d794bb3ec581f1f0650ada8b6c1aca25ec114",
+      "bytes": 1559,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-6.json",
+      "sha256": "eb8e1a9d4dcf1880fd420388fde0a9d7b354427094a574ba4db3b9849691cb62",
+      "bytes": 1764,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-7.json",
+      "sha256": "bc9cd41386a4894d05c7d33a046049c8503af0a553643284fcece686d7a82921",
+      "bytes": 2123,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-command.json",
+      "sha256": "b8731ba68403cac4dfa771fdbe7f346799afaf6c2ee6b4058247817b53a46484",
+      "bytes": 731,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-command.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-result.json",
+      "sha256": "25d89b8758b00089cfdd717033937da59dbe25bb5bb8c5994cee3e3b1a659ed2",
+      "bytes": 2107,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-result.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-verification.json",
+      "sha256": "b8355cde428c7c1151c515b3f2eee5fcb2d9683a61dc39a109d304d20243da00",
+      "bytes": 3404,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01-verification.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01.stderr.log"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01.stdout.log",
+      "sha256": "53a518190a70c01b3fb4cf548ad1c0e57881d99269e4662dc0e62904b6437478",
+      "bytes": 1184,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\configure-bridge-profile-debug-01.stdout.log"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\contract.json",
+      "sha256": "b2bc028766b98472424c237289c0c9385ef82b91ee9610891e6e50a08c8d16ee",
+      "bytes": 501,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\contract.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\freeze.json",
+      "sha256": "ec268dae3b957352285229be6e1ce4f2a2f7e644dcef1f703730799cd488f8ae",
+      "bytes": 47365,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01\\state.json",
+      "sha256": "f2ea6b7aeb738a47bc143cb70770b99847ede7361621879aa58a6548f7c42085",
+      "bytes": 789,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01\\state.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-debug-01-inputs\\spec.json",
+      "sha256": "1b44eaabde4b44b01d487e73a0c4393e55e74231338c64a5da8b9324d2cece16",
+      "bytes": 36272,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-debug-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-0.json",
+      "sha256": "cb2a90bef1069c953110355d2342fec32c218c6da94d651b20b40dc40c9fdb9c",
+      "bytes": 925,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-1.json",
+      "sha256": "ca05bf4d4b9b8830a9b2309c47c4b2b62837f8271e40c41c22352e5b0d9602e9",
+      "bytes": 931,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-2.json",
+      "sha256": "7120369fba2333e08be61b326af9a0d428c531c08ad2cd5362d5e95441ba95c2",
+      "bytes": 918,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-3.json",
+      "sha256": "73c2c08157286bad7b009d18eda9c4c7ada1ac74ca7479e2637e80665353d8a2",
+      "bytes": 1365,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-4.json",
+      "sha256": "3737a5c3e58f2fad8362c6cfbb36f63bdded994b1dbcd54fd35ebd141d79382e",
+      "bytes": 1363,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-5.json",
+      "sha256": "616a81e1354d959cf41b81a029c609a7a8fd9a575366f5129ec79ebe34c44937",
+      "bytes": 1561,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-6.json",
+      "sha256": "8399a6e9c2631f0589193d08d420a2112a7bc03f519764eb431974661c89e1f3",
+      "bytes": 1767,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-7.json",
+      "sha256": "7ef4bf442dbcf1a61ae87f7eb2d1afb97da5fee49c260cbf0c17ec6a4b8f4a73",
+      "bytes": 2124,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-command.json",
+      "sha256": "8ec8d87301fad037fdf00ffbd35c3a8db61fffb83e6e5b61343c358d87dc13cc",
+      "bytes": 739,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-command.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-result.json",
+      "sha256": "f49cdbbf8d89eef634befd679fd46c3bed7f692088e9ae01a2fda89f9c15728c",
+      "bytes": 2108,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-result.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01-verification.json",
+      "sha256": "c9da2cb5b1194384a3188ca2b9dfdbb65a68fffbd947115b3b0f912d818a00a6",
+      "bytes": 3454,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01-verification.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01.stderr.log"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\configure-bridge-profile-release-01.stdout.log",
+      "sha256": "cfeba4a20b63facba9ce28300205a263f1de4bbcaf1b8a7c8d0a6c1b9847e9b1",
+      "bytes": 1188,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\configure-bridge-profile-release-01.stdout.log"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\contract.json",
+      "sha256": "412db7632c88e16dfc9c236f6bc5479679bdc71eb210a959f392f546b52cf2ed",
+      "bytes": 505,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\contract.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\freeze.json",
+      "sha256": "326bba43bdab93338fb63c5cb2b655e1c78e12d53f1fac7ac403b82376a5ef4d",
+      "bytes": 47369,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01\\state.json",
+      "sha256": "6ca9229e7a9eeff675daaf2d5a5a93e44c0591d85d61914fba02a49e808293e5",
+      "bytes": 793,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01\\state.json"
+    },
+    {
+      "relative": "receipts/configure-bridge-profile-release-01-inputs\\spec.json",
+      "sha256": "5d4917b431de4ebad8b941f0f4bf74bf704a3aaae2093653900d6303dd2d798b",
+      "bytes": 36280,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-bridge-profile-release-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\asan-build.json",
+      "sha256": "bcc569677f74e2f2e30bc841db2dd24e77ee0ef4b8c1a52abc70c82b15999051",
+      "bytes": 30081,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\asan-build.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\asan-configure.json",
+      "sha256": "5b16d806ad65af4f6269cb014fcf33e79d6e1b293a20ed5aea70ce6d3fecf85c",
+      "bytes": 30580,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\asan-configure.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\asan-prefix.json",
+      "sha256": "c6ffd5ed7c3b82483f3fc9b2f6a05bb0729e461e2d6ba41307ebe8b4b3a196e8",
+      "bytes": 32332,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\asan-prefix.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\build.ps1",
+      "sha256": "b551aa510a2c8adbbab354890bdaf9a8d50b3521cd98b605eace57b544625a43",
+      "bytes": 2418,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\build.ps1"
+    },
+    {
+      "relative": "receipts/final-profile-01\\capacity-plan.json",
+      "sha256": "577ea5a52e504b49e684682da05cab39b0e0080050a1391aa6b6ddcfd8976666",
+      "bytes": 288,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\capacity-plan.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\debug-build.json",
+      "sha256": "198f056767746170217f096ccf1ea30cb7c2e1af03a82f207b84cc0119b6d450",
+      "bytes": 26450,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\debug-build.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\debug-configure.json",
+      "sha256": "69fc35d94e464f9bc53bc306fef93210af451776b29e3f3e1cd9954570b77bf7",
+      "bytes": 26796,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\debug-configure.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\debug-prefix.json",
+      "sha256": "4c505d19240ef1eb6a25a864f6b506c9c360db0448a4eaa5f85ef630a19723c7",
+      "bytes": 28448,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\debug-prefix.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\export-final.ps1",
+      "sha256": "1b048c88f1a7b551b8b9cfc754b611f12bbf3fec2a3f9c0481528560b0f3d486",
+      "bytes": 11866,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\export-final.ps1"
+    },
+    {
+      "relative": "receipts/final-profile-01\\prefix.ps1",
+      "sha256": "98b2604dfe3455a1231c31aa236eb425133e4212860eec399a7b4af4d5804d8f",
+      "bytes": 2190,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\prefix.ps1"
+    },
+    {
+      "relative": "receipts/final-profile-01\\release-build.json",
+      "sha256": "88a6b9f03cea6b22555aa278395e2216288e1395d7fd7fa62b5448cad4cd7384",
+      "bytes": 26456,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\release-build.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\release-configure.json",
+      "sha256": "3e4086d95de626c1defbca62a00272927712752c63c7ad726a6464a5843bfb8d",
+      "bytes": 26802,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\release-configure.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\release-prefix.json",
+      "sha256": "d9045781bbd125b873519f49e9de15cac01ec80e2b3d533b0622d3acd7202da2",
+      "bytes": 28474,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\release-prefix.json"
+    },
+    {
+      "relative": "receipts/final-profile-01\\stage.ps1",
+      "sha256": "42635f7254b1f29d4a944761aa6ce60bc02b06992ff4629612ef65d901f656a6",
+      "bytes": 224,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\final-profile-01\\stage.ps1"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\contract.json",
+      "sha256": "75ed7bee99cd00758aebe07f099bd28a536edd4947b5c80bff739a56fa979a5e",
+      "bytes": 489,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\contract.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\freeze.json",
+      "sha256": "b22e9af1ab6fd5799202edc4d4cc5a3af167332e14b391c44444bdb1265986cb",
+      "bytes": 5816,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-0.json",
+      "sha256": "9c1ce50172199597303762365da201c1f14e85fdce29e336624759a389afe757",
+      "bytes": 919,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-1.json",
+      "sha256": "3f70bef4e66093fc2a78f350394b5e24969fca016c76524014bea1db6b0f77ac",
+      "bytes": 925,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-2.json",
+      "sha256": "c714fe125554be192df9fab06ab8477ced3c1b41f6a19587659da064a7eba8ad",
+      "bytes": 911,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-3.json",
+      "sha256": "183b6e7e1f0e96f4ae08dbf0c657ce1e41982e8cc7a885ae7e4e9b9c7b338759",
+      "bytes": 1357,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-4.json",
+      "sha256": "409ee38fcfac52ad5bbca67f764693e75813767b43dd96ac1ffbe9bf5b282209",
+      "bytes": 1355,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-5.json",
+      "sha256": "66d0112af97aa9d8f66e67d5f01cf38c92a6bd788ab69c599e3d1ca89aca0b0a",
+      "bytes": 1554,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-6.json",
+      "sha256": "e3e1a447b4d9aaf63eb0a4b131656bddd2ba89a0ab4429e582492f7cd5cc706a",
+      "bytes": 1761,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-7.json",
+      "sha256": "8123df14c3581ae382eb10f438ca35c33b44ed1ac6c28383e9853775b223cbd0",
+      "bytes": 2117,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-command.json",
+      "sha256": "d34a165033cb5cded480b4e930d3d964fa3e339706f9f2b85ac35c94261cbf29",
+      "bytes": 708,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-command.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-result.json",
+      "sha256": "8f8b214d74327397c464d559e6da22d2a71f7351cb6071960cd99ae543627003",
+      "bytes": 2101,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-result.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-verification.json",
+      "sha256": "8d4eb7cee48b285c532268f6217b96a4486e80cbb8bccecdcb0ea246bf055d05",
+      "bytes": 3302,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01-verification.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01.stderr.log"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01.stdout.log",
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5",
+      "bytes": 89,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\pixels-bridge-profile-asan-01.stdout.log"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01\\state.json",
+      "sha256": "2283fb23e795b32d86d0ea38a9c6e20f41499852015caf8c1292f6ae52963fcb",
+      "bytes": 781,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01\\state.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01-inputs\\spec.json",
+      "sha256": "1bc83b3dc06c687cc404bfd065c0c46baf067b6ff8a1d60d41a68b32684a2d6a",
+      "bytes": 2901,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01-pixel-controls\\pixel-leaves.json",
+      "sha256": "bc9b3d6eb8ea0e646bd0ecafc025cadf4842e605705b0c011a3ff805df11cd56",
+      "bytes": 81346,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01-pixel-controls\\pixel-leaves.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-asan-01-pixel-controls\\verification.json",
+      "sha256": "90da500008f667da7cb66b78086b29363f31e12a4962c86f6bfbed9d334bc6d5",
+      "bytes": 4986,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-asan-01-pixel-controls\\verification.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\contract.json",
+      "sha256": "fd291cb7ee82c300b1757e3459568cb239a8a4eb3d1b224c7b19e123b78e6fc0",
+      "bytes": 491,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\contract.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\freeze.json",
+      "sha256": "5bc3d614db5c6056aae35a66d80a7b41c1fb0f34670423c966c3fb74bcbe656d",
+      "bytes": 5379,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-0.json",
+      "sha256": "882157a7dea3d6f1dd19845540ac20fdf0ebf0c82cb83a0c83340e5e95e92f1f",
+      "bytes": 920,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-1.json",
+      "sha256": "752803741544d66c6f81dc79fc26ce9a6ed68a5f561ed76fcb47717afd7763d9",
+      "bytes": 926,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-2.json",
+      "sha256": "449e8f8efcf137480558449d258a1eb49d1d3e2fd056e9d1768b4a52bdd05069",
+      "bytes": 913,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-3.json",
+      "sha256": "bce7b7212a22b8ac499a444f08fab54b87be527ee8abe1a581f695bcad660e8c",
+      "bytes": 1360,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-4.json",
+      "sha256": "510ee6bbf0f2640259e30db68c4ed3266587534041cdc6c3f4f42f1a101e29a5",
+      "bytes": 1358,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-5.json",
+      "sha256": "a74368347ef17270104f87133cba09198ca098e1975e56f287ed10306307265c",
+      "bytes": 1557,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-6.json",
+      "sha256": "c5f5423cff1daf7843aaaf69680579c263d5438449b1aac4220b281e7277d944",
+      "bytes": 1764,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-7.json",
+      "sha256": "91a32d22d4f9469646c80a8bf559027092775e1d14427b1bee32b61b5b5c4c75",
+      "bytes": 2123,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-command.json",
+      "sha256": "be2c806d4c669b0c3b6842bf3f8ca26a0ac017e22f917a191ceaf82afdc23322",
+      "bytes": 712,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-command.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-result.json",
+      "sha256": "e1f9196bb3af76c0b48da271850bc92f20eb55773d1336bdbd4035b64e57f810",
+      "bytes": 2107,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-result.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-verification.json",
+      "sha256": "e2d8880778914065d8c1057899098194e1caadca9581421ccee2de6a0a2537a3",
+      "bytes": 3327,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01-verification.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01.stderr.log"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01.stdout.log",
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5",
+      "bytes": 89,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\pixels-bridge-profile-debug-01.stdout.log"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01\\state.json",
+      "sha256": "c6cb567c691276ce3b9b18bcb6eee30e850112c4ca4221c800b934d0e8952abf",
+      "bytes": 783,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01\\state.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01-inputs\\spec.json",
+      "sha256": "8fd7026549e111a5c693cb1828d1e753fc6577b47ac3c1f73dccdf01d8d08d79",
+      "bytes": 2657,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01-pixel-controls\\pixel-leaves.json",
+      "sha256": "2e18e436d6686303f951870a1aee52bddbf439deb406438e0d171259ec67d5a0",
+      "bytes": 81346,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01-pixel-controls\\pixel-leaves.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-debug-01-pixel-controls\\verification.json",
+      "sha256": "d2c963dff2e693c6e672b9ea8b17d86bf11ad3017af31d0916deeecd4a9b140e",
+      "bytes": 4067,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-debug-01-pixel-controls\\verification.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\contract.json",
+      "sha256": "5f02a43ac7420ee8041788b5dfbd90ff1642ba654655f4f39567f9bc0d74f8aa",
+      "bytes": 495,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\contract.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\freeze.json",
+      "sha256": "8355450910e208c05f0f88ffa41a6ba535a88596cbe668382f226eed2c81ad00",
+      "bytes": 5403,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-0.json",
+      "sha256": "2d202ef796a6b8da4744a41fd1e426aaeeb3206e3198df23c46830b7367a16c5",
+      "bytes": 922,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-1.json",
+      "sha256": "77fba39bb254f70406d63b664c3e8a08917f234473b42f64efb8fb1449816025",
+      "bytes": 928,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-2.json",
+      "sha256": "13f0c10998188f7a0cbc1e0937d0562526052e0063092ae2beabffef847c0cbd",
+      "bytes": 915,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-3.json",
+      "sha256": "e2e89b0c1ec57c50304b092b1037465e798c5a4b7a6f5adc58bd7f2c7f0fdc16",
+      "bytes": 1362,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-4.json",
+      "sha256": "3a669cea68c80bd87ac1378d5301066fcc2426859dc1b17c2c05d0d2fb2fb07a",
+      "bytes": 1360,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-5.json",
+      "sha256": "e7e5f55bc2645cd9bdb58a9aa4569150a61a513149254aee1857762e3822282a",
+      "bytes": 1558,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-6.json",
+      "sha256": "ebb71489887609f5c9a52150c84a724db34943cf054e0c7b429b2859a8cea13f",
+      "bytes": 1764,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-7.json",
+      "sha256": "5f59a5acbaf226a3b8736ad5fc90587d29b7aecb7c401f83b690c5e48579faaf",
+      "bytes": 2117,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-command.json",
+      "sha256": "3a33886deac501d0f10817c4080a8c5c44b58744c71e4bafae878deddce0664c",
+      "bytes": 720,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-command.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-result.json",
+      "sha256": "7e30aa4a8eac501d769b8fc43ae64123d6c6a9f66656ac8982912db06de9a70d",
+      "bytes": 2101,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-result.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-verification.json",
+      "sha256": "933e06b996f427029687834b3b78b5171c040292c597091c874e7fcdb864f1a2",
+      "bytes": 3377,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01-verification.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01.stderr.log"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01.stdout.log",
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5",
+      "bytes": 89,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\pixels-bridge-profile-release-01.stdout.log"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01\\state.json",
+      "sha256": "4825f510e16853cca20d6275c721fb807de40bd944e5c73a02260451efa7af21",
+      "bytes": 787,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01\\state.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01-inputs\\spec.json",
+      "sha256": "1688b1df5328533dd91f02d55f660cd4a5db5e1360472dfcdd7dff49a4942d25",
+      "bytes": 2689,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01-pixel-controls\\pixel-leaves.json",
+      "sha256": "964d5cac821d85ccda89b9d6464229b7e27754a8279e3fe986bcc7ee25816043",
+      "bytes": 81346,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01-pixel-controls\\pixel-leaves.json"
+    },
+    {
+      "relative": "receipts/pixels-bridge-profile-release-01-pixel-controls\\verification.json",
+      "sha256": "8ecd365405c585688d27e7e7b5a1f47f3f6cce179c4f28a873fccd885b7a7050",
+      "bytes": 3654,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-profile-release-01-pixel-controls\\verification.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\contract.json",
+      "sha256": "0565e6d538d547c2627eea5eb5efdc9bd5d483c2055aa2071dd8c6a8ebaa4cdb",
+      "bytes": 489,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\contract.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\freeze.json",
+      "sha256": "b0eb5df7236667f35f902efc63069a968db8312d982ac242dfc234ed58bf304c",
+      "bytes": 56166,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-0.json",
+      "sha256": "9f0f32485f3fb79c31ab1c8834554e81823ce9f5e565c66dce11fe93a0a35696",
+      "bytes": 919,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-1.json",
+      "sha256": "922e73867644560e28bc4ab539bad5ef81423057f6eb700112e939a5a1d76933",
+      "bytes": 925,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-2.json",
+      "sha256": "b03eb34110bac791734b5783e4379fff3f2b02441f921025f697361730055e6c",
+      "bytes": 912,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-3.json",
+      "sha256": "bdaf38c55fe624f6f577f6baa93f187704d9b19725f58a35c180ae975077a85e",
+      "bytes": 1359,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-4.json",
+      "sha256": "055ff69fd5826db4a3ca69eba15890213561dc9fcfb597f303095ae5f59169f5",
+      "bytes": 1357,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-5.json",
+      "sha256": "cbb1ad9a7f1954ee11845c8d4e9f579ece376b87e7581b61c634e6bc94ee2369",
+      "bytes": 1554,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-6.json",
+      "sha256": "b2b223146eae74438bac5de3edef7dd3ec00da55f24116fc6e4eb0dd6a8ac272",
+      "bytes": 1760,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-7.json",
+      "sha256": "16445b1d9d38a18ebd05efcb43cef065e667a342840a93ade3ff47e4026d0186",
+      "bytes": 2113,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-command.json",
+      "sha256": "3bf3e9103625c116185ea927de677974ee2b61f1bb49e5ad2166a2615f4410fc",
+      "bytes": 708,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-command.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-result.json",
+      "sha256": "f47155717abedeac61630dd173c564baaab8174a5b1234d418c7480b96c20e82",
+      "bytes": 2097,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-result.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-verification.json",
+      "sha256": "c2468c8ccc8a9f3c8c8206d8acbed0c3752fd27b8495a3d95e7e89b7e6ee204e",
+      "bytes": 3302,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01-verification.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01.stderr.log"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01.stdout.log",
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3",
+      "bytes": 77,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\prefix-bridge-profile-asan-01.stdout.log"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01\\state.json",
+      "sha256": "26003bdf4b67f79fa75b96c91870ccb16c8f019f567947c27d3af7ed287e4f1c",
+      "bytes": 781,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01\\state.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-asan-01-inputs\\spec.json",
+      "sha256": "30886a5386a5794f28a7d83747046bc0db918828c7f4d8365062d1b3c67b72d5",
+      "bytes": 32019,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-asan-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\contract.json",
+      "sha256": "eeff855e725ed703272687cce127a4c3a228d9c0fdf98095e271c072c30a462f",
+      "bytes": 491,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\contract.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\freeze.json",
+      "sha256": "f5a98e20563a6b58d2948fef5b4221a0d5315b327ac22e5ba61d77d1f581abf2",
+      "bytes": 49721,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-0.json",
+      "sha256": "77f3f2507ba1aded0e86ce81d4658f29d38e347e3c8d20d90aae1560b34a26e4",
+      "bytes": 920,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-1.json",
+      "sha256": "bc5a11c2f26a9d72e0a931be2a3b2b66b9ce08567101cb204bd496d56de2b540",
+      "bytes": 926,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-2.json",
+      "sha256": "948b23e170c20562c5fea9e287474b03f82634e3b2e080385d5f2895b3c94be5",
+      "bytes": 912,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-3.json",
+      "sha256": "e5775979b7006182eff21e9d6ce2f0413a9de310bf5995c074ac86c4c4710e59",
+      "bytes": 1358,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-4.json",
+      "sha256": "da8e3ecd43339788e83a6f9f1aa7f720be8bbd221e666fbccbda9db087435816",
+      "bytes": 1356,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-5.json",
+      "sha256": "62e971a01cb4c5f7d9bef88cec908386a5aec58a7fda32423746af15b3bc6bf3",
+      "bytes": 1554,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-6.json",
+      "sha256": "edbd8e3f991dd6a49e2c14beb58372c0df5601eed8a389955a40d3fc02df4022",
+      "bytes": 1759,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-7.json",
+      "sha256": "6115a343671b8e18a81d7171309f533fb615d56f1b6d98d1864b530936c20ebd",
+      "bytes": 2110,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-command.json",
+      "sha256": "84da027246ec6517f3dbaeb2d79ab17c2e635f6d2217e3e709c6807137613342",
+      "bytes": 712,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-command.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-result.json",
+      "sha256": "84f6738fbe4a021bc8839f9831efb4def717919207c9e6285ab8fa494bb068bc",
+      "bytes": 2094,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-result.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-verification.json",
+      "sha256": "cf7df1ccf09969ce72eeb9617d6ab0cabd5922598e8dff87c8c10880a81e3a40",
+      "bytes": 3327,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01-verification.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01.stderr.log"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01.stdout.log",
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3",
+      "bytes": 77,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\prefix-bridge-profile-debug-01.stdout.log"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01\\state.json",
+      "sha256": "4b614aa335366be5753e78dce0de167eda0cb9e84bc50ecac90ea2aa3c381f91",
+      "bytes": 783,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01\\state.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-debug-01-inputs\\spec.json",
+      "sha256": "c13390a492483a9c14e75460dcd22610c94956061c70c8442da017432eebbfe3",
+      "bytes": 28193,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-debug-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\contract.json",
+      "sha256": "73102a0c12741e31ae5c850e0113b0cfd6964c52cfda37df08e573cb71619f61",
+      "bytes": 495,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\contract.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\freeze.json",
+      "sha256": "000b59f0e01e108f52b2de82ddaf5f48abbb7ca62b2a7b034a33a4bf5d986761",
+      "bytes": 49743,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\freeze.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-0.json",
+      "sha256": "73743a87d629322149590a12149a2633f2620a7bb9dce11e8ce27205098770d0",
+      "bytes": 922,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-0.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-1.json",
+      "sha256": "254339465efa9127156b406415de43194d1c1b1501ab96caf833a980b9ebb8d4",
+      "bytes": 928,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-1.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-2.json",
+      "sha256": "058ba911f91a902a4daab6ea9ba780e2008004083dee0ed33126cbd9b1f16f27",
+      "bytes": 914,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-2.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-3.json",
+      "sha256": "5765e7a000709ac2c4c4241d4a53625189f3e2a588f55e94e9921aa5e7c9688d",
+      "bytes": 1359,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-3.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-4.json",
+      "sha256": "970c8c29eba0cb9836eaf3fdc3e924863988511515094e03eba0e72f11cb98ba",
+      "bytes": 1357,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-4.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-5.json",
+      "sha256": "d9e0f9a154a0658c0fc1147cb00853412d554f85f283852cbb79280bdc162334",
+      "bytes": 1554,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-5.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-6.json",
+      "sha256": "26e54d1ee51a19a69a8c04253ef42fab13929c7768d64de84f65eaf59a2a5716",
+      "bytes": 1760,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-6.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-7.json",
+      "sha256": "89b3a4a14e71a2086a8d36d0cdca09b49cc1df799e45689895c30747723fa92b",
+      "bytes": 2128,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-checkpoint-7.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-command.json",
+      "sha256": "592af6a97969e8c7c9d4d75b1a8c683e882dc2753b748e0a42244d8a81b9825c",
+      "bytes": 720,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-command.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-result.json",
+      "sha256": "3dd2dd82fac366b3b58f9ec1f2a12d37f7cbcfd082c5603ff9f12f6e272fccff",
+      "bytes": 2112,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-result.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-verification.json",
+      "sha256": "1153214ef0b3986bbfe6006e72ff3e83ca3449680020c87f9367a25431929aaf",
+      "bytes": 3377,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01-verification.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01.stderr.log"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01.stdout.log",
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3",
+      "bytes": 77,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\prefix-bridge-profile-release-01.stdout.log"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01\\state.json",
+      "sha256": "3ca5a5d169a4fa7d8c4e0d41b8bf297f6bac4431fe3d45103cd4cb97107b4094",
+      "bytes": 787,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01\\state.json"
+    },
+    {
+      "relative": "receipts/prefix-bridge-profile-release-01-inputs\\spec.json",
+      "sha256": "cb98abd9ca7fe32d4e7cfcc948986a0c06086ea98ef033790d7a7c7dd2d01a25",
+      "bytes": 28223,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-profile-release-01-inputs\\spec.json"
+    },
+    {
+      "relative": "receipts/source-frozen-0f81a38-01\\manifest.json",
+      "sha256": "c9cde64a5ea93d34b14208acfcf674cdb0661791b846c472ca26e399abf2f2df",
+      "bytes": 2756,
+      "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\source-frozen-0f81a38-01\\manifest.json"
+    }
+  ],
+  "schema": "pas.windows-append-only-evidence-copy.v1"
+}

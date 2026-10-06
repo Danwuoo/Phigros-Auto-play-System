@@ -1,0 +1,20 @@
+{
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\bvi-io-patch-01",
+  "total_s": 90,
+  "stage": "bvi-io-patch",
+  "argv": [
+    "--fuzz=0",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\bvi-io-adapter-01\\main.cpp",
+    "-i",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261005\\round2\\evidence\\bvi-frozen-suite\\typed-singleton-lines.patch"
+  ],
+  "runner_exit": 0,
+  "exe": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+  "native_exit": 0,
+  "stream_cap": 1048576,
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261005\\round2\\evidence\\bvi-frozen-suite\\typed-singleton-lines.patch",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\x10d_o_bvi_build\\main.cpp",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\x10d_o_bvi_build\\driver.inc"
+  ]
+}

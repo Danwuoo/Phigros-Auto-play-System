@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/d",
+    "/s",
+    "/c",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-debug-01-inputs\\native.cmd"
+  ],
+  "stream_cap": 4194304,
+  "stage": "pixels-bridge-debug-01",
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-debug-01",
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\native-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-debug-01-inputs\\native.cmd",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-debug-01\\pixel_chain.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\pixel-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\pixels-bridge-debug-01-pixel-controls\\pixel-leaves.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\real-pixels-selection-02\\selection.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-debug-03\\freeze.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-debug-03\\build-bridge-debug-03-verification.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-debug-03\\build-bridge-debug-03-result.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800/full-recording/index.jsonl",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800\\manifest.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-debug-01\\bridge_tests.exe",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-debug-01\\current_bridge.lib",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-debug-01\\exact_bvi_v3.lib",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-debug-01\\formal_core.lib",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-debug-01\\pixel_chain.exe"
+  ],
+  "native_exit": 0,
+  "total_s": 900,
+  "exe": "C:\\WINDOWS\\system32\\cmd.exe",
+  "runner_exit": 0
+}

@@ -1,0 +1,15 @@
+TRACE Test entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\test-bridge-release-01-inputs\test.cmd]
+TRACE vcvars END exit=0
+Test project C:/Users/wurre/Desktop/PAS-zero-miss-r4-20261006/out/bridge-win-release-01
+    Start 1: complete_owner_prefix
+1/1 Test #1: complete_owner_prefix ............***Failed    0.19 sec
+prefix assertions=60 failed=2
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.22 sec
+
+The following tests FAILED:
+	  1 - complete_owner_prefix (Failed)
+TRACE Test END exit=8

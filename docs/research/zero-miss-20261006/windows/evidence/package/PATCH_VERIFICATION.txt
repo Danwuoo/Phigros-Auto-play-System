@@ -1,0 +1,4 @@
+cumulative git-am PASS: base=74e54437d4a3ad2b2bd1a3b09312211a92f2359e result-tree=6a4a9950423f0775992780b65b96ce8dcf2bb98e
+PASS: retained candidate/evidence integrity only; legacy remains36fail; actual device/game not run.
+incremental git-am PASS: base=a53a9b7021bcc900f498047f5cc017b42e4711b0 result-tree=6a4a9950423f0775992780b65b96ce8dcf2bb98e
+PASS: retained candidate/evidence integrity only; legacy remains36fail; actual device/game not run.

@@ -1,0 +1,28 @@
+CMake Warning (dev) at C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/share/ffmpeg/FindFFMPEG.cmake:45 (cmake_parse_arguments):
+  The NAMES keyword was followed by an empty string or no value at all.
+  Policy CMP0174 is not set, so cmake_parse_arguments() will unset the
+  arg_NAMES variable rather than setting it to an empty string.
+Call Stack (most recent call first):
+  C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/share/ffmpeg/FindFFMPEG.cmake:144 (append_dependencies)
+  C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/share/ffmpeg/vcpkg-cmake-wrapper.cmake:27 (_find_package)
+  C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake:862 (include)
+  CMakeLists.txt:25 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/share/ffmpeg/FindFFMPEG.cmake:45 (cmake_parse_arguments):
+  The NAMES keyword was followed by an empty string or no value at all.
+  Policy CMP0174 is not set, so cmake_parse_arguments() will unset the
+  arg_NAMES variable rather than setting it to an empty string.
+Call Stack (most recent call first):
+  C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/share/ffmpeg/FindFFMPEG.cmake:145 (append_dependencies)
+  C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/share/ffmpeg/vcpkg-cmake-wrapper.cmake:27 (_find_package)
+  C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake:862 (include)
+  CMakeLists.txt:25 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    VCPKG_INSTALL_OPTIONS
+
+

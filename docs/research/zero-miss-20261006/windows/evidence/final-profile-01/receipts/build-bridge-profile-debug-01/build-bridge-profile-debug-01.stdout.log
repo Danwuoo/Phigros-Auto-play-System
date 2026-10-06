@@ -1,0 +1,88 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-bridge-profile-debug-01-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\config.cpp for CXX dependencies
+[2/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\core.cpp for CXX dependencies
+[3/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp for CXX dependencies
+[4/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\journal.cpp for CXX dependencies
+[5/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\adb.cpp for CXX dependencies
+[6/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\touch_evidence.cpp for CXX dependencies
+[7/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp for CXX dependencies
+[8/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_clip_replay.cpp for CXX dependencies
+[9/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\preview.cpp for CXX dependencies
+[10/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp for CXX dependencies
+[11/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp for CXX dependencies
+[12/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_pipeline.cpp for CXX dependencies
+[13/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking.cpp for CXX dependencies
+[14/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_methods.cpp for CXX dependencies
+[15/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_shadow.cpp for CXX dependencies
+[16/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_analysis.cpp for CXX dependencies
+[17/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset_tools.cpp for CXX dependencies
+[18/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_session.cpp for CXX dependencies
+[19/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset.cpp for CXX dependencies
+[20/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_archive.cpp for CXX dependencies
+[21/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp for CXX dependencies
+[22/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_pixel_clips.cpp for CXX dependencies
+[23/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_recording.cpp for CXX dependencies
+[24/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp for CXX dependencies
+[25/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp for CXX dependencies
+[26/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp for CXX dependencies
+[27/68] Generating CXX dyndep file CMakeFiles\exact_bvi_v3.dir\CXX.dd
+[28/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge.cpp for CXX dependencies
+[29/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp for CXX dependencies
+[30/68] Generating CXX dyndep file CMakeFiles\formal_core.dir\CXX.dd
+[31/68] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\contact_policy.cpp.obj
+[32/68] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\bvi.cpp.obj
+[33/68] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\relation_policy.cpp.obj
+[34/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\core.cpp.obj
+[35/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\adb.cpp.obj
+[36/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\config.cpp.obj
+[37/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\touch_evidence.cpp.obj
+[38/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\journal.cpp.obj
+[39/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\preview.cpp.obj
+[40/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(311): warning C4244: 'argument': conversion from '__int64' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(312): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(315): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(317): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(324): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(325): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\analysis.cpp(328): warning C4244: 'argument': conversion from 'int64_t' to 'double', possible loss of data
+[41/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(773): warning C4456: declaration of 'gap' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(681): note: see declaration of 'gap'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(921): warning C4456: declaration of 'minor' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(880): note: see declaration of 'minor'
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(952): warning C4456: declaration of 'gap' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game.cpp(681): note: see declaration of 'gap'
+[42/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_clip_replay.cpp.obj
+[43/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp(420): warning C4456: declaration of 'id' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_corpus.cpp(390): note: see declaration of 'id'
+[44/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_cold_pipeline.cpp.obj
+[45/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp.obj
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp(478): warning C4456: declaration of 'closure' hides previous local declaration
+C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_motion.cpp(382): note: see declaration of 'closure'
+[46/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking.cpp.obj
+[47/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_methods.cpp.obj
+[48/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_analysis.cpp.obj
+[49/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_tracking_shadow.cpp.obj
+[50/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset.cpp.obj
+[51/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_session.cpp.obj
+[52/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\game_dataset_tools.cpp.obj
+[53/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_archive.cpp.obj
+[54/68] Generating CXX dyndep file CMakeFiles\current_bridge.dir\CXX.dd
+[55/68] Building CXX object CMakeFiles\exact_bvi_v3.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_cold_v3\constraint_policy.cpp.obj
+[56/68] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\pixel_chain.cpp for CXX dependencies
+[57/68] Linking CXX static library exact_bvi_v3.lib
+[58/68] Generating CXX dyndep file CMakeFiles\bridge_tests.dir\CXX.dd
+[59/68] Generating CXX dyndep file CMakeFiles\pixel_chain.dir\CXX.dd
+[60/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_recording.cpp.obj
+[61/68] Building CXX object CMakeFiles\formal_core.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\src\session_pixel_clips.cpp.obj
+[62/68] Linking CXX static library formal_core.lib
+[63/68] Building CXX object CMakeFiles\current_bridge.dir\bridge.cpp.obj
+[64/68] Linking CXX static library current_bridge.lib
+[65/68] Building CXX object CMakeFiles\bridge_tests.dir\bridge_tests.cpp.obj
+[66/68] Building CXX object CMakeFiles\pixel_chain.dir\pixel_chain.cpp.obj
+[67/68] Linking CXX executable bridge_tests.exe
+[68/68] Linking CXX executable pixel_chain.exe
+TRACE Build END exit=0

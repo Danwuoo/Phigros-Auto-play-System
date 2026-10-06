@@ -1,0 +1,457 @@
+{
+  "bytes": 92100353.0,
+  "files": [
+    {
+      "sha256": "3d48a70d224d21b98b0d48282eeb02709fb08a884d8356c59f28089c9741bd92",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\atlprov.dll",
+      "bytes": 211296,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\atlprov.dll"
+    },
+    {
+      "sha256": "98b69d86fa5912ce0a98384c0da62b9f55120fa186d8270ca7e9abb6f09c27e1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\bscmake.exe",
+      "bytes": 111544,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\bscmake.exe"
+    },
+    {
+      "sha256": "869b66c385a087df9fc60eea91ab6fa5fcb651a58e2a10b71da5d7e80eb6e0d0",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\c1.dll",
+      "bytes": 3623776,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\c1.dll"
+    },
+    {
+      "sha256": "c4549b88f0b12571a0931d5a6c0a9bb0def061feae0e5532300091e1e47f0cdd",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\c1xx.dll",
+      "bytes": 13249848,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\c1xx.dll"
+    },
+    {
+      "sha256": "ff18524161e4447d2cdb6d4cdad3c44cf6449f8456086e465247e18e3ad141c4",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\c2.dll",
+      "bytes": 11492152,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\c2.dll"
+    },
+    {
+      "sha256": "07af7cb58785454ccba1dd04214ad40d5c41a6f9928aef8488ca5f0473f4d4ab",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\c2dd.dll",
+      "bytes": 11492152,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\c2dd.dll"
+    },
+    {
+      "sha256": "5fdbecf891f10f2720fbffffd7b2da90211188459394ab38ea35fd261a7bdafa",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\cfgpersist.dll",
+      "bytes": 1603384,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cfgpersist.dll"
+    },
+    {
+      "sha256": "e6d57100c82ae0310c18b16abfe52bc0df8fbb272ca6c5fb287d485807cfce91",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\cl.exe",
+      "bytes": 893328,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe"
+    },
+    {
+      "sha256": "a501d29c422af1bd2c3f9abb2bb1ab371c177a3f7ccb7fd8823709c57f114bfc",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\cl.exe.config",
+      "bytes": 409,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe.config"
+    },
+    {
+      "sha256": "fd906969e481c42dbe6882973638aaf2b61dadce32dba2a942c44949090d08f7",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\CppBuildInsights.dll",
+      "bytes": 298560,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\CppBuildInsights.dll"
+    },
+    {
+      "sha256": "7de4740127c14172dd3702982c3a52dc427c66b90f0df321220c69865915bfb2",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\CppBuildInsightsEtw.xml",
+      "bytes": 37996,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\CppBuildInsightsEtw.xml"
+    },
+    {
+      "sha256": "46d39c2b7fba2b0b6592d223f321fac3e0742affbf5ba5b35dd102c9f6a9648b",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\cvtres.exe",
+      "bytes": 45984,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cvtres.exe"
+    },
+    {
+      "sha256": "8c88c162010a8d6b80f2c0433d4ce973ce626afcbc8da5be68bfa2ba68341eba",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\d3dcompiler_47.dll",
+      "bytes": 4467904,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\d3dcompiler_47.dll"
+    },
+    {
+      "sha256": "6efb6547f3e149c47f8aa938287e1e0efb07f42e6a6079b453b21b6f9b09d2ba",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\dpcmi.dll",
+      "bytes": 1397048,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\dpcmi.dll"
+    },
+    {
+      "sha256": "0ac1f29d36b21f9a471f7c7a08168e0319e4d647e3ff5c72ab3569a803098f22",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\dumpbin.exe",
+      "bytes": 23384,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\dumpbin.exe"
+    },
+    {
+      "sha256": "dae8ec1dcdb6bbda876fb133341ca9044f0e1ee1f4be662a035f2e7251ac8c02",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\editbin.exe",
+      "bytes": 23384,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\editbin.exe"
+    },
+    {
+      "sha256": "059938169a3abf5636450cb5937da3a14ade477b24d9f0fd9c406211245499c8",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\EspXEngine.dll",
+      "bytes": 4181856,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\EspXEngine.dll"
+    },
+    {
+      "sha256": "7cb11d96890c473580e808e9e34ad00646b89fe98a19f580a762602e3c00a760",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\ifc.exe",
+      "bytes": 216928,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\ifc.exe"
+    },
+    {
+      "sha256": "9e2477efeb3d218f4a1844afc590e6040efecca599c91f777e56ce64a1faccc5",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\KernelTraceControl.dll",
+      "bytes": 253512,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\KernelTraceControl.dll"
+    },
+    {
+      "sha256": "c3a50e04fdf91886f63946b99c11aed024596789e13003c30b80e30b92d9f24e",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\lib.exe",
+      "bytes": 23424,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\lib.exe"
+    },
+    {
+      "sha256": "d4dbe180fdb89d6d5bfbec007bb6a6aeb335cf129285f6aed2c2054b939d6ba3",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\libz3.dll",
+      "bytes": 15187256,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\libz3.dll"
+    },
+    {
+      "sha256": "3ef8fcf80d409fab22ddd89ee19249f31a26ad9914d3e3e48573c30998fa24de",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\link.exe",
+      "bytes": 3701088,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\link.exe"
+    },
+    {
+      "sha256": "a501d29c422af1bd2c3f9abb2bb1ab371c177a3f7ccb7fd8823709c57f114bfc",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\link.exe.config",
+      "bytes": 409,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\link.exe.config"
+    },
+    {
+      "sha256": "84c9b4092b3a1d68ea88985aabf35418f77ad546bfe191f0a038437f2b6e3867",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\math.dll",
+      "bytes": 310624,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\math.dll"
+    },
+    {
+      "sha256": "a20f6d6c0dae7ac9c7c295b819d085bdfc7cfab123e8fc4ca4ddfd0a88701d04",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\Microsoft.Diagnostics.Tracing.EventSource.dll",
+      "bytes": 170288,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\Microsoft.Diagnostics.Tracing.EventSource.dll"
+    },
+    {
+      "sha256": "cc52e19735d6152702672feb5911c8ba77f60fdc73df5ed0d601b37415f3a7ed",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\Microsoft.VisualStudio.RemoteControl.dll",
+      "bytes": 47536,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\Microsoft.VisualStudio.RemoteControl.dll"
+    },
+    {
+      "sha256": "c6b09bdb01fb84406fb95f77befd68b4f8f0b5d715bb00df817b5e691501c50d",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\Microsoft.VisualStudio.Telemetry.dll",
+      "bytes": 1026088,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\Microsoft.VisualStudio.Telemetry.dll"
+    },
+    {
+      "sha256": "4d1d5efd28d72c332ba87e1993cb35e46404753543c5563700b98a97aa3c42a6",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\Microsoft.VisualStudio.Utilities.Internal.dll",
+      "bytes": 62480,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\Microsoft.VisualStudio.Utilities.Internal.dll"
+    },
+    {
+      "sha256": "a0cdb011ab6dffe8282b14d195922654978626eb235fb9c52b814cfb48978a9f",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\ml64.exe",
+      "bytes": 751976,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\ml64.exe"
+    },
+    {
+      "sha256": "14437d92d4a179739d1c69ad936d24fd7df2f8ba27535705f626007557cd408c",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\msobj140.dll",
+      "bytes": 175416,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\msobj140.dll"
+    },
+    {
+      "sha256": "fcebbc9f55ee8b3a4a5062bd149606f2fa10fe45f4b5cc9ce0a16bc51f21ec1a",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\mspdb140.dll",
+      "bytes": 386872,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\mspdb140.dll"
+    },
+    {
+      "sha256": "3ca5754f8f0e70e3921cb583d537e2cf6e2d7bbd0dc0a94c4e60f9635f2b704d",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\mspdbcmf.exe",
+      "bytes": 2645880,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\mspdbcmf.exe"
+    },
+    {
+      "sha256": "9a4049eaf7c2ac6cc58e5df0587cc05fadbfbe1e24acf1454f00f18e384573c8",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\mspdbcore.dll",
+      "bytes": 1446240,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\mspdbcore.dll"
+    },
+    {
+      "sha256": "aef0a36458d373312f34538c3e6f84451232d07ab68999d05f159d7f2ee0c3b7",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\mspdbsrv.exe",
+      "bytes": 192352,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\mspdbsrv.exe"
+    },
+    {
+      "sha256": "20b6235dfa29054ebc315fed3f25591267c1b2bcf2f8449eaa111183271648bb",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\mspdbst.dll",
+      "bytes": 1402168,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\mspdbst.dll"
+    },
+    {
+      "sha256": "7d5568beb06471e5d339d8b250e0f83e78262bd46606343ed2274a008b78b3c6",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\mspft140.dll",
+      "bytes": 3115360,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\mspft140.dll"
+    },
+    {
+      "sha256": "f369f4f7acf6f458b678df9e6cb1ab8aeb2dc89e4272ef1606a9aa423f15e4e9",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\msvcdis140.dll",
+      "bytes": 2143584,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\msvcdis140.dll"
+    },
+    {
+      "sha256": "e5bade26806d4a4d75c52583c520417961fb18e7435085214a4684200ed85e2e",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\msvcp140_1.dll",
+      "bytes": 35696,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\msvcp140_1.dll"
+    },
+    {
+      "sha256": "0b25848ddf264626e66379f5661aa88661fec10863f3b78b36e1dbf3ecb227f3",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\msvcp140_2.dll",
+      "bytes": 274792,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\msvcp140_2.dll"
+    },
+    {
+      "sha256": "67748e3601b21542a8b52913c962fcd13045b077f92234b640644dc80112022c",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\msvcp140_atomic_wait.dll",
+      "bytes": 57792,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\msvcp140_atomic_wait.dll"
+    },
+    {
+      "sha256": "21d2cc5caa139e97bcec4fd135f3b9134fd3e96757d17d0d81f0f29ce583cda5",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\msvcp140_codecvt_ids.dll",
+      "bytes": 31168,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\msvcp140_codecvt_ids.dll"
+    },
+    {
+      "sha256": "06f78564ee5e6dd552da1760ee94670363c713c2a0d6811dca0ff2ca1656da44",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\msvcp140.dll",
+      "bytes": 643432,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\msvcp140.dll"
+    },
+    {
+      "sha256": "64695f3df99e9d85cbd5d9b65b45e94adfcb34f4351c44b96d7b3bdc29613e14",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\Newtonsoft.Json.dll",
+      "bytes": 719160,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\Newtonsoft.Json.dll"
+    },
+    {
+      "sha256": "c8a5be57721cfc53c6058cd43c8a420f77efda0c685be5bfd8e1215dd78130ac",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\nmake.exe",
+      "bytes": 134008,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\nmake.exe"
+    },
+    {
+      "sha256": "471c7e2934405a0a2b052003f4c6f069c0d6e70ed1ab8f4d2c5eb98df72a1e4e",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\pgocvt.exe",
+      "bytes": 76216,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\pgocvt.exe"
+    },
+    {
+      "sha256": "a01717cdf46b6a5c9f75dd1b2d5e85198d4bce69609c908fca8d092bdc29d578",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\pgodb140.dll",
+      "bytes": 105272,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\pgodb140.dll"
+    },
+    {
+      "sha256": "439800ad8c4881679da8743be12698860c56a29d3b0b5406b4221e9a70712049",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\pgomgr.exe",
+      "bytes": 111552,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\pgomgr.exe"
+    },
+    {
+      "sha256": "8009e9ae64c5088a1c8e0eaa8ba16a1a29c38fbe36dbddb33cf674b234f38912",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\pgort140.dll",
+      "bytes": 48952,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\pgort140.dll"
+    },
+    {
+      "sha256": "e74e99f1347569f73e5181212013a21e449c210c7cf10cb33ba364e03bf95fc2",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\pgosweep.exe",
+      "bytes": 77256,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\pgosweep.exe"
+    },
+    {
+      "sha256": "dec754ae5667ca53e093b12457513f6f18f0d935c61529aa112ae85c969b2b06",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\spdconvert.exe",
+      "bytes": 431464,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\spdconvert.exe"
+    },
+    {
+      "sha256": "9a09faa9fa833f1810094c1a71e43217ff82e4861e3c63cea7670434b8d8229d",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\spddump.exe",
+      "bytes": 252768,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\spddump.exe"
+    },
+    {
+      "sha256": "89e05ec3d327f92c7274146467df7198499296d60191200910bc6e28dca2455d",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\sptaggregate.exe",
+      "bytes": 327016,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\sptaggregate.exe"
+    },
+    {
+      "sha256": "6fd2e3cd50c1c52c737a4a066bf1833709634ca3a6edf0c2bd9341d556180b48",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\sptdump.exe",
+      "bytes": 244576,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\sptdump.exe"
+    },
+    {
+      "sha256": "06ea95f8388a6b031acb2449fd5663d9d26d720ae13df80c800805f896734430",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\System.Memory.dll",
+      "bytes": 138144,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\System.Memory.dll"
+    },
+    {
+      "sha256": "3cadcb6b8a7335141c7c357a1d77af1ff49b59b872df494f5025580191d1c0d5",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\System.Runtime.CompilerServices.Unsafe.dll",
+      "bytes": 16768,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\System.Runtime.CompilerServices.Unsafe.dll"
+    },
+    {
+      "sha256": "59c3c53c73b8e7f3a3ef1fb5715b3b4f68ef8b8be9b7a9a12ff2956cfaeaa5cb",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\tbbmalloc.dll",
+      "bytes": 111416,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\tbbmalloc.dll"
+    },
+    {
+      "sha256": "b7b6046246a3ee6b5fde023ddf072cf7453349e34a746bab9444fa5e18a1174f",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\undname.exe",
+      "bytes": 26472,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\undname.exe"
+    },
+    {
+      "sha256": "9f914c0bd08830289925d497f4b304048350042e3308a914da1ba619b58b7cee",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\vcmeta.dll",
+      "bytes": 122168,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vcmeta.dll"
+    },
+    {
+      "sha256": "a9d1f406e9870e8e6bc801589d50170645a069d1b3342dce1d4c9ba2c16adaca",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\vcperf.exe",
+      "bytes": 267064,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vcperf.exe"
+    },
+    {
+      "sha256": "595dd2d0194041ec1669fcc8ad1afe44e3ace628e5c40c74105429390c4a200f",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\vcruntime140_1.dll",
+      "bytes": 50024,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vcruntime140_1.dll"
+    },
+    {
+      "sha256": "62fb4353b289f2c324cb647465726349174e22b5ddc6c3e4d4c7541a35922399",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\vcruntime140_threads.dll",
+      "bytes": 38768,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vcruntime140_threads.dll"
+    },
+    {
+      "sha256": "982af4a71a0e52b3ede981700eaaa0e175cbf09b343c6fbc1a3cfdeb020e57d3",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\vcruntime140.dll",
+      "bytes": 178624,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vcruntime140.dll"
+    },
+    {
+      "sha256": "b58b1a18fc3e3c9c760f46d3d70684bbe73edab671b2d0d26a203e830ccef49d",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\vctip.exe.config",
+      "bytes": 1010,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vctip.exe.config"
+    },
+    {
+      "sha256": "52d71f019c8225a3cce0892e14b6e99919c0213c05e1bb6f5544eb433c3aea3e",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\xdcmake.exe",
+      "bytes": 42880,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\xdcmake.exe"
+    },
+    {
+      "sha256": "a501d29c422af1bd2c3f9abb2bb1ab371c177a3f7ccb7fd8823709c57f114bfc",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\xdcmake.exe.config",
+      "bytes": 409,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\xdcmake.exe.config"
+    },
+    {
+      "sha256": "0b895ea3aa8c7e33f6502feea6df0921b643fdcfce998cf0f25b3dc87bb85db4",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\atlprovui.dll",
+      "bytes": 35128,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\atlprovui.dll"
+    },
+    {
+      "sha256": "bb40dd27f7ea1c7d51865899cd46f13170fa5ad2d1dd6d34b35d624927aa4594",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\bscmakeui.dll",
+      "bytes": 18784,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\bscmakeui.dll"
+    },
+    {
+      "sha256": "c53cc78f38f34b0c88b818e83ef0f895cb2f795bd03e7a50807f2ae7cecc539c",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\clui.dll",
+      "bytes": 630072,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\clui.dll"
+    },
+    {
+      "sha256": "dedae0ae8889b71d02e87db2ecb29a26b2ecb17a957086373abcb2ed1029a60c",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\cvtresui.dll",
+      "bytes": 15672,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\cvtresui.dll"
+    },
+    {
+      "sha256": "a1716362649de5914a602f3c4c9b63a228cd490ec75db6bdc8e96c5b51b8d7f4",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\linkui.dll",
+      "bytes": 108856,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\linkui.dll"
+    },
+    {
+      "sha256": "9bd3b564419e1e7a7f6f8ec5e8f36947654f5a246ddb73b20a7d7c3b001ef754",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\mspdbcmfui.dll",
+      "bytes": 17208,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\mspdbcmfui.dll"
+    },
+    {
+      "sha256": "076b90398c47a3b5f040dbf63298ecbc9f240b93ac8200823510e603e1ec729b",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\mspft140ui.dll",
+      "bytes": 202592,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\mspft140ui.dll"
+    },
+    {
+      "sha256": "f5ffbe0f8f14a06186c8abacd1240080ae94d042627e120dd03ce13b2b304372",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\nmakeui.dll",
+      "bytes": 24376,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\nmakeui.dll"
+    },
+    {
+      "sha256": "5e49b38b4d81fce5aa14fad14332d6df3b1ed1f1223ec7df4affa1da3b207ba4",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\pgort140ui.dll",
+      "bytes": 21344,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\pgort140ui.dll"
+    },
+    {
+      "sha256": "d4a72a25c0b7be65b6f3dcb4ee90a9f4ba8d39fbf62128b65806025f9067f424",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\msvc-isolated-probe-01\\bin\\1033\\pgoui.dll",
+      "bytes": 47968,
+      "original": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\pgoui.dll"
+    }
+  ],
+  "omitted": "vctip.exe",
+  "original_installation_modified": false
+}

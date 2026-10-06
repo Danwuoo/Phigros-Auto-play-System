@@ -1,0 +1,16 @@
+{
+  "current_profile_path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\configs\\phigros-hd-assist-five-lead35.json",
+  "current_game_version_verified": false,
+  "current_profile_sha256": "d2b5cfdc6be023c715fe402a7124ccd1977f5956b8d9fa74466643a575dbd0e0",
+  "manifest_sha256": "7508b2572f045b8bbf52afd45789a717bac03af715ca25eb0b5b8a7294d62eb5",
+  "actual_device_read_commands": 0,
+  "manifest_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800\\manifest.json",
+  "max_contacts_verified": 5,
+  "historical_only": true,
+  "serial": "emulator-5554",
+  "capability_path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\runtime-x11-p\\capability-reference.json",
+  "fixture_apk_sha256": "b3bfaf4e4e876e7833c9af1bd6149b40cdc9fa46b67646d52ea045dde6705dc6",
+  "current_device_verified": false,
+  "capability_sha256": "73dc5c94f1418a1e75bf4488871d27c849e0d6105adc79ec03c167ff672dbcd3",
+  "schema": "pas.historical-capability-read-only-audit.v1"
+}

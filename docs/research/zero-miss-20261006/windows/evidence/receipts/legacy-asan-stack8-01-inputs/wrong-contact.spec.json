@@ -1,0 +1,28 @@
+{
+  "stage_root": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-stack8-wrong-contact-01",
+  "total_s": 300,
+  "inputs": [
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\legacy-stage.ps1",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bvi-win-asan-stack8-01\\legacy.exe",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi\\normalized-execution.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi\\oracle.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\typed-r1.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\bvi-io-adapter-01\\supplemental.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\r1-cases.json",
+    "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\expected-coverage.json",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bvi-win-asan-stack8-01\\clang_rt.asan_dbg_dynamic-x86_64.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bvi-win-asan-stack8-01\\clang_rt.asan_dynamic-x86_64.dll",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-stack8-01-inputs\\wrong-contact.cmd"
+  ],
+  "stream_cap": 4194304,
+  "exe": "C:\\WINDOWS\\system32\\cmd.exe",
+  "native_exit": 1,
+  "runner_exit": 1,
+  "argv": [
+    "/d",
+    "/s",
+    "/c",
+    "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-stack8-01-inputs\\wrong-contact.cmd"
+  ],
+  "stage": "legacy-asan-stack8-wrong-contact-01"
+}

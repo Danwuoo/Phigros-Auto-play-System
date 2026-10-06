@@ -1,15 +1,15 @@
 # 文件總目錄
 
-**最新範圍：2026-10-05 第三階段雲端冷測候選修補完成；原完整冷契約仍有43fail，尚未整合正式runtime或進實機。**
+**最新範圍：2026-10-06 Windows 離線接手及隔離橋接里程碑；原完整冷契約仍36fail，正式 owner／scheduler 前綴113/113，256張真圖沒有 eligible action。正式runtime與實機尚未接入，成本與全曲驗收未成立。**
 
-先讀[第三階段修補](research/zero-miss-20261005/round3/README.md)：同一原oracle54→43fail、新契約339全過、獨立控制保留2個既存fail，並有完整before/after與限制。[第二輪](research/zero-miss-20261005/round2/README.md)保留首次完整suite負結果、Windows收據與結算圖覆核；[首輪](research/zero-miss-20261005/README.md)保留架構盤點。Windows、成本、真圖與全曲IN驗收仍未成立。較早[開發現況](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)為當時停止快照；歷史BUILD包沒有重開。
+先讀[10/6 Windows 收據與限制](research/zero-miss-20261006/windows/README.md)，再讀[10/5 第四階段候選與交接](research/zero-miss-20261005/round4/README.md)。[第三階段](research/zero-miss-20261005/round3/README.md)保留54→43fail，[第二輪](research/zero-miss-20261005/round2/README.md)保留首次54fail及早期Windows收據，[首輪](research/zero-miss-20261005/README.md)保留架構盤點。較早[開發現況](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)是歷史停止快照；舊BUILD／STOP沒有重開。
 
 ## 建議閱讀順序
 
-0. [10/5 第三階段修補](research/zero-miss-20261005/round3/README.md)：最小code、契約版本、正反例與全回歸；[第二輪](research/zero-miss-20261005/round2/README.md)是修補前54fail基準，[首輪](research/zero-miss-20261005/README.md)保留Miss根因樹及全曲验收設計。
-1. [目前開發現況與問題](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)：已有能力、逐包停止點、真實阻塞、剩餘驗收階段。
+0. [10/6 Windows 里程碑](research/zero-miss-20261006/windows/README.md)／[目標與狀態](goals/LEGACY_IN_ZERO_MISS_GOAL.md)：核驗、實作、原套件負結果、真圖阻塞、完整成本與裝置授權界線。
+1. [10/5 第四階段交接](research/zero-miss-20261005/round4/README.md)：凍結v3及原36fail；[較早開發現況](status/DEVELOPMENT_STATUS_AND_ISSUES_20261005.md)保留當時停止點。
 2. [Chapter Legacy 目標與逐曲基準](catalog/01-project/LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)／[逐曲 JSON](catalog/01-project/LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)：IN 解鎖與 Miss=0 的產品分母與限制。
-3. [最新 BUILD 結果](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[交接](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)：新增診斷預驗18/20，真native前停止，原建置封裝仍未定位。
+3. [歷史 BUILD 結果](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_RESULT_20261005.md)／[交接](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_BUILD_HANDOFF_20261005.md)：當時預驗18/20；10/6另在新root達20/20及native控制，不改舊收據。
 4. [R2F control 結果](catalog/03-ownership-bvi/HOLD_OWNERSHIP_X10D_O_BVI_R2F_CONTROL_RESULT_20261005.md)：三真控制通過，但 configure 因 Windows 語法錯誤停止。
 
 ## 依主題查找
@@ -18,7 +18,7 @@
 
 | 分類 | 原檔數 | 用途 |
 |---|---:|---|
-| [目標、架構與路線](catalog/01-project/README.md) | 13 | 產品方向、架構及不同時點的規劃入口。開發目前暫停；舊文件中的續派與最新字樣不代表本輪授權。 |
+| [目標、架構與路線](catalog/01-project/README.md) | 13 | 產品方向、架構及不同時點的規劃入口。本機僅獲離線開發授權；舊文件中的續派與最新字樣不代表裝置授權。 |
 | [實戰、基準與逐曲結果](catalog/02-game-results/README.md) | 14 | 历史HD／IN、熱調試與比較證據。依版本與日期分讀；不是目前解鎖清單，也不是新BVI的實戰驗收。 |
 | [Ownership 與 BVI 工作包](catalog/03-ownership-bvi/README.md) | 29 | X10d-O、4R、4I與後續BVI恢復／建置交付。BCC-v1負結果、BVI未編譯、工具控制通過三種狀態必須分開。 |
 | [幾何、Hold 與離線回歸](catalog/04-offline-research/README.md) | 21 | M0/M1、冷開發、X1–X10及pending研究；合成／fixed-pixels證據不等於遊戲對新觸控的回饋。 |
@@ -32,7 +32,7 @@
 - RESULT 是該包結果；HANDOFF 是接手說明；PROTOCOL／DISPATCH／PLAN 是當時契約或規劃。
 - CONTROLLER_ACCEPTANCE／REVIEW 的驗收範圍可能只到保全、設計、工程控制或冷契約；不能只看檔名就當作產品已驗。
 - 日期相同不代表同一來源／binary；source SHA、attempt 與收據才是辨識依據。
-- 使用者最新授權決定範圍；本次僅有界雲端研究，不得由歷史派送或研究建議自行恢復功能開發或實機。
+- 使用者最新授權決定範圍；10/6為本機離線接手，裝置讀取／Fixture／遊戲另須相應授權。不得由歷史派送或研究建議自行啟動實機。
 
 ## 整理與保全
 

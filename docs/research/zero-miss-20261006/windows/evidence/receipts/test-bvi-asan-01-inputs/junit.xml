@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="(empty)"
+	tests="8"
+	failures="2"
+	disabled="0"
+	skipped="0"
+	hostname=""
+	time="72"
+	timestamp="2026-10-06T09:56:02"
+	>
+	<testcase name="contract" classname="contract" time="7.17151" status="run">
+		<properties/>
+		<system-out>v2 cases=48 assertions=339 failed=0 legacy_failures_preserved=54
+</system-out>
+	</testcase>
+	<testcase name="independent_old" classname="independent_old" time="0.165676" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>=================================================================
+==2044==ERROR: AddressSanitizer: stack-overflow on address 0x7ff64bb7f2c7 (pc 0x7ff64bb7f2c7 bp 0x000000000000 sp 0x00c1198ff2f0 T0)
+==2044==ABORTING
+</system-out>
+	</testcase>
+	<testcase name="relation" classname="relation" time="0.150104" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>=================================================================
+==18640==ERROR: AddressSanitizer: stack-overflow on address 0x7ff7f921a187 (pc 0x7ff7f921a187 bp 0x000000000000 sp 0x00bd2a3ff3d0 T0)
+==18640==ABORTING
+</system-out>
+	</testcase>
+	<testcase name="contact" classname="contact" time="36.5611" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="line_ambiguity" classname="line_ambiguity" time="3.43479" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="independent_v3" classname="independent_v3" time="20.7548" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="query_noise" classname="query_noise" time="3.39832" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="query_accumulation" classname="query_accumulation" time="1.00515" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+</testsuite>

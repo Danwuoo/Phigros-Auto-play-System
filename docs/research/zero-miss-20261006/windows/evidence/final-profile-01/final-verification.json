@@ -1,0 +1,31 @@
+{
+  "legacy_oracles_modified": false,
+  "out_bytes": 11313544443.0,
+  "product_goal_completed": false,
+  "final_stages_verified": 12,
+  "out_hard_cap_bytes": 12884901888,
+  "delivery_tree": "6a4a9950423f0775992780b65b96ce8dcf2bb98e",
+  "original_status": [
+    " M apps/runtime_x11_p/aux/CMakeLists.txt",
+    "?? phigros-zero-miss-handoff-round4-9dc99d6.zip"
+  ],
+  "metadata_hard_cap_bytes": 67108864,
+  "unchanged_formal_sources": true,
+  "unchanged_old_archive_files_verified": 1873,
+  "source_commit": "29e3ed09ae176a93a159f3b7993c8047505e9482",
+  "original_dirty_aux_sha256": "e5c78a1d90a5e430c4f7c5328c7e9a8b3571800b0b8fc698d082b1cbe16d5501",
+  "unchanged_old_binaries_verified": 123,
+  "physical_human_gold": 0,
+  "preserved_original_STOP_states_verified": 71,
+  "passed": true,
+  "device_commands": 0,
+  "root_ctest_timeouts_retained": 2,
+  "schema": "pas.windows-final-integrity.v1",
+  "free_bytes": 197339123712,
+  "runtime_cost_gate": "NOT_READY",
+  "legacy_failures_retained": 36,
+  "selected_original_pngs_verified": 256,
+  "original_head": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "all_native_owned_processes_final_zero": true,
+  "unchanged_v3_core_files": 7
+}

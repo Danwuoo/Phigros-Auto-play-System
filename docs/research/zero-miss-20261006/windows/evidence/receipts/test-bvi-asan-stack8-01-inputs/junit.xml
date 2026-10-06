@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="(empty)"
+	tests="8"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname=""
+	time="100"
+	timestamp="2026-10-06T10:00:04"
+	>
+	<testcase name="contract" classname="contract" time="6.64312" status="run">
+		<properties/>
+		<system-out>v2 cases=48 assertions=339 failed=0 legacy_failures_preserved=54
+</system-out>
+	</testcase>
+	<testcase name="independent_old" classname="independent_old" time="11.7693" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="relation" classname="relation" time="15.3365" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="contact" classname="contact" time="38.6493" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="line_ambiguity" classname="line_ambiguity" time="3.47566" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="independent_v3" classname="independent_v3" time="19.5779" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="query_noise" classname="query_noise" time="4.21373" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="query_accumulation" classname="query_accumulation" time="1.16312" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+</testsuite>

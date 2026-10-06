@@ -1,0 +1,7 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-bridge-release-07-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/4] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\pixel_chain.cpp for CXX dependencies
+[2/4] Generating CXX dyndep file CMakeFiles\pixel_chain.dir\CXX.dd
+[3/4] Building CXX object CMakeFiles\pixel_chain.dir\pixel_chain.cpp.obj
+[4/4] Linking CXX executable pixel_chain.exe
+TRACE Build END exit=0

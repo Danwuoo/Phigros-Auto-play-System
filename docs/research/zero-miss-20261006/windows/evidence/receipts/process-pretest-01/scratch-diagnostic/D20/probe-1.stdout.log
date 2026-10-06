@@ -1,0 +1,1 @@
+TRACE DIAGNOSTIC_POSITIVE wrapper-v0 TRACE L07 vcvars END exit=0 TRACE L12 argv-configure END exit=0 TRACE L17 argv-build END exit=7
