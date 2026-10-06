@@ -47,6 +47,10 @@ struct NoteCandidate {
     bool held_body_patch = false; // Current interior touch region; the front is occluded/unknown.
 };
 struct GameTarget {
+    // Typed pre-dispatch proof from the current-pixel adapter. Default callers
+    // retain the original prediction contract; a measured overlap is separate.
+    enum class CurrentContact { none, hold_front_rails };
+    CurrentContact current_contact = CurrentContact::none;
     std::uint64_t note_id = 0, revision = 0;
     NoteCandidate note;
     Nanoseconds evidence_ns = 0, expires_ns = 0;

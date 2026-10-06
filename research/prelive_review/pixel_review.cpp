@@ -1,0 +1,22 @@
+#define NOMINMAX
+#include <windows.h>
+#include <wincodec.h>
+#include <wrl/client.h>
+#include <nlohmann/json.hpp>
+#include <array>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <vector>
+using J=nlohmann::json;using Microsoft::WRL::ComPtr;
+void check(HRESULT h){if(FAILED(h))throw std::runtime_error("WIC review");}
+std::vector<unsigned char> load(IWICImagingFactory*f,const std::string&p){ComPtr<IWICBitmapDecoder>d;const std::filesystem::path path(p);check(f->CreateDecoderFromFilename(path.c_str(),nullptr,GENERIC_READ,WICDecodeMetadataCacheOnDemand,&d));ComPtr<IWICBitmapFrameDecode>b;check(d->GetFrame(0,&b));UINT w,h;check(b->GetSize(&w,&h));if(w!=1280||h!=720)throw std::runtime_error("review profile");ComPtr<IWICFormatConverter>c;check(f->CreateFormatConverter(&c));check(c->Initialize(b.Get(),GUID_WICPixelFormat24bppRGB,WICBitmapDitherTypeNone,nullptr,0,WICBitmapPaletteTypeCustom));std::vector<unsigned char> rgb(1280*720*3);check(c->CopyPixels(nullptr,3840,UINT(rgb.size()),rgb.data()));return rgb;}
+void png(IWICImagingFactory*f,const std::filesystem::path&p,int w,int h,std::vector<unsigned char>&v){ComPtr<IWICStream>s;check(f->CreateStream(&s));check(s->InitializeFromFilename(p.c_str(),GENERIC_WRITE));ComPtr<IWICBitmapEncoder>e;check(f->CreateEncoder(GUID_ContainerFormatPng,nullptr,&e));check(e->Initialize(s.Get(),WICBitmapEncoderNoCache));ComPtr<IWICBitmapFrameEncode>b;check(e->CreateNewFrame(&b,nullptr));check(b->Initialize(nullptr));check(b->SetSize(w,h));auto format=GUID_WICPixelFormat24bppRGB;check(b->SetPixelFormat(&format));if(format!=GUID_WICPixelFormat24bppRGB)throw std::runtime_error("RGB encoder");check(b->WritePixels(h,w*3,UINT(v.size()),v.data()));check(b->Commit());check(e->Commit());}
+int main(int argc,char**argv){try{if(argc!=3||std::filesystem::exists(argv[2]))throw std::runtime_error("fresh review directory");std::filesystem::create_directory(argv[2]);std::ifstream in(argv[1]);auto selection=J::parse(in);check(CoInitializeEx(nullptr,COINIT_MULTITHREADED));ComPtr<IWICImagingFactory>f;check(CoCreateInstance(CLSID_WICImagingFactory,nullptr,CLSCTX_INPROC_SERVER,IID_PPV_ARGS(&f)));J cards=J::array();
+ struct Card{int ordinal,x,y,w,h,px,py;const char*name;};
+ const Card list[]={{3028,430,170,140,120,495,237,"3028-prior-current"},{3030,430,180,140,120,495,237,"3030-visible-front-review"},{3030,430,160,140,120,495,214,"3030-interior-not-a-head"},{1519,690,520,180,110,746,575,"1519-effect-identity-unknown"}};
+ for(const auto&c:list){const J*entry=nullptr;for(const auto&v:selection.at("frames"))if(v.at("index").at("ordinal")==c.ordinal){entry=&v;break;}if(!entry)throw std::runtime_error("review input missing");auto rgb=load(f.Get(),entry->at("path"));const int w=c.w*3,h=c.h*3;std::vector<unsigned char> unmarked(w*h*3);for(int y=0;y<h;++y)for(int x=0;x<w;++x)for(int k=0;k<3;++k)unmarked[(y*w+x)*3+k]=rgb[(std::size_t(c.y+y/3)*1280+c.x+x/3)*3+k];auto marked=unmarked;const int mx=(c.px-c.x)*3,my=(c.py-c.y)*3;for(int i=-8;i<=8;++i)for(auto p:{std::array<int,2>{mx+i,my},std::array<int,2>{mx,my+i}})if(p[0]>=0&&p[1]>=0&&p[0]<w&&p[1]<h){auto at=(p[1]*w+p[0])*3;marked[at]=255;marked[at+1]=80;marked[at+2]=40;}const auto root=std::filesystem::path(argv[2]);png(f.Get(),root/(std::string(c.name)+"-raw.png"),w,h,unmarked);png(f.Get(),root/(std::string(c.name)+"-marked.png"),w,h,marked);
+ J samples=J::array();for(int y=c.py-4;y<=c.py+4;++y)for(int x:{c.px-30,c.px,c.px+30}){const auto at=(y*1280+x)*3;std::array<int,3> p{rgb[at],rgb[at+1],rgb[at+2]};samples.push_back({{"point",{x,y}},{"rgb",p}});}cards.push_back({{"name",c.name},{"ordinal",c.ordinal},{"source_frame",entry->at("index").at("source_frame")},{"source_path",entry->at("path")},{"source_sha256",entry->at("sha256")},{"crop",{c.x,c.y,c.w,c.h}},{"marker",{c.px,c.py}},{"scale",3},{"samples",samples},{"action_authorized",false},{"physical_role","external review only; unknown unless separately human confirmed"}});
+ }
+ std::ofstream out(std::filesystem::path(argv[2])/"cards.json");out<<J{{"schema","pas.prelive-review-cards.v1"},{"cards",cards},{"strategy_inputs",false},{"annotation_gold",false},{"device_endpoints",0}}.dump(2)<<'\n';if(!out)throw std::runtime_error("write");std::cout<<"review cards=4 no action"<<'\n';return 0;
+ }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}

@@ -1836,16 +1836,27 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
                       t.note.kind==NoteKind::drag?4:t.note.kind==NoteKind::flick?8:0;
         const bool spatial_drag=current_drag_overlap(t);
         const bool spatial_tap=current_tap_overlap(t);
+        const bool spatial_hold=t.current_contact==GameTarget::CurrentContact::hold_front_rails&&
+            t.reason=="current_rails_v1_measured_front_overlap"&&
+            t.note.kind==NoteKind::hold&&t.note.rails_geometry&&t.note.head_on_line&&
+            !t.note.held_body_patch&&!t.note.held_body_evidence&&!t.line_projection_only&&
+            t.samples>=3&&t.history_span_ns>=30'000'000&&t.evidence_ns==s.context.capture_ns&&
+            t.uncertainty_ns<=2'000'000&&t.crossing_ns&&*t.crossing_ns==t.evidence_ns&&
+            std::count_if(s.lines.begin(),s.lines.end(),[&](const auto& line){
+                return line.track_id==t.line_id&&line.association_valid&&line.observed_ns==t.evidence_ns&&
+                    std::abs(normal_distance(t.note.center,line))<=4;
+            })==1;
+        if(t.current_contact!=GameTarget::CurrentContact::none&&!spatial_hold)continue;
         const bool projected=recent_line_projection(t);
         if(t.note.held_body_evidence||!(options_.enabled_types&bit)||t.expires_ns<=clock_.now_ns()||
-           (!spatial_drag&&!spatial_tap&&(!t.crossing_ns||
+           (!spatial_drag&&!spatial_tap&&!spatial_hold&&(!t.crossing_ns||
                             (t.reason!="prediction_observe_only"&&!projected)||
                             t.uncertainty_ns>options_.uncertainty_ns))) continue;
         const auto now=clock_.now_ns();
         const auto predicted_due=spatial_drag?now+15'000'000:
-            spatial_tap?now:*t.crossing_ns-options_.lead_ns;
+            spatial_tap||spatial_hold?now:*t.crossing_ns-options_.lead_ns;
         const auto remaining=predicted_due-now;
-        if(!spatial_drag&&!spatial_tap&&
+        if(!spatial_drag&&!spatial_tap&&!spatial_hold&&
            (*t.crossing_ns-now< -40'000'000||remaining>60'000'000)) continue;
         // Late but bounded live evidence may still be recoverable. Dispatch
         // immediately; retain the original prediction separately in the journal.
@@ -1880,7 +1891,8 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
         if(t.note.kind==NoteKind::hold&&visible_tail_passed(t)) {last_rejection_="hold_tail_already_passed";continue;}
         id.intent=++next_intent_; id.revision=t.revision;
         ContactPlan plan{epoch_,id.intent,t.revision,t.evidence_ns,due+30'000'000,
-            s.context.frame,spatial_tap?"live_pixels_current_tap_overlap":
+            s.context.frame,spatial_hold?"current_rails_v1_measured_hold_front_overlap":
+                spatial_tap?"live_pixels_current_tap_overlap":
                 projected?"live_note_recent_confirmed_line_projection":
                 std::string("live_pixels_short_linear_fit_")+name(t.note.kind),
             {{Phase::down,t.hit.x,t.hit.y,due},
@@ -1906,7 +1918,7 @@ std::vector<TouchReceipt> GamePlanOwner::accept(const DecisionSnapshot& incoming
             const auto last=plan.steps.back(); plan.steps.push_back({Phase::up,last.x,last.y,due+52'000'000});
         }
         plan.note_id=t.note_id; plan.generation=s.context.generation; plan.geometry_version=s.context.geometry;
-        if(!spatial_drag&&!spatial_tap)
+        if(!spatial_drag&&!spatial_tap&&!spatial_hold)
             plan.predicted_down_ns=predicted_due-(t.note.kind==NoteKind::drag?15'000'000:0);
         id.submitted=scheduler_.submit(plan); id.kind=t.note.kind; id.plan=plan;
         id.last_note=t.note;id.line_id=t.line_id;
