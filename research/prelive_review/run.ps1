@@ -1,0 +1,15 @@
+param([ValidateSet('build','run')][string]$Operation='build',[ValidatePattern('^[a-z0-9-]{1,24}$')][string]$Attempt='01')
+$ErrorActionPreference='Stop'
+$repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
+$out=Join-Path $repo 'out/windows-handoff';$pkg=Join-Path $repo 'out/prelive-20261006';$root=Join-Path $repo ('out/prelive-review-release-'+$Attempt)
+$pwsh='C:/Users/wurre/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe'
+$gate=Join-Path $out 'native-qualification-01/native-gate.json'
+function Stage($name,$script,$arguments){$path=Join-Path $pkg ($name+'-params.json');if(Test-Path -LiteralPath $path){throw 'fresh params'};[IO.File]::WriteAllText($path,(@{script=$script;arguments=$arguments}|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false));& $pwsh -NoProfile -File (Join-Path $out 'withdrawal-review-01/stage.ps1') -Parameters $path;if($LASTEXITCODE -ne 0){throw 'stage failed'};$v=Get-Content -LiteralPath (Join-Path $out ($name+'/'+$name+'-verification.json')) -Raw|ConvertFrom-Json;$r=Get-Content -LiteralPath (Join-Path $out ($name+'/'+$name+'-result.json')) -Raw|ConvertFrom-Json;if($v.verification_exit -ne 0 -or $v.native_exit -ne 0 -or $v.runner_exit -ne 0 -or $r.facts.active_final -ne 0 -or -not $r.facts.held_all_signaled -or -not $r.facts.streams_completed){throw 'unverified'}}
+$inputs=@(Get-ChildItem -LiteralPath $PSScriptRoot -File|ForEach-Object FullName)
+if($Operation -eq 'build'){
+ foreach($op in @('Configure','Build')){$name=$op.ToLowerInvariant()+'-review-prelive-release-'+$Attempt;$args=@{SourceRoot=$PSScriptRoot;BuildRoot=$root;StageName=$name;ToolSnapshot=(Join-Path $out 'msvc-isolated-probe-01/tool-snapshot.json');GateReceipt=$gate;Operation=$op;Configuration='Release';Inputs=$inputs;TotalSeconds=300};if($op -eq 'Configure'){$args.Options=@('-DCMAKE_TOOLCHAIN_FILE=C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake','-DVCPKG_INSTALLED_DIR=C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed','-DVCPKG_MANIFEST_INSTALL=OFF','-DVCPKG_TARGET_TRIPLET=x64-windows')};Stage $name (Join-Path $repo 'research/prelive_current/cmake-stage.ps1') $args}
+}else{
+ $selection=Join-Path $pkg 'full-prefix-selection.json';$s=Get-Content -LiteralPath $selection -Raw|ConvertFrom-Json;$selected=@($s.frames|Where-Object {$_.index.ordinal -in @(3028,3030,1519)});foreach($v in $selected){if((Get-FileHash -LiteralPath $v.path).Hash.ToLowerInvariant() -cne $v.sha256){throw 'png sha'}}
+ $inputs+=@($selection)+@($selected.path);$name='review-cards-prelive-release-'+$Attempt;Stage $name (Join-Path $repo 'tools/zero_miss_windows/native-stage.ps1') @{StageName=$name;Executable=(Join-Path $root 'pixel_review.exe');Arguments=@($selection,(Join-Path $pkg ('review-cards-'+$Attempt)));GateReceipt=$gate;Inputs=$inputs;TotalSeconds=300;ExpectedNative=0}
+ foreach($v in $selected){if((Get-FileHash -LiteralPath $v.path).Hash.ToLowerInvariant() -cne $v.sha256){throw 'png sha after'}}
+}
