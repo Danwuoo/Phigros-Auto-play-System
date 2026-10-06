@@ -35,6 +35,8 @@ native freeze 包含該 manifest、完整 build freeze 與 selection。
 
 Body patch 被拒絕，不能冒稱 seen front；跨 epoch／generation／geometry 的
 attachment 必須停止並驗證釋放，另建立新 owner context。
+本地橋接只接受已凍結的 1280×720／RGB888／stride 3840／rotation=1；
+即使 frame、batch、scene 的其他旋轉欄位一致，仍拒絕並使 owner 釋放現有 contact。
 未知注入、completed、取消且 cursor 缺失的身分不能復活。
 沒有 cursor 不轉成零；完整 cursor／prefix_offset 保留 uint64。
 

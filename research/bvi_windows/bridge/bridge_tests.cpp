@@ -200,26 +200,34 @@ void geometry_tests(Recorder& r) {
     const auto body=prepare(f,b,s,10*ms);r.check("body_patch_cannot_be_promoted_to_seen_front",body.valid&&body.count==0&&body.body_patch_denied==1);
     b=batch(s);s.targets.push_back(t);const auto duplicate=prepare(f,b,s,10*ms);
     r.check("ambiguous_target_binding_abstains",duplicate.valid&&duplicate.note_ids[0]==0&&duplicate.unmapped==1);
+    f.source_rotation=2;s.context.rotation=2;b.context=s.context;
+    r.check("matching_rotation_outside_frozen_profile_rejected",!prepare(f,b,s,10*ms).valid);
+    f.source_rotation=1;s.context.rotation=1;b.context=s.context;
     f.epoch=0;r.check("zero_context_rejected",!prepare(f,b,s,10*ms).valid);
 }
 void context_tests(Recorder& r) {
-    for(int field=0;field<3;++field) {
-        const auto id=std::string(field==0?"epoch":field==1?"generation":"geometry");
+    for(int field=0;field<4;++field) {
+        const auto id=std::string(field==0?"epoch":field==1?"generation":field==2?"geometry":"rotation");
         Owner o;auto s=scene(1,0);s.targets={hold(71,0)};o.accept(s);o.sync();
         o.clock.set(10*ms);o.poll();
         r.check(id+"_change_starts_with_own_down",o.sync()&&o.backend.active_count()==1);
         o.clock.set(20*ms);s=scene(2,20*ms);s.targets={hold(71,20*ms)};
-        if(field==0)++s.context.epoch;else if(field==1)++s.context.generation;else ++s.context.geometry;
+        if(field==0)++s.context.epoch;else if(field==1)++s.context.generation;
+        else if(field==2)++s.context.geometry;else ++s.context.rotation;
         auto f=pixels(s);f.epoch=s.context.epoch;f.generation=s.context.generation;f.geometry_version=s.context.geometry;
+        f.source_rotation=s.context.rotation;
         auto candidate=std::make_unique<bvi::Candidate>();
         auto evaluated=evaluate(*candidate,f,batch(s),s,o.ledger,o.clock.now_ns());
-        r.check(id+"_change_cannot_reuse_known_down",evaluated.input.valid&&
-            evaluated.input.reason=="execution_context_mismatch"&&!evaluated.filtered.playing_gate&&evaluated.allowed==0);
+        r.check(id+"_change_cannot_reuse_known_down",
+            (field==3?(!evaluated.input.valid&&evaluated.input.reason=="frame_source_or_capacity"):
+             (evaluated.input.valid&&evaluated.input.reason=="execution_context_mismatch"))&&
+            !evaluated.filtered.playing_gate&&evaluated.allowed==0);
         o.accept(evaluated.filtered);o.poll();
         r.check(id+"_change_releases_actual_contact",o.sync()&&o.backend.active_count()==0&&
             o.backend.downs==1&&o.ledger.find(71)->state==Execution::cancelled);
         evaluated=evaluate(*candidate,f,batch(s),s,o.ledger,o.clock.now_ns());
-        r.check(id+"_change_requires_new_verified_owner_context",!evaluated.filtered.playing_gate&&evaluated.allowed==0);
+        r.check(id+(field==3?"_change_requires_frozen_profile":"_change_requires_new_verified_owner_context"),
+            !evaluated.filtered.playing_gate&&evaluated.allowed==0);
     }
 }
 }

@@ -24,7 +24,7 @@ Prepared prepare(const Frame& f,const CandidateBatch& batch,const DecisionSnapsh
         f.capture_complete_ns,f.width,f.height,f.source_rotation};
     if(!f.source_valid||!batch.source_valid||!batch.capacity_valid||!scene.capacity_valid||
        !f.epoch||!f.generation||!f.geometry_version||!f.sequence||
-       f.width!=1280||f.height!=720||f.stride!=3840||f.rgb.size()!=1280*720*3)
+       f.width!=1280||f.height!=720||f.stride!=3840||f.source_rotation!=1||f.rgb.size()!=1280*720*3)
         return reject("frame_source_or_capacity");
     if(batch.context!=current||scene.context!=current||f.capture_complete_ns<0||
        f.capture_complete_ns>std::numeric_limits<Nanoseconds>::max()-100'000'000||
