@@ -7,10 +7,10 @@ using namespace pas;using namespace pas::current_rails;using namespace pas::curr
 constexpr Nanoseconds ms=1'000'000;
 struct Tests {J rows=J::array(),details=J::object();int failed=0;void check(std::string id,bool ok){rows.push_back({{"id",id},{"pass",ok}});failed+=!ok;std::cout<<id<<" "<<ok<<std::endl;}};
 struct Input {Frame f;CandidateBatch b;DecisionSnapshot s;};
-Input make(int sequence,Nanoseconds time,double front=500,double tail=200,double x=400,double angle=0,bool patch=false,std::array<int,3> rgb={155,233,255}){
+Input make(int sequence,Nanoseconds time,double front=500,double tail=200,double x=400,double angle=0,bool patch=false,std::array<int,3> rgb={155,233,255},double line_angle=0){
  Input a;a.f.sequence=sequence;a.f.epoch=a.f.generation=a.f.geometry_version=1;a.f.width=1280;a.f.height=720;a.f.stride=3840;a.f.source_rotation=1;a.f.source_valid=true;a.f.capture_complete_ns=a.f.pixels_ready_ns=time;a.f.rgb.assign(1280*720*3,30);
  a.s.context={1,1,1,std::uint64_t(sequence),time,1280,720,1};a.s.sequence=sequence;a.s.playing_gate=true;a.s.ui=GameUi::playing;
- LineCandidate l;l.center={640,500};l.tangent={1,0};l.length=1200;l.track_id=7;l.observed_ns=time;l.confidence=1;a.s.lines={l};
+ LineCandidate l;l.center={640,500};l.tangent={std::cos(line_angle),std::sin(line_angle)};l.length=1200;l.track_id=7;l.observed_ns=time;l.confidence=1;a.s.lines={l};
  GameTarget t;t.note_id=42;t.revision=sequence;t.line_id=7;t.note.kind=NoteKind::hold;t.note.center={x,front};t.note.tangent={std::cos(angle),std::sin(angle)};t.note.width=100;t.note.height=front-tail;t.note.rails_geometry=true;t.note.held_body_patch=patch;t.note.held_body_evidence=patch;t.note.head_on_line=std::abs(front-500)<5;
  const Vec2 n{-t.note.tangent.y,t.note.tangent.x};if(!patch)t.note.tail=Vec2{x-n.x*(front-tail),front-n.y*(front-tail)};
  t.hit={x,500};t.crossing_ns=time;t.samples=4;t.history_span_ns=40*ms;t.uncertainty_ns=2*ms;t.evidence_ns=time;t.expires_ns=time+100*ms;t.reason="prediction_observe_only";a.s.targets={t};
@@ -18,6 +18,7 @@ Input make(int sequence,Nanoseconds time,double front=500,double tail=200,double
  // Independent raster: transform every local shape to pixels; no production sampler is used.
  const auto u=t.note.tangent;const Vec2 v{-u.y,u.x};const double depth=patch?100:front-tail;
  for(int y=0;y<720;++y)for(int px=0;px<1280;++px){const double dx=px-x,dy=y-front,along=dx*u.x+dy*u.y,normal=dx*v.x+dy*v.y;auto* p=a.f.rgb.data()+std::size_t(y)*3840+px*3;
+  const double lx=px-640,ly=y-500;if(std::abs(-lx*l.tangent.y+ly*l.tangent.x)<=.5&&std::abs(lx*l.tangent.x+ly*l.tangent.y)<=600)p[0]=p[1]=p[2]=255;
   if(normal>=-depth&&normal<=0&&std::abs(along)<=50){for(int k=0;k<3;++k)p[k]=static_cast<std::uint8_t>(rgb[k]);}
   if(normal>=-depth&&normal<=0&&std::abs(std::abs(along)-50)<=1){p[0]=p[1]=p[2]=255;}}
  return a;
@@ -64,9 +65,9 @@ int main(int argc,char**argv){Tests r;try{if(argc!=2||std::filesystem::exists(ar
  // The note's tangent can approach alignment late. Distant current normals are
  // not a pairing prerequisite; only measured local overlap qualifies entry.
  {Own o;for(int k=0;k<3;++k){auto a=make(k+1,(10+k*20)*ms,460+k*20,200,400,.16-.08*k);o.step(a);}r.check("late_note_alignment_entry",o.backend.downs==1);o.finish();}
- {Own o;for(int k=0;k<3;++k){auto a=make(k+1,(10+k*20)*ms,460+k*20);o.step(a);}for(int k=0;k<4;++k){auto a=make(k+4,(70+k*20)*ms,530,200,400,.06*k);a.b.lines[0].tangent={std::cos(.05*k),std::sin(.05*k)};a.s.lines=a.b.lines;o.step(a);}r.check("line_rotates_during_hold_same_down",o.backend.downs==1&&o.backend.moves>0);o.finish();}
+ {Own o;for(int k=0;k<3;++k){auto a=make(k+1,(10+k*20)*ms,460+k*20);o.step(a);}for(int k=0;k<4;++k){auto a=make(k+4,(70+k*20)*ms,530,200,400,.06*k,false,{155,233,255},.05*k);o.step(a);}r.check("line_rotates_during_hold_same_down",o.backend.downs==1&&o.backend.moves>0);o.finish();}
  // All five contacts come from this candidate's own Down receipts.
- {Own o;for(int k=0;k<3;++k){auto a=make(k+1,(10+k*20)*ms,460+k*20,200,140);for(int j=1;j<5;++j){auto extra=make(k+1,(10+k*20)*ms,460+k*20,200,140+j*220);for(std::size_t p=0;p<a.f.rgb.size();++p)if(extra.f.rgb[p]!=30)a.f.rgb[p]=extra.f.rgb[p];auto c=extra.b.candidates[0];c.candidate_id=j+1;a.b.candidates.push_back(c);auto t=extra.s.targets[0];t.note_id=42+j;a.s.targets.push_back(t);}o.step(a);}r.check("five_own_contacts_bounded",o.backend.downs==5&&o.backend.active_count()==5);r.check("five_finish_release",o.finish());}
+ {Own o;for(int k=0;k<3;++k){auto a=make(k+1,(10+k*20)*ms,460+k*20,200,140);for(int j=1;j<5;++j){const int cx=140+j*220;auto extra=make(k+1,(10+k*20)*ms,460+k*20,200,cx);for(int y=200;y<=460+k*20;++y)for(int x=cx-51;x<=cx+51;++x)for(int c=0;c<3;++c){const auto p=(std::size_t(y)*1280+x)*3+c;if(extra.f.rgb[p]!=30)a.f.rgb[p]=extra.f.rgb[p];}auto c=extra.b.candidates[0];c.candidate_id=j+1;a.b.candidates.push_back(c);auto t=extra.s.targets[0];t.note_id=42+j;a.s.targets.push_back(t);}o.step(a);}r.check("five_own_contacts_bounded",o.backend.downs==5&&o.backend.active_count()==5);r.check("five_finish_release",o.finish());}
  // Irregular business dt, too old evidence and front reversal never replay Down.
  {Own o;for(int k=0;k<3;++k){auto a=make(k+1,(10+(k==1?17:k==2?43:0))*ms,460+k*20);o.step(a);}r.check("irregular_dt_measured_entry",o.backend.downs==1);o.finish();}
  {Own o;for(int k=0;k<3;++k){auto a=make(k+1,(10+k*20)*ms,k==0?470:k==1?460:500);o.step(a);}r.check("reversing_front_no_entry",o.backend.downs==0);o.finish();}
