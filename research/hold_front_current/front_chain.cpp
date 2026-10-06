@@ -109,7 +109,7 @@ int main(int argc,char** argv) {
     std::size_t invalid=0,unmapped=0,body_patch=0,unsupported=0,allowed=0,owned_downs=0,owned_moves=0,owned_ups=0;
     std::size_t peak_lines=0,peak_roi=0,peak_contacts=0,failed=0,raw_candidates=0,tracked_targets=0;
     std::uint64_t peak_probes=0;
-    std::vector<double> decode,compute,total,bridge;
+    std::vector<double> decode,compute,total,bridge,front_compute;
     for(const auto& input:frames) {
         const int next_window=input.at("window");
         if(next_window!=window_id) {
@@ -216,6 +216,7 @@ int main(int argc,char** argv) {
             {"batch_history_source",current_batch.history_source},{"bvi_probes",result.observation.probes},
             {"bvi_metadata_bytes",bvi::Candidate::metadata_bytes()}};
         // Sidecar only, after owner dispatch. Never consumed by the old chain.
+        const auto front_start=meter.now_ns();
         const auto front=pas::hold_front::produce(frame,current_batch);
         J boundaries=J::array();
         std::array<bvi::Query,128> shadow_queries{};
@@ -254,6 +255,10 @@ int main(int argc,char** argv) {
             {"valid",front.valid},{"reason",pas::hold_front::name(front.reason)},
             {"complete_candidate_count",front.count},{"probes",front.probes},{"results",boundaries},
             {"flow","post_dispatch_geometry_only"},{"action_authorized",false}};
+        const auto front_end=meter.now_ns();
+        front_compute.push_back((front_end-front_start)/1e6);
+        row["current_front_sidecar"]["host_start_ns"]=front_start;
+        row["current_front_sidecar"]["host_end_ns"]=front_end;
         const auto encoded=row.dump();
         if(encoded.size()+1>trace_cap-trace_bytes)throw std::runtime_error("trace byte capacity");
         trace<<encoded<<'\n';trace.flush();if(!trace)throw std::runtime_error("trace write failed");
@@ -270,10 +275,12 @@ int main(int argc,char** argv) {
         {"peak_bvi_probes",peak_probes},{"bvi_metadata_bytes",bvi::Candidate::metadata_bytes()},
         {"final_release_verified",true},{"timing_clock_domain","current_host_qpc_ns"},
         {"business_clock_domain","offline_fake_clock_replaying_archived_host_qpc_values"},
-        {"decode_io_ms",distribution(decode)},{"complete_observer_bridge_owner_scheduler_receipts_ms",distribution(compute)},
-        {"decode_and_complete_chain_ms",distribution(total)},{"bridge_ms",distribution(bridge)},
+        {"decode_io_ms",distribution(decode)},{"unchanged_baseline_chain_compute_ms",distribution(compute)},
+        {"decode_and_unchanged_baseline_chain_ms",distribution(total)},{"unchanged_bridge_ms",distribution(bridge)},
+        {"post_dispatch_front_sidecar_compute_ms",distribution(front_compute)},
+        {"front_sidecar_timing_scope","measure + consumer current-RGB revalidation + frozen v3 extract-only shadow + sidecar JSON construction; all 256 frames"},
         {"runtime_cost_gate","not_ready; sequential archived replay, no latest-frame producer/RPC/injection/journal-pressure or frozen AA/AB"},
-        {"timing_excludes","post-dispatch diagnostic serialization/flush and final release; no live injection"},
+        {"timing_excludes","baseline chain compute excludes all post-dispatch diagnostics including new measure/consume/shadow extract; sidecar compute separately measured; both exclude dump/flush, final release, latest-frame producer, RPC and live injection"},
         {"roi_source","formal GameObserver current candidate_batch; baseline-guided recent anchors disclosed"},
         {"frame_context","new offline epoch/generation/geometry; not a current device fingerprint"},
         {"physical_human_gold",0},{"device_commands",0},{"source_absolute_age",nullptr},

@@ -141,6 +141,12 @@ int main(int argc,char** argv){
                     r.at("observer_front")==raw.at("center"),"audit current proposal provenance");
                 require(r.at("context").at("frame")==row.at("source_frame")&&r.at("context").at("capture_ns")==row.at("recorded_capture_ns")&&
                     r.at("pixels_ready_ns")==row.at("recorded_pixels_ready_ns"),"audit boundary frame provenance");
+                const J offline_context={{"epoch",1},{"generation",1},{"geometry",1},
+                    {"frame",entry.at("index").at("source_frame")},{"capture_ns",entry.at("index").at("capture_complete_ns")},
+                    {"width",1280},{"height",720},{"rotation",entry.at("index").at("source_rotation")}};
+                require(entry.at("index").at("width")==1280&&entry.at("index").at("height")==720&&
+                    entry.at("index").at("source_rotation")==1&&r.at("context")==offline_context,
+                    "audit full declared offline context mismatch");
                 require(!r.at("action_authorized").get<bool>()&&r.at("tail_role")=="unknown; current tail proposal or missing; not measured here", "audit roles are not physical gold");
                 require(r.at("probes").get<int>()<=975,"audit front probe bound");
                 if(r.at("boundary").is_null()){
@@ -198,7 +204,9 @@ int main(int argc,char** argv){
             {"policy_use",false},{"precision","approximate semantics; no exact touch or legal Down gold"}};
         report["passed"]=true;report["compared_rows"]=rows;report["witness_queries"]=queries;
         report["raw_png_points_verified"]=points;report["current_witness_frames"]=witness_frames;
-        report["excluded_fields"]={"five current-host timing fields","post_dispatch_witness_review","query_width","query_angle"};
+        report["declared_offline_context"]={{"epoch",1},{"generation",1},{"geometry",1},{"width",1280},{"height",720},{"rotation",1},
+            {"scope","new offline context; not a current device fingerprint"}};
+        report["excluded_fields"]={"five current-host timing fields","post_dispatch_witness_review","query_width","query_angle","current_front_sidecar separately independently checked"};
         report["scope"]="frozen 256-frame selection; current raw PNG coordinates and policy fields; no physical gold";
     }catch(const std::exception& e){exit=1;report["error"]=e.what();}
     std::ofstream out(argv[5]);out<<report.dump(2)<<'\n';if(!out)return 2;
