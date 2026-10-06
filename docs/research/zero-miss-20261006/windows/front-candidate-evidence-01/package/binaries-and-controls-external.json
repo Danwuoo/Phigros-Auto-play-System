@@ -1,0 +1,302 @@
+{
+  "copied": false,
+  "negative_control_traces": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\negative-epoch.rows.jsonl",
+      "sha256": "d3d5d300f5677fcaf28380a00e1d307370431c90ac556d384e34b57ee6b3430a",
+      "bytes": 2055537
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\negative-front-rgb.rows.jsonl",
+      "sha256": "adb5769c694de85182afb694bcf23100cec3e4706ad6bd96313849a2a147483c",
+      "bytes": 2055537
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\negative-geometry.rows.jsonl",
+      "sha256": "6b4e1facd5607a2f1b64333cbe2c2159932e6355a785f829991510895c9f0f1e",
+      "bytes": 2055537
+    }
+  ],
+  "linked_libraries": [
+    {
+      "name": "current_bridge",
+      "configuration": "release",
+      "file": {
+        "bytes": 1996704,
+        "sha256": "37eb0b350b8e6da3b4bd970d54a978616a6d1c3c73726d440a479eef0a19be91",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\current_bridge.lib"
+      }
+    },
+    {
+      "name": "formal_core",
+      "configuration": "release",
+      "file": {
+        "bytes": 200940208,
+        "sha256": "167ec825c6da9aeca6baa1f7ebec3afffe63455d60f7baafeb7f347fea643464",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\formal_core.lib"
+      }
+    },
+    {
+      "name": "pixel_diagnostics",
+      "configuration": "release",
+      "file": {
+        "bytes": 5541408,
+        "sha256": "6a6e55a6d9366f76e174e8dd084636d0897eabd38be0e330af77651a2acd80db",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\pixel_diagnostics.lib"
+      }
+    },
+    {
+      "name": "exact_bvi_v3",
+      "configuration": "release",
+      "file": {
+        "bytes": 684322,
+        "sha256": "493d94380e9ddb1034b4620c1004c47ce7608621c8369de058bc87be63246b62",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\exact_bvi_v3.lib"
+      }
+    },
+    {
+      "name": "current_bridge",
+      "configuration": "debug",
+      "file": {
+        "bytes": 2157596,
+        "sha256": "3c6f13ed6268b020b4f76b04fabb58c3e122e3acbef27fc64399e46747e42477",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\current_bridge.lib"
+      }
+    },
+    {
+      "name": "exact_bvi_v3",
+      "configuration": "debug",
+      "file": {
+        "bytes": 682006,
+        "sha256": "6878e6466f2c95c56b17f5a2102009b075cb53299d6994ef4d1a95ff73edecb5",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\exact_bvi_v3.lib"
+      }
+    },
+    {
+      "name": "pixel_diagnostics",
+      "configuration": "debug",
+      "file": {
+        "bytes": 6069706,
+        "sha256": "4a0091de359673669a971ca93f285534504c742a25edde4ae0252116eddd1f73",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\pixel_diagnostics.lib"
+      }
+    },
+    {
+      "name": "formal_core",
+      "configuration": "debug",
+      "file": {
+        "bytes": 215084334,
+        "sha256": "878e13442ad91f3a7eca76d6e95154908f4f45c582f686d6a5ed27b275e55422",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\formal_core.lib"
+      }
+    },
+    {
+      "name": "exact_bvi_v3",
+      "configuration": "asan",
+      "file": {
+        "bytes": 765174,
+        "sha256": "d943b2fab11d153b8a30ecc1706e9d4ec8c7aec8a73397cfc59f6a580029bb1f",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\exact_bvi_v3.lib"
+      }
+    },
+    {
+      "name": "formal_core",
+      "configuration": "asan",
+      "file": {
+        "bytes": 222242760,
+        "sha256": "b7769e3f055ab137b6c5f29d42a28f99a94ee11df9ec4dbe3f814232b2afce56",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\formal_core.lib"
+      }
+    },
+    {
+      "name": "current_bridge",
+      "configuration": "asan",
+      "file": {
+        "bytes": 2299800,
+        "sha256": "5bce9823727998de023e5c3b9239107ce4bc9438c992eed337f955912a6aa153",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\current_bridge.lib"
+      }
+    },
+    {
+      "name": "pixel_diagnostics",
+      "configuration": "asan",
+      "file": {
+        "bytes": 6060254,
+        "sha256": "edef929053ef689cedea186dec58bb1b2a93b814a923c1aadb1095ad353780d1",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics.lib"
+      }
+    }
+  ],
+  "binaries": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-01\\clang_rt.asan_dbg_dynamic-x86_64.dll",
+      "sha256": "f56d5ff0b9fcb1c99e84201268d84df0c3406aa3710173f44446cf24cf2f857e",
+      "bytes": 1296920
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-01\\clang_rt.asan_dynamic-x86_64.dll",
+      "sha256": "52580b50dadca40f8f04e21c0b61e8ff272b31379270116377f47449c52ef758",
+      "bytes": 1208352
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-02\\clang_rt.asan_dbg_dynamic-x86_64.dll",
+      "sha256": "f56d5ff0b9fcb1c99e84201268d84df0c3406aa3710173f44446cf24cf2f857e",
+      "bytes": 1296920
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-02\\clang_rt.asan_dynamic-x86_64.dll",
+      "sha256": "52580b50dadca40f8f04e21c0b61e8ff272b31379270116377f47449c52ef758",
+      "bytes": 1208352
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-02\\current_front.lib",
+      "sha256": "29ac3ff30e350df814d06e42180350683a3bdd16e8825c41e7c69ed7d9ac29e2",
+      "bytes": 7930670
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-02\\front_audit.exe",
+      "sha256": "f0259cb97cff9907c942e56c7627f73d58d503e84d37312efc88c87241512431",
+      "bytes": 1573888
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-02\\front_tests.exe",
+      "sha256": "52cfa90b82d7fb8a4f682cab95697b95d617e2cdd28b44a1157f06a540d19d18",
+      "bytes": 945152
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-02\\pixel_chain.exe",
+      "sha256": "fa71d9fa2428062126d13d7af2dca4b695c49778af8253657a4721b44d8cdea7",
+      "bytes": 6202880
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-asan-02\\prefix_preservation.exe",
+      "sha256": "5d5928583903e7a3f30aa3dfc0ca26f23cb1ab8fb354cfd33424cf0e6ff59603",
+      "bytes": 5889536
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-01\\current_front.lib",
+      "sha256": "ba7051cce85551c9edf905a3cc4135792eb4960212c0d5260370d035c4ededd4",
+      "bytes": 7878796
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-01\\front_audit.exe",
+      "sha256": "5b3bd999d63d0c9acfae7f10337e16fd8776b1918352d78183f0b35d21917ab4",
+      "bytes": 950272
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-01\\front_tests.exe",
+      "sha256": "595ba20d8684b17bec87865989185c9242935b02a4fbc7c15a2b0b04e1b38854",
+      "bytes": 604160
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-01\\pixel_chain.exe",
+      "sha256": "b48ba574aa3613973a2864c6b48f73811efc233fda793946f542852583312ef1",
+      "bytes": 3974656
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-01\\prefix_preservation.exe",
+      "sha256": "53f80cb1a5bb1531c79eae3869fe8fb27abe0fedcdf0bd30c490ce542ecd9e33",
+      "bytes": 3780608
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\current_front.lib",
+      "sha256": "3673ae637641af2f5d8c66ee1920bc3d7c9f5f7be1c0104850abf1988ca5ed19",
+      "bytes": 7878796
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\front_audit.exe",
+      "sha256": "a00635b7b7b3e19c335b47bef1d0f8c36539dbe5a2e0003b20625871938ab781",
+      "bytes": 966144
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\front_tests.exe",
+      "sha256": "44f02965cc1ce37ce924afa1d211cbc4f2dfa713417c1cca649d94f93d02d0b6",
+      "bytes": 604160
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\pixel_chain.exe",
+      "sha256": "243c4d00ccf2df98fb46b4205f03215e0bc950d0f04869cb9efdeb88c8a1a043",
+      "bytes": 3980288
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02\\prefix_preservation.exe",
+      "sha256": "3424b2df6e105fb6484f23df12dbe6cdeaffa354108834a8e92dd15515ca6cf3",
+      "bytes": 3780608
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-01\\current_front.lib",
+      "sha256": "17e0a352760fe6e87fd015b68110e81fdc81cf7535c09f3a6be3f0e1cab7d1bf",
+      "bytes": 7302756
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-01\\front_audit.exe",
+      "sha256": "6082229a3643c3a8db24af2887f137f1c88a6b70f45a1b73bbfe388bd8a563f3",
+      "bytes": 202240
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-01\\front_tests.exe",
+      "sha256": "13cb9532099fdbe82522109a6f9ecf646c407ccd967f61604612e74890c261b2",
+      "bytes": 121344
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-01\\pixel_chain.exe",
+      "sha256": "ea9f44e50051339cf89857fd1c143f2036194cf0f299559f3efa7cd63fe0aef0",
+      "bytes": 548352
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-01\\prefix_preservation.exe",
+      "sha256": "0f39b23bf8cf5d1a26bf0f6c42f8e741475f5b78d07732fda6bd1f776df530b0",
+      "bytes": 270848
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-02\\current_front.lib",
+      "sha256": "10808f1c75b732580676f765a4b420742e82311af6d896ed6832f477a17a5c55",
+      "bytes": 7302756
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-02\\front_audit.exe",
+      "sha256": "548d402834de7ec7d6142ca3c7249bee08332bda851b84db7201fc8eb255aca4",
+      "bytes": 205824
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-02\\front_tests.exe",
+      "sha256": "3ec4e8aa468796c2e5e7d63ce5a3acced2ee9c06828d8ad1ceb94a19ed9938ce",
+      "bytes": 121344
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-02\\pixel_chain.exe",
+      "sha256": "bebce0ef66159d3bbdc890b6dc856a5dabe2a567fb25a9c72fa795eb4f61401c",
+      "bytes": 560128
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-02\\prefix_preservation.exe",
+      "sha256": "b16fe9ac8db48c977cc372d655060a97489da7da244499b595185f740134b588",
+      "bytes": 270848
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-03\\current_front.lib",
+      "sha256": "9b64fe8fc8b2365d0983dd1ef6af0ecce9489d29a6d2ed508972fb7fcddc0cac",
+      "bytes": 7302756
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-03\\front_audit.exe",
+      "sha256": "2e846f74aefa9eec69cde35b5df220aabfb0495c98c8aea8c7de7dfa0ccebfbd",
+      "bytes": 205824
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-03\\front_tests.exe",
+      "sha256": "07a74a356bfbe31e566dac95971d98b796e8502e26ffa36a53982deb9ce143cc",
+      "bytes": 121344
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-03\\pixel_chain.exe",
+      "sha256": "1b5306317caea1c5014ccd387b5c68724e97a3a33966f0d169a5eca7dfb912bb",
+      "bytes": 560128
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-release-03\\prefix_preservation.exe",
+      "sha256": "3a2656e66d2abff12e9a5ca406df03897bb08679fd98538a81b6d1103bb8718e",
+      "bytes": 270848
+    }
+  ]
+}

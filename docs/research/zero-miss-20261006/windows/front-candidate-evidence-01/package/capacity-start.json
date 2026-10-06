@@ -1,0 +1,108 @@
+{
+  "metadata_cap": 16777216,
+  "base": "4fe388428c7ccca4ef15d18a1d8e44cddd5198c3",
+  "existing_accounts": [
+    {
+      "files": 6312,
+      "path": "out",
+      "bytes": 13367435464
+    },
+    {
+      "files": 2112,
+      "path": "docs/research/zero-miss-20261006/windows/evidence",
+      "bytes": 45551206
+    },
+    {
+      "files": 535,
+      "path": "docs/research/zero-miss-20261006/windows/withdrawal-acceptance-evidence-01",
+      "bytes": 12324539
+    }
+  ],
+  "minimum_free": 21474836480,
+  "protected_stops": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-root-ninja-release-01\\state.json",
+      "sha256": "cbfc9c034773197b5aaaf10b4cf6a269e7f84f2a2179a7c0d5a35d834e7a7937"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-asan-01\\state.json",
+      "sha256": "37c3014ddb33d74408669b99f56ba2c8abd63063e6c774f0c5094eb56a8d7c8f"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-asan-02\\state.json",
+      "sha256": "382bae3398eefdc1c059c16452386e7c803ccf03d8dc3dc17a4f65b776b9c503"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-ninja-asan-03\\state.json",
+      "sha256": "192193ea95a0a625e432edf7ee4974dffed745e3a93efb3614f07d8326a37473"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-release-01\\state.json",
+      "sha256": "f3bfc9b87a6e30cc1598b02027dc82b80682ab678490df3af93af6d6855a4eb0"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\configure-root-release-02\\state.json",
+      "sha256": "7899129f65c0bb617a474b16f4e1d09eb06da4cffdf234643b15021f4477c1f0"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-asan-stack8-suite-01\\state.json",
+      "sha256": "33bc226e00847697420cae35546d4bbc5b67431b5627d3afd64f670b4874f4a9"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-debug-stack8-suite-01\\state.json",
+      "sha256": "d531590992b2a942566de9f2fdaed629d9de353892a49beb7a03b666e12151cb"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\legacy-release-r2-suite-01\\state.json",
+      "sha256": "2335bc1a131003ae2e41937654312a61f8f2b80438707a3060caa8497f7faf2f"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-asan-01\\state.json",
+      "sha256": "2c757d5bb835b71c14ef107e5a07a135abe5a724e203491542e74eaf2b265554"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-release-03\\state.json",
+      "sha256": "3390eba374e0df0cafbd511a08d9ddaa289d64ad76351593f9c445d490b9b6af"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\prefix-bridge-withdraw-release-01\\state.json",
+      "sha256": "1069bb17f81f64bcdfe90c90c4c7ef17480044694bbcbb857ac606c6320429c2"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\process-pretest-01\\scratch-diagnostic\\D19\\state.json",
+      "sha256": "8e686ae9ac678fe119e4174c5ee906dcfbf1dc0481aacad8f6d770e521b75baa"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\process-pretest-01\\scratch-diagnostic\\D20\\state.json",
+      "sha256": "601862be1b7db71457aba984c87ad608143e403fdb8afec789a08d9ead70daab"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bridge-release-01\\state.json",
+      "sha256": "e409cd9c6b8c6336ee7b7a9314ca5a3b229c45bbf44ed018f5959d473a0a0dae"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bridge-release-02\\state.json",
+      "sha256": "5e13caf368e52736cc8c4029e830aa5cf498b2537b541ed9328e76d23ae67ff8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bvi-asan-01\\state.json",
+      "sha256": "8f01cdb40c5336ab17416c5210779c5a9d00102aa028433fc777288aacc16682"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-bvi-debug-01\\state.json",
+      "sha256": "0a099b3902a52f3c229ea4eb394ef4e31527e8422965ea30f8109ea291f32197"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-root-ninja-asan-04\\state.json",
+      "sha256": "4983efd4a296eb200c8c0b02f384bda8b1044fd8b9c52eb93d479529069a8c7c"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\test-root-ninja-debug-01\\state.json",
+      "sha256": "c16790b3d0ec20cb165ea0d65f4641a4a5b5acb9459f0dd3c79745a2b8a27a2d"
+    }
+  ],
+  "branch": "codex/hold-visible-front-20261006",
+  "schema": "pas.hold-front-capacity.v1",
+  "free_before": 196892016640,
+  "out_cap": 2147483648
+}

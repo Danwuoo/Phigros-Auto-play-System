@@ -1,0 +1,838 @@
+{
+  "physical_legal_opportunity_gold": 0,
+  "selected_original_PNGs_verified": 256,
+  "original36_fail_preserved": true,
+  "source_commit": "e26231ec5acef9634df007770c1f06031d5326d4",
+  "cost_gate": "NOT_READY",
+  "user_zip": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\phigros-zero-miss-handoff-round4-9dc99d6.zip",
+    "sha256": "18040114639c560c0ed33d6d7949affd1a4fb1ce2be807adf1f53b948656ee9b",
+    "bytes": 5187688
+  },
+  "metadata_cap": 16777216,
+  "original_manifest_sha": "7508b2572f045b8bbf52afd45789a717bac03af715ca25eb0b5b8a7294d62eb5",
+  "build_bytes": 656640617,
+  "schema": "pas.current-front-handoff.v1",
+  "old_current_out_STOPs_verified": 20,
+  "root349_and_v3_3938_rerun": false,
+  "new_goals": 0,
+  "original_dirty": [
+    " M apps/runtime_x11_p/aux/CMakeLists.txt",
+    "?? phigros-zero-miss-handoff-round4-9dc99d6.zip"
+  ],
+  "package_bytes_before_final_reports": 15044429,
+  "configurations": [
+    {
+      "kind_counts": {
+        "unknown": 145,
+        "unsupported": 523,
+        "visible_terminal_proposed_head": 191
+      },
+      "original_raw_points": 1665,
+      "rows": 256,
+      "timing_excludes": "baseline chain compute excludes all post-dispatch diagnostics including new measure/consume/shadow extract; sidecar compute separately measured; both exclude dump/flush, final release, latest-frame producer, RPC and live injection",
+      "sidecar_compute_qpc_ms": {
+        "absolute_deviation_p95": 11.7489,
+        "jitter_p95_minus_p5": 11.920175,
+        "max": 17.6469,
+        "n": 256,
+        "p50": 0.0885,
+        "p95": 11.960775,
+        "p99": 13.903509999999997
+      },
+      "raw_proposals": 859,
+      "front_checks": 56,
+      "baseline_compute_qpc_ms": {
+        "absolute_deviation_p95": 20.50285,
+        "jitter_p95_minus_p5": 22.707524999999997,
+        "max": 39.9129,
+        "n": 256,
+        "p50": 8.20515,
+        "p95": 28.714824999999998,
+        "p99": 32.748369999999994
+      },
+      "terminal_proposals": 191,
+      "prefix_checks": 113,
+      "front_raw_points": 1910,
+      "mode": "release",
+      "build": "out/hold-front-release-03",
+      "reason_counts": {
+        "current_rgb_terminal_and_rails": 191,
+        "hold_only": 523,
+        "multiple_supported_terminals_unknown": 2,
+        "no_supported_terminal": 54,
+        "tail_missing_or_incompatible_normal_unknown": 89
+      }
+    },
+    {
+      "kind_counts": {
+        "unknown": 145,
+        "unsupported": 523,
+        "visible_terminal_proposed_head": 191
+      },
+      "original_raw_points": 1665,
+      "rows": 256,
+      "timing_excludes": "baseline chain compute excludes all post-dispatch diagnostics including new measure/consume/shadow extract; sidecar compute separately measured; both exclude dump/flush, final release, latest-frame producer, RPC and live injection",
+      "sidecar_compute_qpc_ms": {
+        "absolute_deviation_p95": 18.16055,
+        "jitter_p95_minus_p5": 18.9103,
+        "max": 25.414,
+        "n": 256,
+        "p50": 0.8261499999999999,
+        "p95": 18.99745,
+        "p99": 22.76176999999998
+      },
+      "raw_proposals": 859,
+      "front_checks": 56,
+      "baseline_compute_qpc_ms": {
+        "absolute_deviation_p95": 26.0768,
+        "jitter_p95_minus_p5": 31.2288,
+        "max": 133.408,
+        "n": 256,
+        "p50": 33.1944,
+        "p95": 59.3061,
+        "p99": 83.89036999999986
+      },
+      "terminal_proposals": 191,
+      "prefix_checks": 113,
+      "front_raw_points": 1910,
+      "mode": "debug",
+      "build": "out/hold-front-debug-02",
+      "reason_counts": {
+        "current_rgb_terminal_and_rails": 191,
+        "hold_only": 523,
+        "multiple_supported_terminals_unknown": 2,
+        "no_supported_terminal": 54,
+        "tail_missing_or_incompatible_normal_unknown": 89
+      }
+    },
+    {
+      "kind_counts": {
+        "unknown": 145,
+        "unsupported": 523,
+        "visible_terminal_proposed_head": 191
+      },
+      "original_raw_points": 1665,
+      "rows": 256,
+      "timing_excludes": "baseline chain compute excludes all post-dispatch diagnostics including new measure/consume/shadow extract; sidecar compute separately measured; both exclude dump/flush, final release, latest-frame producer, RPC and live injection",
+      "sidecar_compute_qpc_ms": {
+        "absolute_deviation_p95": 160.39520000000002,
+        "jitter_p95_minus_p5": 170.476525,
+        "max": 204.833,
+        "n": 256,
+        "p50": 10.8687,
+        "p95": 171.417,
+        "p99": 195.32022999999998
+      },
+      "raw_proposals": 859,
+      "front_checks": 56,
+      "baseline_compute_qpc_ms": {
+        "absolute_deviation_p95": 113.20185,
+        "jitter_p95_minus_p5": 196.84895,
+        "max": 515.8623,
+        "n": 256,
+        "p50": 179.20495,
+        "p95": 266.3652,
+        "p99": 338.11667999999975
+      },
+      "terminal_proposals": 191,
+      "prefix_checks": 113,
+      "front_raw_points": 1910,
+      "mode": "asan",
+      "build": "out/hold-front-asan-02",
+      "reason_counts": {
+        "current_rgb_terminal_and_rails": 191,
+        "hold_only": 523,
+        "multiple_supported_terminals_unknown": 2,
+        "no_supported_terminal": 54,
+        "tail_missing_or_incompatible_normal_unknown": 89
+      }
+    }
+  ],
+  "v3_core": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.cpp",
+      "sha256": "866ad2440d088ec1caf360eb5d4a9c796fdfcbcf2e15aff92374baf2291ea824",
+      "bytes": 8687
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\bvi.hpp",
+      "sha256": "565e7c058328d01b11b75e7bf05a96a96dcdd378b42f000a422c000957671d5f",
+      "bytes": 3031
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\constraint_policy.cpp",
+      "sha256": "693cb7a1fa177035e1542c772dd2e26e63cd280fcdc34067aea4f3959297c821",
+      "bytes": 1792
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.cpp",
+      "sha256": "b08520d87591b914fd357205e506a5080abb690dc4efe08c6e44e1225aea1c6f",
+      "bytes": 4306
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\contact_policy.hpp",
+      "sha256": "08f48f197ef36449bc04b81cdd27005c50e56bc4766fde9e5d3bc58c38ccb691",
+      "bytes": 336
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.cpp",
+      "sha256": "37a23c696654b3935a51d422991f260213094a48d1488dc45e74334b29ac1efc",
+      "bytes": 9465
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\bvi_cold_v3\\relation_policy.hpp",
+      "sha256": "bbb47373899ac0531e424849aaa3d32638348ea25e8ebf682ddfaf906ac9feb0",
+      "bytes": 400
+    }
+  ],
+  "original_HEAD": "74e54437d4a3ad2b2bd1a3b09312211a92f2359e",
+  "stage_bytes": 2383564,
+  "first_source_commit": "28493f12e45e2110e74b4d5b0ab99a03f6755cf6",
+  "old_sealed_STOPs_verified": 20,
+  "free_bytes": 196213014528,
+  "user_aux_sha": "e5c78a1d90a5e430c4f7c5328c7e9a8b3571800b0b8fc698d082b1cbe16d5501",
+  "linked_libraries": [
+    {
+      "name": "current_bridge",
+      "configuration": "release",
+      "file": {
+        "bytes": 1996704,
+        "sha256": "37eb0b350b8e6da3b4bd970d54a978616a6d1c3c73726d440a479eef0a19be91",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\current_bridge.lib"
+      }
+    },
+    {
+      "name": "formal_core",
+      "configuration": "release",
+      "file": {
+        "bytes": 200940208,
+        "sha256": "167ec825c6da9aeca6baa1f7ebec3afffe63455d60f7baafeb7f347fea643464",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\formal_core.lib"
+      }
+    },
+    {
+      "name": "pixel_diagnostics",
+      "configuration": "release",
+      "file": {
+        "bytes": 5541408,
+        "sha256": "6a6e55a6d9366f76e174e8dd084636d0897eabd38be0e330af77651a2acd80db",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\pixel_diagnostics.lib"
+      }
+    },
+    {
+      "name": "exact_bvi_v3",
+      "configuration": "release",
+      "file": {
+        "bytes": 684322,
+        "sha256": "493d94380e9ddb1034b4620c1004c47ce7608621c8369de058bc87be63246b62",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-release-01\\exact_bvi_v3.lib"
+      }
+    },
+    {
+      "name": "current_bridge",
+      "configuration": "debug",
+      "file": {
+        "bytes": 2157596,
+        "sha256": "3c6f13ed6268b020b4f76b04fabb58c3e122e3acbef27fc64399e46747e42477",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\current_bridge.lib"
+      }
+    },
+    {
+      "name": "exact_bvi_v3",
+      "configuration": "debug",
+      "file": {
+        "bytes": 682006,
+        "sha256": "6878e6466f2c95c56b17f5a2102009b075cb53299d6994ef4d1a95ff73edecb5",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\exact_bvi_v3.lib"
+      }
+    },
+    {
+      "name": "pixel_diagnostics",
+      "configuration": "debug",
+      "file": {
+        "bytes": 6069706,
+        "sha256": "4a0091de359673669a971ca93f285534504c742a25edde4ae0252116eddd1f73",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\pixel_diagnostics.lib"
+      }
+    },
+    {
+      "name": "formal_core",
+      "configuration": "debug",
+      "file": {
+        "bytes": 215084334,
+        "sha256": "878e13442ad91f3a7eca76d6e95154908f4f45c582f686d6a5ed27b275e55422",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-debug-01\\formal_core.lib"
+      }
+    },
+    {
+      "name": "exact_bvi_v3",
+      "configuration": "asan",
+      "file": {
+        "bytes": 765174,
+        "sha256": "d943b2fab11d153b8a30ecc1706e9d4ec8c7aec8a73397cfc59f6a580029bb1f",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\exact_bvi_v3.lib"
+      }
+    },
+    {
+      "name": "formal_core",
+      "configuration": "asan",
+      "file": {
+        "bytes": 222242760,
+        "sha256": "b7769e3f055ab137b6c5f29d42a28f99a94ee11df9ec4dbe3f814232b2afce56",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\formal_core.lib"
+      }
+    },
+    {
+      "name": "current_bridge",
+      "configuration": "asan",
+      "file": {
+        "bytes": 2299800,
+        "sha256": "5bce9823727998de023e5c3b9239107ce4bc9438c992eed337f955912a6aa153",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\current_bridge.lib"
+      }
+    },
+    {
+      "name": "pixel_diagnostics",
+      "configuration": "asan",
+      "file": {
+        "bytes": 6060254,
+        "sha256": "edef929053ef689cedea186dec58bb1b2a93b814a923c1aadb1095ad353780d1",
+        "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics.lib"
+      }
+    }
+  ],
+  "device_commands": 0,
+  "branch": "codex/hold-visible-front-20261006",
+  "original_index_sha": "0bd8ec74b6bc19d1f8080c064453a052095e328e31d2759f12d6d04d78500f8d",
+  "timing_v1_correction": "v1 baseline chain report excluded new measure/consume/shadow, despite generic old timing_excludes; v2 explicitly renames and separately measures sidecar; no full candidate cost qualification",
+  "head_role": "proposed except external human approximate 3030 label",
+  "product_completed": false,
+  "out_cap": 2147483648,
+  "all_stages": [
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 16.0709715,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "audit-hold-front-asan-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 8.3033469,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "audit-hold-front-debug-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 2.6009901,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "audit-hold-front-release-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 2.8113409,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "audit-hold-front-release-03",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 1,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 2.1889282,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 1,
+      "stage": "audit-hold-front-release-neg-epoch",
+      "streams_completed": true
+    },
+    {
+      "verification": 1,
+      "native": 1,
+      "status": "STOP",
+      "active_final": 0,
+      "identity_trusted": false,
+      "elapsed_s": 2.0213088,
+      "held_signaled": true,
+      "reason": "process-integrity",
+      "runner": 125,
+      "stage": "audit-hold-front-release-neg-front-rgb",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 1,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 1.7216602,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 1,
+      "stage": "audit-hold-front-release-neg-front-rgb-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 1,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 2.1275282,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 1,
+      "stage": "audit-hold-front-release-neg-geometry",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 49.8147985,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "build-hold-front-asan-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 25.00481,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "build-hold-front-debug-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 46.7837339,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "build-hold-front-debug-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 39.7625912,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "build-hold-front-release-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 1,
+      "native": 0,
+      "status": "STOP",
+      "active_final": 0,
+      "identity_trusted": false,
+      "elapsed_s": 55.1039209,
+      "held_signaled": true,
+      "reason": "process-integrity",
+      "runner": 125,
+      "stage": "build-hold-front-release-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 25.9767198,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "build-hold-front-release-03",
+      "streams_completed": true
+    },
+    {
+      "verification": 1,
+      "native": 0,
+      "status": "STOP",
+      "active_final": 0,
+      "identity_trusted": false,
+      "elapsed_s": 5.6880347,
+      "held_signaled": true,
+      "reason": "process-integrity",
+      "runner": 125,
+      "stage": "configure-hold-front-asan-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 7.0300415,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "configure-hold-front-asan-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 5.6887349,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "configure-hold-front-debug-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 6.7952316,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "configure-hold-front-debug-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 7.0291319,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "configure-hold-front-release-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 6.6793274,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "configure-hold-front-release-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 5.7844251,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "configure-hold-front-release-03",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 0.7979791,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "front-hold-front-asan-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 0.634002,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "front-hold-front-debug-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 0.3152194,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "front-hold-front-release-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 0.2553778,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "front-hold-front-release-03",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 74.9013078,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "pixels-hold-front-asan-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 14.2799729,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "pixels-hold-front-debug-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 7.1395087,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "pixels-hold-front-release-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 7.0618539,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "pixels-hold-front-release-03",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 0.8090194,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "prefix-hold-front-asan-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 0.3653769,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "prefix-hold-front-debug-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 0.263384,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "prefix-hold-front-release-01",
+      "streams_completed": true
+    },
+    {
+      "verification": 0,
+      "native": 0,
+      "status": "COMPLETE",
+      "active_final": 0,
+      "identity_trusted": true,
+      "elapsed_s": 0.2428274,
+      "held_signaled": true,
+      "reason": null,
+      "runner": 0,
+      "stage": "prefix-hold-front-release-03",
+      "streams_completed": true
+    }
+  ],
+  "new_agents_or_tasks": 0,
+  "expected_negative_rejections": 3,
+  "protected_original_tests_changed": false,
+  "original_timeouts_and_skips_preserved": true,
+  "own_source": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\.gitattributes",
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "bytes": 8
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\CMakeLists.txt",
+      "sha256": "a134ab8497e0b2cd3c21ce6dc61539efcd349efc6114ecdb577a4e403a23ab95",
+      "bytes": 3472
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_audit.cpp",
+      "sha256": "fccb5db8e67ad667360b404df616a398c082f0b956ec5c1399922a54d32c7c58",
+      "bytes": 17304
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_chain.cpp",
+      "sha256": "2a592a34644602a87402dfd7f2c4448f498e05b61f45484f8c659176c2997845",
+      "bytes": 21901
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front_tests.cpp",
+      "sha256": "f0698100e33390a7528c72c186096909e08c79c9ddc525b414d207f268e33476",
+      "bytes": 8239
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.cpp",
+      "sha256": "e5b23ff5cdd2129ff31431bb5a1194fb7dceef7a4384dd1f5da40068965d3a7f",
+      "bytes": 10757
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\front.hpp",
+      "sha256": "a917a40d1cff466355d166d6bbe22892c261048d2b1731091b82495c64273905",
+      "bytes": 2531
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\README.md",
+      "sha256": "b4500d92de88a8fd1570f39ea6c7c2ace9200f077300c186aa91518ebf94e34e",
+      "bytes": 3680
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\research\\hold_front_current\\run.ps1",
+      "sha256": "2e4f634f4c449f44ebb2dbff47abd6d580584909d678170ce79e82a97ee6f75c",
+      "bytes": 7556
+    }
+  ],
+  "old_sealed_files_verified": 2645,
+  "push_PR_merge": false,
+  "new_process_stops": [
+    {
+      "verification": 1,
+      "native": 1,
+      "status": "STOP",
+      "active_final": 0,
+      "identity_trusted": false,
+      "elapsed_s": 2.0213088,
+      "held_signaled": true,
+      "reason": "process-integrity",
+      "runner": 125,
+      "stage": "audit-hold-front-release-neg-front-rgb",
+      "streams_completed": true
+    },
+    {
+      "verification": 1,
+      "native": 0,
+      "status": "STOP",
+      "active_final": 0,
+      "identity_trusted": false,
+      "elapsed_s": 55.1039209,
+      "held_signaled": true,
+      "reason": "process-integrity",
+      "runner": 125,
+      "stage": "build-hold-front-release-02",
+      "streams_completed": true
+    },
+    {
+      "verification": 1,
+      "native": 0,
+      "status": "STOP",
+      "active_final": 0,
+      "identity_trusted": false,
+      "elapsed_s": 5.6880347,
+      "held_signaled": true,
+      "reason": "process-integrity",
+      "runner": 125,
+      "stage": "configure-hold-front-asan-01",
+      "streams_completed": true
+    }
+  ],
+  "base": "4fe388428c7ccca4ef15d18a1d8e44cddd5198c3"
+}

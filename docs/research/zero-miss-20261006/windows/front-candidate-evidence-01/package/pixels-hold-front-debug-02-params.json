@@ -1,0 +1,12 @@
+{
+  "script": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\tools\\zero_miss_windows\\pixel-stage.ps1",
+  "arguments": {
+    "BuildStage": "build-hold-front-debug-02",
+    "TotalSeconds": 900,
+    "StageName": "pixels-hold-front-debug-02",
+    "GateReceipt": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\native-qualification-01\\native-gate.json",
+    "Selection": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\real-pixels-selection-02\\selection.json",
+    "Report": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\pixels-debug-02.json",
+    "BuildRoot": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\hold-front-debug-02"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schema": "pas.current-pixel-human-semantic-review.v1",
+  "date": "2026-10-06",
+  "reviewer": "human user in root chat 01a10ec6-f96a-7572-9e9b-d3b3d5071f1e",
+  "evidence_frame": {
+    "ordinal": 3030,
+    "path": "C:/Users/wurre/Desktop/Phigros-Auto-play-System/measurements/game-assist/2026-09-30-m0-manual-continue/full-recording36g-01/sessions/manual-session-22885039263800/full-recording/frames/frame-003030.png",
+    "sha256": "5d0b0c9d8bac8d034bbd2cebfab04cf95cb6df96944293e62bbc753ee4226c15"
+  },
+  "labels": [
+    {
+      "kind": "visible_hold_head_front_boundary",
+      "candidate_id": 2,
+      "approximate_point": [495, 237],
+      "position_precision": "approximate; not pixel-perfect or an exact action coordinate",
+      "question": "x≈495、y≈237 的矩形下緣，能否確認是該 Hold 的接入 head 前緣？",
+      "answer": "可確認是 head 前緣",
+      "status": "human_confirmed",
+      "policy_use": false
+    }
+  ],
+  "still_unknown": [
+    "exact head boundary pixels and valid touch location",
+    "frame1519 candidate4/5 physical object identity",
+    "legal action opportunity denominator",
+    "actual physical owner and completed input state",
+    "body/tail continuation and gameplay adoption"
+  ],
+  "scope": "One explicit human semantic label only. Frozen 256-frame selection human_gold=0 and all original oracle files remain unchanged; this separate annotation does not relabel the entire dataset.",
+  "device_commands": 0
+}

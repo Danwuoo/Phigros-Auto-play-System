@@ -1,0 +1,10 @@
+{
+  "compared_rows": 0,
+  "device_commands": 0,
+  "error": "audit front raw RGB mismatch",
+  "passed": false,
+  "physical_human_gold": 0,
+  "raw_png_points_verified": 0,
+  "schema": "pas.windows-independent-pixel-diagnostic-audit.v1",
+  "witness_queries": 0
+}

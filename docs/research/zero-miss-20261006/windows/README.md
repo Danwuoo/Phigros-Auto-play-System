@@ -5,7 +5,12 @@
 橋接。凍結 v3 的七份 core source、正式 runtime、原測試與 oracle 均保留。
 沒有裝置讀取、Fixture／遊戲操作、模型工作、push、PR、merge 或新長期 Goal。
 
-最新自行開發與派送撤回驗收見 [WITHDRAWAL_ACCEPTANCE](WITHDRAWAL_ACCEPTANCE.md)：
+最新隔離 Hold 終端候選見 [FRONT_CANDIDATE](FRONT_CANDIDATE.md)：
+source `e26231ec5acef9634df007770c1f06031d5326d4`，三配置56項新量測、113項未改前綴與
+256幀獨立原圖audit；191個可見終端仍proposed，完整成本及physical採納尚未驗收。
+三個新STOP、全部attempt與封存SHA保留。
+
+前一包自行開發與派送撤回驗收見 [WITHDRAWAL_ACCEPTANCE](WITHDRAWAL_ACCEPTANCE.md)：
 source `774f3e7020818e94c508cc1481dd0986ebe417a0`，三配置113項前綴、32項診斷、
 256幀／1,665原圖取樣獨立核驗與兩個竄改拒絕控制；初次程序 STOP 保留。
 frame3030已有一筆使用者確認的可見 head 前緣語義，1519身分及接觸採納仍 unknown。

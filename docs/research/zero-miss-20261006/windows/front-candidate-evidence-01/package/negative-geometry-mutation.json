@@ -1,0 +1,11 @@
+{
+  "changed_rows": 1,
+  "source": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\pixels-release-03.json.rows.jsonl",
+  "field": "3030 candidate2 context.geometry:1->2",
+  "control_sha256": "6b4e1facd5607a2f1b64333cbe2c2159932e6355a785f829991510895c9f0f1e",
+  "kind": "geometry",
+  "policy_use": false,
+  "original_png_changed": false,
+  "source_sha256": "adb0640517ff0386885a36046aac65f1994b2a9244694caaa0c0b150f27d52ba",
+  "control": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\negative-geometry.rows.jsonl"
+}

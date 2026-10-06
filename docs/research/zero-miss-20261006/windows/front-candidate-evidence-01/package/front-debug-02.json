@@ -1,0 +1,234 @@
+{
+  "assertions": 56,
+  "checks": [
+    {
+      "id": "offset_-12_measured_interval",
+      "pass": true
+    },
+    {
+      "id": "offset_-12_typed_no_ownership",
+      "pass": true
+    },
+    {
+      "id": "offset_-12_bounded",
+      "pass": true
+    },
+    {
+      "id": "offset_0_measured_interval",
+      "pass": true
+    },
+    {
+      "id": "offset_0_typed_no_ownership",
+      "pass": true
+    },
+    {
+      "id": "offset_0_bounded",
+      "pass": true
+    },
+    {
+      "id": "offset_9_measured_interval",
+      "pass": true
+    },
+    {
+      "id": "offset_9_typed_no_ownership",
+      "pass": true
+    },
+    {
+      "id": "offset_9_bounded",
+      "pass": true
+    },
+    {
+      "id": "offset_16_measured_interval",
+      "pass": true
+    },
+    {
+      "id": "offset_16_typed_no_ownership",
+      "pass": true
+    },
+    {
+      "id": "offset_16_bounded",
+      "pass": true
+    },
+    {
+      "id": "rotation_0.450000",
+      "pass": true
+    },
+    {
+      "id": "rotation_normal_0.450000",
+      "pass": true
+    },
+    {
+      "id": "rotation_1.570796",
+      "pass": true
+    },
+    {
+      "id": "rotation_normal_1.570796",
+      "pass": true
+    },
+    {
+      "id": "rotation_2.800000",
+      "pass": true
+    },
+    {
+      "id": "rotation_normal_2.800000",
+      "pass": true
+    },
+    {
+      "id": "rotation_-0.450000",
+      "pass": true
+    },
+    {
+      "id": "rotation_normal_-0.450000",
+      "pass": true
+    },
+    {
+      "id": "edited_front_rejected",
+      "pass": true
+    },
+    {
+      "id": "edited_support_rejected",
+      "pass": true
+    },
+    {
+      "id": "typed_frame_rejected",
+      "pass": true
+    },
+    {
+      "id": "typed_origin_rejected",
+      "pass": true
+    },
+    {
+      "id": "epoch_rejected",
+      "pass": true
+    },
+    {
+      "id": "generation_rejected",
+      "pass": true
+    },
+    {
+      "id": "geometry_context_rejected",
+      "pass": true
+    },
+    {
+      "id": "changed_current_pixels_rejected",
+      "pass": true
+    },
+    {
+      "id": "malformed_0",
+      "pass": true
+    },
+    {
+      "id": "malformed_1",
+      "pass": true
+    },
+    {
+      "id": "malformed_2",
+      "pass": true
+    },
+    {
+      "id": "malformed_3",
+      "pass": true
+    },
+    {
+      "id": "malformed_4",
+      "pass": true
+    },
+    {
+      "id": "malformed_5",
+      "pass": true
+    },
+    {
+      "id": "malformed_6",
+      "pass": true
+    },
+    {
+      "id": "malformed_7",
+      "pass": true
+    },
+    {
+      "id": "malformed_8",
+      "pass": true
+    },
+    {
+      "id": "body_cannot_be_front",
+      "pass": true
+    },
+    {
+      "id": "missing_tail_unknown",
+      "pass": true
+    },
+    {
+      "id": "incompatible_tail_normal_unknown",
+      "pass": true
+    },
+    {
+      "id": "clip_does_not_invent_end",
+      "pass": true
+    },
+    {
+      "id": "no_rails_unknown",
+      "pass": true
+    },
+    {
+      "id": "body_interior_no_end",
+      "pass": true
+    },
+    {
+      "id": "multiple_ends_unknown",
+      "pass": true
+    },
+    {
+      "id": "occluded_inner_lane_abstains",
+      "pass": true
+    },
+    {
+      "id": "mod_pi_normal_from_geometry",
+      "pass": true
+    },
+    {
+      "id": "distinct_neighbor_not_merged",
+      "pass": true
+    },
+    {
+      "id": "permutation_keeps_evidence",
+      "pass": true
+    },
+    {
+      "id": "duplicate_is_not_physical_identity",
+      "pass": true
+    },
+    {
+      "id": "exact_capacity_complete",
+      "pass": true
+    },
+    {
+      "id": "overflow_invalid_not_truncated",
+      "pass": true
+    },
+    {
+      "id": "complete_line_overflow",
+      "pass": true
+    },
+    {
+      "id": "declared_invalid_batch",
+      "pass": true
+    },
+    {
+      "id": "rejected_proposal_abstains",
+      "pass": true
+    },
+    {
+      "id": "invisible_head_abstains",
+      "pass": true
+    },
+    {
+      "id": "tap_identity_stays_unsupported",
+      "pass": true
+    }
+  ],
+  "device_commands": 0,
+  "failed_assertions": 0,
+  "physical_gold": 0,
+  "schema": "pas.current-hold-front-contract.v1",
+  "scope": "current RGB geometry and no-action typed seam; ownership separately verified by unchanged 113-prefix suite"
+}

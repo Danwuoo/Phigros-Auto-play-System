@@ -1,0 +1,238 @@
+{
+  "compared_rows": 256,
+  "current_witness_frames": 2,
+  "declared_offline_context": {
+    "epoch": 1,
+    "generation": 1,
+    "geometry": 1,
+    "height": 720,
+    "rotation": 1,
+    "scope": "new offline context; not a current device fingerprint",
+    "width": 1280
+  },
+  "device_commands": 0,
+  "excluded_fields": [
+    "five current-host timing fields",
+    "post_dispatch_witness_review",
+    "query_width",
+    "query_angle",
+    "current_front_sidecar separately independently checked"
+  ],
+  "external_annotation_comparison": {
+    "annotation_status": "human_confirmed",
+    "measured_minus_approximate": [
+      0.5,
+      -0.5
+    ],
+    "policy_use": false,
+    "precision": "approximate semantics; no exact touch or legal Down gold"
+  },
+  "frame3030_candidate2": {
+    "action_authorized": false,
+    "boundary": [
+      495.5,
+      236.5
+    ],
+    "candidate_id": 2,
+    "context": {
+      "capture_ns": 23135806534300,
+      "epoch": 1,
+      "frame": 14797,
+      "generation": 1,
+      "geometry": 1,
+      "height": 720,
+      "rotation": 1,
+      "width": 1280
+    },
+    "current_tail_roi": true,
+    "edge_samples": [
+      {
+        "along": -45.6,
+        "inside": {
+          "pixel": [
+            450,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            450,
+            237
+          ],
+          "rgb": [
+            67,
+            63,
+            75
+          ]
+        }
+      },
+      {
+        "along": -22.8,
+        "inside": {
+          "pixel": [
+            473,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            473,
+            237
+          ],
+          "rgb": [
+            68,
+            65,
+            75
+          ]
+        }
+      },
+      {
+        "along": 0.0,
+        "inside": {
+          "pixel": [
+            496,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            496,
+            237
+          ],
+          "rgb": [
+            69,
+            66,
+            76
+          ]
+        }
+      },
+      {
+        "along": 22.8,
+        "inside": {
+          "pixel": [
+            518,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            518,
+            237
+          ],
+          "rgb": [
+            70,
+            67,
+            76
+          ]
+        }
+      },
+      {
+        "along": 45.6,
+        "inside": {
+          "pixel": [
+            541,
+            236
+          ],
+          "rgb": [
+            155,
+            233,
+            255
+          ]
+        },
+        "last_inside_offset": 8,
+        "outside": {
+          "pixel": [
+            541,
+            237
+          ],
+          "rgb": [
+            70,
+            68,
+            77
+          ]
+        }
+      }
+    ],
+    "frozen_v3_shadow": {
+      "body": "absent",
+      "contact": "absent",
+      "flow": "extract_only_no_action",
+      "front_end": false,
+      "invalid": false
+    },
+    "head_role": "proposed",
+    "kind": "visible_terminal_proposed_head",
+    "left_rail_rows": 9,
+    "normal": [
+      -0.0,
+      1.0
+    ],
+    "observer_front": [
+      495.5,
+      228.0
+    ],
+    "offset_interval": [
+      8.0,
+      9.0
+    ],
+    "origin": "current_reconstructed_front",
+    "pixels_ready_ns": 23135807818900,
+    "probes": 975,
+    "reason": "current_rgb_terminal_and_rails",
+    "right_rail_rows": 9,
+    "support_anchor_offset": 7,
+    "tail_role": "unknown; current tail proposal or missing; not measured here",
+    "tangent": [
+      1.0,
+      0.0
+    ],
+    "terminal_clusters": 1,
+    "typed_seam_verified": true,
+    "width": 152.0
+  },
+  "front_edge_raw_points_verified": 1910,
+  "front_kind_counts": {
+    "unknown": 145,
+    "unsupported": 523,
+    "visible_terminal_proposed_head": 191
+  },
+  "front_raw_candidates": 859,
+  "front_reason_counts": {
+    "current_rgb_terminal_and_rails": 191,
+    "hold_only": 523,
+    "multiple_supported_terminals_unknown": 2,
+    "no_supported_terminal": 54,
+    "tail_missing_or_incompatible_normal_unknown": 89
+  },
+  "passed": true,
+  "physical_human_gold": 0,
+  "raw_png_points_verified": 1665,
+  "schema": "pas.windows-independent-pixel-diagnostic-audit.v1",
+  "scope": "frozen 256-frame selection; current raw PNG coordinates and policy fields; no physical gold",
+  "visible_terminal_proposals": 191,
+  "witness_queries": 9
+}

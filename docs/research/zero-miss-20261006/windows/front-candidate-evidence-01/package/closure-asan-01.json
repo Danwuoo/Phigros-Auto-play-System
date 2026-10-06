@@ -1,0 +1,40 @@
+{
+  "prior_build_stage": "build-bridge-withdraw-asan-01",
+  "configuration": "Debug",
+  "asan": true,
+  "prior_source_entries_rechecked": 256,
+  "source_commit": "774f3e7020818e94c508cc1481dd0986ebe417a0",
+  "libraries": {
+    "pixel_diagnostics": {
+      "sha256": "edef929053ef689cedea186dec58bb1b2a93b814a923c1aadb1095ad353780d1",
+      "bytes": 6060254,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\pixel_diagnostics.lib"
+    },
+    "current_bridge": {
+      "sha256": "5bce9823727998de023e5c3b9239107ce4bc9438c992eed337f955912a6aa153",
+      "bytes": 2299800,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\current_bridge.lib"
+    },
+    "exact_bvi_v3": {
+      "sha256": "d943b2fab11d153b8a30ecc1706e9d4ec8c7aec8a73397cfc59f6a580029bb1f",
+      "bytes": 765174,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\exact_bvi_v3.lib"
+    },
+    "formal_core": {
+      "sha256": "b7769e3f055ab137b6c5f29d42a28f99a94ee11df9ec4dbe3f814232b2afce56",
+      "bytes": 222242760,
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\bridge-win-withdraw-asan-01\\formal_core.lib"
+    }
+  },
+  "schema": "pas.verified-linked-front-closure.v1",
+  "external_binary_manifest": {
+    "sha256": "244aafe91dd7b41335bf9546400e19aafea028c9a49a237a698c27cf5c8c2a1a",
+    "bytes": 7123,
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\docs\\research\\zero-miss-20261006\\windows\\withdrawal-acceptance-evidence-01\\binaries-external.json"
+  },
+  "prior_build_freeze": {
+    "sha256": "8d75beb6a7e45a325a12cea50f73d044af4d4cd2a12bbb693dcf97789104c847",
+    "bytes": 54206,
+    "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\build-bridge-withdraw-asan-01\\freeze.json"
+  }
+}

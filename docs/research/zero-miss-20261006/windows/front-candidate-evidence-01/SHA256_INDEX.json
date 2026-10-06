@@ -1,0 +1,3769 @@
+{
+  "excluded_self": "SHA256_INDEX.json",
+  "external_controls_preserved_in_out": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\negative-epoch.rows.jsonl",
+      "sha256": "d3d5d300f5677fcaf28380a00e1d307370431c90ac556d384e34b57ee6b3430a",
+      "bytes": 2055537
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\negative-front-rgb.rows.jsonl",
+      "sha256": "adb5769c694de85182afb694bcf23100cec3e4706ad6bd96313849a2a147483c",
+      "bytes": 2055537
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\PAS-zero-miss-r4-20261006\\out\\windows-handoff\\hold-front-package-01\\negative-geometry.rows.jsonl",
+      "sha256": "6b4e1facd5607a2f1b64333cbe2c2159932e6355a785f829991510895c9f0f1e",
+      "bytes": 2055537
+    }
+  ],
+  "source_commit": "e26231ec5acef9634df007770c1f06031d5326d4",
+  "schema": "pas.current-front-sha-index.v1",
+  "files": [
+    {
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "relative": ".gitattributes",
+      "bytes": 8
+    },
+    {
+      "sha256": "89735eb0887c4f139e5546f6c0c0ea6aaba25703d54b98c4734eebd69ce03802",
+      "relative": "build-maps/hold-front-asan-01/build.ninja",
+      "bytes": 61804
+    },
+    {
+      "sha256": "819ebef11085b6669d5c4b755889dab8a476b7b8505d6b1afda3988f94ad89b8",
+      "relative": "build-maps/hold-front-asan-01/CMakeCache.txt",
+      "bytes": 19135
+    },
+    {
+      "sha256": "72c42cd70e43977af9dd347c6f5a704d124f800be21f2e31b742a66aa7849726",
+      "relative": "build-maps/hold-front-asan-01/CMakeFiles/rules.ninja",
+      "bytes": 14370
+    },
+    {
+      "sha256": "93129e340a3e53907350fce1ec1b6b730042ad81a8c0d289de6451e0d7637ee5",
+      "relative": "build-maps/hold-front-asan-02/build.ninja",
+      "bytes": 61864
+    },
+    {
+      "sha256": "426d50d515e88c3aa2071ad6e31ec68e2041c9cc06dff943cc580d9ec00493b4",
+      "relative": "build-maps/hold-front-asan-02/CMakeCache.txt",
+      "bytes": 19135
+    },
+    {
+      "sha256": "18bb7523f01eafc2344efab4bb4be953f538c8187847efbad52ff1cad406fec8",
+      "relative": "build-maps/hold-front-asan-02/CMakeFiles/rules.ninja",
+      "bytes": 14370
+    },
+    {
+      "sha256": "f483845acbf767f17c3495d9e2cdf0b8e615358ebb8929b865354d27b85d3195",
+      "relative": "build-maps/hold-front-debug-01/build.ninja",
+      "bytes": 59136
+    },
+    {
+      "sha256": "9754f6c02ae4aa0234d700d4cc8e1a0da3c565b2ebe54298fe341d06f07c3c7d",
+      "relative": "build-maps/hold-front-debug-01/CMakeCache.txt",
+      "bytes": 18962
+    },
+    {
+      "sha256": "1225ae3a9fd82c1a231ea40b011aec3a27f4d4bd65fe66f563a13395c4981888",
+      "relative": "build-maps/hold-front-debug-01/CMakeFiles/rules.ninja",
+      "bytes": 14371
+    },
+    {
+      "sha256": "be543448fd3228e2bb30125e0b16deb37537c2f15a72d2faa78861b9e1987d33",
+      "relative": "build-maps/hold-front-debug-02/build.ninja",
+      "bytes": 59196
+    },
+    {
+      "sha256": "80a419fce49935fb9a0d4dc4a2f244f3834b8846612678588a10ae371e339902",
+      "relative": "build-maps/hold-front-debug-02/CMakeCache.txt",
+      "bytes": 18962
+    },
+    {
+      "sha256": "37d6e010804650b3cb6dc1b5c9810dcd5377fb9c37d0d5c8d1fc8d50ba9ac609",
+      "relative": "build-maps/hold-front-debug-02/CMakeFiles/rules.ninja",
+      "bytes": 14371
+    },
+    {
+      "sha256": "213bb2c00fbbea6fd118f2b9b3905bad4c7776701e6e686c0a7f0c5761c91b87",
+      "relative": "build-maps/hold-front-release-01/build.ninja",
+      "bytes": 59230
+    },
+    {
+      "sha256": "dc16bbf2963edf0e48bcb64547925e84c4f3d7c7755821c50e7438a01858087d",
+      "relative": "build-maps/hold-front-release-01/CMakeCache.txt",
+      "bytes": 18974
+    },
+    {
+      "sha256": "ae5123684bf875d32fa8d1c539b814dd93fcf0225771c4115dce323c74a43e3e",
+      "relative": "build-maps/hold-front-release-01/CMakeFiles/rules.ninja",
+      "bytes": 14425
+    },
+    {
+      "sha256": "a219bcb5c617076bcaf019a3ab826eaa07ecc5e48a86f996e593800472a1e7d7",
+      "relative": "build-maps/hold-front-release-02/build.ninja",
+      "bytes": 59290
+    },
+    {
+      "sha256": "bec23a8b56481efc6d41f29cf14c3d9d90e3f2ed488bb7cb6d73dff3e8ac7bf3",
+      "relative": "build-maps/hold-front-release-02/CMakeCache.txt",
+      "bytes": 18974
+    },
+    {
+      "sha256": "7f80777fb53faa10ddf88ee6d4339cad3a2c772cf95d9e13abc102dd9c3c81ae",
+      "relative": "build-maps/hold-front-release-02/CMakeFiles/rules.ninja",
+      "bytes": 14425
+    },
+    {
+      "sha256": "85a6e620b881f2e6ea896866e32a5ce9d05e7ac98aeef269df4d74f9ed89c60b",
+      "relative": "build-maps/hold-front-release-03/build.ninja",
+      "bytes": 59290
+    },
+    {
+      "sha256": "9e32cf549988d6d5121d0be890a5cd475e0034da3f1c628619b996e751c68070",
+      "relative": "build-maps/hold-front-release-03/CMakeCache.txt",
+      "bytes": 18974
+    },
+    {
+      "sha256": "f7d65e57daa3ddd4d62cd72c5430a47aadaa89747c9d5a54456fc113e82105ff",
+      "relative": "build-maps/hold-front-release-03/CMakeFiles/rules.ninja",
+      "bytes": 14425
+    },
+    {
+      "sha256": "6124db830cddbed1733fbf3a44a2e0cc2a5b86021bc7a211771e99207824d97f",
+      "relative": "HUMAN_REVIEW_20261006.json",
+      "bytes": 1475
+    },
+    {
+      "sha256": "23333fc5010e3befbb4ed05e9d41c8d72c17f67f3e9d55124efcd215a881a178",
+      "relative": "package/audit-asan-02.json",
+      "bytes": 5112
+    },
+    {
+      "sha256": "23333fc5010e3befbb4ed05e9d41c8d72c17f67f3e9d55124efcd215a881a178",
+      "relative": "package/audit-debug-02.json",
+      "bytes": 5112
+    },
+    {
+      "sha256": "09d35e006b42b496179cdf6e71b388c11ed951a1e1ee2b395d63d9e91a5ce780",
+      "relative": "package/audit-hold-front-asan-02-params.json",
+      "bytes": 4146
+    },
+    {
+      "sha256": "3c8a64b13869ea7a78bec75ed6e6e4d80d73b1ca96d446d62ad9f0aa1e559759",
+      "relative": "package/audit-hold-front-debug-02-params.json",
+      "bytes": 3910
+    },
+    {
+      "sha256": "3df19d9ccd7e3ae051d9490265a6246de0f8943db1aa2f3587c2f35bfc91ed9e",
+      "relative": "package/audit-hold-front-release-01-params.json",
+      "bytes": 3721
+    },
+    {
+      "sha256": "7f2b3e8f18698026ff00dbb067324c4c739849c51d8a8ca5ba8cac3a27860ec2",
+      "relative": "package/audit-hold-front-release-03-params.json",
+      "bytes": 3934
+    },
+    {
+      "sha256": "111d78aaedc8fb7bdff3cc6ce6d6200e5a42ceae4133d1ed4fcfe38e985cd2ad",
+      "relative": "package/audit-hold-front-release-neg-epoch-params.json",
+      "bytes": 3932
+    },
+    {
+      "sha256": "43f4e26e87f32fa3a75a59951262dfe8aba82e16105adafe7fa0dc880cf773de",
+      "relative": "package/audit-hold-front-release-neg-front-rgb-02-params.json",
+      "bytes": 3954
+    },
+    {
+      "sha256": "f37fc186ea6c99fcb1faab01cb0d00041c1b78dce5c9bc3b932fd25e43149153",
+      "relative": "package/audit-hold-front-release-neg-front-rgb-params.json",
+      "bytes": 3948
+    },
+    {
+      "sha256": "29d8dcccd9b88903a5bc1b2a76eca8922ed080c29746362d37c6ab03c4b50705",
+      "relative": "package/audit-hold-front-release-neg-geometry-params.json",
+      "bytes": 3944
+    },
+    {
+      "sha256": "f97d53a90bd8e2bf66223cae03d034ad518f6be098d9d22f152c79be7d4e38df",
+      "relative": "package/audit-release-01.json",
+      "bytes": 4821
+    },
+    {
+      "sha256": "23333fc5010e3befbb4ed05e9d41c8d72c17f67f3e9d55124efcd215a881a178",
+      "relative": "package/audit-release-03.json",
+      "bytes": 5112
+    },
+    {
+      "sha256": "e1e8e1d194296118d00451a21f8fac1cb04e917a6cb87c50705b4d7dfb1cd836",
+      "relative": "package/audit-release-neg-epoch.json",
+      "bytes": 286
+    },
+    {
+      "sha256": "11976ea1284c3a13b54c7fc5ab53609d936ed6d282e279a62d2509c2bb26c240",
+      "relative": "package/audit-release-neg-front-rgb-02.json",
+      "bytes": 270
+    },
+    {
+      "sha256": "11976ea1284c3a13b54c7fc5ab53609d936ed6d282e279a62d2509c2bb26c240",
+      "relative": "package/audit-release-neg-front-rgb.json",
+      "bytes": 270
+    },
+    {
+      "sha256": "e1e8e1d194296118d00451a21f8fac1cb04e917a6cb87c50705b4d7dfb1cd836",
+      "relative": "package/audit-release-neg-geometry.json",
+      "bytes": 286
+    },
+    {
+      "sha256": "4a7149c78e8f084543f18966b613274235fe90e28f6b8071777afd0511100e6f",
+      "relative": "package/binaries-and-controls-external.json",
+      "bytes": 13328
+    },
+    {
+      "sha256": "4fcd229ecffc616c7aadd2a65c3a5cf63f8b2063dcec755ce9171fe67b47be13",
+      "relative": "package/build-hold-front-asan-02-params.json",
+      "bytes": 33306
+    },
+    {
+      "sha256": "2077905990cc58d83c7f701414889ed01f16277e51cef84c49d88749834273a9",
+      "relative": "package/build-hold-front-debug-01-params.json",
+      "bytes": 29468
+    },
+    {
+      "sha256": "ec6ae295add6124b81928365351e0b620d239806dae3bdabcd24e548e61a2a68",
+      "relative": "package/build-hold-front-debug-02-params.json",
+      "bytes": 29681
+    },
+    {
+      "sha256": "1e77f8bbc447d51a8c494427512231593511451c6162c6b793ffeb9bd5854081",
+      "relative": "package/build-hold-front-release-01-params.json",
+      "bytes": 29486
+    },
+    {
+      "sha256": "35a8c0a4449fbc54bf68c739ec88f6f4a394e777ecaa5242aec72fda1b6c7d2f",
+      "relative": "package/build-hold-front-release-02-params.json",
+      "bytes": 29699
+    },
+    {
+      "sha256": "1e740827f433b4def5930f8e1980fb2230b687598ba23a5cba6d73803cd30f71",
+      "relative": "package/build-hold-front-release-03-params.json",
+      "bytes": 29699
+    },
+    {
+      "sha256": "13def3af6962ad4512fc371490cbd1afd4c84732efae33cd89b058c8c77b3945",
+      "relative": "package/capacity-start.json",
+      "bytes": 5351
+    },
+    {
+      "sha256": "5f7b6e9748dbdeeb3337b236ee9604abfa21a157b6de2bccc55f448c0a9d4e2f",
+      "relative": "package/closure-asan-01.json",
+      "bytes": 1939
+    },
+    {
+      "sha256": "6011a0b948ba167b4737234261eca9438f246918ecf91c8ab8d75c3f19d478c1",
+      "relative": "package/closure-asan-02.json",
+      "bytes": 1939
+    },
+    {
+      "sha256": "073d82803352b2811c28baa117f3e97043710d49be97aa2ef8ef0a34666683d9",
+      "relative": "package/closure-debug-01.json",
+      "bytes": 1946
+    },
+    {
+      "sha256": "c88acce20a41d674a2570dd9a6d8d1129f843ae7783c737bfbb796dae746a3f9",
+      "relative": "package/closure-debug-02.json",
+      "bytes": 1946
+    },
+    {
+      "sha256": "6f479db183a07f2ffb0335d03a086cddb9898acf34ccda65f2694375b2b04aba",
+      "relative": "package/closure-release-01.json",
+      "bytes": 1960
+    },
+    {
+      "sha256": "5901885cbf6fdec9145ad83a3b3cfbbeaae91defbdd129f87ee888f56586b15f",
+      "relative": "package/closure-release-02.json",
+      "bytes": 1960
+    },
+    {
+      "sha256": "11f709ff89346393ee396789348ed172752bde8e113cf9f54124c3162e461d49",
+      "relative": "package/closure-release-03.json",
+      "bytes": 1960
+    },
+    {
+      "sha256": "c8376beb8d0dd5a7305d5044708c9d095cb1443c57a43522a387f0a0689a71f0",
+      "relative": "package/configure-hold-front-asan-01-params.json",
+      "bytes": 33744
+    },
+    {
+      "sha256": "363eb403f66d7ffe875e0d8dda0833525843ece20e57600bf09d80a18cb998f7",
+      "relative": "package/configure-hold-front-asan-02-params.json",
+      "bytes": 33957
+    },
+    {
+      "sha256": "b14796e54d8308a6f008063b360531c831fe6602468cd9bb9624fcce282f141c",
+      "relative": "package/configure-hold-front-debug-01-params.json",
+      "bytes": 29968
+    },
+    {
+      "sha256": "df94e93d88ed430ab5f63b50bac2a87cb6255f2c5b32b43ac49a7ee436f04905",
+      "relative": "package/configure-hold-front-debug-02-params.json",
+      "bytes": 30181
+    },
+    {
+      "sha256": "ac70a090f7aff2b16bffe8523ccb31baf461de9f167feb80b716c09fde6b2a0e",
+      "relative": "package/configure-hold-front-release-01-params.json",
+      "bytes": 29988
+    },
+    {
+      "sha256": "793052170052eb9febdddea9116093b129be393a956cb23a80f96be3710d3950",
+      "relative": "package/configure-hold-front-release-02-params.json",
+      "bytes": 30201
+    },
+    {
+      "sha256": "cd6ef24644d86787fd8edee4035742919bccf2c92cba88bae763ffcaefb34faa",
+      "relative": "package/configure-hold-front-release-03-params.json",
+      "bytes": 30201
+    },
+    {
+      "sha256": "656d2dab7d853429b4de19d16ba9f2bc8b34877dce6f8f4a167837d8051822a2",
+      "relative": "package/controls.ps1",
+      "bytes": 1746
+    },
+    {
+      "sha256": "e07a3c054c69fa74db349a1411b508684c87c75e0100dd0a2f7a0122775c058d",
+      "relative": "package/final-verification.json",
+      "bytes": 26722
+    },
+    {
+      "sha256": "1c14420c11f4741e2ed7e675a809626d9f248424a8af9f70c7d73237bbf1bcd8",
+      "relative": "package/finalize-r2.ps1",
+      "bytes": 13099
+    },
+    {
+      "sha256": "03177f427f7be7dcd4c6c6653ab887413dac89aedd774a244ec9e6da6f0ef094",
+      "relative": "package/finalize.ps1",
+      "bytes": 12698
+    },
+    {
+      "sha256": "211c199562c3d3b8b4f1da99cf5185532ef013e16d655f0ee1d43c1385aff008",
+      "relative": "package/front-asan-02.json",
+      "bytes": 4402
+    },
+    {
+      "sha256": "211c199562c3d3b8b4f1da99cf5185532ef013e16d655f0ee1d43c1385aff008",
+      "relative": "package/front-debug-02.json",
+      "bytes": 4402
+    },
+    {
+      "sha256": "2e9948c186197a1b5d7b56bcbfcbd73d83b949c091b0cb978373af16e3886c89",
+      "relative": "package/front-hold-front-asan-02-params.json",
+      "bytes": 2648
+    },
+    {
+      "sha256": "c962068347222abfb7633a0d5e8efb930ce308fc8b3a34e6e920bfcbfad1c12a",
+      "relative": "package/front-hold-front-debug-02-params.json",
+      "bytes": 2410
+    },
+    {
+      "sha256": "bfef11d0d76f971a1108f0f7d8211e4b136584efc7364ff4c5f219be5b9e8789",
+      "relative": "package/front-hold-front-release-01-params.json",
+      "bytes": 2217
+    },
+    {
+      "sha256": "f32a0830f62afc503682ec3405929f491c12e3701362f491af93b6f6a3e9c4a8",
+      "relative": "package/front-hold-front-release-03-params.json",
+      "bytes": 2430
+    },
+    {
+      "sha256": "211c199562c3d3b8b4f1da99cf5185532ef013e16d655f0ee1d43c1385aff008",
+      "relative": "package/front-release-01.json",
+      "bytes": 4402
+    },
+    {
+      "sha256": "211c199562c3d3b8b4f1da99cf5185532ef013e16d655f0ee1d43c1385aff008",
+      "relative": "package/front-release-03.json",
+      "bytes": 4402
+    },
+    {
+      "sha256": "a9cd3a43677e738939fe6915bde62938a42ebd22269042ea675b299a427eb132",
+      "relative": "package/negative-epoch-mutation.json",
+      "bytes": 621
+    },
+    {
+      "sha256": "bea5b014a70f329e2bddec369a43b96d47b7090d90323612298350aa10455269",
+      "relative": "package/negative-front-rgb-mutation.json",
+      "bytes": 649
+    },
+    {
+      "sha256": "9dce3b8e62811ea8948cd6f0042f996569fffda9ff1017ea1cccee652b437cdf",
+      "relative": "package/negative-geometry-mutation.json",
+      "bytes": 630
+    },
+    {
+      "sha256": "9debb2be204ebdb75449ad500199d4ac37fd119d0148516f75de71947d598013",
+      "relative": "package/pixels-asan-02.json",
+      "bytes": 4873
+    },
+    {
+      "sha256": "de5bcee863f38e13f6c2f2b552a27f25edf115e7aef5e498a024ff542b6ce7af",
+      "relative": "package/pixels-asan-02.json.rows.jsonl",
+      "bytes": 2055537
+    },
+    {
+      "sha256": "ea41c0373487d8f01c968d8a23c72aa1bcda8138ae8fbb20148dcac2178da0df",
+      "relative": "package/pixels-debug-02.json",
+      "bytes": 4548
+    },
+    {
+      "sha256": "c8904b6b8682f844373128bcbc24df1ef7943fff480d85faa8995ddcb97fbc23",
+      "relative": "package/pixels-debug-02.json.rows.jsonl",
+      "bytes": 2055537
+    },
+    {
+      "sha256": "3dff7cfdfb3fc0218691d35c65f29963b167efc39aeec4a95c7eb4c48b70b592",
+      "relative": "package/pixels-hold-front-asan-02-params.json",
+      "bytes": 774
+    },
+    {
+      "sha256": "dd5f8dbea79bea59894c465deab63e8aa1b90bb2eaa8367f9c4d5ce8d00f338f",
+      "relative": "package/pixels-hold-front-debug-02-params.json",
+      "bytes": 778
+    },
+    {
+      "sha256": "321b85956d21b45810a4874f60bb606d990857642a36aab92150b5d430b664c2",
+      "relative": "package/pixels-hold-front-release-01-params.json",
+      "bytes": 786
+    },
+    {
+      "sha256": "16b2280226314e8f98fc9b91fdc8cc4c5500e8c7cdf86d883b1d2aefca23cb58",
+      "relative": "package/pixels-hold-front-release-03-params.json",
+      "bytes": 786
+    },
+    {
+      "sha256": "dc99cec1053df16d2ec72cadc4005740f2ba03a715a07b222436e05bf2a4d695",
+      "relative": "package/pixels-release-01.json",
+      "bytes": 3841
+    },
+    {
+      "sha256": "a606b2a95a996632daff300aef83bd399c8a7ea5f7c22477e4a19b4aee980ff4",
+      "relative": "package/pixels-release-01.json.rows.jsonl",
+      "bytes": 2040177
+    },
+    {
+      "sha256": "7a92d1bc4a68f40ae63885f20fb46699e709802fd14fee466be3ccdb5a8a1c4c",
+      "relative": "package/pixels-release-03.json",
+      "bytes": 4401
+    },
+    {
+      "sha256": "adb0640517ff0386885a36046aac65f1994b2a9244694caaa0c0b150f27d52ba",
+      "relative": "package/pixels-release-03.json.rows.jsonl",
+      "bytes": 2055537
+    },
+    {
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39",
+      "relative": "package/prefix-asan-02.json",
+      "bytes": 10101
+    },
+    {
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39",
+      "relative": "package/prefix-debug-02.json",
+      "bytes": 10101
+    },
+    {
+      "sha256": "f2349abfa927a6ca8d0afe2108d1ed5809b7b5b60f0e54c34d5c910bd040c331",
+      "relative": "package/prefix-hold-front-asan-02-params.json",
+      "bytes": 2658
+    },
+    {
+      "sha256": "cd2178ee506276b704477f8c02eb31f15bb606af126b7afbfc022cc6b9b58845",
+      "relative": "package/prefix-hold-front-debug-02-params.json",
+      "bytes": 2420
+    },
+    {
+      "sha256": "acca1025c5340f779db51cfefe50d8a58e92c0d4a88146ab6504599986ab9e3c",
+      "relative": "package/prefix-hold-front-release-01-params.json",
+      "bytes": 2227
+    },
+    {
+      "sha256": "daacddf7a0b5e79d592f2acd9734c804df9d41b7cb811b359c4a5f7edfd1a85b",
+      "relative": "package/prefix-hold-front-release-03-params.json",
+      "bytes": 2440
+    },
+    {
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39",
+      "relative": "package/prefix-release-01.json",
+      "bytes": 10101
+    },
+    {
+      "sha256": "12e72c67e5936c296e132a36e1115d3e2ca0ffe65a85962a6eafea716d393f39",
+      "relative": "package/prefix-release-03.json",
+      "bytes": 10101
+    },
+    {
+      "sha256": "453dad1ed3848e83da4267c67fb644ba9134818330c8ebee3c4db94b24a4f6d0",
+      "relative": "package/source-v1/CMakeLists.txt",
+      "bytes": 3489
+    },
+    {
+      "sha256": "00674c381a4f02a86555fdd561e148c92e37ee6e8e26e8f9e723efeddd4f0f01",
+      "relative": "package/source-v1/front_audit.cpp",
+      "bytes": 16449
+    },
+    {
+      "sha256": "bf7b2973a48a6f1de331168d18a0fde3e72d01ad030f888c6adb7ed59cde8f7e",
+      "relative": "package/source-v1/front_chain.cpp",
+      "bytes": 21209
+    },
+    {
+      "sha256": "f0698100e33390a7528c72c186096909e08c79c9ddc525b414d207f268e33476",
+      "relative": "package/source-v1/front_tests.cpp",
+      "bytes": 8239
+    },
+    {
+      "sha256": "e5b23ff5cdd2129ff31431bb5a1194fb7dceef7a4384dd1f5da40068965d3a7f",
+      "relative": "package/source-v1/front.cpp",
+      "bytes": 10757
+    },
+    {
+      "sha256": "a917a40d1cff466355d166d6bbe22892c261048d2b1731091b82495c64273905",
+      "relative": "package/source-v1/front.hpp",
+      "bytes": 2531
+    },
+    {
+      "sha256": "2e4f634f4c449f44ebb2dbff47abd6d580584909d678170ce79e82a97ee6f75c",
+      "relative": "package/source-v1/run.ps1",
+      "bytes": 7556
+    },
+    {
+      "sha256": "57a5d6026f8f7eafcefb825910fc215516dbcff92f8193300175af1ea1b19569",
+      "relative": "package/source-v1/source-index.json",
+      "bytes": 1770
+    },
+    {
+      "sha256": "d854fbd4727b30801dd7661aff1ffe5748416c117d29a12b10adf67fb54ead3e",
+      "relative": "receipts/audit-hold-front-asan-02-inputs/native.cmd",
+      "bytes": 816
+    },
+    {
+      "sha256": "8b8989abdc02b6ad11dc637ac9e8512107bcb00c7a0e8537860c7366c3aea686",
+      "relative": "receipts/audit-hold-front-asan-02-inputs/spec.json",
+      "bytes": 3721
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-asan-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "fdfd7a9d31cd5b600c16fb390b050c93d597687662c8b8c9e7a142c6a60b78fe",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-checkpoint-0.json",
+      "bytes": 914
+    },
+    {
+      "sha256": "43c7afa9627b6d1875bba547edbdc76b2f246834f2c61a7aeae874a11b94d1a3",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-checkpoint-1.json",
+      "bytes": 920
+    },
+    {
+      "sha256": "ed10e6e91d172c5c5a81b221c6487c3a2e22a881db2e343f17eee44ae6d2a857",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-checkpoint-2.json",
+      "bytes": 906
+    },
+    {
+      "sha256": "635bf767aa607727f67509424ab8612afd8c7f58d715b3716d32aa4c7fde4a42",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-checkpoint-3.json",
+      "bytes": 1352
+    },
+    {
+      "sha256": "fa72149a1293cae17322a14dcb7d9e70b14497668c4090660d3c3ac66166e9b3",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-checkpoint-4.json",
+      "bytes": 1350
+    },
+    {
+      "sha256": "189598deb4e38e887e115b01cb8ab13e7a33a5dd311cb1d4ae70c250ea2ce0d2",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-checkpoint-5.json",
+      "bytes": 1549
+    },
+    {
+      "sha256": "92bf52449235d7b3b5d8415d9c0143d8911b4265daddcea68cfb24b898bd00c9",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-checkpoint-6.json",
+      "bytes": 1755
+    },
+    {
+      "sha256": "09eb9f505fbac6bd9fbe752c96481b9c09e2f0d18cd29d904d03a15581d79ae3",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-checkpoint-7.json",
+      "bytes": 2112
+    },
+    {
+      "sha256": "61c75e9f52521a0ed12e8d77a4fb2188efe74f2bbe7dfcd1a27084bb3f395e6a",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-command.json",
+      "bytes": 688
+    },
+    {
+      "sha256": "a362fbb888e5f7e8671f6e3c47daac4f0c8d3eb35f18995a83fc4142b07679f9",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-result.json",
+      "bytes": 2096
+    },
+    {
+      "sha256": "d7b304fa3a54c27fab4f7c0af62fd457c0c0af863306267b619c9b5e40852a63",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02-verification.json",
+      "bytes": 3177
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "a19ca5792094b9323b68b4972e51651ebf1fa1ea919e1e2fbb2125946fba88bf",
+      "relative": "receipts/audit-hold-front-asan-02/audit-hold-front-asan-02.stdout.log",
+      "bytes": 82
+    },
+    {
+      "sha256": "e99196088cf000766e928f5f54cd5a9497c066c9feaaa13cb83a7010095d9bc0",
+      "relative": "receipts/audit-hold-front-asan-02/contract.json",
+      "bytes": 479
+    },
+    {
+      "sha256": "3faee6647f65f49db93ac447753b16d69778e4ade2200acfec5b9925ed033696",
+      "relative": "receipts/audit-hold-front-asan-02/freeze.json",
+      "bytes": 7485
+    },
+    {
+      "sha256": "3c5523abb918d7ac6aaf8e628f93c08557479669e1bf7324590e01c66b466e61",
+      "relative": "receipts/audit-hold-front-asan-02/state.json",
+      "bytes": 771
+    },
+    {
+      "sha256": "667ed57a6b9a8bf710cd95c3f6643834a4ad13ba59b9166f8333a5ea5a37692c",
+      "relative": "receipts/audit-hold-front-debug-02-inputs/native.cmd",
+      "bytes": 819
+    },
+    {
+      "sha256": "276a75ad0a111700f331cc9bec17a8f68674026073c47e6940fe3171ff82c294",
+      "relative": "receipts/audit-hold-front-debug-02-inputs/spec.json",
+      "bytes": 3490
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-debug-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "2a526001b50852261e810c5d300c6510091aa98e37dae72ccc5245c4af46ab8c",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-checkpoint-0.json",
+      "bytes": 915
+    },
+    {
+      "sha256": "59262105b7f016e5696523e92d943988a83aedeb05fc33a9286436528b3c4f03",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-checkpoint-1.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "544c4c1a57df43b45d2a339f13cc23dd629274b958e4b59acc5b5ec49e756c7c",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-checkpoint-2.json",
+      "bytes": 908
+    },
+    {
+      "sha256": "ee312ed07e71a4c969eb81a8d5535ffe681fe380d567fc7422d8ff18f6fa8b6f",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-checkpoint-3.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "23303a20fe981ab4a2adcad550a11864f53bdba9cdb8aeee7730489b3dd1947c",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-checkpoint-4.json",
+      "bytes": 1353
+    },
+    {
+      "sha256": "89968553703e0fea49d206a0be162ea6ae1e63e671623ec1e7925acc31c0cdb4",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-checkpoint-5.json",
+      "bytes": 1759
+    },
+    {
+      "sha256": "a2140355f2be922afeba025f962266297582e3415895e9ddd2db191d0ee92891",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-checkpoint-6.json",
+      "bytes": 1965
+    },
+    {
+      "sha256": "8749374f517078017c8bc7f83856ffa0208b5e29463b45d97bcd69915cb5f6ce",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-checkpoint-7.json",
+      "bytes": 2453
+    },
+    {
+      "sha256": "53560a291d908d34dce707ec2b3f3883dd42a567df87412416b891108c479775",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-command.json",
+      "bytes": 692
+    },
+    {
+      "sha256": "d9a4935dc7582ddd69df8ce37f05065565b45d37dae3f492d563bfb68415ab78",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-result.json",
+      "bytes": 2437
+    },
+    {
+      "sha256": "ca77b5c0d7f9e5fe8e4494b1c78d721100a211d996f23c07e2e055130b90ca7a",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02-verification.json",
+      "bytes": 3202
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "a19ca5792094b9323b68b4972e51651ebf1fa1ea919e1e2fbb2125946fba88bf",
+      "relative": "receipts/audit-hold-front-debug-02/audit-hold-front-debug-02.stdout.log",
+      "bytes": 82
+    },
+    {
+      "sha256": "61943d4cc5e02116e910e055e05dfe9a8602d57f867a75365fc30a8b6916048c",
+      "relative": "receipts/audit-hold-front-debug-02/contract.json",
+      "bytes": 481
+    },
+    {
+      "sha256": "b0eae5a4dfd4a4c59deffef15505440c919c0ce64e90c0542fc3b6b45abaacbd",
+      "relative": "receipts/audit-hold-front-debug-02/freeze.json",
+      "bytes": 7060
+    },
+    {
+      "sha256": "491bbecc8c2a6f09b39d0eefb5d7447d565facc78e8bdbf166ca6145ac549f3c",
+      "relative": "receipts/audit-hold-front-debug-02/state.json",
+      "bytes": 773
+    },
+    {
+      "sha256": "c49c67257f52fe05f3d3af4f4582c5a9319f72500c88431a020a714937c3a7ca",
+      "relative": "receipts/audit-hold-front-release-01-inputs/native.cmd",
+      "bytes": 825
+    },
+    {
+      "sha256": "b11f680c068a0c357bf98250c7349b1b198b9b3988766d610458d54238ea766e",
+      "relative": "receipts/audit-hold-front-release-01-inputs/spec.json",
+      "bytes": 3307
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "b2f311b253dd0326bd2dd887f3e0078a8293a508a6cdf566835196ace648be0b",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-checkpoint-0.json",
+      "bytes": 917
+    },
+    {
+      "sha256": "ae66275bb9d9981dd3bb780d3b96e4c1a9444f5023f620a092b0755bffbea7be",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-checkpoint-1.json",
+      "bytes": 923
+    },
+    {
+      "sha256": "b64717b545c0753980e4e4cc5bfe29c9565f57b8e467fe2863f9f146ca25b911",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-checkpoint-2.json",
+      "bytes": 910
+    },
+    {
+      "sha256": "57a17b10e2496bf0211c231cec48413542fb4c4551f773cdcea2bb55e1997216",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-checkpoint-3.json",
+      "bytes": 1357
+    },
+    {
+      "sha256": "c4501aa6ae76b7e4feac447c28eb73af084d2c09c60927440dfb827984bf0c27",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-checkpoint-4.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "66a85753acb21c460d45a76da05eee4bafd60e6a677e927e6b532c1d5b94aa01",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-checkpoint-5.json",
+      "bytes": 1761
+    },
+    {
+      "sha256": "98f45a9b9df6a9606156abbbdea45b4dc929295539b54e1703bd6e43af19783f",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-checkpoint-6.json",
+      "bytes": 1967
+    },
+    {
+      "sha256": "e76a38bbbaba27158159b83a637a37496b9190d134a2ce8bad64d12ddb35d5ce",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-checkpoint-7.json",
+      "bytes": 2477
+    },
+    {
+      "sha256": "4a1cc7dbedef774505f70db7da174ee43fd46559e980b61602791cdc21e33e21",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-command.json",
+      "bytes": 700
+    },
+    {
+      "sha256": "2d75144f5592e3905a3c35efd6cdef81049874a64ad942d91b5754b28df73c52",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-result.json",
+      "bytes": 2461
+    },
+    {
+      "sha256": "a82aefaba1704cc682770041cdc6ff47448ec8605b44a2e0f6c6def63b40ed05",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01-verification.json",
+      "bytes": 3252
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "a19ca5792094b9323b68b4972e51651ebf1fa1ea919e1e2fbb2125946fba88bf",
+      "relative": "receipts/audit-hold-front-release-01/audit-hold-front-release-01.stdout.log",
+      "bytes": 82
+    },
+    {
+      "sha256": "8b9d9f46d3154be165e3e8d2588f5feb36fe9a57ebf3dddb6758bc6c2787a587",
+      "relative": "receipts/audit-hold-front-release-01/contract.json",
+      "bytes": 485
+    },
+    {
+      "sha256": "4771bf1e865e6d44dffb3c0f4dfe07233dd879f06c710f01ff2201445c4db990",
+      "relative": "receipts/audit-hold-front-release-01/freeze.json",
+      "bytes": 6688
+    },
+    {
+      "sha256": "1c2321785fca25db69204febfd9e08498d394dfa8cd62ee2670628b3d60293ed",
+      "relative": "receipts/audit-hold-front-release-01/state.json",
+      "bytes": 777
+    },
+    {
+      "sha256": "56eb45b6e2e8d7831ccea89070f8c5932f4019454b1f3b8edda5c9415324bb22",
+      "relative": "receipts/audit-hold-front-release-03-inputs/native.cmd",
+      "bytes": 825
+    },
+    {
+      "sha256": "0b8a4ba18cc8ba81fd993b6ad043817c04502ddc0e0265e376bff7476dcdcf36",
+      "relative": "receipts/audit-hold-front-release-03-inputs/spec.json",
+      "bytes": 3516
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-03/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "73cf9ba32ed6cb7c32efa56133570eb6dd7e00726300a3e31d235a99ec6b1cd7",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-checkpoint-0.json",
+      "bytes": 917
+    },
+    {
+      "sha256": "e1606472c5b5d41605a95b522eea4860ddcf58ab3973930c66b55a44fcece2f2",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-checkpoint-1.json",
+      "bytes": 923
+    },
+    {
+      "sha256": "d2d5cfc433f633ddec89cdb906de873c4b9e0b7da4e28fe795ad309f5483d0e9",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-checkpoint-2.json",
+      "bytes": 910
+    },
+    {
+      "sha256": "49a0af49a2d853d4171a5597bfcf90dbdd45ef199847b20974f605a1139d24cd",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-checkpoint-3.json",
+      "bytes": 1357
+    },
+    {
+      "sha256": "8e34ed448cd42ede26c54b4c16ba1f7c8a3d38244369aa59f18c5dcb1628dddf",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-checkpoint-4.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "e01a8ee2e8c8fe1400583d029037e3ba045c01c7a99033f2f6bf3fa41be6f9c8",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-checkpoint-5.json",
+      "bytes": 1553
+    },
+    {
+      "sha256": "d5424576ec729f628c7d381d4557cc87d6f2c91ad8ebdf625a0f5f60e563cc75",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-checkpoint-6.json",
+      "bytes": 1758
+    },
+    {
+      "sha256": "cc41cb7aefd5266714d24f40fabf626d8d239c4605d6e1ce2addbcf9040bc239",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-checkpoint-7.json",
+      "bytes": 2108
+    },
+    {
+      "sha256": "2e6e3196dce9dde0c3ee735676a78afce73da72dcf9f46f7deea6ba18fdd7119",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-command.json",
+      "bytes": 700
+    },
+    {
+      "sha256": "169e84612a9bfdb8686a003ab98d32a5c26d2616e2ec28617bbe7b6ab67eabe2",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-result.json",
+      "bytes": 2092
+    },
+    {
+      "sha256": "c3f71181d4c9ada537f2e1b518784519c6a3462f4d81b4a842bdfa484500344e",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03-verification.json",
+      "bytes": 3252
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "a19ca5792094b9323b68b4972e51651ebf1fa1ea919e1e2fbb2125946fba88bf",
+      "relative": "receipts/audit-hold-front-release-03/audit-hold-front-release-03.stdout.log",
+      "bytes": 82
+    },
+    {
+      "sha256": "d28d18ab749efce87384ee98373721a25afa5c9d5f0876d0e619437a244ec684",
+      "relative": "receipts/audit-hold-front-release-03/contract.json",
+      "bytes": 485
+    },
+    {
+      "sha256": "32f781c9b590cc7a0624794d566a43252f7a85d6cc9b517091a728d1527c4c8d",
+      "relative": "receipts/audit-hold-front-release-03/freeze.json",
+      "bytes": 7078
+    },
+    {
+      "sha256": "ef65905f20063a743aa650a5da36f077340e5198ca67dc9d8e4e1c262aca8483",
+      "relative": "receipts/audit-hold-front-release-03/state.json",
+      "bytes": 777
+    },
+    {
+      "sha256": "40ed629c220f6747754b14ccf040a01d7c3ccbff8e439d5370e0e46ee1aa3a72",
+      "relative": "receipts/audit-hold-front-release-neg-epoch-inputs/native.cmd",
+      "bytes": 824
+    },
+    {
+      "sha256": "1fafe21a683d384b167e2ffecb303b754ab5d437cba31822d60329cc4544cfb1",
+      "relative": "receipts/audit-hold-front-release-neg-epoch-inputs/spec.json",
+      "bytes": 3536
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "c6f311dfc11329434be8c661ea567be5c5ed72b97316b883f4ca85f83898b83d",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-checkpoint-0.json",
+      "bytes": 924
+    },
+    {
+      "sha256": "9b7af829384dd2ce178798b9bf5910735cd0fa267f9cf1498d58cb28464b1e51",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-checkpoint-1.json",
+      "bytes": 930
+    },
+    {
+      "sha256": "81dd4521133af0dffec027128d5128f10ec046bbc4d1b153df415dadf6b3f216",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-checkpoint-2.json",
+      "bytes": 917
+    },
+    {
+      "sha256": "f27ae3116a0608e8d4e3882c1a282ccdbf2e4f61ed27232b1fb73f5867011626",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-checkpoint-3.json",
+      "bytes": 1364
+    },
+    {
+      "sha256": "1c08846e81aabb62348a9fafb4dc0317b9c5075ae7e4fad50f793f03b3fb07b5",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-checkpoint-4.json",
+      "bytes": 1362
+    },
+    {
+      "sha256": "c802c063a67aa6d5566c7f5bf1088e1d4a91737f3154d155f5cc1f1af7fc8836",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-checkpoint-5.json",
+      "bytes": 1560
+    },
+    {
+      "sha256": "a7996ddc95abaa63c39dbd03c61cb4896ea7f855a7c22e444d8ec8845d007422",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-checkpoint-6.json",
+      "bytes": 1765
+    },
+    {
+      "sha256": "8581ad9da508756eb9902bf7e494f32513193317b7057ff3120781d799b20321",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-checkpoint-7.json",
+      "bytes": 2133
+    },
+    {
+      "sha256": "9130809ad17c49c45b537a5c4242b9b518035935a8a9d125cdb5ca25a47b61c1",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-command.json",
+      "bytes": 728
+    },
+    {
+      "sha256": "9cae05adb9fe65858780694da20d8aac314ddb25a5bcf7d99ad1f49e10c976c7",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-result.json",
+      "bytes": 2117
+    },
+    {
+      "sha256": "b33d28f98c525dc1262d5ddcc523bb4400cf715048e7cd8d1f44a75734bd7475",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch-verification.json",
+      "bytes": 3427
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "746a16ee69ac438f5916679c065fb17136e71ca986735142511437db367dba7a",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/audit-hold-front-release-neg-epoch.stdout.log",
+      "bytes": 83
+    },
+    {
+      "sha256": "58e3d75ead5e649afc6259319551ba2cba5b582b6f8d0fde16fd3cdaa6dc6fe9",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/contract.json",
+      "bytes": 499
+    },
+    {
+      "sha256": "185e523c75cc3bdaadd2e3f0f7c7ec4b4e79bab664ec91adb750b6670abc7736",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/freeze.json",
+      "bytes": 7084
+    },
+    {
+      "sha256": "4aa89f59c8f9380e0ce55cc9a2c9afe1c8c8271fe6043069591b5d92023b030b",
+      "relative": "receipts/audit-hold-front-release-neg-epoch/state.json",
+      "bytes": 791
+    },
+    {
+      "sha256": "153df0143caeed72bc2b5f610562a4595f102bc9c8031dac2cd98da4ef26c436",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02-inputs/native.cmd",
+      "bytes": 835
+    },
+    {
+      "sha256": "96d5854b9a7e18d25e73dd5fca04d37891bbe7eefb2f0dccf8e41fe0b660ba16",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02-inputs/spec.json",
+      "bytes": 3568
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "db2c4b315623624692ed710a46c058b519559e6161b990aebfcd3576e33f6fde",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-checkpoint-0.json",
+      "bytes": 931
+    },
+    {
+      "sha256": "ac24580e2b9d7b6cad31503931877b249e076308de36d9e6df59976718832893",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-checkpoint-1.json",
+      "bytes": 937
+    },
+    {
+      "sha256": "2c7bef430db94c0cbe4bf4978393ee85dbcbe6d14dd0035734d4d16df8e406cc",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-checkpoint-2.json",
+      "bytes": 924
+    },
+    {
+      "sha256": "feeefab9b880753a6d6aded1da93469415aaa7b64eb6df3e7b313578b9c9bf5f",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-checkpoint-3.json",
+      "bytes": 1371
+    },
+    {
+      "sha256": "289437cd5cee7b86e12c4ab85d53470e9891c8402e258ff507a1dc1be9293202",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-checkpoint-4.json",
+      "bytes": 1369
+    },
+    {
+      "sha256": "4867c48e5ea3f5e15e04900b96aca780298701db9cb8459c2607e1eaed83fb98",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-checkpoint-5.json",
+      "bytes": 1567
+    },
+    {
+      "sha256": "5dcd642675d098db5f8d43d3f25efc0234482d8ca9298329769d048a605ed258",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-checkpoint-6.json",
+      "bytes": 1772
+    },
+    {
+      "sha256": "8426beca7e8e0912980b2eac36d6d9c99714cc6f506f0a01ec019d7e6f8970ff",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-checkpoint-7.json",
+      "bytes": 2125
+    },
+    {
+      "sha256": "671d17650499fe3e4f8d74318e409895f769777408552e53ffefde2c43b1297d",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-command.json",
+      "bytes": 756
+    },
+    {
+      "sha256": "4a9e21cf20459ef1345edc5d647670d58426f9e6d0d9ae3c24e04b18bfa6522f",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-result.json",
+      "bytes": 2109
+    },
+    {
+      "sha256": "07768f99416a9f9dbd8e3e01bd1657f3a8c2a9b5a4f05c7227da7c2f207ecd1a",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02-verification.json",
+      "bytes": 3602
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "746a16ee69ac438f5916679c065fb17136e71ca986735142511437db367dba7a",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/audit-hold-front-release-neg-front-rgb-02.stdout.log",
+      "bytes": 83
+    },
+    {
+      "sha256": "9f997aa0782d82f587218083c9af3f95a752eb68358777aff7a8658a735e4f8a",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/contract.json",
+      "bytes": 513
+    },
+    {
+      "sha256": "9e66024446936ee0b5579869e0caca254ea95d58568dddd88c985bf54c85c6d9",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/freeze.json",
+      "bytes": 7102
+    },
+    {
+      "sha256": "e12c9578293c259aa051ab8e68e0d89098a34f37d72d9db116e179cb057963ca",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-02/state.json",
+      "bytes": 805
+    },
+    {
+      "sha256": "fe5adb2d8ed7d63a7850c705b6d11ebd03a01fe52e58af724fc4a3f151c18dfe",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-inputs/native.cmd",
+      "bytes": 832
+    },
+    {
+      "sha256": "8f92a67279875a8fccd86a97f95639111ff16a2911c1ccb88792241a407c59d6",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb-inputs/spec.json",
+      "bytes": 3556
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "e7d9b3ebd51a0e2e00327642c5abf194f50d4b1834ef9c57a906997403d9bcfa",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-checkpoint-0.json",
+      "bytes": 928
+    },
+    {
+      "sha256": "52fa2142ad1dbe9f8572a21e14edfbdb9e3d1c1c060cf71c78cf1b862d782274",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-checkpoint-1.json",
+      "bytes": 934
+    },
+    {
+      "sha256": "6041734fe0c5893175c072bb168dec0be17da8673f99dcb2f3d26daf2e6b48a3",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-checkpoint-2.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "5c8f027256710647b38a4cea4cdb17af4b017dcf6c8cbef24adb9cf23c00fb84",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-checkpoint-3.json",
+      "bytes": 1368
+    },
+    {
+      "sha256": "db428f461da1c4cac17ea67ddb3dfd1f91e15d1eba94440cc70582cb30286e6f",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-checkpoint-4.json",
+      "bytes": 1366
+    },
+    {
+      "sha256": "193b8123f2fe74e0a0ad11a0673c39d1caa1d7ad4c03ae61a96282d3091cac7a",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-checkpoint-5.json",
+      "bytes": 2535
+    },
+    {
+      "sha256": "8cfac811f6eb7598cf30ec4b93a053d66cb55789599c539693ca6ff01d08b414",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-checkpoint-6.json",
+      "bytes": 102
+    },
+    {
+      "sha256": "8cfac811f6eb7598cf30ec4b93a053d66cb55789599c539693ca6ff01d08b414",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-checkpoint-7.json",
+      "bytes": 102
+    },
+    {
+      "sha256": "8568b1a02bf5347c79044c2d794770765efa9680e2874f66430a36ea892e67ae",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-command.json",
+      "bytes": 744
+    },
+    {
+      "sha256": "7f977fa3108b1d3006d249fabd37ad1bcc73780206e4c69313acf55e2dad3b83",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-result.json",
+      "bytes": 2519
+    },
+    {
+      "sha256": "029d941799f49dea999532a8696a09195419e125c19b0b7260dd20bb9b2f0189",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb-verification.json",
+      "bytes": 2570
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "746a16ee69ac438f5916679c065fb17136e71ca986735142511437db367dba7a",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/audit-hold-front-release-neg-front-rgb.stdout.log",
+      "bytes": 83
+    },
+    {
+      "sha256": "5d788226cbf4196f35f85bab1bc10f0025278f3def5affe4d508fbff24ea6922",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/contract.json",
+      "bytes": 507
+    },
+    {
+      "sha256": "93a439bda512fa640bb684fe5562f469206b954e32cb2436523968b6bc5524a7",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/freeze.json",
+      "bytes": 7096
+    },
+    {
+      "sha256": "d1a46a5020a1cd0e75951953f3c94251275b649fc07664c3a357abef87b73f5d",
+      "relative": "receipts/audit-hold-front-release-neg-front-rgb/state.json",
+      "bytes": 610
+    },
+    {
+      "sha256": "7fd4d7f356b835ddf9e74a0785f589e787d59ddb5e2723f76f176e7a7bafd773",
+      "relative": "receipts/audit-hold-front-release-neg-geometry-inputs/native.cmd",
+      "bytes": 830
+    },
+    {
+      "sha256": "6ed0b26b7c07978b4c5cbbe4f55218eaa8fc020d48b334a8b6365cd214ba33c9",
+      "relative": "receipts/audit-hold-front-release-neg-geometry-inputs/spec.json",
+      "bytes": 3551
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "aad09a451fb0c5cbacaf737c2c07008308c221ccdfb97cb0a08852670f9a7b90",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-checkpoint-0.json",
+      "bytes": 927
+    },
+    {
+      "sha256": "e0f0e01705c329732e61587ccda03e18ed75fc4a1fc08f1cd0cf55338ce48db1",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-checkpoint-1.json",
+      "bytes": 933
+    },
+    {
+      "sha256": "bdcbd8436750018509b805b0fa5fe4407a6e1f6944c67741fb846d0a135cb784",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-checkpoint-2.json",
+      "bytes": 919
+    },
+    {
+      "sha256": "095be1535d69e3de900f85323bcee225f7720f9f472a9ffdd4d861d16eca6c71",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-checkpoint-3.json",
+      "bytes": 1365
+    },
+    {
+      "sha256": "74f47010c4d32116a4786657eda6766c0aefa3e2d9c71da63914d870cbc1af9a",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-checkpoint-4.json",
+      "bytes": 1363
+    },
+    {
+      "sha256": "7705dfc2ecda031db3a94939d8aed72c26c85acc0d557175ef55d0dc91ba8e70",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-checkpoint-5.json",
+      "bytes": 1560
+    },
+    {
+      "sha256": "1fd0c80daae9acbc454d2b06dd5a270410b93f22bf9ccbed938454df545e2bc4",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-checkpoint-6.json",
+      "bytes": 1766
+    },
+    {
+      "sha256": "76a05d99c65801c9e7a42c763b54bfe287a11f466c82b5049779a7816c2c8799",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-checkpoint-7.json",
+      "bytes": 2134
+    },
+    {
+      "sha256": "2b5fc996011ead552e3b96b7841243a12a399fb046df4d85888e2678df3c9cc4",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-command.json",
+      "bytes": 740
+    },
+    {
+      "sha256": "4e25145b18f9888e56911ede706f74463000b83baa4d7750a84de66ad4bc7a02",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-result.json",
+      "bytes": 2118
+    },
+    {
+      "sha256": "25ab1ebfee66d446e0a6cb7dfdc05a0fd9a0bdd0fa49c06f1ef44153f9249dc9",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry-verification.json",
+      "bytes": 3502
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "746a16ee69ac438f5916679c065fb17136e71ca986735142511437db367dba7a",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/audit-hold-front-release-neg-geometry.stdout.log",
+      "bytes": 83
+    },
+    {
+      "sha256": "0587f9a8ba3f9f33ea03f46d677e9c4160f8460fd848894d554eab6110811b99",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/contract.json",
+      "bytes": 505
+    },
+    {
+      "sha256": "885e1525f12e171a2acf924dc44118b5b716a42bf3d35999c440ad05f3fd4c9d",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/freeze.json",
+      "bytes": 7093
+    },
+    {
+      "sha256": "180c4f10bef016aa98f76c35aed673fa3574ffb5aab73d42dd0b2e472986c129",
+      "relative": "receipts/audit-hold-front-release-neg-geometry/state.json",
+      "bytes": 797
+    },
+    {
+      "sha256": "a9a3565cf691417b30ff62b7843215ce96d524e5d4d59092d7a275c3ec1c54d2",
+      "relative": "receipts/build-hold-front-asan-02-inputs/build.cmd",
+      "bytes": 733
+    },
+    {
+      "sha256": "a8f8aab7c40cbb8fc20909771ef6749aad9806cad816bdff1fd12da3a494a119",
+      "relative": "receipts/build-hold-front-asan-02-inputs/spec.json",
+      "bytes": 42988
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-asan-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "e24c3e66c5023b277f9fa51e54ab2f5f13e0a9eea08282637f731e6ab1a83fb4",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-checkpoint-0.json",
+      "bytes": 914
+    },
+    {
+      "sha256": "624cb19fccbd56847becae33a9e103cff8f506f3a53344fdc04e626a8f5fb7cc",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-checkpoint-1.json",
+      "bytes": 920
+    },
+    {
+      "sha256": "0ebf27e97a9dc68808ce28f02401756cb942191d10825452dbf176aa870f0723",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-checkpoint-2.json",
+      "bytes": 906
+    },
+    {
+      "sha256": "a6cde99d6102142f0d02b765a78e3a084ef1976c0cfa2dbb04730ae59f254728",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-checkpoint-3.json",
+      "bytes": 1352
+    },
+    {
+      "sha256": "b75aa13239322d1eca5965ffaa2e9ca96d5f94d2410cc5e4ab83604d5b47d8a3",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-checkpoint-4.json",
+      "bytes": 1350
+    },
+    {
+      "sha256": "df2e2036fd71e6fe8ed6dad06178172662bcf5b7d3baf43967f6dccdec51d22c",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-checkpoint-5.json",
+      "bytes": 1549
+    },
+    {
+      "sha256": "0f4849e1344c83512734f51a8a4008946e879344ad99ddffc973b707d54a4fcb",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-checkpoint-6.json",
+      "bytes": 1756
+    },
+    {
+      "sha256": "bf5f123c512e397c0173cf87032cf5b5352786569720191a6155621eabcc1113",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-checkpoint-7.json",
+      "bytes": 2115
+    },
+    {
+      "sha256": "d0f6623dcfcc09dcc603b2c7bf6e2796df4b26d2afc59f4e676ba7a2f9bbce82",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-command.json",
+      "bytes": 687
+    },
+    {
+      "sha256": "5fa024401ebf55465f53616b1c04e5dbce07b515efce13fdf8ef2d65fbc74f5c",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-result.json",
+      "bytes": 2099
+    },
+    {
+      "sha256": "c5172084e650b936f179a30d1f381826c94c0b269d651adcd1ac72d7ff831f8a",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02-verification.json",
+      "bytes": 3179
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "a5f141a548a5b51e5ed9ea2cb4299e6606162e02fd2a7f2547799645365a990c",
+      "relative": "receipts/build-hold-front-asan-02/build-hold-front-asan-02.stdout.log",
+      "bytes": 1940
+    },
+    {
+      "sha256": "149a5745a79fb71511df597210d4bb2ba1e363106c1999a46876b8a932964387",
+      "relative": "receipts/build-hold-front-asan-02/contract.json",
+      "bytes": 479
+    },
+    {
+      "sha256": "b87ff4a1d955576328391a19e99061e2fdd7c704d3763762aca0fbb984a4edd9",
+      "relative": "receipts/build-hold-front-asan-02/freeze.json",
+      "bytes": 57509
+    },
+    {
+      "sha256": "47ad4ef05737ffefbbd844083079874ecfc5ce07ea089e10c0390defb4c71ba6",
+      "relative": "receipts/build-hold-front-asan-02/state.json",
+      "bytes": 771
+    },
+    {
+      "sha256": "49b970a6906f085c2f9b52a232b15f5c9fc4146a911a51c79a831edd1956cd6b",
+      "relative": "receipts/build-hold-front-debug-01-inputs/build.cmd",
+      "bytes": 734
+    },
+    {
+      "sha256": "f42b943df5a1198a3dac0beccbb938845d043c5020f631af27351f9dc251eeee",
+      "relative": "receipts/build-hold-front-debug-01-inputs/spec.json",
+      "bytes": 39208
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-debug-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "3225f87d225c0329ea5c19be8afa34cdc482156cace3d7a5977321caed6b2870",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-checkpoint-0.json",
+      "bytes": 915
+    },
+    {
+      "sha256": "1fa283b6b2325175fc3a1214ef3a874f85a6b9f769c17a62f3f1e8ecb8ce0876",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-checkpoint-1.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "eeee6aa4cffe5673834b737b161abf7fdd016c6142a05d1dd5d9959044e7b5ba",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-checkpoint-2.json",
+      "bytes": 908
+    },
+    {
+      "sha256": "c10762cde68f66de83829b728ec6827e9e57c50e47f8336cc22727c8ea378991",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-checkpoint-3.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "d645aab74667bb85430a3424e16022d6c3ad262f0ff5e65ba9ebc2f13638898b",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-checkpoint-4.json",
+      "bytes": 1353
+    },
+    {
+      "sha256": "d727e10e51b8648ce0519cb44171070aa3a4056f08ee95520325fedd91b15d40",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-checkpoint-5.json",
+      "bytes": 1552
+    },
+    {
+      "sha256": "714846acea22b5b1571676a9bbc3d83849db720a0177219ea80adf37c066e055",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-checkpoint-6.json",
+      "bytes": 1759
+    },
+    {
+      "sha256": "fe18a364202e01c88fd8acf6d15482a0f6a2db6d435e108e1efd9f69b88b06da",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-checkpoint-7.json",
+      "bytes": 2118
+    },
+    {
+      "sha256": "c94d8b60d36efd2dbbd015331ef55104393939f169a4435b998fa45803faec05",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-command.json",
+      "bytes": 691
+    },
+    {
+      "sha256": "315c0eb0c71dcfb62668abbaea3d2e811042ebae2a250ad14fbdc819f93765e5",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-result.json",
+      "bytes": 2102
+    },
+    {
+      "sha256": "a50e31c606bd5c6bec8b02008b61ad5361f240197953875decec6face291bff8",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01-verification.json",
+      "bytes": 3204
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "2f52b7fd5c12effe3e1575510b50ca7b40f3f394cf3709e0cd03a59e7ef26124",
+      "relative": "receipts/build-hold-front-debug-01/build-hold-front-debug-01.stdout.log",
+      "bytes": 1941
+    },
+    {
+      "sha256": "223d086ad4a94d62ceabafe02241e520a41110fc4b5b740f0c5f19c04c6a9046",
+      "relative": "receipts/build-hold-front-debug-01/contract.json",
+      "bytes": 481
+    },
+    {
+      "sha256": "1480b8cea843ed55764c578cc5257371efbeeee1edc0a60941e5818cb7a78326",
+      "relative": "receipts/build-hold-front-debug-01/freeze.json",
+      "bytes": 51120
+    },
+    {
+      "sha256": "0ba3d72bb54cb30a70acfd77a4f9e4438c994909b0d738dafa5d20186811ca02",
+      "relative": "receipts/build-hold-front-debug-01/state.json",
+      "bytes": 773
+    },
+    {
+      "sha256": "8e86410302d33de707219b8a34724b345421734904ab500b8d284a6ee69e503a",
+      "relative": "receipts/build-hold-front-debug-02-inputs/build.cmd",
+      "bytes": 734
+    },
+    {
+      "sha256": "7e5a52a36575d90433e8f7b271502eecc559bc5102ed03b46f67dfd916618142",
+      "relative": "receipts/build-hold-front-debug-02-inputs/spec.json",
+      "bytes": 39417
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-debug-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "37a624ee4788136775153812a2419d54c6ecb86e01247201e22bca6042f29228",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-checkpoint-0.json",
+      "bytes": 915
+    },
+    {
+      "sha256": "242c0f70b92b8d019daa04717d3be858c675a10639d5dd266e6a25220e58a1df",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-checkpoint-1.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "2dfc809c833da42ba005b934512598998c74b470c091b3735cad52905ee268c1",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-checkpoint-2.json",
+      "bytes": 908
+    },
+    {
+      "sha256": "4a7d9354a4a49bebdb17eadf96e8f243efe8a4da29a9bd812f48f196d909451f",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-checkpoint-3.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "530d4eeb81e98595e85a29c07293b48ee6d6007e9a853f1135aa936c2f2f4fdf",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-checkpoint-4.json",
+      "bytes": 1353
+    },
+    {
+      "sha256": "b6be9be14441d5ab311f0f4ab0132b6ab0427904d4903c358ece3308bc3ac38d",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-checkpoint-5.json",
+      "bytes": 1760
+    },
+    {
+      "sha256": "ab1677a4ba489c21131d00af178c15e9c88b3f7d7f9dad10714097be37315f79",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-checkpoint-6.json",
+      "bytes": 1967
+    },
+    {
+      "sha256": "74e1af8e85465a73e3810c4044244bb7be451fe7a6c004b7e3fd95031841c494",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-checkpoint-7.json",
+      "bytes": 2466
+    },
+    {
+      "sha256": "f579ed977f66359613a59dced7a42e356a9e0d5ddbb811885049a44a4abf0d5d",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-command.json",
+      "bytes": 691
+    },
+    {
+      "sha256": "ff440b803419ba94be4fcbe136edbee3289fb1cbf5631e0f33aa9430f69f4994",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-result.json",
+      "bytes": 2450
+    },
+    {
+      "sha256": "6bbd2898ab86a9c5047ad0c4d2ab8f0f3bc616d7bdef01505fd1e46c7d4145d9",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02-verification.json",
+      "bytes": 3204
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "e655b84bf54df1c68e337b02c85ffca147529489e6d575ba6096e25b83bdb22c",
+      "relative": "receipts/build-hold-front-debug-02/build-hold-front-debug-02.stdout.log",
+      "bytes": 1941
+    },
+    {
+      "sha256": "713126aa8b72f264cf541e3f9b0429c1d4983d80f6b05ccf0499aab979053425",
+      "relative": "receipts/build-hold-front-debug-02/contract.json",
+      "bytes": 481
+    },
+    {
+      "sha256": "fe224134102485a383de54cd05029948efbb66099d7c1605a4278fb349582203",
+      "relative": "receipts/build-hold-front-debug-02/freeze.json",
+      "bytes": 51510
+    },
+    {
+      "sha256": "3bf012027fa868a71b15581f40abf4d8981f5d2d2ce0eb44bd06483f5e1f1057",
+      "relative": "receipts/build-hold-front-debug-02/state.json",
+      "bytes": 773
+    },
+    {
+      "sha256": "51402023a787fddb967aba8e0d392130d274d91e43adaaa0183655076a7d76b0",
+      "relative": "receipts/build-hold-front-release-01-inputs/build.cmd",
+      "bytes": 736
+    },
+    {
+      "sha256": "13f742ec788bf069cb08f8f99490247e10ca6e8976bd89a3c7e134092b397490",
+      "relative": "receipts/build-hold-front-release-01-inputs/spec.json",
+      "bytes": 39228
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-release-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "429f6159e08d8f83bd82196eb53c0c56201bb2dbe7bc9b387f76de8abdf1014c",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-checkpoint-0.json",
+      "bytes": 917
+    },
+    {
+      "sha256": "35292a77320a3bca8601f31d6410cea3f72abc6bd3e0d52554df0782742311da",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-checkpoint-1.json",
+      "bytes": 923
+    },
+    {
+      "sha256": "d96e44169e2fdc0f13567a71fc529b918df6c3dfdd67f0f7a6c2bbee6cc92066",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-checkpoint-2.json",
+      "bytes": 910
+    },
+    {
+      "sha256": "250d3e6c094cac0f9ef694d8c17a925edbba6380495e76dbdaedb93b8a036c0b",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-checkpoint-3.json",
+      "bytes": 1357
+    },
+    {
+      "sha256": "e506d3976c1d9fc781d866253248c23e15c4a3d0e1150eb136fee677b17d0591",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-checkpoint-4.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "176ac4ddc3d03575ee77f16b6c63c2f46d7f2e32b0e22a288353ee7800b96fbb",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-checkpoint-5.json",
+      "bytes": 1554
+    },
+    {
+      "sha256": "c5f682c5a3a0e0942f46f76f0a61105806af9c12849d9a21fbe810c264d9a8f7",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-checkpoint-6.json",
+      "bytes": 1760
+    },
+    {
+      "sha256": "0f41a6ee3b2f3db884b7e4dddf0e2e22c8317e8f2469fee0660aa5cf50ab0ac6",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-checkpoint-7.json",
+      "bytes": 2122
+    },
+    {
+      "sha256": "6e60f0702bcc96eb483b0bc62a37ec42b846d861ef1d54e4afc90ae0af0615b3",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-command.json",
+      "bytes": 699
+    },
+    {
+      "sha256": "8b856a8e3d93b4edf1bc85223b9fded9c7e001a186fde888954bc7af70d37aac",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-result.json",
+      "bytes": 2106
+    },
+    {
+      "sha256": "92c4bf61336578d077fe6d7495b3e651a09cdbebf43ebb5bfa50ad2667dea9c1",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01-verification.json",
+      "bytes": 3254
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "7b0a72654504398a1401326837aa89612e707384a7b10c1f6b6dff10ed2538bf",
+      "relative": "receipts/build-hold-front-release-01/build-hold-front-release-01.stdout.log",
+      "bytes": 1943
+    },
+    {
+      "sha256": "b96d1647344adb9854efe00b02307310a208bf40c2b50f7a11f3e40ea1efbcfd",
+      "relative": "receipts/build-hold-front-release-01/contract.json",
+      "bytes": 485
+    },
+    {
+      "sha256": "3a7d15482a069ecf6b8f6b931055077cd391e83c9cf608e84f828553b2220448",
+      "relative": "receipts/build-hold-front-release-01/freeze.json",
+      "bytes": 51136
+    },
+    {
+      "sha256": "7678510ab32bdd9e8be33021d451e5cd0a831dd00a620997bec10e288f144520",
+      "relative": "receipts/build-hold-front-release-01/state.json",
+      "bytes": 777
+    },
+    {
+      "sha256": "8d218a49a21651d344afc6e96bdf4ad17ea8aea35ae7adc56b7483172dc4d6b6",
+      "relative": "receipts/build-hold-front-release-02-inputs/build.cmd",
+      "bytes": 736
+    },
+    {
+      "sha256": "f2ea8bf72dbd980df82abcb793854750a7ec020013a1b55ced6c077846797aa8",
+      "relative": "receipts/build-hold-front-release-02-inputs/spec.json",
+      "bytes": 39437
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-release-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "c2fe77f942eb729260282270bc747b34f2e7df877cd8991e77fef5d2084cea58",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-checkpoint-0.json",
+      "bytes": 917
+    },
+    {
+      "sha256": "19f42b8250d2bb7e4b3dfa6570608b227511c998b3bfba717095dd2e999a4b60",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-checkpoint-1.json",
+      "bytes": 923
+    },
+    {
+      "sha256": "11c9ad628cb3501d16bb850b6163e67afff71d57f1d600c5a3592b3a131da25e",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-checkpoint-2.json",
+      "bytes": 910
+    },
+    {
+      "sha256": "8be5e98c652c08e85f8c3ed8d69002d80a0cc123abecd4335313bf50afc2f49a",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-checkpoint-3.json",
+      "bytes": 1356
+    },
+    {
+      "sha256": "6b7b69f59394f1ffa4624a1ce9a38ad8991b1f40ccc71bcf1b5f23c16e71d57c",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-checkpoint-4.json",
+      "bytes": 1354
+    },
+    {
+      "sha256": "ac849eb27deb049f99b4bae67f681191d366403c71ca170e2c5baf2fac386eb7",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-checkpoint-5.json",
+      "bytes": 2540
+    },
+    {
+      "sha256": "54983f8899a39d053cb418774b1f70f33003b1dc209ed305e32fdd6b66bb8cca",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-checkpoint-6.json",
+      "bytes": 91
+    },
+    {
+      "sha256": "54983f8899a39d053cb418774b1f70f33003b1dc209ed305e32fdd6b66bb8cca",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-checkpoint-7.json",
+      "bytes": 91
+    },
+    {
+      "sha256": "3805616ee55605fd138c11ff4b7092c361ee324f518461632cba786cfd960446",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-command.json",
+      "bytes": 699
+    },
+    {
+      "sha256": "efeeb85efa2dc4438163299f15391f258187867d8b77bee61e34fa2144303d22",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-result.json",
+      "bytes": 2524
+    },
+    {
+      "sha256": "7bfe9f16ddc77c82c0ff7daa854ce4ccadd3b5eff04ff2ca3de853c5acf4a0fa",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02-verification.json",
+      "bytes": 2575
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "d4f7c85442f6ae3049db0d50633a5cf26759b097b5456974c9c4338b4dbcdbd3",
+      "relative": "receipts/build-hold-front-release-02/build-hold-front-release-02.stdout.log",
+      "bytes": 1943
+    },
+    {
+      "sha256": "3b37ffcdbe650fa355a6c1c9b8aef49faa5a359fb30047c84fd806e60cbcf503",
+      "relative": "receipts/build-hold-front-release-02/contract.json",
+      "bytes": 485
+    },
+    {
+      "sha256": "1c457762ca06938a91467e6146360daffb9d43c6e477091b54c81917bca3d001",
+      "relative": "receipts/build-hold-front-release-02/freeze.json",
+      "bytes": 51526
+    },
+    {
+      "sha256": "6d7f055c1f236ea5e936c32dbba18d8bc801a3fcf1a1a5c18c40010c10ee2546",
+      "relative": "receipts/build-hold-front-release-02/state.json",
+      "bytes": 588
+    },
+    {
+      "sha256": "28eaeedf5ee955d41a9384323270208467cd4974734974dc42f04f8c5652a0eb",
+      "relative": "receipts/build-hold-front-release-03-inputs/build.cmd",
+      "bytes": 736
+    },
+    {
+      "sha256": "15ec38159d5ab91854852c72bb0afe9238c90cd95f5b1b055cce16a5b475ee77",
+      "relative": "receipts/build-hold-front-release-03-inputs/spec.json",
+      "bytes": 39437
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-release-03/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "45b0e455d37c723e8b9ae12b38989f58d6f777aabbefd0dff38cc8720fac3705",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-checkpoint-0.json",
+      "bytes": 917
+    },
+    {
+      "sha256": "79b45a8812986f9fe3e3a99d9358dedb306f32340d0d256567140c1b0bd35730",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-checkpoint-1.json",
+      "bytes": 923
+    },
+    {
+      "sha256": "44e64d1dd235d8470e8e65b4be27fb8e1f2df5e66c60b15b84faff330dda4b83",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-checkpoint-2.json",
+      "bytes": 909
+    },
+    {
+      "sha256": "f180e5b64f3abfd5478b24651147ffb5bc7e383278e3997fec5db1fd44a85835",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-checkpoint-3.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "3873371c95d826aa7a0ac9353b3b7a780252ff2b3c0ca21f1e52e826c89ac2d6",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-checkpoint-4.json",
+      "bytes": 1353
+    },
+    {
+      "sha256": "dbd319104039e669c0a0df2242adc1471ab46f0adf7ea1f8c85cd306bc975857",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-checkpoint-5.json",
+      "bytes": 1552
+    },
+    {
+      "sha256": "033625f986ef944028b8373fcc98a5b12725f7d0834ed5577504f2586134ca61",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-checkpoint-6.json",
+      "bytes": 1759
+    },
+    {
+      "sha256": "979632cb2dc086c8df8500e9c0714b019cb10508ba3510a1c12beeadf49b6eb7",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-checkpoint-7.json",
+      "bytes": 2119
+    },
+    {
+      "sha256": "71ee971c1ca0ef2a7ac76f799464db6687a733f8cb5a2f8b53f19a9b312b80e8",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-command.json",
+      "bytes": 699
+    },
+    {
+      "sha256": "f5484becc30c930f0b771cd76befe4bb9a1819bf10bfebd3b69b3b267375ea5e",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-result.json",
+      "bytes": 2103
+    },
+    {
+      "sha256": "157767801fdd25d567616d0538f44d014aa6fb91d0d634c0a0788b3dcd17dcc1",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03-verification.json",
+      "bytes": 3254
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "e232ca014358e5307f1e893e5b3a4f6552de5b829a855e0dc6bb7dfff30cd0d6",
+      "relative": "receipts/build-hold-front-release-03/build-hold-front-release-03.stdout.log",
+      "bytes": 1943
+    },
+    {
+      "sha256": "539b9f7a4c3eac78b257ed8f3231be6e84d2a1c84671f7fc8afaf658e81d575d",
+      "relative": "receipts/build-hold-front-release-03/contract.json",
+      "bytes": 485
+    },
+    {
+      "sha256": "212791f7b7e5204da68a064a9e62c4d1dc74f54797c36ee9c678966ea75d9f5c",
+      "relative": "receipts/build-hold-front-release-03/freeze.json",
+      "bytes": 51526
+    },
+    {
+      "sha256": "086dea8c4c90be94cc707a802e917d7470a3fa6384825930af6ce31f39a31629",
+      "relative": "receipts/build-hold-front-release-03/state.json",
+      "bytes": 777
+    },
+    {
+      "sha256": "17363f388b8a709b8e1924705bc1465c4d4fcc6770beaa42cae4a7d46eb063b4",
+      "relative": "receipts/configure-hold-front-asan-01-inputs/configure.cmd",
+      "bytes": 1907
+    },
+    {
+      "sha256": "77ba0c49afb5a54d0fbd8bdd8436f2bee8a7e48fda5e4ad109471b1913aab8d4",
+      "relative": "receipts/configure-hold-front-asan-01-inputs/spec.json",
+      "bytes": 42803
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-asan-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "c0e7452c0eedf59a6f69b0a4f7373c3ed6c5c5a531052176d2c3f60881134a24",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-checkpoint-0.json",
+      "bytes": 918
+    },
+    {
+      "sha256": "e4c2cb62fb9eb227e5c971d799d85f6638ac06fcee6e35a08ed102528b6e9f26",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-checkpoint-1.json",
+      "bytes": 924
+    },
+    {
+      "sha256": "0d28e22668e48954919a77a3d3f1d0e73e0e965c06166eea92925b45f5ea01f4",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-checkpoint-2.json",
+      "bytes": 911
+    },
+    {
+      "sha256": "bfdbfa91ee61247f6a68772d4355bf45f830ce5580be77f46d9ba281e6698c24",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-checkpoint-3.json",
+      "bytes": 1358
+    },
+    {
+      "sha256": "6844310f0d694203c3ff27eaf1155309d49ab4cf1b887b82587d8824c0160b7a",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-checkpoint-4.json",
+      "bytes": 1356
+    },
+    {
+      "sha256": "1b19e85af6aa24e1f624c61afd8cd8e0a9292a85a4a7f03b32d86d6275417fb1",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-checkpoint-5.json",
+      "bytes": 2776
+    },
+    {
+      "sha256": "6a8d792fa939635970802669970d4ac392f2fda4668dbd8669c00e90af04ce05",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-checkpoint-6.json",
+      "bytes": 92
+    },
+    {
+      "sha256": "6a8d792fa939635970802669970d4ac392f2fda4668dbd8669c00e90af04ce05",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-checkpoint-7.json",
+      "bytes": 92
+    },
+    {
+      "sha256": "1183c9a6fe4ea23927b9530237308aa89ea4dca80b0e953788156d1fe5fae0ed",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-command.json",
+      "bytes": 711
+    },
+    {
+      "sha256": "d9da616c89f7bfb507ff74a69d6f0777264debef9b5fac5cea943e7450cb3dc4",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-result.json",
+      "bytes": 2760
+    },
+    {
+      "sha256": "2767c28acd005a777c419c4f76d8b56cd72fdad205d19bc070e4d91327e646ba",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01-verification.json",
+      "bytes": 2811
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "41637268407cd6135b359877c5c0e2971a6a7ae58e7c95e0635e3c4478fceef1",
+      "relative": "receipts/configure-hold-front-asan-01/configure-hold-front-asan-01.stdout.log",
+      "bytes": 1170
+    },
+    {
+      "sha256": "fc7567e452d89d4ffdce50dda02c667286b68beabc15546c761141a2b33a82b8",
+      "relative": "receipts/configure-hold-front-asan-01/contract.json",
+      "bytes": 491
+    },
+    {
+      "sha256": "58340435e3d6aef8a89093b491b1809fd738ad35031b7db03e53d33a9323831c",
+      "relative": "receipts/configure-hold-front-asan-01/freeze.json",
+      "bytes": 57132
+    },
+    {
+      "sha256": "1b59bd6c66d668cecb00819fb41ec75bb29e75ffe6e2f64a5bd4f5cc92746fa5",
+      "relative": "receipts/configure-hold-front-asan-01/state.json",
+      "bytes": 590
+    },
+    {
+      "sha256": "04d040073362f26d3ea08d0dfcfe8df37117e94fd71b94f39f25a09219138e4d",
+      "relative": "receipts/configure-hold-front-asan-02-inputs/configure.cmd",
+      "bytes": 1907
+    },
+    {
+      "sha256": "5c32f7832d35f87b8c899bece4e4855948529ffa13dd4461ca00b6b5408be2f6",
+      "relative": "receipts/configure-hold-front-asan-02-inputs/spec.json",
+      "bytes": 43012
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-asan-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "7f2c40ad1cc0121c0d66eae51748da84cd814fe8d0044e10d000ee1b4bd6aa49",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-checkpoint-0.json",
+      "bytes": 918
+    },
+    {
+      "sha256": "92b1b3bf1caf71a4a82c60610228fc12add302520c5c37aacb2249d784268717",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-checkpoint-1.json",
+      "bytes": 924
+    },
+    {
+      "sha256": "770a9d652ddde6465f11b3ef0adcb5250f06233a49cc60f7f339b5162238bd38",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-checkpoint-2.json",
+      "bytes": 911
+    },
+    {
+      "sha256": "c1e2b1f2f0fafdff9a10f699ce8c7930c0b4ba52847972d9772afce407343dee",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-checkpoint-3.json",
+      "bytes": 1358
+    },
+    {
+      "sha256": "be5b1ade331d2cd25a291cec6e4f179d4be57576150dfdcc1f2caba458fcaad9",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-checkpoint-4.json",
+      "bytes": 1356
+    },
+    {
+      "sha256": "3f10141a109f4140043093fbb4a478a5346db463bfcf916999e7bf2512af5db9",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-checkpoint-5.json",
+      "bytes": 1554
+    },
+    {
+      "sha256": "e7a2cfa7d2ff276d7d822bb4a677ef887b5e0cd82e4033f743805c58e043309c",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-checkpoint-6.json",
+      "bytes": 1760
+    },
+    {
+      "sha256": "980d6b2a34d58abcac713d1bb26330d0da1120111bf55bea82b18c07d5ce38c0",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-checkpoint-7.json",
+      "bytes": 2135
+    },
+    {
+      "sha256": "f4d1f3aae0175c5ebe9a41bb3708d97beed94bc5fc9da0e421f7ecaf6b59ea03",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-command.json",
+      "bytes": 711
+    },
+    {
+      "sha256": "fc681d3c53f6e39dda036b5d5ae72d70e564c66c045556dce8e2ea97bd14f0e1",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-result.json",
+      "bytes": 2119
+    },
+    {
+      "sha256": "06e296bd4af06d24aabdb2c847afd14cbc89e5da55ef9aecb624a71335b49b2d",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02-verification.json",
+      "bytes": 3279
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "e3bf13786ce88097a622d3271768f43c331d6dc85f2f41c1ca0ccfdfb1f88e80",
+      "relative": "receipts/configure-hold-front-asan-02/configure-hold-front-asan-02.stdout.log",
+      "bytes": 1170
+    },
+    {
+      "sha256": "7f9cc171411c8df553835cd3b97182166979b0a239bbc7425d25baad26522a09",
+      "relative": "receipts/configure-hold-front-asan-02/contract.json",
+      "bytes": 491
+    },
+    {
+      "sha256": "5032fcaa404e29eda7deaefcd27e739d2df4640049795e10ef91d3bae04989f8",
+      "relative": "receipts/configure-hold-front-asan-02/freeze.json",
+      "bytes": 57522
+    },
+    {
+      "sha256": "dc47458c2d080d7471702657444f414ad4c8840e3f343312dc7db95fe6d264dd",
+      "relative": "receipts/configure-hold-front-asan-02/state.json",
+      "bytes": 779
+    },
+    {
+      "sha256": "0db8028a6138ffc93b1334994d2b0042b84c9b1576d09a103584f4bf268a383f",
+      "relative": "receipts/configure-hold-front-debug-01-inputs/configure.cmd",
+      "bytes": 1773
+    },
+    {
+      "sha256": "aa1445a697175874149bd90188cbc231e05aebc72994192b0040effd3815ae05",
+      "relative": "receipts/configure-hold-front-debug-01-inputs/spec.json",
+      "bytes": 39232
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-debug-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "692396739347fb253024181efd3bd099578bda08cb0eb474ca41f624230ca06b",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-checkpoint-0.json",
+      "bytes": 919
+    },
+    {
+      "sha256": "e1dfa9b7a5301f4cf3e0d94c72e696b0dce79186e9814f1e25c2e3d88e70e7b2",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-checkpoint-1.json",
+      "bytes": 925
+    },
+    {
+      "sha256": "71bf684ce9b23cf0bf74bae4a5db5ff8e5c8cbf88f25e7487dd5b5f0f5a9f99e",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-checkpoint-2.json",
+      "bytes": 912
+    },
+    {
+      "sha256": "01bb56b4c162e5e337522a6844ba79f395ffb6de30205d413d4de8b4180ca783",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-checkpoint-3.json",
+      "bytes": 1359
+    },
+    {
+      "sha256": "2a49dfddff913cd28b9e7d1a47777498d771159f3f4fe767ec60ef05da920cdb",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-checkpoint-4.json",
+      "bytes": 1357
+    },
+    {
+      "sha256": "9efd3ce2c13786cac80abf2409ecffa7ec73241e47215cbc2fdfafed14f133ba",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-checkpoint-5.json",
+      "bytes": 1555
+    },
+    {
+      "sha256": "1cd409ecc6389d32226374c3859a97042fb6fd212fa128dcb67ff557ee55bcff",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-checkpoint-6.json",
+      "bytes": 1761
+    },
+    {
+      "sha256": "5fc27e3a887b67378acb975a06d4559c1c89c26d602522d31f8acde289f37856",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-checkpoint-7.json",
+      "bytes": 2119
+    },
+    {
+      "sha256": "599499d27b2e7b0d13078fe5a920d9dc4ac85b9c2502faab32e882a0a0da6ac5",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-command.json",
+      "bytes": 715
+    },
+    {
+      "sha256": "afe9ece9fe39ea582d704f784d95b5335a3c717eda965fe4ce81dd25c62771f3",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-result.json",
+      "bytes": 2103
+    },
+    {
+      "sha256": "ef51693755af5060d46278d12bb1d655150bf207c7a5d9658787b164a92f0295",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01-verification.json",
+      "bytes": 3304
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "dfea6e8841cb95c44dc52ee1e7734d59c5498d94d69f3f6859245b795fa7feb3",
+      "relative": "receipts/configure-hold-front-debug-01/configure-hold-front-debug-01.stdout.log",
+      "bytes": 1172
+    },
+    {
+      "sha256": "5745711e905b7f02ef145a199e2d7bcb3f0a08b2b742560ea5f5e647820d22b5",
+      "relative": "receipts/configure-hold-front-debug-01/contract.json",
+      "bytes": 493
+    },
+    {
+      "sha256": "093ebe562e54c1222ed82a79e299e4967e17832ed43ec448f59de16a259be695",
+      "relative": "receipts/configure-hold-front-debug-01/freeze.json",
+      "bytes": 51133
+    },
+    {
+      "sha256": "cecb58c77bae4c47d6a3444f892cc9cef215d12798e21ee67e4012b3b141bf85",
+      "relative": "receipts/configure-hold-front-debug-01/state.json",
+      "bytes": 781
+    },
+    {
+      "sha256": "57e4b3591c006363a5250949d7ec982d35299d6481c75609036c5e4eb3215ced",
+      "relative": "receipts/configure-hold-front-debug-02-inputs/configure.cmd",
+      "bytes": 1773
+    },
+    {
+      "sha256": "0c35e6f72ce116fab94323e5b3da7513eba222b7e64c5ac0c1ab959219d553f4",
+      "relative": "receipts/configure-hold-front-debug-02-inputs/spec.json",
+      "bytes": 39441
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-debug-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "56f53220a029da0402faaa984fb5a58538d898b6ab12b35a14864a31596aa168",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-checkpoint-0.json",
+      "bytes": 919
+    },
+    {
+      "sha256": "98415e0fd1e0c3016bfc49e19edd3eb3c808e84252f256b5b7c87faa70440ce2",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-checkpoint-1.json",
+      "bytes": 925
+    },
+    {
+      "sha256": "6f44840685ddfa65b6e36dc9173cf788c3080c5f6787d1e118eea3c2846ffd56",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-checkpoint-2.json",
+      "bytes": 912
+    },
+    {
+      "sha256": "c2deacaa3f19709978606d6fe63de94f2b954193717b30d38be7699a5c28ab70",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-checkpoint-3.json",
+      "bytes": 1359
+    },
+    {
+      "sha256": "0b3701ae950a44fa584a6ffb517f267a937e93dbe91b4935b6319aa7b578ef44",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-checkpoint-4.json",
+      "bytes": 1357
+    },
+    {
+      "sha256": "a37207edd283de54fcd16b065338dd6888ef6bb1e247794dd705e34a71010f4e",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-checkpoint-5.json",
+      "bytes": 1763
+    },
+    {
+      "sha256": "82d84633680473bdda11fcee45fdf2b2f03f8e2c764a4432b811e2fa6a0b68df",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-checkpoint-6.json",
+      "bytes": 1969
+    },
+    {
+      "sha256": "feb58f5c206907856de43217c46cd30c507904fa2aa6c95661f18c210940a0e5",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-checkpoint-7.json",
+      "bytes": 2461
+    },
+    {
+      "sha256": "3a223ac1f4e231e3ea318b3df2506e1306371c1a37b4c0f298d56cbb803bca1e",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-command.json",
+      "bytes": 715
+    },
+    {
+      "sha256": "42a4f54af2aa119b81738b10dc8d45e263f404e0acf52c3d67a7598b5407c857",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-result.json",
+      "bytes": 2445
+    },
+    {
+      "sha256": "ddf770e6b0002095818e76f429298195173b3173fe771ea69a841aff6bf5170d",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02-verification.json",
+      "bytes": 3304
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "aeaa62ce30741a2d243e575a2aee5a2e82ea89dbb050e1d160fbf2f73f5a3620",
+      "relative": "receipts/configure-hold-front-debug-02/configure-hold-front-debug-02.stdout.log",
+      "bytes": 1172
+    },
+    {
+      "sha256": "726022cc911f970fcc56147d5066d7a135f41359b85865002a6167e8b1257f26",
+      "relative": "receipts/configure-hold-front-debug-02/contract.json",
+      "bytes": 493
+    },
+    {
+      "sha256": "3ea6d6d8ec6040e971fbc29e99afc98188e21c2263858f31a46ee03099c51781",
+      "relative": "receipts/configure-hold-front-debug-02/freeze.json",
+      "bytes": 51523
+    },
+    {
+      "sha256": "93946d5b3db9027c8cca763d9f39681c2f835bc6dc49b4cec87b54d36b3c0928",
+      "relative": "receipts/configure-hold-front-debug-02/state.json",
+      "bytes": 781
+    },
+    {
+      "sha256": "8b2d1303059f83371f4f2c72576eab95fcfa3910121f334b00d87e6bd6288859",
+      "relative": "receipts/configure-hold-front-release-01-inputs/configure.cmd",
+      "bytes": 1779
+    },
+    {
+      "sha256": "75bd5cb4111a3bddf13e0f83c591770f390aa0415428e31b1ee07a1742863ae8",
+      "relative": "receipts/configure-hold-front-release-01-inputs/spec.json",
+      "bytes": 39252
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-release-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "3bd05f04adae769240b96aeae13acc61b1ef06a198309abceb5e0f455a3e8235",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-checkpoint-0.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "75dc9d657258dfd6843ccfff6b45443e737ab566a067bcb2d89de7385c1d19c4",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-checkpoint-1.json",
+      "bytes": 927
+    },
+    {
+      "sha256": "0503923960b558d17cfeebdba5842c46cde38c023204932aa5f2279756e934a9",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-checkpoint-2.json",
+      "bytes": 914
+    },
+    {
+      "sha256": "24cc44617ed4964de763c9e876a834de4464a33fb7a700a2d8239164ce976af3",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-checkpoint-3.json",
+      "bytes": 1361
+    },
+    {
+      "sha256": "d80992026e367840ac689e56178a8a832da4aebf4d482c08d0a22e4f62fba156",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-checkpoint-4.json",
+      "bytes": 1359
+    },
+    {
+      "sha256": "89fdc84e390c46037db52c5d323b8a43f1e921f5f960c0767875b2e91b6150e4",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-checkpoint-5.json",
+      "bytes": 1765
+    },
+    {
+      "sha256": "6e0e946d2d594343e1d0b537edbf37b03f8eee94c670de2efc2232e8eb3d88bf",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-checkpoint-6.json",
+      "bytes": 1971
+    },
+    {
+      "sha256": "5af61cdc7cb28e3908cd934ad28a76e357f67e8211184476d23d0176ad6d4135",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-checkpoint-7.json",
+      "bytes": 2463
+    },
+    {
+      "sha256": "c874aeec04763d35860bdb82046968f41a01bf3ab149940f05f770bff81f6bf2",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-command.json",
+      "bytes": 723
+    },
+    {
+      "sha256": "aead533b4b5605c3376514a78496cb8591c529807c4df3627087a1b234d8b201",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-result.json",
+      "bytes": 2447
+    },
+    {
+      "sha256": "ee0f788237d47427a03a24e7f9bbdf3563ec8ec318171bf1e38f77d44da0a07c",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01-verification.json",
+      "bytes": 3354
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "001da1e344cd00edc67da904ffdd9ed941170c36e96cb1677e21e6da29a596fc",
+      "relative": "receipts/configure-hold-front-release-01/configure-hold-front-release-01.stdout.log",
+      "bytes": 1176
+    },
+    {
+      "sha256": "7a28c2a28fc090971a28151917bea0b1f47c82b1cfb22a92f0492a23cec140d0",
+      "relative": "receipts/configure-hold-front-release-01/contract.json",
+      "bytes": 497
+    },
+    {
+      "sha256": "830a31b2b19ac056bc9c35c73515e69b363477057eb3443f76663868104fc099",
+      "relative": "receipts/configure-hold-front-release-01/freeze.json",
+      "bytes": 51149
+    },
+    {
+      "sha256": "c630062b63786daada1e043eae37873431e373d59b0bbfff675779aed8f69b77",
+      "relative": "receipts/configure-hold-front-release-01/state.json",
+      "bytes": 785
+    },
+    {
+      "sha256": "98b6c63e10c833af52759a89973c3e40c312645432e43df1aeba4493818303b6",
+      "relative": "receipts/configure-hold-front-release-02-inputs/configure.cmd",
+      "bytes": 1779
+    },
+    {
+      "sha256": "0b63d7ce0e0af8b46aab16de23c7214bc431edce7eea37cacd0c48a18c4984e2",
+      "relative": "receipts/configure-hold-front-release-02-inputs/spec.json",
+      "bytes": 39461
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-release-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "dbf93cf73bbcf586ebdb86ce9d2d92c15697cd6e9d720f68b876256d729db3c6",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-checkpoint-0.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "d2b3a783909f6f4b973b7404618008d502c3fd963407ff80638b19f5e1f7db76",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-checkpoint-1.json",
+      "bytes": 927
+    },
+    {
+      "sha256": "bdaf8d2aff3467351a622cf14daaab11a4043c773a2041bc78b9129d2243ebb5",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-checkpoint-2.json",
+      "bytes": 914
+    },
+    {
+      "sha256": "3aaa07a52169bb9d7482ed5dfe5852c7c05614e594bb6377c93a4fc954597976",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-checkpoint-3.json",
+      "bytes": 1361
+    },
+    {
+      "sha256": "5b74c91aa2692c299b1f7526d27a39fd26c853828729fbf6a1c3216cca3effec",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-checkpoint-4.json",
+      "bytes": 1359
+    },
+    {
+      "sha256": "9c75391b0417e67033b0698f8583b8171e7d58694eebb5a409e7c7fdc88885f8",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-checkpoint-5.json",
+      "bytes": 1557
+    },
+    {
+      "sha256": "46c8a69df03cd9fe02a03fa9ea4ed500959474c3a4097511c6bbfe9653560577",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-checkpoint-6.json",
+      "bytes": 1763
+    },
+    {
+      "sha256": "a51134195ee4a1665255590f2595b11bcbb5bce6967103479492562d7376e0b5",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-checkpoint-7.json",
+      "bytes": 2122
+    },
+    {
+      "sha256": "961a50b77026fa0544fdc0d99d60df42e569d5cc080bd9221fd8c43f2cda1ac3",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-command.json",
+      "bytes": 723
+    },
+    {
+      "sha256": "5b4592170b059badd387d4795f59c30ba51fa22f61b1b9b6ea09379d30b09c07",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-result.json",
+      "bytes": 2106
+    },
+    {
+      "sha256": "94833e316d72ec57366c949f27399a0dcec11d1b90d6bfb92edc325c7101feeb",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02-verification.json",
+      "bytes": 3354
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "1ebf6ac2aa8e152bfe6c29f60f856be4c9b100bb00f7efc705802cc4f2f308e0",
+      "relative": "receipts/configure-hold-front-release-02/configure-hold-front-release-02.stdout.log",
+      "bytes": 1176
+    },
+    {
+      "sha256": "12526a00a20dfe1d908bdd51da5fd8a224a10926439e2ca0c46f72dd77708628",
+      "relative": "receipts/configure-hold-front-release-02/contract.json",
+      "bytes": 497
+    },
+    {
+      "sha256": "69b79066692fbea611b089651e6a0234e46c4d852affb768fb17d3496fe783dd",
+      "relative": "receipts/configure-hold-front-release-02/freeze.json",
+      "bytes": 51539
+    },
+    {
+      "sha256": "fa0303fb08cf789d26e6d5e67c13a0080be7c2095fa23c2ac397938d4c9a8d3e",
+      "relative": "receipts/configure-hold-front-release-02/state.json",
+      "bytes": 785
+    },
+    {
+      "sha256": "d0440792d11ec8929da0758c0d281237f520b09f5b43c0aa9dcc665b67b69fef",
+      "relative": "receipts/configure-hold-front-release-03-inputs/configure.cmd",
+      "bytes": 1779
+    },
+    {
+      "sha256": "4ba459ebbe90166774875188523be4e4ec4f0f525635bb891837ed37072bc726",
+      "relative": "receipts/configure-hold-front-release-03-inputs/spec.json",
+      "bytes": 39461
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-release-03/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "6166325e742451e589642383c28c34b0a5793415c046d9a55dad409c2de7733f",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-checkpoint-0.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "c3f1b0a7c0f0f283a99bed4bdfa6f26b5dc4295939405e38759e667c156a73e3",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-checkpoint-1.json",
+      "bytes": 927
+    },
+    {
+      "sha256": "2d7770f2d8f7d0a98eaeb97663fad344f9207e12cfe71ccdadaf3d381d4fb67b",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-checkpoint-2.json",
+      "bytes": 914
+    },
+    {
+      "sha256": "bbc66852d73aa007ebe396a911cfdd239a91b1ee013687d74bf3aa08406d7c97",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-checkpoint-3.json",
+      "bytes": 1361
+    },
+    {
+      "sha256": "51690d8e9a8ada8575505aa903462c022cdb87c7bfdb03543b12fcab49d5b0ca",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-checkpoint-4.json",
+      "bytes": 1359
+    },
+    {
+      "sha256": "f068993027bf57f5be76134762592b27544df980e07594b518e038b5aacb2b30",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-checkpoint-5.json",
+      "bytes": 1557
+    },
+    {
+      "sha256": "108c373d80aae8cf6fc7280a3b06e68df00992956ca313ae8ee5c096b4eb07fc",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-checkpoint-6.json",
+      "bytes": 1763
+    },
+    {
+      "sha256": "41c86ce853fee3867c3d21a210a4f59c96b475fdb7e5b246323b077afc9d40ab",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-checkpoint-7.json",
+      "bytes": 2122
+    },
+    {
+      "sha256": "d1a249d25140c31465f17f8f269cd4a1b4d5665625b3228b85597333756511f8",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-command.json",
+      "bytes": 723
+    },
+    {
+      "sha256": "72b3b00ccba8a1fb149dc13b9a80f8710d9846157f93ea875c3da4de419fa53b",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-result.json",
+      "bytes": 2106
+    },
+    {
+      "sha256": "6c06d1f9d91df8929e3813692d123da938ce015843b8d877718563b603d5c873",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03-verification.json",
+      "bytes": 3354
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "400b4cb54b78315b9ea45e69fe14ec098aedccb8f7b799bd29788670858f2a8e",
+      "relative": "receipts/configure-hold-front-release-03/configure-hold-front-release-03.stdout.log",
+      "bytes": 1176
+    },
+    {
+      "sha256": "e4c3f9557ead4b854c2b2134f71c425b4d3802d6d8325fe5d313181e60dc2136",
+      "relative": "receipts/configure-hold-front-release-03/contract.json",
+      "bytes": 497
+    },
+    {
+      "sha256": "d6dc72952027f94448b68262397cb9022bdd9e124cefbbd2c25995ee71fbc183",
+      "relative": "receipts/configure-hold-front-release-03/freeze.json",
+      "bytes": 51539
+    },
+    {
+      "sha256": "80dc3f7c0fe718f962df73a31223e7ceefd86928b31d95de8f4cc3f4631ff4bc",
+      "relative": "receipts/configure-hold-front-release-03/state.json",
+      "bytes": 785
+    },
+    {
+      "sha256": "2dc29789231f1d73702c1ba2dbb014406bdf40b48fc3e8cbca49b0228ed517c0",
+      "relative": "receipts/front-hold-front-asan-02-inputs/native.cmd",
+      "bytes": 348
+    },
+    {
+      "sha256": "7e2a05cde6a434f77c69b5ec99126c594636b35b741f9d716eaab39865f73e2b",
+      "relative": "receipts/front-hold-front-asan-02-inputs/spec.json",
+      "bytes": 2793
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/front-hold-front-asan-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "61b3d8caaeaec0ec1fb6832e802ec51cbf991b23ac936310300ad85d8c3606d1",
+      "relative": "receipts/front-hold-front-asan-02/contract.json",
+      "bytes": 479
+    },
+    {
+      "sha256": "493ff0040e07313ee5f728e58cc136a0c943cebc75ea428be5f805f6812ee72e",
+      "relative": "receipts/front-hold-front-asan-02/freeze.json",
+      "bytes": 5991
+    },
+    {
+      "sha256": "1c305d1972fd0524d20dcc633a097cee21dd05ea61db241e9d3499ca9fc8d588",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-checkpoint-0.json",
+      "bytes": 914
+    },
+    {
+      "sha256": "5e56312d5925f52881311ecade20c583eac4576c4398ca2653e0ea539298800b",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-checkpoint-1.json",
+      "bytes": 920
+    },
+    {
+      "sha256": "b92b52eba80054c490462299b2621fb2872cb1a4e6e81960744f5b91734ff927",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-checkpoint-2.json",
+      "bytes": 907
+    },
+    {
+      "sha256": "badd745da0f33905f386cedee30639058355ddbc34587adc97b6e97cd27deeed",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-checkpoint-3.json",
+      "bytes": 1354
+    },
+    {
+      "sha256": "bc915370e6b3e024a972b032bd6d988d62fcdc7dd271e909184d4d51d3889277",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-checkpoint-4.json",
+      "bytes": 1352
+    },
+    {
+      "sha256": "97afd312efe8ba4def4b1e8fb0f014a69387b74bbacbd55474bbbb8c0899e9b9",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-checkpoint-5.json",
+      "bytes": 1758
+    },
+    {
+      "sha256": "9d3432a6192b75071090a354ccbefa459a66796ec8610584f1b510fc3c99ab0b",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-checkpoint-6.json",
+      "bytes": 1964
+    },
+    {
+      "sha256": "1abb20db56d4f777549701a3471eb15f801b4565f64874b5701ce159f3042d6e",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-checkpoint-7.json",
+      "bytes": 2450
+    },
+    {
+      "sha256": "c104f6e9490d8492bd730bec40e0abba7fbdf7f88165d7c46b22b50d7db94b32",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-command.json",
+      "bytes": 688
+    },
+    {
+      "sha256": "97e6e6623301156a0e37f3cb60de312fd83f2d8b1ef42d52582f194ba67c99ab",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-result.json",
+      "bytes": 2434
+    },
+    {
+      "sha256": "51d1701491a73702b395581dd885895bf5d9ead51bc1f0b6a8136502861d91a0",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02-verification.json",
+      "bytes": 3177
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "cca89953f406d1877924cc4ccc78d7c3ef6c26b71e138c36803103aec3742447",
+      "relative": "receipts/front-hold-front-asan-02/front-hold-front-asan-02.stdout.log",
+      "bytes": 71
+    },
+    {
+      "sha256": "a60e6aba46fa107ed04adf2239545215795de50ade614233bc6162ab1a43a1fe",
+      "relative": "receipts/front-hold-front-asan-02/state.json",
+      "bytes": 771
+    },
+    {
+      "sha256": "4f31ed29ee14f5171e2c0c1d92ae5944cbc64cd98f80c39696460c40a2ef915f",
+      "relative": "receipts/front-hold-front-debug-02-inputs/native.cmd",
+      "bytes": 350
+    },
+    {
+      "sha256": "8fa8378e6a55a08700e751471236327c4e1f8610134e0433c5dda9d082873e28",
+      "relative": "receipts/front-hold-front-debug-02-inputs/spec.json",
+      "bytes": 2561
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/front-hold-front-debug-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "44a73c8dad0b281510dc45519069dd734346dfc93f8a1815903369f95732a6f6",
+      "relative": "receipts/front-hold-front-debug-02/contract.json",
+      "bytes": 481
+    },
+    {
+      "sha256": "93305a907159a89cf83aa50557ab1df0783224c5b8e6e84334da5cf2d68e854b",
+      "relative": "receipts/front-hold-front-debug-02/freeze.json",
+      "bytes": 5565
+    },
+    {
+      "sha256": "181fa120be4b75cb98e217833d86fe040f51a61fd5d6e9fc534e6bfcd38e8531",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-checkpoint-0.json",
+      "bytes": 915
+    },
+    {
+      "sha256": "d63826441ea64c4f724a37c31379bdd0b8347c4e5faa5620d9b6edcc4d69c14e",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-checkpoint-1.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "46e20b2dcf08cf3a046079851131523b54bcda982c6c913cf01df6a845d0cff0",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-checkpoint-2.json",
+      "bytes": 908
+    },
+    {
+      "sha256": "5c7444c6ff0d478c4dc9f745d3a43159db19ca332dcc02392dc9e7bb08d2278b",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-checkpoint-3.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "a8857f3958f518bd91b10d690f9de3a2ed17d6357c59e63a42ff3fa726ad12dc",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-checkpoint-4.json",
+      "bytes": 1353
+    },
+    {
+      "sha256": "2d20e9e0408124532b9e06b3fa01457ee393b942c057b1e76a1dcc2b8defd0dd",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-checkpoint-5.json",
+      "bytes": 1551
+    },
+    {
+      "sha256": "e2fdd0469ea2a61be49caa6c99e1a3d57d389c21145ce680358b1c62dda80a86",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-checkpoint-6.json",
+      "bytes": 1755
+    },
+    {
+      "sha256": "66adeda499fd5d4b4a4be710869e07629ce1374128c3825123072f503f93e9f4",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-checkpoint-7.json",
+      "bytes": 2107
+    },
+    {
+      "sha256": "0be7ab74ff93d885cd1b56ab475ef54fa2d8c62b05206dbdecce511ad97fc748",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-command.json",
+      "bytes": 692
+    },
+    {
+      "sha256": "1ac409c2e2aff084d6dd831cbc71d3eed083a5f3839af113aa7037a552f1edef",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-result.json",
+      "bytes": 2091
+    },
+    {
+      "sha256": "e0f24dbd379736eb7a8b54e167ec5fccd80a77f6a95f546b7fb5260557c17613",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02-verification.json",
+      "bytes": 3202
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "cca89953f406d1877924cc4ccc78d7c3ef6c26b71e138c36803103aec3742447",
+      "relative": "receipts/front-hold-front-debug-02/front-hold-front-debug-02.stdout.log",
+      "bytes": 71
+    },
+    {
+      "sha256": "711460f96135b4f2015b772d8c5d44db61aee361ea422a7700795f64e4058edb",
+      "relative": "receipts/front-hold-front-debug-02/state.json",
+      "bytes": 773
+    },
+    {
+      "sha256": "86f7b803dc046df53a89f7dbde1e9061bf0e0450e633cb0507f76cf31e4c7c8b",
+      "relative": "receipts/front-hold-front-release-01-inputs/native.cmd",
+      "bytes": 354
+    },
+    {
+      "sha256": "7af3e3bc111b76054dc618f86d0a3e6e88b2d64c6e4a64e80a8c813f4fdd310f",
+      "relative": "receipts/front-hold-front-release-01-inputs/spec.json",
+      "bytes": 2376
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/front-hold-front-release-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "2262db8543e135db626fbb9bde5cbfec41ba989753492057a441b1f65515bbb3",
+      "relative": "receipts/front-hold-front-release-01/contract.json",
+      "bytes": 485
+    },
+    {
+      "sha256": "d8d1472eb5bed02017cfa195620996ce4da0dfacb7c22813660c96a6ea4145ae",
+      "relative": "receipts/front-hold-front-release-01/freeze.json",
+      "bytes": 5191
+    },
+    {
+      "sha256": "4cc1f460974dff9f56442c0f209c85f7ce6fa253426a478f03a1a25bde4247a5",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-checkpoint-0.json",
+      "bytes": 917
+    },
+    {
+      "sha256": "d555bae9c2fb0df62c1192063307ebb6c92455778cf3dc2a2a46a5cc025b148a",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-checkpoint-1.json",
+      "bytes": 923
+    },
+    {
+      "sha256": "7912e95c8320793b08564269f7eb75d6480d7ba4e12be3c6f1a1d2eac80deab1",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-checkpoint-2.json",
+      "bytes": 910
+    },
+    {
+      "sha256": "d097e30a5ecc97318b9aabb6d5e5c6bf00d3b463303a50a7a7c136f26dde7592",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-checkpoint-3.json",
+      "bytes": 1357
+    },
+    {
+      "sha256": "ffc0deedf7506f8370ff466dba0fde3cb3d7fd3a4aa92313b95338f5f85528e0",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-checkpoint-4.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "69f58db0644db499a3eda493fef84a95162744329c74a3cebe34022d7535db89",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-checkpoint-5.json",
+      "bytes": 1553
+    },
+    {
+      "sha256": "22032e158aa51e6a44ce790145a708599367140c6d2dce28d74f27a2ac0ca03c",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-checkpoint-6.json",
+      "bytes": 1758
+    },
+    {
+      "sha256": "2732a61f6bae82da84fe9907f406b63144974a477db29a34b504acaa06131700",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-checkpoint-7.json",
+      "bytes": 2111
+    },
+    {
+      "sha256": "deb67146316ac7f3c38ec760e912f9933ae86ea6026fb5d8e3f029dfdada1e1b",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-command.json",
+      "bytes": 700
+    },
+    {
+      "sha256": "52422064ec080c84624ec9133f6e297747a0df5a4aa27a661ea0314e3dc1b05e",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-result.json",
+      "bytes": 2095
+    },
+    {
+      "sha256": "02a4caca259f6c803dc0761f98fd20377294d27f9d8780430b3bfd1ecbe2c775",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01-verification.json",
+      "bytes": 3252
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "cca89953f406d1877924cc4ccc78d7c3ef6c26b71e138c36803103aec3742447",
+      "relative": "receipts/front-hold-front-release-01/front-hold-front-release-01.stdout.log",
+      "bytes": 71
+    },
+    {
+      "sha256": "a3345792d6d87c2c0665dd0000197be16d70e066cad1c6fff612accb80a71d7b",
+      "relative": "receipts/front-hold-front-release-01/state.json",
+      "bytes": 777
+    },
+    {
+      "sha256": "1e086b6b14f39aeee0333affd32be251db133992edf45dc843fca508b721ca25",
+      "relative": "receipts/front-hold-front-release-03-inputs/native.cmd",
+      "bytes": 354
+    },
+    {
+      "sha256": "5ffc24edfb20c4a6dcff34dad2839faba277fcc9f1339ac38fb9057b40b2fbfe",
+      "relative": "receipts/front-hold-front-release-03-inputs/spec.json",
+      "bytes": 2585
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/front-hold-front-release-03/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "e7b64aefd474fb7bfeb4e05f5f422ce12fe7d807e2d26a863a4cf006bfaf6b5e",
+      "relative": "receipts/front-hold-front-release-03/contract.json",
+      "bytes": 485
+    },
+    {
+      "sha256": "b731f916a8ce659c0071cb1f5b2211780805c728c875c3b157e37826377c80c7",
+      "relative": "receipts/front-hold-front-release-03/freeze.json",
+      "bytes": 5581
+    },
+    {
+      "sha256": "cb41126442311ef194f646351a4167349d9be7bbff922f3807dc4013f53c178d",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-checkpoint-0.json",
+      "bytes": 917
+    },
+    {
+      "sha256": "e3c2513fbaf09ed9e597393ed466b653ba34e4c9853975fbbce07840e786d05f",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-checkpoint-1.json",
+      "bytes": 923
+    },
+    {
+      "sha256": "12c78c2b924cd612c8e8682eef353be2aceb15c43691d56ecf5c1ca213ed5357",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-checkpoint-2.json",
+      "bytes": 909
+    },
+    {
+      "sha256": "d88f398048618cefe10c2295047cbc0076dea2e6347de1e778d4f142d9d2aaee",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-checkpoint-3.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "57af5054c93923eca7ce48d68bdda22ab45f092d0e38aabf6ce7fbb6500d1197",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-checkpoint-4.json",
+      "bytes": 1353
+    },
+    {
+      "sha256": "d7dc289c2b5fa4d90f7929c16069339c04bd0a74501ed3d9d0df2a58253250d9",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-checkpoint-5.json",
+      "bytes": 1759
+    },
+    {
+      "sha256": "974fcbdea83ae212d5f0b9f2549637157c4a27bc0f2562bbea0da270ceb06d23",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-checkpoint-6.json",
+      "bytes": 1964
+    },
+    {
+      "sha256": "2da7747357ea2cdee2b2bf2f8dfb1f94e0bc29544491cf687c91cdb6e7015000",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-checkpoint-7.json",
+      "bytes": 2448
+    },
+    {
+      "sha256": "0f34da7aaf13813932b22d49e031f23919870c3b528b9861ef2dcfe02a0c2b6d",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-command.json",
+      "bytes": 700
+    },
+    {
+      "sha256": "23ea1a54163047bdb0bde59636b05b35f1a3813d0af30a496644187062edfddd",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-result.json",
+      "bytes": 2432
+    },
+    {
+      "sha256": "847123fe79b70747925a4758f5c85e790c97d8729da1dff9a57f594d1e15ab62",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03-verification.json",
+      "bytes": 3252
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "cca89953f406d1877924cc4ccc78d7c3ef6c26b71e138c36803103aec3742447",
+      "relative": "receipts/front-hold-front-release-03/front-hold-front-release-03.stdout.log",
+      "bytes": 71
+    },
+    {
+      "sha256": "14fefe25d37c567f2ac385fdbac47f5ee85d49bc77f21a575a3b92b9c05afc8e",
+      "relative": "receipts/front-hold-front-release-03/state.json",
+      "bytes": 777
+    },
+    {
+      "sha256": "1ef5301ea2ed4e41b858be11a0169f10e9c663f5382628d195834f482fefe5ea",
+      "relative": "receipts/pixels-hold-front-asan-02-inputs/native.cmd",
+      "bytes": 460
+    },
+    {
+      "sha256": "2ebd8a8ab99d8b7d84f28239bda8debbb5777cbac4d6e279e18518d327e537d4",
+      "relative": "receipts/pixels-hold-front-asan-02-inputs/spec.json",
+      "bytes": 2802
+    },
+    {
+      "sha256": "07acbb6d7ebef30fc44b0cad7288801f46f142959100ba3f651460f0753525eb",
+      "relative": "receipts/pixels-hold-front-asan-02-pixel-controls/pixel-leaves.json",
+      "bytes": 81346
+    },
+    {
+      "sha256": "ea1eac893bf2d04e95de10b3317717600feb39ac2b673d525c1e5dba13c21bc8",
+      "relative": "receipts/pixels-hold-front-asan-02-pixel-controls/verification.json",
+      "bytes": 4966
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/pixels-hold-front-asan-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "08ec89fb8ede6b8cc0066dbbeade7292a76d101688fabd324032784fd98b0bc6",
+      "relative": "receipts/pixels-hold-front-asan-02/contract.json",
+      "bytes": 481
+    },
+    {
+      "sha256": "7a2723566b5dd4997c2efe08b2ae1ca4ca8fc268a6a777d28b809336373c571a",
+      "relative": "receipts/pixels-hold-front-asan-02/freeze.json",
+      "bytes": 5731
+    },
+    {
+      "sha256": "f57d0431dc806f2bb3501e5edbdce5ff23a652ed8592c739fe5487ff7d47d838",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-checkpoint-0.json",
+      "bytes": 915
+    },
+    {
+      "sha256": "76bdecf7ecf75a099eaac9376774fa61d9434c27107775f80dbe15023d7eaf51",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-checkpoint-1.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "21222e56457d92e2394a0aca1dd2e24c87b36e1032e11de0edb0c6cfc531c8f4",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-checkpoint-2.json",
+      "bytes": 907
+    },
+    {
+      "sha256": "a8baf1f9ce1f5b5a600174b21feeb823fca41ed5a477b884d124f224eff96478",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-checkpoint-3.json",
+      "bytes": 1353
+    },
+    {
+      "sha256": "9752d0308eee2bbfa6b5c670ca2a3fb38af0a287cf72e1ed7adacffc4148723f",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-checkpoint-4.json",
+      "bytes": 1351
+    },
+    {
+      "sha256": "1e7a25cfb3fb9bdb0b5ad289655f616f453a24b1e47ec57eba7560de538b6011",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-checkpoint-5.json",
+      "bytes": 1550
+    },
+    {
+      "sha256": "382beee6da31748bf9727e47ef4f44e3f71e41b6a457c1b7c4c5c0a41399fd74",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-checkpoint-6.json",
+      "bytes": 1757
+    },
+    {
+      "sha256": "517dd8850047d07ba46b8b7de9f8ea38779388bcf03ec264a8fc504658843828",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-checkpoint-7.json",
+      "bytes": 2114
+    },
+    {
+      "sha256": "02b5072ee0851ccc742c040ad59aada2259ad7c5ce13c2df4d65d871f7ef6304",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-command.json",
+      "bytes": 692
+    },
+    {
+      "sha256": "cb7b3e4a1e8ec34429cd607f40b7a1ca15be0e99732b857c81b24e9d23528adf",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-result.json",
+      "bytes": 2098
+    },
+    {
+      "sha256": "e74185aa6f1826441c7a8fff5eef7c89968945b416ee51d166ed9f4ba83946f4",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02-verification.json",
+      "bytes": 3202
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5",
+      "relative": "receipts/pixels-hold-front-asan-02/pixels-hold-front-asan-02.stdout.log",
+      "bytes": 89
+    },
+    {
+      "sha256": "f5070feba9038215582932d35aed073a7a352b11e1e812fe07ca141c2ee1fd90",
+      "relative": "receipts/pixels-hold-front-asan-02/state.json",
+      "bytes": 773
+    },
+    {
+      "sha256": "866814f7fa33e26f552d534e278c29b0a83485ea45c8be068a95bcf4cf9c36e6",
+      "relative": "receipts/pixels-hold-front-debug-02-inputs/native.cmd",
+      "bytes": 462
+    },
+    {
+      "sha256": "ba2a193490982413f384924430a7dc084974bb1ad75148ea13a9856e84d4a4ac",
+      "relative": "receipts/pixels-hold-front-debug-02-inputs/spec.json",
+      "bytes": 2574
+    },
+    {
+      "sha256": "8bb4e6d8e192c521ec6bc81e4dc8040080480cd7e168bd6df63d1365935cffdb",
+      "relative": "receipts/pixels-hold-front-debug-02-pixel-controls/pixel-leaves.json",
+      "bytes": 81346
+    },
+    {
+      "sha256": "4b31fecc03f5985a74e9cd21e028072b614e2d23b6e93803b0bb636dbe9814b6",
+      "relative": "receipts/pixels-hold-front-debug-02-pixel-controls/verification.json",
+      "bytes": 4055
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/pixels-hold-front-debug-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "d5c01bf0200498e145d8d889fc7ecfa3daf20cb5a8e06ea5a6f1ccf812d1e523",
+      "relative": "receipts/pixels-hold-front-debug-02/contract.json",
+      "bytes": 483
+    },
+    {
+      "sha256": "7d70c84fcdcbd63ec43e8033ff6b7807692bfc99db69193f6fd1fb817929c19f",
+      "relative": "receipts/pixels-hold-front-debug-02/freeze.json",
+      "bytes": 5309
+    },
+    {
+      "sha256": "2d84d6c3a37e5d8fa1ed0a14f982c7d63723778a14d6ae3e5dd5535aa34a055f",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-checkpoint-0.json",
+      "bytes": 916
+    },
+    {
+      "sha256": "06059d6ac704682c58161875a75a8f41476b6e01ce9b05e36630414ee93ea4d6",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-checkpoint-1.json",
+      "bytes": 922
+    },
+    {
+      "sha256": "033de4af07e31d06b71de04b6123a55c40206810c293fedb99ae4a6a3742dc41",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-checkpoint-2.json",
+      "bytes": 909
+    },
+    {
+      "sha256": "14e6c8bed92f3ee90ab80f73762ecf13955c089141486d08da1379f5112d7a05",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-checkpoint-3.json",
+      "bytes": 1356
+    },
+    {
+      "sha256": "f8dee1d31547cf408cd5e79c91967c5317473cefc590857f1f7c632f0bf76050",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-checkpoint-4.json",
+      "bytes": 1354
+    },
+    {
+      "sha256": "c96beee2910733cc3b0a1ef904ca06af65ebd960d390d2faa9dcfd8d2d854c28",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-checkpoint-5.json",
+      "bytes": 1553
+    },
+    {
+      "sha256": "d130b2d3094ec65d8cd04f2dcd6d5385938857e3767496310ab82e38fb3dd377",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-checkpoint-6.json",
+      "bytes": 1759
+    },
+    {
+      "sha256": "e8301b8a1fe1f79c3dd3140c237647d19861b8b6facfca0ff41d4f515d1dd2f0",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-checkpoint-7.json",
+      "bytes": 2118
+    },
+    {
+      "sha256": "67a6fd8ce44d6c3858142ad644fc3fc8bddc21dad07b5d98bd58c884e0ab85d3",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-command.json",
+      "bytes": 696
+    },
+    {
+      "sha256": "3e136ffb7ed9e50dc80e45ba948b1a5a8186207fa4b861c301f3f733a424b742",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-result.json",
+      "bytes": 2102
+    },
+    {
+      "sha256": "e198a2c82782a0e3fdcdf5d2782e5994c1b03462883851f7891c4b1e3b9ac907",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02-verification.json",
+      "bytes": 3227
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5",
+      "relative": "receipts/pixels-hold-front-debug-02/pixels-hold-front-debug-02.stdout.log",
+      "bytes": 89
+    },
+    {
+      "sha256": "c4889518a93ed875a6c113cbd11b7180b971a9a8ce063b291110cbb3759af23a",
+      "relative": "receipts/pixels-hold-front-debug-02/state.json",
+      "bytes": 775
+    },
+    {
+      "sha256": "e5c9a8dadc33dcf60d7a195c4258b433082d5e35e2bb3afa3ede10f1ee85ee89",
+      "relative": "receipts/pixels-hold-front-release-01-inputs/native.cmd",
+      "bytes": 466
+    },
+    {
+      "sha256": "3bb52028c8b3fa02d728d4d0125ea3e4e42f59ab15277655f0faf221930d1679",
+      "relative": "receipts/pixels-hold-front-release-01-inputs/spec.json",
+      "bytes": 2606
+    },
+    {
+      "sha256": "a82ec7e93dfe4cbcfb5c141c681335318d4fd1d5b08a70367d7e48ba7957bd35",
+      "relative": "receipts/pixels-hold-front-release-01-pixel-controls/pixel-leaves.json",
+      "bytes": 81346
+    },
+    {
+      "sha256": "11050b6f1bd9d28abbeb6e8b3170843af1a0a3c2e32474a2048f061c2b0493b7",
+      "relative": "receipts/pixels-hold-front-release-01-pixel-controls/verification.json",
+      "bytes": 3642
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/pixels-hold-front-release-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "889eb32ae7fcba524d284b1e75a863337f9d678d32a946dd5c923f6524a76b92",
+      "relative": "receipts/pixels-hold-front-release-01/contract.json",
+      "bytes": 487
+    },
+    {
+      "sha256": "8a9d2e9db1bc26435d84e08da4066880102e1a5714fc11f7c11e991bde260d3b",
+      "relative": "receipts/pixels-hold-front-release-01/freeze.json",
+      "bytes": 5333
+    },
+    {
+      "sha256": "9f07671cc2d8fddbd280966453ec5c3efb78b42899ccaaf94e81a2e6807490dd",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-checkpoint-0.json",
+      "bytes": 918
+    },
+    {
+      "sha256": "3812c7ed9c272c421f28f66e24a8a09f4faaff602a802c05162b337ab3d77a7f",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-checkpoint-1.json",
+      "bytes": 924
+    },
+    {
+      "sha256": "2cde07739338e2d3c3ff80c3ec8e8870b395d8f7071b440311d3cc4ab1fc12f3",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-checkpoint-2.json",
+      "bytes": 911
+    },
+    {
+      "sha256": "90a2ae37e43494267d3cfa666633c98b0db7e517e6111b215d1eb7510d87106c",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-checkpoint-3.json",
+      "bytes": 1358
+    },
+    {
+      "sha256": "4583a42bede34d92114c42d79a97fa631fdaaf921f19c870613cbca94d65338b",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-checkpoint-4.json",
+      "bytes": 1356
+    },
+    {
+      "sha256": "28b7aaf950ee9983af47d8c6655cbf095b5124c4bfc9f9e5e6a694bf6487acd9",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-checkpoint-5.json",
+      "bytes": 1554
+    },
+    {
+      "sha256": "04ca3ef7c5d3cb645c7b14e9680b08c9fab9c06309216dcf1f85143748d7b32c",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-checkpoint-6.json",
+      "bytes": 1759
+    },
+    {
+      "sha256": "325f42352f4cbba72ad6b109f8b3f5915282764a1abf3a8c7a253ef90939cd42",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-checkpoint-7.json",
+      "bytes": 2130
+    },
+    {
+      "sha256": "d44755c230df597fc1ad6002371498a2299af7b19ec5a589d6cbf3d9d97796b3",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-command.json",
+      "bytes": 704
+    },
+    {
+      "sha256": "9ddf0bb17d20910323a24103d270cf0205f4b44e10686da13650db127fed7d9a",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-result.json",
+      "bytes": 2114
+    },
+    {
+      "sha256": "758562b7e2df9f893d11a29bd6e95f8481ff49400e4c8f4412c4ccd33f5c3e60",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01-verification.json",
+      "bytes": 3277
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5",
+      "relative": "receipts/pixels-hold-front-release-01/pixels-hold-front-release-01.stdout.log",
+      "bytes": 89
+    },
+    {
+      "sha256": "2a8b19523eae200ce1aadd1306d58f815a4cad61983ff4dc3d1109b4a546665e",
+      "relative": "receipts/pixels-hold-front-release-01/state.json",
+      "bytes": 779
+    },
+    {
+      "sha256": "e23a1fcb9d1b9d8229ac084d981bf91e444cbad157787bcf9fcffe3c80c7d426",
+      "relative": "receipts/pixels-hold-front-release-03-inputs/native.cmd",
+      "bytes": 466
+    },
+    {
+      "sha256": "91abba995b53d79bbd75feca16cc3ef2b9099ebd0e69dcb7f25bc6f036680338",
+      "relative": "receipts/pixels-hold-front-release-03-inputs/spec.json",
+      "bytes": 2606
+    },
+    {
+      "sha256": "45e4bd7b8d5bd843812b04ba4172a2df5b9028f6515d32c099aec30157b24f24",
+      "relative": "receipts/pixels-hold-front-release-03-pixel-controls/pixel-leaves.json",
+      "bytes": 81346
+    },
+    {
+      "sha256": "4156c7b4a98c4d1b7567ad65d254d1c517a3dcb58d21f8460a0b0909779f6692",
+      "relative": "receipts/pixels-hold-front-release-03-pixel-controls/verification.json",
+      "bytes": 3642
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/pixels-hold-front-release-03/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "0b59ffac07e27801cfedb3d6956bffa21ebd8f411d241bb2f75f8a867160b701",
+      "relative": "receipts/pixels-hold-front-release-03/contract.json",
+      "bytes": 487
+    },
+    {
+      "sha256": "a107ad37bf7905a6a00c976a2e7c578d88115ed00a33ce23a335d96fcd60a077",
+      "relative": "receipts/pixels-hold-front-release-03/freeze.json",
+      "bytes": 5333
+    },
+    {
+      "sha256": "6b816711c3905e61a7414b2f06a452b36479ad61c7217193671289d71ffdcf49",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-checkpoint-0.json",
+      "bytes": 918
+    },
+    {
+      "sha256": "00d8aca5d114388e1fbaf27dd997b3f70adec564fd25c3d8139ad0dcc9d961fd",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-checkpoint-1.json",
+      "bytes": 924
+    },
+    {
+      "sha256": "c703d92d304c8d39b53f415a2813e5da6eb4f9ceef6ea8e267190e055210c6cd",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-checkpoint-2.json",
+      "bytes": 911
+    },
+    {
+      "sha256": "5142ae5b5a2b808c0d8931561a5f134e2353d2843a0399c6f88d96c7cd232a51",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-checkpoint-3.json",
+      "bytes": 1358
+    },
+    {
+      "sha256": "eafcf3cad1aa1f26ec9176829b683a39411fe59ef3c50b1b9ceb70f88fa41bea",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-checkpoint-4.json",
+      "bytes": 1356
+    },
+    {
+      "sha256": "de18d975cfd70fb979220db3a974467e267f21814d51d40a26c8f375dcb9438b",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-checkpoint-5.json",
+      "bytes": 1554
+    },
+    {
+      "sha256": "49dec8230e9e03397dd72ad05041f95efa18e1d782688c87e05c24d928bcb80e",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-checkpoint-6.json",
+      "bytes": 1760
+    },
+    {
+      "sha256": "2ae5d6f050a197f766dda7d3681e56442789a610040af5c2af0d1f2b37b66c9b",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-checkpoint-7.json",
+      "bytes": 2115
+    },
+    {
+      "sha256": "e537f725a16651dc6bcd3552db332e8b0f9076e4651c064cd9798381cb9e5d3c",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-command.json",
+      "bytes": 704
+    },
+    {
+      "sha256": "c64a7c4de223da5200ed99f752de3d8ab0c842cb5f05eace02edc5a283b5ae7e",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-result.json",
+      "bytes": 2099
+    },
+    {
+      "sha256": "f628ebd38592e3b8ddd3f3ad4f6dcb1276c7c2cd5aed9e790010a5d01aceaaf8",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03-verification.json",
+      "bytes": 3277
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "6695a32adcc0e9e20a2362d7a1fa5dbb11e40c612eefabaa7f9b742a7ac94ee5",
+      "relative": "receipts/pixels-hold-front-release-03/pixels-hold-front-release-03.stdout.log",
+      "bytes": 89
+    },
+    {
+      "sha256": "a19e9d7f44985437c30cba49792b5cb0e65b2eace7946f461189939838d6d6d6",
+      "relative": "receipts/pixels-hold-front-release-03/state.json",
+      "bytes": 779
+    },
+    {
+      "sha256": "d0306ba33ebf1601bf18a5ca56809c50de532ba3da95043a8d4d0ac2bd57dcb6",
+      "relative": "receipts/prefix-hold-front-asan-02-inputs/native.cmd",
+      "bytes": 357
+    },
+    {
+      "sha256": "6d50f7c893966fdfe3517571a233f4db4c6b3a5433dc3710a0b242065bb877ee",
+      "relative": "receipts/prefix-hold-front-asan-02-inputs/spec.json",
+      "bytes": 2805
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/prefix-hold-front-asan-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "1ef1f25f7462ceb299da452264726734abf4cdbb899c39f9d13cec3705f84e0f",
+      "relative": "receipts/prefix-hold-front-asan-02/contract.json",
+      "bytes": 481
+    },
+    {
+      "sha256": "8cef97c8ab60cdbb9ac6c9ee663fa7fddfa6cd8ae12f16b057ed03a647f685e4",
+      "relative": "receipts/prefix-hold-front-asan-02/freeze.json",
+      "bytes": 5993
+    },
+    {
+      "sha256": "b645a5016bcf10b6b8af47749d77c9562b1f6b5ee92000d1f4f3e01cc17012cf",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-checkpoint-0.json",
+      "bytes": 915
+    },
+    {
+      "sha256": "d429e55db8439041a8e5dfd9fd0afb46c01652f456eb34ed77e80b27313c305f",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-checkpoint-1.json",
+      "bytes": 921
+    },
+    {
+      "sha256": "bde613a0f02f8390e1234678128d56f0968f9f6fa3c23ae5afefb4593aa53024",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-checkpoint-2.json",
+      "bytes": 908
+    },
+    {
+      "sha256": "57cd621dd100064763520af497efb391bb653a2a69a6b03c003ed30b602be090",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-checkpoint-3.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "224a1d6d8a91762d7ff5b6f3da519500f11cf9efa3e768691290cb93b96679ee",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-checkpoint-4.json",
+      "bytes": 1353
+    },
+    {
+      "sha256": "8b9a98bf69bc8bb587b1440a06a9f38a5638939007af90acee6b860442432a8e",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-checkpoint-5.json",
+      "bytes": 1551
+    },
+    {
+      "sha256": "b0e86b980606f894a4ab5b1117a4aca87f2430bc32a93708c9197bdec058c75a",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-checkpoint-6.json",
+      "bytes": 1756
+    },
+    {
+      "sha256": "56228e41b8b98baff395d86024aa67e925221eba5bc772255b6a29d45ef6ddb4",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-checkpoint-7.json",
+      "bytes": 2109
+    },
+    {
+      "sha256": "929e12ee25f232cfdbcaeb145024db345b20df8e66b3d78693bd18daf0c4b964",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-command.json",
+      "bytes": 692
+    },
+    {
+      "sha256": "a21af3d5b8b96ae32c17f33324b6f4eedbbf452a17b8462249e0c3e6fe254ddd",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-result.json",
+      "bytes": 2093
+    },
+    {
+      "sha256": "19f7a6ced71edcf613dc28af24d04a46fada4742f7bdf80e7aa21ba695913ce8",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02-verification.json",
+      "bytes": 3202
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3",
+      "relative": "receipts/prefix-hold-front-asan-02/prefix-hold-front-asan-02.stdout.log",
+      "bytes": 77
+    },
+    {
+      "sha256": "dff74feb51327e28c3ca188fa64be3aeee4c8423329718e5f25445bc939f8336",
+      "relative": "receipts/prefix-hold-front-asan-02/state.json",
+      "bytes": 773
+    },
+    {
+      "sha256": "1d1f5143e3195db9ebe9b179e7e63fbfc433a750f9d64cae29b6d866fd2aca7e",
+      "relative": "receipts/prefix-hold-front-debug-02-inputs/native.cmd",
+      "bytes": 359
+    },
+    {
+      "sha256": "6b97534b997c96856df273b1ce8c0da6c27cc8c479b5daa756573aee9c4c4810",
+      "relative": "receipts/prefix-hold-front-debug-02-inputs/spec.json",
+      "bytes": 2573
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/prefix-hold-front-debug-02/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "e6286768f94f630b230c42d0fcd310a74030f3bceda5400bbe8eea86f5d608b6",
+      "relative": "receipts/prefix-hold-front-debug-02/contract.json",
+      "bytes": 483
+    },
+    {
+      "sha256": "7d14a84e1f4bdb734cecc5eacea02cdc479b0792607ba917797a4919dec409f7",
+      "relative": "receipts/prefix-hold-front-debug-02/freeze.json",
+      "bytes": 5567
+    },
+    {
+      "sha256": "c771cf4c8d2aaefb6bdbcf771ea80ef72d7653fec9c3004f2e7368b4491c15ab",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-checkpoint-0.json",
+      "bytes": 916
+    },
+    {
+      "sha256": "156a13cc6a0cc66e3c13f5b2b6dbb06e02e1043604fb59be22271bc61c466236",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-checkpoint-1.json",
+      "bytes": 922
+    },
+    {
+      "sha256": "03c64b0f61e5dc2f2b12043adf14aca6a584c63dd43509607e4b2fe9c5db1581",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-checkpoint-2.json",
+      "bytes": 909
+    },
+    {
+      "sha256": "3dbf639fb26c0db013647dc620291371bb5bbc75207a6b643f7848e8b6855f6a",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-checkpoint-3.json",
+      "bytes": 1356
+    },
+    {
+      "sha256": "4b2844dff5b43da5e73cd23bd2b30994b07379b56a130580c073fdc3e615b62c",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-checkpoint-4.json",
+      "bytes": 1354
+    },
+    {
+      "sha256": "7569070a6a890b2b11621aad9ed2c716b45b400763c084897134461e10b96ab2",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-checkpoint-5.json",
+      "bytes": 1552
+    },
+    {
+      "sha256": "e8c5e60a5e7ce2d84f44d680b8331a06d0052e75c105786ed95087a31c38a649",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-checkpoint-6.json",
+      "bytes": 1758
+    },
+    {
+      "sha256": "642fc178f78793bf666abc6ddeea5ee3ee0c4f3d2319dbbc10da58f4318c2e5e",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-checkpoint-7.json",
+      "bytes": 2111
+    },
+    {
+      "sha256": "c933114eb9281b749d762bfd717d749babe93c127e372f501d8b181a3364392e",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-command.json",
+      "bytes": 696
+    },
+    {
+      "sha256": "abc6f054388497392b44a9084728e878fde8c997a02f79ad5b3c404da40e3fdb",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-result.json",
+      "bytes": 2095
+    },
+    {
+      "sha256": "0f3247ab7727b6d8b787b3cfcb01790454d701cedd6b41b7e70c0732bd98f9e0",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02-verification.json",
+      "bytes": 3227
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3",
+      "relative": "receipts/prefix-hold-front-debug-02/prefix-hold-front-debug-02.stdout.log",
+      "bytes": 77
+    },
+    {
+      "sha256": "f5e1e24c646e65c38e890336500d464e31761ae2a08e7dcb2169510cd5cb729e",
+      "relative": "receipts/prefix-hold-front-debug-02/state.json",
+      "bytes": 775
+    },
+    {
+      "sha256": "430a373120d71cbd735a8142ccfa7dac4ace5e5f53b549cbc89fe17c85127912",
+      "relative": "receipts/prefix-hold-front-release-01-inputs/native.cmd",
+      "bytes": 363
+    },
+    {
+      "sha256": "750ad3f1404bbb0420a8f4b89f5a767a367442c556fef6fb4a51053bcbcaac20",
+      "relative": "receipts/prefix-hold-front-release-01-inputs/spec.json",
+      "bytes": 2388
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/prefix-hold-front-release-01/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "f1c0152493d6355ca0b182effa638819795701b3365b1102344da8d0b5812194",
+      "relative": "receipts/prefix-hold-front-release-01/contract.json",
+      "bytes": 487
+    },
+    {
+      "sha256": "0f01a441e53defea3ca3aeaf47c1796a946b78a5f7655f6faa8a60a82adae916",
+      "relative": "receipts/prefix-hold-front-release-01/freeze.json",
+      "bytes": 5193
+    },
+    {
+      "sha256": "81548d24ac7131c5e07a807fcc696dff4e0c13b033643e3083ea0b088163beca",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-checkpoint-0.json",
+      "bytes": 918
+    },
+    {
+      "sha256": "32012465c0fb4e071f9cfd09386e65c0b715eb9e5b7526a609ef31f50f34781b",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-checkpoint-1.json",
+      "bytes": 924
+    },
+    {
+      "sha256": "20ac62f08f8511bc9103e0498327c70125a4350a06e4a92572a41d356179ebdd",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-checkpoint-2.json",
+      "bytes": 911
+    },
+    {
+      "sha256": "689788ad502fc9ede9c409d0eb85a91a56a88d9608dd710a9672f430be964643",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-checkpoint-3.json",
+      "bytes": 1358
+    },
+    {
+      "sha256": "9670c4e7ef3d5e4d64c5ea42e6b6699bbaba126c715743ed59a375cbce57661d",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-checkpoint-4.json",
+      "bytes": 1356
+    },
+    {
+      "sha256": "b1415104f4c11ca298574264fdadb21b11364a69f69e2feb9373ffff7ba84d4e",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-checkpoint-5.json",
+      "bytes": 1554
+    },
+    {
+      "sha256": "1b3febcfb494a68db2a694b1d88f8b6e0a81822418ebfa008ee656f8182fba4f",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-checkpoint-6.json",
+      "bytes": 1759
+    },
+    {
+      "sha256": "8e998ad7ba244faa8ad5ec58c066c7926c701fbcb233326a6ab3d4a18950c6c4",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-checkpoint-7.json",
+      "bytes": 2110
+    },
+    {
+      "sha256": "a5c864e6cb81ff41ff23170a39c59ca9586a8ec56521a7fe3589cbda4832ab7a",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-command.json",
+      "bytes": 704
+    },
+    {
+      "sha256": "1da45b6e522a488b32848f27a2f835d0c99b5a580dd2c3937c621b3dce2c5e67",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-result.json",
+      "bytes": 2094
+    },
+    {
+      "sha256": "431c973358df6bc6e042911635195d639191626a22994c09843f0f6ad3fcfbc3",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01-verification.json",
+      "bytes": 3277
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3",
+      "relative": "receipts/prefix-hold-front-release-01/prefix-hold-front-release-01.stdout.log",
+      "bytes": 77
+    },
+    {
+      "sha256": "985397eaec3f4f83bf83b7acc5ce1de07c7e57ccb904660114e9f3eb5fb830a9",
+      "relative": "receipts/prefix-hold-front-release-01/state.json",
+      "bytes": 779
+    },
+    {
+      "sha256": "b836b4b9cbd05e17567e1c1f340a1b07ac55c0cfc3ac8237833491699b73a545",
+      "relative": "receipts/prefix-hold-front-release-03-inputs/native.cmd",
+      "bytes": 363
+    },
+    {
+      "sha256": "d120a52176d7b910b80df7e94417dda27e38da2cafe2b3297dc64401437b7cde",
+      "relative": "receipts/prefix-hold-front-release-03-inputs/spec.json",
+      "bytes": 2597
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/prefix-hold-front-release-03/attempt.lock",
+      "bytes": 0
+    },
+    {
+      "sha256": "88a7e256ce0cc56d9e693da7d9699d53e018ef34e652c66a176c93b8f34494f8",
+      "relative": "receipts/prefix-hold-front-release-03/contract.json",
+      "bytes": 487
+    },
+    {
+      "sha256": "65f0a8ebf2b3b3090d057b976bfa68f386af611399ac10366183ce3c8c645e96",
+      "relative": "receipts/prefix-hold-front-release-03/freeze.json",
+      "bytes": 5583
+    },
+    {
+      "sha256": "25d514fd04c33cc4ba9d42df5859f13603d7a3746f97919dc10e654647022c1d",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-checkpoint-0.json",
+      "bytes": 918
+    },
+    {
+      "sha256": "67a1554edba7b5b09dff82e45cd5e00d7e2f3eb7a9b40a86269e18dc033de2f2",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-checkpoint-1.json",
+      "bytes": 924
+    },
+    {
+      "sha256": "9141a85b16865e3b01da6b2a204dd4601df6a0ef5e72e87f31e5fb777eb545d7",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-checkpoint-2.json",
+      "bytes": 911
+    },
+    {
+      "sha256": "d4a8587bc2fbc46175eebddd7f7b6fe817be98f3c99d6379eb0a258b4330b704",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-checkpoint-3.json",
+      "bytes": 1357
+    },
+    {
+      "sha256": "b81e1130ae06f2018f805a4c15dbc770273537a0223a0228587f73e7ee3fa5cc",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-checkpoint-4.json",
+      "bytes": 1355
+    },
+    {
+      "sha256": "f8e8db3503ab67a583fa9c1194b66649aca7c87dfca6836329e87bb3026de2fe",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-checkpoint-5.json",
+      "bytes": 1552
+    },
+    {
+      "sha256": "8a1fa88966660ae966b0b71eaebebae4fd6704a7047bf8f694af12d6c8aff2dd",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-checkpoint-6.json",
+      "bytes": 1757
+    },
+    {
+      "sha256": "9b39a1013056502abbedf360aaa206351f370b9e96013c3dd0a53d34c961f00b",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-checkpoint-7.json",
+      "bytes": 2108
+    },
+    {
+      "sha256": "e4e215a7f9bc8843469b24ebf0ed6b1d61f19b4ecf5eb344dde4cbf1aba994ec",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-command.json",
+      "bytes": 704
+    },
+    {
+      "sha256": "df3b288127b1c23da84d90833388f5dfbee946e84b66539063bb68455194b176",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-result.json",
+      "bytes": 2092
+    },
+    {
+      "sha256": "bcfaa28eb194e68a6d9f43f5310b69598907809fa9a3684ae0932519079ff9b8",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03-verification.json",
+      "bytes": 3277
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03.stderr.log",
+      "bytes": 0
+    },
+    {
+      "sha256": "f1f88dea1de8cc9810b8fb471efecab2c5ba0c93db36722d59ba11c1cf25a8f3",
+      "relative": "receipts/prefix-hold-front-release-03/prefix-hold-front-release-03.stdout.log",
+      "bytes": 77
+    },
+    {
+      "sha256": "0742e5d90760280a28f1a8a7141fbbe1a816eb4b7790491f99fe53b42d68d746",
+      "relative": "receipts/prefix-hold-front-release-03/state.json",
+      "bytes": 779
+    },
+    {
+      "sha256": "595aab9d49a9d701e6c0d6991a207558c4742fa87de75e344a88a2c9848c05e4",
+      "relative": "selection.json",
+      "bytes": 376384
+    },
+    {
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "relative": "source-e26231e/.gitattributes",
+      "bytes": 8
+    },
+    {
+      "sha256": "a134ab8497e0b2cd3c21ce6dc61539efcd349efc6114ecdb577a4e403a23ab95",
+      "relative": "source-e26231e/CMakeLists.txt",
+      "bytes": 3472
+    },
+    {
+      "sha256": "fccb5db8e67ad667360b404df616a398c082f0b956ec5c1399922a54d32c7c58",
+      "relative": "source-e26231e/front_audit.cpp",
+      "bytes": 17304
+    },
+    {
+      "sha256": "2a592a34644602a87402dfd7f2c4448f498e05b61f45484f8c659176c2997845",
+      "relative": "source-e26231e/front_chain.cpp",
+      "bytes": 21901
+    },
+    {
+      "sha256": "f0698100e33390a7528c72c186096909e08c79c9ddc525b414d207f268e33476",
+      "relative": "source-e26231e/front_tests.cpp",
+      "bytes": 8239
+    },
+    {
+      "sha256": "e5b23ff5cdd2129ff31431bb5a1194fb7dceef7a4384dd1f5da40068965d3a7f",
+      "relative": "source-e26231e/front.cpp",
+      "bytes": 10757
+    },
+    {
+      "sha256": "a917a40d1cff466355d166d6bbe22892c261048d2b1731091b82495c64273905",
+      "relative": "source-e26231e/front.hpp",
+      "bytes": 2531
+    },
+    {
+      "sha256": "b4500d92de88a8fd1570f39ea6c7c2ace9200f077300c186aa91518ebf94e34e",
+      "relative": "source-e26231e/README.md",
+      "bytes": 3680
+    },
+    {
+      "sha256": "2e4f634f4c449f44ebb2dbff47abd6d580584909d678170ce79e82a97ee6f75c",
+      "relative": "source-e26231e/run.ps1",
+      "bytes": 7556
+    }
+  ]
+}

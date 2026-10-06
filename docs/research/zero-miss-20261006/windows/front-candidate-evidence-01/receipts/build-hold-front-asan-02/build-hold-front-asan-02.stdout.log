@@ -1,0 +1,23 @@
+TRACE Build entry [C:\WINDOWS\system32\cmd.exe /d /s /c C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\out\windows-handoff\build-hold-front-asan-02-inputs\build.cmd]
+TRACE vcvars END exit=0
+[1/20] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front.cpp for CXX dependencies
+[2/20] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_tests.cpp for CXX dependencies
+[3/20] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp for CXX dependencies
+[4/20] Generating CXX dyndep file CMakeFiles\current_front.dir\CXX.dd
+[5/20] Generating CXX dyndep file CMakeFiles\front_tests.dir\CXX.dd
+[6/20] Generating CXX dyndep file CMakeFiles\prefix_preservation.dir\CXX.dd
+[7/20] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_chain.cpp for CXX dependencies
+[8/20] Generating CXX dyndep file CMakeFiles\pixel_chain.dir\CXX.dd
+[9/20] Scanning C:\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\hold_front_current\front_audit.cpp for CXX dependencies
+[10/20] Generating CXX dyndep file CMakeFiles\front_audit.dir\CXX.dd
+[11/20] Building CXX object CMakeFiles\front_tests.dir\front_tests.cpp.obj
+[12/20] Building CXX object CMakeFiles\current_front.dir\front.cpp.obj
+[13/20] Linking CXX static library current_front.lib
+[14/20] Building CXX object CMakeFiles\prefix_preservation.dir\C_\Users\wurre\Desktop\PAS-zero-miss-r4-20261006\research\bvi_windows\bridge\bridge_tests.cpp.obj
+[15/20] Linking CXX executable front_tests.exe
+[16/20] Linking CXX executable prefix_preservation.exe
+[17/20] Building CXX object CMakeFiles\pixel_chain.dir\front_chain.cpp.obj
+[18/20] Linking CXX executable pixel_chain.exe
+[19/20] Building CXX object CMakeFiles\front_audit.dir\front_audit.cpp.obj
+[20/20] Linking CXX executable front_audit.exe
+TRACE Build END exit=0
