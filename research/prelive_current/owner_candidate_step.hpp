@@ -52,9 +52,11 @@ public:
   raw+=batch.candidates.size();
   if(event_output){event_output({{"event","current_observer_scene"},{"scene",decision_json(s)}});event_output({{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(batch)}});}
   HostClock meter;auto t0=meter.now_ns();DecisionSnapshot filtered;
-  if(candidate){last=hook.evaluate(f,batch,s,ledger,clock_.now_ns());accepted+=last.accepted;unknown+=last.unknown;
+  const current_execution::OwnerCheckpoint checkpoint{clock_,[this](){return poll();}};
+  if(candidate){last=hook.evaluate(f,batch,s,ledger,clock_.now_ns(),&checkpoint);accepted+=last.accepted;unknown+=last.unknown;
    for(std::size_t k=0;k<last.count;++k){terminals+=last.support[k].terminal;bodies+=last.support[k].body;}filtered=last.filtered;
-  }else{const auto e=current_execution::evaluate(*baseline,f,batch,s,ledger,clock_.now_ns());accepted+=e.allowed;filtered=e.filtered;if(e.input.valid&&ledger.valid())for(const auto&t:s.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&ledger.permits_current_target(t.note_id)){filtered.targets.push_back(t);++accepted;}}
+  }else{const auto e=current_execution::evaluate(*baseline,f,batch,s,ledger,clock_.now_ns(),&checkpoint);if(e.interrupted)return false;accepted+=e.allowed;filtered=e.filtered;if(e.input.valid&&ledger.valid())for(const auto&t:s.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&ledger.permits_current_target(t.note_id)){filtered.targets.push_back(t);++accepted;}}
+  if(blocked())return false;
   hook_compute=meter.now_ns()-t0;if(event_output)event_output({{"event","filtered_owner_scene"},{"allow",allow},{"scene",decision_json(filtered)}});
   t0=meter.now_ns();owner_.accept(filtered,allow);owner_processed=bool(owner_.owner());owner_.poll();const bool ok=sync();owner_compute=meter.now_ns()-t0;return ok;
  }

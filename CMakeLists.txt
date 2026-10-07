@@ -58,6 +58,7 @@ add_library(pas_current_candidate STATIC
   research/bvi_cold_v3/bvi.cpp research/bvi_cold_v3/contact_policy.cpp
   research/bvi_cold_v3/relation_policy.cpp research/bvi_cold_v3/constraint_policy.cpp
   research/hold_front_current/front.cpp research/prelive_current/own_bridge.cpp
+  research/bvi_owner_cooperative/extract.cpp
   research/prelive_current/current.cpp)
 target_include_directories(pas_current_candidate PUBLIC research/bvi_cold_v3
   research/hold_front_current research/prelive_current)

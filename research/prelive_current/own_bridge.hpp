@@ -3,6 +3,7 @@
 #include "pas/game.hpp"
 #include "bvi.hpp"
 #include "receipt_stream.hpp"
+#include "owner_checkpoint.hpp"
 #include <array>
 #include <optional>
 #include <span>
@@ -83,7 +84,9 @@ struct Evaluation {
     bvi::Observation observation;
     DecisionSnapshot filtered;
     std::size_t allowed=0;
+    bool interrupted=false;
 };
 Evaluation evaluate(bvi::Candidate&,const Frame&,const CandidateBatch&,
-                    const DecisionSnapshot&,const ExecutionLedger&,Nanoseconds now);
+                    const DecisionSnapshot&,const ExecutionLedger&,Nanoseconds now,
+                    const OwnerCheckpoint* checkpoint=nullptr);
 } // namespace pas::current_execution

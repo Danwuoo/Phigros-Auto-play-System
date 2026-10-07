@@ -1,4 +1,5 @@
 #include "own_bridge.hpp"
+#include "../bvi_owner_cooperative/extract.hpp"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -298,7 +299,8 @@ bvi::Guard ExecutionLedger::guard(std::uint64_t note,int query,Nanoseconds now,N
     return g;
 }
 Evaluation evaluate(bvi::Candidate& candidate,const Frame& f,const CandidateBatch& batch,
-                    const DecisionSnapshot& scene,const ExecutionLedger& ledger,Nanoseconds now) {
+                    const DecisionSnapshot& scene,const ExecutionLedger& ledger,Nanoseconds now,
+                    const OwnerCheckpoint* checkpoint) {
     Evaluation e;e.input=prepare(f,batch,scene,now);e.filtered=scene;e.filtered.targets.clear();
     if(!e.input.valid||!ledger.valid()) {e.filtered.playing_gate=false;e.filtered.capacity_valid=false;return e;}
     if(!ledger.context_matches(scene.context)) {
@@ -307,8 +309,23 @@ Evaluation evaluate(bvi::Candidate& candidate,const Frame& f,const CandidateBatc
     }
     bvi::Key key{{f.epoch,f.generation,f.geometry_version,f.source_rotation},f.capture_complete_ns,
         f.pixels_ready_ns,f.sequence,f.source_valid};
-    e.observation=candidate.extract({f.rgb,f.width,f.height,f.stride,key},
-        {e.input.queries.data(),e.input.count},{e.input.lines.data(),e.input.line_count});
+    const bvi::View view{f.rgb,f.width,f.height,f.stride,key};
+    const std::span<const bvi::Query> queries{e.input.queries.data(),e.input.count};
+    const std::span<const bvi::Line> lines{e.input.lines.data(),e.input.line_count};
+    e.observation=checkpoint?bvi::owner_cooperative::extract(candidate,view,queries,lines,checkpoint->poll):
+        candidate.extract(view,queries,lines);
+    if(checkpoint) {
+        if(e.observation.reason=="owner checkpoint stopped"||!checkpoint->check()) {
+            e.interrupted=true;e.filtered.playing_gate=false;e.filtered.capacity_valid=false;return e;
+        }
+        const auto resumed=checkpoint->now();
+        // Poll may complete/revoke an attachment. Re-read both time and ledger;
+        // never commit with the pre-extraction lease or completed identity.
+        if(resumed<now||resumed-f.capture_complete_ns>=100'000'000||!ledger.valid()) {
+            e.interrupted=true;e.filtered.playing_gate=false;e.filtered.capacity_valid=false;return e;
+        }
+        now=resumed;
+    }
     candidate.relate(e.observation,key,now);
     if(e.observation.invalid||e.observation.context_invalid){e.filtered.playing_gate=false;return e;}
     int remaining=std::max(0,5-static_cast<int>(ledger.reservations()));

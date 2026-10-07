@@ -26,7 +26,8 @@ class Hook {
     bvi::Candidate tap_;
 public:
     Evaluation evaluate(const Frame&,const CandidateBatch&,const DecisionSnapshot&,
-        const current_execution::ExecutionLedger&,Nanoseconds);
+        const current_execution::ExecutionLedger&,Nanoseconds,
+        const current_execution::OwnerCheckpoint* checkpoint=nullptr);
     void reset(){tracks_={};context_={};tap_=bvi::Candidate{};}
     static constexpr std::size_t storage_bytes(){return sizeof(Hook);}
 };

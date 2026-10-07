@@ -46,10 +46,11 @@ int body_rows(Reader& read,const NoteCandidate& note,Vec2 hit,const CandidateBat
 }
 }
 Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionSnapshot& scene,
- const current_execution::ExecutionLedger& ledger,Nanoseconds now){
+ const current_execution::ExecutionLedger& ledger,Nanoseconds now,
+ const current_execution::OwnerCheckpoint* checkpoint){
  Evaluation out;out.filtered=scene;out.filtered.targets.clear();out.raw=b.candidates.size();
  const SceneContext expected{f.epoch,f.generation,f.geometry_version,f.sequence,f.capture_complete_ns,f.width,f.height,f.source_rotation};
- auto invalid=[&](){out.filtered.playing_gate=false;out.filtered.capacity_valid=false;return out;};
+ auto invalid=[&](){out.valid=false;out.filtered.targets.clear();out.filtered.playing_gate=false;out.filtered.capacity_valid=false;return out;};
  if(!f.source_valid||!b.source_valid||!b.capacity_valid||!scene.capacity_valid||!ledger.valid()||!ledger.context_matches(expected)||b.context!=expected||scene.context!=expected||
   !f.epoch||!f.generation||!f.geometry_version||!f.sequence||f.width!=1280||f.height!=720||f.stride!=3840||f.source_rotation!=1||f.rgb.size()!=1280*720*3||b.candidates.size()>128||b.lines.size()>16||scene.targets.size()>128||f.capture_complete_ns<0||f.capture_complete_ns>std::numeric_limits<Nanoseconds>::max()-100*ms||f.capture_complete_ns>f.pixels_ready_ns||f.pixels_ready_ns>now||now-f.capture_complete_ns>=100*ms)return invalid();
  for(const auto& l:b.lines)if(l.observed_ns!=f.capture_complete_ns||!finite(l.center)||!finite(l.tangent)||std::abs(std::hypot(l.tangent.x,l.tangent.y)-1)>.001||!std::isfinite(l.length)||l.length<=0)return invalid();
@@ -60,7 +61,9 @@ Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionS
  context_=expected;out.valid=true;
  // The original Tap contract is retained; its historical RGB novelty and
  // relation logic are never replaced by a permissive Hold colour predicate.
- auto taps=current_execution::evaluate(tap_,f,b,scene,ledger,now);
+ auto taps=current_execution::evaluate(tap_,f,b,scene,ledger,now,checkpoint);
+ if(taps.interrupted)return invalid();
+ if(checkpoint)now=checkpoint->now();
  for(auto& t:taps.filtered.targets)if(t.note.kind==NoteKind::tap){out.filtered.targets.push_back(t);++out.accepted;}
  // Drag/Flick keep the original formal observer/owner contract. This adapter
  // makes no new BVI claim about them; completed/retired IDs still cannot revive.
@@ -68,6 +71,12 @@ Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionS
  Reader read{f,out.probes};
  for(const auto& c:b.candidates){
   if(c.note.kind!=NoteKind::hold)continue;
+  if(checkpoint){
+   if(!checkpoint->check())return invalid();
+   const auto resumed=checkpoint->now();
+   if(resumed<now||resumed-f.capture_complete_ns>=100*ms||!ledger.valid())return invalid();
+   now=resumed;
+  }
   auto& s=out.support[out.count++];s.candidate=c.candidate_id;
   const auto& n=c.note;
   if(!finite(n.center)||!finite(n.tangent)||!std::isfinite(n.width)||n.width<16||n.width>512||std::abs(std::hypot(n.tangent.x,n.tangent.y)-1)>.001||c.quality==ObservationQuality::rejected){++out.unknown;continue;}
@@ -211,6 +220,8 @@ Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionS
   }
   if(s.accepted){out.filtered.targets.push_back(std::move(t));++out.accepted;}
  }
+ if(checkpoint&&(!checkpoint->check()||checkpoint->now()<now||
+    checkpoint->now()-f.capture_complete_ns>=100*ms))return invalid();
  return out;
 }
 static_assert(Hook::storage_bytes()<1048576);
