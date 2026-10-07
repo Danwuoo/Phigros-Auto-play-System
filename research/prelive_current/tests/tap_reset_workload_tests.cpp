@@ -20,7 +20,7 @@ J trial(bool candidate,int offset,int cadence,bool absent,bool skip){
 int main(int argc,char** argv){try{
  if(argc!=2||std::filesystem::exists(argv[1]))throw std::runtime_error("fresh test output required");J checks=J::array(),runs=J::array(),corpus=J::array();int failed=0;
  auto check=[&](std::string name,bool pass){checks.push_back({{"name",name},{"pass",pass}});failed+=!pass;};
- for(int offset:tap_reset_workload::offsets)for(int phase=0;phase<32;++phase){std::vector<std::uint8_t> p;tap_reset_workload::render_phase(p,phase,offset);pas::evidence::Sha256 h;h.update(p.data(),p.size());corpus.push_back({{"phase",phase},{"offset",offset},{"bytes",p.size()},{"sha256",h.finish()}});}
+ for(int offset:tap_reset_workload::offsets)for(int phase=0;phase<32;++phase){std::vector<std::uint8_t> p;tap_reset_workload::render_phase(p,phase,offset);pas::evidence::Sha256 h;h.update(reinterpret_cast<const char*>(p.data()),p.size());corpus.push_back({{"phase",phase},{"offset",offset},{"bytes",p.size()},{"sha256",h.finish()}});}
  check("explicit_prefix_absence_exceeds_90ms_at_stress_cadence",16*8>90);
  check("all_96_declared_phase_offset_RGB_hashes",corpus.size()==96);
  for(bool candidate:{false,true})for(int cadence:{20,8})for(int offset:tap_reset_workload::offsets){auto r=trial(candidate,offset,cadence,false,false);const auto id=std::string(candidate?"B":"A")+"-"+std::to_string(cadence)+"-"+std::to_string(offset);
