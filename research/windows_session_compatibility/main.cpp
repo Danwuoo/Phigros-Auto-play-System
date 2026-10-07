@@ -20,8 +20,8 @@ TEST(CurrentSessionSchemaCompatibility, ExactGoldenExceptTwoAddedDiagnosticField
  const std::regex allowed("^/[0-9]+/decision/targets/[0-9]+/(current_contact|tail_terminal_proof)$");
  for(const auto& change:diff){ASSERT_EQ(change.at("op"),"add");ASSERT_TRUE(std::regex_match(change.at("path").get<std::string>(),allowed));}
  for(auto& frame:legacy)for(auto& target:frame.at("decision").at("targets")){
-  ASSERT_TRUE(target.contains("current_contact")&&target.at("current_contact").is_string());
-  ASSERT_TRUE(target.contains("tail_terminal_proof")&&(target.at("tail_terminal_proof").is_null()||target.at("tail_terminal_proof").is_string()));
+  ASSERT_EQ(target.at("current_contact"),"none");
+  ASSERT_TRUE(target.at("tail_terminal_proof").is_null());
   target.erase("current_contact");target.erase("tail_terminal_proof");
  }
  EXPECT_EQ(legacy,golden);
