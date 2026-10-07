@@ -7,6 +7,7 @@
 #include "campaign_provenance.hpp"
 #include "offline_output.hpp"
 #include "streaming_workload.hpp"
+#include "tap_reset_workload.hpp"
 #include "owner_wait.hpp"
 #include "producer_wait.hpp"
 #include "pas/journal.hpp"
@@ -56,8 +57,9 @@ std::array<std::vector<std::uint8_t>,12> stimulus(std::string_view scene){std::a
  }return images;}
 struct Sample {Nanoseconds capture=0,published=0,recognition=0,complete=0,observer=0,hook=0,owner=0,producer_due=0,render_start=0,render_end=0,publication_return=0;bool published_ok=false,consumed=false,owned=false,writer=false;};
 J pipeline(std::string mode,std::string scene,int n,const std::string& report,const J& provenance=nullptr){
- if(n<1000||n>10000||(mode!="A"&&mode!="B")||(scene!="tap"&&scene!="hold"&&scene!=streaming_workload::scene&&scene!="dense"&&scene!="slow"&&scene!="writer"&&scene!="rpc"&&scene!="fault"))throw std::runtime_error("pipeline bounds");
- const bool streaming=scene==streaming_workload::scene;
+ if(n<1000||n>10000||(mode!="A"&&mode!="B")||(scene!="tap"&&scene!=tap_reset_workload::scene&&scene!="hold"&&scene!=streaming_workload::scene&&scene!="dense"&&scene!="slow"&&scene!="writer"&&scene!="rpc"&&scene!="fault"))throw std::runtime_error("pipeline bounds");
+ const bool tap_streaming=scene==tap_reset_workload::scene;
+ const bool streaming=scene==streaming_workload::scene||tap_streaming;
  const auto images=streaming?std::array<std::vector<std::uint8_t>,12>{}:stimulus(scene);
  std::vector<std::uint8_t> generated(streaming?streaming_workload::bytes:0);HostClock clock;LatestFrame latest(1280,720,3,&clock);Runtime rt(clock);
  const int writer_capacity=scene=="writer"?2:8192;Journal journal(report+".journal.jsonl",writer_capacity,[&]{if(scene=="writer")std::this_thread::sleep_for(std::chrono::milliseconds(30));});
@@ -83,8 +85,9 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  const int cadence=scene=="slow"||n==10000?8:20;
  ProducerDeadlineWait producer_wait;
  const auto due_epoch=clock.now_ns();
- if(!emit({{"event","producer_schedule"},{"epoch_ns",due_epoch},{"cadence_ms",cadence},{"requested",n},{"generator",streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB"}}))throw std::runtime_error("producer schedule Journal admission");
- std::jthread producer([&]{try{for(int i=1;i<=n;++i){auto& sample=samples[i];sample.producer_due=due_epoch+Nanoseconds(i-1)*cadence*1'000'000;producer_wait.wait_until(clock,sample.producer_due);sample.render_start=clock.now_ns();if(streaming)streaming_workload::render(generated,i);sample.render_end=clock.now_ns();Frame f;f.sequence=i;f.epoch=f.generation=f.geometry_version=1;f.width=1280;f.height=720;f.stride=3840;f.source_rotation=1;f.capture_backend="offline_memory_stub";f.capture_complete_ns=f.pixels_ready_ns=sample.render_end;sample.capture=f.capture_complete_ns;const auto* pixels=streaming?generated.data():images[(i-1)%12].data();sample.published_ok=latest.publish(pixels,1280*720*3,f);sample.publication_return=clock.now_ns();++publish_attempts;}}catch(...){safe=false;}done=true;});
+ const std::string generator=tap_streaming?std::string(tap_reset_workload::generator):streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB";
+ if(!emit({{"event","producer_schedule"},{"epoch_ns",due_epoch},{"cadence_ms",cadence},{"requested",n},{"generator",generator}}))throw std::runtime_error("producer schedule Journal admission");
+ std::jthread producer([&]{try{for(int i=1;i<=n;++i){auto& sample=samples[i];sample.producer_due=due_epoch+Nanoseconds(i-1)*cadence*1'000'000;producer_wait.wait_until(clock,sample.producer_due);sample.render_start=clock.now_ns();if(tap_streaming)tap_reset_workload::render(generated,i);else if(streaming)streaming_workload::render(generated,i);sample.render_end=clock.now_ns();Frame f;f.sequence=i;f.epoch=f.generation=f.geometry_version=1;f.width=1280;f.height=720;f.stride=3840;f.source_rotation=1;f.capture_backend="offline_memory_stub";f.capture_complete_ns=f.pixels_ready_ns=sample.render_end;sample.capture=f.capture_complete_ns;const auto* pixels=streaming?generated.data():images[(i-1)%12].data();sample.published_ok=latest.publish(pixels,1280*720*3,f);sample.publication_return=clock.now_ns();++publish_attempts;}}catch(...){safe=false;}done=true;});
  bool supervisor_stopped=false;std::uint64_t seen=0;while(true){
   // A due Up or evidence expiry must not wait for the next producer frame.
   // The same consumer remains the sole owner; receipts use the same bounded
@@ -115,7 +118,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  result["phase_lateness_ms"]={{"down",distribution(phase_late[0])},{"move",distribution(phase_late[1])},{"up",distribution(phase_late[2])}};result["journal_admitted_bytes"]=journal_bytes;result["journal_records"]=journal_records;result["journal_admission_failed"]=admission_failed;result["supervisor_stopped"]=supervisor_stopped;result["final_release"]={{"requested",rt.final_release.requested_ids},{"failed",rt.final_release.failed_ids},{"unknown",rt.final_release.unknown_ids},{"start",rt.final_release.start_ns},{"return",rt.final_release.return_ns}};
  result["injection_ms"]=distribution(injection);result["all_phase_lateness_ms"]=distribution(late);result["evidence_to_injection_ms"]=distribution(evidence_to_injection);result["receipt_count"]=receipt_count;result["release_calls"]=release_calls;result["provenance"]=provenance;
  result["producer_epoch_ns"]=due_epoch;result["producer_render_ms"]=distribution(render_times);result["producer_schedule_lateness_ms"]=distribution(producer_late);result["render_start_to_owner_ms"]=distribution(render_owner);result["producer_deadline_overruns"]=producer_overruns;result["render_start_to_publication_return_ms"]=distribution(render_publication);result["publication_deadline_overruns"]=publication_overruns;
- result["renderer_storage_bytes"]=streaming?streaming_workload::bytes:12*streaming_workload::bytes;result["generator"]=streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB";result["render_timing_scope"]="render start/end separately measured; capture_complete is end of synthetic render; render_start_to_owner includes render; no real capture/RPC qualification";
+ result["renderer_storage_bytes"]=streaming?streaming_workload::bytes:12*streaming_workload::bytes;result["generator"]=generator;result["render_timing_scope"]="render start/end separately measured; capture_complete is end of synthetic render; render_start_to_owner includes render; no real capture/RPC qualification";
  return result;
 }
 }

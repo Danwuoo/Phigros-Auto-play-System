@@ -32,6 +32,7 @@ J validity(const J& r){J failures=J::array();auto check=[&](bool yes,const char*
  for(const auto* metric:{"observer_ms","hook_ms","owner_ms","capture_to_owner_ms"})check(dist(m.at(metric))&&m.at(metric).at("n")==m.at("owner_seen"),"measurement_distribution");
  if(r.contains("_audited_measurement")){const auto& a=r.at("_audited_measurement");const auto& phases=a.at("phase_counts");const auto& lateness=a.at("lateness");if(r.at("scene")!="dense")check(phases.at(0).get<std::uint64_t>()>0&&phases.at(2).get<std::uint64_t>()>0,"measurement_action_opportunities_absent");if(lateness.at("n").get<std::uint64_t>()>0)check(dist(lateness)&&lateness.at("p99").get<double>()<=15&&lateness.at("max").get<double>()<=100,"measurement_phase_lateness");}
  if(r.at("scene")=="hold-closed-reset-v2")check(r.contains("producer_deadline_overruns")&&r.at("producer_deadline_overruns")==0&&r.at("publication_deadline_overruns")==0&&r.at("render_start_to_publication_return_ms").at("n")==r.at("requested")&&r.at("producer_render_ms").at("n")==r.at("requested")&&r.at("renderer_storage_bytes")==2764800&&r.at("generator")=="closed_reset_v2_streamed_all_offsets","streamed_workload_and_cadence");
+ if(r.at("scene")=="tap-closed-reset-v1")check(r.contains("producer_deadline_overruns")&&r.at("producer_deadline_overruns")==0&&r.at("publication_deadline_overruns")==0&&r.at("render_start_to_publication_return_ms").at("n")==r.at("requested")&&r.at("producer_render_ms").at("n")==r.at("requested")&&r.at("renderer_storage_bytes")==2764800&&r.at("generator")=="tap_closed_reset_v1_streamed_all_offsets","tap_streamed_workload_and_cadence");
  check(r.at("rss_peak_os").get<std::uint64_t>()<=128*MiB,"rss");return {{"pass",failures.empty()},{"failures",failures}};
 }
 struct Campaign { J value;std::string sha;fs::path path;std::map<std::string,J> bindings;std::vector<std::string> scenes;};
@@ -40,13 +41,18 @@ Campaign campaign(const J& input,const fs::path& self){
  const auto& b=input.at("campaign");Campaign c{read(bound_file(b)),b.at("sha256"),bound_file(b),{}, {}};
  if(c.value.at("schema")!="pas.current-rails-campaign-freeze.v2"||c.value.at("configuration")!="Release"||c.value.at("platform")!="windows-x64"||c.value.at("id").get<std::string>().empty())throw std::runtime_error("campaign identity/configuration");
  const auto commit=c.value.at("source_commit").get<std::string>();if(commit.size()!=40||commit.find_first_not_of("0123456789abcdef")!=std::string::npos)throw std::runtime_error("full source commit required");
- c.scenes=c.value.at("scenes").get<std::vector<std::string>>();if(c.scenes.size()!=3||c.scenes[0]!="tap"||(c.scenes[1]!="hold"&&c.scenes[1]!="hold-closed-reset-v2")||c.scenes[2]!="dense")throw std::runtime_error("predeclared scene order");
+ c.scenes=c.value.at("scenes").get<std::vector<std::string>>();if(c.scenes.size()!=3||(c.scenes[0]!="tap"&&c.scenes[0]!="tap-closed-reset-v1")||(c.scenes[1]!="hold"&&c.scenes[1]!="hold-closed-reset-v2")||c.scenes[2]!="dense")throw std::runtime_error("predeclared scene order");
  const auto& binds=c.value.at("bindings");if(binds.size()>32)throw std::runtime_error("campaign binding capacity");
  for(const auto& entry:binds){const auto role=entry.at("role").get<std::string>();if(!c.bindings.emplace(role,entry).second)throw std::runtime_error("duplicate binding role");bound_file(entry,256*MiB);}
  for(const auto* role:{"candidate_binary","analyzer_binary","auditor_binary","profile","cost_protocol","environment","source_manifest"})if(!c.bindings.contains(role))throw std::runtime_error("incomplete source/build/profile binding");
  if(bound_file(c.bindings.at("analyzer_binary"),256*MiB)!=fs::canonical(self))throw std::runtime_error("wrong analyzer executable");
- if(c.bindings.at("cost_protocol").at("sha256")!="58d6136fcbce1ebf6c25a23795f10aab78013d46318c2b6261b7f6206abe91e6")throw std::runtime_error("original hard protocol changed");
- pas::cost_provenance::source_closure(c.value);
+ const auto expected_protocol=c.scenes[0]=="tap-closed-reset-v1"?"0000ad66d05649ebc4f60570b58e9a9a4cb58f7e6629279e4d38a945c8d4c060":"58d6136fcbce1ebf6c25a23795f10aab78013d46318c2b6261b7f6206abe91e6";
+ if(c.bindings.at("cost_protocol").at("sha256")!=expected_protocol)throw std::runtime_error("predeclared protocol changed");
+ const auto source=pas::cost_provenance::source_closure(c.value);
+ if(c.scenes[0]=="tap-closed-reset-v1"){
+  std::set<std::string> included;for(const auto& b:source.at("files"))included.insert(b.at("relative_path"));
+  for(const auto* required:{"research/prelive_current/tap_reset_workload.hpp","research/prelive_current/tests/tap_reset_workload_tests.cpp"})if(!included.contains(required))throw std::runtime_error("Tap reset source closure member absent");
+ }
  pas::cost_provenance::effective_profile(c.bindings.at("profile"));
  const auto& plan=c.value.at("planned_runs");if(plan.size()!=12)throw std::runtime_error("frozen AA run count");std::set<std::string> ids;std::set<fs::path> paths;
  for(std::size_t i=0;i<plan.size();++i){const auto& p=plan[i];if(p.at("scene")!=c.scenes[i/4]||p.at("mode")!="A"||!ids.insert(p.at("run_id").get<std::string>()).second||!paths.insert(fs::weakly_canonical(p.at("report_path").get<std::string>())).second)throw std::runtime_error("frozen AA order/identity");}
@@ -84,7 +90,7 @@ J load_run(const J& entry,const J& planned,const Campaign& c){
  if(r.at("scene")!=entry.at("scene")||r.at("mode")!=planned.at("mode"))throw std::runtime_error("report scene/mode mismatch");
  const J audit_binding={{"path",entry.at("audit_path")},{"sha256",entry.at("audit_sha256")}};auto audit=read(bound_file(audit_binding));
  if(audit.at("schema")!="pas.prelive-independent-integrity.v2"||!audit.at("integrity").get<bool>()||!audit.at("complete_prefix_evidence").get<bool>()||!audit.at("all_input_processed").get<bool>()||!audit.at("metrics_verified").get<bool>()||!audit.at("plan_join_complete").get<bool>()||!audit.at("coordinate_join_complete").get<bool>()||audit.at("release_uncertainty_seen").get<bool>())throw std::runtime_error("raw integrity/cost gate incomplete");
- if(r.at("scene")=="hold-closed-reset-v2"&&!audit.value("producer_metrics_verified",false))throw std::runtime_error("new workload producer timing not verified");
+ if((r.at("scene")=="hold-closed-reset-v2"||r.at("scene")=="tap-closed-reset-v1")&&!audit.value("producer_metrics_verified",false))throw std::runtime_error("new workload producer timing not verified");
  if(!audit.at("provenance_join_complete").get<bool>()||audit.at("run_provenance")!=r.at("provenance"))throw std::runtime_error("producer report/Journal identity not joined");
  const auto& provenance=r.at("provenance");
  if(provenance.at("schema")!="pas.current-rails-run-provenance.v1"||provenance.at("campaign_id")!=c.value.at("id")||provenance.at("campaign_sha256")!=c.sha||provenance.at("source_commit")!=c.value.at("source_commit")||provenance.at("run_id")!=entry.at("run_id")||provenance.at("scene")!=entry.at("scene")||provenance.at("mode")!=planned.at("mode")||provenance.at("requested")!=2560||fs::canonical(provenance.at("report_path").get<std::string>())!=path)throw std::runtime_error("producer campaign/run mismatch");

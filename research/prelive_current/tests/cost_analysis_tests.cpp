@@ -15,6 +15,15 @@ int main(int argc,char**argv){try{
  auto dist=[](int n,double v){return J{{"n",n},{"p50",v},{"p95",v},{"p99",v},{"max",v},{"jitter_p95_minus_p5",0}};};
  J report={{"schema","pas.prelive-complete-chain-cost.v1"},{"mode","A"},{"scene","tap"},{"requested",2560},{"attempts",2560},{"warmup_attempts",256},{"cadence_ms",20},{"clock_domain","host_QPC"},{"source_absolute_age",nullptr},{"device_endpoints",0},{"safe",true},{"supervisor_stopped",false},{"release_verified",true},{"final_release",{{"failed",J::array()},{"unknown",J::array()}}},{"pool_drops",0},{"writer_drops",0},{"writer_fault",false},{"journal_admission_failed",false},{"injection_failed",0},{"owner_seen_fraction",1},{"owner_seen",2560},{"own_down",1},{"own_up",1},{"capture_to_owner_ms",dist(2560,1)},{"all_phase_lateness_ms",dist(2,.1)},{"measurement",{{"attempts",2304},{"owner_seen",2304},{"owner_seen_fraction",1},{"observer_ms",dist(2304,.3)},{"hook_ms",dist(2304,.2)},{"owner_ms",dist(2304,.1)},{"capture_to_owner_ms",dist(2304,1)}}},{"rss_peak_os",1024}};
  expect(validity(report).at("pass"),"valid unit report");
+ {
+  auto streamed=report;streamed["scene"]="tap-closed-reset-v1";streamed["producer_deadline_overruns"]=0;streamed["publication_deadline_overruns"]=0;
+  streamed["render_start_to_publication_return_ms"]=dist(2560,.1);streamed["producer_render_ms"]=dist(2560,.1);streamed["renderer_storage_bytes"]=2764800;streamed["generator"]="tap_closed_reset_v1_streamed_all_offsets";
+  expect(validity(streamed).at("pass").get<bool>(),"new declared Tap streamed contract");
+  for(const auto* field:{"producer_deadline_overruns","publication_deadline_overruns"}){auto bad=streamed;bad[field]=1;expect(!validity(bad).at("pass").get<bool>(),"Tap overrun rejected");}
+  {auto bad=streamed;bad["renderer_storage_bytes"]=2764801;expect(!validity(bad).at("pass").get<bool>(),"Tap storage bound rejected");}
+  {auto bad=streamed;bad["generator"]="historical_twelve_precomputed_RGB";expect(!validity(bad).at("pass").get<bool>(),"old Tap cannot qualify new contract");}
+  {auto bad=streamed;bad["producer_render_ms"]["n"]=2559;expect(!validity(bad).at("pass").get<bool>(),"Tap complete render denominator");}
+ }
  for(const auto* key:{"requested","attempts","warmup_attempts","cadence_ms"}){auto bad=report;bad[key]=0;expect(!validity(bad).at("pass").get<bool>(),"frozen denominator rejected");}
  {auto bad=report;bad["capture_to_owner_ms"]["p99"]=101;bad["capture_to_owner_ms"]["max"]=251;expect(!validity(bad).at("pass").get<bool>(),"latency hard gate");}
  {auto bad=report;bad["_audited_measurement"]={{"phase_counts",{0,0,0}},{"lateness",{{"n",0}}}};expect(!validity(bad).at("pass").get<bool>(),"warmup-only action rejected");}
