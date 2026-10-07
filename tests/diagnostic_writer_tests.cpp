@@ -5,6 +5,7 @@
 #include "pas/analysis.hpp"
 #include <gtest/gtest.h>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <type_traits>
 namespace {
@@ -264,7 +265,7 @@ fixtures=output.string()+".fixtures";
 if(fs::exists(fixtures))throw std::runtime_error("fresh fixture root");
 fs::create_directory(fixtures);
 int n=1;
-char*args[]={argv[0]};
+char*args[]={argv[0],nullptr};
 ::testing::InitGoogleTest(&n,args);
 const int result=RUN_ALL_TESTS();
 const auto*u=::testing::UnitTest::GetInstance();
