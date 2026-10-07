@@ -19,7 +19,7 @@ public:
     std::string error() const;
     std::size_t peak_queue() const;
 private:
-    struct Item {std::uint64_t round; nlohmann::json value; bool complete=false;std::shared_ptr<const Frame> image;};
+    struct Item {std::uint64_t round; nlohmann::json value; bool complete=false;std::shared_ptr<const Frame> image;std::string row;std::size_t charged_bytes=0;};
     void push(Item);
     void writer();
     std::filesystem::path root_;nlohmann::json provenance_;

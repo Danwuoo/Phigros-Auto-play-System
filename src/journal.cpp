@@ -18,6 +18,20 @@ Journal::~Journal() { close(); }
 bool Journal::push(nlohmann::json record, bool critical) {
     record["schema_version"] = 2;
     record["clock_domain"] = "host_qpc_ns";
+    return enqueue(std::move(record),critical);
+}
+
+PreparedJournalRecord Journal::prepare(nlohmann::json record) {
+    record["schema_version"] = 2;
+    record["clock_domain"] = "host_qpc_ns";
+    return PreparedJournalRecord(record.dump());
+}
+
+bool Journal::push(PreparedJournalRecord record, bool critical) {
+    return enqueue(std::move(record),critical);
+}
+
+bool Journal::enqueue(Item record, bool critical) {
     {
         std::lock_guard lock(mutex_);
         if (closed_ || faulted_) return false;
@@ -36,7 +50,7 @@ void Journal::writer(std::stop_token stop) {
     std::ofstream file(path_, std::ios::binary | std::ios::trunc);
     if (!file) { std::lock_guard lock(mutex_); faulted_ = true; return; }
     while (true) {
-        nlohmann::json record;
+        Item record;
         {
             std::unique_lock lock(mutex_);
             ready_.wait(lock, [&] { return stop.stop_requested() || !queue_.empty(); });
@@ -44,7 +58,9 @@ void Journal::writer(std::stop_token stop) {
             record = std::move(queue_.front()); queue_.pop_front();
         }
         if (before_write_) before_write_();
-        file << record.dump() << '\n';
+        if (const auto* prepared=std::get_if<PreparedJournalRecord>(&record))
+            file << prepared->row_ << '\n';
+        else file << std::get<nlohmann::json>(record).dump() << '\n';
         if (!file) { std::lock_guard lock(mutex_); faulted_ = true; return; }
     }
     file.flush();

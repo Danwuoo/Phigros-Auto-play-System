@@ -21,9 +21,14 @@ SessionArchive::SessionArchive(std::filesystem::path root,json provenance,std::s
 }
 SessionArchive::~SessionArchive() {close();}
 void SessionArchive::push(Item item) {
+    // Serialize once before the mailbox lock. Complete summaries retain JSON
+    // for writer-owned manifest/result additions; ordinary events retain only
+    // their immutable serialized row. The byte admission rule is unchanged.
+    auto row=item.value.dump();item.charged_bytes=row.size();
+    if(!item.complete){item.row=std::move(row);item.value=nullptr;}
     {std::lock_guard lock(mutex_);
         if(closed_||faulted_)throw std::runtime_error("session archive unavailable");
-        const auto bytes=item.value.dump().size();
+        const auto bytes=item.charged_bytes;
         if(queue_.size()>=8192||queued_bytes_+bytes>16*1024*1024) {faulted_=true;error_="session archive mailbox overrun";throw std::runtime_error(error_);}
         queued_bytes_+=bytes;
         queue_.push_back(std::move(item));peak_=std::max(peak_,queue_.size());}
@@ -57,9 +62,9 @@ void SessionArchive::writer() {
             Item item;
             {std::unique_lock lock(mutex_);ready_.wait(lock,[&]{return closed_||!queue_.empty();});
                 if(queue_.empty()&&closed_)break;
-                item=std::move(queue_.front());queue_.pop_front();queued_bytes_-=item.value.dump().size();}
+                item=std::move(queue_.front());queue_.pop_front();queued_bytes_-=item.charged_bytes;}
             if(!item.round) {
-                const auto row=item.value.dump()+"\n";
+                const auto row=std::move(item.row)+"\n";
                 if(row.size()>standby_bytes_)throw std::runtime_error("standby record exceeds segment bound");
                 if(!standby.is_open()||standby_size+row.size()>standby_bytes_) {
                     if(standby.is_open()){flush(standby);standby_segment=(standby_segment+1)%4;}
@@ -95,7 +100,7 @@ void SessionArchive::writer() {
                 if(!index)throw std::runtime_error("round index write failed");
                 last_completed=active;active=0;hashes=json::array();continue;
             }
-            const auto row=item.value.dump()+"\n";
+            const auto row=std::move(item.row)+"\n";
             if(row.size()>segment_bytes_)throw std::runtime_error("round record exceeds segment bound");
             if(!events.is_open()||event_size+row.size()>segment_bytes_) {
                 if(events.is_open()){close_segment();++segment;}

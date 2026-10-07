@@ -68,7 +68,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  if(scene=="fault")rt.backend.failure=current_execution::ReplayBackend::Failure::unknown_down;
  std::vector<double> injection,late,evidence_to_injection;std::size_t receipt_count=0,release_calls=0;
  std::array<std::vector<double>,3> phase_late;std::uint64_t journal_bytes=0,journal_records=0;bool admission_failed=false;
- auto emit=[&](J record,bool critical=true){const auto bytes=record.dump().size()+128;if(bytes>262144||journal_records>=65536||journal_bytes+bytes>1073741824){admission_failed=true;return false;}journal_bytes+=bytes;++journal_records;const bool ok=journal.push(std::move(record),critical);if(!ok&&critical)admission_failed=true;return ok;};
+ auto emit=[&](J record,bool critical=true){auto prepared=Journal::prepare(std::move(record));const auto bytes=prepared.bytes()+128;if(bytes>262144||journal_records>=65536||journal_bytes+bytes>1073741824){admission_failed=true;return false;}journal_bytes+=bytes;++journal_records;const bool ok=journal.push(std::move(prepared),critical);if(!ok&&critical)admission_failed=true;return ok;};
  if(!provenance.is_null()&&!emit({{"event","current_chain_provenance"},{"provenance",provenance}}))throw std::runtime_error("provenance Journal admission");
  rt.event_output=[&](J value){emit(std::move(value));};
  rt.receipt_output=[&](const auto& event){
