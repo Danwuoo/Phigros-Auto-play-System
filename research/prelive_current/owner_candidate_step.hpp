@@ -2,6 +2,7 @@
 #include "current.hpp"
 #include "pas/game_session.hpp"
 #include "pas/game_tracking.hpp"
+#include "pas/diagnostic_snapshot.hpp"
 
 namespace pas::current_rails {
 // Endpoint-free action seam. References the existing sole owner and its bounded
@@ -37,6 +38,7 @@ public:
  Evaluation last;
  std::function<void(const current_execution::BackendEvent&)> receipt_output;
  std::function<void(nlohmann::json)> event_output;
+ std::function<void(DiagnosticSnapshot)> snapshot_output;
  ReleaseReport final_release;
  std::string_view evaluation_outcome="not_evaluated";
  std::uint64_t checkpoint_calls=0;
@@ -75,7 +77,8 @@ public:
   // revise an old lease. All callers share this expired-first boundary.
   if(!poll())return false;
   raw+=batch.candidates.size();
-  if(event_output){event_output({{"event","current_observer_scene"},{"scene",decision_json(s)}});event_output({{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(batch)}});}
+  if(snapshot_output){snapshot_output(DiagnosticSnapshot::current(s));snapshot_output(DiagnosticSnapshot::batch(batch));}
+  else if(event_output){event_output({{"event","current_observer_scene"},{"scene",decision_json(s)}});event_output({{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(batch)}});}
   HostClock meter;auto t0=meter.now_ns();DecisionSnapshot filtered;
   const auto evaluate_start=clock_.now_ns();auto checkpoint_previous=evaluate_start;
   const current_execution::OwnerCheckpoint checkpoint{clock_,[this,&checkpoint_previous](){const auto qpc=clock_.now_ns();++checkpoint_calls;checkpoint_max_gap=std::max(checkpoint_max_gap,qpc-checkpoint_previous);checkpoint_previous=qpc;return poll();}};
@@ -84,7 +87,7 @@ public:
    if(last.interrupted)return fail("candidate_evaluate",last.outcome);
   }else{const auto e=current_execution::evaluate(*baseline,f,batch,s,ledger,clock_.now_ns(),&checkpoint);evaluation_outcome=e.outcome;if(e.interrupted)return fail("baseline_evaluate",e.outcome);accepted+=e.allowed;filtered=e.filtered;if(e.input.valid&&!e.source_expired&&ledger.valid())for(const auto&t:s.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&ledger.permits_current_target(t.note_id)){filtered.targets.push_back(t);++accepted;}}
   if(blocked())return fail("after_evaluate",failure_cause());
-  hook_compute=meter.now_ns()-t0;if(event_output)event_output({{"event","filtered_owner_scene"},{"allow",allow},{"scene",decision_json(filtered)}});
+  hook_compute=meter.now_ns()-t0;if(snapshot_output)snapshot_output(DiagnosticSnapshot::filtered(filtered,allow));else if(event_output)event_output({{"event","filtered_owner_scene"},{"allow",allow},{"scene",decision_json(filtered)}});
   t0=meter.now_ns();const auto commit_now=clock_.now_ns();
   if(commit_now<evaluate_start)return fail("before_commit","owner_clock_reversed");
   if(commit_now-f.capture_complete_ns>=100'000'000){evaluation_outcome="source_expired_before_commit";filtered.targets.clear();filtered.playing_gate=false;filtered.capacity_valid=false;allow=false;}

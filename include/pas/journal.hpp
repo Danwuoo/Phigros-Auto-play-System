@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 #include <variant>
+#include "pas/diagnostic_snapshot.hpp"
 
 namespace pas {
 
@@ -35,11 +36,14 @@ public:
     bool push(nlohmann::json record, bool critical = true);
     static PreparedJournalRecord prepare(nlohmann::json record);
     bool push(PreparedJournalRecord record, bool critical = true);
+    bool push(DiagnosticSnapshot record, bool critical = true);
+    std::uint64_t admitted_bytes() const;
+    std::uint64_t admitted_records() const;
     void close();
     std::uint64_t debug_drops() const;
     bool faulted() const;
 private:
-    using Item = std::variant<nlohmann::json,PreparedJournalRecord>;
+    using Item = std::variant<PreparedJournalRecord,DiagnosticSnapshot>;
     bool enqueue(Item record, bool critical);
     void writer(std::stop_token stop);
     const std::size_t capacity_;
@@ -50,6 +54,8 @@ private:
     std::deque<Item> queue_;
     std::jthread worker_;
     std::uint64_t debug_drops_ = 0;
+    std::size_t queued_bytes_=0;
+    std::uint64_t admitted_bytes_=0,admitted_records_=0;
     bool faulted_ = false;
     bool closed_ = false;
 };

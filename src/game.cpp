@@ -2,6 +2,7 @@
 #include "pas/game_tracking.hpp"
 #include "pas/game_motion.hpp"
 #include "pas/analysis.hpp"
+#include "pas/lossless_event_stream.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -2139,7 +2140,9 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
 
 nlohmann::json analyze_game_segments(const std::vector<std::filesystem::path>& paths) {
     using nlohmann::json;
-    if(paths.empty()||paths.size()>32) throw std::invalid_argument("game journal segment capacity");
+    const bool compressed=!paths.empty()&&paths.front().extension()==".gz";
+    if(paths.empty()||paths.size()>(compressed?256u:32u)) throw std::invalid_argument("game journal segment capacity");
+    std::uint64_t physical_bytes=0,decoded_bytes=0;
     std::uint64_t frames=0,predictions=0,dry=0,real=0,revokes=0,rejections=0,gate_frames=0,multi_line=0;
     std::uint64_t playing_no_line=0;
     std::map<std::string,std::uint64_t> kinds,reasons,uis,accepted_kinds,real_phases,rejection_reasons,revoke_reasons;
@@ -2216,13 +2219,15 @@ nlohmann::json analyze_game_segments(const std::vector<std::filesystem::path>& p
     };
     std::string line;
     for(const auto& path:paths) {
-    std::ifstream file(path, std::ios::binary); if(!file) throw std::runtime_error("cannot open game journal segment: "+path.string());
-    while(std::getline(file,line)) {
+    if((path.extension()==".gz")!=compressed)throw std::invalid_argument("game journal mixed encodings");
+    physical_bytes+=std::filesystem::file_size(path);if(physical_bytes>512ull*1024*1024)throw std::runtime_error("game journal physical byte bound");
+    LosslessEventReader file(path,compressed?16ull*1024*1024:512ull*1024*1024);
+    while(file.next(line)) {
         if(line.empty()) continue;
         const auto e=json::parse(line); const auto event=e.value("event","");
         if(event=="game_decision") {
             const auto schema=e.value("decision_schema",0);
-            if(schema!=1&&schema!=2&&schema!=3) throw std::runtime_error("unknown game decision schema");
+            if(schema!=1&&schema!=2&&schema!=3&&schema!=4) throw std::runtime_error("unknown game decision schema");
             ++frames; count(uis,e.at("ui").get<std::string>());
             const bool playing=e.at("playing_gate").get<bool>();
             if(playing) {++gate_frames;if(e.at("lines").empty()) ++playing_no_line;}
@@ -2429,7 +2434,7 @@ nlohmann::json analyze_game_segments(const std::vector<std::filesystem::path>& p
             }
         }
     }
-    if(!file.eof()) throw std::runtime_error("game journal segment read failed: "+path.string());
+    decoded_bytes+=file.decoded_bytes();if(decoded_bytes>4ull*1024*1024*1024)throw std::runtime_error("game journal decoded byte bound");
     }
     for(const auto& [id,evidence]:observed_tracks) finish_track(evidence);
     json durations=json::object(),lateness_by_kind=json::object(),first_leads=json::object();
@@ -2510,8 +2515,9 @@ nlohmann::json analyze_game_round(const std::filesystem::path& round_directory) 
     std::ifstream file(round_directory/"summary.json",std::ios::binary);
     if(!file) throw std::runtime_error("cannot open game round summary");
     const auto summary=json::parse(file);
+    const bool compressed=summary.value("event_encoding",std::string("plain-jsonl-v1"))=="gzip-jsonl-v1";
     if(!summary.contains("event_segments")||!summary.at("event_segments").is_array()||
-       summary.at("event_segments").empty()||summary.at("event_segments").size()>32)
+       summary.at("event_segments").empty()||summary.at("event_segments").size()>(compressed?256u:32u))
         throw std::invalid_argument("game round event segment capacity/shape");
     std::vector<std::filesystem::path> paths;
     json verified=json::array();
@@ -2521,7 +2527,7 @@ nlohmann::json analyze_game_round(const std::filesystem::path& round_directory) 
            !segment.contains("sha256")||!segment.at("sha256").is_string())
             throw std::invalid_argument("game round event segment shape");
         const auto name=segment.at("path").get<std::string>();
-        if(name!="events-"+std::to_string(index++)+".jsonl")
+        if(name!="events-"+std::to_string(index++)+(compressed?".jsonl.gz":".jsonl"))
             throw std::invalid_argument("game round segment order/path");
         const auto path=round_directory/name;
         const auto hash=sha256_file(path);

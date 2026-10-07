@@ -113,8 +113,10 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
         manifest["candidate_live_admission"]="UNQUALIFIED";manifest["changed_windows_branch_executed"]=false;
         manifest["candidate_packet_slots"]=1;manifest["candidate_receipt_capacity"]=64;
         manifest["candidate_packet_policy"]="same immutable consumed frame lease and complete observer batch; transition/context mismatch ineligible";
+        manifest["diagnostic_snapshot_policy"]="owned current scalars only; writer encoding; 256KiB charged per snapshot; 16MiB mailbox plus one in-flight item";
+        manifest["journal_encoding"]="gzip-jsonl-v1";manifest["round_max_segments"]=256;manifest["round_decoded_byte_cap"]=4ull*1024*1024*1024;manifest["round_physical_byte_cap"]=512ull*1024*1024;
     }
-    SessionArchive archive(root,manifest);
+    SessionArchive archive(root,manifest,16*1024*1024,1024*1024,candidate_mode?SessionArchive::Encoding::gzip:SessionArchive::Encoding::plain);
     std::unique_ptr<SessionPixelClips> clips;
     if(pixel_clips)clips=std::make_unique<SessionPixelClips>(root/"pixel-clips",clock,config.width,config.height);
     std::unique_ptr<SessionRecording> recording;
@@ -216,6 +218,7 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
             if(candidate_mode)candidate_step=std::make_unique<current_rails::OwnerCandidateStep>(clock,game,candidate_receipts);
             if(candidate_step) {
                 candidate_step->event_output=record;
+                candidate_step->snapshot_output=[&](DiagnosticSnapshot value){archive.event(active,std::move(value));};
                 candidate_step->receipt_output=[&](const current_execution::BackendEvent& e){if(!e.release)++commands;record(current_execution::backend_event_json(e));};
             }
             const auto receipts=[&](const std::vector<TouchReceipt>& rs) {
@@ -286,7 +289,7 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
                         }
                         if(recognition.size()<100000)recognition.push_back((s.recognition_end_ns-s.recognition_start_ns)/1e6);
                         if(residency.size()<100000)residency.push_back((clock.now_ns()-t)/1e6);
-                        record(decision_json(s));
+                        if(candidate_mode)archive.event(active,DiagnosticSnapshot::decision(s));else record(decision_json(s));
                         record({{"event","lifecycle_ui_evidence"},{"source_frame",seen},{"capture_complete_ns",t},
                             {"hud",p->evidence.hud},{"result_labels",p->evidence.result_labels},{"result_similarity",p->evidence.result_similarity},
                             {"source_timestamp_us",p->source_time?json(*p->source_time):json(nullptr)},
@@ -301,8 +304,8 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
                                 record({{"event","candidate_packet_owner_qpc"},{"source_frame",seen},{"capture_complete_ns",s.context.capture_ns},
                                     {"packet_sequence",p->packet_sequence},{"packet_published_ns",p->published_ns},{"owner_start_ns",owner_start},{"eligible",eligible}});
                                 if(!eligible) {
-                                    record({{"event","current_observer_scene"},{"scene",decision_json(s)}});
-                                    if(p->candidate)record({{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(p->candidate->batch)}});
+                                    archive.event(active,DiagnosticSnapshot::current(s));
+                                    if(p->candidate)archive.event(active,DiagnosticSnapshot::batch(p->candidate->batch));
                                     if(!candidate_step->suspend("candidate_same_consumed_frame_ineligible"))throw std::runtime_error("candidate ineligible packet release not verified");}
                                 else if(!candidate_step->accept(*p->candidate->frame,p->candidate->batch,s,allow))throw std::runtime_error("candidate shared owner step failed");
                                 record({{"event","candidate_owner_return_qpc"},{"source_frame",seen},{"owner_return_ns",clock.now_ns()},
@@ -409,6 +412,7 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
         {"overwritten",candidate_packet_overwritten.load()},{"consumed_latest_sequence",candidate_packet_consumed.load()},
         {"consumer_skips",candidate_packet_skips.load()},{"physical_pool_drops",latest.counters().pool_drops}};
     if(error)try{std::rethrow_exception(error);}catch(const std::exception& e){summary["fault"]=e.what();}
+    if(archive.faulted())summary["archive_first_error"]=archive.error();
     std::ofstream file(root/"summary.json");file<<summary.dump(2)<<'\n';file.close();
     if(!file)throw std::runtime_error("session summary write failed");
     std::cout<<summary.dump(2)<<'\n';if(error)std::rethrow_exception(error);
