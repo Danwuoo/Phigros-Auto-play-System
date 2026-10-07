@@ -125,6 +125,26 @@ ASSERT_TRUE(reader.next(row));
 EXPECT_EQ(J::parse(row).at("event").get<std::string>(),"end");
 EXPECT_FALSE(reader.next(row));
 EXPECT_EQ(journal.admitted_records(),2);
+for(const auto*name:{"exact-buffer","multiple-input-buffers"}){SCOPED_TRACE(name);
+const auto p=root/(std::string(name)+".jsonl.gz");
+std::string expected_row(std::string_view(name)=="exact-buffer"?65535:196607,'x');
+if(std::string_view(name)=="multiple-input-buffers"){std::uint32_t state=123456789;
+for(auto&c:expected_row){state=state*1664525u+1013904223u;
+c=static_cast<char>(33+(state>>24)%90);
+}}
+const std::string bytes=expected_row+'\n';
+gzFile output=gzopen(p.string().c_str(),"wb1");
+ASSERT_NE(output,nullptr);
+const int written=gzwrite(output,bytes.data(),static_cast<unsigned>(bytes.size()));
+const int closed=gzclose(output);
+ASSERT_EQ(written,static_cast<int>(bytes.size()));
+ASSERT_EQ(closed,Z_OK);
+pas::LosslessEventReader bounded(p,bytes.size());
+ASSERT_TRUE(bounded.next(row));
+EXPECT_EQ(row,expected_row);
+EXPECT_FALSE(bounded.next(row));
+EXPECT_EQ(bounded.decoded_bytes(),bytes.size());
+}
 }
 TEST(DiagnosticJournal, ByteBoundDropsDebugAndFaultsCriticalWithoutDiscardingAdmittedRows){const auto root=fresh("pressure");
 std::mutex mutex;
@@ -201,9 +221,17 @@ a.close();
 ASSERT_FALSE(a.faulted());
 }const auto original=source/"round-1/events-0.jsonl.gz";
 ASSERT_TRUE(fs::exists(original));
-for(const auto*name:{"crc","truncated"}){const auto p=root/(std::string(name)+".jsonl.gz");
+for(const auto*name:{"crc","truncated","trailing","concatenated"}){SCOPED_TRACE(name);
+const auto p=root/(std::string(name)+".jsonl.gz");
 fs::copy_file(original,p);
 if(std::string_view(name)=="truncated")fs::resize_file(p,fs::file_size(p)-8);
+else if(std::string_view(name)=="trailing"){std::ofstream f(p,std::ios::binary|std::ios::app);
+f<<"unexpected trailing bytes";
+}
+else if(std::string_view(name)=="concatenated"){std::ifstream member(original,std::ios::binary);
+std::ofstream f(p,std::ios::binary|std::ios::app);
+f<<member.rdbuf();
+}
 else{std::fstream f(p,std::ios::binary|std::ios::in|std::ios::out);
 const auto offset=static_cast<std::streamoff>(fs::file_size(p)-8);
 f.seekg(offset);

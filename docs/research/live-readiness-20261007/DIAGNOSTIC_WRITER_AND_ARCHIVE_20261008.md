@@ -28,6 +28,16 @@ The existing writer has a 32 x 16 MiB per-round limit; its original fault is
 masked by a subsequent admission exception. That production batch is STOP and
 must not resume unchanged. No dense report or complete round summary exists.
 
+The retained writer03 Release test from frozen source
+`f96cebadab657e3be5a2e01b73281a67ec69bed0` ran all fifteen cases: fourteen
+passed, but a corrupt/truncated gzip counterexample was accepted as EOF.
+That native test remains STOP (native/runner=1, verification=1), with complete
+streams and natural process quiescence. No cost run follows that failed source.
+This revision replaces gzread EOF handling with strict inflate completion;
+the original corruption predicates remain and now also reject trailing bytes
+and concatenated gzip members. Each member must reach Z_STREAM_END, including
+verified CRC and size trailer, and consume the complete physical source.
+
 ## Changed contract
 
 `DiagnosticSnapshot` clones only bounded current scene/batch scalar values.
@@ -51,7 +61,7 @@ archives remain plain. Compressed rounds have <=256 segments, each <=16 MiB
 decoded; <=4 GiB total decoded; <=512 MiB total physical; <=1 MiB per event row.
 Before opening another segment it reserves its worst physical bound within the
 same 512 MiB cap. The writer retains the existing 8192-item/16 MiB mailbox.
-One fixed 64 KiB decoder buffer and one <=1 MiB row are used by readers. Gzip
+Two fixed 64 KiB input/decode buffers and one <=1 MiB row are used by readers. Gzip
 magic, CRC/truncation, per-segment decoded limits, contiguous segment names,
 physical/decoded totals and SHA bindings are independently checked. Compressed
 Windows rows reconstruct the original CRLF bytes. No old raw is overwritten.
