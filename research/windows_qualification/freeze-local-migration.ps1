@@ -45,12 +45,26 @@ foreach($freeze in $migration.old_freezes){
  $f=Bound (Join-Path $repo $freeze.path);if($f.bytes -ne $freeze.bytes -or $f.sha256 -cne $freeze.sha256){throw 'original-three-freezes'}
  foreach($row in (Get-Content -LiteralPath $f.path -Raw|ConvertFrom-Json).files){if($row.path -ceq $oldPath){$oldRows[$row.sha256]=$row}}
 }
-if($oldRows.Count -ne 1){throw 'single-preserved-generator-required'}
-$previous=@($oldRows.Values)[0];$old=Bound $previous.path
-if($old.bytes -ne $previous.bytes -or $old.sha256 -cne $previous.sha256){throw 'preserved-generator-original-seal'}
-$oldBlob='migration-blobs/'+$old.sha256+'.txt';[IO.File]::Copy($old.path,(Join-Path $destination $oldBlob),$false)
+if($oldRows.Count -gt 1){throw 'single-preserved-generator-required'}
+$oldEntries=@()
+if($oldRows.Count -eq 1){
+ $previous=@($oldRows.Values)[0];$old=Bound $previous.path
+ if($old.bytes -ne $previous.bytes -or $old.sha256 -cne $previous.sha256){throw 'preserved-generator-original-seal'}
+ $oldBlob='migration-blobs/'+$old.sha256+'.txt';[IO.File]::Copy($old.path,(Join-Path $destination $oldBlob),$false)
+ $oldEntries=@(@{path=$previous.path;bytes=$previous.bytes;sha256=$previous.sha256;preserved_original=@{path=$oldBlob;bytes=$old.bytes;sha256=$old.sha256}})
+}
+# The analyzer fixture was introduced after the original bridge freeze, just
+# like the packet's independent review TU. Preserve its handoff Git blob even
+# when there is no historical freeze member to migrate.
+$start=[Diagnostics.ProcessStartInfo]::new((Get-Command git.exe).Source)
+$start.UseShellExecute=$false;$start.CreateNoWindow=$true;$start.RedirectStandardOutput=$true
+foreach($arg in @('-C',$repo,'show',($migration.target_commit+':'+$relative))){$start.ArgumentList.Add($arg)}
+$process=[Diagnostics.Process]::Start($start);$memory=[IO.MemoryStream]::new()
+try{$process.StandardOutput.BaseStream.CopyTo($memory);$process.WaitForExit();if($process.ExitCode -ne 0 -or $memory.Length -ge 1048576){throw 'handoff-generator-blob'};$originalBytes=$memory.ToArray()}finally{$memory.Dispose();$process.Dispose()}
+$originalSha=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($originalBytes)).ToLowerInvariant()
+$originalBlob='migration-blobs/'+$originalSha+'.txt';if(-not(Test-Path -LiteralPath (Join-Path $destination $originalBlob))){[IO.File]::WriteAllBytes((Join-Path $destination $originalBlob),$originalBytes)}
 $migration.paths+=@{relative_path=$relative;canonical_target=@{path=$blobRelative;bytes=$current.bytes;sha256=$current.sha256};target_encodings=$variants;
- old_entries=@(@{path=$previous.path;bytes=$previous.bytes;sha256=$previous.sha256;preserved_original=@{path=$oldBlob;bytes=$old.bytes;sha256=$old.sha256}})}
+ old_entries=$oldEntries;handoff_original=@{path=$originalBlob;bytes=$originalBytes.Length;sha256=$originalSha;source_commit=$migration.target_commit}}
 $originalCommit=$migration.target_commit;$migration.target_commit=$SourceCommit
 $migration|Add-Member -NotePropertyName local_derivation -NotePropertyValue @{packet=(Bound $PacketMigration);handoff_commit=$originalCommit;
  additional_source_delta=$relative;reason='Windows text-mode CRLF differed from byte-exact binary-mode scoped review restoration';protocol_modified=$false;original_receipts_modified=$false}
