@@ -9,7 +9,7 @@ using namespace pas;using namespace pas::current_rails;using J=nlohmann::json;
 namespace {
 J trial(bool candidate,int offset,int cadence,bool absent,bool skip){
  FakeClock clock;auto rt=std::make_unique<Runtime>(clock);std::vector<std::uint8_t> p;std::set<std::uint64_t> accepted_ids;bool safe=true;int processed=0;
- rt->event_output=[&](const J& e){if(e.at("event")=="own_accepted_plan"){if(accepted_ids.size()>=128)throw std::runtime_error("test plan identity cap");accepted_ids.insert(e.at("note"));}};
+ rt->event_output=[&](const J& e){if(e.at("event")=="own_accepted_plan"){if(accepted_ids.size()>=128)throw std::runtime_error("test plan identity cap");accepted_ids.insert(e.at("note").get<std::uint64_t>());}};
  for(int i=1;i<=64;++i){if(skip&&i%4==1&&i>4)continue;tap_reset_workload::render_phase(p,(i-1)%32,offset,absent);Frame f;
   f.sequence=i;f.epoch=f.generation=f.geometry_version=1;f.width=1280;f.height=720;f.stride=3840;f.source_rotation=1;f.capture_complete_ns=f.pixels_ready_ns=1'000'000'000LL+Nanoseconds(i)*cadence*1'000'000;
   f.rgb=p;clock.set(f.capture_complete_ns);safe&=rt->dispatch(f,candidate);++processed;
