@@ -17,7 +17,7 @@ int main(int argc,char** argv){try{
  const auto r=read(report,1048576),a=read(attempts,16ull*1024*1024);
  const std::size_t n=r.at("requested");require(n>=1000&&n<=10000&&a.is_array()&&a.size()==n,"full denominator");
  std::size_t first=0,last_owned=0,owned=0;Ns previous_capture=0;J timing=J::array(),overruns=J::array();
- for(std::size_t i=0;i<n;++i){const auto& row=a[i];require(row.at("attempt")==i+1,"attempt order");if(row.at("owned").get<bool>()){++owned;last_owned=i+1;}else if(last_owned&&!first)first=i+1;}
+ for(std::size_t i=0;i<n;++i){const auto& row=a[i];require(row.at("attempt")==i+1,"attempt order");if(row.at("owned").get<bool>()){++owned;last_owned=i+1;}else if(row.at("consumed").get<bool>()&&last_owned&&!first)first=i+1;}
  require(owned==r.at("owner_seen")&&first>0&&!r.at("safe").get<bool>()&&r.at("supervisor_stopped").get<bool>(),"stopped run and owner join");
  const Ns cadence=r.at("cadence_ms").get<Ns>()*1000000;
  for(std::size_t i=0;i<n;++i){const auto& row=a[i];const Ns capture=row.at("capture"),end=row.at("owner_complete"),due=row.at("producer_due_ns"),render=row.at("render_end_ns"),pub=row.at("publication_return_ns");
