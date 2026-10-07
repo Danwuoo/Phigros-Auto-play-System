@@ -62,7 +62,7 @@ Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionS
  // The original Tap contract is retained; its historical RGB novelty and
  // relation logic are never replaced by a permissive Hold colour predicate.
  auto taps=current_execution::evaluate(tap_,f,b,scene,ledger,now,checkpoint);
- if(taps.interrupted)return invalid();
+ if(taps.interrupted||taps.source_expired){out.interrupted=taps.interrupted;out.source_expired=taps.source_expired;out.outcome=taps.outcome;return invalid();}
  if(checkpoint)now=checkpoint->now();
  for(auto& t:taps.filtered.targets)if(t.note.kind==NoteKind::tap){out.filtered.targets.push_back(t);++out.accepted;}
  // Drag/Flick keep the original formal observer/owner contract. This adapter
@@ -72,9 +72,10 @@ Evaluation Hook::evaluate(const Frame& f,const CandidateBatch& b,const DecisionS
  for(const auto& c:b.candidates){
   if(c.note.kind!=NoteKind::hold)continue;
   if(checkpoint){
-   if(!checkpoint->check())return invalid();
+   if(!checkpoint->check()){out.interrupted=true;out.outcome="hold_checkpoint_failed";return invalid();}
    const auto resumed=checkpoint->now();
-   if(resumed<now||resumed-f.capture_complete_ns>=100*ms||!ledger.valid())return invalid();
+   if(resumed<now||!ledger.valid()){out.interrupted=true;out.outcome=resumed<now?"hold_clock_reversed":"hold_ledger_invalid";return invalid();}
+   if(resumed-f.capture_complete_ns>=100*ms){out.source_expired=true;out.outcome="source_expired_before_hold";return invalid();}
    now=resumed;
   }
   auto& s=out.support[out.count++];s.candidate=c.candidate_id;

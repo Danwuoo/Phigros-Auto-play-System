@@ -14,6 +14,8 @@ struct Evaluation {
     std::array<Support,128> support{};
     std::size_t count=0,accepted=0,raw=0,unknown=0;
     bool valid=false;
+    bool interrupted=false,source_expired=false;
+    std::string_view outcome="current_evidence";
     std::uint64_t probes=0;
 };
 // One current lease, 128 identities x six measured local distances / <=90ms.

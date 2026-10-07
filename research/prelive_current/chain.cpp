@@ -92,12 +92,12 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
   // A due Up or evidence expiry must not wait for the next producer frame.
   // The same consumer remains the sole owner; receipts use the same bounded
   // stream/ledger/Journal join as dispatch, with no retry after uncertainty.
-  if(!supervisor_stopped&&!rt.step.poll()){safe=false;stop=rt.owner.scheduler()&&!rt.owner.scheduler()->fault().empty()?rt.owner.scheduler()->fault():std::string(rt.ledger.reason());supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
+  if(!supervisor_stopped&&!rt.step.poll()){safe=false;stop=rt.step.stop_reason();supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
   if(!supervisor_stopped&&(admission_failed||journal.faulted())){safe=false;stop="journal_admission_or_writer_fault";supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
   const auto wait=owner_wait_ns(supervisor_stopped?nullptr:rt.owner.scheduler(),clock.now_ns());
   auto f=latest.read_after(seen,wait);if(!f){if(done)break;continue;}seen=f->sequence;auto& s=samples[seen];s.consumed=true;s.published=f->published_ns;
   if(scene=="slow")std::this_thread::sleep_for(std::chrono::milliseconds(12));
-  if(!supervisor_stopped&&!rt.dispatch(*f,mode=="B")){safe=false;stop=rt.owner.scheduler()&&!rt.owner.scheduler()->fault().empty()?rt.owner.scheduler()->fault():std::string(rt.ledger.reason());supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
+  if(!supervisor_stopped&&!rt.dispatch(*f,mode=="B")){safe=false;stop=rt.step.stop_reason();supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
   s.recognition=clock.now_ns();s.observer=supervisor_stopped?0:rt.observer_compute;s.hook=supervisor_stopped?0:rt.hook_compute;s.owner=supervisor_stopped?0:rt.owner_compute;s.owned=!supervisor_stopped&&rt.owner_processed;++consumed;invalid+=mode=="B"&&!rt.last.valid;
   // Diagnostics carry joined frame/intent receipts and stay one-way.
   s.writer=emit({{"event","complete_current_chain"},{"frame",seen},{"capture",f->capture_complete_ns},{"pixels_ready",f->pixels_ready_ns},{"published",f->published_ns},{"owner_complete",s.recognition},{"downs",rt.backend.downs},{"moves",rt.backend.moves},{"ups",rt.backend.ups}},scene!="writer");
@@ -113,6 +113,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  std::size_t owned=0;std::vector<double> owned_total;for(const auto&s:samples)if(s.owned){++owned;owned_total.push_back((s.recognition-s.capture)/1e6);}result["owner_seen"]=owned;result["owner_seen_fraction"]=double(owned)/n;result["capture_to_owner_ms"]=distribution(owned_total);
  J measurement;std::vector<double> mt,mo,mh,mr;std::size_t mn=0;for(int i=257;i<=n;++i){const auto& s=samples[i];if(!s.owned)continue;++mn;mt.push_back((s.recognition-s.capture)/1e6);mo.push_back(s.owner/1e6);mh.push_back(s.hook/1e6);mr.push_back(s.observer/1e6);}measurement={{"attempts",n-256},{"owner_seen",mn},{"owner_seen_fraction",double(mn)/(n-256)},{"capture_to_owner_ms",distribution(mt)},{"observer_ms",distribution(mr)},{"hook_ms",distribution(mh)},{"owner_ms",distribution(mo)}};
  result["measurement"]=measurement;result["warmup_attempts"]=256;result["cadence_ms"]=cadence;
+ result["first_owner_failure"]=rt.step.first_failure();result["lifecycle_stop_reason"]=rt.lifecycle.status().reason;
  result["owner_wait_policy"]="same_consumer_poll_before_wait; min(next_phase_or_expiry,10ms_watchdog); frame_arrival_wakes_early";
  result["producer_wait_policy"]="QPC absolute unchanged epoch/cadence; high-resolution waitable timer; ceil100ns; no coalescing; bounded wait; no fallback";
  result["phase_lateness_ms"]={{"down",distribution(phase_late[0])},{"move",distribution(phase_late[1])},{"up",distribution(phase_late[2])}};result["journal_admitted_bytes"]=journal_bytes;result["journal_records"]=journal_records;result["journal_admission_failed"]=admission_failed;result["supervisor_stopped"]=supervisor_stopped;result["final_release"]={{"requested",rt.final_release.requested_ids},{"failed",rt.final_release.failed_ids},{"unknown",rt.final_release.unknown_ids},{"start",rt.final_release.start_ns},{"return",rt.final_release.return_ns}};

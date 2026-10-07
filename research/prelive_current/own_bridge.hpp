@@ -85,6 +85,8 @@ struct Evaluation {
     DecisionSnapshot filtered;
     std::size_t allowed=0;
     bool interrupted=false;
+    bool source_expired=false;
+    std::string_view outcome="current_evidence";
 };
 Evaluation evaluate(bvi::Candidate&,const Frame&,const CandidateBatch&,
                     const DecisionSnapshot&,const ExecutionLedger&,Nanoseconds now,

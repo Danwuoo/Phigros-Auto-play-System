@@ -316,13 +316,20 @@ Evaluation evaluate(bvi::Candidate& candidate,const Frame& f,const CandidateBatc
         candidate.extract(view,queries,lines);
     if(checkpoint) {
         if(e.observation.reason=="owner checkpoint stopped"||!checkpoint->check()) {
-            e.interrupted=true;e.filtered.playing_gate=false;e.filtered.capacity_valid=false;return e;
+            e.interrupted=true;e.outcome="owner_checkpoint_failed";e.filtered.playing_gate=false;e.filtered.capacity_valid=false;return e;
         }
         const auto resumed=checkpoint->now();
         // Poll may complete/revoke an attachment. Re-read both time and ledger;
         // never commit with the pre-extraction lease or completed identity.
-        if(resumed<now||resumed-f.capture_complete_ns>=100'000'000||!ledger.valid()) {
-            e.interrupted=true;e.filtered.playing_gate=false;e.filtered.capacity_valid=false;return e;
+        if(resumed<now||!ledger.valid()) {
+            e.interrupted=true;e.outcome=resumed<now?"checkpoint_clock_reversed":"checkpoint_ledger_invalid";
+            e.filtered.playing_gate=false;e.filtered.capacity_valid=false;return e;
+        }
+        if(resumed-f.capture_complete_ns>=100'000'000) {
+            // Expiry revokes this observation. A healthy owner remains able to
+            // process a later fresh frame; it does not retry an expired intent.
+            e.source_expired=true;e.outcome="source_expired_after_extract";
+            e.filtered.playing_gate=false;e.filtered.capacity_valid=false;return e;
         }
         now=resumed;
     }
