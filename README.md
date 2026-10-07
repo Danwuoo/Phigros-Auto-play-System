@@ -1,8 +1,11 @@
 # Phigros Auto-play System
 
 2026-10-07 Windows 實際結果見 [Windows readiness：NOT_READY](docs/research/live-readiness-20261007/README.md)。
-三配置與 83 個冷 stage、3063 WIC prefix、cold CLI 15 控制通過；A/A Tap1–2 合格，
-Tap3 分析程序因 Job 成員 image identity 未確認而 STOP，後九筆／noise／ABBA 未跑。
+三配置與 83 個冷 stage、3063 WIC prefix、cold CLI 15 控制通過。
+[Job 身分修補 v3](docs/research/live-readiness-20261007/JOB_IDENTITY_REPAIR_20261007.md) 已通過
+39＋9 個 file-only 控制、4 個 native 資格控制與27次實際追加控制，包含 error 5 的真實分支。
+新 AA04 的直接 producer／auditor／analyzer 全部通過程序驗證，但首筆 Tap full phase
+lateness p99=18.832ms 超過原15ms門檻，批次停止；後11筆／noise／ABBA未跑。
 入口保持 UNQUALIFIED，零 emulator／觸控；完整 live validator、physical 與全曲 IN Miss=0 尚未完成。
 
 最新雲端 readiness 候選由 [10/6 續作入口](docs/research/live-readiness-20261006/README.md) 進入。

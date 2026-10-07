@@ -1,6 +1,10 @@
 # 2026-10-07 Windows readiness 實際結果：NOT_READY
 
-三配置冷回歸、3063 個原始 WIC frames 及冷編譯收據 CLI 已完成。Windows A/A 實際產生三筆 Tap，前兩筆完整通過；第三筆分析程序在 root-exit 無法確認一個 Job 成員的 image identity，必要程序門檻 STOP。**AA12／noise／ABBA 未取得資格，live 入口保持 UNQUALIFIED；本輪零 emulator 啟動、零裝置命令、零觸控。全曲完整 IN Miss=0 未完成。**
+三配置冷回歸、3063 個原始 WIC frames 及冷編譯收據 CLI 已完成。使用者續派的
+[Job 身分修補與評估](JOB_IDENTITY_REPAIR_20261007.md) 已完成 v3：包含真實 error 5
+分支的27次追加控制全過，新 AA04 的直接 producer／auditor／analyzer 程序收據全過。
+目前必要成本門檻改為首筆 Tap full phase lateness p99=18.832ms > 原15ms，批次停止。
+**AA12／noise／ABBA 未取得資格，live 入口保持 UNQUALIFIED；本輪零 emulator 啟動、零裝置命令、零觸控。全曲完整 IN Miss=0 未完成。**
 
 完整實際路徑、SHA、各 stage、原 STOP、容量及三筆 raw 分布見 [result-index.json](result-index.json)。已執行 recipe／GUI helper 的逐 byte source 副本見 [recorded-recipe-copies.json](recorded-recipe-copies.json)；實際測試輸入仍保留原 OUT 路徑。這些副本不代表新的執行或新的成本資格。
 

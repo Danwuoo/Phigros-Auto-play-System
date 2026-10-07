@@ -1,5 +1,10 @@
 # Windows Job 修補 v3：已驗身分與退出時間窗
 
+實際結果見 [修復評估](../../docs/research/live-readiness-20261007/JOB_IDENTITY_REPAIR_20261007.md)。
+39＋9 file-only、4 native資格控制及27追加控制通過，包含真正error5／限時等待分支。
+新AA04三個直接成本程序全部COMPLETE，numeric成本則因full phase lateness p99
+18.832ms超過原15ms而STOP。原threshold與warmup保留，實機入口保持UNQUALIFIED。
+
 使用者 2026-10-07 明確授權修復並評估。v1 只在 root exit 開始辨識子程序；v2
 提前驗證並持有 handle，但 aa03 的實際 producer 又重現 error 5／未 signaled：
 PID 23960 的初次完整 image 是 `C:/Windows/System32/conhost.exe`，退出時 image

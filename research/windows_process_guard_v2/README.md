@@ -1,5 +1,8 @@
 # Windows Job 成員身分修補 v2
 
+此版本為保留的研究快照。AA03 實量另發現 image error5 先於 handle signaled 的時間窗；
+現行修補與結果見 [v3](../windows_process_guard_v3/README.md)，v2 不作完整修復宣稱。
+
 2026-10-07。使用者明確要求修復並評估原 Tap3 `member-identity-untrusted:root-exit`。
 這是必要維護守衛，不是遊戲策略、正式成本分析器或實機 admission。
 
