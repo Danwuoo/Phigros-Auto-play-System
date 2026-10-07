@@ -24,8 +24,8 @@ void tap(Tests&t){Context c;t.check("actual_owner_tap_down",c.start(NoteKind::ta
  const auto due=c.owner.scheduler()->next_due_ns();t.check("actual_tap_up_deadline",due&&*due==28*ms);
  t.check("watchdog_caps_distant_phase",owner_wait_ns(c.owner.scheduler(),10*ms)==10*ms);
  c.clock.set(20*ms);t.check("wait_shortens_before_up",owner_wait_ns(c.owner.scheduler(),c.clock.now_ns())==8*ms);
- c.clock.set(28*ms);t.check("due_phase_no_wait",owner_wait_ns(c.owner.scheduler(),c.clock.now_ns())==0);
- t.check("up_executes_without_new_frame",c.idle()&&c.backend.ups==1&&c.backend.active_count()==0&&c.events.size()==2&&c.events.back().issued.phase==Phase::up&&c.events.back().receipt.injection_start_ns==28*ms);
+ const auto before=c.events.size();c.clock.set(28*ms);t.check("due_phase_no_wait",owner_wait_ns(c.owner.scheduler(),c.clock.now_ns())==0);
+ t.check("up_executes_without_new_frame",c.idle()&&c.backend.ups==1&&c.backend.active_count()==0&&c.events.size()==before+1&&c.events.back().issued.phase==Phase::up&&c.events.back().receipt.injection_start_ns==28*ms);
  t.check("idle_up_ledger_completed",c.step.ledger.find(42)&&c.step.ledger.find(42)->state==Execution::completed);
  c.clock.set(30*ms);c.owner.accept(scene(NoteKind::tap),true);t.check("stale_packet_cannot_replay_completed_down",c.idle()&&c.backend.downs==1&&c.backend.ups==1);
  t.check("tap_final_release_verified",c.step.finish());}
