@@ -1,5 +1,9 @@
 # Phigros Auto-play System
 
+2026-10-07 Windows 本機接續見 [fresh Windows readiness](docs/research/live-readiness-20261007/README.md)。
+原 source-only 包已核對，fresh native gate／三配置建置與 Win32 production 編譯完成；
+新 C++20 cold 收據唯讀 CLI 不授予 live，成本、physical 與全曲 IN Miss=0 仍待驗證。
+
 最新雲端 readiness 候選由 [10/6 續作入口](docs/research/live-readiness-20261006/README.md) 進入。
 起點為 main `e9e305e3aba13f05a786c74540419428610b2f76`，本分支只有 local commits，未 push。
 本輪補強成本原始證據／campaign 身分、活動 Hold 的當前 body 與不確定釋放證據；
