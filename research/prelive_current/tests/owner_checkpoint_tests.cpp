@@ -19,7 +19,7 @@ struct Pixels{
   if(kind==NoteKind::hold){target.note.tail=Vec2{400,200};target.note.rails_geometry=true;target.note.head_on_line=true;target.current_contact=GameTarget::CurrentContact::hold_front_rails;target.reason="current_rails_v1_measured_front_overlap";}else target.reason="prediction_observe_only";
   target.hit={400,500};target.evidence_ns=12*ms;target.expires_ns=112*ms;target.crossing_ns=12*ms;target.samples=3;target.history_span_ns=40*ms;target.uncertainty_ns=2*ms;scene.targets={target};
   batch.context=scene.context;batch.source_valid=true;batch.capacity_valid=true;batch.playing_gate=true;batch.ui=GameUi::playing;batch.lines=scene.lines;
-  NoteCandidate candidate;candidate.candidate_id=1;candidate.note=target.note;candidate.head_visible=candidate.body_visible=candidate.action_support=true;candidate.quality=ObservationQuality::strong_current;batch.candidates={candidate};
+  TrackingCandidate candidate;candidate.candidate_id=1;candidate.note=target.note;candidate.head_visible=candidate.body_visible=candidate.action_support=true;candidate.quality=ObservationQuality::strong_current;batch.candidates={candidate};
  }
  DecisionSnapshot initial(){auto s=scene;s.context.frame=s.sequence=1;s.context.capture_ns=10*ms;for(auto& l:s.lines)l.observed_ns=10*ms;for(auto& t:s.targets){t.revision=1;t.evidence_ns=10*ms;t.expires_ns=110*ms;t.crossing_ns=10*ms;}return s;}
 };
