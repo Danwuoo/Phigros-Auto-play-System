@@ -13,3 +13,19 @@ research/prelive_current/windows_recipe_evidence/** -text -whitespace
 # Preserve final and historical portable summary seals on Windows too.
 research/prelive_portable/*MANIFEST* -text -whitespace
 research/prelive_portable/*RESULTS* -text -whitespace
+# Keep the recorded Windows attempt recipes and evidence byte-identical.
+docs/research/live-readiness-20261007/*.json -text -whitespace
+research/windows_qualification/functional-gui-source/** -text -whitespace
+research/windows_qualification/build-gui03.ps1 -text -whitespace
+research/windows_qualification/cmake-gui-stage.ps1 -text -whitespace
+research/windows_qualification/continue-aa01-after-maintenance.ps1 -text -whitespace
+research/windows_qualification/functional-gui-stage.ps1 -text -whitespace
+research/windows_qualification/pixels-gui.ps1 -text -whitespace
+research/windows_qualification/reader-controls-gui.ps1 -text -whitespace
+research/windows_qualification/review-aa01-tap1-02.ps1 -text -whitespace
+research/windows_qualification/run-aa-gui-controls.ps1 -text -whitespace
+research/windows_qualification/run-functional-gui-asan-remaining.ps1 -text -whitespace
+research/windows_qualification/run-functional-gui-debug-family2.ps1 -text -whitespace
+research/windows_qualification/run-functional-gui.ps1 -text -whitespace
+research/windows_qualification/write-final-index.ps1 -text -whitespace
+research/windows_qualification/write-prerequisites-win04-map.ps1 -text -whitespace

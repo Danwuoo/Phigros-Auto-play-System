@@ -1,8 +1,9 @@
 # Phigros Auto-play System
 
-2026-10-07 Windows 本機接續見 [fresh Windows readiness](docs/research/live-readiness-20261007/README.md)。
-原 source-only 包已核對，fresh native gate／三配置建置與 Win32 production 編譯完成；
-新 C++20 cold 收據唯讀 CLI 不授予 live，成本、physical 與全曲 IN Miss=0 仍待驗證。
+2026-10-07 Windows 實際結果見 [Windows readiness：NOT_READY](docs/research/live-readiness-20261007/README.md)。
+三配置與 83 個冷 stage、3063 WIC prefix、cold CLI 15 控制通過；A/A Tap1–2 合格，
+Tap3 分析程序因 Job 成員 image identity 未確認而 STOP，後九筆／noise／ABBA 未跑。
+入口保持 UNQUALIFIED，零 emulator／觸控；完整 live validator、physical 與全曲 IN Miss=0 尚未完成。
 
 最新雲端 readiness 候選由 [10/6 續作入口](docs/research/live-readiness-20261006/README.md) 進入。
 起點為 main `e9e305e3aba13f05a786c74540419428610b2f76`，本分支只有 local commits，未 push。
