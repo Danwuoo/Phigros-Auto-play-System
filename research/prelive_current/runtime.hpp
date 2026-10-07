@@ -33,7 +33,8 @@ public:
  bool dispatch(const Frame& f,bool candidate=true) {
   owner_processed=false;observer_compute=hook_compute=owner_compute=0;
   if(step.blocked()||!step.poll())return false;
-  HostClock meter;const auto t0=meter.now_ns();auto s=observer.process(f);observer_compute=meter.now_ns()-t0;const auto ui=session_ui_pixels(f,s);
+  step.diagnostic_profile.begin_frame(f.sequence);HostClock meter;const auto t0=meter.now_ns();DecisionSnapshot s;
+  step.diagnostic_profile.run("observer_process",[&]{s=observer.process(f);});observer_compute=meter.now_ns()-t0;const auto ui=session_ui_pixels(f,s);
   const auto status=lifecycle.observe(s.context,ui,s.playing_gate,clock_.now_ns());
   if(status.ended&&owner.owner()){if(!finish())return false;}
   if(status.new_round){if(!step.start(status.round))return false;observer.reset();s.playing_gate=false;s.targets.clear();s.lines.clear();}

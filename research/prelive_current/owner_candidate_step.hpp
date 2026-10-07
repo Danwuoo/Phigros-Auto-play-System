@@ -2,6 +2,7 @@
 #include "current.hpp"
 #include "pas/game_session.hpp"
 #include "pas/game_tracking.hpp"
+#include "diagnostic_phase_profile.hpp"
 
 namespace pas::current_rails {
 // Endpoint-free action seam. References the existing sole owner and its bounded
@@ -41,6 +42,7 @@ public:
  std::string_view evaluation_outcome="not_evaluated";
  std::uint64_t checkpoint_calls=0;
  Nanoseconds checkpoint_max_gap=0;
+ diagnostic_phase::Profile diagnostic_profile;
  OwnerCandidateStep(const Clock& c,SessionGameOwner& owner,current_execution::ReceiptStream& stream)
      :clock_(c),owner_(owner),receipts_(stream) {}
  OwnerCandidateStep(const OwnerCandidateStep&)=delete;
@@ -70,27 +72,35 @@ public:
  bool accept(const Frame& f,const CandidateBatch& batch,const DecisionSnapshot& s,bool allow,bool candidate=true) {
   owner_processed=false;hook_compute=owner_compute=0;accepting_frame_=f.sequence;accepting_capture_=f.capture_complete_ns;
   evaluation_outcome="current_evidence";checkpoint_calls=0;checkpoint_max_gap=0;
+  diagnostic_profile.begin_frame(f.sequence);
   if(blocked())return fail("accept_blocked",failure_cause());
   // Linearize due/expired work before a fresh-but-delayed observation can
   // revise an old lease. All callers share this expired-first boundary.
   if(!poll())return false;
   raw+=batch.candidates.size();
-  if(event_output){event_output({{"event","current_observer_scene"},{"scene",decision_json(s)}});event_output({{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(batch)}});}
+  if(event_output){nlohmann::json scene,raw_batch;
+   diagnostic_profile.run("current_scene_json_build",[&]{scene={{"event","current_observer_scene"},{"scene",decision_json(s)}};});
+   diagnostic_profile.run("current_scene_output",[&]{event_output(std::move(scene));});
+   diagnostic_profile.run("candidate_batch_json_build",[&]{raw_batch={{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(batch)}};});
+   diagnostic_profile.run("candidate_batch_output",[&]{event_output(std::move(raw_batch));});}
   HostClock meter;auto t0=meter.now_ns();DecisionSnapshot filtered;
   const auto evaluate_start=clock_.now_ns();auto checkpoint_previous=evaluate_start;
   const current_execution::OwnerCheckpoint checkpoint{clock_,[this,&checkpoint_previous](){const auto qpc=clock_.now_ns();++checkpoint_calls;checkpoint_max_gap=std::max(checkpoint_max_gap,qpc-checkpoint_previous);checkpoint_previous=qpc;return poll();}};
-  if(candidate){last=hook.evaluate(f,batch,s,ledger,clock_.now_ns(),&checkpoint);accepted+=last.accepted;unknown+=last.unknown;
+  if(candidate){diagnostic_profile.run("hook_evaluate",[&]{last=hook.evaluate(f,batch,s,ledger,clock_.now_ns(),&checkpoint);});accepted+=last.accepted;unknown+=last.unknown;
    for(std::size_t k=0;k<last.count;++k){terminals+=last.support[k].terminal;bodies+=last.support[k].body;}filtered=last.filtered;evaluation_outcome=last.outcome;
    if(last.interrupted)return fail("candidate_evaluate",last.outcome);
   }else{const auto e=current_execution::evaluate(*baseline,f,batch,s,ledger,clock_.now_ns(),&checkpoint);evaluation_outcome=e.outcome;if(e.interrupted)return fail("baseline_evaluate",e.outcome);accepted+=e.allowed;filtered=e.filtered;if(e.input.valid&&!e.source_expired&&ledger.valid())for(const auto&t:s.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&ledger.permits_current_target(t.note_id)){filtered.targets.push_back(t);++accepted;}}
   if(blocked())return fail("after_evaluate",failure_cause());
-  hook_compute=meter.now_ns()-t0;if(event_output)event_output({{"event","filtered_owner_scene"},{"allow",allow},{"scene",decision_json(filtered)}});
+  hook_compute=meter.now_ns()-t0;if(event_output){nlohmann::json row;
+   diagnostic_profile.run("filtered_scene_json_build",[&]{row={{"event","filtered_owner_scene"},{"allow",allow},{"scene",decision_json(filtered)}};});
+   diagnostic_profile.run("filtered_scene_output",[&]{event_output(std::move(row));});}
   t0=meter.now_ns();const auto commit_now=clock_.now_ns();
   if(commit_now<evaluate_start)return fail("before_commit","owner_clock_reversed");
   if(commit_now-f.capture_complete_ns>=100'000'000){evaluation_outcome="source_expired_before_commit";filtered.targets.clear();filtered.playing_gate=false;filtered.capacity_valid=false;allow=false;}
   // Every late frame is still processed as a revoke, with no new action.
   // The same owner and ledger retain completed/cancelled/unknown identities.
-  owner_.accept(filtered,allow);owner_processed=bool(owner_.owner());owner_.poll();const bool ok=sync();owner_compute=meter.now_ns()-t0;
+  bool ok=false;diagnostic_profile.run("owner_accept_poll_sync",[&]{owner_.accept(filtered,allow);owner_processed=bool(owner_.owner());owner_.poll();ok=sync();});owner_compute=meter.now_ns()-t0;
+  if(diagnostic_profile.enabled&&event_output)event_output({{"event","diagnostic_phase_profile"},{"profile",diagnostic_profile.json()}});
   if(event_output)event_output({{"event","owner_step_outcome"},{"source_frame",f.sequence},{"capture_complete_ns",f.capture_complete_ns},{"commit_qpc_ns",commit_now},{"outcome",evaluation_outcome},{"checkpoint_calls",checkpoint_calls},{"checkpoint_max_gap_ns",checkpoint_max_gap},{"ledger_valid",ledger.valid()},{"ledger_reason",ledger.reason()}});
   return ok||fail("accept_sync",failure_cause());
  }
