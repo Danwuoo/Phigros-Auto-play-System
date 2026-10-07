@@ -7,6 +7,7 @@
 #include "campaign_provenance.hpp"
 #include "offline_output.hpp"
 #include "streaming_workload.hpp"
+#include "owner_wait.hpp"
 #include "pas/journal.hpp"
 #include <algorithm>
 #include <atomic>
@@ -77,12 +78,19 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
   emit({{"event","own_injection_receipt"},{"intent",c.intent_id},{"source_frame",c.source_frame_sequence},{"contact",c.contact_id},{"x",c.x},{"y",c.y},{"phase",static_cast<int>(c.phase)},{"scheduled",c.scheduled_ns},{"injection_start",r.injection_start_ns},{"injection_return",r.injection_return_ns},{"success",r.success},{"reason",r.reason}});
  };
  const auto begin=clock.now_ns();std::uint64_t initial_rss=rss(),peak_rss=initial_rss;std::size_t consumed=0,invalid=0;std::atomic<bool> safe=true;std::string stop;
- // Latest-only producer uses an 8ms cadence; no waiting for the consumer.
+ // Producer remains independent: normal 20ms; slow/stress 8ms.
  const int cadence=scene=="slow"||n==10000?8:20;
  const auto due_epoch=clock.now_ns();const auto producer_start=std::chrono::steady_clock::now();
  if(!emit({{"event","producer_schedule"},{"epoch_ns",due_epoch},{"cadence_ms",cadence},{"requested",n},{"generator",streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB"}}))throw std::runtime_error("producer schedule Journal admission");
  std::jthread producer([&]{const auto start=producer_start;try{for(int i=1;i<=n;++i){std::this_thread::sleep_until(start+std::chrono::milliseconds((i-1)*cadence));auto& sample=samples[i];sample.producer_due=due_epoch+Nanoseconds(i-1)*cadence*1'000'000;sample.render_start=clock.now_ns();if(streaming)streaming_workload::render(generated,i);sample.render_end=clock.now_ns();Frame f;f.sequence=i;f.epoch=f.generation=f.geometry_version=1;f.width=1280;f.height=720;f.stride=3840;f.source_rotation=1;f.capture_backend="offline_memory_stub";f.capture_complete_ns=f.pixels_ready_ns=sample.render_end;sample.capture=f.capture_complete_ns;const auto* pixels=streaming?generated.data():images[(i-1)%12].data();sample.published_ok=latest.publish(pixels,1280*720*3,f);sample.publication_return=clock.now_ns();++publish_attempts;}}catch(...){safe=false;}done=true;});
- bool supervisor_stopped=false;std::uint64_t seen=0;while(true){auto f=latest.read_after(seen,10'000'000);if(!f){if(done)break;continue;}seen=f->sequence;auto& s=samples[seen];s.consumed=true;s.published=f->published_ns;
+ bool supervisor_stopped=false;std::uint64_t seen=0;while(true){
+  // A due Up or evidence expiry must not wait for the next producer frame.
+  // The same consumer remains the sole owner; receipts use the same bounded
+  // stream/ledger/Journal join as dispatch, with no retry after uncertainty.
+  if(!supervisor_stopped&&!rt.step.poll()){safe=false;stop=rt.owner.scheduler()&&!rt.owner.scheduler()->fault().empty()?rt.owner.scheduler()->fault():std::string(rt.ledger.reason());supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
+  if(!supervisor_stopped&&(admission_failed||journal.faulted())){safe=false;stop="journal_admission_or_writer_fault";supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
+  const auto wait=owner_wait_ns(supervisor_stopped?nullptr:rt.owner.scheduler(),clock.now_ns());
+  auto f=latest.read_after(seen,wait);if(!f){if(done)break;continue;}seen=f->sequence;auto& s=samples[seen];s.consumed=true;s.published=f->published_ns;
   if(scene=="slow")std::this_thread::sleep_for(std::chrono::milliseconds(12));
   if(!supervisor_stopped&&!rt.dispatch(*f,mode=="B")){safe=false;stop=rt.owner.scheduler()&&!rt.owner.scheduler()->fault().empty()?rt.owner.scheduler()->fault():std::string(rt.ledger.reason());supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
   s.recognition=clock.now_ns();s.observer=supervisor_stopped?0:rt.observer_compute;s.hook=supervisor_stopped?0:rt.hook_compute;s.owner=supervisor_stopped?0:rt.owner_compute;s.owned=!supervisor_stopped&&rt.owner_processed;++consumed;invalid+=mode=="B"&&!rt.last.valid;
@@ -100,6 +108,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  std::size_t owned=0;std::vector<double> owned_total;for(const auto&s:samples)if(s.owned){++owned;owned_total.push_back((s.recognition-s.capture)/1e6);}result["owner_seen"]=owned;result["owner_seen_fraction"]=double(owned)/n;result["capture_to_owner_ms"]=distribution(owned_total);
  J measurement;std::vector<double> mt,mo,mh,mr;std::size_t mn=0;for(int i=257;i<=n;++i){const auto& s=samples[i];if(!s.owned)continue;++mn;mt.push_back((s.recognition-s.capture)/1e6);mo.push_back(s.owner/1e6);mh.push_back(s.hook/1e6);mr.push_back(s.observer/1e6);}measurement={{"attempts",n-256},{"owner_seen",mn},{"owner_seen_fraction",double(mn)/(n-256)},{"capture_to_owner_ms",distribution(mt)},{"observer_ms",distribution(mr)},{"hook_ms",distribution(mh)},{"owner_ms",distribution(mo)}};
  result["measurement"]=measurement;result["warmup_attempts"]=256;result["cadence_ms"]=cadence;
+ result["owner_wait_policy"]="same_consumer_poll_before_wait; min(next_phase_or_expiry,10ms_watchdog); frame_arrival_wakes_early";
  result["phase_lateness_ms"]={{"down",distribution(phase_late[0])},{"move",distribution(phase_late[1])},{"up",distribution(phase_late[2])}};result["journal_admitted_bytes"]=journal_bytes;result["journal_records"]=journal_records;result["journal_admission_failed"]=admission_failed;result["supervisor_stopped"]=supervisor_stopped;result["final_release"]={{"requested",rt.final_release.requested_ids},{"failed",rt.final_release.failed_ids},{"unknown",rt.final_release.unknown_ids},{"start",rt.final_release.start_ns},{"return",rt.final_release.return_ns}};
  result["injection_ms"]=distribution(injection);result["all_phase_lateness_ms"]=distribution(late);result["evidence_to_injection_ms"]=distribution(evidence_to_injection);result["receipt_count"]=receipt_count;result["release_calls"]=release_calls;result["provenance"]=provenance;
  result["producer_epoch_ns"]=due_epoch;result["producer_render_ms"]=distribution(render_times);result["producer_schedule_lateness_ms"]=distribution(producer_late);result["render_start_to_owner_ms"]=distribution(render_owner);result["producer_deadline_overruns"]=producer_overruns;result["render_start_to_publication_return_ms"]=distribution(render_publication);result["publication_deadline_overruns"]=publication_overruns;

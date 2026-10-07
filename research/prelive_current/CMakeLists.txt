@@ -71,6 +71,10 @@ add_executable(own_prefix own_prefix.cpp)
 target_link_libraries(own_prefix PRIVATE own_bridge)
 add_executable(current_chain chain.cpp)
 target_link_libraries(current_chain PRIVATE current_rails)
+add_executable(owner_wait_tests tests/owner_wait_tests.cpp)
+target_link_libraries(owner_wait_tests PRIVATE current_rails)
+add_executable(lateness_diagnose tests/lateness_diagnose.cpp)
+target_link_libraries(lateness_diagnose PRIVATE nlohmann_json::nlohmann_json)
 add_executable(formal_affected "${PAS_REPO}/tests/game_tests.cpp" "${PAS_REPO}/tests/game_tracking_tests.cpp")
 # Exact pure-contract prefix from the original runtime.cpp, before its first
 # device-reading entry point. No test edits, replacements, oracle or endpoint.
