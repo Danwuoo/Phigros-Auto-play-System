@@ -28,8 +28,9 @@ private:
 
 class Journal final {
 public:
+    enum class Encoding {plain,gzip};
     explicit Journal(const std::filesystem::path& path, std::size_t capacity = 8192,
-                     std::function<void()> before_write = {});
+                     std::function<void()> before_write = {},Encoding encoding=Encoding::plain);
     ~Journal();
     Journal(const Journal&) = delete;
     Journal& operator=(const Journal&) = delete;
@@ -58,6 +59,7 @@ private:
     std::uint64_t admitted_bytes_=0,admitted_records_=0;
     bool faulted_ = false;
     bool closed_ = false;
+    const Encoding encoding_;
 };
 
 } // namespace pas

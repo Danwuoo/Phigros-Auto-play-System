@@ -2,13 +2,15 @@
 
 #include <fstream>
 #include <stdexcept>
+#include <zlib.h>
 
 namespace pas {
 
 Journal::Journal(const std::filesystem::path& path, std::size_t capacity,
-                 std::function<void()> before_write)
-    : capacity_(capacity), path_(path), before_write_(std::move(before_write)) {
+                 std::function<void()> before_write,Encoding encoding)
+    : capacity_(capacity), path_(path), before_write_(std::move(before_write)),encoding_(encoding) {
     if (capacity < 2 || capacity > 1'000'000) throw std::invalid_argument("invalid journal capacity");
+    if(encoding==Encoding::gzip&&path.extension()!=".gz")throw std::invalid_argument("gzip journal path");
     std::filesystem::create_directories(path.parent_path());
     worker_ = std::jthread([this](std::stop_token stop) { writer(stop); });
 }
@@ -49,9 +51,11 @@ bool Journal::enqueue(Item record, bool critical) {
 }
 
 void Journal::writer(std::stop_token stop) {
+ gzFile compressed=nullptr;
  try {
-    std::ofstream file(path_, std::ios::binary | std::ios::trunc);
-    if (!file) { std::lock_guard lock(mutex_); faulted_ = true; return; }
+    std::ofstream file;
+    if(encoding_==Encoding::gzip){compressed=gzopen(path_.string().c_str(),"wb1");if(!compressed)throw std::runtime_error("gzip journal open");}
+    else {file.open(path_, std::ios::binary | std::ios::trunc);if(!file)throw std::runtime_error("journal open");}
     while (true) {
         Item record=PreparedJournalRecord("");
         {
@@ -64,14 +68,15 @@ void Journal::writer(std::stop_token stop) {
         std::string row;if(auto* prepared=std::get_if<PreparedJournalRecord>(&record))row=std::move(prepared->row_);
         else {auto value=std::get<DiagnosticSnapshot>(record).encode();value["schema_version"]=2;value["clock_domain"]="host_qpc_ns";row=value.dump();}
         {std::lock_guard lock(mutex_);const auto bytes=row.size()+128;
-         if(bytes>262144||admitted_records_>=65536||bytes>1073741824-admitted_bytes_){faulted_=true;return;}
+         const auto byte_cap=encoding_==Encoding::gzip?4294967296ull:1073741824ull;
+         if(bytes>262144||admitted_records_>=65536||bytes>byte_cap-admitted_bytes_)throw std::runtime_error("journal output bound");
          admitted_bytes_+=bytes;++admitted_records_;}
-        file << row << '\n';
-        if (!file) { std::lock_guard lock(mutex_); faulted_ = true; return; }
+        if(compressed){row+='\n';const auto offset=gzoffset(compressed);const auto reserve=compressBound(static_cast<uLong>(row.size()))+65536ull;if(offset<0||static_cast<std::uint64_t>(offset)>1073741824ull-reserve)throw std::runtime_error("gzip journal physical bound");if(gzwrite(compressed,row.data(),static_cast<unsigned>(row.size()))!=static_cast<int>(row.size()))throw std::runtime_error("gzip journal write");}
+        else {file << row << '\n';if(!file)throw std::runtime_error("journal write");}
     }
-    file.flush();
-    if (!file) { std::lock_guard lock(mutex_); faulted_ = true; }
- }catch(...){std::lock_guard lock(mutex_);faulted_=true;queue_.clear();queued_bytes_=0;}
+    if(compressed){const auto handle=compressed;compressed=nullptr;if(gzclose(handle)!=Z_OK||std::filesystem::file_size(path_)>1073741824)throw std::runtime_error("gzip journal close/bound");}
+    else {file.flush();if(!file)throw std::runtime_error("journal flush");}
+ }catch(...){if(compressed)gzclose(compressed);std::lock_guard lock(mutex_);faulted_=true;queue_.clear();queued_bytes_=0;}
 }
 
 void Journal::close() {

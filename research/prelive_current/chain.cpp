@@ -62,7 +62,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  const bool streaming=scene==streaming_workload::scene||tap_streaming;
  const auto images=streaming?std::array<std::vector<std::uint8_t>,12>{}:stimulus(scene);
  std::vector<std::uint8_t> generated(streaming?streaming_workload::bytes:0);HostClock clock;LatestFrame latest(1280,720,3,&clock);Runtime rt(clock);
- const int writer_capacity=scene=="writer"?2:8192;Journal journal(report+".journal.jsonl",writer_capacity,[&]{if(scene=="writer")std::this_thread::sleep_for(std::chrono::milliseconds(30));});
+ const bool compressed_stress=n==10000;const int writer_capacity=scene=="writer"?2:8192;Journal journal(report+(compressed_stress?".journal.jsonl.gz":".journal.jsonl"),writer_capacity,[&]{if(scene=="writer")std::this_thread::sleep_for(std::chrono::milliseconds(30));},compressed_stress?Journal::Encoding::gzip:Journal::Encoding::plain);
  std::vector<Sample> samples(n+1);std::atomic<bool> done=false;std::atomic<int> publish_attempts=0;
  if(scene=="rpc")rt.backend.delay_ms=5;
  if(scene=="fault")rt.backend.failure=current_execution::ReplayBackend::Failure::unknown_down;
@@ -115,6 +115,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  J measurement;std::vector<double> mt,mo,mh,mr;std::size_t mn=0;for(int i=257;i<=n;++i){const auto& s=samples[i];if(!s.owned)continue;++mn;mt.push_back((s.recognition-s.capture)/1e6);mo.push_back(s.owner/1e6);mh.push_back(s.hook/1e6);mr.push_back(s.observer/1e6);}measurement={{"attempts",n-256},{"owner_seen",mn},{"owner_seen_fraction",double(mn)/(n-256)},{"capture_to_owner_ms",distribution(mt)},{"observer_ms",distribution(mr)},{"hook_ms",distribution(mh)},{"owner_ms",distribution(mo)}};
  result["measurement"]=measurement;result["warmup_attempts"]=256;result["cadence_ms"]=cadence;
  result["first_owner_failure"]=rt.step.first_failure();result["lifecycle_stop_reason"]=rt.lifecycle.status().reason;
+ result["journal_event_encoding"]=compressed_stress?"gzip-jsonl-v1":"plain-jsonl-v1";
  result["owner_wait_policy"]="same_consumer_poll_before_wait; min(next_phase_or_expiry,10ms_watchdog); frame_arrival_wakes_early";
  result["producer_wait_policy"]="QPC absolute unchanged epoch/cadence; high-resolution waitable timer; ceil100ns; no coalescing; bounded wait; no fallback";
  result["phase_lateness_ms"]={{"down",distribution(phase_late[0])},{"move",distribution(phase_late[1])},{"up",distribution(phase_late[2])}};result["journal_admitted_bytes"]=journal.admitted_bytes();result["journal_records"]=journal.admitted_records();result["journal_admission_failed"]=admission_failed;result["supervisor_stopped"]=supervisor_stopped;result["final_release"]={{"requested",rt.final_release.requested_ids},{"failed",rt.final_release.failed_ids},{"unknown",rt.final_release.unknown_ids},{"start",rt.final_release.start_ns},{"return",rt.final_release.return_ns}};

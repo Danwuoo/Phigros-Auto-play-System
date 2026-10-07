@@ -141,10 +141,10 @@ target_link_libraries(input_closure_review_tests PRIVATE nlohmann_json::nlohmann
 # The test-only renamed entry point calls the real auditor in process; it does
 # not spawn a binary, manufacture a Windows receipt, or change audit.cpp.
 add_executable(prelive_audit "${PAS_REPO}/research/prelive_audit/audit.cpp")
-target_link_libraries(prelive_audit PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(prelive_audit PRIVATE nlohmann_json::nlohmann_json ZLIB::ZLIB)
 add_library(producer_review_audit OBJECT "${PAS_REPO}/research/prelive_audit/audit.cpp")
 target_compile_definitions(producer_review_audit PRIVATE main=raw_audit_entry)
-target_link_libraries(producer_review_audit PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(producer_review_audit PUBLIC nlohmann_json::nlohmann_json ZLIB::ZLIB)
 add_executable(producer_admission_review_tests tests/producer_admission_review_tests.cpp)
 target_link_libraries(producer_admission_review_tests PRIVATE producer_review_audit nlohmann_json::nlohmann_json)
 add_executable(offline_output_tests tests/offline_output_tests.cpp)

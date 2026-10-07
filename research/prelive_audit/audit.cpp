@@ -1,6 +1,7 @@
 #include <nlohmann/json.hpp>
 #include "../prelive_current/evidence_hash.hpp"
 #include "../prelive_current/producer_timing.hpp"
+#include "../../include/pas/lossless_event_stream.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -16,7 +17,7 @@ using J=nlohmann::json;namespace fs=std::filesystem;
 namespace {
 constexpr std::uint64_t stream_cap=1073741824ull+65536;
 J read(const fs::path&p,std::size_t cap){if(fs::file_size(p)>cap)throw std::runtime_error("file bound");std::ifstream f(p);if(!f)throw std::runtime_error("input open");return J::parse(f);}
-template<class F> std::size_t stream(const fs::path&p,F fn){if(fs::file_size(p)>stream_cap)throw std::runtime_error("stream bound");std::ifstream f(p,std::ios::binary);if(!f)throw std::runtime_error("stream open");std::string line;std::size_t n=0;while(std::getline(f,line)){if(++n>65536||line.size()>262144||line.empty())throw std::runtime_error("row bound");fn(J::parse(line));}if(!f.eof())throw std::runtime_error("stream EOF");return n;}
+template<class F> std::size_t stream(const fs::path&p,F fn){if(fs::file_size(p)>stream_cap)throw std::runtime_error("stream bound");pas::LosslessEventReader f(p,p.extension()==".gz"?4294967296ull:stream_cap);std::string line;std::size_t n=0;while(f.next(line)){if(++n>65536||line.size()>262144||line.empty())throw std::runtime_error("row bound");fn(J::parse(line));}return n;}
 J binding(const fs::path&p){return {{"path",fs::absolute(p).lexically_normal().string()},{"bytes",fs::file_size(p)},{"sha256",pas::evidence::sha256(p)}};}
 J distribution(std::vector<double> v){if(v.empty())return {{"n",0}};std::sort(v.begin(),v.end());auto p=[&](double x){const double a=(v.size()-1)*x;const auto lo=std::size_t(a),hi=std::min(lo+1,v.size()-1);return v[lo]+(v[hi]-v[lo])*(a-lo);};return {{"n",v.size()},{"p50",p(.5)},{"p95",p(.95)},{"p99",p(.99)},{"max",v.back()},{"jitter_p95_minus_p5",p(.95)-p(.05)}};}
 double milliseconds(std::int64_t end,std::int64_t start){if((start>0&&end<std::numeric_limits<std::int64_t>::min()+start)||(start<0&&end>std::numeric_limits<std::int64_t>::max()+start))throw std::runtime_error("timestamp difference overflow");return (end-start)/1e6;}
@@ -33,7 +34,8 @@ int main(int argc,char**argv){try{
  const fs::path p=argv[1];
  const auto verifier_binary=binding(argv[0]);J bindings={{"report",binding(p)}};const auto r=read(p,1024*1024);const auto schema=r.at("schema").get<std::string>();
  const bool pixel=schema=="pas.prelive-current-pixels.v1";if(!pixel&&schema!="pas.prelive-complete-chain-cost.v1")throw std::runtime_error("unsupported report schema");
- const auto rows_path=p.string()+(pixel?".rows.jsonl":".attempts.json"),events_path=p.string()+(pixel?".events.jsonl":".journal.jsonl");
+ const auto encoding=r.value("journal_event_encoding",std::string("plain-jsonl-v1"));if(encoding!="plain-jsonl-v1"&&encoding!="gzip-jsonl-v1")throw std::runtime_error("journal encoding");if(encoding=="gzip-jsonl-v1"&&(pixel||r.at("requested")!=10000))throw std::runtime_error("gzip stress scope");
+ const auto rows_path=p.string()+(pixel?".rows.jsonl":".attempts.json"),events_path=p.string()+(pixel?".events.jsonl":encoding=="gzip-jsonl-v1"?".journal.jsonl.gz":".journal.jsonl");
  bindings[pixel?"rows":"attempts"]=binding(rows_path);bindings[pixel?"events":"journal"]=binding(events_path);
  std::set<std::string> error_set;auto check=[&](bool b,const std::string&s){if(!b)error_set.insert(s);};
  const bool loss=!pixel&&(r.at("writer_fault").get<bool>()||r.at("writer_drops").get<std::int64_t>()!=0||r.at("journal_admission_failed").get<bool>());

@@ -56,6 +56,14 @@ magic, CRC/truncation, per-segment decoded limits, contiguous segment names,
 physical/decoded totals and SHA bindings are independently checked. Compressed
 Windows rows reconstruct the original CRLF bytes. No old raw is overwritten.
 
+The 1000-frame profiling journal was 188357163 bytes. A 10000-frame dense
+stress journal would exceed its original 1 GiB plain-output bound. Therefore
+only the explicitly finite n=10000 research stress journal uses gzip, with
+1 GiB physical, 4 GiB decoded/charged-output, 65536 records and the original
+262144-byte charged row limit. The standalone auditor reads all decoded rows
+and accepts this encoding only for requested=10000. Normal R2 n=2560 keeps its
+original plain journal, 1 GiB output bound, protocol and proof predicates.
+
 The first archive error is sticky, subsequent admissions report that cause,
 and an independent bounded archive-failure receipt is attempted. Failure to
 write that receipt cannot replace the first error or trigger a touch retry.
