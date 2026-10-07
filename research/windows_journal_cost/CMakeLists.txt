@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 # Rebuild the complete formal core: its public headers and archive/journal
 # implementation changed. No old compiled core or current library is reused.
+find_package(GTest CONFIG REQUIRED)
 add_subdirectory(../prelive_current prelive)
 set(PAS_REPO "${CMAKE_CURRENT_SOURCE_DIR}/../..")
 add_executable(producer_wait_tests "${PAS_REPO}/research/prelive_current/tests/producer_wait_tests.cpp")
