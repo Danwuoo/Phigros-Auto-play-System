@@ -57,6 +57,9 @@ std::array<std::vector<std::uint8_t>,12> stimulus(std::string_view scene){std::a
  }return images;}
 struct Sample {Nanoseconds capture=0,published=0,recognition=0,complete=0,observer=0,hook=0,owner=0,producer_due=0,render_start=0,render_end=0,publication_return=0;bool published_ok=false,consumed=false,owned=false,writer=false;};
 J pipeline(std::string mode,std::string scene,int n,const std::string& report,const J& provenance=nullptr){
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ if(mode!="B"||scene!="dense"||n!=1000)throw std::runtime_error("diagnostic phase scope: B dense 1000 only");
+#endif
  if(n<1000||n>10000||(mode!="A"&&mode!="B")||(scene!="tap"&&scene!=tap_reset_workload::scene&&scene!="hold"&&scene!=streaming_workload::scene&&scene!="dense"&&scene!="slow"&&scene!="writer"&&scene!="rpc"&&scene!="fault"))throw std::runtime_error("pipeline bounds");
  const bool tap_streaming=scene==tap_reset_workload::scene;
  const bool streaming=scene==streaming_workload::scene||tap_streaming;

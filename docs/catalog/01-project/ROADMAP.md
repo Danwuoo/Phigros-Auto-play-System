@@ -1,5 +1,14 @@
 # 開發路線圖
 
+## 2026-10-08 main 續作
+
+使用者授權整合／清理外部專案副本，將 retained prelive 上限提高至 48 GiB，後續固定在
+main 開發。見[整合帳本](../06-engineering/MAIN_CONSOLIDATION_20261008.md)。保留所有
+歷史負結果與 SHA；新 main 順序為重新建置及受影響冷回歸、固定像素 prefix、成本工具
+與 production closure、R2 AA／noise／ABBA，然後 admission／profile／physical gates，
+最後逐曲完整 IN Miss=0。每個 gate 各自記錄，未跑保持 NOT_RUN，不用 donor PASS 升格。
+HD 仍只作解鎖與回歸，模型訓練與新長期 goal 未授權。以下較早順序按當時範圍閱讀。
+
 ## 2026-10-04 現行順序
 
 產品目標為 **Chapter Legacy所有曲目解鎖IN並完整IN結算Miss=0**，HD作解鎖及回歸，P/G/B照報，不增AP前置。最新基準、逐曲證據及工作包契約見[10/4總帳](LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)與[JSON](LEGACY_IN_ZERO_MISS_EVIDENCE_20261004.json)。現行章節分母未核、目前逐曲解鎖unknown，沒有全曲驗收。

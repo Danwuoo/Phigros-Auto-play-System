@@ -13,6 +13,11 @@ J read_json(const std::filesystem::path&p,std::uint64_t cap){require(std::filesy
 J binding(const std::filesystem::path&p,std::uint64_t cap){return {{"path",p.string()},{"bytes",std::filesystem::file_size(p)},{"sha256",pas::evidence::sha256(p,cap)}};}
 J distribution(std::vector<double> v){if(v.empty())return {{"n",0}};std::sort(v.begin(),v.end());auto p=[&](double x){double a=(v.size()-1)*x;auto lo=std::size_t(a),hi=std::min(lo+1,v.size()-1);return v[lo]+(v[hi]-v[lo])*(a-lo);};return {{"n",v.size()},{"p50",p(.5)},{"p95",p(.95)},{"p99",p(.99)},{"max",v.back()},{"jitter_p95_minus_p5",p(.95)-p(.05)}};}
 struct Stats{std::vector<double> wall,cpu,cycles;double wall_sum=0,cpu_sum=0,cycles_sum=0;};
+bool journal_row(std::istream& f,std::string& line){
+ line.clear();char c;
+ while(f.get(c)){if(c=='\n')return true;require(line.size()<262144,"journal row byte bound");line.push_back(c);}
+ require(f.eof()&&!f.bad()&&line.empty(),"complete journal row termination");return false;
+}
 }
 int main(int argc,char**argv){try{
  require(argc==4,"report expected-sha output");const std::filesystem::path report=argv[1],out=argv[3],attempts=report.string()+".attempts.json",journal=report.string()+".journal.jsonl";
@@ -23,7 +28,7 @@ int main(int argc,char**argv){try{
  const std::set<std::string> json_names{"observer_process","current_scene_json_build","current_scene_output","candidate_batch_json_build","candidate_batch_output","hook_evaluate","filtered_scene_json_build","filtered_scene_output","owner_accept_poll_sync"};
  const std::set<std::string> snapshot_names{"observer_process","current_scene_snapshot_build","current_scene_output","candidate_batch_snapshot_build","candidate_batch_output","hook_evaluate","filtered_scene_snapshot_build","filtered_scene_output","owner_accept_poll_sync"};
  std::map<std::string,Stats> stats;std::vector<J> by_frame(requested+1);std::ifstream f(journal);std::string line;std::size_t rows=0,profile_count=0;std::uint64_t bytes=0;
- while(std::getline(f,line)){require(++rows<=65536&&line.size()<=262144,"journal row bounds");bytes+=line.size()+1;require(bytes<=1073741824,"journal byte bound");const auto e=J::parse(line);if(e.value("event","")!="diagnostic_phase_profile")continue;
+ while(journal_row(f,line)){require(++rows<=65536&&line.size()<=262144,"journal row bounds");bytes+=line.size()+1;require(bytes<=1073741824,"journal byte bound");const auto e=J::parse(line);if(e.value("event","")!="diagnostic_phase_profile")continue;
   const auto&p=e.at("profile");const auto frame=p.at("source_frame").get<std::size_t>();require(frame>0&&frame<=requested&&by_frame[frame].is_null(),"unique bounded profile frame");
   require(p.at("schema")=="pas.diagnostic-phase-profile.v1"&&p.at("enabled")==true&&p.at("row_cap")==9&&p.at("rows").size()==9&&p.at("cost_qualification")==false,"profile scope and complete phases");
   std::set<std::string> found;double sum=0;for(const auto&v:p.at("rows")){const auto name=v.at("phase").get<std::string>();require((json_names.contains(name)||snapshot_names.contains(name))&&found.insert(name).second,"phase identities");const auto ns=v.at("wall_qpc_ns").get<std::int64_t>();require(ns>=0,"phase QPC monotonic");sum+=ns/1e6;

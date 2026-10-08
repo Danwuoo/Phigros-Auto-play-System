@@ -4,6 +4,16 @@
 
 ## 現行方向
 
+2026-10-08 使用者最新授權：將 Desktop、Downloads 與可讀 C 槽內的外部專案副本、
+證據及封包集中回 main，核對保存後刪除外部位置；後續直接在 main 開發，不再新建
+worktree。retained prelive 上限提高為 48 GiB，minimum free 20 GiB 及既有 stage、
+candidate、raw、metadata 界限保留。見[整合帳本](docs/catalog/06-engineering/MAIN_CONSOLIDATION_20261008.md)。
+保留歷史 source／binary SHA、原始負結果、STOP 與搬移索引；搬移不授予新 main 資格。
+既有 emulator／Computer Use 自行選曲及 Play 授權沿用，但須先通過現行 build／cost／
+admission／profile／physical gates。模型訓練、遠端 push 與新長期 goal 未授權。
+模擬器、SDK 與已安裝 AVD／遊戲資料是後續開發依賴，保留原位置與 profile 指紋。
+以下較早 evidence-only／cloud-only 範圍為當時階段記錄，不能覆蓋最新使用者授權。
+
 2026-10-06 雲端續作入口：[readiness 工作](docs/research/live-readiness-20261006/README.md)。
 指定起點 e9e305e，ignored compact 與直接父提交 f07dc40 的來源映射已核；不要回套舊 v3 patch。
 本輪只雲端實作／必要離線驗證／local commits，未 push、未操作裝置；Windows 成本、physical

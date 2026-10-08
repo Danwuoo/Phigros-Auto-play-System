@@ -1,5 +1,12 @@
 # 現行架構與資料契約
 
+2026-10-08 main 已整合 Windows readiness、owner 到期安全拒絕、bounded typed diagnostic
+writer、嚴格 gzip reader 及可選 phase 診斷。診斷仍只向外輸出；一般 `current_chain`
+不啟用 phase profiling，獨立診斷 binary 不具成本資格。完整來源／證據沿革與 48 GiB
+容量契約見[main 整合帳本](../06-engineering/MAIN_CONSOLIDATION_20261008.md)。新 main
+須重新建置並通過成本、admission、profile 與 physical gates；實機入口仍 UNQUALIFIED。
+以下 10/4 main50 及 C36h 內容為其 frozen 歷史責任描述，不能代替新 main 的驗收。
+
 2026-10-04，main HEAD `f83c7ea0bd4e92ab6fb50a14fc9db2c4e333be2c`，**observer50／planner27／diagnostics11、live0，是comparison／donor**；behavioural／experimental baseline仍是另有frozen來源的C36h tint1。本文按責任描述main50正式程式，不把其owner規則套到C36h。產品目標、逐曲證據、最新研究狀態與工作包見[10/4總帳](LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)；[10/1狀態](PROJECT_STATUS_NEXT_STEPS_20261001.md)按J5–J32接續，早期段落為歷史。來源沿革見[整合交接](../06-engineering/MAIN_INTEGRATION_HANDOFF_20261001.md)、[冷開發](../04-offline-research/COLD_DEVELOPMENT_RESULT_20260929.md)及[熱調試](../02-game-results/FOUR_SONG_HOT_TUNING_20260929.md)。模型只離線；main50或研究工具通過不授予live-ready。
 
 ## 即時閉環

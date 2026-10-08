@@ -1,0 +1,551 @@
+{
+  "main_worktrees": 1,
+  "source_bytes": 35199550411,
+  "device_operations": 0,
+  "historical_receipts_unchanged": true,
+  "schema": "pas.main-consolidation-completed.v1",
+  "installed_emulator_profiles_retained": [
+    "C:\\Users\\wurre\\.android\\avd\\phigros.avd",
+    "C:\\Users\\wurre\\.android\\avd\\phigros.ini",
+    "C:\\Users\\wurre\\.android\\avd\\Phigros_4K.avd"
+  ],
+  "status": "EXTERNAL_PROJECT_COPIES_CONSOLIDATED",
+  "relocation_actions": 47,
+  "external_worktrees_deleted": 18,
+  "new_main_live_admission": "UNQUALIFIED",
+  "identical_archive_copies_deleted": 1,
+  "branch": "main",
+  "c_volume_survey": {
+    "path": "out/consolidation-20261008-01/c-volume-survey.json",
+    "sha256": "a150f65f1ef9b6e360e866cd55537d9fd0fe8f6d5a93ab19e17abe5e8ab8add1",
+    "bytes": 138976
+  },
+  "migration_receipts": [
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/001.json",
+      "sha256": "210b281c2524fab73ffb6815cb5e2d1bd650f61a525ab4e110bf48ab9987856d",
+      "bytes": 1739
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/002.json",
+      "sha256": "7fa3ae9125b354db4c357484d8518af5e81c783a9ec861921ef2d377e49bb8c4",
+      "bytes": 2541
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/003.json",
+      "sha256": "b562e8a10b5900dd0d24c37af390cc82aad843af5ae198859ce40d672fcdade2",
+      "bytes": 917
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/004.json",
+      "sha256": "27ad93b07c94e6527ad389d6f81df367597bc1d40ae58745dabba65101f690c7",
+      "bytes": 917
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/005.json",
+      "sha256": "ccd7db4891ad2a074e14e499fd51b73caed891d66f36fb956e74056eeaba060d",
+      "bytes": 897
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/006.json",
+      "sha256": "89a8d2367e730fc674324a02acd8847ed290e1422a23a7dee4840b71fa80d5e4",
+      "bytes": 1308
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/007.json",
+      "sha256": "53fd828f38437eb47838ac091dc4e6bf9e1ef08f63aa559a1f0744150aa99f57",
+      "bytes": 903
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/008.json",
+      "sha256": "e71abeb400feffd4bac96121227518f79253aaafbc1df445a808d395d3e91bc7",
+      "bytes": 15881910
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/009.json",
+      "sha256": "98dad97b86f2b36b2124e30ac53564da36684306ec80ad73747b06477c2126a4",
+      "bytes": 34789
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/010.json",
+      "sha256": "a17a1f189dbc8079b1bf629e68090b6d9b28aa89c116dffe951d76e147a44bf7",
+      "bytes": 1710
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/011.json",
+      "sha256": "b2986c2124b4d4d4361e52dd81357bfc3a35dc79604bf88b2eb69553803bc3a0",
+      "bytes": 12016
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/012.json",
+      "sha256": "85a0089170c69dc1edbbc84e0e68adaf06142a79803f17d34f4cf0a2874d3dad",
+      "bytes": 734
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/013.json",
+      "sha256": "b6502d85caa7387e4dea343540cc2bbfab35fd2a48dd91eb6e28c4e398180f28",
+      "bytes": 772
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/014.json",
+      "sha256": "6738ddaabc028678f1e75cd3ae11141a9e0e992514a24fc25f24b7195822bcba",
+      "bytes": 780
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/015.json",
+      "sha256": "db20099c347f411b1da9a86db7824674fe14f78c9f13cdfe8c045fa2256a3299",
+      "bytes": 740
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/016.json",
+      "sha256": "27c1b242e0b703ecf93998f2b1ac246a7dee20949c67d1a2ebd24e130aa4557b",
+      "bytes": 731
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/017.json",
+      "sha256": "6f0f02dd689753cbc0bc9145971c439949c9b6dbdbebae3ae9db528a642f62a6",
+      "bytes": 1913
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/018.json",
+      "sha256": "ac1ab2c3cce7045dcbbd407cbd9eb59f6aa89c78eab473f0b47316e4a7ebc692",
+      "bytes": 782
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/019.json",
+      "sha256": "39c4f52be89d29fa0f5bcb07fb932ad47049f62b6abd116b4005548f2272be89",
+      "bytes": 752
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/020.json",
+      "sha256": "0dd1da83f2c3723f9a228714914c0d9112c7fdb11acdfa6485e11867ad67e8e5",
+      "bytes": 736
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/021.json",
+      "sha256": "6be1f8386d5b35046ef6026753d3fd3a14ce34ef48d33969fce47ee9a75ac33c",
+      "bytes": 804
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/022.json",
+      "sha256": "b74f0591b42ae56fe7d6dac26e37673383e3d8f699876c6da371cd9496370748",
+      "bytes": 788
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/023.json",
+      "sha256": "8b5117d99e13ca2daea903a70636a76c82684ac03165e5c4244b22282ad87efc",
+      "bytes": 774
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/024.json",
+      "sha256": "fa64860498a4a4d952edd3901dec8b72f5320c1107c87138ce4253356a3c4580",
+      "bytes": 768
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/025.json",
+      "sha256": "301db8fe9e8f7554c9ef29eb04b62a7b1c15367e89625d610d13cb23bc80edde",
+      "bytes": 774
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/026.json",
+      "sha256": "44d4060dbab2c2b0d4fb6282aade386787ee08c60e82a7ffbe48fc0f56c8037b",
+      "bytes": 768
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/027.json",
+      "sha256": "12e44f386bc23ecaf4705b7f95b44ae2f2609516bf7042732953aa525161dc95",
+      "bytes": 530
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/028.json",
+      "sha256": "9e2286fc4b3db0b1f3d0a41897d3fdef5a3e693457a200645a338b14b1bd7c9e",
+      "bytes": 887
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/029.json",
+      "sha256": "9a4e68ef92e205402c8290c1341aa2d048afc1475c545feadc7f0e6adfe69994",
+      "bytes": 712
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/030.json",
+      "sha256": "2e962ae1a27199c6ff91eedb7fd29be1905d64e5e0abb10d54397aae315e49ef",
+      "bytes": 530
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/031.json",
+      "sha256": "befbbf94f718e469a577aee13a4628a9d251bfb159b272b241d445c38e616f8e",
+      "bytes": 738
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/032.json",
+      "sha256": "f93db9e4c1d47348b7275a3b9fc00835d45b196ab44c8421412cf48353e0be73",
+      "bytes": 742
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/033.json",
+      "sha256": "f09e37424e9951c327fe3ee6446c170f3c6aecee799260be225e5dbd694917fa",
+      "bytes": 2347
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/034.json",
+      "sha256": "c7c498e9aa69e7bcee004c98b30bf8cf06dc5a164974e5fd493b5956d825821a",
+      "bytes": 1153
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/035.json",
+      "sha256": "838b89632add9d18ffa68d011f52017d6b338e44cf78286aa2e0e3a159a82f85",
+      "bytes": 31591
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/036.json",
+      "sha256": "83a8123eb509dee43f85e35b75589e91f22339b76e424f22c6b25ac5ae4766ea",
+      "bytes": 806
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/037.json",
+      "sha256": "e15f169c9437a5803ece52ffec19d22930c634b4d934c9f1bb456fe6916d2d67",
+      "bytes": 1291
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/038.json",
+      "sha256": "6baf2a034dbd439b684ca3e00f7f39fbc53c9e13d37830e298556f1e3c31a602",
+      "bytes": 7569
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/039.json",
+      "sha256": "8f9a9d8242f1f32885c201bf2a2be967096ec0cd3aefb14c1de120d9f185b943",
+      "bytes": 606
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/040.json",
+      "sha256": "f34afdf5667d16501ae6b5d2ba29b877ca2b10886b14a4048eda53758c4fecc5",
+      "bytes": 782
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/041.json",
+      "sha256": "871c463d5c3d8bcd23ee73636fc24e1ea8f8177f1db7a66234a3e462b46e34b9",
+      "bytes": 716
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/042.json",
+      "sha256": "2c808d7fbfc4790885c6c11e6e7154a9951b959e31ef7064c96fe238530cf6d1",
+      "bytes": 554
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/043.json",
+      "sha256": "7c1d70b1d0368e11047c1f00c314a97b51efe37f7b82c27a2a80b3ba44427e11",
+      "bytes": 524
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/044.json",
+      "sha256": "53dfe3124861532ff51df027d4e52567736ded64168b75719f08f21e392abbbe",
+      "bytes": 950
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/045.json",
+      "sha256": "2cf80ae3d51ffeab472ff46f541177a97da61f7be2701341bb9a73f1f4669298",
+      "bytes": 730
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/046.json",
+      "sha256": "de47f36b1982b1cb0baccf71aa95d5d905e7d6e0d1e8c964f6e7ccff2e789ff4",
+      "bytes": 730
+    },
+    {
+      "path": "out/consolidation-20261008-01/migration-receipts/047.json",
+      "sha256": "6f1b75eb914592b11eb0e416a011d58c58454d9a4f38a5c0729cd56bcc60c26e",
+      "bytes": 646
+    }
+  ],
+  "unreadable_locations": 590,
+  "git_bundle": {
+    "path": "out/consolidation-20261008-01/repository-before.bundle",
+    "sha256": "686a86f4634cdefbfbd30e5268d614b9026c6635dc5726e57e87ba54ac15c402",
+    "bytes": 1000253252
+  },
+  "external_artifact_source_paths_remaining": 0,
+  "source_files_hashed": 63263,
+  "integrated_candidate_base": "4c0f6b0a5da0e6c4d937fbd2f8a802c08132c9ae",
+  "remote_push": 0,
+  "reparse_points_not_followed": 140,
+  "relocation_index": {
+    "path": "out/consolidation-20261008-01/relocation-index.json",
+    "sha256": "dd71d1fa2d3f2ad10cae0f23636b732f0f2912f793e5a3bd5a4ee40d3a08cf7d",
+    "bytes": 20294
+  },
+  "worktree_deletion_receipts": [
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-dense-noise-diagnostic-fixed-20261008.json",
+      "sha256": "18e0d1478254bd73839cdc5e0509b8e306f25ad7ee048a9feb74451dbc72c799",
+      "bytes": 715
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-journal-cost-20261007.json",
+      "sha256": "34169a97f2b6444f15d5682402643561e16eaa68a94dfa3d49b639a481fb3d10",
+      "bytes": 683
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-owner-cooperative-20261007.json",
+      "sha256": "13c2220d84e776346861c166105db7c473fd70db27e3f0149f3c7781cc83a9e4",
+      "bytes": 693
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-owner-deadline-20261007.json",
+      "sha256": "e4e03a47085dc34910b1581165321dd19cf49cba305c4c405b75db85245297cc",
+      "bytes": 687
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-owner-dense-noise-20261008.json",
+      "sha256": "7acbad11f3ddf6caaf3b36f896444389b0f111906ec3f5d0c747d8c3ce965fc1",
+      "bytes": 693
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-owner-dense-phase-profile-20261008.json",
+      "sha256": "022c072e2469c9b4eb95bee78fd4eacf2577880a98bef54c56033581afd7960c",
+      "bytes": 709
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-owner-diagnostic-writer-20261008.json",
+      "sha256": "5fde822997be303a04b844868b7baa9f1092a597024bb96ebfc0d76c9b447b3d",
+      "bytes": 705
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-owner-diagnostic-writer-fixed-20261008.json",
+      "sha256": "7433902d13c21bd1e1a775459d6454a43bc462427d1bd749397411eda54cf621",
+      "bytes": 717
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-owner-expiry-recovery-20261007.json",
+      "sha256": "0dd8da2ae31c260aec794d2bcc470dd4414e1046adb9b081f12d7e966d3beab8",
+      "bytes": 701
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-owner-expiry-safe-reject-20261007.json",
+      "sha256": "2cea19b0cd5acb797ae0b9fb340a3e665c31b518035a5f62e046f09a8748ea58",
+      "bytes": 707
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-producer-deadline-20261007.json",
+      "sha256": "fd851bf2e54283f8e1edf719dea8e8592699e7b032ed299de3312ad892601450",
+      "bytes": 693
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-readiness-controls-20261007.json",
+      "sha256": "3cefb7685e7b14a82846f69cf3468172cdd5dfab59fd9f8897f765663174f2d0",
+      "bytes": 695
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-tap-load-20261007.json",
+      "sha256": "6a462b28c6bf74b75140dba2c8533267ce9fc8837ddf2d03adaafc97491b88ed",
+      "bytes": 675
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-tap-load-v2-20261007.json",
+      "sha256": "0e8d7913ca55cfed16a4129961776a8a272559b91db20d5059bbd88e4c66a6ad",
+      "bytes": 681
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-tap-load-v3-20261007.json",
+      "sha256": "5dc771c329e0844ad18ed475a9c9cf2704ad9bad7d2b256f36dec2886a60fbcb",
+      "bytes": 681
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-windows-readiness-20261007.json",
+      "sha256": "04466fb7775df6572b3018433cf368370671527d3acfca8786c000c311ae7584",
+      "bytes": 693
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-writer-strict-20261008.json",
+      "sha256": "3e6f1adfa2ce2aff65e4571089e5def1d0972ddbb2255a2bc725e20374de7de5",
+      "bytes": 685
+    },
+    {
+      "path": "out/consolidation-20261008-01/worktree-removal-receipts/PAS-writer-tests-20261008.json",
+      "sha256": "2368820386751ae44b7015a0c7b65e26c635e8277fc2b75a8676d038fe880b9a",
+      "bytes": 683
+    }
+  ],
+  "physical_source_snapshots": [
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-dense-noise-diagnostic-fixed-20261008.json",
+      "sha256": "89f334c17fa6fa734a0f2985091727045fe63a3c77e0c10d9395b1541182dab1",
+      "bytes": 1124
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-dense-noise-diagnostic-fixed-20261008.zip",
+      "sha256": "7f2ad29093f983109b867dae8db463a193e2ab3d263bf5b0307ec60b2f1ad7e5",
+      "bytes": 5414
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-journal-cost-20261007.json",
+      "sha256": "eb1f5940a7e33d6b56efaf45abbb89afeb9f5393b53fdb367ddd1a5ca350b6a1",
+      "bytes": 180764
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-journal-cost-20261007.zip",
+      "sha256": "d7200a26f25ba760ff8a3e0df09101a128c1795e292451769dc7b324951e2d0e",
+      "bytes": 2636127
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-cooperative-20261007.json",
+      "sha256": "d30fa8a1658f7cc37b822463c1ef3cd0a9050ede60db17ff467202ced039ce54",
+      "bytes": 181714
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-cooperative-20261007.zip",
+      "sha256": "35eb406c51aece04f8fae8dcab830adaa5aba3b1c5ef7b7ba95d99db128d200d",
+      "bytes": 2645662
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-deadline-20261007.json",
+      "sha256": "d67b6a7a111d6c204874d00c3437979a75e82613e9d83e5798f1e725895e7ccc",
+      "bytes": 177613
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-deadline-20261007.zip",
+      "sha256": "14996f88b2d3b04de688422a442acef8d22db707720b8047d6711deb4a5f305d",
+      "bytes": 2612284
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-dense-noise-20261008.json",
+      "sha256": "61b2ae623e7e310911029b8581aa9d4fd5f5b2f61c23681a841816a9f9096f98",
+      "bytes": 182808
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-dense-noise-20261008.zip",
+      "sha256": "a602ffd831f3f3e5d47e153ba2340df5c3ab22039c9bd15620cc0b30061d1e19",
+      "bytes": 2655763
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-dense-phase-profile-20261008.json",
+      "sha256": "fc548acdbcbdb18e511adb78e4b856c4e7233366754e0af8bf4b652bb7481d26",
+      "bytes": 182848
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-dense-phase-profile-20261008.zip",
+      "sha256": "4c94fe6a1cd58c7741dc4d0cd88cc082a398c4580d6eb5d74639bae8f7bd1a44",
+      "bytes": 2656629
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-diagnostic-writer-20261008.json",
+      "sha256": "921c1636cb8681b2709ed5f1cd8925808bff69376f7ac1c36294593befba29c5",
+      "bytes": 184162
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-diagnostic-writer-20261008.zip",
+      "sha256": "24e7d5a8ad62ca6011291d4a7f9db668938890bf01885e7c4c08a24b0749f37f",
+      "bytes": 2676201
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-diagnostic-writer-fixed-20261008.json",
+      "sha256": "c17f23de02e5ba2e87f79e6264d230eaa3fb24774e291ab2f7c807beb4b5b747",
+      "bytes": 184174
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-diagnostic-writer-fixed-20261008.zip",
+      "sha256": "206541e4c74057db587bc5a1bfd760c90c48fce0ab4794973e3d2303d44e59f1",
+      "bytes": 2676221
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-expiry-recovery-20261007.json",
+      "sha256": "e182a094b8248962181af30dfca25967feb529cf508dbea03f808d0f71b909f6",
+      "bytes": 182453
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-expiry-recovery-20261007.zip",
+      "sha256": "6e70da1d4e6721d8f74d71f2fe26f293e4b02134465b0ac5ab2d07f6c887499d",
+      "bytes": 2650586
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-expiry-safe-reject-20261007.json",
+      "sha256": "63b2251c1b1cb231efc90a3165f5277a2658055e728f74253d767af6d03c96eb",
+      "bytes": 182459
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-owner-expiry-safe-reject-20261007.zip",
+      "sha256": "c0821b09892d312a585e22bda4f438aa957816c6d10702bb60d719957dbdd7cc",
+      "bytes": 2652301
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-producer-deadline-20261007.json",
+      "sha256": "d3de1801e0147b6abf8226c0024d472fc29af8a7527212cac3af0e7b1c954fb0",
+      "bytes": 178180
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-producer-deadline-20261007.zip",
+      "sha256": "14acf5e25eb01d7970bf194be55e13dc48eb6ee79cf508f3e02d780774fb8757",
+      "bytes": 2610107
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-readiness-controls-20261007.json",
+      "sha256": "96fee1fa31d9d77c60940cb7f70360fc7ca495b8f92c790bbbad5740a67f6d98",
+      "bytes": 180239
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-readiness-controls-20261007.zip",
+      "sha256": "f55c7d01e58b885d991afaa0363e385eed458d2281dec1d6d50bd3ca406476ff",
+      "bytes": 2629586
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-tap-load-20261007.json",
+      "sha256": "5eda0223654e0dd4dbc167f762a4abd634d654068d7aaa1f8436a001b5da55d6",
+      "bytes": 180033
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-tap-load-20261007.zip",
+      "sha256": "47695d3daf57d8d96769b8d3bdc9f4f6a4d1a343c6c43d2b4e1d72a4103efba3",
+      "bytes": 2628833
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-tap-load-v2-20261007.json",
+      "sha256": "0ae4b049bac4b820ff76258fcd4d37498f56f37e6c0f1a596fefbdd93ebbe088",
+      "bytes": 180225
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-tap-load-v2-20261007.zip",
+      "sha256": "0ddd14a257246dbe5744c935e0e0bf626371c314bf3748102a43f9be6ef2bf51",
+      "bytes": 2629568
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-tap-load-v3-20261007.json",
+      "sha256": "e68f15fe97a9681292b9b6f7347cace4747bbbfe54b2198572a3b2619903d4eb",
+      "bytes": 180225
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-tap-load-v3-20261007.zip",
+      "sha256": "619c9a9ea0c637c46e7595b644f92f0e4a2903e3410e468623d0e17b76f3a0e7",
+      "bytes": 2629592
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-windows-readiness-20261007.json",
+      "sha256": "d79e96c61323460a242064ef729f4e561a85428edf85846cc355de2f5efe1ddc",
+      "bytes": 184508
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-windows-readiness-20261007.zip",
+      "sha256": "6978ff91c19326bb27d4ee3d0987f02cdc85799e9104a001010743a474eca499",
+      "bytes": 2677951
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-writer-strict-20261008.json",
+      "sha256": "d2df6cb4a8aa230217cf6ce17d4bc42c4684d6e557a47ab411a3b307130cd368",
+      "bytes": 184142
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-writer-strict-20261008.zip",
+      "sha256": "d92a866575f1169502fcd061db5371cb48c542be2120a8401f988122839c55a9",
+      "bytes": 2677083
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-writer-tests-20261008.json",
+      "sha256": "dd5cefc25415f32aab848128d7b383cc1394c6999cab0d4ba2ce6197ccc2f9f2",
+      "bytes": 184140
+    },
+    {
+      "path": "out/consolidation-20261008-01/physical-source-snapshots/PAS-writer-tests-20261008.zip",
+      "sha256": "91b4136ee2933b4a663b2371be5cc5d248d28ab491e74ca356ddd3323df6ca4f",
+      "bytes": 2676247
+    }
+  ],
+  "date": "2026-10-08"
+}

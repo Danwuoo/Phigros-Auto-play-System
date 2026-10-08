@@ -3,9 +3,12 @@
 Main consolidation retains this historical experiment and its original raw
 evidence. The integrated `current_chain` keeps phase profiling disabled. Only
 the separate `current_chain_phase_profile` target enables the nine scalar rows;
-its output explicitly remains ineligible for cost qualification. The current
+it accepts only `pipeline B dense 1000` and its output explicitly remains
+ineligible for cost qualification. The current
 typed writer uses snapshot construction labels instead of JSON construction
 labels. The summary accepts either complete, consistent nine-phase layout.
+It rejects a row before collecting more than 262144 bytes and requires a final
+newline, so malformed single-line input cannot allocate a complete journal.
 Historical c978 measurements below do not qualify the integrated main build.
 
 This is an endpoint-free diagnostic fork of frozen candidate

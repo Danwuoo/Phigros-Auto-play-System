@@ -1,5 +1,13 @@
 # Phigros Auto-play System
 
+2026-10-08 使用者授權將外部專案工作副本、證據與封包清算回 main，刪除保存完成的副本，
+並將 retained prelive 容量提高為 **48 GiB**。最新入口為
+[main 整合與清理帳本](docs/catalog/06-engineering/MAIN_CONSOLIDATION_20261008.md)及
+[容量授權](docs/research/live-readiness-20261007/CAPACITY_APPROVAL_20261008.json)。
+後續開發固定在 main；歷史失敗、STOP、source／binary SHA 與原始證據保留。
+整合後 main 必須重新建置／驗證，實機入口仍 UNQUALIFIED，完整 IN Miss=0 尚未完成。
+以下日期較早的「最新」入口為歷史快照。
+
 2026-10-07 最新續作見 [owner cooperative 階段交接](docs/research/live-readiness-20261007/OWNER_COOPERATIVE_STAGE_HANDOFF_20261007.md)。
 候選 `45f8a5f` 三配置39組 affected 冷回歸、3063 prefix、成本工具42＋22控制通過。
 新 Windows AA 前兩筆 Tap PASS；第三筆安全停止，owner seen 2181/2560、measurement 1925/2304，

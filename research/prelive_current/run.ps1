@@ -121,7 +121,23 @@ function GateInputs(){
  $paths+=@($tool);foreach($f in $snapshot.files){if((Get-FileHash -LiteralPath $f.copy).Hash.ToLowerInvariant() -cne $f.sha256){throw 'tool-snapshot-changed'};$paths+=@($f.copy)}
  return @($paths|Sort-Object -Unique)
 }
-function Capacity($stage,$phase){$roots=@(Get-ChildItem -LiteralPath (Join-Path $repo 'out') -Directory|Where-Object Name -like 'prelive*')+@(Get-ChildItem -LiteralPath $out -Directory|Where-Object Name -like '*prelive*');$rows=@($roots|ForEach-Object {$sum=(Get-ChildItem -LiteralPath $_.FullName -File -Recurse|Measure-Object Length -Sum).Sum;@{path=$_.FullName;bytes=[long]$sum}});$total=[long](($rows|Measure-Object bytes -Sum).Sum);$free=[long](Get-PSDrive C).Free;$reserve=if($phase -eq 'before' -and $Operation -in @('pipeline','pixels','tests','family')){1073741824}elseif($phase -eq 'before' -and $Operation -eq 'build'){if($CoreDonor){536870912}else{1610612736}}else{0};$valid=$total+$reserve -le 12884901888 -and $free-$reserve -ge 21474836480;NewJson (Join-Path $pkg ($stage+'-capacity-'+$phase+'.json')) @{schema='pas.prelive-capacity.v1';stage=$stage;phase=$phase;roots=$rows;bytes=$total;reserve=$reserve;free=$free;cap=12884901888;minimum_free=21474836480;pass=$valid;metadata_seal_cap=67108864};if(-not $valid){throw 'capacity-gate'}}
+function Capacity($stage,$phase){
+ # User approved 48 GiB on 2026-10-08 and required external artifacts to move
+ # into main. Count retained historical evidence and the migration snapshots
+ # as well as fresh builds; relocation must not make old bytes disappear from
+ # this ledger. The roots below do not overlap.
+ $mainOut=Join-Path $repo 'out'
+ $roots=@(Get-ChildItem -LiteralPath $mainOut -Directory|Where-Object Name -like 'prelive*')
+ foreach($relative in @('windows-handoff','retained/consolidation-20261008','consolidation-20261008-01')){
+  $path=Join-Path $mainOut $relative;if(Test-Path -LiteralPath $path){$roots+=@(Get-Item -LiteralPath $path)}
+ }
+ $rows=@($roots|ForEach-Object {$sum=(Get-ChildItem -LiteralPath $_.FullName -File -Recurse|Measure-Object Length -Sum).Sum;@{path=$_.FullName;bytes=[long]$sum}})
+ $total=[long](($rows|Measure-Object bytes -Sum).Sum);$free=[long](Get-PSDrive C).Free
+ $reserve=if($phase -eq 'before' -and $Operation -in @('pipeline','pixels','tests','family')){1073741824}elseif($phase -eq 'before' -and $Operation -eq 'build'){if($CoreDonor){536870912}else{1610612736}}else{0}
+ $valid=$total+$reserve -le 51539607552 -and $free-$reserve -ge 21474836480
+ NewJson (Join-Path $pkg ($stage+'-capacity-'+$phase+'.json')) @{schema='pas.prelive-capacity.v1';stage=$stage;phase=$phase;roots=$rows;bytes=$total;reserve=$reserve;free=$free;cap=51539607552;authorization='human approval 2026-10-08';minimum_free=21474836480;pass=$valid;metadata_seal_cap=67108864}
+ if(-not $valid){throw 'capacity-gate'}
+}
 function Receipt($stage,[int]$expected=0){$dir=Join-Path $out $stage;$vp=Join-Path $dir ($stage+'-verification.json');$v=Get-Content -LiteralPath $vp -Raw|ConvertFrom-Json;$r=Get-Content -LiteralPath (Join-Path $dir ($stage+'-result.json')) -Raw|ConvertFrom-Json;$s=Get-Content -LiteralPath (Join-Path $dir 'state.json') -Raw|ConvertFrom-Json;
  if($v.pending -or -not $v.producer_complete -or $v.native_exit -ne $expected -or $v.runner_exit -ne $expected -or $v.verification_exit -ne 0 -or $r.pending -or $r.facts.active_final -ne 0 -or -not $r.facts.held_all_signaled -or -not $r.facts.streams_completed -or -not $r.facts.identity_trusted -or -not $r.facts.natural_quiescence -or $s.status -cne 'COMPLETE' -or $s.running -or $s.freeze_sha -cne (Get-FileHash -LiteralPath (Join-Path $dir 'freeze.json')).Hash.ToLowerInvariant() -or $s.contract_sha -cne (Get-FileHash -LiteralPath (Join-Path $dir 'contract.json')).Hash.ToLowerInvariant()){throw ('receipt-not-verified '+$stage)};foreach($f in $v.entries){CheckEntry $f};$anchors=@($s.receipts|Where-Object path -eq $vp);if($anchors.Count -ne 1){throw 'state-receipt-link'};CheckEntry $anchors[0]}
 function Stage($stage,$script,$arguments){

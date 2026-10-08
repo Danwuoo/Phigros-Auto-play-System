@@ -1,0 +1,20 @@
+{
+  "schema": "pas.retained-capacity-authorization.v1",
+  "date": "2026-10-08",
+  "status": "HUMAN_APPROVED",
+  "retained_prelive_cap_bytes": 51539607552,
+  "retained_prelive_cap_gib": 48,
+  "minimum_free_bytes": 21474836480,
+  "build_reserve_bytes": 1610612736,
+  "raw_reserve_bytes": 1073741824,
+  "candidate_build_cap_bytes": 6442450944,
+  "cost_raw_cap_bytes": 12884901888,
+  "stage_metadata_cap_bytes": 67108864,
+  "new_metadata_total_cap_bytes": 268435456,
+  "scope": "Preserve all unique historical evidence, consolidate external project artifacts into main, delete verified redundant copies, continue development in main.",
+  "historical_capacity_stops_remain_unchanged": true,
+  "historical_pass_does_not_qualify_new_main_build": true,
+  "live_admission": "UNQUALIFIED",
+  "model_training_authorized": false,
+  "remote_push_authorized": false
+}
