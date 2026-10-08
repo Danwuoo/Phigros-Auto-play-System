@@ -1,5 +1,12 @@
 # Main 整合、容量與外部副本清算 — 2026-10-08
 
+後續 main emulator 前工作包已依使用者「完成當前階段後停止，盤點開發情況」收尾，
+最新入口為[開發盤點](../../research/live-readiness-20261007/PRE_EMULATOR_STAGE_20261008.md)。
+source `23a2634` 三配置 60/60 組、3063 prefix、四項故障控制通過；AA Tap3 deadline
+overrun、production dense archive mailbox overrun，仍 NOT_READY／UNQUALIFIED。
+本頁以下 main07 的 45/45 與其容量是整合階段快照，保留原 source／receipt；
+不是後續 main14 的結果或當前容量。後續收尾 retained 帳本為 44.916/48 GiB。
+
 使用者授權先將 Desktop、Downloads 與可讀 C 槽中的專案工作副本、原始證據、
 建置輸出及封包集中至 main，保存驗證後刪除外部副本，並接受 retained prelive
 上限由 32 GiB 提高至 48 GiB。後續直接在 main 開發，不再新建 worktree。

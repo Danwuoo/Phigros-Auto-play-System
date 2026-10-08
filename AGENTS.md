@@ -4,6 +4,15 @@
 
 ## 現行方向
 
+2026-10-08 最新使用者指示：「完成當前階段後停止，盤點開發情況」。本輪已封存並
+停止開發／測試，未啟動 emulator；先讀[階段盤點](docs/research/live-readiness-20261007/PRE_EMULATOR_STAGE_20261008.md)
+及[收據 JSON](docs/research/live-readiness-20261007/PRE_EMULATOR_STAGE_20261008.json)。
+實際編譯 source `23a2634`，三配置各 22 正式 TUs／60 組冷回歸、3063 prefix、四項故障控制通過。
+Production normal Tap／Hold 通過，dense archive mailbox overrun 執行失敗；AA Tap3
+producer／publication 各一次 deadline overrun，後九筆／noise／ABBA 及 production 後六項未跑。
+成本 NOT_READY、live UNQUALIFIED、完整 validator 未實作；不把較晚文件 HEAD 當作 binary
+來源。尚有可冷修補工作，未到只差 emulator 的階段；本次不建立自動續跑。後續續作依新指示。
+
 2026-10-08 使用者最新授權：將 Desktop、Downloads 與可讀 C 槽內的外部專案副本、
 證據及封包集中回 main，核對保存後刪除外部位置；後續直接在 main 開發，不再新建
 worktree。retained prelive 上限提高為 48 GiB，minimum free 20 GiB 及既有 stage、

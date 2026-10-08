@@ -3,9 +3,13 @@
 2026-10-08 main 已整合 Windows readiness、owner 到期安全拒絕、bounded typed diagnostic
 writer、嚴格 gzip reader 及可選 phase 診斷。診斷仍只向外輸出；一般 `current_chain`
 不啟用 phase profiling，獨立診斷 binary 不具成本資格。完整來源／證據沿革與 48 GiB
-容量契約見[main 整合帳本](../06-engineering/MAIN_CONSOLIDATION_20261008.md)。source
-`5513458` 的三配置新建置、45／45 組 affected 冷回歸與 141 個 native stage 已通過；
-新 main 尚須 prefix、成本、production、admission、profile 與 physical gates；實機入口仍 UNQUALIFIED。
+容量契約見[main 整合帳本](../06-engineering/MAIN_CONSOLIDATION_20261008.md)。實際 source
+`23a2634` 的三配置完整 production 建置、60／60 組 affected 冷回歸、3063 像素前綴及
+四項 literal production 故障控制通過。Normal Tap／Hold 的 production packet／action／
+wake／archive 已在 endpoint-free doubles 下執行並通過必要數值 gate；dense 因 archive
+mailbox overrun 中止，AA Tap3 producer／publication deadline overrun，成本仍 NOT_READY。
+完整 live reader／qualified token 尚未實作，當前 profile／physical 未取得資格，入口仍
+UNQUALIFIED。依使用者最新指示停止後續工作，見[開發盤點](../../research/live-readiness-20261007/PRE_EMULATOR_STAGE_20261008.md)。
 以下 10/4 main50 及 C36h 內容為其 frozen 歷史責任描述，不能代替新 main 的驗收。
 
 2026-10-04，main HEAD `f83c7ea0bd4e92ab6fb50a14fc9db2c4e333be2c`，**observer50／planner27／diagnostics11、live0，是comparison／donor**；behavioural／experimental baseline仍是另有frozen來源的C36h tint1。本文按責任描述main50正式程式，不把其owner規則套到C36h。產品目標、逐曲證據、最新研究狀態與工作包見[10/4總帳](LEGACY_IN_ZERO_MISS_BASELINE_20261004.md)；[10/1狀態](PROJECT_STATUS_NEXT_STEPS_20261001.md)按J5–J32接續，早期段落為歷史。來源沿革見[整合交接](../06-engineering/MAIN_INTEGRATION_HANDOFF_20261001.md)、[冷開發](../04-offline-research/COLD_DEVELOPMENT_RESULT_20260929.md)及[熱調試](../02-game-results/FOUR_SONG_HOT_TUNING_20260929.md)。模型只離線；main50或研究工具通過不授予live-ready。

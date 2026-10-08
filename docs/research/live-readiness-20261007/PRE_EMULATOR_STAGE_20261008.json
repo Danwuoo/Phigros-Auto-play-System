@@ -1,0 +1,1365 @@
+{
+  "user_instruction": "完成當前階段後停止，盤點開發情況",
+  "completed_full_IN_zero_miss": 0,
+  "branch": "main",
+  "maintenance_unified_recipe_pending": [
+    "isolate large production target launches",
+    "pin byte-exact legacy fixture protocol in isolated test-double repository",
+    "serial final executable symbol archive/cleanup before build seal"
+  ],
+  "all_endpoint_free_work_complete": false,
+  "faults": {
+    "pass": true,
+    "rows": [
+      {
+        "scenario": "capture",
+        "live_ready": false,
+        "report": {
+          "sha256": "c02e5e9d5bbfdc1d7e702b9f3e0e649681b08174d7d666f9b7c8b9b55d8b1d98",
+          "bytes": 1711,
+          "path": "out/prelive-pre-emulator-faults-main14f/capture/report.json"
+        },
+        "physical_qualification": false,
+        "audit": {
+          "sha256": "cd09118e38fe002ec8964d3c2cc8309c7297eb0044c0b9aa03bb22a25278265d",
+          "bytes": 601,
+          "path": "out/prelive-pre-emulator-faults-main14f/capture-audit.json"
+        },
+        "cost_qualification": false,
+        "control_pass": true
+      },
+      {
+        "scenario": "writer",
+        "live_ready": false,
+        "report": {
+          "sha256": "29e9008d79338531ec7c00a3022aac59276dbbdba1b3a9e529ea5961929104f0",
+          "bytes": 1720,
+          "path": "out/prelive-pre-emulator-faults-main14f/writer/report.json"
+        },
+        "physical_qualification": false,
+        "audit": {
+          "sha256": "7e240bd9015a56e457d677ec2f3735b20720a19860d385b3b0545490934615c8",
+          "bytes": 597,
+          "path": "out/prelive-pre-emulator-faults-main14f/writer-audit.json"
+        },
+        "cost_qualification": false,
+        "control_pass": true
+      },
+      {
+        "scenario": "rpc",
+        "live_ready": false,
+        "report": {
+          "sha256": "f45975f6607e635c4b9d10dc7f39e7b6c7cdd4e8bb7e1ac488aeef5f305d1e8f",
+          "bytes": 1683,
+          "path": "out/prelive-pre-emulator-faults-main14f/rpc/report.json"
+        },
+        "physical_qualification": false,
+        "audit": {
+          "sha256": "5744a45de049fd8e7f3294e7230f0eeb05cbd4a6d17b7a5bd10fb018ce293fa6",
+          "bytes": 594,
+          "path": "out/prelive-pre-emulator-faults-main14f/rpc-audit.json"
+        },
+        "cost_qualification": false,
+        "control_pass": true
+      },
+      {
+        "scenario": "slow",
+        "live_ready": false,
+        "report": {
+          "sha256": "b72d9730192af8d3cf821eea9867cc3ed25cb0ee0998fdf975fa25f6deb3cc62",
+          "bytes": 1613,
+          "path": "out/prelive-pre-emulator-faults-main14f/slow/report.json"
+        },
+        "physical_qualification": false,
+        "audit": {
+          "sha256": "41291ec149ada37bbc5391ba315781cd986236747604e31a9fb5fbd09073fae2",
+          "bytes": 602,
+          "path": "out/prelive-pre-emulator-faults-main14f/slow-audit.json"
+        },
+        "cost_qualification": false,
+        "control_pass": true
+      }
+    ],
+    "status": {
+      "sha256": "61df0ac1c5289d67a7c725619e32f5e791aa9897d31813ce2c456b106bb532e1",
+      "bytes": 12898,
+      "path": "out/prelive-pre-emulator-faults-main14f/status.json"
+    }
+  },
+  "capacity": {
+    "free_bytes": 207322050560,
+    "retained_cap_bytes": 51539607552,
+    "compiler_scope_bytes": 5722844756,
+    "ledger": {
+      "sha256": "439f545ad62afcd61f00e46aecfde31e6923846ef5df8600df97c93de14f51c9",
+      "bytes": 7663,
+      "path": "out/prelive-20261006/results-pre-emulator-main14-capacity-after.json"
+    },
+    "retained_bytes": 48227847084,
+    "minimum_free_bytes": 21474836480,
+    "compiler_scope": "compiler/evaluation/fixture/planning only; all historical evidence stays in retained ledger",
+    "dependencies_scope": "SDK/AVD/installed vcpkg are retained development dependencies outside retained-prelive scope",
+    "pass": true,
+    "compiler_cap_bytes": 6442450944
+  },
+  "remaining_work": [
+    "production dense archive mailbox overrun diagnosis and concrete repair",
+    "AA producer late wake diagnosis and concrete repair",
+    "unify verified maintenance continuation recipes and qualify changed source",
+    "fresh AA12/noise/ABBA36 only after concrete changed candidate",
+    "remaining production stress/debug/asan six cases",
+    "live reader/admission and current device/profile/five-finger/physical evidence",
+    "chapter listing, actual IN unlock and complete IN Miss=0 acceptance"
+  ],
+  "AA": {
+    "noise": "NOT_RUN",
+    "located_original_attempt": {
+      "attempt": 1928,
+      "capture": 29373950408200,
+      "consumed": true,
+      "hook_ns": 10538500,
+      "journal_enqueue_complete": 29373968847300,
+      "observer_ns": 5506300,
+      "owned": true,
+      "owner_complete": 29373968830800,
+      "owner_ns": 19400,
+      "producer_due_ns": 29373925167700,
+      "publication_return_ns": 29373952652100,
+      "published": 29373952637100,
+      "published_ok": true,
+      "render_end_ns": 29373950408200,
+      "render_start_ns": 29373949800400,
+      "writer_ok": true
+    },
+    "ABBA": "NOT_RUN",
+    "scheduling_repair_implemented": false,
+    "negative_attempt_raw": {
+      "sha256": "7e9076b71485761ef1076158b3a6b1254264265a7686c67ad0692349e8908a77",
+      "bytes": 1026787,
+      "path": "out/prelive-pre-emulator-aa-main14/main14-tap-closed-reset-v1-3.json.attempts.json"
+    },
+    "not_run": 9,
+    "status": {
+      "sha256": "f3b62ee7273fb6ffd77a7bc4676e91bab014f4980b87993df40a78da20330fd9",
+      "bytes": 12475,
+      "path": "out/prelive-pre-emulator-aa-main14/status.json"
+    },
+    "completed_verdicts": [
+      {
+        "run_id": "main14-tap-closed-reset-v1-1",
+        "verdict": {
+          "sha256": "b3f24f66a2dba1c4efbe5b66df041aa602bebb2b6b97abad8678cb51d9aead53",
+          "bytes": 525,
+          "path": "out/prelive-pre-emulator-aa-main14/main14-tap-closed-reset-v1-1-gate.json"
+        },
+        "status": "PASS"
+      },
+      {
+        "run_id": "main14-tap-closed-reset-v1-2",
+        "verdict": {
+          "sha256": "38621a4cad514b30d2372bde60f047efbc484652324fc7679ffb80fac6b2de59",
+          "bytes": 525,
+          "path": "out/prelive-pre-emulator-aa-main14/main14-tap-closed-reset-v1-2-gate.json"
+        },
+        "status": "PASS"
+      },
+      {
+        "run_id": "main14-tap-closed-reset-v1-3",
+        "verdict": {
+          "sha256": "fb3b003b06fd22b00e0ee9ab1750b7ef55c348fe9991a8fa2facd42af4c02b83",
+          "bytes": 575,
+          "path": "out/prelive-pre-emulator-aa-main14/main14-tap-closed-reset-v1-3-gate.json"
+        },
+        "status": "NOT_READY"
+      }
+    ],
+    "R2_protocol": {
+      "sha256": "0000ad66d05649ebc4f60570b58e9a9a4cb58f7e6629279e4d38a945c8d4c060",
+      "bytes": 3512,
+      "path": "docs/research/zero-miss-20261006/windows/PRELIVE_COST_PROTOCOL_R2_20261007.md"
+    },
+    "campaign": {
+      "sha256": "461ff7810db88ec026186f39b4bc6009e0f2f770c6d543adfee4d09a16815d7d",
+      "bytes": 7116,
+      "path": "out/prelive-pre-emulator-aa-main14/campaign.json"
+    },
+    "all_12_cost_validity_pass": false
+  },
+  "maintenance_scope": "Index of original C++ verdicts, receipts and archive metadata; no new performance recomputation or live qualification",
+  "native_summary": {
+    "sha256": "9f5c6359e17faa532a6135d3e5a90b9f9fab104cb10764bdf9e5864950c1ef68",
+    "bytes": 185890,
+    "path": "out/prelive-pre-emulator-results-main14/native-stage-status.json"
+  },
+  "schema": "pas.pre-emulator-stage-inventory.v1",
+  "documentation_followup_only": true,
+  "native_stage_counts": {
+    "complete": 175,
+    "all_pass": false,
+    "selected": 176,
+    "failed_stage": "production-pre-emulator-main14-normal-dense",
+    "stop": 1
+  },
+  "production": {
+    "normal_dense_original_remaining_label": "NOT_RUN in original batch file means not added to successful audit rows; actual native receipt proves attempted failure",
+    "failed_execution_cases": 1,
+    "debug_asan_stress_qualification": "NOT_RUN; no cost or raw-integrity claim",
+    "rows": [
+      {
+        "full_owner_seen": 2557,
+        "report": {
+          "sha256": "77fbed06af41ada3cc4c66c2c59749eb56db4276e5da0929075189ce49e3ab87",
+          "bytes": 5706,
+          "path": "out/prelive-pre-emulator-production-main14/normal-tap/report.json"
+        },
+        "normal_cost_valid": true,
+        "integrity_verified": true,
+        "windows_cost_qualification": false,
+        "capture_to_owner_return_ms": {
+          "jitter_p95_minus_p5": 4.368004999999999,
+          "max": 36.3091,
+          "n": 2304,
+          "p50": 8.6329,
+          "p95": 11.250015,
+          "p99": 14.449564999999966
+        },
+        "status": "PASS",
+        "measurement_owner_seen": 2304,
+        "audit": {
+          "sha256": "b33f2a0628a449757678eb41567314240dfcc1ea542ec8214b12cab8165fcba3",
+          "bytes": 2089,
+          "path": "out/prelive-pre-emulator-production-main14/normal-tap-audit.json"
+        },
+        "id": "normal-tap"
+      },
+      {
+        "full_owner_seen": 2536,
+        "report": {
+          "sha256": "b5610bf921b705e7847e75959c9a01deb1ead84ddc7f4048de896f067d26fa7f",
+          "bytes": 5576,
+          "path": "out/prelive-pre-emulator-production-main14/normal-hold/report.json"
+        },
+        "normal_cost_valid": true,
+        "integrity_verified": true,
+        "windows_cost_qualification": false,
+        "capture_to_owner_return_ms": {
+          "jitter_p95_minus_p5": 36.92226000000001,
+          "max": 65.1164,
+          "n": 2283,
+          "p50": 17.9593,
+          "p95": 45.117580000000004,
+          "p99": 50.37735199999999
+        },
+        "status": "PASS",
+        "measurement_owner_seen": 2283,
+        "audit": {
+          "sha256": "11f76be4693e5fed2fa3958662ee33e7bba0c9dfcec6dd96948ae5994dfb7d10",
+          "bytes": 2071,
+          "path": "out/prelive-pre-emulator-production-main14/normal-hold-audit.json"
+        },
+        "id": "normal-hold"
+      },
+      {
+        "session_summary": {
+          "sha256": "0c57c9e5e260761522b4f361e51efc73d4e9c1352f1c12db21c31498a7d75f93",
+          "bytes": 709,
+          "path": "out/prelive-pre-emulator-production-main14/normal-dense/archive/manual-session-30365373529300/summary.json"
+        },
+        "complete_attempt_accounting": false,
+        "native_elapsed_s": 1.5102135,
+        "status": "FAILED_EXECUTION",
+        "state": {
+          "sha256": "eabffe3d819f56f12a405840e9aa88bedee0ad4f2d6416eec8bb20025ef2108d",
+          "bytes": 617,
+          "path": "out/windows-handoff/production-pre-emulator-main14-normal-dense/state.json"
+        },
+        "result": {
+          "sha256": "2fe88312d2022c41d00a07d5b47607b229eded4807c0b189269d9ffac59d653e",
+          "bytes": 3497,
+          "path": "out/windows-handoff/production-pre-emulator-main14-normal-dense/production-pre-emulator-main14-normal-dense-result.json"
+        },
+        "normal_cost_verdict": "NOT_PRODUCED",
+        "planned_attempts": 2560,
+        "partial_events": {
+          "sha256": "fda8297012c75c962f1c37799823d70d268846aa980ae594d0cb1c735b542d32",
+          "bytes": 402377,
+          "path": "out/prelive-pre-emulator-production-main14/normal-dense/archive/manual-session-30365373529300/round-1/events-0.jsonl.gz"
+        },
+        "input_closure": {
+          "sha256": "6d8ff1703bd72641c783ffab824bafb0081f9c5d299d89cd3aec722ca2118a57",
+          "bytes": 1206,
+          "path": "out/prelive-20261006/production-pre-emulator-main14-normal-dense-input-closure-verification.json"
+        },
+        "partial": true,
+        "verification": {
+          "sha256": "8df76d869b28ab53a45db2c98ed8b78637e8a4371427bd744f276083b9cb9180",
+          "bytes": 3545,
+          "path": "out/windows-handoff/production-pre-emulator-main14-normal-dense/production-pre-emulator-main14-normal-dense-verification.json"
+        },
+        "native_exit": 2,
+        "raw_integrity_audit": "NOT_RUN",
+        "runner_exit": 2,
+        "published": 41,
+        "reason": "session archive mailbox overrun",
+        "round_summary": {
+          "sha256": "5d30cd6604bb65611cd642ab9021421951fbd16b938d8366037a5a85911f073b",
+          "bytes": 515,
+          "path": "out/prelive-pre-emulator-production-main14/normal-dense/archive/manual-session-30365373529300/round-1/summary.json"
+        },
+        "id": "normal-dense"
+      },
+      {
+        "status": "NOT_RUN",
+        "id": "stress-tap"
+      },
+      {
+        "status": "NOT_RUN",
+        "id": "stress-dense"
+      },
+      {
+        "status": "NOT_RUN",
+        "id": "debug-tap"
+      },
+      {
+        "status": "NOT_RUN",
+        "id": "debug-hold"
+      },
+      {
+        "status": "NOT_RUN",
+        "id": "asan-tap"
+      },
+      {
+        "status": "NOT_RUN",
+        "id": "asan-hold"
+      }
+    ],
+    "stopped": true,
+    "successful_normal_cases": 2,
+    "not_run_cases": 6,
+    "original_status": {
+      "sha256": "db8a6b40a6b67bf814e8da568f6a530fee564c83ec231217563d03ff3fecbd53",
+      "bytes": 7518,
+      "path": "out/prelive-pre-emulator-production-main14/status.json"
+    }
+  },
+  "compiled_source_commit": "23a26342663b5d5b968f098620db435855a25087",
+  "prefix": {
+    "pass": true,
+    "frames": 3063,
+    "receipt": {
+      "sha256": "91b2adb7daefde0993800802b55d52c729580644bf4312e9cf865445916c322e",
+      "bytes": 2198,
+      "path": "out/prelive-pre-emulator-prefix-main14/prefix-receipt.json"
+    }
+  },
+  "chapter_denominator": "unknown",
+  "physical_qualification": false,
+  "stop_state": "No new development/test/native stage after current production batch; inventory only, no scheduled continuation",
+  "live_validator": "UNIMPLEMENTED",
+  "isolated_analyzer_fixture": {
+    "sha256": "127cde6185ecb516ba53a638db1c64e90421b212e8e615f62e265321077910bf",
+    "bytes": 614061,
+    "path": "out/prelive-pre-emulator-fixture-repo-main14/fixture-repository-proof.json"
+  },
+  "consolidation": {
+    "sha256": "30ddfbb24bbd2159dc57c3ef0d71e61aeeb8e01a2510a835543244f00cf566af",
+    "bytes": 23401,
+    "path": "docs/research/live-readiness-20261007/MAIN_CONSOLIDATION_INDEX_20261008.json"
+  },
+  "emulator_started": false,
+  "next_requires_emulator": false,
+  "date": "2026-10-08",
+  "status": "USER_REQUESTED_STOP_LIVE_UNQUALIFIED",
+  "result_summary": {
+    "sha256": "224aab5a7367679c808365de46d4bda3222fd8bb5e15f88b20fd80f3fda42953",
+    "bytes": 48734,
+    "path": "out/prelive-pre-emulator-results-main14/result.json"
+  },
+  "live_ready": false,
+  "current_unlocks": "unknown",
+  "device_operations": 0,
+  "new_campaign_started_after_instruction": false,
+  "recorded_maintenance_recipes": [
+    {
+      "sha256": "60602590c017fe13533cfdb3e88a53575e067e1168e411bd26394a5388a32437",
+      "bytes": 15610,
+      "path": "out/prelive-pre-emulator-planning/build-isolated-production.ps1"
+    },
+    {
+      "sha256": "4e5b6fad42214085394a2e71ce21a09435e0a124127478c1626164d18955f692",
+      "bytes": 5480,
+      "path": "out/prelive-pre-emulator-planning/complete-cold.ps1"
+    },
+    {
+      "sha256": "2428ba459c84766fd9e8b886b66177d436e429f58fa6149a44f63522917e38dd",
+      "bytes": 2575,
+      "path": "out/prelive-pre-emulator-planning/prepare-fixture-repository.ps1"
+    },
+    {
+      "sha256": "1e023b54b4dc5ea441f12d18c8681c8e77d1598fafd7c61418471b3c19349327",
+      "bytes": 5862,
+      "path": "out/prelive-pre-emulator-planning/complete-cold-fixtures.ps1"
+    },
+    {
+      "sha256": "93d8fd53e4e91a2ba2f5e139a547e99c533ead2f25046be3f8c81da23f60e633",
+      "bytes": 5902,
+      "path": "out/prelive-pre-emulator-planning/complete-cold-fixtures-v2.ps1"
+    },
+    {
+      "sha256": "587c29067510603afb3f0eb31e611d60f8f768b1a6c51764e8078d968d13e1f5",
+      "bytes": 3078,
+      "path": "out/prelive-pre-emulator-planning/finish-debug-symbol-cleanup.ps1"
+    },
+    {
+      "sha256": "92bb6f0bff895f6df2b535c45876285ae6a2c1314d3d258d132f4b4fa85e9112",
+      "bytes": 5941,
+      "path": "out/prelive-pre-emulator-planning/reseal-and-complete-debug.ps1"
+    },
+    {
+      "sha256": "2d3a02cfd65a0b1a6402877249dac068f509bfb95a7c764286b1db7fa56a31f2",
+      "bytes": 2294,
+      "path": "out/prelive-pre-emulator-planning/load-release-for-functional.ps1"
+    },
+    {
+      "sha256": "26397eb167cd2970a0cc2e6630590e59562518ba7d7c175fe7b06d04ab9ff68b",
+      "bytes": 5154,
+      "path": "out/prelive-pre-emulator-planning/common.ps1"
+    },
+    {
+      "sha256": "5157345dfba5b1657bcda7aca2bef40fac25675dacfe57bf357d032c4c809a55",
+      "bytes": 2487,
+      "path": "out/prelive-pre-emulator-planning/prefix-release-functional.ps1"
+    },
+    {
+      "sha256": "27c6df85528eaf866f0e214d829dce71811648b300bd0fc6777d58b87c60798b",
+      "bytes": 2477,
+      "path": "out/prelive-pre-emulator-planning/faults-release-functional.ps1"
+    },
+    {
+      "sha256": "f8edb4eeffdea7fb58868082b6fa403a411459b12e5c05a894aa575db38924d4",
+      "bytes": 7329,
+      "path": "out/prelive-pre-emulator-planning/collect-results.ps1"
+    }
+  ],
+  "cold": {
+    "pass": true,
+    "groups_pass": 60,
+    "fresh_core_compile_count": 66,
+    "configurations": [
+      {
+        "evaluation": {
+          "sha256": "57f7a2cb737a0669bf590769d6974fadb9d51787866226312ed5c04b008e2c81",
+          "bytes": 15330,
+          "path": "out/prelive-pre-emulator-evaluation-main14-release/evaluation.json"
+        },
+        "old_donor_objects_used": false,
+        "production_executable_executed": false,
+        "build": {
+          "sha256": "191eb3fb46ed236401acd0d5fb8067189e746c97650b0d33d2b3218a579943a2",
+          "bytes": 66004,
+          "path": "out/prelive-pre-emulator-evaluation-main12-release/build-binding.json"
+        },
+        "fresh_core_translation_units": 22,
+        "source_manifest": {
+          "sha256": "b56cad596865b991d4b3da2bd5d0fc1a4e61612d4e5453028792f056642059e6",
+          "bytes": 223104,
+          "path": "out/prelive-pre-emulator-evaluation-main12-release/source-manifest.json"
+        },
+        "actual_build_root": "out/prelive-pre-emulator-release-main12",
+        "affected_groups_pass": 20,
+        "tests": [
+          {
+            "test": "diagnostic_writer_tests",
+            "receipt": {
+              "sha256": "60c11dd54f9d61a3abb6e2ecdc49bb96fa3aa4627d58b93f1559ad0cc60b1932",
+              "bytes": 4170,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-diagnostic-writer-tests/test-prelive-pre-emulator-release-main12-diagnostic-writer-tests-verification.json"
+            },
+            "report": {
+              "sha256": "edf9c2c91cf2675d34fe4518e565c216fb5e3dd67d5c8b0b5be4fe4899442692",
+              "bytes": 2216,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/diagnostic_writer_tests.json"
+            }
+          },
+          {
+            "test": "owner_checkpoint_tests",
+            "receipt": {
+              "sha256": "a99521a788bb37eafb65902363283d57f863c393aebba271105212d793f26bb4",
+              "bytes": 4143,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-owner-checkpoint-tests/test-prelive-pre-emulator-release-main12-owner-checkpoint-tests-verification.json"
+            },
+            "report": {
+              "sha256": "ac59286d7cf2f0a0cdcd0089987c2c3018f2417a47261b9d0071d687057de641",
+              "bytes": 1909,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/owner_checkpoint_tests.json"
+            }
+          },
+          {
+            "test": "owner_expiry_tests",
+            "receipt": {
+              "sha256": "0d3ea06202105ca00ea354abeb6487129b626749c0a1ede9c7817fc1627d7a73",
+              "bytes": 4043,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-owner-expiry-tests/test-prelive-pre-emulator-release-main12-owner-expiry-tests-verification.json"
+            },
+            "report": {
+              "sha256": "7daeecfa55969a0c65d848e11d89149f7a2218d88f83c0800d6b997e78898f99",
+              "bytes": 2255,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/owner_expiry_tests.json"
+            }
+          },
+          {
+            "test": "producer_wait_tests",
+            "receipt": {
+              "sha256": "4900ab834e2bbe6b352542e8d1fe6e840505029f98b52f332e00b6960ef50c96",
+              "bytes": 4068,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-producer-wait-tests/test-prelive-pre-emulator-release-main12-producer-wait-tests-verification.json"
+            },
+            "report": {
+              "sha256": "14dfcd85cef6ec254377d1908982b380846be74d804b0a313dd1c65ad83d6b05",
+              "bytes": 1159,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/producer_wait_tests.json"
+            }
+          },
+          {
+            "test": "tap_reset_workload_tests",
+            "receipt": {
+              "sha256": "3ebf854de3b81a1f2a1db61b17fbd8a125241ce8ef9f008e9dd599e3471bdaa7",
+              "bytes": 4193,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-tap-reset-workload-tests/test-prelive-pre-emulator-release-main12-tap-reset-workload-tests-verification.json"
+            },
+            "report": {
+              "sha256": "0ab56b3f573f8f50fb19c1057c22e642307b937f183123ef44e1b4ce13273d83",
+              "bytes": 27242,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/tap_reset_workload_tests.json"
+            }
+          },
+          {
+            "test": "owner_wait_tests",
+            "receipt": {
+              "sha256": "d469b3ee840514aae330819982e0b29da71cded7dc09809b7c215f44b5937a56",
+              "bytes": 3993,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-owner-wait-tests/test-prelive-pre-emulator-release-main12-owner-wait-tests-verification.json"
+            },
+            "report": {
+              "sha256": "78ed94cde562779af84de5b8e199feda53dbf829049ece4129c94d86ecee0720",
+              "bytes": 1895,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/owner_wait_tests.json"
+            }
+          },
+          {
+            "test": "current_tests",
+            "receipt": {
+              "sha256": "0a43d22f92e6c9e5bb270bddc843dafd1ea8008d32df45bcd4781d1eef47f007",
+              "bytes": 3920,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-current-tests/test-prelive-pre-emulator-release-main12-current-tests-verification.json"
+            },
+            "report": {
+              "sha256": "eac5e3533068b330c8fda939593e5a532a168ccb49ad2231e6befd422c277c54",
+              "bytes": 5658,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/current_tests.json"
+            }
+          },
+          {
+            "test": "active_body_tests",
+            "receipt": {
+              "sha256": "ff647c25105b34fa29ccc70a03db7655f1cb3221a44db3974588a7d60e67c495",
+              "bytes": 4020,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-active-body-tests/test-prelive-pre-emulator-release-main12-active-body-tests-verification.json"
+            },
+            "report": {
+              "sha256": "d00da6bd18150d82d4617c82b8b6da0119f2bdabfe390416c115d14edfe3dfea",
+              "bytes": 2955,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/active_body_tests.json"
+            }
+          },
+          {
+            "test": "tail_guard_tests",
+            "receipt": {
+              "sha256": "b09f6f8e6e829816cc3c1527c0310bf30edf186cbe45ebca8f3b78bd8861fe95",
+              "bytes": 3993,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-tail-guard-tests/test-prelive-pre-emulator-release-main12-tail-guard-tests-verification.json"
+            },
+            "report": {
+              "sha256": "2ce47431c3d6ccd655408da5597e0ee2965d7324d05a9fb7087ec5a37279c4d0",
+              "bytes": 19164,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/tail_guard_tests.json"
+            }
+          },
+          {
+            "test": "tail_only_owner_review",
+            "receipt": {
+              "sha256": "02b3b25754832025a3c85f9e76a20317ee770b1dde22a95d48e6c30e9de35123",
+              "bytes": 4145,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-tail-only-owner-review/test-prelive-pre-emulator-release-main12-tail-only-owner-review-verification.json"
+            },
+            "report": {
+              "sha256": "c697242cdd8ea94bd4660be1b49a0e3248c10ad023934632727cdf9f30b8aa37",
+              "bytes": 16191,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/tail_only_owner_review.json"
+            }
+          },
+          {
+            "test": "tail_only_pixels_review",
+            "receipt": {
+              "sha256": "c1608f3a3595dda068168ea9d995cda28c0a2beb9e3982b5778f7bddf23ee824",
+              "bytes": 4170,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main12-tail-only-pixels-review/test-prelive-pre-emulator-release-main12-tail-only-pixels-review-verification.json"
+            },
+            "report": {
+              "sha256": "35c8533ead9284e64bb59658b167acbe4da1b40567b968354211f96e23c1dc1a",
+              "bytes": 8111,
+              "path": "out/prelive-pre-emulator-evaluation-main12-release/tail_only_pixels_review.json"
+            }
+          },
+          {
+            "test": "disabled_live_seam_tests",
+            "receipt": {
+              "sha256": "a58cd5a15f2bab16de88c11dd926d5ee60c6a2356699f0d23e3614a3f0118ad9",
+              "bytes": 4193,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main13-disabled-live-seam-tests/test-prelive-pre-emulator-release-main13-disabled-live-seam-tests-verification.json"
+            },
+            "report": {
+              "sha256": "bf199d9335da709164e6ce5d13404477af5cffae24931e01f08ad18ad4303a96",
+              "bytes": 4089,
+              "path": "out/prelive-pre-emulator-evaluation-main13-release/disabled_live_seam_tests.json"
+            }
+          },
+          {
+            "test": "live_seam_packet_review",
+            "receipt": {
+              "sha256": "d9a54b89e2cc39346546aff6d14002147563ad400f3f44f5e6e7bb6acc3ce54b",
+              "bytes": 4168,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main13-live-seam-packet-review/test-prelive-pre-emulator-release-main13-live-seam-packet-review-verification.json"
+            },
+            "report": {
+              "sha256": "6758f9938c61dcec78516be88cf1e8cc3b97831761f4a1f9ae7af55373c39b89",
+              "bytes": 5705,
+              "path": "out/prelive-pre-emulator-evaluation-main13-release/live_seam_packet_review.json"
+            }
+          },
+          {
+            "test": "live_seam_runtime_review",
+            "receipt": {
+              "sha256": "0afe5620092e6f69b1fc7f0c0687611ab9a67d052401421239cbfc7e28cc7b97",
+              "bytes": 4193,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main13-live-seam-runtime-review/test-prelive-pre-emulator-release-main13-live-seam-runtime-review-verification.json"
+            },
+            "report": {
+              "sha256": "8290d75d8af7a8326c524faf848744d9bca2d2f00830e3d34c025ac23d18c4fe",
+              "bytes": 12371,
+              "path": "out/prelive-pre-emulator-evaluation-main13-release/live_seam_runtime_review.json"
+            }
+          },
+          {
+            "test": "runtime_finish_tests",
+            "receipt": {
+              "sha256": "d49a42fe0be9d220e11576ab1c14f8ba292935501a81bf8bd22ec136a48450c0",
+              "bytes": 4093,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main13-runtime-finish-tests/test-prelive-pre-emulator-release-main13-runtime-finish-tests-verification.json"
+            },
+            "report": {
+              "sha256": "64439f08a3f022f888e7771bbf22541ad599c2e0d93359febddcd6a77829a86b",
+              "bytes": 4851,
+              "path": "out/prelive-pre-emulator-evaluation-main13-release/runtime_finish_tests.json"
+            }
+          },
+          {
+            "test": "cost_comparison_tests",
+            "receipt": {
+              "sha256": "3d152ea8dcb68905e7ff6b4577654b2f0efe915955d6d3f4ac042d28dea639c3",
+              "bytes": 4118,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main13-cost-comparison-tests/test-prelive-pre-emulator-release-main13-cost-comparison-tests-verification.json"
+            },
+            "report": {
+              "sha256": "824fa5fb337d9a608f533707fae12785f6254d5ae37949bcf25132299335caff",
+              "bytes": 1692,
+              "path": "out/prelive-pre-emulator-evaluation-main13-release/cost_comparison_tests.json"
+            }
+          },
+          {
+            "test": "production_pipeline_audit_tests",
+            "receipt": {
+              "sha256": "a4e0767d1765e32793cc06ba2d9b501ec27ce6c0d5f921c3e5d5aa305199a86d",
+              "bytes": 4369,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main13-production-pipeline-audit-tests/test-prelive-pre-emulator-release-main13-production-pipeline-audit-tests-verification.json"
+            },
+            "report": {
+              "sha256": "dc8780210b5be36bdfa1da74e6cf5d9fb13904cabc0c6bd02318d579dd1b693a",
+              "bytes": 2681,
+              "path": "out/prelive-pre-emulator-evaluation-main13-release/production_pipeline_audit_tests.json"
+            }
+          },
+          {
+            "test": "production_entry_controls",
+            "receipt": {
+              "sha256": "b3646f8bd33e0d2bcf8cf3e2900ad3d2904395cb9f6b9a8c494144dada3546de",
+              "bytes": 4218,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main13-production-entry-controls/test-prelive-pre-emulator-release-main13-production-entry-controls-verification.json"
+            },
+            "report": {
+              "sha256": "d452cf304802c85580d1b4d2b0b995278a7c5a6c8ff945108391c053fed3ae5c",
+              "bytes": 941,
+              "path": "out/prelive-pre-emulator-evaluation-main13-release/production_entry_controls.json"
+            }
+          },
+          {
+            "test": "cost_analysis_tests",
+            "receipt": {
+              "sha256": "9178e6de7c20a83a30a3b192cf3526c4826ef3483eb302460623dea5c6c098e4",
+              "bytes": 4072,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main14-cost-analysis-tests/test-prelive-pre-emulator-release-main14-cost-analysis-tests-verification.json"
+            },
+            "report": {
+              "sha256": "ddc5f15ccaeebdc62249b71fae63593255b508d33f6b8e72774c18d5ac0cda28",
+              "bytes": 153,
+              "path": "out/prelive-pre-emulator-evaluation-main14-release/cost-unit-fixture/result.json"
+            }
+          },
+          {
+            "test": "cost_analysis_review_tests",
+            "receipt": {
+              "sha256": "418624dc0b3efd61ce357a10f7ec906fe698f4bc048d84dbd0a7026404440aa0",
+              "bytes": 4247,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-release-main14-cost-analysis-review-tests/test-prelive-pre-emulator-release-main14-cost-analysis-review-tests-verification.json"
+            },
+            "report": {
+              "sha256": "61828667300132e18f0a22369b0d5ccc952eb7d1e51223cebb559f1ab4b795bd",
+              "bytes": 84275,
+              "path": "out/prelive-pre-emulator-evaluation-main14-release/cost-review-fixture/review_result.json"
+            }
+          }
+        ],
+        "dependency_files": 2154,
+        "configuration": "release",
+        "dependency_bytes": 11383669733,
+        "native_build_groups": 28,
+        "dependency_manifest": {
+          "sha256": "4aaa51fb1eb99e039b049c804a0381ebb93966cc7afe29d845339a87ac9c79eb",
+          "bytes": 575889,
+          "path": "out/prelive-pre-emulator-evaluation-main12-release/dependency-manifest.json"
+        },
+        "production_executable": {
+          "sha256": "4f3c1d06cf2203826a4c2913f0a02d0b1e7d3335d7a17c63dec4615426099cda",
+          "bytes": 9889792,
+          "path": "out/prelive-pre-emulator-release-main12/production/pas.exe"
+        },
+        "source_commit": "23a26342663b5d5b968f098620db435855a25087"
+      },
+      {
+        "evaluation": {
+          "sha256": "af7e216c1a48b31c774192a2de1084e92fd1b35cd850195b3f0adc6ad81f72ae",
+          "bytes": 15502,
+          "path": "out/prelive-pre-emulator-evaluation-main14-debug/evaluation.json"
+        },
+        "old_donor_objects_used": false,
+        "production_executable_executed": false,
+        "build": {
+          "sha256": "be28a7d99a49bdd68066120cf7fb09e99f21be00fe7073915400600449139c1f",
+          "bytes": 106611,
+          "path": "out/prelive-pre-emulator-evaluation-main14-debug/build-binding-resealed.json"
+        },
+        "fresh_core_translation_units": 22,
+        "source_manifest": {
+          "sha256": "5adebc6425b3e5988272c334699c3da1853380db2f616f6af5a133418e2af1b0",
+          "bytes": 223104,
+          "path": "out/prelive-pre-emulator-evaluation-main13-debug/source-manifest.json"
+        },
+        "actual_build_root": "out/prelive-pre-emulator-debug-main13",
+        "affected_groups_pass": 20,
+        "tests": [
+          {
+            "test": "diagnostic_writer_tests",
+            "receipt": {
+              "sha256": "233a185455d19038900280771ec52c4511f608438fbb60123b8ef8ca1cbe83da",
+              "bytes": 4120,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main13-diagnostic-writer-tests/test-prelive-pre-emulator-debug-main13-diagnostic-writer-tests-verification.json"
+            },
+            "report": {
+              "sha256": "edf9c2c91cf2675d34fe4518e565c216fb5e3dd67d5c8b0b5be4fe4899442692",
+              "bytes": 2216,
+              "path": "out/prelive-pre-emulator-evaluation-main13-debug/diagnostic_writer_tests.json"
+            }
+          },
+          {
+            "test": "owner_checkpoint_tests",
+            "receipt": {
+              "sha256": "d1778bf092a18891aa435502d2dbe43ba42d0cea79395671587bf427dc98005b",
+              "bytes": 4093,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-owner-checkpoint-tests/test-prelive-pre-emulator-debug-main14-owner-checkpoint-tests-verification.json"
+            },
+            "report": {
+              "sha256": "ac59286d7cf2f0a0cdcd0089987c2c3018f2417a47261b9d0071d687057de641",
+              "bytes": 1909,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/owner_checkpoint_tests.json"
+            }
+          },
+          {
+            "test": "owner_expiry_tests",
+            "receipt": {
+              "sha256": "9830b0eb03959858d377f461cf48e472701f9ece0eb57615996f8a12f7c06693",
+              "bytes": 3993,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-owner-expiry-tests/test-prelive-pre-emulator-debug-main14-owner-expiry-tests-verification.json"
+            },
+            "report": {
+              "sha256": "7daeecfa55969a0c65d848e11d89149f7a2218d88f83c0800d6b997e78898f99",
+              "bytes": 2255,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/owner_expiry_tests.json"
+            }
+          },
+          {
+            "test": "producer_wait_tests",
+            "receipt": {
+              "sha256": "5373a6db36f56b0f4fbd4ce309e23f2de73b7ce066b0ed22e7f1f48cbf5b43d1",
+              "bytes": 4018,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-producer-wait-tests/test-prelive-pre-emulator-debug-main14-producer-wait-tests-verification.json"
+            },
+            "report": {
+              "sha256": "14dfcd85cef6ec254377d1908982b380846be74d804b0a313dd1c65ad83d6b05",
+              "bytes": 1159,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/producer_wait_tests.json"
+            }
+          },
+          {
+            "test": "tap_reset_workload_tests",
+            "receipt": {
+              "sha256": "287e365b19579b4059ad0ebd9da8e75dc45af9c4c5dd0a08c1608ec37ad83353",
+              "bytes": 4143,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-tap-reset-workload-tests/test-prelive-pre-emulator-debug-main14-tap-reset-workload-tests-verification.json"
+            },
+            "report": {
+              "sha256": "0ab56b3f573f8f50fb19c1057c22e642307b937f183123ef44e1b4ce13273d83",
+              "bytes": 27242,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/tap_reset_workload_tests.json"
+            }
+          },
+          {
+            "test": "owner_wait_tests",
+            "receipt": {
+              "sha256": "9923d44d26af2951b0e15776d5393d5b98e3e66f7b5c3e64960d81f5e6f4f101",
+              "bytes": 3943,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-owner-wait-tests/test-prelive-pre-emulator-debug-main14-owner-wait-tests-verification.json"
+            },
+            "report": {
+              "sha256": "78ed94cde562779af84de5b8e199feda53dbf829049ece4129c94d86ecee0720",
+              "bytes": 1895,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/owner_wait_tests.json"
+            }
+          },
+          {
+            "test": "current_tests",
+            "receipt": {
+              "sha256": "a5614d4b4df9747e14278ebe023859575138cb53a2cc3008e4d80e78f37b54d2",
+              "bytes": 3870,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-current-tests/test-prelive-pre-emulator-debug-main14-current-tests-verification.json"
+            },
+            "report": {
+              "sha256": "eac5e3533068b330c8fda939593e5a532a168ccb49ad2231e6befd422c277c54",
+              "bytes": 5658,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/current_tests.json"
+            }
+          },
+          {
+            "test": "active_body_tests",
+            "receipt": {
+              "sha256": "78119d86cb62106b1f64e6e8953c4b1df71041d8bf1ae9731e7699e7087b1c70",
+              "bytes": 3970,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-active-body-tests/test-prelive-pre-emulator-debug-main14-active-body-tests-verification.json"
+            },
+            "report": {
+              "sha256": "d00da6bd18150d82d4617c82b8b6da0119f2bdabfe390416c115d14edfe3dfea",
+              "bytes": 2955,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/active_body_tests.json"
+            }
+          },
+          {
+            "test": "tail_guard_tests",
+            "receipt": {
+              "sha256": "2de4600c2d0342a73f682b110af3dba186e3cb8e0339e5b230b2e15f676c92c9",
+              "bytes": 3943,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-tail-guard-tests/test-prelive-pre-emulator-debug-main14-tail-guard-tests-verification.json"
+            },
+            "report": {
+              "sha256": "2ce47431c3d6ccd655408da5597e0ee2965d7324d05a9fb7087ec5a37279c4d0",
+              "bytes": 19164,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/tail_guard_tests.json"
+            }
+          },
+          {
+            "test": "tail_only_owner_review",
+            "receipt": {
+              "sha256": "57e823c9401eea25a3d09b1f0b093e17afdb9a5d10ef6dbe7199ce2a994323f2",
+              "bytes": 4095,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-tail-only-owner-review/test-prelive-pre-emulator-debug-main14-tail-only-owner-review-verification.json"
+            },
+            "report": {
+              "sha256": "c697242cdd8ea94bd4660be1b49a0e3248c10ad023934632727cdf9f30b8aa37",
+              "bytes": 16191,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/tail_only_owner_review.json"
+            }
+          },
+          {
+            "test": "tail_only_pixels_review",
+            "receipt": {
+              "sha256": "997496ccd4bfd351b1a113bd90c1b1f3de2ffe558c06ff9ca2243b529698797f",
+              "bytes": 4120,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-tail-only-pixels-review/test-prelive-pre-emulator-debug-main14-tail-only-pixels-review-verification.json"
+            },
+            "report": {
+              "sha256": "35c8533ead9284e64bb59658b167acbe4da1b40567b968354211f96e23c1dc1a",
+              "bytes": 8111,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/tail_only_pixels_review.json"
+            }
+          },
+          {
+            "test": "disabled_live_seam_tests",
+            "receipt": {
+              "sha256": "6964b72e3dd3a57d550d7374a28f2c685ca8ccac7e17abc2768bda37cfd969fc",
+              "bytes": 4143,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-disabled-live-seam-tests/test-prelive-pre-emulator-debug-main14-disabled-live-seam-tests-verification.json"
+            },
+            "report": {
+              "sha256": "bf199d9335da709164e6ce5d13404477af5cffae24931e01f08ad18ad4303a96",
+              "bytes": 4089,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/disabled_live_seam_tests.json"
+            }
+          },
+          {
+            "test": "live_seam_packet_review",
+            "receipt": {
+              "sha256": "09b50aeb4667f5365fc9d74c90d47d26cf1706296cb1d9aead4a6f9a1fb04797",
+              "bytes": 4118,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-live-seam-packet-review/test-prelive-pre-emulator-debug-main14-live-seam-packet-review-verification.json"
+            },
+            "report": {
+              "sha256": "6758f9938c61dcec78516be88cf1e8cc3b97831761f4a1f9ae7af55373c39b89",
+              "bytes": 5705,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/live_seam_packet_review.json"
+            }
+          },
+          {
+            "test": "live_seam_runtime_review",
+            "receipt": {
+              "sha256": "c276f6e2f982e973030ed2d3a84bcd92185e835f5e4ae7cf27bc2664062d6522",
+              "bytes": 4143,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-live-seam-runtime-review/test-prelive-pre-emulator-debug-main14-live-seam-runtime-review-verification.json"
+            },
+            "report": {
+              "sha256": "8290d75d8af7a8326c524faf848744d9bca2d2f00830e3d34c025ac23d18c4fe",
+              "bytes": 12371,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/live_seam_runtime_review.json"
+            }
+          },
+          {
+            "test": "runtime_finish_tests",
+            "receipt": {
+              "sha256": "9567ee85bf34fddf9f6f19dc90123a80240c7a182f6b6bcda30891ebb4ad3543",
+              "bytes": 4043,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-runtime-finish-tests/test-prelive-pre-emulator-debug-main14-runtime-finish-tests-verification.json"
+            },
+            "report": {
+              "sha256": "64439f08a3f022f888e7771bbf22541ad599c2e0d93359febddcd6a77829a86b",
+              "bytes": 4851,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/runtime_finish_tests.json"
+            }
+          },
+          {
+            "test": "cost_comparison_tests",
+            "receipt": {
+              "sha256": "ebb878cf400f71bf5a682c028274b5c2c1499efa92aa6d35851c1e1b3b81c8ed",
+              "bytes": 4068,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-cost-comparison-tests/test-prelive-pre-emulator-debug-main14-cost-comparison-tests-verification.json"
+            },
+            "report": {
+              "sha256": "824fa5fb337d9a608f533707fae12785f6254d5ae37949bcf25132299335caff",
+              "bytes": 1692,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/cost_comparison_tests.json"
+            }
+          },
+          {
+            "test": "production_pipeline_audit_tests",
+            "receipt": {
+              "sha256": "648190f9f86c478149b3c2b3b487fc36347b3ab303609a050fc10dd2a28757ba",
+              "bytes": 4318,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-production-pipeline-audit-tests/test-prelive-pre-emulator-debug-main14-production-pipeline-audit-tests-verification.json"
+            },
+            "report": {
+              "sha256": "dc8780210b5be36bdfa1da74e6cf5d9fb13904cabc0c6bd02318d579dd1b693a",
+              "bytes": 2681,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/production_pipeline_audit_tests.json"
+            }
+          },
+          {
+            "test": "production_entry_controls",
+            "receipt": {
+              "sha256": "3fd135c37714f370f29c59571aa45a4cca044eb6cf20d11f3b20e55e840265ad",
+              "bytes": 4168,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-production-entry-controls/test-prelive-pre-emulator-debug-main14-production-entry-controls-verification.json"
+            },
+            "report": {
+              "sha256": "d452cf304802c85580d1b4d2b0b995278a7c5a6c8ff945108391c053fed3ae5c",
+              "bytes": 941,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/production_entry_controls.json"
+            }
+          },
+          {
+            "test": "cost_analysis_tests",
+            "receipt": {
+              "sha256": "ff47a0ccda950a33b0d6fbaae62fe03fadf18b320ead50ee07c2d8066c957443",
+              "bytes": 4022,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-cost-analysis-tests/test-prelive-pre-emulator-debug-main14-cost-analysis-tests-verification.json"
+            },
+            "report": {
+              "sha256": "ddc5f15ccaeebdc62249b71fae63593255b508d33f6b8e72774c18d5ac0cda28",
+              "bytes": 153,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/cost-unit-fixture/result.json"
+            }
+          },
+          {
+            "test": "cost_analysis_review_tests",
+            "receipt": {
+              "sha256": "d2173efa840f99785b6619d22acabf59a69ae6062d8b659d2101f77f1667bba0",
+              "bytes": 4197,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-debug-main14-cost-analysis-review-tests/test-prelive-pre-emulator-debug-main14-cost-analysis-review-tests-verification.json"
+            },
+            "report": {
+              "sha256": "3f582462949cba2da297ce418b5ab77ac6d52b0822bc13978afbfbac253cabbf",
+              "bytes": 84191,
+              "path": "out/prelive-pre-emulator-evaluation-main14-debug/cost-review-fixture/review_result.json"
+            }
+          }
+        ],
+        "dependency_files": 2154,
+        "configuration": "debug",
+        "dependency_bytes": 11383669733,
+        "native_build_groups": 30,
+        "dependency_manifest": {
+          "sha256": "9bc1b3aaba4e716fa6a365ce7faa7dee4a7343114b0a69e34b8d0b1751ca980e",
+          "bytes": 575889,
+          "path": "out/prelive-pre-emulator-evaluation-main13-debug/dependency-manifest.json"
+        },
+        "production_executable": {
+          "sha256": "336860724864a5230349a05d9e843096e9f9b13f38ed25866a3417c292135933",
+          "bytes": 46738944,
+          "path": "out/prelive-pre-emulator-debug-main13/production/pas.exe"
+        },
+        "source_commit": "23a26342663b5d5b968f098620db435855a25087"
+      },
+      {
+        "evaluation": {
+          "sha256": "bfd14ebb0800fccfce13c741d445169904bc026dbdc8e3342f3f48badec5709c",
+          "bytes": 15144,
+          "path": "out/prelive-pre-emulator-evaluation-main14-asan/evaluation.json"
+        },
+        "old_donor_objects_used": false,
+        "production_executable_executed": false,
+        "build": {
+          "sha256": "448b6baeeac30ce81e9e4616b95d39e45164cdb254dea06118a255f71459ddf6",
+          "bytes": 82626,
+          "path": "out/prelive-pre-emulator-evaluation-main12-asan/build-binding.json"
+        },
+        "fresh_core_translation_units": 22,
+        "source_manifest": {
+          "sha256": "9c64a03936b07b6ab0c2a5fd9cbc63953ae3fe09144a1fda22674b35d55625ad",
+          "bytes": 223104,
+          "path": "out/prelive-pre-emulator-evaluation-main12-asan/source-manifest.json"
+        },
+        "actual_build_root": "out/prelive-pre-emulator-asan-main12",
+        "affected_groups_pass": 20,
+        "tests": [
+          {
+            "test": "diagnostic_writer_tests",
+            "receipt": {
+              "sha256": "18d4fab4f5ac565a4e01a811599c4a980dd26aec097e3ad910e3d9c7fbeedae2",
+              "bytes": 4095,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-diagnostic-writer-tests/test-prelive-pre-emulator-asan-main12-diagnostic-writer-tests-verification.json"
+            },
+            "report": {
+              "sha256": "edf9c2c91cf2675d34fe4518e565c216fb5e3dd67d5c8b0b5be4fe4899442692",
+              "bytes": 2216,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/diagnostic_writer_tests.json"
+            }
+          },
+          {
+            "test": "owner_checkpoint_tests",
+            "receipt": {
+              "sha256": "82f84271436c14436e61fbc1443863c62658e0719763f9dff80d5a0c3a128994",
+              "bytes": 4068,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-owner-checkpoint-tests/test-prelive-pre-emulator-asan-main12-owner-checkpoint-tests-verification.json"
+            },
+            "report": {
+              "sha256": "ac59286d7cf2f0a0cdcd0089987c2c3018f2417a47261b9d0071d687057de641",
+              "bytes": 1909,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/owner_checkpoint_tests.json"
+            }
+          },
+          {
+            "test": "owner_expiry_tests",
+            "receipt": {
+              "sha256": "a77bdde3d4e1dd317dc5e3bef3baea2f96f9b41f19375d7ed329a9ae8d3b8f6d",
+              "bytes": 3968,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-owner-expiry-tests/test-prelive-pre-emulator-asan-main12-owner-expiry-tests-verification.json"
+            },
+            "report": {
+              "sha256": "7daeecfa55969a0c65d848e11d89149f7a2218d88f83c0800d6b997e78898f99",
+              "bytes": 2255,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/owner_expiry_tests.json"
+            }
+          },
+          {
+            "test": "producer_wait_tests",
+            "receipt": {
+              "sha256": "fe50888d7b0b602d1649bff7b55b64f1d9414d79e81c5ecd0ba5548ae87283cd",
+              "bytes": 3993,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-producer-wait-tests/test-prelive-pre-emulator-asan-main12-producer-wait-tests-verification.json"
+            },
+            "report": {
+              "sha256": "14dfcd85cef6ec254377d1908982b380846be74d804b0a313dd1c65ad83d6b05",
+              "bytes": 1159,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/producer_wait_tests.json"
+            }
+          },
+          {
+            "test": "tap_reset_workload_tests",
+            "receipt": {
+              "sha256": "1d90cc6fd7a1509e9aa9ea15f5114ad1a3ef301ffd43c6836710ddadb8ada5fc",
+              "bytes": 4118,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-tap-reset-workload-tests/test-prelive-pre-emulator-asan-main12-tap-reset-workload-tests-verification.json"
+            },
+            "report": {
+              "sha256": "0ab56b3f573f8f50fb19c1057c22e642307b937f183123ef44e1b4ce13273d83",
+              "bytes": 27242,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/tap_reset_workload_tests.json"
+            }
+          },
+          {
+            "test": "owner_wait_tests",
+            "receipt": {
+              "sha256": "4246438aaeab42e70efe31400bdab5b423646d22cd28a781de288ec0279daf16",
+              "bytes": 3918,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-owner-wait-tests/test-prelive-pre-emulator-asan-main12-owner-wait-tests-verification.json"
+            },
+            "report": {
+              "sha256": "78ed94cde562779af84de5b8e199feda53dbf829049ece4129c94d86ecee0720",
+              "bytes": 1895,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/owner_wait_tests.json"
+            }
+          },
+          {
+            "test": "current_tests",
+            "receipt": {
+              "sha256": "7266734e642313f6e7467ac3c18e26771c3bdf168d927b9d2cb3e12a0628da1c",
+              "bytes": 3845,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-current-tests/test-prelive-pre-emulator-asan-main12-current-tests-verification.json"
+            },
+            "report": {
+              "sha256": "eac5e3533068b330c8fda939593e5a532a168ccb49ad2231e6befd422c277c54",
+              "bytes": 5658,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/current_tests.json"
+            }
+          },
+          {
+            "test": "active_body_tests",
+            "receipt": {
+              "sha256": "0fb8ab10cb5e138f3c1bbb2dafba255ddbfc172db76216716fd10a1c82c4769f",
+              "bytes": 3945,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-active-body-tests/test-prelive-pre-emulator-asan-main12-active-body-tests-verification.json"
+            },
+            "report": {
+              "sha256": "d00da6bd18150d82d4617c82b8b6da0119f2bdabfe390416c115d14edfe3dfea",
+              "bytes": 2955,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/active_body_tests.json"
+            }
+          },
+          {
+            "test": "tail_guard_tests",
+            "receipt": {
+              "sha256": "79597a9ba97f72d16cb9676f93bb1c78336241105978a25fd833f02e178d05eb",
+              "bytes": 3918,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-tail-guard-tests/test-prelive-pre-emulator-asan-main12-tail-guard-tests-verification.json"
+            },
+            "report": {
+              "sha256": "2ce47431c3d6ccd655408da5597e0ee2965d7324d05a9fb7087ec5a37279c4d0",
+              "bytes": 19164,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/tail_guard_tests.json"
+            }
+          },
+          {
+            "test": "tail_only_owner_review",
+            "receipt": {
+              "sha256": "1d0ba9cb946dd863db0bd7bee05986470bbc50fc3a2c8a448d4b6cba056aa5a0",
+              "bytes": 4070,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-tail-only-owner-review/test-prelive-pre-emulator-asan-main12-tail-only-owner-review-verification.json"
+            },
+            "report": {
+              "sha256": "c697242cdd8ea94bd4660be1b49a0e3248c10ad023934632727cdf9f30b8aa37",
+              "bytes": 16191,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/tail_only_owner_review.json"
+            }
+          },
+          {
+            "test": "tail_only_pixels_review",
+            "receipt": {
+              "sha256": "3282a474495f9217e3e50cc0e3dce0f903f9771a9261eb980d22742c965dbe6c",
+              "bytes": 4095,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-tail-only-pixels-review/test-prelive-pre-emulator-asan-main12-tail-only-pixels-review-verification.json"
+            },
+            "report": {
+              "sha256": "35c8533ead9284e64bb59658b167acbe4da1b40567b968354211f96e23c1dc1a",
+              "bytes": 8111,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/tail_only_pixels_review.json"
+            }
+          },
+          {
+            "test": "disabled_live_seam_tests",
+            "receipt": {
+              "sha256": "57c4a02f5be49a6440d98caf710e0ff8fa8e9b62a93ef12c00cc184deb830ebb",
+              "bytes": 4118,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-disabled-live-seam-tests/test-prelive-pre-emulator-asan-main12-disabled-live-seam-tests-verification.json"
+            },
+            "report": {
+              "sha256": "bf199d9335da709164e6ce5d13404477af5cffae24931e01f08ad18ad4303a96",
+              "bytes": 4089,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/disabled_live_seam_tests.json"
+            }
+          },
+          {
+            "test": "live_seam_packet_review",
+            "receipt": {
+              "sha256": "d11ebb8483f797dbfd7c2c37a5817c0baa721478bd7d7650a291fc80bf069bd9",
+              "bytes": 4093,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-live-seam-packet-review/test-prelive-pre-emulator-asan-main12-live-seam-packet-review-verification.json"
+            },
+            "report": {
+              "sha256": "6758f9938c61dcec78516be88cf1e8cc3b97831761f4a1f9ae7af55373c39b89",
+              "bytes": 5705,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/live_seam_packet_review.json"
+            }
+          },
+          {
+            "test": "live_seam_runtime_review",
+            "receipt": {
+              "sha256": "d5ffeb059185a5a72775a6c640788e27fbb13c6849bd516a0b5ae786837bb051",
+              "bytes": 4118,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-live-seam-runtime-review/test-prelive-pre-emulator-asan-main12-live-seam-runtime-review-verification.json"
+            },
+            "report": {
+              "sha256": "8290d75d8af7a8326c524faf848744d9bca2d2f00830e3d34c025ac23d18c4fe",
+              "bytes": 12371,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/live_seam_runtime_review.json"
+            }
+          },
+          {
+            "test": "runtime_finish_tests",
+            "receipt": {
+              "sha256": "8c622b9a0a855e4289f87c3cf67b40b2f19ec246dcf93feabffa61bd31bcd9c2",
+              "bytes": 4018,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-runtime-finish-tests/test-prelive-pre-emulator-asan-main12-runtime-finish-tests-verification.json"
+            },
+            "report": {
+              "sha256": "64439f08a3f022f888e7771bbf22541ad599c2e0d93359febddcd6a77829a86b",
+              "bytes": 4851,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/runtime_finish_tests.json"
+            }
+          },
+          {
+            "test": "cost_comparison_tests",
+            "receipt": {
+              "sha256": "ce12e9f319eaa9f04d96f92674fc994daa43b82a7504387a495f36646f582517",
+              "bytes": 4043,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-cost-comparison-tests/test-prelive-pre-emulator-asan-main12-cost-comparison-tests-verification.json"
+            },
+            "report": {
+              "sha256": "824fa5fb337d9a608f533707fae12785f6254d5ae37949bcf25132299335caff",
+              "bytes": 1692,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/cost_comparison_tests.json"
+            }
+          },
+          {
+            "test": "production_pipeline_audit_tests",
+            "receipt": {
+              "sha256": "a4cefa73942add0cfb33ec888b3ca3561426247fca0ecd022f7084581205052d",
+              "bytes": 4293,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-production-pipeline-audit-tests/test-prelive-pre-emulator-asan-main12-production-pipeline-audit-tests-verification.json"
+            },
+            "report": {
+              "sha256": "dc8780210b5be36bdfa1da74e6cf5d9fb13904cabc0c6bd02318d579dd1b693a",
+              "bytes": 2681,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/production_pipeline_audit_tests.json"
+            }
+          },
+          {
+            "test": "production_entry_controls",
+            "receipt": {
+              "sha256": "672ddc63d78e360c5f7e2d1e827d9ac462aa878f150d19b9eecfa10601c371fc",
+              "bytes": 4143,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main12-production-entry-controls/test-prelive-pre-emulator-asan-main12-production-entry-controls-verification.json"
+            },
+            "report": {
+              "sha256": "d452cf304802c85580d1b4d2b0b995278a7c5a6c8ff945108391c053fed3ae5c",
+              "bytes": 941,
+              "path": "out/prelive-pre-emulator-evaluation-main12-asan/production_entry_controls.json"
+            }
+          },
+          {
+            "test": "cost_analysis_tests",
+            "receipt": {
+              "sha256": "c1619e79f5317c6f3e6b120d0e6f6ea2d2529f8b7fead70f35a8b0701c12da65",
+              "bytes": 3997,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main14-cost-analysis-tests/test-prelive-pre-emulator-asan-main14-cost-analysis-tests-verification.json"
+            },
+            "report": {
+              "sha256": "ddc5f15ccaeebdc62249b71fae63593255b508d33f6b8e72774c18d5ac0cda28",
+              "bytes": 153,
+              "path": "out/prelive-pre-emulator-evaluation-main14-asan/cost-unit-fixture/result.json"
+            }
+          },
+          {
+            "test": "cost_analysis_review_tests",
+            "receipt": {
+              "sha256": "f93163246a6833be7e106d06f6b891d3cf505442da09d79087206b1be6215f05",
+              "bytes": 4172,
+              "path": "out/windows-handoff/test-prelive-pre-emulator-asan-main14-cost-analysis-review-tests/test-prelive-pre-emulator-asan-main14-cost-analysis-review-tests-verification.json"
+            },
+            "report": {
+              "sha256": "a764ffecdbe8df3aef5ccb8f1bb3789efbe290ed9adc9c8628918ecf288ac098",
+              "bytes": 84149,
+              "path": "out/prelive-pre-emulator-evaluation-main14-asan/cost-review-fixture/review_result.json"
+            }
+          }
+        ],
+        "dependency_files": 2154,
+        "configuration": "asan",
+        "dependency_bytes": 11383669733,
+        "native_build_groups": 28,
+        "dependency_manifest": {
+          "sha256": "3c9b22b23e0d6476be35d5ec75b8f03ff2f7352b16d8e94881c6e73a4af41b82",
+          "bytes": 575889,
+          "path": "out/prelive-pre-emulator-evaluation-main12-asan/dependency-manifest.json"
+        },
+        "production_executable": {
+          "sha256": "9644dddf60d2a49f19ec65472ac510bea208adbcb8d9ba2d75d59ccdb72b4a5a",
+          "bytes": 48521728,
+          "path": "out/prelive-pre-emulator-asan-main12/production/pas.exe"
+        },
+        "source_commit": "23a26342663b5d5b968f098620db435855a25087"
+      }
+    ]
+  },
+  "symbol_preservation": {
+    "old_seal_invalid_negative": {
+      "sha256": "c89fadca8f3b181114c32f1a6b78ded0b93143656992c0f2a5aaee4fdd16c672",
+      "bytes": 627,
+      "path": "out/retained/consolidation-20261008/main13-debug-symbol-archive/seal-race-negative.json"
+    },
+    "proof": {
+      "sha256": "b63368126eabdff9920295d2b9e7e8b750bea62c8fcdc812c9a1a764492d17bc",
+      "bytes": 7289,
+      "path": "out/retained/consolidation-20261008/main13-debug-symbol-archive/proof.json"
+    },
+    "cleanup": {
+      "sha256": "2e3614520873609cf05bc65f47f551845d3fa6fecb184b027b6973051d1e9301",
+      "bytes": 8500,
+      "path": "out/retained/consolidation-20261008/main13-debug-symbol-archive/cleanup-complete.json"
+    }
+  }
+}

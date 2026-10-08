@@ -4,10 +4,15 @@
 
 使用者授權整合／清理外部專案副本，將 retained prelive 上限提高至 48 GiB，後續固定在
 main 開發。見[整合帳本](../06-engineering/MAIN_CONSOLIDATION_20261008.md)。保留所有
-歷史負結果與 SHA；source `5513458` 已完成三配置各自正式 22 TUs 新建置與 45／45
-組 affected 冷回歸。新 main 接續順序為固定像素 prefix、成本工具
-與 production closure、R2 AA／noise／ABBA，然後 admission／profile／physical gates，
-最後逐曲完整 IN Miss=0。每個 gate 各自記錄，未跑保持 NOT_RUN，不用 donor PASS 升格。
+歷史負結果與 SHA；實際 source `23a2634` 已完成三配置各自正式 22 TUs 新建置與
+60／60 組 affected 冷回歸、3063 prefix、四項 literal 故障控制。Production normal Tap／Hold
+通過，dense archive mailbox overrun 執行失敗；R2 AA Tap3 deadline overrun，後九筆／noise／
+ABBA 未跑。依「完成當前階段後停止，盤點開發情況」，本輪已封存並停止續作，見
+[開發盤點](../../research/live-readiness-20261007/PRE_EMULATOR_STAGE_20261008.md)。
+後續缺口依序包含 production archive／AA producer 的具體修補、維護 recipe 固定化與
+新來源驗證，再取得完整 R2 AA／noise／ABBA 及剩餘 production 六項，然後 live reader／
+admission／profile／physical gates，最後逐曲完整 IN Miss=0。這是待辦，沒有自動續跑。
+每個 gate 各自記錄，未跑保持 NOT_RUN，已執行失敗不改成未跑，不用 donor PASS 升格。
 HD 仍只作解鎖與回歸，模型訓練與新長期 goal 未授權。以下較早順序按當時範圍閱讀。
 
 ## 2026-10-04 現行順序
