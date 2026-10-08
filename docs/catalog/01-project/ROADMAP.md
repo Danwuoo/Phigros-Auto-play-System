@@ -4,7 +4,8 @@
 
 使用者授權整合／清理外部專案副本，將 retained prelive 上限提高至 48 GiB，後續固定在
 main 開發。見[整合帳本](../06-engineering/MAIN_CONSOLIDATION_20261008.md)。保留所有
-歷史負結果與 SHA；新 main 順序為重新建置及受影響冷回歸、固定像素 prefix、成本工具
+歷史負結果與 SHA；source `5513458` 已完成三配置各自正式 22 TUs 新建置與 45／45
+組 affected 冷回歸。新 main 接續順序為固定像素 prefix、成本工具
 與 production closure、R2 AA／noise／ABBA，然後 admission／profile／physical gates，
 最後逐曲完整 IN Miss=0。每個 gate 各自記錄，未跑保持 NOT_RUN，不用 donor PASS 升格。
 HD 仍只作解鎖與回歸，模型訓練與新長期 goal 未授權。以下較早順序按當時範圍閱讀。

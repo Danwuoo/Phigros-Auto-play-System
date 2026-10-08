@@ -95,6 +95,24 @@ quote、percent、換行等 cmd 展開字元。後續 CMake stage 在 COMPLETE c
 及 before／after SHA 的契約內套用同樣值，不重複初始化 vcvars；守衛原封不動。
 main06 完整負結果與 frozen recipe 保留，兩次 STOP 都不算冷回歸 PASS。
 
+main07 實際封存來源為 `5513458d7172351262f972cf2426947bfda7015d`。
+Release／Debug／ASan 各自 freshly 編譯正式 22 TUs，全部 30 個 build stage、環境封存、
+configure 及 15 組 affected 冷回歸都通過。總計 **45／45 組、writer 45 次案例執行、
+66 次正式 TU 編譯、141 個 native stage**；每個 receipt 重新核對自然退出、身分、
+held all signaled、streams complete、active_final=0、before／after 封存與實際 exit。
+三配置並行僅用於 cold regression，不用這次 elapsed 取得成本資格。
+
+最終 retained 41592301789 bytes（38.74／48 GiB）、candidate 5176971633 bytes
+（4.82／6 GiB）、C 槽 free 239420968960 bytes，minimum free 20 GiB 通過。
+外部 action 原位置仍剩餘 0、main 是唯一 worktree。封存入口為
+[冷驗證 JSON](../../research/live-readiness-20261007/MAIN_COLD_RESULTS_20261008.json)，
+完整逐 receipt 核對為 `out/consolidation-20261008-01/main07-cold-results.json`。
+後續本頁狀態提交只更新文件；已執行的 build／test source SHA 保持 `5513458`，
+不能將新文件 HEAD 或搬移前的 receipt 當成新 binary 資格。
+
+一般鏈、phase 診斷版、bounded phase summary 與 auditor 已編譯；新 phase 量測、
+prefix、R2 cost 及 literal production 仍為 NOT_RUN。冷回歸通過不授予實機 admission。
+
 整合前 a2 的 33／45 affected groups PASS 是歷史結果；其餘 12 groups 因容量未建置。
 新 main 的 affected cold、3063 prefix、R2 AA／noise／ABBA、literal production fault／
 stress／slow-writer／RPC、admission／profile／physical 與完整 IN Miss=0 均分開記錄。

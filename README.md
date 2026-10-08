@@ -5,7 +5,10 @@
 [main 整合與清理帳本](docs/catalog/06-engineering/MAIN_CONSOLIDATION_20261008.md)及
 [容量授權](docs/research/live-readiness-20261007/CAPACITY_APPROVAL_20261008.json)。
 後續開發固定在 main；歷史失敗、STOP、source／binary SHA 與原始證據保留。
-整合後 main 必須重新建置／驗證，實機入口仍 UNQUALIFIED，完整 IN Miss=0 尚未完成。
+整合後 source `5513458` 已完成 Release／Debug／ASan 各自 22 個正式 TUs 新建置，
+45／45 組 affected 冷回歸與 141 個 native stage 通過，見
+[新 main 冷驗證封存](docs/research/live-readiness-20261007/MAIN_COLD_RESULTS_20261008.json)。
+新 main 的 prefix／cost／production 尚未跑；實機入口仍 UNQUALIFIED，完整 IN Miss=0 尚未完成。
 以下日期較早的「最新」入口為歷史快照。
 
 2026-10-07 最新續作見 [owner cooperative 階段交接](docs/research/live-readiness-20261007/OWNER_COOPERATIVE_STAGE_HANDOFF_20261007.md)。
