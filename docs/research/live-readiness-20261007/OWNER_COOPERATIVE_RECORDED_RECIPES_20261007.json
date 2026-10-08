@@ -1,0 +1,99 @@
+{
+  "replay_permitted": false,
+  "schema": "pas.owner-cooperative-recipe-copies.v1",
+  "copies": [
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\build-cooperative-coop01.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\build-cooperative-coop01.ps1",
+      "name": "build-cooperative-coop01.ps1",
+      "bytes": 9332,
+      "sha256": "ff1cbbd22045cc61dbc98370dc37f9c5c865c6f4b7db293ec919b3b0fb5dadd6"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\build-cooperative-coop02.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\build-cooperative-coop02.ps1",
+      "name": "build-cooperative-coop02.ps1",
+      "bytes": 9923,
+      "sha256": "6d5e779feca277def04c9df649eeca84b1bbc3db78981c56a433be23b6174cbe"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\build-cooperative-coop03.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\build-cooperative-coop03.ps1",
+      "name": "build-cooperative-coop03.ps1",
+      "bytes": 9957,
+      "sha256": "1376332fb982283d5a0161b67d448e80fba25544c4ae91c4f4046c9fdaacffb1"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\build-cooperative-coop04.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\build-cooperative-coop04.ps1",
+      "name": "build-cooperative-coop04.ps1",
+      "bytes": 9620,
+      "sha256": "1874504512ce26e89ce9c446d168f6d70a5347d41d528287e2e75e45c8fd6c30"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\build-cooperative-supp01.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\build-cooperative-supp01.ps1",
+      "name": "build-cooperative-supp01.ps1",
+      "bytes": 6742,
+      "sha256": "a9790af2c5c8b97ca536cc3fde4df485241f8edbbff64c4e471304cebbf6ad4d"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\build-cooperative-supp02.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\build-cooperative-supp02.ps1",
+      "name": "build-cooperative-supp02.ps1",
+      "bytes": 6726,
+      "sha256": "635ff8ba47822be2bb6d235d06a6a819c5f411d7a16909404eaa22e12e4aad86"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\run-cooperative-prefix01.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\run-cooperative-prefix01.ps1",
+      "name": "run-cooperative-prefix01.ps1",
+      "bytes": 5887,
+      "sha256": "9b107f7691ce70c14b038b06077f379a6378266f5939458aa0c85d56a8dc1cb1"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\build-cooperative-tools01.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\build-cooperative-tools01.ps1",
+      "name": "build-cooperative-tools01.ps1",
+      "bytes": 5052,
+      "sha256": "cae42514bceff239717e70ad7fc71939de6947f2373650bb5e65273c37f8a680"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\finish-cooperative-tools02.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\finish-cooperative-tools02.ps1",
+      "name": "finish-cooperative-tools02.ps1",
+      "bytes": 5297,
+      "sha256": "97cb7c02b1e888f1858e9893d47a2e07c20b0da2ed411a9b6c5cbc674bc798dd"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\collect-cooperative-freeze01.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\collect-cooperative-freeze01.ps1",
+      "name": "collect-cooperative-freeze01.ps1",
+      "bytes": 9158,
+      "sha256": "2b598af856a0385c3794c136d283d298228972ce83926d92d49a6f2a91dcfc52"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\collect-cooperative-freeze02.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\collect-cooperative-freeze02.ps1",
+      "name": "collect-cooperative-freeze02.ps1",
+      "bytes": 9638,
+      "sha256": "c7ce263de61b6bf8dea391371c0f7f50c59064ebda32fca112ec4019afd65ce8"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\run-cooperative-r2-aa01.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\run-cooperative-r2-aa01.ps1",
+      "name": "run-cooperative-r2-aa01.ps1",
+      "bytes": 16717,
+      "sha256": "496269c838156f3953a22f3b2e7d1627fa8cd59f45ded0b40f812be55b6cf5b3"
+    },
+    {
+      "original": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\out\\seal-cooperative-phase01.ps1",
+      "copy": "C:\\Users\\wurre\\Desktop\\PAS-windows-readiness-20261007\\docs\\research\\live-readiness-20261007\\recorded-owner-cooperative-recipes\\seal-cooperative-phase01.ps1",
+      "name": "seal-cooperative-phase01.ps1",
+      "bytes": 6498,
+      "sha256": "c49147ca5ab6c71bca66fe5b41abe65062fa3e3c7d7f674706ec207d0c9752ae"
+    }
+  ],
+  "scope": "exact byte preservation only; original PSCommandPath and output roots are immutable",
+  "device_operations": 0
+}

@@ -1,5 +1,13 @@
 # 2026-10-07 Windows readiness 實際結果：NOT_READY
 
+最新入口為 [owner cooperative 階段交接與新 task 接續](OWNER_COOPERATIVE_STAGE_HANDOFF_20261007.md)。
+`45f8a5f` 的39組新 affected 回歸／3063 prefix／成本工具控制通過，AA Tap1/2 PASS，
+Tap3 的安全性、coverage/n 與 producer/publication cadence 失敗，批次依原 gate 停止。
+完整資格入口、當前 emulator 與全曲完整 IN Miss=0 仍未完成。使用者已新授權由下一個
+GPT-6.1 Sol／xhigh task 使用 Computer Use 和 emulator 自行選曲／Play／驗收。
+這取代下文歷史的 user-only Play 分工與 cold-only 工作範圍，不免除實際資格驗證。
+下文是較早階段的原始結果；source、binary、STOP 依各自 SHA 分讀。
+
 三配置冷回歸、3063 個原始 WIC frames 及冷編譯收據 CLI 已完成。使用者續派的
 [Job 身分修補與評估](JOB_IDENTITY_REPAIR_20261007.md) 已完成 v3：包含真實 error 5
 分支的27次追加控制全過，新 AA04 的直接 producer／auditor／analyzer 程序收據全過。
