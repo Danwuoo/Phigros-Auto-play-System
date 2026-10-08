@@ -1,4 +1,5 @@
-param([ValidateSet('release','debug','asan')][string]$Mode='release')
+param([ValidateSet('release','debug','asan')][string]$Mode='release',
+      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main06')
 $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$sourceRepo=$repo;$oldRepo=$repo
 $out=Join-Path $repo 'out/windows-handoff';$pkg=Join-Path $repo 'out/prelive-20261006';$pwsh=(Get-Command pwsh).Source;$Operation='build';$Campaign='';$script:inputClosures=@{};$script:maintenancePath=$PSCommandPath
@@ -10,7 +11,7 @@ foreach($name in @('NewJson','CheckEntry','Binding','Fresh','InputClosure','Chec
  if($name -in @('Native','Stage')){$t=$t.Replace('Join-Path $out ''withdrawal-review-01/stage.ps1''','Join-Path $repo ''research/main_consolidation/stage.ps1''')};if($name -ceq 'Native'){$t=$t.Replace('$PSCommandPath','$script:maintenancePath').Replace('tools/zero_miss_windows/invoke.ps1','research/windows_process_guard_v3/invoke.ps1')};if($name -ceq 'GateInputs'){$t=$t.Replace('pas.windows-offline-process-gate.v1','pas.windows-offline-process-gate.v3')};. ([scriptblock]::Create($t))
 }
 $commit=(& git -C $sourceRepo rev-parse HEAD);if($LASTEXITCODE -or -not $commit -or (& git -C $sourceRepo branch --show-current) -cne 'main'){throw 'main source identity required'};if((& git -C $sourceRepo rev-parse HEAD) -cne $commit -or (& git -C $sourceRepo status --porcelain)){throw 'exact clean candidate required'}
-$artifact=Join-Path $repo ('out/prelive-main-integration-evaluation-main05-'+$Mode);Fresh $artifact;[IO.Directory]::CreateDirectory($artifact)|Out-Null
+$artifact=Join-Path $repo ('out/prelive-main-integration-evaluation-'+$BuildAttempt+'-'+$Mode);Fresh $artifact;[IO.Directory]::CreateDirectory($artifact)|Out-Null
 $approval=Join-Path $repo 'docs/research/live-readiness-20261007/CAPACITY_APPROVAL_20261008.json';$a=Get-Content -Raw -LiteralPath $approval|ConvertFrom-Json;if($a.status -cne 'HUMAN_APPROVED' -or $a.retained_prelive_cap_bytes -ne 51539607552){throw '48 GiB approval required'};
 $plan=Join-Path $sourceRepo 'docs/research/live-readiness-20261007/DIAGNOSTIC_WRITER_AND_ARCHIVE_20261008.md'
 $coreProof=Join-Path $artifact 'fresh-core-build-plan.json';NewJson $coreProof @{schema='pas.fresh-core-build-plan.v1';source_commit=$commit;configuration=$Mode;translation_units=22;old_donor_objects_used=$false;compiler_snapshot=(Binding $tool);device_operations=0;live_ready=$false}
@@ -19,10 +20,10 @@ $sourceManifest=Join-Path $artifact 'source-manifest.json';NewJson $sourceManife
 $adapter=Join-Path $oldRepo 'research/windows_owner_wake/cmake-stage-v2.ps1';$g=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
 $deps=@(Get-ChildItem -LiteralPath 'C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/include' -File -Recurse|Where-Object {$_.FullName -match '\\(nlohmann|zlib|google|grpc|gtest)\\' -or $_.Name -in @('zlib.h','zconf.h')}|ForEach-Object FullName)
 $inputs=@($PSCommandPath,$recipe,$adapter,$plan,$approval,(Join-Path $repo 'research/main_consolidation/stage.ps1'),$sourceManifest,$coreProof)+$sourceFiles+$deps+(GateInputs)+@($g.guard_source.path,$g.process_source.path,$g.cached_identity_controls.path,$g.identity_wait_controls.path)
-$root=Join-Path $repo ('out/prelive-main-integration-'+$Mode+'-main05');$cfg=if($Mode -eq 'release'){'Release'}else{'Debug'}
+$root=Join-Path $repo ('out/prelive-main-integration-'+$Mode+'-'+$BuildAttempt);$cfg=if($Mode -eq 'release'){'Release'}else{'Debug'}
 $options=@('-DCMAKE_TOOLCHAIN_FILE=C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake','-DVCPKG_INSTALLED_DIR=C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed','-DVCPKG_TARGET_TRIPLET=x64-windows','-DVCPKG_MANIFEST_MODE=OFF','-DCMAKE_CXX_SCAN_FOR_MODULES=OFF','-DCMAKE_HAVE_LIB_PTHREAD:INTERNAL=','-DCMAKE_HAVE_PTHREADS_CREATE:INTERNAL=','-DCMAKE_HAVE_PTHREAD_CREATE:INTERNAL=')
 if($Mode -eq 'asan'){$options+=@('-DPAS_PRELIVE_ASAN=ON','-DPAS_ASAN_SUPPORT_ROOT=C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/include')}
-$configure='configure-prelive-main-integration-'+$Mode+'-main05'
+$configure='configure-prelive-main-integration-'+$Mode+'-'+$BuildAttempt
 Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 'research/prelive_current');BuildRoot=$root;StageName=$configure;ToolSnapshot=$tool;GateReceipt=$gate;Operation='Configure';Configuration=$cfg;Inputs=$inputs;Options=$options}
 $targets=@('diagnostic_writer_tests','owner_checkpoint_tests','owner_expiry_tests','producer_wait_tests','tap_reset_workload_tests','receipt_join_diagnose','owner_wait_tests','current_tests','active_body_tests','tail_guard_tests','tail_only_owner_review','tail_only_pixels_review','disabled_live_seam_tests','live_seam_packet_review','live_seam_runtime_review','runtime_finish_tests','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit')
 $buildReceipts=@()
@@ -33,13 +34,18 @@ $objects=@(Get-Content -LiteralPath (Join-Path $root 'build.ninja')|ForEach-Obje
 $decl=Get-Content -LiteralPath (Join-Path $sourceRepo 'CMakeLists.txt')|Where-Object {$_ -match '^add_library\(pas_core STATIC '};$expected=@([regex]::Matches($decl,'src/[^ )]+[.]cpp')|ForEach-Object {$_.Value})
 $actual=@($objects|ForEach-Object {if($_ -match '/(src/[^/]+[.]cpp)[.]obj$'){$Matches[1]}else{throw 'unexpected formal core object'}})
 if($objects.Count -ne 22 -or @(Compare-Object ($actual|Sort-Object) ($expected|Sort-Object)).Count){throw 'exact fresh 22 core object set'}
-$groups=@();for($i=0;$i -lt $objects.Count;$i+=5){$groups+=@(@{name=('core-'+[int]($i/5+1));targets=@($objects|Select-Object -Skip $i -First 5)})};$groups+=@(@{name='libraries';targets=@('current_rails')});foreach($target in $targets){$groups+=@(@{name=$target.Replace('_','-');targets=@($target)})}
+$groups=@();for($i=0;$i -lt $objects.Count;$i+=5){$groups+=@(@{name=('core-'+[int]($i/5+1));targets=@($objects|Select-Object -Skip $i -First 5)})}
+# main05's combined library stage reached the fixed 64 held-identity cap.
+# Build each dependency first so the next stage has a small, known closure;
+# never increase the guard limit or reuse the interrupted output as a donor.
+foreach($library in @('formal_core','exact_bvi_v3','current_front','own_bridge','current_rails')){$groups+=@(@{name=('library-'+$library.Replace('_','-'));targets=@($library)})}
+foreach($target in $targets){$groups+=@(@{name=$target.Replace('_','-');targets=@($target)})}
 foreach($group in $groups){
- $build='build-prelive-main-integration-'+$Mode+'-main05-'+$group.name
+ $build='build-prelive-main-integration-'+$Mode+'-'+$BuildAttempt+'-'+$group.name
  Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 'research/prelive_current');BuildRoot=$root;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;Operation='Build';Configuration=$cfg;Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja'));Options=@('--target')+$group.targets}
  $buildReceipts+=@(Binding (Join-Path $out ($build+'/'+$build+'-verification.json')))
  if($group.name -ceq 'diagnostic-writer-tests'){
-  $testExe=Join-Path $root 'diagnostic_writer_tests.exe';$seal=@{files=@(Binding $testExe)};$Operation='tests';$report=Join-Path $artifact 'diagnostic_writer_tests.json';$stage='test-prelive-main-integration-'+$Mode+'-main05-diagnostic-writer-tests'
+  $testExe=Join-Path $root 'diagnostic_writer_tests.exe';$seal=@{files=@(Binding $testExe)};$Operation='tests';$report=Join-Path $artifact 'diagnostic_writer_tests.json';$stage='test-prelive-main-integration-'+$Mode+'-'+$BuildAttempt+'-diagnostic-writer-tests'
   $runtimeDlls=@(Get-ChildItem -LiteralPath $root -File -Filter '*.dll'|ForEach-Object FullName)
   Native $stage $testExe @($report) @($inputs+$seal.files.path+$buildReceipts.path+$runtimeDlls) 900
   $value=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
@@ -50,7 +56,7 @@ foreach($group in $groups){
 $seal=@{files=@(Get-ChildItem -LiteralPath $root -File -Recurse|ForEach-Object {Binding $_.FullName})}
 $buildSeal=Join-Path $artifact 'build-binding.json';NewJson $buildSeal @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration=$Mode;source_manifest=(Binding $sourceManifest);core_build_plan=(Binding $coreProof);build_root=$root;files=$seal.files;configure_receipt=(Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json')));build_receipts=$buildReceipts;device_operations=0;live_ready=$false}
 $Operation='tests';$tests=@($earlyTest);foreach($target in $targets|Where-Object {$_ -notin @('diagnostic_writer_tests','receipt_join_diagnose','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit')}){
- $report=Join-Path $artifact ($target+'.json');$stage='test-prelive-main-integration-'+$Mode+'-main05-'+$target.Replace('_','-');Native $stage (Join-Path $root ($target+'.exe')) @($report) @($inputs+$buildSeal+$seal.files.path) 900
+ $report=Join-Path $artifact ($target+'.json');$stage='test-prelive-main-integration-'+$Mode+'-'+$BuildAttempt+'-'+$target.Replace('_','-');Native $stage (Join-Path $root ($target+'.exe')) @($report) @($inputs+$buildSeal+$seal.files.path) 900
  $r=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json;if($r.failed -ne 0){throw ('cold regression failed '+$target)}
  $tests+=@(@{test=$target;report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))})
 }

@@ -75,6 +75,19 @@ held all signaled、streams complete、active_final=0；預期 nonzero 與 owned
 原 writer 的 15 cases 與其餘 14 組 affected 冷回歸照跑；Debug／ASan 原容量 STOP
 不能用 Release PASS 補成已跑。各配置 fresh build 輸出分開封存。
 
+第一個新 main Release 嘗試 main05（source `0a322fc`）的 configure 及 22 個正式
+TUs 分五組通過 native 驗證；合併的 libraries stage 在 20.225 秒觸及固定
+`held-identity-cap64`，runner exit=125、verification exit=1，state=STOP。
+CMake log 的 `Build END exit=0` 不能代替 wrapper 自然退出／完整身分驗證；沒有
+冷回歸 PASS 或成本資格。完整 result、verification、checkpoint 及 logs 保留於
+`out/windows-handoff/build-prelive-main-integration-release-main05-libraries/`，
+原 recipe 另存於清算 audit 的 `build-main05-frozen.ps1`。
+
+main06 recipe 將 formal_core、exact_bvi_v3、current_front、own_bridge、current_rails
+依依賴順序拆成五個小 stage，並重新 configure、編譯全部 22 個正式 TUs；不使用
+中止輸出作 donor，不提高 64 held identities、8 snapshots 或其他守衛界限。
+新 attempt namespace 必須全新；不能覆寫 main05 或原地重跑原 combined stage。
+
 整合前 a2 的 33／45 affected groups PASS 是歷史結果；其餘 12 groups 因容量未建置。
 新 main 的 affected cold、3063 prefix、R2 AA／noise／ABBA、literal production fault／
 stress／slow-writer／RPC、admission／profile／physical 與完整 IN Miss=0 均分開記錄。

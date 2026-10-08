@@ -23,7 +23,14 @@ expected length and expected SHA. It verifies moved raw bytes or an exact
 physical source ZIP entry without extraction, launches, or file writes. Its
 output is explicitly historical proof and never current-main qualification.
 
-Outputs live in `out/prelive-main-integration-*-main05` and
-`out/prelive-main-integration-evaluation-main05-*`. No source worktree, emulator,
+The combined library stage in Release main05 stopped at the fixed 64 held
+process identities, after its CMake output reported success but before the
+wrapper's natural exit was verified. That attempt remains STOP. main06 builds
+the five libraries in dependency order as separate bounded stages and freshly
+compiles all 22 core units again. Guard limits and predicates are unchanged.
+
+Outputs live in `out/prelive-main-integration-*-main06` and
+`out/prelive-main-integration-evaluation-main06-*`; `-BuildAttempt` selects a
+fresh attempt namespace and never overwrites an existing attempt. No source worktree, emulator,
 ADB, touch or model endpoint is created. Successful cold tests grant no live
 admission; prefix, cost, production, profile and physical gates remain separate.
