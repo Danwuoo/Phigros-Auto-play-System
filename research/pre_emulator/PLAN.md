@@ -1,5 +1,27 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
+使用者最新授權繼續完成，實機測試 ready 後建立新的 GPT-6.1 Sol／xhigh local
+main task，授權該 task 啟動 emulator／Computer Use 進行有限測試。本 task 完成
+冷修補與原門檻驗證後交接；下列較早停止文字按當時範圍閱讀。
+
+新候選保留完整診斷 JSON，只移轉已擁有的 arrays／scene，避免 initializer-list
+深層複製。16 MiB archive mailbox、每份 snapshot 256 KiB 計費、gzip level 1
+及完整事件內容不變。main14 partial gzip 經 CRC／SHA 完整讀取（360 rows，
+11,461,381 decoded bytes），主要負載是完整 candidate／scene，非 ledger 重複忙迴圈。
+
+endpoint-free 合成 producer 採用作用域 THREAD_PRIORITY_ABOVE_NORMAL（1），
+normal process class，query／set／readback／restore 失敗皆取消資格；A 與 B 政策相同。
+原 QPC epoch、所有嘗試、cadence、等待與 deadline overrun 判定不改。
+這是待原成本 gate 驗證的環境修補，不宣稱 Windows 排程保證 deadline。
+
+builder 將 production_entry_controls／fault_controls／pas 分成獨立 native groups，
+guard held limit 64 不改；所有 native build 完成後串行封存 final executable PDB，
+逐 entry 讀回 SHA，再刪除 originals，最後封存 build-binding。Compiler PDB 保留。
+歷史 analyzer 單元 fixture 在隔離目錄用当前 source copies＋byte-exact Git legacy
+protocol，正式 R2 protocol 不變。compiler 6 GiB 帳本只含 compiler／evaluation／
+fixture／planning；全部 raw 和保留 archives 仍進入 48 GiB 總帳。新 production
+狀態區分 FAILED_EXECUTION／FAILED_STAGE／NOT_RUN，失敗原件不改。
+
 使用者授權繼續實作，**到需要啟動 emulator 就停止**。本包只執行 endpoint-free
 Windows 建置、fixed pixels、R2 AA/noise/ABBA 和 literal production cold stages；
 不啟動 emulator、ADB、遊戲、真 capture/RPC 或 touch，不新建 goal／worktree。

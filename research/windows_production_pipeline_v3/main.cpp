@@ -53,6 +53,7 @@ GrpcCapture::~GrpcCapture()=default;
 void GrpcCapture::cancel(){cold::state.cancelled=true;}
 CaptureStats GrpcCapture::stats()const{std::lock_guard lock(mutex_);return stats_;}
 void GrpcCapture::stream(std::stop_token stop,const std::function<void(Frame&&)>& on_frame){
+ current_rails::WindowsProducerPriorityApi priority_api;current_rails::ProducerPriorityScope priority(priority_api);
  current_rails::ProducerDeadlineWait wait;const auto epoch=clock_.now_ns();
  std::vector<std::uint8_t> storage(1280*720*3);cold::state.attempts.resize(std::size_t(cold::state.requested)+64);
  for(int i=0;i<cold::state.requested+64&&!stop.stop_requested()&&!cold::state.cancelled;++i){
@@ -65,6 +66,7 @@ void GrpcCapture::stream(std::stop_token stop,const std::function<void(Frame&&)>
   {std::lock_guard lock(mutex_);++stats_.valid;stats_.last_notification_ns=f.capture_complete_ns;}
   on_frame(std::move(f));a.callback_return=clock_.now_ns();storage=std::move(f.rgb);
  }
+ priority.close();
  while(!cold::state.cancelled&&!stop.stop_requested()){
   if(clock_.now_ns()>epoch+Nanoseconds(cold::state.requested)*cold::state.cadence*1'000'000+2'000'000'000)throw std::runtime_error("cold finite pipeline did not finish from result pixels");
   std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -107,5 +109,6 @@ int main(int argc,char** argv){try{
  J attempts=J::array();for(std::size_t i=0;i<state.attempts.size();++i){const auto& a=state.attempts[i];attempts.push_back({{"attempt",i+1},{"producer_due_ns",a.due},{"render_start_ns",a.render_start},{"render_end_ns",a.render_end},{"capture_callback_return_ns",a.callback_return},{"produced",a.render_end!=0},{"measurement",i>=256&&i<std::size_t(state.requested)}});}save(root/"attempts.json",attempts);
  PROCESS_MEMORY_COUNTERS memory{};memory.cb=sizeof(memory);require(K32GetProcessMemoryInfo(GetCurrentProcess(),&memory,sizeof(memory))!=0,"OS peak RSS");
  J report={{"schema","pas.windows-production-pipeline-cold.v1"},{"scene",state.scene},{"requested",state.requested},{"warmup",256},{"measurement_attempts",state.requested-256},{"cadence_ms",state.cadence},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},{"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},{"public_entry_rejected",rejected},{"endpoint_free",true},{"preflight_is_test_double",true},{"capture_is_test_double",true},{"touch_is_test_double",true},{"production_packet_action_wake_archive_executed",true},{"real_capture_rpc_measured",false},{"device_operations",0},{"live_ready",false},{"archive_root",session.string()},{"summary",summary},{"round_summary",round_summary},{"owner_measurement_eligible",capture_to_owner.size()},{"owner_measurement_coverage",double(capture_to_owner.size())/(state.requested-256)},{"capture_to_owner_start_ms",dist(capture_to_owner)},{"packet_wait_ms",dist(packet_wait)},{"hook_ms",dist(hook)},{"owner_ms",dist(owner_ms)},{"measurement_phase_lateness_ms",dist(late)},{"down",state.downs},{"move",state.moves},{"up",state.ups},{"release_calls",state.releases},{"single_touch_owner",state.touch_owner.has_value()},{"full_journal_rows",rows},{"full_journal_bytes",bytes},{"full_journal_decoded_bytes",decoded},{"event_encoding","gzip-jsonl-v1"},{"rss_peak_os",memory.PeakWorkingSetSize},{"scope","literal production Packet/Wake/pool/perception/action/supervisor/SessionArchive; synthetic boundaries and result; no device or physical qualification"}};
+ report["producer_priority_policy"]="synthetic capture thread only; NORMAL process class; scoped ABOVE_NORMAL; verified query/set/readback/restore";
  save(root/"report.json",report);std::cout<<report.dump(2)<<'\n';return 0;
  }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

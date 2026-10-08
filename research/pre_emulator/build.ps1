@@ -1,5 +1,5 @@
 param([ValidateSet('release','debug','asan')][string]$Mode='release',
-      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12')
+      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main19')
 $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$sourceRepo=$repo;$oldRepo=$repo
 $out=Join-Path $repo 'out/windows-handoff';$pkg=Join-Path $repo 'out/prelive-20261006';$pwsh=(Get-Command pwsh).Source;$Operation='build';$Campaign='';$script:inputClosures=@{};$script:maintenancePath=$PSCommandPath
@@ -60,8 +60,10 @@ for($i=0;$i -lt $objects.Count;$i+=5){$groups+=@(@{name=('core-'+[int]($i/5+1));
 # never increase the guard limit or reuse the interrupted output as a donor.
 foreach($library in @('pas_core','pas_proto','pas_current_candidate','pas_emulator','pas_bench','exact_bvi_v3','current_front','own_bridge','current_rails')){$groups+=@(@{name=('library-'+$library.Replace('_','-'));targets=@($library)})}
 $groups+=@(@{name='diagnostic-writer-tests';targets=@('diagnostic_writer_tests')})
-$remainingTargets=@($targets|Where-Object {$_ -notin @('fault_audit','batch_check','diagnostic_writer_tests')})
+$largeTargets=@('production_entry_controls','fault_controls','pas')
+$remainingTargets=@($targets|Where-Object {$_ -notin (@('fault_audit','batch_check','diagnostic_writer_tests')+$largeTargets)})
 for($i=0;$i -lt $remainingTargets.Count;$i+=3){$groups+=@(@{name=('targets-'+([int]($i/3+1)).ToString('00'));targets=@($remainingTargets|Select-Object -Skip $i -First 3)})}
+foreach($target in $largeTargets){$groups+=@(@{name=$target.Replace('_','-');targets=@($target)})}
 foreach($group in $groups){
  $build='build-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-'+$group.name
  Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 'research/pre_emulator');BuildRoot=$root;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration=$cfg;Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja'));Options=@('--target')+$group.targets}
@@ -76,8 +78,11 @@ foreach($group in $groups){
   $earlyTest=@{test='diagnostic_writer_tests';report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))};$Operation='build'
  }
 }
+& (Join-Path $PSScriptRoot 'archive-final-symbols.ps1') -Mode $Mode -BuildAttempt $BuildAttempt -FinalStage $build
+$symbolProof=Join-Path $repo ('out/retained/consolidation-20261008/'+$BuildAttempt+'-'+$Mode+'-final-symbols/proof.json')
+$symbols=if(Test-Path -LiteralPath $symbolProof){Binding $symbolProof}else{$null}
 $seal=@{files=@(Get-ChildItem -LiteralPath $root -File -Recurse|ForEach-Object {Binding $_.FullName})}
-$buildSeal=Join-Path $artifact 'build-binding.json';NewJson $buildSeal @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration=$Mode;source_manifest=(Binding $sourceManifest);dependency_manifest=(Binding $dependencyManifest);core_build_plan=(Binding $coreProof);build_root=$root;files=$seal.files;configure_receipt=(Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json')));build_receipts=$buildReceipts;device_operations=0;live_ready=$false}
+$buildSeal=Join-Path $artifact 'build-binding.json';NewJson $buildSeal @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration=$Mode;source_manifest=(Binding $sourceManifest);dependency_manifest=(Binding $dependencyManifest);core_build_plan=(Binding $coreProof);build_root=$root;files=$seal.files;configure_receipt=(Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json')));build_receipts=$buildReceipts;serial_symbol_archive=$symbols;device_operations=0;live_ready=$false}
 function FindExecutable($target){$found=@(Get-ChildItem -LiteralPath $root -File -Recurse -Filter ($target+'.exe'));if($found.Count -ne 1){throw 'one exact executable required'};return $found[0].FullName}
 $Operation='tests';$tests=@($earlyTest);foreach($target in $targets|Where-Object {$_ -notin @('diagnostic_writer_tests','receipt_join_diagnose','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit','cost_analysis','cost_analysis_tests','cost_analysis_review_tests','cost_receipt','cost_comparison','production_pipeline_cold','production_pipeline_audit','fault_controls','fault_audit','batch_check','pas')}){
  $report=Join-Path $artifact ($target+'.json');$stage='test-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-'+$target.Replace('_','-');Native $stage (FindExecutable $target) @($report) @($inputs+$buildSeal+$seal.files.path) 900
@@ -85,11 +90,14 @@ $Operation='tests';$tests=@($earlyTest);foreach($target in $targets|Where-Object
  $tests+=@(@{test=$target;report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))})
 }
 $fixtureRoot=Join-Path $artifact 'cost-unit-fixture';$reviewRoot=Join-Path $artifact 'cost-review-fixture'
-foreach($unit in @(@{name='cost_analysis_tests';args=@($fixtureRoot,$repo);report=(Join-Path $fixtureRoot 'result.json')},@{name='cost_analysis_review_tests';args=@($fixtureRoot,$reviewRoot);report=(Join-Path $reviewRoot 'review_result.json')})){
+$fixtureRepo=Join-Path $repo ('out/prelive-pre-emulator-fixture-repo-'+$BuildAttempt+'-'+$Mode)
+& (Join-Path $PSScriptRoot 'prepare-fixture.ps1') -SourceManifest $sourceManifest -Destination $fixtureRepo
+$fixtureProof=Join-Path $fixtureRepo 'fixture-repository-proof.json';$fixtureInputs=@(Get-ChildItem -LiteralPath $fixtureRepo -File -Recurse|ForEach-Object FullName)
+foreach($unit in @(@{name='cost_analysis_tests';args=@($fixtureRoot,$fixtureRepo);report=(Join-Path $fixtureRoot 'result.json')},@{name='cost_analysis_review_tests';args=@($fixtureRoot,$reviewRoot);report=(Join-Path $reviewRoot 'review_result.json')})){
  $stage='test-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-'+$unit.name.Replace('_','-')
- Native $stage (FindExecutable $unit.name) $unit.args @($inputs+$buildSeal+$seal.files.path) 900
+ Native $stage (FindExecutable $unit.name) $unit.args @($inputs+$buildSeal+$seal.files.path+$fixtureInputs) 900
  $r=Get-Content -LiteralPath $unit.report -Raw|ConvertFrom-Json;if(-not $r.pass){throw 'cost tool unit review failed'}
  $tests+=@(@{test=$unit.name;report=(Binding $unit.report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))})
 }
-$newRoots=@(Get-ChildItem -LiteralPath (Join-Path $repo 'out') -Directory|Where-Object Name -like 'prelive-pre-emulator*');$candidateBytes=[long](($newRoots|ForEach-Object {Get-ChildItem -LiteralPath $_.FullName -File -Recurse}|Measure-Object Length -Sum).Sum);if($candidateBytes -gt 6442450944){throw 'separate candidate cap'}
+$newRoots=@(Get-ChildItem -LiteralPath (Join-Path $repo 'out') -Directory|Where-Object Name -match '^prelive-pre-emulator-(?:(?:release|debug|asan)-main[0-9]{2}|evaluation-main[0-9]{2}-(?:release|debug|asan)|fixture-repo-main[0-9]{2}(?:-(?:release|debug|asan))?|planning)$');$candidateBytes=[long](($newRoots|ForEach-Object {Get-ChildItem -LiteralPath $_.FullName -File -Recurse}|Measure-Object Length -Sum).Sum);if($candidateBytes -gt 6442450944){throw 'separate candidate cap'}
 NewJson (Join-Path $artifact 'evaluation.json') @{schema='pas.cooperative-cold-evaluation.v1';source_commit=$commit;build=(Binding $buildSeal);tests=$tests;affected_cold_pass=$true;candidate_bytes=$candidateBytes;candidate_cap=6442450944;live_ready=$false;device_operations=0}

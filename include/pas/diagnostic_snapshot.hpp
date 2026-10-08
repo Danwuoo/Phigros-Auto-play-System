@@ -36,10 +36,11 @@ public:
  static DiagnosticSnapshot filtered(const DecisionSnapshot&s,bool allow){validate(s);return {Kind::filtered_scene,s,allow};}
  static DiagnosticSnapshot batch(const CandidateBatch&b){validate(b);return {Kind::batch,b};}
  nlohmann::json encode()const{
-  if(kind_==Kind::batch)return {{"event","complete_raw_candidate_batch"},{"batch",candidate_batch_json(std::get<CandidateBatch>(value_))}};
+  if(kind_==Kind::batch){nlohmann::json result={{"event","complete_raw_candidate_batch"}};result["batch"]=candidate_batch_json(std::get<CandidateBatch>(value_));return result;}
   const auto&s=std::get<DecisionSnapshot>(value_);if(kind_==Kind::decision)return decision_json(s);
-  if(kind_==Kind::current_scene)return {{"event","current_observer_scene"},{"scene",decision_json(s)}};
-  return {{"event","filtered_owner_scene"},{"allow",allow_},{"scene",decision_json(s)}};
+  nlohmann::json result={{"event",kind_==Kind::current_scene?"current_observer_scene":"filtered_owner_scene"}};
+  if(kind_==Kind::filtered_scene)result["allow"]=allow_;
+  result["scene"]=decision_json(s);return result;
  }
 };
 }

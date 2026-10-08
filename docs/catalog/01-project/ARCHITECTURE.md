@@ -1,5 +1,11 @@
 # 現行架構與資料契約
 
+2026-10-08 最新續派的冷候選移轉已擁有的完整 JSON arrays／scene，避免深層複製；
+archive mailbox／snapshot 計費與完整事件契約不變。endpoint-free producer 用可驗證、
+可還原的 ABOVE_NORMAL thread scope，A/B 相同，cadence 與 QPC epoch 不變。
+新結果尚待三配置／R2／production 驗證，live 仍 UNQUALIFIED；通過啟動前準備後
+由新的 GPT-6.1 Sol／xhigh task 接續 emulator／Computer Use 有限測試。較早停止為歷史。
+
 2026-10-08 main 已整合 Windows readiness、owner 到期安全拒絕、bounded typed diagnostic
 writer、嚴格 gzip reader 及可選 phase 診斷。診斷仍只向外輸出；一般 `current_chain`
 不啟用 phase profiling，獨立診斷 binary 不具成本資格。完整來源／證據沿革與 48 GiB

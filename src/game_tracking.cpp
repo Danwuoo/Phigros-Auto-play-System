@@ -578,10 +578,11 @@ json candidate_batch_json(const CandidateBatch& b){json cs=json::array(),ls=json
    {"angular_velocity",l.angular_velocity},{"association_valid",l.association_valid},
    {"motion_valid",l.motion_valid},{"motion_samples",l.motion_samples},{"motion_span_ns",l.motion_span_ns},
    {"motion_residual_px",l.motion_residual},{"angular_residual_rad",l.angular_residual}});
- return {{"schema",1},{"extractor_version",b.extractor_version},{"quality_version",b.quality_version},{"history_source",b.history_source},
+ json result={{"schema",1},{"extractor_version",b.extractor_version},{"quality_version",b.quality_version},{"history_source",b.history_source},
  {"context",{{"epoch",b.context.epoch},{"generation",b.context.generation},{"geometry",b.context.geometry},{"frame",b.context.frame},{"capture_ns",b.context.capture_ns},{"width",b.context.width},{"height",b.context.height},{"rotation",b.context.rotation}}},
  {"extraction_start_ns",b.extraction_start_ns},{"extraction_end_ns",b.extraction_end_ns},{"ui",name(b.ui)},
- {"playing_gate",b.playing_gate},{"capacity_valid",b.capacity_valid},{"source_valid",b.source_valid},{"lines",ls},{"candidates",cs}};
+ {"playing_gate",b.playing_gate},{"capacity_valid",b.capacity_valid},{"source_valid",b.source_valid}};
+ result["lines"]=std::move(ls);result["candidates"]=std::move(cs);return result;
 }
 CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("schema")!=1)throw std::invalid_argument("candidate schema");
  const auto& c=j.at("context");b.context={c.at("epoch"),c.at("generation"),c.at("geometry"),c.at("frame"),c.at("capture_ns"),c.at("width"),c.at("height"),c.at("rotation")};

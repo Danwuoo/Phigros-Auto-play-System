@@ -2121,8 +2121,11 @@ nlohmann::json decision_json(const DecisionSnapshot& s) {
         {"ui",name(s.ui)},{"ui_basis",s.ui_basis},{"playing_gate",s.playing_gate},
         {"combo_digit_glyphs",s.combo_digit_glyphs},{"combo_glyph_semantics","diagnostic_shapes_only_not_ocr_or_judgment"},
         {"play_button",s.play_button?json{{"x",s.play_button->x},{"y",s.play_button->y}}:json(nullptr)},
-        {"capacity_valid",s.capacity_valid},{"lines",lines},{"targets",targets},
+        {"capacity_valid",s.capacity_valid},
         {"source_absolute_age",nullptr},{"per_note_feedback","unknown"}};
+    // Large diagnostic arrays already own every scalar. Transfer them once;
+    // initializer-list insertion otherwise copies their entire JSON trees.
+    result["lines"]=std::move(lines);result["targets"]=std::move(targets);
     if(s.compute_timing_host_qpc) {
         result["compute_clock_domain"]="host_qpc_ns";
         result["components_compute_ns"]=s.components_compute_ns;

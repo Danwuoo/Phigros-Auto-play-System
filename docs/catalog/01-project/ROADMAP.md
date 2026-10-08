@@ -1,5 +1,9 @@
 # 開發路線圖
 
+2026-10-08 最新使用者已解除停止，續派冷修補、原 build／cost／production gate，
+實機測試準備完成後交接新的 GPT-6.1 Sol／xhigh local main task，並授權 emulator／
+Computer Use 有限測試。當前候選待驗證，授權不替代資格；下列停止盤點為前階段歷史。
+
 ## 2026-10-08 main 續作
 
 使用者授權整合／清理外部專案副本，將 retained prelive 上限提高至 48 GiB，後續固定在
