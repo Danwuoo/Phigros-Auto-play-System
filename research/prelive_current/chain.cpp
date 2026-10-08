@@ -62,6 +62,9 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  const bool streaming=scene==streaming_workload::scene||tap_streaming;
  const auto images=streaming?std::array<std::vector<std::uint8_t>,12>{}:stimulus(scene);
  std::vector<std::uint8_t> generated(streaming?streaming_workload::bytes:0);HostClock clock;LatestFrame latest(1280,720,3,&clock);Runtime rt(clock);
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ rt.step.diagnostic_profile.enabled=true;
+#endif
  const bool compressed_stress=n==10000;const int writer_capacity=scene=="writer"?2:8192;Journal journal(report+(compressed_stress?".journal.jsonl.gz":".journal.jsonl"),writer_capacity,[&]{if(scene=="writer")std::this_thread::sleep_for(std::chrono::milliseconds(30));},compressed_stress?Journal::Encoding::gzip:Journal::Encoding::plain);
  std::vector<Sample> samples(n+1);std::atomic<bool> done=false;std::atomic<int> publish_attempts=0;
  if(scene=="rpc")rt.backend.delay_ms=5;
@@ -136,5 +139,9 @@ int main(int argc,char**argv){try{if(argc<4)throw std::runtime_error("usage pixe
   result=pipeline(argv[2],argv[3],std::stoi(argv[4]),report,provenance);
   if(pas::cost_provenance::producer(argv[5],argv[6],executable,argv[2],argv[3],std::stoi(argv[4]),report,process)!=provenance)throw std::runtime_error("producer freeze changed during run");
  }else throw std::runtime_error("offline CLI only; no endpoint argument");
- result["loaded_module_paths"]=modules();result["rss_peak_os"]=peak_rss_os();std::ofstream out(report);out<<result.dump(2)<<'\n';if(!out)return 2;std::cout<<result.at("schema")<<'\n';return result.value("release_verified",false)?0:1;
+ result["loaded_module_paths"]=modules();result["rss_peak_os"]=peak_rss_os();
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ result["diagnostic_phase_profile_enabled"]=true;result["cost_qualification"]=false;
+#endif
+ std::ofstream out(report);out<<result.dump(2)<<'\n';if(!out)return 2;std::cout<<result.at("schema")<<'\n';return result.value("release_verified",false)?0:1;
  }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}
