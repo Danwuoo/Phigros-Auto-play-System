@@ -4,6 +4,12 @@
 
 ## 現行方向
 
+2026-10-08 使用者已續派：完成冷修補與實機啟動前準備後，建立新的 GPT-6.1 Sol／xhigh
+local main task，並交接其開啟 emulator／Computer Use、自行選曲／Play 進行有限測試的授權。
+先處理 AA producer deadline 與 production dense archive overrun；不把授權當資格或提高門檻。
+本 task 先冷開發；實際 emulator／device／physical 驗證交新 task，只有取得相應收據才能觸控。
+以下停止指示保留為前階段歷史，最新續派已解除停止。
+
 2026-10-08 最新使用者指示：「完成當前階段後停止，盤點開發情況」。本輪已封存並
 停止開發／測試，未啟動 emulator；先讀[階段盤點](docs/research/live-readiness-20261007/PRE_EMULATOR_STAGE_20261008.md)
 及[收據 JSON](docs/research/live-readiness-20261007/PRE_EMULATOR_STAGE_20261008.json)。
