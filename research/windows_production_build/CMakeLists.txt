@@ -64,6 +64,7 @@ string(REPLACE "configure_file(cmake/" "configure_file(\"${PAS_PRODUCTION_SOURCE
 string(REPLACE "session_build_provenance.hpp.in generated/" "session_build_provenance.hpp.in\" generated/" PROVENANCE_SOURCE "${PROVENANCE_SOURCE}")
 file(WRITE "${CMAKE_BINARY_DIR}/production-provenance.cmake" "${PROVENANCE_SOURCE}")
 include("${CMAKE_BINARY_DIR}/production-provenance.cmake")
+target_include_directories(pas_emulator PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated")
 set(BENCH_SOURCES src/bench.cpp src/bench_workloads.cpp src/touch_bench.cpp src/native_capture.cpp src/scrcpy_capture.cpp)
 list(TRANSFORM BENCH_SOURCES PREPEND "${PAS_PRODUCTION_SOURCE_REPO}/")
 add_library(pas_bench STATIC ${BENCH_SOURCES})
