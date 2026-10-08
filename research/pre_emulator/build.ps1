@@ -1,5 +1,5 @@
 param([ValidateSet('release','debug','asan')][string]$Mode='release',
-      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main10')
+      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main11')
 $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$sourceRepo=$repo;$oldRepo=$repo
 $out=Join-Path $repo 'out/windows-handoff';$pkg=Join-Path $repo 'out/prelive-20261006';$pwsh=(Get-Command pwsh).Source;$Operation='build';$Campaign='';$script:inputClosures=@{};$script:maintenancePath=$PSCommandPath
@@ -49,16 +49,20 @@ $objects=@(Get-Content -LiteralPath (Join-Path $root 'build.ninja')|ForEach-Obje
 $decl=Get-Content -LiteralPath (Join-Path $sourceRepo 'CMakeLists.txt')|Where-Object {$_ -match '^add_library\(pas_core STATIC '};$expected=@([regex]::Matches($decl,'src/[^ )]+[.]cpp')|ForEach-Object {$_.Value})
 $actual=@($objects|ForEach-Object {if($_ -match '/(src/[^/]+[.]cpp)[.]obj$'){$Matches[1]}else{throw 'unexpected formal core object'}})
 if($objects.Count -ne 22 -or @(Compare-Object ($actual|Sort-Object) ($expected|Sort-Object)).Count){throw 'exact fresh 22 core object set'}
-$groups=@();for($i=0;$i -lt $objects.Count;$i+=5){$groups+=@(@{name=('core-'+[int]($i/5+1));targets=@($objects|Select-Object -Skip $i -First 5)})}
+$groups=@(@{name='fault-audit';targets=@('fault_audit')},@{name='batch-check';targets=@('batch_check')})
+for($i=0;$i -lt $objects.Count;$i+=5){$groups+=@(@{name=('core-'+[int]($i/5+1));targets=@($objects|Select-Object -Skip $i -First 5)})}
 # main05's combined library stage reached the fixed 64 held-identity cap.
 # Build each dependency first so the next stage has a small, known closure;
 # never increase the guard limit or reuse the interrupted output as a donor.
 foreach($library in @('pas_core','pas_proto','pas_current_candidate','pas_emulator','pas_bench','exact_bvi_v3','current_front','own_bridge','current_rails')){$groups+=@(@{name=('library-'+$library.Replace('_','-'));targets=@($library)})}
-foreach($target in $targets){$groups+=@(@{name=$target.Replace('_','-');targets=@($target)})}
+$groups+=@(@{name='diagnostic-writer-tests';targets=@('diagnostic_writer_tests')})
+$remainingTargets=@($targets|Where-Object {$_ -notin @('fault_audit','batch_check','diagnostic_writer_tests')})
+for($i=0;$i -lt $remainingTargets.Count;$i+=3){$groups+=@(@{name=('targets-'+([int]($i/3+1)).ToString('00'));targets=@($remainingTargets|Select-Object -Skip $i -First 3)})}
 foreach($group in $groups){
  $build='build-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-'+$group.name
  Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 'research/pre_emulator');BuildRoot=$root;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration=$cfg;Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja'));Options=@('--target')+$group.targets}
  $buildReceipts+=@(Binding (Join-Path $out ($build+'/'+$build+'-verification.json')))
+ & (Join-Path $PSScriptRoot 'archive-linker-caches.ps1') -Mode $Mode -BuildAttempt $BuildAttempt -Stage $build -Targets $group.targets
  if($group.name -ceq 'diagnostic-writer-tests'){
   $testExe=Join-Path $root 'cold/diagnostic_writer_tests.exe';$seal=@{files=@(Binding $testExe)};$Operation='tests';$report=Join-Path $artifact 'diagnostic_writer_tests.json';$stage='test-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-diagnostic-writer-tests'
   $runtimeDlls=@(Get-ChildItem -LiteralPath $root -File -Recurse -Filter '*.dll'|ForEach-Object FullName)

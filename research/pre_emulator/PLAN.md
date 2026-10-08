@@ -19,3 +19,9 @@ manual_session 包含原 translation unit，替換的只有 capture/preflight/to
 device/profile/physical 收據建立 schema；沿用交接的信任契約，不先創造可啟用
 格式。本包在需要 emulator 的 profile/physical/capture/RPC 階段停下，入口保持
 UNQUALIFIED，cold/comparison 的 PASS 不授予實機資格。
+
+main10 的新 auditor 字串／JSON 比較編譯失敗保留完整 negative receipts；
+main11 改成明確型別，先編譯 auditor／batch helper 再新編全部正式 core。
+小型 executable 每组三個 native build，64 個 held identity gate 不變；
+每組完成後將非 runtime 的 .ilk／.map 壓縮讀回 SHA 核對，再移除原 cache，
+執行檔、PDB、objects、libraries 與原始證據保持可用。
