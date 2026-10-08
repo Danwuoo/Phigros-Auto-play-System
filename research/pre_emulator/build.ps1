@@ -18,7 +18,7 @@ $coreProof=Join-Path $artifact 'fresh-core-build-plan.json';NewJson $coreProof @
 $sourceFiles=@(& git -C $sourceRepo ls-files|Where-Object {$_ -cne 'apps/runtime_x11_p/aux/CMakeLists.txt' -and $_ -match '(\.(cpp|hpp|h|ps1|proto|in)$|(^|/)CMakeLists\.txt$)'}|ForEach-Object {Join-Path $sourceRepo $_})
 $sourceManifest=Join-Path $artifact 'source-manifest.json';NewJson $sourceManifest @{schema='pas.cooperative-source.v1';source_commit=$commit;dirty=$false;files=@($sourceFiles|ForEach-Object {Binding $_});device_operations=0;live_ready=$false}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1';$g=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
-$deps=@(Get-ChildItem -LiteralPath 'C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/include' -File -Recurse|Where-Object {$_.FullName -match '\\(nlohmann|zlib|google|grpc|gtest)\\' -or $_.Name -in @('zlib.h','zconf.h')}|ForEach-Object FullName)
+$deps=@(Get-ChildItem -LiteralPath 'C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/include' -File -Recurse|ForEach-Object FullName)
 $inputs=@($PSCommandPath,$recipe,$adapter,$plan,$approval,(Join-Path $repo 'research/main_consolidation/stage.ps1'),$sourceManifest,$coreProof)+$sourceFiles+$deps+(GateInputs)+@($g.guard_source.path,$g.process_source.path,$g.cached_identity_controls.path,$g.identity_wait_controls.path)
 $environmentStage='environment-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt
 $environmentRoot=Join-Path $out ($environmentStage+'-inputs');Fresh $environmentRoot;[IO.Directory]::CreateDirectory($environmentRoot)|Out-Null
