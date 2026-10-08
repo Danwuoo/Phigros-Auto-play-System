@@ -1,5 +1,5 @@
 param([ValidateSet('release','debug','asan')][string]$Mode='release',
-      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main06')
+      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main07')
 $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$sourceRepo=$repo;$oldRepo=$repo
 $out=Join-Path $repo 'out/windows-handoff';$pkg=Join-Path $repo 'out/prelive-20261006';$pwsh=(Get-Command pwsh).Source;$Operation='build';$Campaign='';$script:inputClosures=@{};$script:maintenancePath=$PSCommandPath
@@ -17,14 +17,29 @@ $plan=Join-Path $sourceRepo 'docs/research/live-readiness-20261007/DIAGNOSTIC_WR
 $coreProof=Join-Path $artifact 'fresh-core-build-plan.json';NewJson $coreProof @{schema='pas.fresh-core-build-plan.v1';source_commit=$commit;configuration=$Mode;translation_units=22;old_donor_objects_used=$false;compiler_snapshot=(Binding $tool);device_operations=0;live_ready=$false}
 $sourceFiles=@(& git -C $sourceRepo ls-files|Where-Object {$_ -cne 'apps/runtime_x11_p/aux/CMakeLists.txt' -and $_ -match '(\.(cpp|hpp|h|ps1|proto|in)$|(^|/)CMakeLists\.txt$)'}|ForEach-Object {Join-Path $sourceRepo $_})
 $sourceManifest=Join-Path $artifact 'source-manifest.json';NewJson $sourceManifest @{schema='pas.cooperative-source.v1';source_commit=$commit;dirty=$false;files=@($sourceFiles|ForEach-Object {Binding $_});device_operations=0;live_ready=$false}
-$adapter=Join-Path $oldRepo 'research/windows_owner_wake/cmake-stage-v2.ps1';$g=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
+$adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1';$g=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
 $deps=@(Get-ChildItem -LiteralPath 'C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/include' -File -Recurse|Where-Object {$_.FullName -match '\\(nlohmann|zlib|google|grpc|gtest)\\' -or $_.Name -in @('zlib.h','zconf.h')}|ForEach-Object FullName)
 $inputs=@($PSCommandPath,$recipe,$adapter,$plan,$approval,(Join-Path $repo 'research/main_consolidation/stage.ps1'),$sourceManifest,$coreProof)+$sourceFiles+$deps+(GateInputs)+@($g.guard_source.path,$g.process_source.path,$g.cached_identity_controls.path,$g.identity_wait_controls.path)
+$environmentStage='environment-prelive-main-integration-'+$Mode+'-'+$BuildAttempt
+$environmentRoot=Join-Path $out ($environmentStage+'-inputs');Fresh $environmentRoot;[IO.Directory]::CreateDirectory($environmentRoot)|Out-Null
+$environmentOutput=Join-Path $environmentRoot 'compiler-environment.json'
+$environmentCommand=Join-Path $environmentRoot 'capture.cmd'
+$vcvars='C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Auxiliary/Build/vcvars64.bat'
+$capture=Join-Path $repo 'research/main_consolidation/capture-environment.ps1'
+foreach($value in @($vcvars,$pwsh,$capture,$environmentOutput)){if($value -match '["%\r\n]'){throw 'literal environment capture path'}}
+$lines=@('@echo off','setlocal DisableDelayedExpansion',('call "'+$vcvars+'" -vcvars_ver=14.51 >nul'),'if not "%errorlevel%"=="0" exit /b %errorlevel%',('"'+$pwsh+'" -NoProfile -File "'+$capture+'" -Output "'+$environmentOutput+'"'),'exit /b %errorlevel%')
+[IO.File]::WriteAllText($environmentCommand,($lines -join "`r`n")+"`r`n",[Text.UTF8Encoding]::new($false))
+$environmentSpec=Join-Path $environmentRoot 'spec.json'
+$environmentLeaves=InputClosure $environmentStage @($inputs+$capture+$environmentCommand+$vcvars+$pwsh)
+NewJson $environmentSpec @{stage_root=(Join-Path $out $environmentStage);stage=$environmentStage;exe=$env:ComSpec;argv=@('/d','/s','/c',$environmentCommand);native_exit=0;runner_exit=0;total_s=120;stream_cap=65536;inputs=@($environmentLeaves+$environmentCommand+$capture+$vcvars+$pwsh+(Join-Path $pkg ($environmentStage+'-params.json')));environment=@{VSCMD_SKIP_SENDTELEMETRY='1';VC_DISABLE_SQM='1';MSBUILDDISABLENODEREUSE='1'}}
+Stage $environmentStage (Join-Path $repo 'research/windows_process_guard_v3/invoke.ps1') @{Specification=$environmentSpec;GateReceipt=$gate}
+$environmentBinding=Join-Path $artifact 'compiler-environment-binding.json';NewJson $environmentBinding @{schema='pas.msvc-environment-binding.v1';environment=(Binding $environmentOutput);verification=(Binding (Join-Path $out ($environmentStage+'/'+$environmentStage+'-verification.json')));state=(Binding (Join-Path $out ($environmentStage+'/state.json')));source_commit=$commit;device_operations=0;live_ready=$false} 131072
+$inputs+=@($environmentBinding,$environmentOutput)
 $root=Join-Path $repo ('out/prelive-main-integration-'+$Mode+'-'+$BuildAttempt);$cfg=if($Mode -eq 'release'){'Release'}else{'Debug'}
 $options=@('-DCMAKE_TOOLCHAIN_FILE=C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake','-DVCPKG_INSTALLED_DIR=C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed','-DVCPKG_TARGET_TRIPLET=x64-windows','-DVCPKG_MANIFEST_MODE=OFF','-DCMAKE_CXX_SCAN_FOR_MODULES=OFF','-DCMAKE_HAVE_LIB_PTHREAD:INTERNAL=','-DCMAKE_HAVE_PTHREADS_CREATE:INTERNAL=','-DCMAKE_HAVE_PTHREAD_CREATE:INTERNAL=')
 if($Mode -eq 'asan'){$options+=@('-DPAS_PRELIVE_ASAN=ON','-DPAS_ASAN_SUPPORT_ROOT=C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/include')}
 $configure='configure-prelive-main-integration-'+$Mode+'-'+$BuildAttempt
-Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 'research/prelive_current');BuildRoot=$root;StageName=$configure;ToolSnapshot=$tool;GateReceipt=$gate;Operation='Configure';Configuration=$cfg;Inputs=$inputs;Options=$options}
+Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 'research/prelive_current');BuildRoot=$root;StageName=$configure;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Configure';Configuration=$cfg;Inputs=$inputs;Options=$options}
 $targets=@('diagnostic_writer_tests','owner_checkpoint_tests','owner_expiry_tests','producer_wait_tests','tap_reset_workload_tests','receipt_join_diagnose','owner_wait_tests','current_tests','active_body_tests','tail_guard_tests','tail_only_owner_review','tail_only_pixels_review','disabled_live_seam_tests','live_seam_packet_review','live_seam_runtime_review','runtime_finish_tests','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit')
 $buildReceipts=@()
 $taskNinja=Get-Content -LiteralPath (Join-Path $root 'build.ninja') -Raw
@@ -42,7 +57,7 @@ foreach($library in @('formal_core','exact_bvi_v3','current_front','own_bridge',
 foreach($target in $targets){$groups+=@(@{name=$target.Replace('_','-');targets=@($target)})}
 foreach($group in $groups){
  $build='build-prelive-main-integration-'+$Mode+'-'+$BuildAttempt+'-'+$group.name
- Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 'research/prelive_current');BuildRoot=$root;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;Operation='Build';Configuration=$cfg;Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja'));Options=@('--target')+$group.targets}
+ Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 'research/prelive_current');BuildRoot=$root;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration=$cfg;Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja'));Options=@('--target')+$group.targets}
  $buildReceipts+=@(Binding (Join-Path $out ($build+'/'+$build+'-verification.json')))
  if($group.name -ceq 'diagnostic-writer-tests'){
   $testExe=Join-Path $root 'diagnostic_writer_tests.exe';$seal=@{files=@(Binding $testExe)};$Operation='tests';$report=Join-Path $artifact 'diagnostic_writer_tests.json';$stage='test-prelive-main-integration-'+$Mode+'-'+$BuildAttempt+'-diagnostic-writer-tests'

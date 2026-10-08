@@ -88,6 +88,13 @@ main06 recipe 將 formal_core、exact_bvi_v3、current_front、own_bridge、curr
 中止輸出作 donor，不提高 64 held identities、8 snapshots 或其他守衛界限。
 新 attempt namespace 必須全新；不能覆寫 main05 或原地重跑原 combined stage。
 
+main06（source `90a6747`）Configure 也因 vcvars 初始化加 CMake probe 累計身分
+觸及相同上限而 STOP；未開始正式編譯。main07 將 vcvars 初始化獨立為一次 bounded
+native stage，只封存 14 個具名編譯環境變數，單值 16 KiB／整體 128 KiB，拒絕
+quote、percent、換行等 cmd 展開字元。後續 CMake stage 在 COMPLETE capture receipt
+及 before／after SHA 的契約內套用同樣值，不重複初始化 vcvars；守衛原封不動。
+main06 完整負結果與 frozen recipe 保留，兩次 STOP 都不算冷回歸 PASS。
+
 整合前 a2 的 33／45 affected groups PASS 是歷史結果；其餘 12 groups 因容量未建置。
 新 main 的 affected cold、3063 prefix、R2 AA／noise／ABBA、literal production fault／
 stress／slow-writer／RPC、admission／profile／physical 與完整 IN Miss=0 均分開記錄。

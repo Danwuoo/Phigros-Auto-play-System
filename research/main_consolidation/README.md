@@ -29,8 +29,14 @@ wrapper's natural exit was verified. That attempt remains STOP. main06 builds
 the five libraries in dependency order as separate bounded stages and freshly
 compiles all 22 core units again. Guard limits and predicates are unchanged.
 
-Outputs live in `out/prelive-main-integration-*-main06` and
-`out/prelive-main-integration-evaluation-main06-*`; `-BuildAttempt` selects a
+main06's Configure stage also hit the same identity cap. main07 separates
+vcvars initialization into one verified native stage, captures only 14 named
+compiler variables with bounded literal values, and binds the resulting file
+to the COMPLETE capture receipt. CMake stages recheck this proof and use the
+same values without reinitializing vcvars. The process guard is unchanged.
+
+Outputs live in `out/prelive-main-integration-*-main07` and
+`out/prelive-main-integration-evaluation-main07-*`; `-BuildAttempt` selects a
 fresh attempt namespace and never overwrites an existing attempt. No source worktree, emulator,
 ADB, touch or model endpoint is created. Successful cold tests grant no live
 admission; prefix, cost, production, profile and physical gates remain separate.
