@@ -1,3 +1,4 @@
+#include "pas/diagnostic_json.hpp"
 #include "pas/game_tracking.hpp"
 #include "pas/strategy_version.hpp"
 #include <algorithm>
@@ -551,9 +552,20 @@ namespace {
 using json=nlohmann::json;
 json vec(Vec2 p){return json::array({p.x,p.y});}
 Vec2 point(const json& j){if(!j.is_array()||j.size()!=2)throw std::invalid_argument("point shape");Vec2 p{j[0].get<double>(),j[1].get<double>()};if(!std::isfinite(p.x)||!std::isfinite(p.y))throw std::invalid_argument("nonfinite point");return p;}
-json note_json(const NoteCandidate& n){return {{"kind",name(n.kind)},{"center",vec(n.center)},{"tangent",vec(n.tangent)},
- {"width",n.width},{"height",n.height},{"confidence_diagnostic_only",n.confidence},{"tail",n.tail?vec(*n.tail):json(nullptr)},
- {"outline",n.outline_evidence},{"rails",n.rails_geometry},{"head_on_line",n.head_on_line},{"held_body_evidence",n.held_body_evidence},{"held_body_patch",n.held_body_patch},{"direct_rails",n.direct_rails_evidence},{"extractor_hint_id",n.recent_identity}};}
+json note_json(const NoteCandidate& n){return diagnostic_json::object(diagnostic_json::field("kind",name(n.kind)),
+diagnostic_json::field("center",vec(n.center)),
+diagnostic_json::field("tangent",vec(n.tangent)),
+diagnostic_json::field("width",n.width),
+diagnostic_json::field("height",n.height),
+diagnostic_json::field("confidence_diagnostic_only",n.confidence),
+diagnostic_json::field("tail",n.tail?vec(*n.tail):json(nullptr)),
+diagnostic_json::field("outline",n.outline_evidence),
+diagnostic_json::field("rails",n.rails_geometry),
+diagnostic_json::field("head_on_line",n.head_on_line),
+diagnostic_json::field("held_body_evidence",n.held_body_evidence),
+diagnostic_json::field("held_body_patch",n.held_body_patch),
+diagnostic_json::field("direct_rails",n.direct_rails_evidence),
+diagnostic_json::field("extractor_hint_id",n.recent_identity));}
 NoteCandidate parse_note(const json& j){NoteCandidate n;const auto k=j.at("kind").get<std::string>();bool found=false;
  for(auto kind:{NoteKind::tap,NoteKind::hold,NoteKind::drag,NoteKind::flick,NoteKind::ambiguous})if(k==name(kind)){n.kind=kind;found=true;}
  if(!found)throw std::invalid_argument("note kind");n.center=point(j.at("center"));n.tangent=point(j.at("tangent"));
@@ -568,20 +580,51 @@ NoteCandidate parse_note(const json& j){NoteCandidate n;const auto k=j.at("kind"
  n.direct_rails_evidence=j.value("direct_rails",false);n.recent_identity=j.value("extractor_hint_id",std::uint64_t{0});return n;}
 }
 json candidate_batch_json(const CandidateBatch& b){json cs=json::array(),ls=json::array();
- for(const auto& c:b.candidates)cs.push_back({{"candidate_id",c.candidate_id},{"note",note_json(c.note)},
-  {"shortened_hold",c.shortened_hold?note_json(*c.shortened_hold):json(nullptr)},
-  {"quality",c.quality==ObservationQuality::strong_current?"strong_current":c.quality==ObservationQuality::weak_current?"weak_current":"rejected"},
-  {"head_visible",c.head_visible},{"body_visible",c.body_visible},{"left_rail",c.left_rail},{"right_rail",c.right_rail},
-  {"action_support",c.action_support},{"origin",c.origin},{"hint_source_frame",c.hint_source_frame},{"hint_age_ns",c.hint_age_ns}});
- for(const auto& l:b.lines)ls.push_back({{"center",vec(l.center)},{"tangent",vec(l.tangent)},{"length",l.length},{"thickness",l.thickness},{"confidence",l.confidence},
-   {"line_id",l.track_id},{"observed_ns",l.observed_ns},{"velocity",vec(l.velocity)},
-   {"angular_velocity",l.angular_velocity},{"association_valid",l.association_valid},
-   {"motion_valid",l.motion_valid},{"motion_samples",l.motion_samples},{"motion_span_ns",l.motion_span_ns},
-   {"motion_residual_px",l.motion_residual},{"angular_residual_rad",l.angular_residual}});
- json result={{"schema",1},{"extractor_version",b.extractor_version},{"quality_version",b.quality_version},{"history_source",b.history_source},
- {"context",{{"epoch",b.context.epoch},{"generation",b.context.generation},{"geometry",b.context.geometry},{"frame",b.context.frame},{"capture_ns",b.context.capture_ns},{"width",b.context.width},{"height",b.context.height},{"rotation",b.context.rotation}}},
- {"extraction_start_ns",b.extraction_start_ns},{"extraction_end_ns",b.extraction_end_ns},{"ui",name(b.ui)},
- {"playing_gate",b.playing_gate},{"capacity_valid",b.capacity_valid},{"source_valid",b.source_valid}};
+ for(const auto& c:b.candidates)cs.push_back(diagnostic_json::object(diagnostic_json::field("candidate_id",c.candidate_id),
+diagnostic_json::field("note",note_json(c.note)),
+diagnostic_json::field("shortened_hold",c.shortened_hold?note_json(*c.shortened_hold):json(nullptr)),
+diagnostic_json::field("quality",c.quality==ObservationQuality::strong_current?"strong_current":c.quality==ObservationQuality::weak_current?"weak_current":"rejected"),
+diagnostic_json::field("head_visible",c.head_visible),
+diagnostic_json::field("body_visible",c.body_visible),
+diagnostic_json::field("left_rail",c.left_rail),
+diagnostic_json::field("right_rail",c.right_rail),
+diagnostic_json::field("action_support",c.action_support),
+diagnostic_json::field("origin",c.origin),
+diagnostic_json::field("hint_source_frame",c.hint_source_frame),
+diagnostic_json::field("hint_age_ns",c.hint_age_ns)));
+ for(const auto& l:b.lines)ls.push_back(diagnostic_json::object(diagnostic_json::field("center",vec(l.center)),
+diagnostic_json::field("tangent",vec(l.tangent)),
+diagnostic_json::field("length",l.length),
+diagnostic_json::field("thickness",l.thickness),
+diagnostic_json::field("confidence",l.confidence),
+diagnostic_json::field("line_id",l.track_id),
+diagnostic_json::field("observed_ns",l.observed_ns),
+diagnostic_json::field("velocity",vec(l.velocity)),
+diagnostic_json::field("angular_velocity",l.angular_velocity),
+diagnostic_json::field("association_valid",l.association_valid),
+diagnostic_json::field("motion_valid",l.motion_valid),
+diagnostic_json::field("motion_samples",l.motion_samples),
+diagnostic_json::field("motion_span_ns",l.motion_span_ns),
+diagnostic_json::field("motion_residual_px",l.motion_residual),
+diagnostic_json::field("angular_residual_rad",l.angular_residual)));
+ json result=diagnostic_json::object(diagnostic_json::field("schema",1),
+diagnostic_json::field("extractor_version",b.extractor_version),
+diagnostic_json::field("quality_version",b.quality_version),
+diagnostic_json::field("history_source",b.history_source),
+diagnostic_json::field("context",diagnostic_json::object(diagnostic_json::field("epoch",b.context.epoch),
+diagnostic_json::field("generation",b.context.generation),
+diagnostic_json::field("geometry",b.context.geometry),
+diagnostic_json::field("frame",b.context.frame),
+diagnostic_json::field("capture_ns",b.context.capture_ns),
+diagnostic_json::field("width",b.context.width),
+diagnostic_json::field("height",b.context.height),
+diagnostic_json::field("rotation",b.context.rotation))),
+diagnostic_json::field("extraction_start_ns",b.extraction_start_ns),
+diagnostic_json::field("extraction_end_ns",b.extraction_end_ns),
+diagnostic_json::field("ui",name(b.ui)),
+diagnostic_json::field("playing_gate",b.playing_gate),
+diagnostic_json::field("capacity_valid",b.capacity_valid),
+diagnostic_json::field("source_valid",b.source_valid));
  result["lines"]=std::move(ls);result["candidates"]=std::move(cs);return result;
 }
 CandidateBatch parse_candidate_batch(const json& j){CandidateBatch b;if(j.at("schema")!=1)throw std::invalid_argument("candidate schema");

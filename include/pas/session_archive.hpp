@@ -11,8 +11,10 @@ namespace pas {
 class SessionArchive final {
 public:
     enum class Encoding {plain,gzip};
+    enum class Persistence {diagnostic_archive,none};
     SessionArchive(std::filesystem::path root,nlohmann::json provenance,
-                   std::size_t segment_bytes=16*1024*1024,std::size_t standby_bytes=1024*1024,Encoding encoding=Encoding::plain);
+                   std::size_t segment_bytes=16*1024*1024,std::size_t standby_bytes=1024*1024,Encoding encoding=Encoding::plain,
+                   Persistence persistence=Persistence::diagnostic_archive);
     ~SessionArchive();
     void event(std::uint64_t round,nlohmann::json value);
     void event(std::uint64_t round,DiagnosticSnapshot value);
@@ -32,5 +34,6 @@ private:
     std::atomic<bool> faulted_=false,image_pending_=false;bool closed_=false;
     std::string error_;
     const Encoding encoding_;
+    const Persistence persistence_;
 };
 }

@@ -69,6 +69,9 @@ nlohmann::json match_touch_capability(const RuntimeConfig& c,const json& report,
     return {{"fingerprint_matches",mismatches.empty()},{"mismatches",mismatches},
             {"historical_capability_only",true},{"gameplay_enabled",false}};
 }
+bool current_capture_geometry_matches(const RuntimeConfig& c,const Frame& frame) noexcept {
+    return frame.width==c.width&&frame.height==c.height&&frame.source_rotation==c.source_rotation;
+}
 json game_preflight(const std::string& config_path,const std::string& capability_path) {
     const auto c=load_config(config_path);
     if(c.capture_kind!="emulator-grpc") throw std::invalid_argument("preflight requires emulator-grpc");
@@ -95,6 +98,10 @@ json game_preflight(const std::string& config_path,const std::string& capability
     result["guest_processors"]=bytes({"-s",c.serial,"shell","getconf","_NPROCESSORS_ONLN"});
     result["guest_memory"]=bytes({"-s",c.serial,"shell","cat","/proc/meminfo"});
     result["capture_geometry"]={{"width",frame.width},{"height",frame.height},{"source_rotation",frame.source_rotation}};
+    if(!current_capture_geometry_matches(c,frame)) {
+        result["mismatches"].push_back("current_capture_geometry");
+        result["fingerprint_matches"]=false;
+    }
     result["corner_mapping"]=points; result["real_input_created"]=false;
     result["source_absolute_age"]=nullptr; result["clock_domain"]="host_qpc_ns";
     return result;

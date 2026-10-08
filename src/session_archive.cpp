@@ -14,14 +14,20 @@ void save(const std::filesystem::path& path,const json& value) {
 }
 void flush(std::ofstream& f) {f.flush();if(!f)throw std::runtime_error("session archive flush failed");f.close();}
 }
-SessionArchive::SessionArchive(std::filesystem::path root,json provenance,std::size_t segments,std::size_t standby,Encoding encoding)
-    :root_(std::move(root)),provenance_(std::move(provenance)),segment_bytes_(segments),standby_bytes_(standby),encoding_(encoding) {
+SessionArchive::SessionArchive(std::filesystem::path root,json provenance,std::size_t segments,std::size_t standby,Encoding encoding,Persistence persistence)
+    :root_(std::move(root)),provenance_(std::move(provenance)),segment_bytes_(segments),standby_bytes_(standby),encoding_(encoding),persistence_(persistence) {
     if(segments<128||standby<128||segments>16*1024*1024||standby>1024*1024)throw std::invalid_argument("archive segment bound");
+    if(persistence_==Persistence::none){provenance_=nullptr;return;}
     std::filesystem::create_directories(root_);save(root_/"manifest.json",provenance_);
     worker_=std::jthread([this]{writer();});
 }
 SessionArchive::~SessionArchive() {close();}
 void SessionArchive::push(Item item) {
+    if(persistence_==Persistence::none){
+        std::lock_guard lock(mutex_);
+        if(closed_)throw std::runtime_error("session archive closed");
+        return; // No serialization, queue, worker, directories, files or images.
+    }
     // Serialize once before the mailbox lock. Complete summaries retain JSON
     // for writer-owned manifest/result additions; ordinary events retain only
     // their immutable serialized row. The byte admission rule is unchanged.
@@ -37,11 +43,13 @@ void SessionArchive::push(Item item) {
 }
 void SessionArchive::event(std::uint64_t round,DiagnosticSnapshot value){Item item{round,nullptr};item.snapshot.emplace(std::move(value));push(std::move(item));}
 void SessionArchive::event(std::uint64_t round,json value) {
+    if(persistence_==Persistence::none){push({round,nullptr});return;}
     value["schema_version"]=2;value["clock_domain"]="host_qpc_ns";value["round_id"]=round;
     push({round,std::move(value)});
 }
 void SessionArchive::complete(std::uint64_t round,json summary,std::shared_ptr<const Frame> result) {
     if(!round)throw std::invalid_argument("zero round completion");
+    if(persistence_==Persistence::none){push({round,nullptr,true});return;}
     if(result&&image_pending_.exchange(true))throw std::runtime_error("previous result image still pending archive");
     push({round,std::move(summary),true,std::move(result)});
 }

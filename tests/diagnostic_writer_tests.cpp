@@ -1,3 +1,5 @@
+#include "source382_diagnostic_reference.hpp"
+#include <limits>
 #include "pas/diagnostic_snapshot.hpp"
 #include "pas/journal.hpp"
 #include "pas/session_archive.hpp"
@@ -286,7 +288,99 @@ EXPECT_EQ(J::parse(row),expected);
 EXPECT_FALSE(reader.next(row));
 EXPECT_TRUE(pas::analyze_game_round(root/"round-1").at("segment_integrity_verified").get<bool>());
 }
+TEST(DiagnosticArchive, NoPersistenceCreatesNoDirectoryOrImageAndHasNoQueue){
+ const auto root=fixtures/"score-only-no-directory";
+ ASSERT_FALSE(fs::exists(root));
+ {
+  pas::SessionArchive archive(root,{{"private","not persisted"}},16*1024*1024,1024*1024,
+      pas::SessionArchive::Encoding::gzip,pas::SessionArchive::Persistence::none);
+  for(int i=0;i<20000;++i){
+   archive.event(1,{{"event","discarded"},{"ordinal",i}});
+   archive.event(1,pas::DiagnosticSnapshot::current(scene()));
+  }
+  auto invalid_image=std::make_shared<pas::Frame>();
+  invalid_image->width=1280;invalid_image->height=720;invalid_image->rgb={1,2,3};
+  archive.complete(1,{{"status","result_confirmed"}},invalid_image);
+  archive.complete(2,{{"status","aborted"}},invalid_image);
+  EXPECT_EQ(archive.peak_queue(),0);
+  EXPECT_FALSE(archive.faulted());
+  EXPECT_TRUE(archive.error().empty());
+  EXPECT_FALSE(fs::exists(root));
+  archive.close();
+  EXPECT_THROW(archive.event(0,{{"event","after-close"}}),std::runtime_error);
+ }
+ EXPECT_FALSE(fs::exists(root));
 }
+TEST(DiagnosticArchive, NoPersistenceDoesNotSerializeInvalidUtf8OrTouchExistingFiles){
+ const auto root=fresh("score-only-existing-sentinel");
+ const auto sentinel=root/"manifest.json";
+ {std::ofstream f(sentinel,std::ios::binary);f<<"must stay byte-exact";}
+ const auto sha=pas::sha256_file(sentinel);
+ pas::SessionArchive archive(root,{{"private","discarded"}},128,128,
+     pas::SessionArchive::Encoding::plain,pas::SessionArchive::Persistence::none);
+ EXPECT_NO_THROW(archive.event(1,{{"invalid_utf8",std::string(1,char(0xff))}}));
+ EXPECT_THROW(archive.complete(0,{{"status","zero-round"}}),std::invalid_argument);
+ archive.close();
+ EXPECT_EQ(pas::sha256_file(sentinel),sha);
+ EXPECT_EQ(std::distance(fs::directory_iterator(root),fs::directory_iterator()),1);
+ EXPECT_FALSE(archive.faulted());
+}
+TEST(DiagnosticArchive, NoPersistenceKeepsConstructorBounds){
+ const auto root=fixtures/"score-only-invalid-bounds";
+ EXPECT_THROW((pas::SessionArchive(root,J::object(),127,128,pas::SessionArchive::Encoding::gzip,
+     pas::SessionArchive::Persistence::none)),std::invalid_argument);
+ EXPECT_THROW((pas::SessionArchive(root,J::object(),16*1024*1024+1,128,pas::SessionArchive::Encoding::gzip,
+     pas::SessionArchive::Persistence::none)),std::invalid_argument);
+ EXPECT_FALSE(fs::exists(root));
+}
+}
+TEST(DiagnosticSerialization, Source382FullByteOracle){
+ J cases=J::array();pas::DecisionSnapshot dense;pas::CandidateBatch batch;
+ for(int variant=0;variant<12;++variant){
+  pas::DecisionSnapshot s;s.context={1,2,3,4,500,1280,720,1};s.sequence=7;
+  s.ui=static_cast<pas::GameUi>(variant%6);s.playing_gate=variant%2;s.capacity_valid=variant%3;
+  s.ui_basis="escaped \" \\ unicode \xE6\x9C\xAC\n\t";s.compute_timing_host_qpc=variant%2;
+  if(variant%2)s.play_button=pas::Vec2{1.5,-.5};
+  s.recognition_start_ns=1;s.recognition_end_ns=2;s.combo_digit_glyphs=3;
+  for(int i=0;i<(variant==0?0:variant<3?1:16);++i){
+   pas::LineCandidate l;l.center={i*1.5,-i*.5};l.tangent={.6,.8};l.length=900;l.thickness=2;l.confidence=.75;
+   l.track_id=std::uint64_t(i+1);l.observed_ns=500;l.velocity={1e-30,1e30};l.angular_velocity=-.25;
+   l.association_valid=i%2;l.motion_valid=i%3;l.motion_samples=i;l.motion_span_ns=123;l.motion_residual=.25;l.angular_residual=.5;s.lines.push_back(l);
+  }
+  for(int i=0;i<(variant==0?0:variant<3?1:128);++i){
+   pas::GameTarget t;t.note_id=std::uint64_t(i+1);t.revision=i;t.line_id=1;t.note.kind=static_cast<pas::NoteKind>(i%5);
+   t.note.center={i*1.25,-.5};t.note.tangent={.6,.8};t.note.width=72;t.note.height=24;t.note.confidence=.5;
+   t.note.outline_evidence=i%2;t.note.rails_geometry=i%3;t.note.head_on_line=i%2;t.note.held_body_evidence=i%3;
+   t.note.held_body_patch=i%2;t.note.direct_rails_evidence=i%3;t.note.recent_identity=std::uint64_t(i+100);
+   if(i%2)t.note.tail=pas::Vec2{40,50};
+   t.evidence_ns=500;t.expires_ns=900;t.uncertainty_ns=30;t.hit={1.25,-.5};t.hit_velocity={1e-30,1e30};
+   if(i%2){t.crossing_ns=999;t.tail_crossing_ns=1999;}
+   t.current_contact=static_cast<pas::GameTarget::CurrentContact>(i%3);
+   if(i%3==0){t.tail_terminal_proof.emplace();t.tail_terminal_proof->context=s.context;t.tail_terminal_proof->note_id=t.note_id;}
+   t.line_projection_only=i%2;t.last_line_observed_ns=123;t.projected_line_along_px=-2.5;t.projected_line_half_length_px=450;
+   t.distance=-.5;t.velocity=1e-30;t.residual=.25;t.prediction_error_px=.5;t.fit_residual_limit_px=3;t.samples=4;t.history_span_ns=5;
+   t.reason="\n\t\\\"";if(variant==10)t.distance=std::numeric_limits<double>::infinity();if(variant==11)t.velocity=std::numeric_limits<double>::quiet_NaN();
+   s.targets.push_back(t);
+  }
+  pas::CandidateBatch b;b.context=s.context;b.lines=s.lines;b.history_source=s.ui_basis;b.ui=s.ui;
+  b.playing_gate=s.playing_gate;b.capacity_valid=s.capacity_valid;b.source_valid=variant%2;b.extraction_start_ns=123;b.extraction_end_ns=456;
+  for(const auto& t:s.targets){pas::TrackingCandidate c;c.candidate_id=t.note_id;c.note=t.note;
+   c.quality=static_cast<pas::ObservationQuality>(c.candidate_id%3);c.head_visible=c.candidate_id%2;c.body_visible=c.candidate_id%3;
+   c.left_rail=c.candidate_id%2;c.right_rail=c.candidate_id%3;c.action_support=c.candidate_id%2;c.origin=s.ui_basis;c.hint_source_frame=4;c.hint_age_ns=5;
+   if(c.candidate_id%2)c.shortened_hold=c.note;b.candidates.push_back(c);}
+  ASSERT_TRUE(pas::diagnostic_reference::decision_json(s).dump()==pas::decision_json(s).dump()) << "decision bytes differ from original frozen core";
+  ASSERT_TRUE(pas::diagnostic_reference::candidate_batch_json(b).dump()==pas::candidate_batch_json(b).dump()) << "batch bytes differ from original frozen core";
+  cases.push_back({{"id","full_byte_parity_"+std::to_string(variant)},{"pass",true}});
+  if(variant==9){dense=s;batch=b;}
+ }
+ dense.targets[0].reason=std::string(1,char(0xff));bool old_bad=false,new_bad=false;
+ try{pas::diagnostic_reference::decision_json(dense).dump();}catch(const J::type_error&){old_bad=true;}
+ try{pas::decision_json(dense).dump();}catch(const J::type_error&){new_bad=true;}
+ ASSERT_TRUE(old_bad&&new_bad) << "same invalid UTF8 rejection";dense.targets[0].reason="\n\t\\\"";
+ cases.push_back({{"id","invalid_utf8_same_rejection"},{"pass",true}});
+ EXPECT_EQ(cases.size(),13);
+}
+
 int main(int argc,char**argv){try{if(argc!=2||fs::exists(argv[1]))throw std::runtime_error("fresh test report argument");
 const fs::path output=argv[1];
 fixtures=output.string()+".fixtures";

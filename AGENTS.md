@@ -4,6 +4,14 @@
 
 ## 現行方向
 
+2026-10-09 使用者明確指定後續新 GPT-6.1 Sol／xhigh local main task：授權開啟
+emulator／Computer Use，自行盤點 Chapter Legacy 現行曲目，所有可用 IN 各測一次。
+完成一輪後整理分數並停止休息；IN 未解鎖／不可用就註記，不加 HD 解鎖或重試。
+只保存曲名、IN 等級、分數與簡短狀態；不錄屏、不保存遊玩截圖、PNG、pixel clips、
+逐 frame／touch／trace 或其他遊玩紀錄。CU 導航／讀分數可用瞬時畫面，不另存證據。
+歷史及冷驗證 raw 保留，cold archive workload／原 gate 不變。詳見
+[本輪授權與修補](docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+
 2026-10-08 使用者已續派：完成冷修補與實機啟動前準備後，建立新的 GPT-6.1 Sol／xhigh
 local main task，並交接其開啟 emulator／Computer Use、自行選曲／Play 進行有限測試的授權。
 先處理 AA producer deadline 與 production dense archive overrun；不把授權當資格或提高門檻。

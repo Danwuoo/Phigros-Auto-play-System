@@ -1,5 +1,12 @@
 # 現行架構與資料契約
 
+2026-10-09 診斷 JSON 改用直接建立 object map，避免 initializer-list 複製巢狀值，
+以 `382d845` 原函式的完整 bytes oracle 核對；事件內容、archive bounds 與 cost workload 不變。
+`SessionArchive::Persistence::none` 不建立 writer、目錄或檔案；固定單曲 score-session
+停用預覽、clips、錄屏與 summary/image 保存，保留有界 RAM 安全狀態及單一 owner 撤銷／釋放。
+preflight 必須把新擷取的 width／height／rotation 納入 fingerprint_matches。
+只讀 cold receipt reader 不發 admission；入口仍 UNQUALIFIED，實際裝置資格由交接 task 取得。
+
 2026-10-08 最新續派的冷候選移轉已擁有的完整 JSON arrays／scene，避免深層複製；
 archive mailbox／snapshot 計費與完整事件契約不變。endpoint-free producer 用可驗證、
 可還原的 ABOVE_NORMAL thread scope，A/B 相同，cadence 與 QPC epoch 不變。

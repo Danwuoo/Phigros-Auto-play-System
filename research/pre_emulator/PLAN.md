@@ -1,5 +1,13 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
+2026-10-09 續派範圍見 [一輪分數授權](../../docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+本輪整合 object-map 診斷建構、score-only 無持久化、current capture geometry 核對與
+只讀 build reader。新增 3 個無持久化測試及 1 個含 13 情境的原 byte oracle，writer
+共 19 正式測試；新增 reader controls 及 literal score-only Tap／Hold／Dense／invalid
+4 組，三配置各 25 冷回歸。原 22 TUs、archive workload、R2 數值 gates 不變。
+完整 live enabling validator 仍須根據實際成功的 production/cost/current device 收據完成，
+score-session 公開入口當前保持 UNQUALIFIED，不能用 cold PASS 或授權取代資格。
+
 使用者最新授權繼續完成，實機測試 ready 後建立新的 GPT-6.1 Sol／xhigh local
 main task，授權該 task 啟動 emulator／Computer Use 進行有限測試。本 task 完成
 冷修補與原門檻驗證後交接；下列較早停止文字按當時範圍閱讀。

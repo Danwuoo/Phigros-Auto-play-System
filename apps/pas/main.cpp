@@ -365,6 +365,10 @@ int main(int argc, char** argv) {
     buffer_cmd->add_option("--consumer-delay-ms", buffer_consumer_delay_ms);
     buffer_cmd->add_option("--log", buffer_log);
     std::string config_path, run_mode = "observe";
+    std::string score_config,score_capability;
+    auto* score_cmd=app.add_subcommand("score-session","Single current-candidate round; no saved diagnostics, images or recording");
+    score_cmd->add_option("--config",score_config)->required();
+    score_cmd->add_option("--capability",score_capability)->required();
     std::string manual_config,manual_capability;
     bool manual_no_preview=false,manual_pixel_clips=false,manual_full_recording=false,manual_one_round=false;
     double round_watchdog_s=0;
@@ -682,6 +686,7 @@ int main(int argc, char** argv) {
             std::cout << fake_capture_bench(buffer_duration_s, 0, buffer_interval_ms,
                 64, 64, buffer_consumer_delay_ms, false, buffer_log,
                 "buffer_bench_native").dump(2) << '\n';
+        else if (*score_cmd) run_current_candidate_score_only_session(CandidateLiveAdmission{},score_config,score_capability);
         else if (*manual_cmd) run_manual_session(manual_config,manual_capability,manual_no_preview,
             static_cast<Nanoseconds>(std::llround(round_watchdog_s*1e9)),manual_pixel_clips,manual_full_recording,manual_one_round);
         else if (*run_cmd) {

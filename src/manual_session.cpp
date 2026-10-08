@@ -65,8 +65,12 @@ json release_json(const ReleaseReport& r,const std::string& reason) {
         {"effect_verified",false}};
 }
 }
-static void run_manual_session_impl(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round,ManualVariant variant) {
+static void run_manual_session_impl(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round,ManualVariant variant,
+    SessionArchive::Persistence persistence=SessionArchive::Persistence::diagnostic_archive) {
     const bool candidate_mode=variant==ManualVariant::current_candidate;
+    const bool score_only=persistence==SessionArchive::Persistence::none;
+    if(score_only&&(!candidate_mode||!no_preview||pixel_clips||full_recording||!one_round||watchdog<=0||watchdog>600'000'000'000LL))
+        throw std::invalid_argument("score-only trial requires current candidate, no preview/recording/clips, one round and watchdog at most 600s");
     const auto config=load_config(config_path);
     if(config.capture_kind!="emulator-grpc"||config.touch_kind!="emulator-grpc"||
        config.width!=1280||config.height!=720||config.source_rotation!=1||config.grpc_read_chunk_kib!=256||
@@ -80,6 +84,7 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
     const auto preflight=game_preflight(config_path,capability_path);
     if(!preflight.at("fingerprint_matches").get<bool>())throw std::runtime_error("manual-session capability fingerprint mismatch");
     HostClock clock;
+    const auto session_start=clock.now_ns();
     wchar_t module[32768]{};const auto size=GetModuleFileNameW(nullptr,module,32768);
     if(!size||size==32768)throw std::runtime_error("runtime executable unavailable");
     const auto root=std::filesystem::path(config.log_dir)/("manual-session-"+std::to_string(clock.now_ns()));
@@ -116,7 +121,7 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
         manifest["diagnostic_snapshot_policy"]="owned current scalars only; writer encoding; 256KiB charged per snapshot; 16MiB mailbox plus one in-flight item";
         manifest["journal_encoding"]="gzip-jsonl-v1";manifest["round_max_segments"]=256;manifest["round_decoded_byte_cap"]=4ull*1024*1024*1024;manifest["round_physical_byte_cap"]=512ull*1024*1024;
     }
-    SessionArchive archive(root,manifest,16*1024*1024,1024*1024,candidate_mode?SessionArchive::Encoding::gzip:SessionArchive::Encoding::plain);
+    SessionArchive archive(root,manifest,16*1024*1024,1024*1024,candidate_mode?SessionArchive::Encoding::gzip:SessionArchive::Encoding::plain,persistence);
     std::unique_ptr<SessionPixelClips> clips;
     if(pixel_clips)clips=std::make_unique<SessionPixelClips>(root/"pixel-clips",clock,config.width,config.height);
     std::unique_ptr<SessionRecording> recording;
@@ -176,7 +181,7 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
                 // This independent latch closes dispatch before the action owner consumes the packet.
                 live_gate=p->allow_down&&f->capture_complete_ns>invalid_through.load()&&
                     (!candidate_mode||(p->candidate&&p->candidate->eligible(*p,clock.now_ns())));
-                if(p->status.ended&&p->status.state==PlaySessionState::result&&!result_frame)
+                if(!score_only&&p->status.ended&&p->status.state==PlaySessionState::result&&!result_frame)
                     result_frame=std::make_shared<Frame>(*f); // One bounded copy; never a pool lease.
                 p->result=result_frame;p->source_time=f->source_timestamp_us;p->source_sequence=f->source_sequence;
                 const auto now=clock.now_ns();
@@ -375,12 +380,16 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
             if(archive.faulted())throw std::runtime_error(archive.error());
             if(recording&&recording->faulted())throw std::runtime_error(recording->error());
             const auto now=clock.now_ns(),last=last_capture.load();const auto stats=capture.stats();
+            if(score_only&&now-session_start>=900'000'000'000LL)
+                throw std::runtime_error("score-only session wall limit reached");
             const bool expired=last&&now-last>=100'000'000;
             if((expired&&!stale)||stats.relative_stale_drops!=lag||stats.inactive!=inactive) {
                 invalid_through=last;live_gate=false;++revocation;wake.notify();lag=stats.relative_stale_drops;inactive=stats.inactive;
             }
             stale=expired;
             const auto active_start=active_round_start.load();
+            if(score_only&&!active_start&&now-session_start>=300'000'000'000LL)
+                throw std::runtime_error("score-only waiting-for-Play limit reached");
             if(watchdog&&active_start&&now-active_start>=watchdog)
                 throw std::runtime_error("round_watchdog_aborted");
             if(now-heartbeat>=60'000'000'000LL) {
@@ -403,6 +412,12 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
     if(recording)recording->close();
     std::exception_ptr error;{std::lock_guard lock(fault_mutex);error=fault;}
     if(recording&&recording->faulted()&&!error)error=std::make_exception_ptr(std::runtime_error(recording->error()));
+    if(score_only){
+        if(error)std::rethrow_exception(error);
+        if(archive.faulted())throw std::runtime_error(archive.error());
+        std::cout<<"Score-only session stopped; no gameplay files saved.\n";
+        return;
+    }
     json summary={{"state",error||archive.faulted()?"FAULT":"STOPPED"},{"run_dir",std::filesystem::absolute(root).string()},
         {"published",latest.counters().published},{"pool_drops",latest.counters().pool_drops},
         {"consumer_skips",latest.counters().consumer_skips},{"journal_peak_queue",archive.peak_queue()},
@@ -424,6 +439,12 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
 void run_current_candidate_manual_session(const CandidateLiveAdmission& admission,const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round) {
     enter_current_candidate_manual_session(admission,[&]{
         run_manual_session_impl(config_path,capability_path,no_preview,watchdog,pixel_clips,full_recording,one_round,ManualVariant::current_candidate);
+    });
+}
+void run_current_candidate_score_only_session(const CandidateLiveAdmission& admission,const std::string& config_path,const std::string& capability_path) {
+    enter_current_candidate_manual_session(admission,[&]{
+        run_manual_session_impl(config_path,capability_path,true,600'000'000'000LL,
+            false,false,true,ManualVariant::current_candidate,SessionArchive::Persistence::none);
     });
 }
 

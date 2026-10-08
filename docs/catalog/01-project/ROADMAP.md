@@ -1,5 +1,10 @@
 # 開發路線圖
 
+2026-10-09 新順序：完成診斷 writer／分數無持久化／當前畫面 geometry 冷修補，
+新建三配置及原 production／AA／noise／ABBA gate；到裝置相關階段交接新的 6.1 Sol／xhigh
+local main task。該 task 盤點 Chapter Legacy 全部現行 IN，可用曲各一次，只記分數，
+一輪整理完成即停止。未解鎖／故障如實註記，不加入解鎖輪、提高分數重跑或錄屏。
+
 2026-10-08 最新使用者已解除停止，續派冷修補、原 build／cost／production gate，
 實機測試準備完成後交接新的 GPT-6.1 Sol／xhigh local main task，並授權 emulator／
 Computer Use 有限測試。當前候選待驗證，授權不替代資格；下列停止盤點為前階段歷史。

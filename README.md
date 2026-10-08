@@ -1,5 +1,9 @@
 # Phigros Auto-play System
 
+2026-10-09 後續測試範圍已限定：[Chapter Legacy IN 一輪、只記分數、完成後停止](docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+冷修補整合直接建置三配置的新正式來源；舊 `382d845` stress dense mailbox overrun
+與未執行的 AA／ABBA 保留。新的分數模式停用遊玩持久化，仍須通過當前資格，尚未啟動 emulator。
+
 2026-10-08 使用者已續派：先完成 AA producer／production dense 冷修補與原門檻驗證，
 實機測試準備完成後交接新的 GPT-6.1 Sol／xhigh local main task，授權其 emulator／
 Computer Use 有限測試。最新 recipe 見[啟動前工作包](research/pre_emulator/PLAN.md)。

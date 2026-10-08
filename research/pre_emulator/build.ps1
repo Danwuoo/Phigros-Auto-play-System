@@ -60,7 +60,8 @@ for($i=0;$i -lt $objects.Count;$i+=5){$groups+=@(@{name=('core-'+[int]($i/5+1));
 # never increase the guard limit or reuse the interrupted output as a donor.
 foreach($library in @('pas_core','pas_proto','pas_current_candidate','pas_emulator','pas_bench','exact_bvi_v3','current_front','own_bridge','current_rails')){$groups+=@(@{name=('library-'+$library.Replace('_','-'));targets=@($library)})}
 $groups+=@(@{name='diagnostic-writer-tests';targets=@('diagnostic_writer_tests')})
-$largeTargets=@('production_entry_controls','fault_controls','pas')
+$targets+=@('score_only_controls','qualification_reader','qualification_reader_controls')
+$largeTargets=@('production_entry_controls','fault_controls','pas','score_only_controls','qualification_reader')
 $remainingTargets=@($targets|Where-Object {$_ -notin (@('fault_audit','batch_check','diagnostic_writer_tests')+$largeTargets)})
 for($i=0;$i -lt $remainingTargets.Count;$i+=3){$groups+=@(@{name=('targets-'+([int]($i/3+1)).ToString('00'));targets=@($remainingTargets|Select-Object -Skip $i -First 3)})}
 foreach($target in $largeTargets){$groups+=@(@{name=$target.Replace('_','-');targets=@($target)})}
@@ -74,7 +75,7 @@ foreach($group in $groups){
   $runtimeDlls=@(Get-ChildItem -LiteralPath $root -File -Recurse -Filter '*.dll'|ForEach-Object FullName)
   Native $stage $testExe @($report) @($inputs+$seal.files.path+$buildReceipts.path+$runtimeDlls) 900
   $value=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
-  if($value.schema -cne 'pas.diagnostic-writer-tests.v1' -or $value.failed -ne 0 -or $value.tests_planned -ne 15 -or $value.tests_run -ne 15 -or $value.cases.Count -ne 15 -or @($value.cases|Where-Object {-not $_.pass}).Count){throw 'all 15 real writer and encoding cases required'}
+  if($value.schema -cne 'pas.diagnostic-writer-tests.v1' -or $value.failed -ne 0 -or $value.tests_planned -ne 19 -or $value.tests_run -ne 19 -or $value.cases.Count -ne 19 -or @($value.cases|Where-Object {-not $_.pass}).Count){throw 'all 19 real writer, score-only and byte-oracle cases required'}
   $earlyTest=@{test='diagnostic_writer_tests';report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))};$Operation='build'
  }
 }
@@ -84,10 +85,17 @@ $symbols=if(Test-Path -LiteralPath $symbolProof){Binding $symbolProof}else{$null
 $seal=@{files=@(Get-ChildItem -LiteralPath $root -File -Recurse|ForEach-Object {Binding $_.FullName})}
 $buildSeal=Join-Path $artifact 'build-binding.json';NewJson $buildSeal @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration=$Mode;source_manifest=(Binding $sourceManifest);dependency_manifest=(Binding $dependencyManifest);core_build_plan=(Binding $coreProof);build_root=$root;files=$seal.files;configure_receipt=(Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json')));build_receipts=$buildReceipts;serial_symbol_archive=$symbols;device_operations=0;live_ready=$false}
 function FindExecutable($target){$found=@(Get-ChildItem -LiteralPath $root -File -Recurse -Filter ($target+'.exe'));if($found.Count -ne 1){throw 'one exact executable required'};return $found[0].FullName}
-$Operation='tests';$tests=@($earlyTest);foreach($target in $targets|Where-Object {$_ -notin @('diagnostic_writer_tests','receipt_join_diagnose','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit','cost_analysis','cost_analysis_tests','cost_analysis_review_tests','cost_receipt','cost_comparison','production_pipeline_cold','production_pipeline_audit','fault_controls','fault_audit','batch_check','pas')}){
+$Operation='tests';$tests=@($earlyTest);foreach($target in $targets|Where-Object {$_ -notin @('diagnostic_writer_tests','receipt_join_diagnose','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit','cost_analysis','cost_analysis_tests','cost_analysis_review_tests','cost_receipt','cost_comparison','production_pipeline_cold','production_pipeline_audit','fault_controls','fault_audit','batch_check','pas','score_only_controls','qualification_reader')}){
  $report=Join-Path $artifact ($target+'.json');$stage='test-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-'+$target.Replace('_','-');Native $stage (FindExecutable $target) @($report) @($inputs+$buildSeal+$seal.files.path) 900
  $r=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json;if($r.failed -ne 0){throw ('cold regression failed '+$target)}
  $tests+=@(@{test=$target;report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))})
+}
+foreach($scene in @('tap','hold','dense','invalid')){
+ $controlRoot=Join-Path $artifact ('score-only-'+$scene);$stage='test-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-score-only-'+$scene
+ Native $stage (FindExecutable 'score_only_controls') @($scene,$controlRoot) @($inputs+$buildSeal+$seal.files.path) 900
+ $report=Join-Path $controlRoot 'control-report.json';$r=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
+ if(-not $r.pass -or $r.failed -ne 0 -or $r.device_operations -ne 0){throw 'literal score-only control failed'}
+ $tests+=@(@{test=('score_only_'+$scene);report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))})
 }
 $fixtureRoot=Join-Path $artifact 'cost-unit-fixture';$reviewRoot=Join-Path $artifact 'cost-review-fixture'
 $fixtureRepo=Join-Path $repo ('out/prelive-pre-emulator-fixture-repo-'+$BuildAttempt+'-'+$Mode)

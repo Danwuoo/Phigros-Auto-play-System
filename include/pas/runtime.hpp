@@ -25,6 +25,10 @@ void run_manual_session(const std::string& config_path,const std::string& capabi
 void run_current_candidate_manual_session(const CandidateLiveAdmission&,
                         const std::string& config_path,const std::string& capability_path,
                         bool no_preview,Nanoseconds round_watchdog=0,bool pixel_clips=false,bool full_recording=false,bool one_round=false);
+// Fixed single-round mode: no persisted diagnostics, images or recording.
+void run_current_candidate_score_only_session(const CandidateLiveAdmission&,
+                        const std::string& config_path,const std::string& capability_path);
+bool current_capture_geometry_matches(const RuntimeConfig&,const Frame&) noexcept;
 CaptureOptions runtime_capture_options(const RuntimeConfig& config);
 nlohmann::json match_touch_capability(const RuntimeConfig& config, const nlohmann::json& report,
                                      const nlohmann::json& device, const std::string& installed_hash);
