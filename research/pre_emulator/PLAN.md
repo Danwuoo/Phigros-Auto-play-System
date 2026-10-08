@@ -14,6 +14,14 @@ normal process class，query／set／readback／restore 失敗皆取消資格；
 原 QPC epoch、所有嘗試、cadence、等待與 deadline overrun 判定不改。
 這是待原成本 gate 驗證的環境修補，不宣稱 Windows 排程保證 deadline。
 
+main20 的 normal Tap／Hold／Dense 已通過完整 raw integrity 與原數值 gates。
+8 ms stress Tap producer 完成，auditor 因錯誤 publication 分母停止：10013 produced、
+10005 published、7 physical pool drops、1 result stop 後回呼。新 auditor 明確核對
+published＋pool drops＋至多一個 result stop 後 tail＝produced，兩處 pool counters
+必須一致，所有 requested attempts 仍保留。normal 成本仍要求零 pool drops；
+stress drops 不予成本資格。補正只影響分析，不修改三 buffer、runtime 或門檻。
+原 native exit 2／STOP 保留，新結果另立 source/build/campaign 身分。
+
 builder 將 production_entry_controls／fault_controls／pas 分成獨立 native groups，
 guard held limit 64 不改；所有 native build 完成後串行封存 final executable PDB，
 逐 entry 讀回 SHA，再刪除 originals，最後封存 build-binding。Compiler PDB 保留。
