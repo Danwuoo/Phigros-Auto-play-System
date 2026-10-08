@@ -17,7 +17,7 @@ function LoadBuilds([string]$attempt){
  $script:builds=@();$script:tests=@();$script:inputs=@($script:maintenancePath,$recipe,(Join-Path $PSScriptRoot 'common.ps1'))
  foreach($mode in @('release','debug','asan')){
   $path=Join-Path $repo ('out/prelive-pre-emulator-evaluation-'+$attempt+'-'+$mode+'/evaluation.json')
-  $e=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $e.affected_cold_pass -or $e.tests.Count -ne 20 -or $e.device_operations -ne 0 -or $e.live_ready){throw 'three full cold configurations required'}
+  $e=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $e.affected_cold_pass -or $e.tests.Count -ne 25 -or $e.device_operations -ne 0 -or $e.live_ready){throw 'three full 25-group cold configurations required'}
   CheckEntry $e.build;$b=Get-Content -LiteralPath $e.build.path -Raw|ConvertFrom-Json
   foreach($f in $b.files){CheckEntry $f}
   foreach($r in @($b.configure_receipt)+@($b.build_receipts)+@($e.tests.receipt)){CheckEntry $r;$v=Get-Content -LiteralPath $r.path -Raw|ConvertFrom-Json;Receipt $v.stage}
