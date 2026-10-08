@@ -1,5 +1,5 @@
 param([ValidateSet('release','debug','asan')][string]$Mode='release',
-      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main08')
+      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main10')
 $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$sourceRepo=$repo;$oldRepo=$repo
 $out=Join-Path $repo 'out/windows-handoff';$pkg=Join-Path $repo 'out/prelive-20261006';$pwsh=(Get-Command pwsh).Source;$Operation='build';$Campaign='';$script:inputClosures=@{};$script:maintenancePath=$PSCommandPath
