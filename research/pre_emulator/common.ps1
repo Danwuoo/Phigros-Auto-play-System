@@ -24,7 +24,10 @@ function LoadBuilds([string]$attempt){
   foreach($t in $e.tests){CheckEntry $t.report}
   CheckEntry $b.source_manifest;$m=Get-Content -LiteralPath $b.source_manifest.path -Raw|ConvertFrom-Json
   foreach($f in $m.files){CheckEntry $f}
-  $script:builds+=@($b);$script:tests+=@($e.tests);$script:inputs+=@($path,$e.build.path,$b.source_manifest.path,$b.core_build_plan.path)+$b.configure_receipt.path+$b.build_receipts.path+$e.tests.report.path+$e.tests.receipt.path
+  CheckEntry $b.dependency_manifest;$d=Get-Content -LiteralPath $b.dependency_manifest.path -Raw|ConvertFrom-Json
+  if(-not $d.release_and_debug -or -not $d.protoc_and_plugin -or $d.source_commit -cne $b.source_commit){throw 'complete installed dependency closure required'}
+  foreach($f in $d.files){CheckEntry $f}
+  $script:builds+=@($b);$script:tests+=@($e.tests);$script:inputs+=@($path,$e.build.path,$b.source_manifest.path,$b.dependency_manifest.path,$b.core_build_plan.path)+$b.configure_receipt.path+$b.build_receipts.path+$e.tests.report.path+$e.tests.receipt.path
   if($mode -ceq 'release'){$script:inputs+=@($b.files.path)}
  }
  $script:commit=$builds[0].source_commit

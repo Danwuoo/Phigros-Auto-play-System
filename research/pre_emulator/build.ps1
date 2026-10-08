@@ -1,5 +1,5 @@
 param([ValidateSet('release','debug','asan')][string]$Mode='release',
-      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main11')
+      [ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12')
 $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$sourceRepo=$repo;$oldRepo=$repo
 $out=Join-Path $repo 'out/windows-handoff';$pkg=Join-Path $repo 'out/prelive-20261006';$pwsh=(Get-Command pwsh).Source;$Operation='build';$Campaign='';$script:inputClosures=@{};$script:maintenancePath=$PSCommandPath
@@ -18,7 +18,13 @@ $coreProof=Join-Path $artifact 'fresh-core-build-plan.json';NewJson $coreProof @
 $sourceFiles=@(& git -C $sourceRepo ls-files|Where-Object {$_ -cne 'apps/runtime_x11_p/aux/CMakeLists.txt' -and $_ -match '(\.(cpp|hpp|h|ps1|proto|in)$|(^|/)CMakeLists\.txt$)'}|ForEach-Object {Join-Path $sourceRepo $_})
 $sourceManifest=Join-Path $artifact 'source-manifest.json';NewJson $sourceManifest @{schema='pas.cooperative-source.v1';source_commit=$commit;dirty=$false;files=@($sourceFiles|ForEach-Object {Binding $_});device_operations=0;live_ready=$false}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1';$g=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
-$deps=@(Get-ChildItem -LiteralPath 'C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/include' -File -Recurse|ForEach-Object FullName)
+$dependencyRoot='C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows'
+# Capture both configurations, package metadata, protoc/plugin and runtime DLLs
+# before configure; Release/lib basename matches miss Debug-specific inputs.
+$deps=@(Get-ChildItem -LiteralPath $dependencyRoot -File -Recurse|ForEach-Object FullName)
+$dependencyManifest=Join-Path $artifact 'dependency-manifest.json'
+NewJson $dependencyManifest @{schema='pas.pre-emulator-dependency-closure.v1';source_commit=$commit;root=$dependencyRoot;files=@($deps|ForEach-Object {Binding $_});release_and_debug=$true;protoc_and_plugin=$true;device_operations=0;live_ready=$false} 4194304
+$deps+=@($dependencyManifest,'C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake')
 $inputs=@($PSCommandPath,$recipe,$adapter,$plan,$approval,(Join-Path $repo 'research/main_consolidation/stage.ps1'),$sourceManifest,$coreProof)+$sourceFiles+$deps+(GateInputs)+@($g.guard_source.path,$g.process_source.path,$g.cached_identity_controls.path,$g.identity_wait_controls.path)
 $environmentStage='environment-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt
 $environmentRoot=Join-Path $out ($environmentStage+'-inputs');Fresh $environmentRoot;[IO.Directory]::CreateDirectory($environmentRoot)|Out-Null
@@ -43,8 +49,6 @@ Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $sourceRepo 
 $targets=@('diagnostic_writer_tests','owner_checkpoint_tests','owner_expiry_tests','producer_wait_tests','tap_reset_workload_tests','receipt_join_diagnose','owner_wait_tests','current_tests','active_body_tests','tail_guard_tests','tail_only_owner_review','tail_only_pixels_review','disabled_live_seam_tests','live_seam_packet_review','live_seam_runtime_review','runtime_finish_tests','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit','cost_analysis','cost_analysis_tests','cost_analysis_review_tests','cost_receipt','cost_comparison','cost_comparison_tests','production_pipeline_cold','production_pipeline_audit','production_pipeline_audit_tests','production_entry_controls','fault_controls','fault_audit','batch_check','pas')
 $buildReceipts=@()
 $taskNinja=Get-Content -LiteralPath (Join-Path $root 'build.ninja') -Raw
-$usedLibs=@(Get-ChildItem -LiteralPath 'C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/lib' -File -Recurse|Where-Object {$taskNinja.Contains($_.Name)}|ForEach-Object FullName)
-$inputs+=@($usedLibs)+@(Get-ChildItem -LiteralPath 'C:/Users/wurre/Desktop/Phigros-Auto-play-System/out/vcpkg_installed/x64-windows/bin' -File -Recurse|ForEach-Object FullName)
 $objects=@(Get-Content -LiteralPath (Join-Path $root 'build.ninja')|ForEach-Object {$line=$_.Replace('\','/');if($line -match '^build (production/CMakeFiles/pas_core[.]dir/[^:]+[.]obj): CXX_COMPILER'){$Matches[1]}})
 $decl=Get-Content -LiteralPath (Join-Path $sourceRepo 'CMakeLists.txt')|Where-Object {$_ -match '^add_library\(pas_core STATIC '};$expected=@([regex]::Matches($decl,'src/[^ )]+[.]cpp')|ForEach-Object {$_.Value})
 $actual=@($objects|ForEach-Object {if($_ -match '/(src/[^/]+[.]cpp)[.]obj$'){$Matches[1]}else{throw 'unexpected formal core object'}})
@@ -73,7 +77,7 @@ foreach($group in $groups){
  }
 }
 $seal=@{files=@(Get-ChildItem -LiteralPath $root -File -Recurse|ForEach-Object {Binding $_.FullName})}
-$buildSeal=Join-Path $artifact 'build-binding.json';NewJson $buildSeal @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration=$Mode;source_manifest=(Binding $sourceManifest);core_build_plan=(Binding $coreProof);build_root=$root;files=$seal.files;configure_receipt=(Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json')));build_receipts=$buildReceipts;device_operations=0;live_ready=$false}
+$buildSeal=Join-Path $artifact 'build-binding.json';NewJson $buildSeal @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration=$Mode;source_manifest=(Binding $sourceManifest);dependency_manifest=(Binding $dependencyManifest);core_build_plan=(Binding $coreProof);build_root=$root;files=$seal.files;configure_receipt=(Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json')));build_receipts=$buildReceipts;device_operations=0;live_ready=$false}
 function FindExecutable($target){$found=@(Get-ChildItem -LiteralPath $root -File -Recurse -Filter ($target+'.exe'));if($found.Count -ne 1){throw 'one exact executable required'};return $found[0].FullName}
 $Operation='tests';$tests=@($earlyTest);foreach($target in $targets|Where-Object {$_ -notin @('diagnostic_writer_tests','receipt_join_diagnose','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit','cost_analysis','cost_analysis_tests','cost_analysis_review_tests','cost_receipt','cost_comparison','production_pipeline_cold','production_pipeline_audit','fault_controls','fault_audit','batch_check','pas')}){
  $report=Join-Path $artifact ($target+'.json');$stage='test-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-'+$target.Replace('_','-');Native $stage (FindExecutable $target) @($report) @($inputs+$buildSeal+$seal.files.path) 900

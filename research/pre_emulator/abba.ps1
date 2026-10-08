@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main11',[ValidatePattern('^[a-z0-9-]{1,16}$')][string]$Attempt='main11')
+param([ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12',[ValidatePattern('^[a-z0-9-]{1,16}$')][string]$Attempt='main12')
 . (Join-Path $PSScriptRoot 'common.ps1');$script:maintenancePath=$PSCommandPath
 LoadBuilds $BuildAttempt
 $aaRoot=Join-Path $repo ('out/prelive-pre-emulator-aa-'+$Attempt)

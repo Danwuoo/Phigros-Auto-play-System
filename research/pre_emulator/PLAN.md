@@ -25,3 +25,10 @@ main11 改成明確型別，先編譯 auditor／batch helper 再新編全部正�
 小型 executable 每组三個 native build，64 個 held identity gate 不變；
 每組完成後將非 runtime 的 .ilk／.map 壓縮讀回 SHA 核對，再移除原 cache，
 執行檔、PDB、objects、libraries 與原始證據保持可用。
+
+main11 所沿用的 builder 未完整封存 Debug/lib、Debug/bin、protoc／plugin。
+依賴清單修補會使正在收尾的 source closure 明確 STOP，native stage 不強制終止。
+main11 整包不予資格；main12 在 configure 前封存已安裝 triplet 全部檔案與 toolchain，
+同時覆蓋 Release／Debug library、runtime、package metadata 及 protobuf 產生工具。
+
+main11 asan source withdrawal at native stage build-prelive-pre-emulator-asan-main11-targets-01: dependency closure incomplete; wait for natural native completion, never issue qualification.
