@@ -36,3 +36,22 @@ retained 48 GiB／minimum free 20 GiB 及原 stage/candidate/raw/metadata caps �
 原 R2 AA12/noise/ABBA36 成功才到 emulator 邊界。reader 不發 live admission，
 新 task 取得當前 profile/capture/RPC/physical 收據並完成相應 validator 才能觸控；
 安全故障立即撤銷釋放，未知 Down 不重試。當前尚未宣稱 ready 或啟動裝置。
+
+main24／`dc2007712e6a4ccf1a1b0c445227d4e752096549` 的 Release 25/25 冷回歸通過，
+Debug 在 score-only Hold 的 planned Up positivity 斷言 native 2 停止；Dense／invalid／
+後兩個 cost tool review 與 ASan／prefix／faults／production／AA／ABBA 未跑。
+No-persistence 的單曲停止／釋放／無檔案檢查已通過；不能把該負結果隱去。
+
+另立診斷 `diagnose-main24-debug-hold-archive-01`（不授資格）使用原 archive 模式，
+結果為 11 Down、0 explicit Up、85 release calls，反映取消路徑與 planned Up 是不同計數。
+邊界新增 cancelled contacts／final contacts，有限生命週期改為每個 Down 都有一次
+Up 或 cancellation release，且 final=0；Tap／Hold 仍要求確有 Down。原 normal cost
+的 explicit Down／Up 數值 gate 不改，沒有把 cancellation 充作 Up，也沒有聲稱 tail 驗收。
+Debug 組件 `test-score-balance-prototype-16-hold` 得 12 Down／4 Up／8 cancelled／final0，
+Native 自然退出／held／streams／active0，整體 candidate 仍未予資格。
+
+原 dc200 的 904 正式來源檔逐檔 SHA 複製核對於
+`out/prelive-pre-emulator-planning/source-dc200-formal-snapshot/snapshot.json`。
+原 main24 Release／Debug compiler roots 全 entry SHA 壓縮讀回核對後封存於
+`out/retained/consolidation-20261008/source-dc200-compiler-archives/`；原 raw／負結果不刪，
+重新驗證舊資格需要還原原 source 與 outputs。新修補須重新完整建置／驗證，不沿用舊資格。

@@ -17,7 +17,9 @@ struct State {
  std::string scene;int requested{},cadence{};
  std::atomic<bool> cancelled=false;
  std::vector<Attempt> attempts;
- std::uint64_t downs{},moves{},ups{},releases{},preflights{},discoveries{},constructors{};
+ // Boundary-only accounting; never fed to perception or action decisions.
+ // Explicit Up and cancellation releases stay separate.
+ std::uint64_t downs{},moves{},ups{},releases{},released_contacts{},contacts_final{},preflights{},discoveries{},constructors{};
  std::optional<std::thread::id> touch_owner;
 };
 State state;
@@ -78,9 +80,10 @@ TouchReceipt GrpcTouch::inject(const TouchCommand& command){
  cold::owner();cold::require(command.contact_id>=0&&command.contact_id<max_contacts_,"contact pool");auto [x,y]=mapping_.map(command.x,command.y);cold::require(x>=0&&y>=0&&x<width_&&y<height_,"mapped geometry");
  const bool exists=positions_.contains(command.contact_id);cold::require(command.phase==Phase::down?!exists:exists,"contact phase ownership");const auto start=clock_.now_ns();
  if(command.phase==Phase::down){++cold::state.downs;positions_[command.contact_id]={x,y};}else if(command.phase==Phase::move){++cold::state.moves;positions_[command.contact_id]={x,y};}else {++cold::state.ups;positions_.erase(command.contact_id);}
+ cold::state.contacts_final=positions_.size();
  return {command,start,clock_.now_ns(),true,"endpoint_free_cold_effect_unverified"};
 }
-ReleaseReport GrpcTouch::release_all(){cold::owner();++cold::state.releases;ReleaseReport r;r.start_ns=clock_.now_ns();for(const auto& [id,_]:positions_)r.requested_ids.push_back(id);positions_.clear();r.return_ns=clock_.now_ns();return r;}
+ReleaseReport GrpcTouch::release_all(){cold::owner();++cold::state.releases;ReleaseReport r;r.start_ns=clock_.now_ns();for(const auto& [id,_]:positions_)r.requested_ids.push_back(id);cold::state.released_contacts+=positions_.size();positions_.clear();cold::state.contacts_final=positions_.size();r.return_ns=clock_.now_ns();return r;}
 ReleaseReport GrpcTouch::emergency_release_all(){return release_all();}
 }
 int main(int argc,char** argv){try{

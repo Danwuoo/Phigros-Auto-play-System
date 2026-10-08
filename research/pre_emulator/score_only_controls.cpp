@@ -10,7 +10,10 @@ int main(int argc,char** argv){try{
     const fs::path root=fs::absolute(argv[2]);
     require(!fs::exists(root),"fresh cold test fixture");fs::create_directory(root);
     J report={{"schema","pas.score-only-literal-controls.v1"},{"device_operations",0},
-        {"live_ready",false},{"cost_qualification",false},{"physical_qualification",false}};
+        {"live_ready",false},{"cost_qualification",false},{"physical_qualification",false},
+        {"whole_candidate_qualification_issued",false},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},
+        {"base_component_source_commit",pas_session_build_commit},{"base_component_source_dirty",pas_session_build_dirty},
+        {"scope","finite no-persistence lifecycle; exact Down/Up/cancel balance; no Hold semantic or cost qualification"}};
     if(operation=="invalid"){
         int passed=0;
         for(int i=0;i<7;++i){
@@ -52,15 +55,20 @@ int main(int argc,char** argv){try{
         require(!fs::exists(root/"forbidden-gameplay-archive"),"no gameplay directory, journal, PNG or summary created");
         require(state.cancelled&&state.touch_owner.has_value()&&state.preflights==1&&state.discoveries==1&&
             state.releases>0,"finite literal lifecycle and sole owner release executed");
-        if(operation!="dense")require(state.downs>0&&state.ups>0,"real cold Down/Up opportunities executed");
         report["scene"]=operation;report["down"]=state.downs;report["move"]=state.moves;
         report["up"]=state.ups;report["release_calls"]=state.releases;
+        report["contacts_released_by_cancel"]=state.released_contacts;report["contacts_final"]=state.contacts_final;
+        // Missing current support may cancel a Hold through release_all.
+        // Require every admitted contact to end, rather than force a tail Up.
+        const bool contact_balance=state.downs==state.ups+state.released_contacts&&state.contacts_final==0;
+        report["all_downs_terminalized"]=contact_balance;
+        if(!contact_balance||(operation!="dense"&&state.downs==0)){
+            report["pass"]=false;report["failed"]=1;report["no_gameplay_files_created"]=true;
+            save(root/"control-report.json",report);
+            throw std::runtime_error("cold Down opportunities and exact Up/cancel contact balance required");
+        }
         report["no_gameplay_files_created"]=true;report["literal_production_source_executed"]=true;
-        report["actual_manual_translation_unit_sha256"]=PAS_COLD_MANUAL_SHA;
-        report["base_component_source_commit"]=pas_session_build_commit;
-        report["base_component_source_dirty"]=pas_session_build_dirty;
     }
     report["whole_candidate_qualification_issued"]=false;
-    report["scope"]="freshly compiled production source; cold boundary doubles only";
     report["pass"]=true;report["failed"]=0;save(root/"control-report.json",report);return 0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

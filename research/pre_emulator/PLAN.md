@@ -1,6 +1,13 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
 2026-10-09 續派範圍見 [一輪分數授權](../../docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+main24／`dc20077` Release 25 組通過；Debug 在 score-only Hold 的「必有明確 Up」
+斷言失敗（native 2），後續未跑。另立 diagnostic_archive 組件診斷為 11 Down／0 Up／
+85 release calls。新的 cold 邊界分開累計 explicit Up、cancelled contacts、final contacts，
+要求 Down = Up + cancelled 且 final=0、Tap/Hold 確有 Down。這是有限生命週期／無持久化
+測試，不是 Hold tail 語義或成本資格；不將 cancellation 計入原 Up，原 normal cost 的
+Down/Up 必要條件不改。Debug 組件測得 12 Down／4 Up／8 cancel／final0；新來源整包另驗。
+
 本輪整合 object-map 診斷建構、score-only 無持久化、current capture geometry 核對與
 只讀 build reader。新增 3 個無持久化測試及 1 個含 13 情境的原 byte oracle，writer
 共 19 正式測試；新增 reader controls 及 literal score-only Tap／Hold／Dense／invalid
