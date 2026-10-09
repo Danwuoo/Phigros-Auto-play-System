@@ -14,6 +14,26 @@ Chapter Legacy 全部 IN；每個可用譜面一次。IN 未解鎖／不可用�
 retained 48 GiB／minimum free 20 GiB 及原 stage/candidate/raw/metadata caps 保留。
 不把分數表當成全曲 IN Miss=0 驗收，不由歷史 HD 結果推算現行解鎖或曲目分母。
 
+main27／`2082a9d8edfd01ebb82c6a5d70323a054aa66123` Release／Debug 各25通過；
+ASan19通過後 score-only Tap native2（22.398s），stderr為未從 result pixels 完成。
+無 control-report，觸控計數未知；未建立 gameplay archive。自然程序退出、active0、
+held/streams完整，並不替代 contact 統計。後五項與 graph/prefix/fault/production9/
+AA12/noise/ABBA36未跑。原904 source逐檔SHA snapshot與失敗收據見
+`out/prelive-pre-emulator-planning/source-2082a-formal-snapshot/`及`main27-stage-inventory.json`。
+
+以原 sealed ASan core 的 component22 結算16張診斷，total p50/p95/p99/max為
+94.921/113.172/115.639/116.256ms；5張達100ms freshness限制，雖六標籤均正確，
+連續确认會重置。component21缺命名空間的編譯失敗亦保存，未量測。
+修補只對同一固定 label ROI 先建立白色像素位元列，再以原 template 的
+intersection/union計相同similarity；±3px／.72／色彩／frame freshness與期限不改，
+至多352 bytes ROI stack、無歷史／score／frame存留。原正式game_session之外無策略改動。
+component23精確原演算法parity（49 translations／64-bit跨字邊界／缺標籤／threshold
+colors／noise／HUD/menu/invalid）及原19測試，共20通過，ASan Tap/Hold/Dense/invalid
+四組通過且final0／無遊戲檔案。新結算16張 total p50/p95/p99/max為
+31.705/46.641/47.752/48.030ms，無達100ms，第三張result確認；是兩次獨立診斷，
+不作R2 noise/ABBA或全體成本資格。新整合fresh22 TUs／每配置25組（writer20項）及
+其後全部既有gates重新驗證，當前仍未開裝置或取得live資格。
+
 原 `382d84513dde0e928e6c65d3486964f8290b8bec`（main22）完成三配置各 20 組冷回歸、
 3063 prefix、4 項故障控制。Production normal Tap／Hold／Dense 與 stress Tap integrity
 通過；stress Dense 41.725 秒因 archive mailbox overrun 執行失敗。Debug／ASan production

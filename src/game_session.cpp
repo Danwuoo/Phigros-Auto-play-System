@@ -1,11 +1,63 @@
 #include "pas/game_session.hpp"
 #include "pas/result_ui_labels.hpp"
 #include <algorithm>
+#include <array>
+#include <bit>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
 
 namespace pas {
+namespace {
+// The fixed label windows fit two 64-bit words per row. Cache only the
+// current label ROI; no frame, score, identity or history is retained.
+using LabelRows=std::array<std::array<std::uint64_t,2>,16>;
+constexpr auto result_masks=[] {
+    std::array<LabelRows,result_ui::labels.size()> masks{};
+    for(std::size_t i=0;i<result_ui::labels.size();++i) {
+        const auto& l=result_ui::labels[i];
+        for(int y=0;y<l.height;++y)for(int x=0;x<l.width;++x)
+            if(l.bits[static_cast<std::size_t>(y)*l.width+x]=='#')
+                masks[i][y][x/64]|=std::uint64_t{1}<<(x%64);
+    }
+    return masks;
+}();
+static_assert([] {
+    for(const auto& l:result_ui::labels)
+        if(l.width<=0||l.width>88||l.height<=0||l.height>16||
+            l.bits.size()!=static_cast<std::size_t>(l.width)*l.height||
+            l.x<3||l.y<3||l.x+l.width+3>1280||l.y+l.height+3>720)return false;
+    return true;
+}());
+constexpr std::uint64_t low_mask(int width) {
+    return width>=64?~std::uint64_t{0}:(std::uint64_t{1}<<width)-1;
+}
+double result_label_similarity(const Frame& f,std::size_t index) {
+    const auto& l=result_ui::labels[index];
+    std::array<std::array<std::uint64_t,2>,22> white{};
+    for(int y=0;y<l.height+6;++y)for(int x=0;x<l.width+6;++x) {
+        const auto* p=f.rgb.data()+static_cast<std::size_t>(l.y+y-3)*f.stride+(l.x+x-3)*3;
+        const int lo=std::min({p[0],p[1],p[2]}),hi=std::max({p[0],p[1],p[2]});
+        if(lo>90&&hi-lo<35)white[y][x/64]|=std::uint64_t{1}<<(x%64);
+    }
+    const auto mask0=low_mask(std::min(l.width,64)),mask1=low_mask(std::max(l.width-64,0));
+    double best=0;
+    for(int dy=0;dy<7;++dy)for(int dx=0;dx<7;++dx) {
+        int intersection=0,united=0;
+        for(int y=0;y<l.height;++y) {
+            const auto& row=white[y+dy];
+            // Keep shift 0 separate so no expression shifts by 64.
+            const auto b0=(dx?((row[0]>>dx)|(row[1]<<(64-dx))):row[0])&mask0;
+            const auto b1=(row[1]>>dx)&mask1;
+            const auto& a=result_masks[index][y];
+            intersection+=std::popcount(a[0]&b0)+std::popcount(a[1]&b1);
+            united+=std::popcount(a[0]|b0)+std::popcount(a[1]|b1);
+        }
+        best=std::max(best,united?static_cast<double>(intersection)/united:0);
+    }
+    return best;
+}
+}
 const char* name(PlaySessionState s) {
     switch(s) {
     case PlaySessionState::standby:return "STANDBY";
@@ -33,20 +85,8 @@ SessionUiEvidence session_ui_pixels(const Frame& f,const DecisionSnapshot& s) {
     e.menu=s.ui==GameUi::menu&&s.capacity_valid;
     if(e.hud||e.menu)return e;
     double weakest=1;
-    for(const auto& label:result_ui::labels) {
-        double best=0;
-        // Bounded translation tolerance only; this profile is 1280x720.
-        for(int dy=-3;dy<=3;++dy)for(int dx=-3;dx<=3;++dx) {
-            int intersection=0,united=0;
-            for(int y=0;y<label.height;++y)for(int x=0;x<label.width;++x) {
-                const auto* p=f.rgb.data()+static_cast<std::size_t>(label.y+y+dy)*f.stride+(label.x+x+dx)*3;
-                const bool a=label.bits[static_cast<std::size_t>(y)*label.width+x]=='#';
-                const int lo=std::min({p[0],p[1],p[2]}),hi=std::max({p[0],p[1],p[2]});
-                const bool b=lo>90&&hi-lo<35;
-                intersection+=a&&b;united+=a||b;
-            }
-            best=std::max(best,united?static_cast<double>(intersection)/united:0);
-        }
+    for(std::size_t i=0;i<result_ui::labels.size();++i) {
+        const auto best=result_label_similarity(f,i);
         if(best>=.72)++e.result_labels;
         weakest=std::min(weakest,best);
     }

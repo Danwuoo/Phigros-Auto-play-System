@@ -75,7 +75,7 @@ foreach($group in $groups){
   $runtimeDlls=@(Get-ChildItem -LiteralPath $root -File -Recurse -Filter '*.dll'|ForEach-Object FullName)
   Native $stage $testExe @($report) @($inputs+$seal.files.path+$buildReceipts.path+$runtimeDlls) 900
   $value=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
-  if($value.schema -cne 'pas.diagnostic-writer-tests.v1' -or $value.failed -ne 0 -or $value.tests_planned -ne 19 -or $value.tests_run -ne 19 -or $value.cases.Count -ne 19 -or @($value.cases|Where-Object {-not $_.pass}).Count){throw 'all 19 real writer, score-only and byte-oracle cases required'}
+  if($value.schema -cne 'pas.diagnostic-writer-tests.v1' -or $value.failed -ne 0 -or $value.tests_planned -ne 20 -or $value.tests_run -ne 20 -or $value.cases.Count -ne 20 -or @($value.cases|Where-Object {-not $_.pass}).Count){throw 'all 20 real writer, score-only, byte-oracle and result-label parity cases required'}
   $earlyTest=@{test='diagnostic_writer_tests';report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))};$Operation='build'
  }
 }

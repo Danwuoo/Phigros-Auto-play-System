@@ -1,4 +1,5 @@
 #include "source382_diagnostic_reference.hpp"
+#include "source2082_result_ui_reference.hpp"
 #include <limits>
 #include "pas/diagnostic_snapshot.hpp"
 #include "pas/journal.hpp"
@@ -379,6 +380,45 @@ TEST(DiagnosticSerialization, Source382FullByteOracle){
  ASSERT_TRUE(old_bad&&new_bad) << "same invalid UTF8 rejection";dense.targets[0].reason="\n\t\\\"";
  cases.push_back({{"id","invalid_utf8_same_rejection"},{"pass",true}});
  EXPECT_EQ(cases.size(),13);
+}
+
+TEST(ResultUiParity, ExactOriginalLabelsTranslationThresholdNoiseAndGates) {
+ pas::Frame f;f.width=1280;f.height=720;f.stride=3840;f.source_valid=true;f.rgb.resize(1280*720*3);
+ pas::DecisionSnapshot s;
+ const auto check=[&] {
+  const auto a=pas::result_ui_reference::session_ui_pixels(f,s),b=pas::session_ui_pixels(f,s);
+  EXPECT_EQ(a.hud,b.hud);EXPECT_EQ(a.menu,b.menu);EXPECT_EQ(a.result,b.result);
+  EXPECT_EQ(a.result_labels,b.result_labels);EXPECT_EQ(a.result_similarity,b.result_similarity);
+ };
+ const auto paint=[&](int dx,int dy,int omit,std::array<std::uint8_t,3> color) {
+  std::fill(f.rgb.begin(),f.rgb.end(),30);
+  for(std::size_t i=0;i<pas::result_ui::labels.size();++i) {
+   if(static_cast<int>(i)==omit)continue;const auto& l=pas::result_ui::labels[i];
+   for(int y=0;y<l.height;++y)for(int x=0;x<l.width;++x)
+    if(l.bits[std::size_t(y)*l.width+x]=='#')for(int c=0;c<3;++c)
+     f.rgb[std::size_t(l.y+y+dy)*f.stride+(l.x+x+dx)*3+c]=color[c];
+  }
+ };
+ // All 49 translations include word-boundary shifts of the 88/71-pixel labels.
+ for(int dy=-3;dy<=3;++dy)for(int dx=-3;dx<=3;++dx){paint(dx,dy,-1,{255,255,255});check();EXPECT_TRUE(pas::session_ui_pixels(f,s).result);}
+ for(int omit=0;omit<6;++omit){paint(0,0,omit,{255,255,255});check();EXPECT_FALSE(pas::session_ui_pixels(f,s).result);}
+ for(const auto color:std::array<std::array<std::uint8_t,3>,6>{{{90,90,90},{91,91,91},{255,255,255},{100,134,100},{100,135,100},{90,255,90}}}){
+  paint(0,0,-1,color);check();
+ }
+ for(int seed=0;seed<8;++seed){
+  paint(seed%7-3,(seed*3)%7-3,-1,{245,245,245});
+  std::uint32_t rng=std::uint32_t(seed+1);
+  for(const auto& l:pas::result_ui::labels)for(int k=0;k<64;++k){
+   rng=rng*1664525u+1013904223u;const auto x=l.x-3+int(rng%std::uint32_t(l.width+6));
+   rng=rng*1664525u+1013904223u;const auto y=l.y-3+int(rng%std::uint32_t(l.height+6));
+   for(int c=0;c<3;++c)f.rgb[std::size_t(y)*f.stride+x*3+c]=k%2?30:255;
+  }
+  check();
+ }
+ for(const auto value:{0,30,255}){std::fill(f.rgb.begin(),f.rgb.end(),std::uint8_t(value));check();}
+ paint(0,0,-1,{255,255,255});s.ui_basis="pause_bars=2 score_glyphs=4";check();EXPECT_FALSE(pas::session_ui_pixels(f,s).result);
+ s.ui_basis.clear();s.ui=pas::GameUi::menu;s.capacity_valid=true;check();EXPECT_FALSE(pas::session_ui_pixels(f,s).result);
+ s=pas::DecisionSnapshot{};f.source_valid=false;check();f.source_valid=true;f.width=720;check();f.width=1280;f.rgb.pop_back();check();
 }
 
 int main(int argc,char**argv){try{if(argc!=2||fs::exists(argv[1]))throw std::runtime_error("fresh test report argument");

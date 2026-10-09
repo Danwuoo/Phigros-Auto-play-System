@@ -1,6 +1,20 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
 2026-10-09 續派範圍見 [一輪分數授權](../../docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+main27／`2082a9d` Release／Debug 各25通過；ASan19通過後 score-only Tap native2
+（22.398s）：未從 result pixels 完成，沒有 control-report，不能推定觸控計數。
+原件／904 source SHA snapshot／STOP 保存，後五項與 graph/prefix/fault/production/AA/ABBA
+未跑。原 core 的結算診斷 n16，total p50/p95/p99/max=94.921/113.172/115.639/116.256ms，
+5張超過原100ms freshness，六標籤均辨識正確但確認重置；不是記憶體報錯。
+新 matcher 對固定 label ROI（至多22×2 uint64、352 bytes）一次計算白色像素，
+以 constexpr template rows／popcount 算原 intersection/union；±3px、.72門檻、
+色彩條件、完整標籤、source freshness／result confirmation／所有期限不改。
+component23 原19項及新精確原演算法 parity 共20項通過，含49平移、跨64位元边界、
+缺標籤、threshold colors、noise、HUD/menu/invalid；ASan Tap/Hold/Dense/invalid 均通過。
+新結算 n16 total p50/p95/p99/max=31.705/46.641/47.752/48.030ms，無超100ms，
+第三張 result 確認。兩次為獨立診斷，未作 R2 noise/ABBA 比較或成本資格。
+新整合每配置仍25組，writer必須20 real tests；fresh22 TUs／其後原 gates 全部另驗。
+
 main26／`f90d345` Release／Debug 各25通過，ASan19通過後 score-only Tap native2：
 已正常 result／停止／無檔案／contacts0，但額外的 Down positivity 失敗。原件保存。
 archive 對照亦 Down0；較慢 pixels component19 仍 Down0，試驗撤回並保留來源／負結果。
