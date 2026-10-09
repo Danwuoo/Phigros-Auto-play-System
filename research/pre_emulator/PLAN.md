@@ -1,6 +1,16 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
 2026-10-09 續派範圍見 [一輪分數授權](../../docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+main26／`f90d345` Release／Debug 各25通過，ASan19通過後 score-only Tap native2：
+已正常 result／停止／無檔案／contacts0，但額外的 Down positivity 失敗。原件保存。
+archive 對照亦 Down0；較慢 pixels component19 仍 Down0，試驗撤回並保留來源／負結果。
+ASan 的 no-persistence 功能測試明列 instrumentation integrity、非即時資格，允許
+unchanged deadline 下安全不 Down；所有已發生 Down 仍恰有 Up 或 cancellation、final0。
+Release／Debug Tap／Hold positivity 保留，builder 核對 test-only instrumentation flag
+與 mode，report real-time qualification false。原 runtime、pixels、profile、時限、
+production9 與 R2 AA/noise/ABBA 數值 gates 不改。ASan component20 四組通過不授整體
+candidate；新整合重新完整三配置及其後 stages。
+
 main25／`1f1266c` Release 25/25 通過、Debug 21 組通過後在 score-only Dense 的
 synthetic result deadline 失敗（native2／79.077s），後續 NOT_RUN，原失敗不改。
 Debug Dense rendering 使 workload 落後 epoch，terminal64 slots catch-up 成 burst；

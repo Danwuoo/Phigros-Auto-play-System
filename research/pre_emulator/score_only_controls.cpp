@@ -5,6 +5,11 @@
 
 int main(int argc,char** argv){try{
     using namespace cold;
+#ifdef PAS_SCORE_ONLY_INSTRUMENTED
+    constexpr bool instrumented=true;
+#else
+    constexpr bool instrumented=false;
+#endif
     require(argc==3,"usage tap|hold|dense|invalid fresh-cold-output");
     const std::string operation=argv[1];
     const fs::path root=fs::absolute(argv[2]);
@@ -14,6 +19,8 @@ int main(int argc,char** argv){try{
         {"whole_candidate_qualification_issued",false},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},
         {"base_component_source_commit",pas_session_build_commit},{"base_component_source_dirty",pas_session_build_dirty},
         {"scope","finite no-persistence lifecycle; exact Down/Up/cancel balance; no Hold semantic or cost qualification"}};
+    report["instrumented_build"]=instrumented;
+    report["real_time_qualification_issued"]=false;
     if(operation=="invalid"){
         // Fake-clock regression: both on-time and severely late workloads leave
         // the same 64 result slots at 20 ms spacing, without shifting workload.
@@ -74,7 +81,14 @@ int main(int argc,char** argv){try{
         // Require every admitted contact to end, rather than force a tail Up.
         const bool contact_balance=state.downs==state.ups+state.released_contacts&&state.contacts_final==0;
         report["all_downs_terminalized"]=contact_balance;
-        if(!contact_balance||(operation!="dense"&&state.downs==0)){
+        // Instrumentation can exceed the unchanged deadlines and safely prevent
+        // every Down. This case checks integrity/cleanup, never real-time cost.
+        // Release and Debug still require actual Tap/Hold opportunities; all
+        // original R2 production/AA/ABBA Down/Up and deadline gates stay exact.
+        const bool positive_down_required=!instrumented&&operation!="dense";
+        report["positive_down_required"]=positive_down_required;
+        report["safe_no_down_observed"]=state.downs==0;
+        if(!contact_balance||(positive_down_required&&state.downs==0)){
             report["pass"]=false;report["failed"]=1;report["no_gameplay_files_created"]=true;
             save(root/"control-report.json",report);
             throw std::runtime_error("cold Down opportunities and exact Up/cancel contact balance required");

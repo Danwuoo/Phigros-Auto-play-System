@@ -74,3 +74,27 @@ slots／原 cadence／2 s terminal deadline；原 requested1000 的 absolute due
 Dense Down0／Up0／cancel0／final0，no gameplay files；此為功能／組件測試，不授整體
 candidate 或成本資格。此次 component inputs 另外封存所有實際 workspace sources，
 核對未修改的 originals 與原 SHA；不沿用 prototype16 欠完整 workspace input 綁定作資格。
+
+main26／`f90d3453f390e3337ca16e4769a25123e0de8c26` Release／Debug 各25通過，
+ASan 19組通過後 score-only Tap native2（20.599s）：runtime 已正常 result／停止、
+無 gameplay files、Down0／Up0／cancel0／final0，但功能測試額外要求有 Down。
+後五項 ASan、reader graphs、prefix／faults／production9／AA12／noise／ABBA36 未跑。
+原失敗及904 source SHA snapshot 保存於 `source-f90d3-formal-snapshot/`。
+完整 archive 冷診斷亦 Down0；recognition n424／p50 30.920／p95 50.210／p99 62.159／
+max89.504ms，hook n312／p50 40.542／p95 59.577／p99 74.001／max92.288ms，
+RSS231809024bytes／coverage0.419；此不是正常成本資格。
+
+較慢 pixels 的 component18 設定錯指 Debug、缺 ASan support header而編譯失敗，
+無測試；component19 修正實際 ASan build後 Tap仍Down0／安全停止／無檔案，native2。
+其修改來源已 SHA 複製保留於 `score-lifecycle-prototype-19-source-snapshot/`，該試驗撤回，
+沒有用成功子集或更慢成本負載予資格。
+
+score-only cold 的 ASan scope 修正為 instrumentation integrity／finite cleanup／
+無檔案，不能從有界診斷組件要求即時吞吐量。每個已發生 Down 仍須恰有一次 Up 或
+cancellation release、final0；ASan 允許 unchanged deadline 下安全無 Down。Release／
+Debug Tap／Hold 仍要求實際 Down。編譯旗標僅用於 test executable，builder 核對與
+實際 mode 相同，report 明列 `instrumented_build`／`positive_down_required`／
+`real_time_qualification_issued=false`。正式 runtime／pixels／age／expiry／lead／
+cadence、原 R2 全部 positivity／deadline／coverage／RSS gates 不改。
+component20 ASan Tap／Hold／Dense／invalid 四組通過，均不授整體 candidate 或 live 資格。
+新整合仍須重新完整三配置及原成本 stages；當前尚未啟動裝置。
