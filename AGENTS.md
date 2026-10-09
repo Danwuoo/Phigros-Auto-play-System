@@ -4,6 +4,16 @@
 
 ## 現行方向
 
+2026-10-10 冷續作：先讀[一輪分數授權與最新修補](docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+main28 source `62a8000` 三配置各25、3063 prefix、fault4、production normal三項通過；
+stress Tap producer0而auditor2（原Hold-only取消契約遇六次Tap），後五项與AA/noise/ABBA未跑。
+原905 source／raw／STOP及graph collector／ASan reader watchdog負結果保留；新Tap取消
+契約的67控制及原full raw組件核對通過，但不授整體資格。新整合須fresh三配置及其後原gates。
+graph以同source sealed Release reader核對各配置完整收據圖、明列executor配置；不發admission。
+本task仍只冷開發，完成後交新的6.1 Sol/xhigh local main task。該task獲授emulator/CU/
+選曲Play，以當前遊戲畫面盤點Chapter Legacy所有可用IN，各一次、只保存分數表，未解鎖記狀態；
+不錄屏或持久化其他遊玩證據。一輪整理後停止休息，不補HD/解鎖/AP/Miss0/高分或額外重試。
+
 2026-10-09 使用者明確指定後續新 GPT-6.1 Sol／xhigh local main task：授權開啟
 emulator／Computer Use，自行盤點 Chapter Legacy 現行曲目，所有可用 IN 各測一次。
 完成一輪後整理分數並停止休息；IN 未解鎖／不可用就註記，不加 HD 解鎖或重試。

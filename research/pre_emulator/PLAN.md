@@ -1,6 +1,24 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
 2026-10-09 續派範圍見 [一輪分數授權](../../docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+2026-10-10 main28／`62a8000` 三配置 fresh22 TUs／各25組（writer20項）全部通過，
+3063 prefix／fault4／production normal Tap、Hold、Dense 完整 raw及原數值 gates通過。
+stress Tap producer0／85.429s，auditor2：原取消核對僅接受Hold，raw有六次已Down的Tap
+於物件消失後取消Up。原905 source SHA snapshot／raw／STOP／後五項與AA/noise/ABBA
+NOT_RUN保存，不能授成本或live資格。新取消核對保留原own contact／position／最新plan／
+100ms evidence lease／current packet QPC／唯一收據／executed prefix要求；僅增加兩種
+明列Tap basis、原Down+Up兩步／18ms間隔／cursor1／40ms missing grace的取消Up。
+Down／Move不能用此路徑；Drag／Flick／未知kind仍拒絕，Tap不得冒稱Hold或game effect。
+原39＋新28控制共67及原完整stress Tap raw獨立組件核對通過，六次取消皆有own Up；
+原68 pool drops、coverage .8855、producer2／callback3 overruns與normal cost false照報。
+組件不授整體資格；新整合仍重新三配置及所有後項，原runtime／策略／R2 gates不變。
+main28只讀圖：Release通過，Debug攤平8247檔超單stage8192；修正為凍結完整transitive
+metadata，由原C++ Reader逐檔SHA並finish再驗，原native/graph caps不改。Debug通過；
+ASan reader877.054s watchdog停止且清理active0／held/streams完整，原負結果保存。
+以同source sealed Release reader核對完整ASan圖通過（291.359s），明列核對工具配置。
+`build_graphs.ps1`正式化此核對路徑；三配置的實際binaries／instrumentation／25 controls
+仍各自保留，reader始終只讀、不發admission。新來源整包須另驗，未啟動emulator。
+
 main27／`2082a9d` Release／Debug 各25通過；ASan19通過後 score-only Tap native2
 （22.398s）：未從 result pixels 完成，沒有 control-report，不能推定觸控計數。
 原件／904 source SHA snapshot／STOP 保存，後五項與 graph/prefix/fault/production/AA/ABBA

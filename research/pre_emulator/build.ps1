@@ -88,6 +88,7 @@ function FindExecutable($target){$found=@(Get-ChildItem -LiteralPath $root -File
 $Operation='tests';$tests=@($earlyTest);foreach($target in $targets|Where-Object {$_ -notin @('diagnostic_writer_tests','receipt_join_diagnose','current_chain','current_chain_phase_profile','diagnostic_phase_summary','prelive_audit','cost_analysis','cost_analysis_tests','cost_analysis_review_tests','cost_receipt','cost_comparison','production_pipeline_cold','production_pipeline_audit','fault_controls','fault_audit','batch_check','pas','score_only_controls','qualification_reader')}){
  $report=Join-Path $artifact ($target+'.json');$stage='test-prelive-pre-emulator-'+$Mode+'-'+$BuildAttempt+'-'+$target.Replace('_','-');Native $stage (FindExecutable $target) @($report) @($inputs+$buildSeal+$seal.files.path) 900
  $r=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json;if($r.failed -ne 0){throw ('cold regression failed '+$target)}
+ if($target -ceq 'production_pipeline_audit_tests' -and $r.checks.Count -ne 67){throw 'all 39 original plus 28 Tap cancellation controls required'}
  $tests+=@(@{test=$target;report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))})
 }
 foreach($scene in @('tap','hold','dense','invalid')){

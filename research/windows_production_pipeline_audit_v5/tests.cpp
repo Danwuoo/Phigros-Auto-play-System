@@ -40,6 +40,43 @@ int main(int argc,char** argv){try{w::require(argc==2&&!std::filesystem::exists(
  test("unsupported_reason",false,[](auto& f){f.cancels[0]["reason"]="forged_safe";});
  test("game_effect_not_proven",false,[](auto& f){f.cancels[0]["game_effect"]="verified";});
  test("expired_body_source",false,[](auto& f){f.plans[0]["evidence"]=-100'000'000;f.cancels[0]["last_evidence_ns"]=-100'000'000;});
+ const auto tap_test=[&](const char* name,bool accept,auto change){
+  Fixture f;f.cancels[0]["kind"]="tap";f.plans[0]["basis"]="live_pixels_short_linear_fit_tap";
+  f.plans[0]["steps"][0]["due"]=32'000'110;f.plans[0]["steps"][1]["due"]=50'000'110;
+  f.packets[2]={40'000'200,40'000'260};f.cancels[0]["cancel_ns"]=40'000'225;
+  f.receipt["issued"]["scheduled"]=40'000'230;
+  f.receipt["injection_start_ns"]=40'000'232;f.receipt["injection_return_ns"]=40'000'234;
+  change(f);bool actual=true;try{f.verify();}catch(const std::exception&){actual=false;}
+  checks.push_back({{"id",name},{"pass",actual==accept},{"expected_accept",accept}});failed+=actual!=accept;
+ };
+ tap_test("active_tap_linear_fit_cancel_up",true,[](auto&){});
+ tap_test("active_tap_current_overlap_cancel_up",true,[](auto& f){f.plans[0]["basis"]="live_pixels_current_tap_overlap";});
+ tap_test("tap_cancel_before_missing_grace",false,[](auto& f){f.cancels[0]["cancel_ns"]=40'000'099;f.packets[2].start=40'000'000;});
+ tap_test("tap_cancel_missing_basis",false,[](auto& f){f.plans[0].erase("basis");});
+ tap_test("tap_cancel_hold_basis",false,[](auto& f){f.plans[0]["basis"]="current_rails_v1_measured_hold_front_overlap";});
+ tap_test("tap_cancel_projection_basis",false,[](auto& f){f.plans[0]["basis"]="live_note_recent_confirmed_line_projection";});
+ tap_test("tap_cancel_forged_basis",false,[](auto& f){f.plans[0]["basis"]="forged_tap";});
+ tap_test("tap_cancel_extra_step",false,[](auto& f){f.plans[0]["steps"].push_back(f.plans[0]["steps"][1]);});
+ tap_test("tap_cancel_compacted_prefix",false,[](auto& f){f.plans[0]["prefix_offset"]=1;});
+ tap_test("tap_cancel_completed_cursor",false,[](auto& f){f.cancels[0]["executed_steps"]=2;});
+ tap_test("tap_cancel_wrong_down_phase",false,[](auto& f){f.plans[0]["steps"][0]["phase"]=1;});
+ tap_test("tap_cancel_wrong_up_phase",false,[](auto& f){f.plans[0]["steps"][1]["phase"]=1;});
+ tap_test("tap_cancel_wrong_duration",false,[](auto& f){f.plans[0]["steps"][1]["due"]=50'000'111;});
+ tap_test("tap_cancel_reversed_times",false,[](auto& f){f.plans[0]["steps"][1]["due"]=32'000'109;});
+ tap_test("tap_cancel_position_jump",false,[](auto& f){f.plans[0]["steps"][1]["x"]=405.0;});
+ tap_test("tap_cancel_down_before_evidence",false,[](auto& f){f.plans[0]["steps"][0]["due"]=99;f.plans[0]["steps"][1]["due"]=18'000'099;});
+ tap_test("tap_cancel_duration_overflow",false,[](auto& f){f.plans[0]["steps"][0]["due"]=std::numeric_limits<Ns>::max();f.plans[0]["steps"][1]["due"]=std::numeric_limits<Ns>::min();});
+ tap_test("tap_cancel_relabelled_hold",false,[](auto& f){f.cancels[0]["kind"]="hold";});
+ tap_test("tap_cancel_other_contact",false,[](auto& f){f.receipt["issued"]["contact"]=1;});
+ tap_test("tap_cancel_duplicate_receipt",false,[](auto& f){f.used.insert(0);});
+ tap_test("tap_cancel_wrong_current_packet",false,[](auto& f){f.packets.clear();});
+ tap_test("tap_cancel_stale_source",false,[](auto& f){f.plans[0]["evidence"]=-100'000'000;f.cancels[0]["last_evidence_ns"]=-100'000'000;});
+ tap_test("tap_cancel_cannot_inject_down",false,[](auto& f){f.receipt["issued"]["phase"]=0;});
+ tap_test("tap_cancel_cannot_inject_move",false,[](auto& f){f.receipt["issued"]["phase"]=1;});
+ tap_test("tap_cancel_cannot_claim_effect",false,[](auto& f){f.cancels[0]["game_effect"]="verified";});
+ tap_test("drag_cancel_not_qualified",false,[](auto& f){f.cancels[0]["kind"]="drag";});
+ tap_test("flick_cancel_not_qualified",false,[](auto& f){f.cancels[0]["kind"]="flick";});
+ tap_test("unknown_cancel_kind",false,[](auto& f){f.cancels[0]["kind"]="unknown";});
  const auto publication_test=[&](const char* name,bool accept,auto change){
   J summary={{"published",std::uint64_t(10005)},{"pool_drops",std::uint64_t(7)},
              {"candidate_packet_counters",{{"physical_pool_drops",std::uint64_t(7)}}}};

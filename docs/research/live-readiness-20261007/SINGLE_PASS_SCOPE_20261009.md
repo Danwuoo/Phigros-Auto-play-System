@@ -14,6 +14,23 @@ Chapter Legacy 全部 IN；每個可用譜面一次。IN 未解鎖／不可用�
 retained 48 GiB／minimum free 20 GiB 及原 stage/candidate/raw/metadata caps 保留。
 不把分數表當成全曲 IN Miss=0 驗收，不由歷史 HD 結果推算現行解鎖或曲目分母。
 
+2026-10-10 main28／`62a8000` fresh22 TUs、三配置各25冷組／writer20項、3063 prefix、
+fault4及production normal Tap／Hold／Dense的完整raw與原成本 gates均通過。stress Tap
+producer native0／85.429s，auditor native2因取消核對只接受Hold；完整81342 raw rows有
+六次Tap取消，Down289／Up289，原程序正常result／清理。stress Dense及後四production、
+AA12／noise／ABBA36未跑。原905 source SHA snapshot、raw、STOP與圖核對負結果保存於
+`out/prelive-pre-emulator-planning/main28-stage-inventory.json`及`source-62a8000-formal-snapshot/`。
+Debug圖攤平8247超8192的外層collector已改用完整SHA-bound metadata，由C++ Reader逐檔
+及finish再SHA；ASan reader877.054s watchdog失敗保留。同source sealed Release reader
+完整核對Debug／ASan圖通過；不把核對器配置冒稱原ASan executor成功，不發live admission。
+
+Tap取消收據補上明列basis、兩步Down/Up18ms、cursor1、原40ms missing grace，保留own
+contact／position／最新plan／100ms lease／current owner QPC／unique receipt；禁止Down/
+Move走取消路徑、Tap冒稱Hold或game effect、Drag／Flick／unknown。原39＋新28控制共67
+及保留原stress Tap完整raw重讀均通過，六次取消與own Up對應。68 pool drops、coverage
+.8855、producer2／callback3 overruns與stress normal cost false仍完整報告。組件只診斷，
+新整合三配置及原production／R2 AA/noise/ABBA仍須另驗；未到實測交接，未啟動裝置。
+
 main27／`2082a9d8edfd01ebb82c6a5d70323a054aa66123` Release／Debug 各25通過；
 ASan19通過後 score-only Tap native2（22.398s），stderr為未從 result pixels 完成。
 無 control-report，觸控計數未知；未建立 gameplay archive。自然程序退出、active0、
