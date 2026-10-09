@@ -45,6 +45,8 @@ public class PasOwnedV3 {
   public long stdout_seen,stderr_seen;public int stdout_written,stderr_written;public bool stdout_overflow,stderr_overflow;
   public string guard_version="pas.owned-held-identity.v3";
   public long identity_polls,identity_poll_incomplete,identity_poll_qpc_total,identity_poll_qpc_max;
+  public long initial_identity_polls;
+  public int initial_acquisition_window_ms=50,initial_acquisition_sleep_ms=1,steady_acquisition_sleep_ms=25;
   public int pinned_identity_count;public List<Member> pinned_identities=new List<Member>();
   public List<Snapshot> snapshots=new List<Snapshot>();public List<string> errors=new List<string>();public bool errors_overflow;public List<uint> held_members_exited=new List<uint>();
   public List<HeldWait> held_waits=new List<HeldWait>();public double root_deadline_s,cleanup_deadline_s;public bool? termination_returned,held_all_signaled;
@@ -74,6 +76,13 @@ public class PasOwnedV3 {
  // a PID-only cache, a new handle, a live inaccessible process or empty image.
  public static bool CachedImageAllowed(PinnedIdentity saved,uint pid,long creation,IntPtr handle,bool exited){
   return saved!=null&&saved.pid==pid&&saved.creation_filetime==creation&&saved.handle==handle&&handle!=IntPtr.Zero&&exited&&!String.IsNullOrEmpty(saved.image)&&saved.image_validation_qpc>0;
+ }
+ // Acquire complete identities more often while a short console root starts.
+ // This only changes acquisition cadence. Unknown or inaccessible members
+ // still cannot qualify a mandatory snapshot or borrow another image.
+ public static int AcquisitionSleep(double sinceResume){
+  if(Double.IsNaN(sinceResume)||Double.IsInfinity(sinceResume)||sinceResume<0)throw new Exception("acquisition-clock");
+  return sinceResume<0.050?1:25;
  }
  static Snapshot Members(IntPtr job,string stage,Stopwatch sw,Dictionary<uint,long> known,Dictionary<uint,IntPtr> held,Dictionary<uint,PinnedIdentity> identities){
   var s=new Snapshot{stage=stage,utc=DateTime.UtcNow.ToString("o"),qpc_ticks=Stopwatch.GetTimestamp(),elapsed_s=sw.Elapsed.TotalSeconds};
@@ -112,6 +121,12 @@ public class PasOwnedV3 {
    }
   }catch(Exception e){s.missing_reason=e.Message;s.complete=false;}finally{Marshal.FreeHGlobal(buffer);}return s;
  }
+ static void AcquireIdentities(Result r,IntPtr job,Stopwatch sw,double resumeTime,Dictionary<uint,long> known,Dictionary<uint,IntPtr> held,Dictionary<uint,PinnedIdentity> identities){
+  long start=Stopwatch.GetTimestamp();var sample=Members(job,"running",sw,known,held,identities);long ticks=Stopwatch.GetTimestamp()-start;
+  r.identity_polls++;if(sw.Elapsed.TotalSeconds-resumeTime<0.050)r.initial_identity_polls++;if(!sample.complete)r.identity_poll_incomplete++;
+  r.identity_poll_qpc_total+=ticks;r.identity_poll_qpc_max=Math.Max(r.identity_poll_qpc_max,ticks);
+  foreach(var member in sample.members)if(member.missing_reason=="held-identity-cap64")throw new Exception("held-identity-cap64");
+ }
  static void Observe(Result r,IntPtr job,string stage,Stopwatch sw,Dictionary<uint,long> known,Dictionary<uint,IntPtr> held,Dictionary<uint,PinnedIdentity> identities){
   if(r.snapshots.Count>=8)throw new Exception("snapshot-cap8");var s=Members(job,stage,sw,known,held,identities);r.snapshots.Add(s);
   r.identity_trusted=r.identity_trusted!=false&&s.complete;if(!s.complete)throw new Exception("member-identity-untrusted:"+stage);
@@ -136,12 +151,14 @@ public class PasOwnedV3 {
    Need(AssignProcessToJobObject(job,p.process),"assign");r.assigned=true;Observe(r,job,"assigned-suspended",sw,known,held,identities);checkpoint("assigned",r);
    Need(CloseHandle(ow),"stdout-write-close");ow=IntPtr.Zero;Need(CloseHandle(ew),"stderr-write-close");ew=IntPtr.Zero;
    op=new Pump(or,so,cap);or=IntPtr.Zero;ep=new Pump(er,se,cap);er=IntPtr.Zero;
-   r.resume_attempted=true;Need(ResumeThread(p.thread)!=0xffffffff,"resume");r.resumed=true;checkpoint("resumed",r);
+   double resumeTime=sw.Elapsed.TotalSeconds;
+   r.resume_attempted=true;Need(ResumeThread(p.thread)!=0xffffffff,"resume");r.resumed=true;
+   AcquireIdentities(r,job,sw,resumeTime,known,held,identities);checkpoint("resumed",r);
    while(true){var wait=WaitForSingleObject(p.process,0);if(wait==0)break;if(wait==0xffffffff)throw new Exception("root-WAIT_FAILED:"+Marshal.GetLastWin32Error());if(wait!=258)throw new Exception("root-wait-unknown:"+wait);if(sw.Elapsed.TotalSeconds>=r.root_deadline_s)throw new Exception("root-timeout");if(op.overflow!=0||ep.overflow!=0)throw new Exception("stream-cap");
     // Samples only acquire complete identities. A transient list/query race
     // never produces a trusted mandatory snapshot; it is counted here, and
     // any still-unidentified member is rejected by the root-exit observation.
-    long start=Stopwatch.GetTimestamp();var sample=Members(job,"running",sw,known,held,identities);long ticks=Stopwatch.GetTimestamp()-start;r.identity_polls++;if(!sample.complete)r.identity_poll_incomplete++;r.identity_poll_qpc_total+=ticks;r.identity_poll_qpc_max=Math.Max(r.identity_poll_qpc_max,ticks);foreach(var member in sample.members)if(member.missing_reason=="held-identity-cap64")throw new Exception("held-identity-cap64");Thread.Sleep(25);}
+    AcquireIdentities(r,job,sw,resumeTime,known,held,identities);Thread.Sleep(AcquisitionSleep(sw.Elapsed.TotalSeconds-resumeTime));}
    uint code;Need(GetExitCodeProcess(p.process,out code),"root-exit");Exited(r,code);r.active_at_exit=Active(job);Observe(r,job,"root-exit",sw,known,held,identities);checkpoint("root-exited",r);
    var q=Stopwatch.StartNew();while(Active(job)>0&&q.Elapsed.TotalSeconds<15){Thread.Sleep(25);}
    r.quiescence_s=q.Elapsed.TotalSeconds;r.natural_quiescence=Active(job)==0;r.descendants=r.natural_quiescence==true?"natural_zero":"observed_nonzero";Observe(r,job,"quiescence-end",sw,known,held,identities);checkpoint("quiescence",r);

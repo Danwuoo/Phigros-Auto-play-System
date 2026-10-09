@@ -4,7 +4,7 @@ $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$sourceRepo=$repo;$oldRepo=$repo
 $out=Join-Path $repo 'out/windows-handoff';$pkg=Join-Path $repo 'out/prelive-20261006';$pwsh=(Get-Command pwsh).Source;$Operation='build';$Campaign='';$script:inputClosures=@{};$script:maintenancePath=$PSCommandPath
 [IO.Directory]::CreateDirectory($pkg)|Out-Null
-$gate=Join-Path $out 'guard-main05-native-01/native-gate.json';$tool=Join-Path $out 'tool-main05-01/tool-snapshot.json';$recipe=Join-Path $repo 'research/prelive_current/run.ps1';$tok=$null;$err=$null;$ast=[Management.Automation.Language.Parser]::ParseFile($recipe,[ref]$tok,[ref]$err)
+$gate=Join-Path $out 'guard-main06-native-01/native-gate.json';$tool=Join-Path $out 'tool-main05-01/tool-snapshot.json';$recipe=Join-Path $repo 'research/prelive_current/run.ps1';$tok=$null;$err=$null;$ast=[Management.Automation.Language.Parser]::ParseFile($recipe,[ref]$tok,[ref]$err)
 if($err.Count){throw 'shared recipe parse'}
 foreach($name in @('NewJson','CheckEntry','Binding','Fresh','InputClosure','CheckClosure','ClosureReceipt','GateInputs','Capacity','Receipt','Stage','Native')){
  $d=@($ast.FindAll({param($n)$n -is [Management.Automation.Language.FunctionDefinitionAst]},$false)|Where-Object Name -ceq $name);if($d.Count -ne 1){throw 'shared function'};$t=$d[0].Extent.Text

@@ -17,6 +17,8 @@ foreach($entry in $waitControls.shared_source){CheckEntry $entry}
 Add-Type -Path (Join-Path $PSScriptRoot 'owned.cs')
 & (Join-Path $PSScriptRoot 'cache-controls.ps1') -Report (Join-Path $qualifyRoot 'cache-controls.json')
 if($LASTEXITCODE -ne 0){throw 'cached-identity-controls'}
+& (Join-Path $PSScriptRoot 'initial-controls.ps1') -Report (Join-Path $qualifyRoot 'initial-controls.json')
+if($LASTEXITCODE -ne 0){throw 'initial-identity-acquisition-controls'}
 $pwsh=(Get-Command pwsh -ErrorAction Stop).Source
 $cmake=(Get-Command cmake -ErrorAction Stop).Source
 $vcvars='C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Auxiliary\Build\vcvars64.bat'
@@ -72,6 +74,7 @@ foreach($marker in @('TRACE wrapper-v0 entry cmdcmdline=','TRACE L07 vcvars END 
 foreach($receipt in $receipts){CheckEntry $receipt.receipt}
 NewJson (Join-Path $qualifyRoot 'native-gate.json') @{schema='pas.windows-offline-process-gate.v3';attempt=$Attempt;
  guard_source=(Entry (Join-Path $PSScriptRoot 'owned.cs'));process_source=(Entry (Join-Path $PSScriptRoot 'process.ps1'));cached_identity_controls=(Entry (Join-Path $qualifyRoot 'cache-controls.json'));identity_wait_controls=(Entry $IdentityWaitControls);diagnostic=(Entry $DiagnosticReceipt);file_only_cases=20;file_only_failed=0;
+ initial_acquisition_controls=(Entry (Join-Path $qualifyRoot 'initial-controls.json'));
  native_controls=$receipts;native_controls_verified=4;wrapper_positive=$true;
  device_operations=0;historical_stop_resumed=$false}
 $receipts|ConvertTo-Json -Depth 6

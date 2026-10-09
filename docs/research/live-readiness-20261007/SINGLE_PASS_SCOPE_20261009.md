@@ -1,5 +1,14 @@
 # 2026-10-09 一輪 IN 測試授權及冷修補
 
+2026-10-10 最新冷結果：main29／`208ad7b` 三配置各25、完整圖三份及3063 prefix
+通過，capture／writer故障通過。RPC producer／auditor均native0，但guard runner125、
+identity false：PID9008 image unknown/error5，原STOP及906 source SHA snapshot保留。
+slow／production9／AA12／noise／ABBA36 NOT_RUN，成本NOT_READY／live UNQUALIFIED。
+新guard在resume後立即acquire、首50ms sleep1ms後恢復25ms，原資格判定及時限不改；
+39＋9＋12 controls、native4與固定short RPC24診斷通過。組件不授candidate資格；
+新來源仍須fresh全包。盤點索引 `out/prelive-pre-emulator-planning/main29-stage-inventory.json`。
+fault status補正已執行失敗／真正NOT_RUN；原status錯把RPC列NOT_RUN也保留不改。
+
 使用者明確要求：冷準備完成後交接新的 GPT-6.1 Sol／xhigh local main task，授權
 啟動已安裝 emulator／Windows Computer Use，自行選曲及 Play。以遊戲現行畫面盤點
 Chapter Legacy 全部 IN；每個可用譜面一次。IN 未解鎖／不可用記狀態，不補 HD 解鎖、

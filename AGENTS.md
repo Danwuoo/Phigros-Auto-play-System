@@ -4,6 +4,14 @@
 
 ## 現行方向
 
+2026-10-10 main29／`208ad7b` 三配置各25、完整圖三份及3063 prefix通過；RPC audit
+程序收據因未驗image的PID9008 error5而STOP（native0、runner125、identity false）。
+原source／raw／STOP保存，slow／production9／AA12／noise／ABBA36 NOT_RUN。
+新guard首50ms sleep1ms後原25ms，立即resume取樣；原image／64 held／8 snapshots／
+50ms shared drain／deadline gates不改。39＋9＋12 controls、native4及short RPC24
+組件診斷通過，新gate main06；新整合須fresh全包，未到實測ready。其餘一輪IN分數
+授權沿用，不因修補另加門檻、不啟動emulator、不以組件PASS當整體資格。以下main28為歷史。
+
 2026-10-10 冷續作：先讀[一輪分數授權與最新修補](docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
 main28 source `62a8000` 三配置各25、3063 prefix、fault4、production normal三項通過；
 stress Tap producer0而auditor2（原Hold-only取消契約遇六次Tap），後五项與AA/noise/ABBA未跑。

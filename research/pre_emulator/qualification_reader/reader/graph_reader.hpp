@@ -240,10 +240,20 @@ public:
             for (const auto& c : d.at("cases"))
                 w::require(c.at("pass").get<bool>() && ids.insert(c.at("id").get<std::string>()).second,
                            "graph complete unique control set");
+            if (d.contains("shared_source")) {
+                w::require(d.at("shared_source").is_array() && !d.at("shared_source").empty(),
+                           "graph control source bindings");
+                for (const auto& source : d.at("shared_source")) bound(source);
+            }
         };
         controls(g.at("diagnostic"), 20);
         controls(g.at("cached_identity_controls"), 9);
         controls(g.at("identity_wait_controls"), 39);
+        controls(g.at("initial_acquisition_controls"), 12);
+        const auto initial = object(g.at("initial_acquisition_controls"), w::MiB);
+        w::require(initial.at("schema") == "pas.initial-identity-acquisition-controls.v1" &&
+                   initial.at("initial_window_ms") == 50 && initial.at("initial_sleep_ms") == 1 &&
+                   initial.at("steady_sleep_ms") == 25, "graph exact initial acquisition policy");
         const std::map<std::string, std::pair<int,int>> expected{
             {"natural",{0,0}}, {"nonzero",{7,7}}, {"owned-child",{0,125}}, {"probe-1",{0,0}}};
         w::require(g.at("native_controls").is_array() && g.at("native_controls").size() == 4,

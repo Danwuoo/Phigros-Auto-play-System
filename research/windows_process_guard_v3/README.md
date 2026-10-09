@@ -1,5 +1,17 @@
 # Windows Job 修補 v3：已驗身分與退出時間窗
 
+2026-10-10 main29／`208ad7b` 的 RPC auditor 正常退出且 control_pass=true，但
+root-exit 有未驗過 image 的 PID9008，QueryFullProcessImageName error5、未 signaled；
+runner125、identity_trusted=false，原 STOP 保留。該 PID 的 image unknown，不能稱作 conhost。
+本次在 ResumeThread 後立即取樣，前50ms以1ms sleep取樣，之後原25ms；50ms從resume
+時計算，不從每個成員或每次查詢重置。running sample仍只取得完整已驗身分、不授snapshot資格。
+原64 held／8 snapshots／image-drain共用50ms／root、cleanup、stream及總期限不變。
+原39 wait＋9 cache及新12 file-only controls通過；新四個native資格控制和固定24次
+原RPC完整raw的短auditor診斷均通過。原20個未改的file-only transaction controls沿用其
+完整SHA；診斷混用原sealed auditor與新maintenance guard，明列組件來源、不授candidate資格。
+新gate `out/windows-handoff/guard-main06-native-01/native-gate.json`；cold整包須另驗。
+guard source SHA辨識此維護修補，A/B都使用相同取樣政策；不宣稱Windows取樣排程保證。
+
 實際結果見 [修復評估](../../docs/research/live-readiness-20261007/JOB_IDENTITY_REPAIR_20261007.md)。
 39＋9 file-only、4 native資格控制及27追加控制通過，包含真正error5／限時等待分支。
 新AA04三個直接成本程序全部COMPLETE，numeric成本則因full phase lateness p99

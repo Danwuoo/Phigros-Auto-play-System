@@ -1,6 +1,18 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
 2026-10-09 續派範圍見 [一輪分數授權](../../docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+2026-10-10 main29／`208ad7b` 三配置各25、writer20、auditor67、fresh22 TUs及
+三份完整圖／3063 prefix通過。capture／writer故障及audit通過；RPC producer0、
+auditor0/control_pass=true但guard runner125：root-exit未驗image的PID9008 error5，
+image unknown，不能推定conhost或以active0補足身分。slow／production9／AA12／noise／
+ABBA36 NOT_RUN，原status將已執行RPC寫NOT_RUN的錯誤也保存；以
+`out/prelive-pre-emulator-planning/main29-stage-inventory.json`更正索引，不改原件。
+原906 formal source及guard／方向文件共910份SHA snapshot保存。
+guard在resume後立即acquire、首50ms sleep1ms，之後原25ms；原image／held／snapshot／
+shared50ms drain與所有時限不改。39／9／新12 controls、native4及固定short RPC24
+診斷通過；組件不授candidate資格。新gate main06；reader核對新增controls及shared
+source binding。新fault status區分已執行失敗與真正未跑；原R2／runtime／archive不變。
+新整合重新fresh三配置及其後全包，不復活main29 STOP或採挑選成功的重測。
 2026-10-10 main28／`62a8000` 三配置 fresh22 TUs／各25組（writer20項）全部通過，
 3063 prefix／fault4／production normal Tap、Hold、Dense 完整 raw及原數值 gates通過。
 stress Tap producer0／85.429s，auditor2：原取消核對僅接受Hold，raw有六次已Down的Tap
