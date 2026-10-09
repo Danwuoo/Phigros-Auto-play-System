@@ -15,6 +15,17 @@ int main(int argc,char** argv){try{
         {"base_component_source_commit",pas_session_build_commit},{"base_component_source_dirty",pas_session_build_dirty},
         {"scope","finite no-persistence lifecycle; exact Down/Up/cancel balance; no Hold semantic or cost qualification"}};
     if(operation=="invalid"){
+        // Fake-clock regression: both on-time and severely late workloads leave
+        // the same 64 result slots at 20 ms spacing, without shifting workload.
+        constexpr pas::Nanoseconds planned_end=20'000'000'000LL,late_end=79'000'000'000LL,cadence=20'000'000LL;
+        require(score_result_epoch(planned_end,planned_end-cadence)==planned_end&&
+            score_result_epoch(planned_end,late_end)==late_end,"result epoch never precedes planned or actual workload end");
+        for(const auto end:{planned_end,late_end}){
+            const auto first=score_result_epoch(planned_end,end),last=first+63*cadence;
+            require(first>=end&&last-first==1'260'000'000LL&&last<first+2'000'000'000LL,
+                "bounded paced result window for on-time and late fake clocks");
+        }
+        report["result_tail_fake_clock_cases"]=4;
         int passed=0;
         for(int i=0;i<7;++i){
             bool rejected=false;
@@ -37,7 +48,7 @@ int main(int argc,char** argv){try{
         report["invalid_requests_rejected_before_io"]=passed+1;
     }else{
         require(operation=="tap"||operation=="hold"||operation=="dense","fixed endpoint-free scene");
-        state.scene=operation;state.requested=1000;state.cadence=20;
+        state.scene=operation;state.requested=1000;state.cadence=20;state.score_only_result_tail=true;
         const auto profile=root/"profile.json";
         J config={{"schema",2},{"name","score-only cold boundary fixture"},{"serial","emulator-offline-cold"},
             {"capture",{{"kind","emulator-grpc"},{"execution","thread"},{"transport","payload"},
@@ -56,6 +67,7 @@ int main(int argc,char** argv){try{
         require(state.cancelled&&state.touch_owner.has_value()&&state.preflights==1&&state.discoveries==1&&
             state.releases>0,"finite literal lifecycle and sole owner release executed");
         report["scene"]=operation;report["down"]=state.downs;report["move"]=state.moves;
+        report["synthetic_result_tail_policy"]="64 slots at original cadence from max(planned workload end, actual completion); requested attempts unchanged; diagnostic cost path disabled for this fixture";
         report["up"]=state.ups;report["release_calls"]=state.releases;
         report["contacts_released_by_cancel"]=state.released_contacts;report["contacts_final"]=state.contacts_final;
         // Missing current support may cancel a Hold through release_all.

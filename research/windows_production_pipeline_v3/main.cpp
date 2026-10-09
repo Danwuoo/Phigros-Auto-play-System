@@ -15,6 +15,10 @@ namespace fs=std::filesystem;
 struct Attempt {pas::Nanoseconds due{},render_start{},render_end{},callback_return{};};
 struct State {
  std::string scene;int requested{},cadence{};
+ // Functional no-persistence tests may render slower than their scheduled
+ // workload in Debug. Pace their result pixels from actual workload completion;
+ // the original diagnostic/cost producer and all requested due times stay exact.
+ bool score_only_result_tail=false;
  std::atomic<bool> cancelled=false;
  std::vector<Attempt> attempts;
  // Boundary-only accounting; never fed to perception or action decisions.
@@ -23,6 +27,7 @@ struct State {
  std::optional<std::thread::id> touch_owner;
 };
 State state;
+constexpr pas::Nanoseconds score_result_epoch(pas::Nanoseconds planned_end,pas::Nanoseconds actual_end){return std::max(planned_end,actual_end);}
 void require(bool value,const char* reason){if(!value)throw std::runtime_error(reason);}
 void owner(){auto id=std::this_thread::get_id();if(!state.touch_owner)state.touch_owner=id;require(*state.touch_owner==id,"multiple touch owners");}
 void box(std::vector<std::uint8_t>& rgb,int x0,int y0,int x1,int y1,std::array<std::uint8_t,3> color){
@@ -57,9 +62,16 @@ CaptureStats GrpcCapture::stats()const{std::lock_guard lock(mutex_);return stats
 void GrpcCapture::stream(std::stop_token stop,const std::function<void(Frame&&)>& on_frame){
  current_rails::WindowsProducerPriorityApi priority_api;current_rails::ProducerPriorityScope priority(priority_api);
  current_rails::ProducerDeadlineWait wait;const auto epoch=clock_.now_ns();
+ auto result_epoch=epoch+Nanoseconds(cold::state.requested)*cold::state.cadence*1'000'000;
  std::vector<std::uint8_t> storage(1280*720*3);cold::state.attempts.resize(std::size_t(cold::state.requested)+64);
  for(int i=0;i<cold::state.requested+64&&!stop.stop_requested()&&!cold::state.cancelled;++i){
-  auto& a=cold::state.attempts[std::size_t(i)];a.due=epoch+Nanoseconds(i)*cold::state.cadence*1'000'000;wait.wait_until(clock_,a.due);a.render_start=clock_.now_ns();
+  if(cold::state.score_only_result_tail&&i==cold::state.requested)
+   result_epoch=cold::score_result_epoch(result_epoch,clock_.now_ns());
+  auto& a=cold::state.attempts[std::size_t(i)];
+  a.due=cold::state.score_only_result_tail&&i>=cold::state.requested
+   ?result_epoch+Nanoseconds(i-cold::state.requested)*cold::state.cadence*1'000'000
+   :epoch+Nanoseconds(i)*cold::state.cadence*1'000'000;
+  wait.wait_until(clock_,a.due);a.render_start=clock_.now_ns();
   if(i>=cold::state.requested)cold::result(storage);
   else if(cold::state.scene=="tap")current_rails::tap_reset_workload::render(storage,std::uint64_t(i+1));
   else if(cold::state.scene=="hold")current_rails::streaming_workload::render(storage,std::uint64_t(i+1));
@@ -70,7 +82,7 @@ void GrpcCapture::stream(std::stop_token stop,const std::function<void(Frame&&)>
  }
  priority.close();
  while(!cold::state.cancelled&&!stop.stop_requested()){
-  if(clock_.now_ns()>epoch+Nanoseconds(cold::state.requested)*cold::state.cadence*1'000'000+2'000'000'000)throw std::runtime_error("cold finite pipeline did not finish from result pixels");
+  if(clock_.now_ns()>result_epoch+2'000'000'000)throw std::runtime_error("cold finite pipeline did not finish from result pixels");
   std::this_thread::sleep_for(std::chrono::milliseconds(1));
  }
 }

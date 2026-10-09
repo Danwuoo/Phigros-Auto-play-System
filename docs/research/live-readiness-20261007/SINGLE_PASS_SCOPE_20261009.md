@@ -55,3 +55,22 @@ Native 自然退出／held／streams／active0，整體 candidate 仍未予資�
 原 main24 Release／Debug compiler roots 全 entry SHA 壓縮讀回核對後封存於
 `out/retained/consolidation-20261008/source-dc200-compiler-archives/`；原 raw／負結果不刪，
 重新驗證舊資格需要還原原 source 與 outputs。新修補須重新完整建置／驗證，不沿用舊資格。
+
+main25／`1f1266c101caa6964a62c8512d29b2541c30d9a2` Release 25/25 通過；Debug 21 組
+通過，包括 Hold 的 8 Down／0 explicit Up／8 cancellation releases／final0。
+Debug score-only Dense native 2（79.077 s）失敗於 cold result pixels 未完成，
+沒有 control-report，不能由自然 process 結束推定原失敗的觸控計數。後三項 Debug、
+ASan、reader graphs、prefix／faults／production9／AA12／noise／ABBA36 均 NOT_RUN。
+原結果／stdout／stderr／STOP 與 source904 檔 SHA snapshot 保留，索引
+`out/prelive-pre-emulator-planning/main25-stage-inventory.json`。
+
+原因為 Debug Dense rendering 落後 absolute workload epoch，原 synthetic terminal 64
+slots 在 catch-up 下連續送出，之後已過舊 result deadline。只針對 score-only 的功能
+fixture 將 result epoch 設為 max(planned workload end, actual completion)，仍是 64
+slots／原 cadence／2 s terminal deadline；原 requested1000 的 absolute due times、
+正式 runtime、diagnostic archive production fixture 與 R2 全部 gates 不變。
+原 production fixture 預設此旗標 false，原 auditor 的全部 absolute attempt 契約不改。
+`score-result-tail-prototype-17` 四項 fake-clock cases 及 Debug Dense 通過（80.507 s），
+Dense Down0／Up0／cancel0／final0，no gameplay files；此為功能／組件測試，不授整體
+candidate 或成本資格。此次 component inputs 另外封存所有實際 workspace sources，
+核對未修改的 originals 與原 SHA；不沿用 prototype16 欠完整 workspace input 綁定作資格。

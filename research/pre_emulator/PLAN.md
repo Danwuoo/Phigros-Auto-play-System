@@ -1,6 +1,16 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
 2026-10-09 續派範圍見 [一輪分數授權](../../docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+main25／`1f1266c` Release 25/25 通過、Debug 21 組通過後在 score-only Dense 的
+synthetic result deadline 失敗（native2／79.077s），後續 NOT_RUN，原失敗不改。
+Debug Dense rendering 使 workload 落後 epoch，terminal64 slots catch-up 成 burst；
+score-only 功能 fixture 將 result epoch 設 max(planned end, actual completion)，
+64 slots／原 cadence／2s terminal deadline 與原 requested due times 保留。
+只有 score-only fixture 啟用；diagnostic/cost producer 預設 false，正式 runtime、
+archive workload、原 auditor absolute QPC 契約及 R2 gates 不變。
+四項 fake-clock＋Debug Dense 組件通過（80.507s／final0／無 gameplay files）；
+不能授予整體 candidate 資格，新來源仍須重新完整三配置及其後 stages。
+
 main24／`dc20077` Release 25 組通過；Debug 在 score-only Hold 的「必有明確 Up」
 斷言失敗（native 2），後續未跑。另立 diagnostic_archive 組件診斷為 11 Down／0 Up／
 85 release calls。新的 cold 邊界分開累計 explicit Up、cancelled contacts、final contacts，
