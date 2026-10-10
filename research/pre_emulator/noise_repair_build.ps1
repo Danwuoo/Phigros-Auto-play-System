@@ -259,7 +259,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $script:commit=$head
  $script:seal=@{files=@($delta.files)}
  $script:inputs=@($script:noiseRepairChecked.Keys|Sort-Object -Unique)
- $script:noiseRepairBinding=$bindingPin
+ $script:noiseRepairBindingPin=$bindingPin
  $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base}
  $script:noiseRepairPrerequisites=@{source_commit=$baseCommit;scope='Previously passed scopes only; no new-source fresh/full qualification';release_tests=$oldTests;old_configuration_proofs=$oldProofs;compiler_archive_links=$archiveLinks;original_main32_inventory=$delta.original_main32_inventory;formal_source_byte_identical=$true;formal_rebuilt=$false;whole_candidate_qualification=$false;live_ready=$false;device_operations=0}
 }

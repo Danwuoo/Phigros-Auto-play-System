@@ -54,3 +54,8 @@ main33／`c3a51ca` configure native／runner／verification皆0。後續graph檢
 POSIX分隔符及`/MD`辨識，Windows Ninja實際使用反斜線及等價MSVC `-MD`，因而冷STOP；
 沒有compile／controls／AA量測。保留原configure與STOP，修正路徑正規化及相同runtime
 flag辨識後用新attempt，不放寬兩TU、Release flags或原測量契約。
+
+main34／`626d32d`兩個target、controls36及全部native／closure通過。AA loader的
+script binding欄位與caller同名PowerShell參數碰撞，將path變成hashtable，AA campaign
+封存前冷STOP；沒有producer／噪聲量測。改為獨立`noiseRepairBindingPin`，原必要建置
+收據及prelaunch負結果保留；新attempt不重跑75組或production。
