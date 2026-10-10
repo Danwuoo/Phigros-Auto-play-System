@@ -48,6 +48,7 @@ try{
   if($NoiseRepairBinding){
    $priority=(Get-Content -LiteralPath $p.report_path -Raw|ConvertFrom-Json).consumer_priority
    if(-not $priority.verified -or -not $priority.applied -or -not $priority.restored -or $priority.requested -ne 1 -or $priority.applied_readback -ne 1 -or $priority.process_class -ne 32 -or $priority.process_class_after_close -ne 32 -or $priority.restored_readback -ne $priority.previous -or $priority.failure -cne 'none' -or $priority.rollback_failure -cne 'none' -or $priority.fallback_attempted){throw 'explicit consumer scheduling readback and restoration required'}
+   NoiseRepairVerifyWorkerPlacement (Get-Content -LiteralPath $p.report_path -Raw|ConvertFrom-Json)
   }
   $audit=Join-Path $artifact ($id+'-audit.json')
   Native ('audit-pre-emulator-'+$id) (Exe 'prelive_audit') @($p.report_path,$audit) @($inputs+$p.report_path+($p.report_path+'.attempts.json')+($p.report_path+'.journal.jsonl')) 900

@@ -93,3 +93,26 @@ RelationProcessorCore topology保存原group／number／EfficiencyClass。
 端點相同不證明中途未遷移，wall−CPU不是精確off-CPU，cycles不換算QPC；
 不猜P/E編號，不改affinity／CPU sets。此診斷cost qualification=false，不能代替AA／ABBA。
 最新使用者再確認須完成所有啟動實機前可完成的測試／開發；仍不開新thread或emulator。
+
+main37／compiled source `156214a`的新A/B dense1000 producer及兩個summary全部native／
+runner／verification0，4個stage自然退出、active0、held與streams完整。
+A measured733、B739；observer不同processor起訖583及558，hook277及402。
+當前拓撲18 LP／14 cores，raw最高class1為core0/9/10/11；不同端點已確認切換，
+class別統計仍有中途遷移混合，不能解讀成特定core的純residency效能。
+全部918 codefiles逐bytes複製／SHA核對保存於source-156214a-phase-snapshot；
+這兩個probe不授noise或live資格，不作favorable rerun。
+
+下一個明確冷修補以獨立OS查詢產生worker placement，不讀診斷JSON作policy。
+最高rawclass取各不同physical core的最低LP，排序首LP給consumer、次LP給producer；
+當前18-LP環境將為0／10。原process與writer affinity不變，producer原mask（可能繼承
+consumer）另行保存，兩者explicit set/readback/restore皆必須通過。只支援已實際確認
+single active group；不猜跨group還原、不選同core sibling、不默默fallback。
+三個必要TUs為chain、原priority controls及新的65項affinity controls；新AA／ABBA每筆
+讀回placement與兩scope收據，R2所有workload、公式、門檻與原PAS正式source不變。
+
+為保留新AA／ABBA headroom，另將兩個inactive歷史cold production目錄的43份大journal，
+以及已完成main37 A/B與main32 phase診斷3份journal，共46份／1265799319 bytes，
+逐entry decoded SHA及原件再核對後保存於35560489-byte ZIP：
+`out/retained/consolidation-20261008/inactive-cold-diagnostic-raw-archive38/original-journals.zip`。
+同目錄proof保存原path／bytes／SHA，原報告與summary保持；只刪核對後未壓縮副本。
+新AA／ABBA raw與當前main32正式前置證據未移動；原診斷完整重讀先restore原path。

@@ -6,10 +6,19 @@ main32／aa9de3c的75冷組、完整圖3、3063 prefix、fault4及production9已
 validity全PASS但原noise不足、ABBA未跑。使用者要求修復後不全盤重跑，仍完成啟動前
 必要開發與未跑noise／ABBA；成功至需emulator處停止，先不要建立新thread。
 見[授權及base/delta身分](../../docs/research/live-readiness-20261007/NOISE_REPAIR_SCOPE_20261011.md)。
-只重新編譯必要cold consumer TU與36項priority控制，沿用原source-bound Release libs；
+main36 fresh AA12 validity及priority還原通過，但原noise仍12欄不足、ABBA未跑。
+main37／`156214a`的A/B dense1000診斷全部native通過；observer不同core端點
+583/733及558/739。這是實際endpoint事實，不證明整段residency或所有noise根因。
+新冷worker affinity候選依有界OS topology的最高rawEfficiencyClass，選兩個不同實體
+core及各自最低LP；consumer先、producer後，A/B同policy，writer在scope前建立。
+保存並核對原group/mask、set/readback與explicit restore，多group或不完整資訊明確fail。
+只重新編譯必要chain TU、36項priority及65項affinity控制，沿用原source-bound Release libs；
 新current_chain、原analyzer／auditor各自SHA綁定。正式src/include/pas及production binary
 不改；保留原負結果，完整AA12／noise／ABBA原gate不降。後文fresh全盤要求為先前包規則，
 本次以明確使用者縮小重驗指示為準。新delta不是新三配置whole或live資格。
+同步補既有main32 preservation與新narrow cost的只讀bundle joins，不授qualified token。
+讀取current device/profile/physical實際收據及live啟用接線依需emulator的階段完成，
+這輪先完成其餘所有能冷完成的開發／測試，不建立新thread。
 
 2026-10-10 main31／`afaa8f3` fresh22 TUs、三配置各25組、writer20／auditor93、完整圖3、
 3063 prefix及fault4通過；production normal Tap／Hold完整raw與原數值通過。normal Dense

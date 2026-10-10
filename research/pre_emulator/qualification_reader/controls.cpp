@@ -1,4 +1,5 @@
 #include "reader/graph_reader.hpp"
+#include "reader/narrow_preflight.hpp"
 #include <iostream>
 int main(int argc,char** argv){try{
  namespace g=pas::preflight_graph;namespace fs=std::filesystem;using J=nlohmann::json;
@@ -28,7 +29,29 @@ int main(int argc,char** argv){try{
  auto array=save("array.json","[]");check("nonobject_reject",rejects([&]{g::w::read(array);}));
  std::string deep;for(int i=0;i<66;++i)deep+="{\"x\":";deep+="0";deep+=std::string(66,'}');
  auto depth=save("depth.json",deep);check("valid_excessive_depth_reject",rejects([&]{g::w::read(depth);}));
+ namespace n=g::narrow;
+ auto role_pin=pin;role_pin["role"]="candidate_binary";
+ check("narrow_pin_role_projection",n::same_pin(pin,role_pin));
+ bad=pin;bad["path"]="relative.json";check("narrow_relative_pin_reject",rejects([&]{n::pin_shape(bad);}));
+ bad=pin;bad["sha256"]=std::string(64,'z');check("narrow_malformed_sha_reject",rejects([&]{n::pin_shape(bad);}));
+ check("narrow_formal_cpp_not_maintenance",!n::maintenance_path("src/manual_session.cpp")&&!n::maintenance_path("research/prelive_current/cold_chain.cpp"));
+ J parent={{"source_commit",std::string(40,'a')},{"source_manifest",pin},{"core_build_plan",pin},{"changed_paths",J::array()},{"candidate_bytes",3},{"files",J::array({pin})},{"compiled_outputs",J::array({pin})},{"scope","noise_and_unrun_abba_only"},{"additional_inputs",J::array({J{{"path",(root/"docs/test.md").string()},{"bytes",std::uint64_t(3)},{"sha256",sha}}})}};
+ auto amendment=parent;amendment["source_commit"]=std::string(40,'b');amendment["compiled_source_commit"]=std::string(40,'a');amendment["maintenance_only_amendment"]=true;amendment["maintenance_changed_paths"]=J::array({"docs/test.md"});amendment["parent_repair_build"]=pin;amendment["compiled_source_manifest"]=pin;amendment["formal_rebuilt"]=false;amendment["component_rebuilt"]=false;amendment["amendment_proof"]=pin;
+ check("narrow_preserved_parent_positive",!rejects([&]{n::same_parent(amendment,parent);}));
+ auto changed=amendment;changed["files"][0]["sha256"]=std::string(64,'0');check("narrow_changed_runtime_reject",rejects([&]{n::same_parent(changed,parent);}));
+ changed=amendment;changed["compiled_outputs"][0]["sha256"]=std::string(64,'0');check("narrow_changed_object_reject",rejects([&]{n::same_parent(changed,parent);}));
+ changed=amendment;changed["force_qualification"]=true;check("narrow_undeclared_field_reject",rejects([&]{n::same_parent(changed,parent);}));
+ changed=amendment;changed["additional_inputs"][0]["sha256"]=std::string(64,'0');check("narrow_declared_doc_rebind_positive",!rejects([&]{n::same_parent(changed,parent);}));
+ changed["maintenance_changed_paths"]=J::array();check("narrow_undeclared_doc_rebind_reject",rejects([&]{n::same_parent(changed,parent);}));
+ changed=amendment;changed["additional_inputs"][0]["path"]=(root/"docs/other.md").string();check("narrow_changed_additional_path_reject",rejects([&]{n::same_parent(changed,parent);}));
+ changed=amendment;changed["maintenance_changed_paths"]=J::array({"src/manual_session.cpp"});check("narrow_formal_amendment_reject",rejects([&]{n::same_parent(changed,parent);}));
+ check("narrow_missing_cost_bindings",!n::supplied(J{{"aa_input",nullptr}},{"aa_input","aa_status"}));
+ check("narrow_supplied_cost_bindings",n::supplied(J{{"aa_input",pin},{"aa_status",pin}},{"aa_input","aa_status"}));
+ check("narrow_original_noise_positive",g::cc::noise({1.,1.,1.,1.},"observer_ms").adequate);
+ check("narrow_original_noise_negative",!g::cc::noise({1.,2.,3.,4.},"observer_ms").adequate);
+ g::Reader missing_reader(root);n::Preflight missing(missing_reader,root,J{{"schema","pas.readonly-narrow-preflight-input.v1"},{"device_operations",0}});const auto missing_report=missing.run();
+ check("narrow_missing_receipts_structured_no_admission",missing_report.at("status")=="REJECTED"&&!missing_report.at("pass").get<bool>()&&!missing_report.at("qualification_issued").get<bool>()&&!missing_report.at("live_ready").get<bool>()&&missing_report.at("device_operations")==0&&missing_report.at("issues")[0].at("reason")=="missing input binding: gate"&&!missing_report.at("raw_revalidation_performed").get<bool>());
  r.finish();save("abc","abd");check("post_read_mutation_reject",rejects([&]{r.finish();}));
- J report={{"schema","pas.qualification-reader-controls.v1"},{"failed",0},{"cases",cases},{"qualification_issued",false},{"device_operations",0}};
+ J report={{"schema","pas.qualification-reader-controls.v1"},{"failed",0},{"cases",cases},{"cases_count",cases.size()},{"qualification_issued",false},{"live_ready",false},{"device_operations",0}};
  std::ofstream f(output,std::ios::binary);f<<report.dump(2)<<'\n';if(!f)throw std::runtime_error("report write");return 0;
  }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

@@ -72,10 +72,23 @@ function NoiseRepairCheckNativeReceipt($entry){
  foreach($path in @((Join-Path $stageRoot ($verification.stage+'-result.json')),(Join-Path $stageRoot 'state.json'),(Join-Path $stageRoot 'freeze.json'),(Join-Path $stageRoot 'contract.json'))){NoiseRepairAddInputs @((Binding $path))}
 }
 function NoiseRepairAllowedChange([string]$relative){
- if($relative -in @('AGENTS.md','README.md','research/pre_emulator/PLAN.md','research/prelive_current/chain.cpp','research/prelive_current/consumer_priority.hpp','research/prelive_current/tests/consumer_priority_controls.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/CMakeLists.txt')){return $true}
+ if($relative -in @('AGENTS.md','README.md','research/pre_emulator/PLAN.md','research/prelive_current/chain.cpp','research/prelive_current/consumer_priority.hpp','research/prelive_current/tests/consumer_priority_controls.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/worker_affinity.hpp','research/prelive_current/tests/worker_affinity_tests.cpp','research/prelive_current/owner_candidate_step.hpp','research/prelive_current/diagnostic_processor.hpp','research/prelive_current/diagnostic_phase_profile.hpp','research/prelive_current/diagnostic_phase_summary.cpp','research/prelive_current/CMakeLists.txt')){return $true}
+ if($relative -cmatch '^research/pre_emulator/qualification_reader/(?:main[.]cpp|controls[.]cpp|reader/narrow_preflight[.]hpp)$'){return $true}
  if($relative -cmatch '^research/pre_emulator/(?:[^/]+[.]ps1|(?:[^/]+/)*CMakeLists[.]txt)$'){return $true}
  if($relative -cmatch '^docs/.*[.](?:md|json)$' -and $relative -cne 'docs/research/zero-miss-20261006/windows/PRELIVE_COST_PROTOCOL_R2_20261007.md'){return $true}
  return $false
+}
+function NoiseRepairVerifyWorkerPlacement($report){
+ if(-not $script:noiseRepairBuild.worker_affinity_required){return}
+ $p=$report.worker_placement
+ NoiseRepairRequire ($p.schema -ceq 'pas.cold-worker-placement.v1' -and $p.valid -eq $true -and $p.failure -ceq 'none' -and $p.active_groups -eq 1 -and $p.process_class -eq 32 -and $p.group -eq 0 -and $p.topology_error -eq 0 -and $p.topology_bytes -gt 0 -and $p.topology_bytes -le 65536 -and $p.topology_cores -ge 2 -and $p.topology_cores -le 256 -and $p.topology_logical_processors -ge 2 -and $p.topology_logical_processors -le 256 -and $p.cost_qualification -eq $false -and $p.device_operations -eq 0) 'bounded actual cold worker placement required'
+ NoiseRepairRequire ($p.consumer_mask -gt 0 -and $p.producer_mask -gt 0 -and $p.consumer_mask -ne $p.producer_mask -and $p.consumer_core -ne $p.producer_core -and $p.consumer_number -lt $p.producer_number -and $p.consumer_number -ge 0 -and $p.producer_number -lt 64 -and $p.efficiency_class -ge 0 -and $p.efficiency_class -le 255) 'two distinct deterministic highest-class physical cores required'
+ foreach($role in @('consumer','producer')){
+  $s=$report.($role+'_affinity');[uint64]$mask=$p.($role+'_mask')
+  NoiseRepairRequire (($mask -band ($mask-1)) -eq 0 -and ($mask -band [uint64]$p.process_mask) -eq $mask) 'requested single LP in current process mask'
+  NoiseRepairRequire ($s.schema -ceq 'pas.cold-worker-affinity.v1' -and $s.verified -eq $true -and $s.applied -eq $true -and $s.close_attempted -eq $true -and $s.restored -eq $true -and $s.previous_available -eq $true -and $s.applied_available -eq $true -and $s.restored_available -eq $true -and $s.thread_id -gt 0 -and $s.active_groups -eq 1 -and $s.process_class -eq 32 -and $s.process_mask -eq $p.process_mask -and $s.system_mask -eq $p.system_mask -and $s.requested.group -eq 0 -and $s.requested.mask -eq $mask -and $s.applied_readback.group -eq 0 -and $s.applied_readback.mask -eq $mask -and $s.previous.group -eq 0 -and $s.previous.mask -gt 0 -and $s.restored_readback.group -eq $s.previous.group -and $s.restored_readback.mask -eq $s.previous.mask -and $s.failure -ceq 'none' -and $s.rollback_failure -ceq 'none' -and $s.fallback_failure -ceq 'none' -and $s.rollback_attempted -eq $false -and $s.fallback_attempted -eq $false) ($role+' actual readback and exact explicit affinity restoration required')
+ }
+ NoiseRepairRequire ($report.consumer_affinity.thread_id -ne $report.producer_affinity.thread_id) 'independent producer and consumer threads'
 }
 function LoadNoiseRepairBuild([string]$bindingPath){
  $script:noiseRepairChecked=@{}
@@ -207,6 +220,12 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  NoiseRepairRequire ($dependencies.source_commit -ceq $baseCommit -and $dependencies.release_and_debug -eq $true -and $dependencies.protoc_and_plugin -eq $true) 'old dependency provenance must remain old'
  $dependencyFiles=@{}
  foreach($file in $dependencies.files){NoiseRepairCheckBinding $file;$dependencyFiles[[IO.Path]::GetFullPath($file.path)]=$file}
+ if(NoiseRepairProperty $delta 'selected_dependency_manifest'){
+  NoiseRepairAddInputs @($delta.selected_dependency_manifest)
+  $selected=NoiseRepairReadBinding $delta.selected_dependency_manifest
+  NoiseRepairRequire (@($selected.files).Count -gt 0 -and @($selected.files).Count -le 128) 'bounded actual dependency selection'
+  foreach($file in $selected.files){$key=[IO.Path]::GetFullPath($file.path);NoiseRepairRequire ($dependencyFiles.ContainsKey($key)) 'selected dependency belongs to original installed closure';NoiseRepairSameBinding $file $dependencyFiles[$key] 'actual selected dependency bytes';NoiseRepairAddInputs @($file)}
+ }
  NoiseRepairRequire (@($delta.base_static_inputs).Count -gt 0) 'base static inputs required'
  foreach($file in $delta.base_static_inputs){
   NoiseRepairAddInputs @($file);$key=[IO.Path]::GetFullPath($file.path)
@@ -217,7 +236,10 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  foreach($name in @('current_rails.lib','current_front.lib','own_bridge.lib','exact_bvi_v3.lib','pas_core.lib')){NoiseRepairRequire (@($delta.base_static_inputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq $name}).Count -eq 1) ('one unchanged static library '+$name)}
  $corePlan=NoiseRepairReadBinding $delta.core_build_plan
  NoiseRepairRequire ($corePlan.source_commit -ceq $head -and $corePlan.base_source_commit -ceq $baseCommit -and $corePlan.formal_rebuilt -eq $false) 'delta/core provenance'
- NoiseRepairRequire (@(Compare-Object (@($corePlan.delta_targets)|Sort-Object) (@('current_chain','consumer_priority_controls')|Sort-Object)).Count -eq 0) 'only the two declared harness targets'
+ $hasAffinity=@($corePlan.delta_targets) -ccontains 'worker_affinity_controls'
+ $expectedTargets=@('current_chain','consumer_priority_controls');if($hasAffinity){$expectedTargets+=@('worker_affinity_controls')}
+ $newExecutables=@($expectedTargets|ForEach-Object {$_+'.exe'})
+ NoiseRepairRequire (@(Compare-Object (@($corePlan.delta_targets)|Sort-Object) ($expectedTargets|Sort-Object)).Count -eq 0) 'only the declared narrow harness targets'
  if($isAmendment){
   NoiseRepairRequire ($corePlan.compiled_source_commit -ceq $compiledCommit -and $corePlan.component_rebuilt -eq $false) 'maintenance plan retains compiled-source identity'
   foreach($property in $compiledPlan.PSObject.Properties){if($property.Name -cne 'source_commit'){NoiseRepairSameValue $corePlan.($property.Name) $property.Value ('unchanged compiled plan '+$property.Name)}}
@@ -239,11 +261,19 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  NoiseRepairRequire ($controls.schema -ceq 'pas.consumer-priority-tests.v1' -and $controls.assertions -eq 36 -and @($controls.checks).Count -eq 36 -and $controls.failed -eq 0 -and $controls.pass -eq $true -and @($controls.checks|Where-Object {$_.pass -ne $true}).Count -eq 0) 'all 36 consumer priority controls required'
  NoiseRepairRequire ($controls.device_operations -eq 0 -and $controls.device_endpoints -eq 0 -and $controls.live_ready -eq $false -and $controls.cost_qualification -eq $false) 'controlled harness regression scope'
  if(NoiseRepairProperty $controls 'real_time_qualification_issued'){NoiseRepairRequire ($controls.real_time_qualification_issued -eq $false) 'controls cannot grant real-time qualification'}
+ if($hasAffinity){
+  NoiseRepairAddInputs @($delta.affinity_controls_report)
+  NoiseRepairCheckNativeReceipt $delta.affinity_controls_receipt
+  $affinityControls=NoiseRepairReadBinding $delta.affinity_controls_report
+  NoiseRepairRequire ($affinityControls.schema -ceq 'pas.worker-affinity-tests.v1' -and $affinityControls.assertions -eq 65 -and @($affinityControls.checks).Count -eq 65 -and $affinityControls.failed -eq 0 -and $affinityControls.pass -eq $true -and @($affinityControls.checks|Where-Object {$_.pass -ne $true}).Count -eq 0) 'all worker affinity controls required'
+  NoiseRepairRequire ($affinityControls.device_operations -eq 0 -and $affinityControls.device_endpoints -eq 0 -and $affinityControls.live_ready -eq $false -and $affinityControls.cost_qualification -eq $false) 'affinity controls grant no cost or live qualification'
+ }
  $compilerEnvironment=NoiseRepairReadBinding $delta.compiler_environment
  NoiseRepairRequire ($delta.compiler_environment_reused -eq $true -and $compilerEnvironment.source_commit -ceq $baseCommit -and $compilerEnvironment.live_ready -eq $false -and $compilerEnvironment.device_operations -eq 0) 'compiler environment retained with original provenance'
  NoiseRepairAddInputs @($compilerEnvironment.environment,$compilerEnvironment.verification,$compilerEnvironment.state)
  NoiseRepairCheckNativeReceipt $compilerEnvironment.verification
  $declaredClosures=@($delta.configure_input_closure)+@($delta.build_input_closures)+@($delta.controls_input_closure)
+ if($hasAffinity){$declaredClosures+=@($delta.affinity_controls_input_closure)}
  foreach($entry in $declaredClosures){
   $closure=NoiseRepairReadBinding $entry
   NoiseRepairAddInputs @($entry)
@@ -261,18 +291,18 @@ function LoadNoiseRepairBuild([string]$bindingPath){
   if($baseFiles.ContainsKey($key)){NoiseRepairSameBinding $file $baseFiles[$key] 'reused runtime file'}
   else{
    $name=[IO.Path]::GetFileName($key)
-   NoiseRepairRequire ($name -in @('current_chain.exe','consumer_priority_controls.exe') -or [IO.Path]::GetExtension($key) -ceq '.dll') 'new runtime output outside declared harness/DLL set'
+   NoiseRepairRequire ($name -cin $newExecutables -or [IO.Path]::GetExtension($key) -ceq '.dll') 'new runtime output outside declared harness/DLL set'
    if([IO.Path]::GetExtension($key) -ceq '.dll'){
     $origins=@(@($base.files)+@($dependencies.files)|Where-Object {[IO.Path]::GetFileName($_.path) -ceq $name -and $_.bytes -eq $file.bytes -and $_.sha256 -ceq $file.sha256})
     NoiseRepairRequire ($origins.Count -gt 0) ('byte-identical original runtime DLL required '+$name)
    }
   }
  }
- foreach($name in @('current_chain.exe','consumer_priority_controls.exe','cost_analysis.exe','prelive_audit.exe','cost_comparison.exe','batch_check.exe')){
+ foreach($name in @($newExecutables)+@('cost_analysis.exe','prelive_audit.exe','cost_comparison.exe','batch_check.exe')){
   $files=@($delta.files|Where-Object {[IO.Path]::GetFileName($_.path) -ceq $name})
   NoiseRepairRequire ($files.Count -eq 1) ('one sealed executable '+$name)
   $key=[IO.Path]::GetFullPath($files[0].path)
-  if($name -in @('current_chain.exe','consumer_priority_controls.exe')){NoiseRepairRequire (-not $baseFiles.ContainsKey($key)) ('new harness output required '+$name)}
+  if($name -cin $newExecutables){NoiseRepairRequire (-not $baseFiles.ContainsKey($key)) ('new harness output required '+$name)}
   else{NoiseRepairRequire ($baseFiles.ContainsKey($key)) ('byte-identical original tool required '+$name)}
  }
  NoiseRepairRequire (@($delta.compiled_outputs).Count -gt 0) 'complete actual delta output bindings'
@@ -281,7 +311,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  # base compiler/cache products and the installed dependency tree are not.
  $runtimeDirectories=@($delta.files|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.exe'}|ForEach-Object {[IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($_.path))}|Sort-Object -Unique)
  foreach($file in $base.files|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.dll' -and [IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($_.path)) -in $runtimeDirectories}){NoiseRepairAddInputs @($file)}
- foreach($name in @('current_chain.exe','consumer_priority_controls.exe')){
+ foreach($name in $newExecutables){
   $sealed=@($delta.files|Where-Object {[IO.Path]::GetFileName($_.path) -ceq $name})[0]
   $compiled=@($delta.compiled_outputs|Where-Object {[string]::Equals($_.path,$sealed.path,[StringComparison]::OrdinalIgnoreCase)})
   NoiseRepairRequire ($compiled.Count -eq 1) ('one actual new compiled output '+$name)
@@ -291,16 +321,23 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $controlSpec=$script:noiseRepairSpecs[$controlVerification.stage]
  $controlBinary=@($delta.files|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'consumer_priority_controls.exe'})[0]
  NoiseRepairRequire ([string]::Equals($controlSpec.exe,$controlBinary.path,[StringComparison]::OrdinalIgnoreCase) -and @($controlSpec.argv|Where-Object {[string]::Equals($_,$delta.controls_report.path,[StringComparison]::OrdinalIgnoreCase)}).Count -eq 1) 'new controls binary/report native join'
+ if($hasAffinity){
+  $affinityVerification=NoiseRepairReadBinding $delta.affinity_controls_receipt
+  $affinitySpec=$script:noiseRepairSpecs[$affinityVerification.stage]
+  $affinityBinary=@($delta.files|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'worker_affinity_controls.exe'})[0]
+  NoiseRepairRequire ([string]::Equals($affinitySpec.exe,$affinityBinary.path,[StringComparison]::OrdinalIgnoreCase) -and @($affinitySpec.argv|Where-Object {[string]::Equals($_,$delta.affinity_controls_report.path,[StringComparison]::OrdinalIgnoreCase)}).Count -eq 1) 'affinity controls binary/report native join'
+ }
  $allObjects=@($delta.compiled_outputs|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.obj'})
- $deltaObjects=@($allObjects|Where-Object {$_.path.Replace('\','/') -cmatch '/CMakeFiles/(?:current_chain|consumer_priority_controls)[.]dir/'})
- NoiseRepairRequire ($deltaObjects.Count -eq 2 -and @($deltaObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'chain.cpp.obj'}).Count -eq 1 -and @($deltaObjects|Where-Object {[IO.Path]::GetFileName($_.path) -in @('consumer_priority_tests.cpp.obj','consumer_priority_controls.cpp.obj')}).Count -eq 1) 'only the two actual harness translation units'
+ $deltaObjects=@($allObjects|Where-Object {$_.path.Replace('\','/') -cmatch '/CMakeFiles/(?:current_chain|consumer_priority_controls|worker_affinity_controls)[.]dir/'})
+ NoiseRepairRequire ($deltaObjects.Count -eq $expectedTargets.Count -and @($deltaObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'chain.cpp.obj'}).Count -eq 1 -and @($deltaObjects|Where-Object {[IO.Path]::GetFileName($_.path) -in @('consumer_priority_tests.cpp.obj','consumer_priority_controls.cpp.obj')}).Count -eq 1 -and ((-not $hasAffinity) -or @($deltaObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'worker_affinity_tests.cpp.obj'}).Count -eq 1)) 'only declared actual harness translation units'
  foreach($object in $allObjects|Where-Object {$_ -notin $deltaObjects}){
   NoiseRepairRequire ($object.path.Replace('\','/') -cmatch '/(?:CompilerIdCXX/CMakeCXXCompilerId[.]obj|CMakeFiles/ShowIncludes/main[.]obj)$') 'unexpected new target/formal object'
  }
  $ninjaRows=@($delta.compiled_outputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'build.ninja'})
  NoiseRepairRequire ($ninjaRows.Count -eq 1) 'one actual delta Ninja plan'
  $compilerRows=@(Get-Content -LiteralPath $ninjaRows[0].path|ForEach-Object {$_.Replace('\','/')}|Where-Object {$_ -cmatch '^build .+: CXX_COMPILER'})
- NoiseRepairRequire ($compilerRows.Count -eq 2 -and @($compilerRows|Where-Object {$_ -cmatch '^build CMakeFiles/current_chain[.]dir/'}).Count -eq 1 -and @($compilerRows|Where-Object {$_ -cmatch '^build CMakeFiles/consumer_priority_controls[.]dir/'}).Count -eq 1) 'actual Ninja plan must compile only the two harness targets'
+ NoiseRepairRequire ($compilerRows.Count -eq $expectedTargets.Count) 'actual Ninja TU count'
+ foreach($target in $expectedTargets){$pattern='^build CMakeFiles/'+[regex]::Escape($target)+'[.]dir/';NoiseRepairRequire (@($compilerRows|Where-Object {$_ -cmatch $pattern}).Count -eq 1) ('one actual Ninja TU '+$target)}
  if(NoiseRepairProperty $delta 'additional_inputs'){NoiseRepairAddInputs @($delta.additional_inputs)}
  $oldProofs=@($inventory.cold)
  NoiseRepairRequire ($oldProofs.Count -eq 3 -and @(Compare-Object (@($oldProofs.mode)|Sort-Object) (@('release','debug','asan')|Sort-Object)).Count -eq 0) 'three preserved old configuration proofs'
@@ -353,6 +390,6 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $script:seal=@{files=@($delta.files)}
  $script:inputs=@($script:noiseRepairActiveInputs.Keys|Sort-Object -Unique)
  $script:noiseRepairBindingPin=$bindingPin
- $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment}
+ $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment;worker_affinity_required=$hasAffinity}
  $script:noiseRepairPrerequisites=@{source_commit=$baseCommit;scope='Previously passed scopes only; no new-source fresh/full qualification';release_tests=$oldTests;old_configuration_proofs=$oldProofs;compiler_archive_links=$archiveLinks;original_main32_inventory=$delta.original_main32_inventory;formal_source_byte_identical=$true;formal_rebuilt=$false;compiled_source_commit=$compiledCommit;controls_prerequisite_only=$isAmendment;component_rebuilt=(-not $isAmendment);maintenance_only_amendment=$isAmendment;whole_candidate_qualification=$false;live_ready=$false;device_operations=0}
 }

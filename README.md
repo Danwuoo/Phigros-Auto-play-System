@@ -5,7 +5,11 @@ integrity通過；normal三項原成本數值通過，AA12 validity亦全通過�
 capture-to-owner噪聲不足，ABBA未跑。原raw／913 source snapshot／37 native完整收據保留。
 依使用者最新指示，修補後不全盤重跑既有PASS，做必要新噪聲及未跑ABBA至emulator邊界，
 完成後先不開新thread；見[縮小重驗範圍](docs/research/live-readiness-20261007/NOISE_REPAIR_SCOPE_20261011.md)。
-冷consumer調度候選尚待實測，cost NOT_READY／live UNQUALIFIED；正式production binary不改。
+main36／執行來源`505ae43`、編譯來源`42a450c`的新AA12 validity全通過，noise仍12欄不足；
+ABBA未跑。main37／`156214a`有界A/B診斷通過，observer起訖core不同583/733及558/739；
+下一修補為可驗證還原的冷worker核心固定，成本NOT_READY／live UNQUALIFIED。
+同步補只讀base/delta收據join；最新指示須完成全部啟動實機前可完成的測試／開發，
+完成後停在emulator邊界、先不開新thread。正式production binary保持原來源。
 
 2026-10-10 main31／`afaa8f3` 三配置75組／完整圖3／3063 prefix／fault4通過，production
 normal Tap／Hold原raw與數值通過。normal Dense僅145張即`user_stop_aborted`，native2；

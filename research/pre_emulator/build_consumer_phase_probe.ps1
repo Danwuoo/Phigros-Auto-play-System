@@ -26,7 +26,7 @@ function VerifyProbeInputs {
  foreach($entry in @($sourceEntries)+@($staticInputs)+@($selectedDependencies)+@($profilePin,$basePin,$baseBuildPin,$baseBuild.source_manifest,$baseBuild.dependency_manifest,$baseZPin,$environmentPin)+@($environmentProof.environment,$environmentProof.verification,$environmentProof.state)){CheckEntry $entry}
 }
 function ProbeCandidateBytes {
- $roots=@(Get-ChildItem -LiteralPath (Join-Path $repo 'out') -Directory|Where-Object { $_.Name -match '^prelive-pre-emulator-(?:(?:release|debug|asan)-main[0-9]{2}|evaluation-main[0-9]{2}-(?:release|debug|asan)|fixture-repo-main[0-9]{2}(?:-(?:release|debug|asan))?|planning)$' -or $_.Name -match '^prelive-(?:noise-repair|consumer-phase-probe)-(?:evaluation-)?main[0-9]{2}$' })
+ $roots=@(Get-ChildItem -LiteralPath (Join-Path $repo 'out') -Directory|Where-Object { $_.Name -match '^prelive-pre-emulator-(?:(?:release|debug|asan)-main[0-9]{2}|evaluation-main[0-9]{2}-(?:release|debug|asan)|fixture-repo-main[0-9]{2}(?:-(?:release|debug|asan))?|planning)$' -or $_.Name -match '^prelive-(?:noise-repair|consumer-phase-probe|narrow-reader)-(?:evaluation-)?main[0-9]{2}$' })
  $bytes=[long](($roots|ForEach-Object {Get-ChildItem -LiteralPath $_.FullName -File -Recurse}|Measure-Object Length -Sum).Sum)
  if($bytes -gt 6442450944){throw 'unchanged aggregate candidate cap'}
  return $bytes
