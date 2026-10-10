@@ -96,6 +96,7 @@ foreach($scene in @('tap','hold','dense','invalid')){
  Native $stage (FindExecutable 'score_only_controls') @($scene,$controlRoot) @($inputs+$buildSeal+$seal.files.path) 900
  $report=Join-Path $controlRoot 'control-report.json';$r=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
  if(-not $r.pass -or $r.failed -ne 0 -or $r.device_operations -ne 0){throw 'literal score-only control failed'}
+ if(-not $r.keyboard_is_test_double -or -not $r.console_registration_is_test_double -or ($scene -ceq 'invalid' -and $r.controlled_stop_lifecycle_cases -ne 2)){throw 'controlled endpoint-free user input and both real stop-loop cleanup cases required'}
  if($r.instrumented_build -ne ($Mode -ceq 'asan') -or $r.real_time_qualification_issued){throw 'exact diagnostic instrumentation scope'}
  if($scene -cne 'invalid' -and $r.positive_down_required -ne ($Mode -cne 'asan' -and $scene -cne 'dense')){throw 'normal Tap/Hold positivity and diagnostic-only ASan scope'}
  $tests+=@(@{test=('score_only_'+$scene);report=(Binding $report);receipt=(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))})

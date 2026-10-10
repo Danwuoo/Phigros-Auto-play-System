@@ -3,6 +3,20 @@
 #include "research/windows_production_pipeline_v3/main.cpp"
 #undef main
 
+namespace cold {
+J score_profile(const fs::path& root){
+    return {{"schema",2},{"name","score-only cold boundary fixture"},{"serial","emulator-offline-cold"},
+            {"capture",{{"kind","emulator-grpc"},{"execution","thread"},{"transport","payload"},
+                {"image_format","rgb888"},{"row_order","top-down"},{"width",1280},{"height",720},
+                {"source_rotation",1},{"grpc_read_chunk_kib",256},{"max_relative_lag_ms",250}}},
+            {"touch",{{"kind","emulator-grpc"},{"width",720},{"height",1280},{"rotation_deg",90},
+                {"max_contacts",5},{"timeout_ms",100}}},
+            {"scheduler",{{"max_plans",128},{"max_steps",16},{"horizon_ms",350},{"evidence_max_age_ms",100}}},
+            {"game",{{"lead_ms",35},{"uncertainty_ms",30},{"enabled_types",J::array({"tap","hold","drag","flick"})}}},
+            {"preview",{{"hz",0}}},{"log_dir",(root/"forbidden-gameplay-archive").string()}};
+}
+}
+
 int main(int argc,char** argv){try{
     using namespace cold;
 #ifdef PAS_SCORE_ONLY_INSTRUMENTED
@@ -53,19 +67,40 @@ int main(int argc,char** argv){try{
         require(legacy_rejected&&state.preflights==0&&state.discoveries==0&&state.constructors==0,
             "no legacy fallback or endpoint I/O");
         report["invalid_requests_rejected_before_io"]=passed+1;
+        // Exercise both controlled stop inputs in the actual manual-session
+        // body, including capture cancellation, owner release and no archive.
+        // Invalid requests above still reject before any boundary I/O.
+        int stop_cases=0;
+        for(const bool console_stop:{false,true}){
+            state.scene="tap";state.requested=1000;state.cadence=20;
+            state.score_only_result_tail=true;state.cancelled=false;
+            state.touch_owner.reset();state.downs=state.moves=state.ups=state.releases=0;
+            state.released_contacts=state.contacts_final=0;
+            stop_boundary=StopBoundary{};
+            stop_boundary.escape_held=!console_stop;
+            stop_boundary.console_pending=console_stop;stop_boundary.console_event=CTRL_C_EVENT;
+            const auto stop_root=root/(console_stop?"controlled-console-stop":"controlled-escape-stop");
+            fs::create_directory(stop_root);const auto profile=stop_root/"profile.json";
+            save(profile,score_profile(stop_root));
+            pas::run_manual_session_impl(profile.string(),"endpoint-free-test-double",true,
+                600'000'000'000LL,false,false,true,pas::ManualVariant::current_candidate,
+                pas::SessionArchive::Persistence::none);
+            require(pas::manual_stop.load()&&state.cancelled&&stop_boundary.key_polls>0&&
+                stop_boundary.handler_adds==1&&stop_boundary.handler_removes==1&&
+                stop_boundary.handler==nullptr&&stop_boundary.console_deliveries==(console_stop?1u:0u),
+                "controlled Escape/console stop reaches real stop loop and unregisters handler");
+            require(state.contacts_final==0&&state.downs==state.ups+state.released_contacts&&
+                !fs::exists(stop_root/"forbidden-gameplay-archive"),
+                "controlled stop releases all admitted contacts and writes no gameplay files");
+            ++stop_cases;
+        }
+        report["controlled_stop_lifecycle_cases"]=stop_cases;
+        report["no_gameplay_files_created"]=true;
     }else{
         require(operation=="tap"||operation=="hold"||operation=="dense","fixed endpoint-free scene");
         state.scene=operation;state.requested=1000;state.cadence=20;state.score_only_result_tail=true;
         const auto profile=root/"profile.json";
-        J config={{"schema",2},{"name","score-only cold boundary fixture"},{"serial","emulator-offline-cold"},
-            {"capture",{{"kind","emulator-grpc"},{"execution","thread"},{"transport","payload"},
-                {"image_format","rgb888"},{"row_order","top-down"},{"width",1280},{"height",720},
-                {"source_rotation",1},{"grpc_read_chunk_kib",256},{"max_relative_lag_ms",250}}},
-            {"touch",{{"kind","emulator-grpc"},{"width",720},{"height",1280},{"rotation_deg",90},
-                {"max_contacts",5},{"timeout_ms",100}}},
-            {"scheduler",{{"max_plans",128},{"max_steps",16},{"horizon_ms",350},{"evidence_max_age_ms",100}}},
-            {"game",{{"lead_ms",35},{"uncertainty_ms",30},{"enabled_types",J::array({"tap","hold","drag","flick"})}}},
-            {"preview",{{"hz",0}}},{"log_dir",(root/"forbidden-gameplay-archive").string()}};
+        const auto config=score_profile(root);
         save(profile,config);
         pas::run_manual_session_impl(profile.string(),"endpoint-free-test-double",true,
             600'000'000'000LL,false,false,true,pas::ManualVariant::current_candidate,
@@ -95,6 +130,7 @@ int main(int argc,char** argv){try{
         }
         report["no_gameplay_files_created"]=true;report["literal_production_source_executed"]=true;
     }
+    report["keyboard_is_test_double"]=true;report["console_registration_is_test_double"]=true;
     report["whole_candidate_qualification_issued"]=false;
     report["pass"]=true;report["failed"]=0;save(root/"control-report.json",report);return 0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

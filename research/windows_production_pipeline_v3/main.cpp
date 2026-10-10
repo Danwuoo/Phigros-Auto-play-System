@@ -1,4 +1,16 @@
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include "cold_stop_boundary.hpp"
+// Compile the exact manual-session body with endpoint-free user-input
+// boundaries. No desktop key state or console registration enters this
+// fixture. A real external Ctrl+C can still terminate its console process;
+// such a native interruption remains a negative guard receipt.
+#define GetAsyncKeyState ::cold::controlled_key_state
+#define SetConsoleCtrlHandler ::cold::controlled_console_handler
 #include "frozen_manual_session.cpp"
+#undef SetConsoleCtrlHandler
+#undef GetAsyncKeyState
 #include "producer_wait.hpp"
 #include "tap_reset_workload.hpp"
 #include "streaming_workload.hpp"
@@ -7,7 +19,7 @@
 #include <psapi.h>
 #include <set>
 
-// These symbols replace only emulator boundaries in this test executable.
+// These symbols replace emulator boundaries in this test executable.
 // No pas_emulator.lib, discovery, ADB, channel creation or sendTouch is linked.
 namespace cold {
 using J=nlohmann::json;
@@ -109,6 +121,9 @@ int main(int argc,char** argv){try{
  // Same translation unit, exact production implementation. This test-only
  // wrapper and boundary symbols cannot grant a token to the production exe.
  pas::run_manual_session_impl(config_path.string(),"endpoint-free-test-double",true,0,false,false,true,pas::ManualVariant::current_candidate);
+ require(stop_boundary.key_polls>0&&stop_boundary.handler_adds==1&&stop_boundary.handler_removes==1&&
+     stop_boundary.handler==nullptr&&!stop_boundary.escape_held&&!stop_boundary.console_pending&&
+     stop_boundary.console_deliveries==0,"controlled cold user-input boundary and handler cleanup");
  std::vector<fs::path> dirs;for(const auto& e:fs::directory_iterator(root/"archive"))if(e.is_directory())dirs.push_back(e.path());require(dirs.size()==1,"one finite session");const auto session=dirs[0],round=session/"round-1";
  const auto summary=read(session/"summary.json"),round_summary=read(round/"summary.json");require(summary.at("state")=="STOPPED"&&round_summary.at("status")=="result_confirmed","synthetic result lifecycle must complete");
  std::map<std::uint64_t,pas::Nanoseconds> owner_started;std::set<std::uint64_t> returned;std::vector<double> observer,hook,owner_ms,capture_to_owner,packet_wait,late;std::uint64_t rows=0,bytes=0,decoded=0;
@@ -125,5 +140,8 @@ int main(int argc,char** argv){try{
  PROCESS_MEMORY_COUNTERS memory{};memory.cb=sizeof(memory);require(K32GetProcessMemoryInfo(GetCurrentProcess(),&memory,sizeof(memory))!=0,"OS peak RSS");
  J report={{"schema","pas.windows-production-pipeline-cold.v1"},{"scene",state.scene},{"requested",state.requested},{"warmup",256},{"measurement_attempts",state.requested-256},{"cadence_ms",state.cadence},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},{"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},{"public_entry_rejected",rejected},{"endpoint_free",true},{"preflight_is_test_double",true},{"capture_is_test_double",true},{"touch_is_test_double",true},{"production_packet_action_wake_archive_executed",true},{"real_capture_rpc_measured",false},{"device_operations",0},{"live_ready",false},{"archive_root",session.string()},{"summary",summary},{"round_summary",round_summary},{"owner_measurement_eligible",capture_to_owner.size()},{"owner_measurement_coverage",double(capture_to_owner.size())/(state.requested-256)},{"capture_to_owner_start_ms",dist(capture_to_owner)},{"packet_wait_ms",dist(packet_wait)},{"hook_ms",dist(hook)},{"owner_ms",dist(owner_ms)},{"measurement_phase_lateness_ms",dist(late)},{"down",state.downs},{"move",state.moves},{"up",state.ups},{"release_calls",state.releases},{"single_touch_owner",state.touch_owner.has_value()},{"full_journal_rows",rows},{"full_journal_bytes",bytes},{"full_journal_decoded_bytes",decoded},{"event_encoding","gzip-jsonl-v1"},{"rss_peak_os",memory.PeakWorkingSetSize},{"scope","literal production Packet/Wake/pool/perception/action/supervisor/SessionArchive; synthetic boundaries and result; no device or physical qualification"}};
  report["producer_priority_policy"]="synthetic capture thread only; NORMAL process class; scoped ABOVE_NORMAL; verified query/set/readback/restore";
+ report["keyboard_is_test_double"]=true;report["console_registration_is_test_double"]=true;
+ report["controlled_stop_key_polls"]=stop_boundary.key_polls;
+ report["controlled_console_stop_deliveries"]=stop_boundary.console_deliveries;
  save(root/"report.json",report);std::cout<<report.dump(2)<<'\n';return 0;
  }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

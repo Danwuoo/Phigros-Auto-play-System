@@ -1,5 +1,25 @@
 # 2026-10-09 一輪 IN 測試授權及冷修補
 
+2026-10-10 main31／`afaa8f3` fresh22 TUs、三配置各25組、writer20／auditor93、完整圖3、
+3063 prefix及fault4通過；production normal Tap／Hold完整raw與原數值通過。normal Dense
+native2／2.993s，僅145張、round `user_stop_aborted`，沒有report；guard identity／held／
+streams／active0皆正常。原件未分辨Escape或console stop，不能認定具體外部輸入；原完整
+raw、908 formal＋方向／guard共912份SHA snapshot及STOP見
+`out/prelive-pre-emulator-planning/main31-stage-inventory.json`。後六production、AA12／noise／
+ABBA36 NOT_RUN，cost NOT_READY／live UNQUALIFIED。先前ASan prelaunch容量STOP亦保留；
+12個歷史compiler roots逐entry ZIP讀回SHA、原件再核對後清理，回收3.08GiB，僅續跑同source
+原NOT_RUN三目標，不重測已完成資格，見`main31-asan-capacity-recovery32.json`。
+冷production／score-only／fault fixture新增有界可控keyboard／console-registration doubles，
+正式`src/manual_session.cpp`及其Escape／Ctrl+C停止行為不改，真實外部console終止仍記負結果。
+原8 invalid與實際Stop loop Escape／Ctrl+C兩種取消／釋放／無遊戲檔案回歸通過，原2560／20ms
+完整Dense及原raw auditor通過、診斷數值true；只屬組件，不授candidate／cost／physical資格。
+組件configure26 native1、compile27／28 native2與原來源／輸出保留；修正依賴及生成include後
+component29通過，見`out/prelive-pre-emulator-planning/cold-stop-prototype-29-result.json`。
+原完整archive／R2期限及coverage／RSS／容量不改。新整合仍fresh三配置與原全包，未啟動裝置；
+成功到emulator邊界才建立指定GPT-6.1 Sol／xhigh local main task，沿用Chapter Legacy IN一輪
+只記分數／整理後停止授權，新task取得當前裝置收據及完成validator後才觸控。
+
+
 2026-10-10 main30／`f6548e5` 三配置各25／完整圖3／3063 prefix／fault4通過，production
 normal三項完整raw及原數值、stress兩項與Debug Tap integrity通過。stress Dense已正常
 完成（123.951s），原mailbox overrun未重現；stress normal cost false照報。Debug Hold

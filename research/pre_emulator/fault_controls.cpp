@@ -1,4 +1,12 @@
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include "../windows_production_pipeline_v3/cold_stop_boundary.hpp"
+#define GetAsyncKeyState ::cold::controlled_key_state
+#define SetConsoleCtrlHandler ::cold::controlled_console_handler
 #include "frozen_manual_session.cpp"
+#undef SetConsoleCtrlHandler
+#undef GetAsyncKeyState
 #include "producer_wait.hpp"
 #include "tap_reset_workload.hpp"
 #include "streaming_workload.hpp"
@@ -109,6 +117,9 @@ int main(int argc,char** argv){try{
  J attempts=J::array();std::size_t produced=0;
  for(int i=0;i<state.requested;++i){const auto&a=state.attempts.at(std::size_t(i));const bool present=a.render_end!=0;produced+=present;attempts.push_back({{"attempt",i+1},{"due_ns",a.due},{"render_start_ns",a.render_start},{"render_end_ns",a.render_end},{"callback_return_ns",a.callback_return},{"produced",present},{"measurement",i>=256}});}
  save(root/"attempts.json",attempts);
- save(root/"report.json",{{"schema","pas.literal-production-boundary-controls.v1"},{"scenario",state.scenario},{"requested",1000},{"produced",produced},{"not_produced",1000-produced},{"warmup",256},{"measurement_attempts",744},{"cadence_ms",20},{"public_entry_rejected",closed},{"expected_fault",expected_fault},{"actual_threw",threw},{"actual_error",reason},{"summary",summary},{"down_attempts",state.downs},{"move_attempts",state.moves},{"up_attempts",state.ups},{"release_calls",state.releases},{"releases_before_rpc",state.releases_before_rpc},{"single_touch_owner",true},{"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},{"endpoint_free",true},{"device_operations",0},{"physical_qualification",false},{"cost_qualification",false},{"live_ready",false},{"scope","literal manual_session, supervisor, owner, wake and SessionArchive; fault injection only in boundary test doubles; all 1000 planned attempts retained"}});
+ require(stop_boundary.handler_adds==1&&stop_boundary.handler_removes==1&&stop_boundary.handler==nullptr&&
+     !stop_boundary.escape_held&&!stop_boundary.console_pending&&stop_boundary.console_deliveries==0,
+     "controlled cold stop inputs and handler cleanup");
+ save(root/"report.json",{{"schema","pas.literal-production-boundary-controls.v1"},{"scenario",state.scenario},{"requested",1000},{"produced",produced},{"not_produced",1000-produced},{"warmup",256},{"measurement_attempts",744},{"cadence_ms",20},{"public_entry_rejected",closed},{"expected_fault",expected_fault},{"actual_threw",threw},{"actual_error",reason},{"summary",summary},{"down_attempts",state.downs},{"move_attempts",state.moves},{"up_attempts",state.ups},{"release_calls",state.releases},{"releases_before_rpc",state.releases_before_rpc},{"single_touch_owner",true},{"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},{"keyboard_is_test_double",true},{"console_registration_is_test_double",true},{"controlled_stop_key_polls",stop_boundary.key_polls},{"endpoint_free",true},{"device_operations",0},{"physical_qualification",false},{"cost_qualification",false},{"live_ready",false},{"scope","literal manual_session, supervisor, owner, wake and SessionArchive; fault and user input only in endpoint-free boundary doubles; all 1000 planned attempts retained"}});
  std::cout<<state.scenario<<" literal boundary control PASS; live UNQUALIFIED\n";return 0;
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}

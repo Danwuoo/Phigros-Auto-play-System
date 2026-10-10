@@ -9,6 +9,8 @@ try{foreach($scenario in @('capture','writer','rpc','slow')){
  $activeScenario=$scenario;$activeStage=$stage;$phase='producer'
  Native $stage (Exe 'fault_controls') @($scenario,$root) $inputs 900
  $report=Join-Path $root 'report.json';$audit=Join-Path $artifact ($scenario+'-audit.json');$raw=@(Get-ChildItem -LiteralPath $root -File -Recurse|ForEach-Object FullName)
+ $phase='audit_check';$r=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
+ if(-not $r.keyboard_is_test_double -or -not $r.console_registration_is_test_double){throw 'controlled endpoint-free user input required'}
  $activeStage='audit-fault-pre-emulator-'+$Attempt+'-'+$scenario;$phase='auditor'
  Native $activeStage (Exe 'fault_audit') @($root,(Binding $report).sha256,$commit,$manual,$audit) @($inputs+$raw) 900
  $phase='audit_check'

@@ -1,5 +1,13 @@
 # Phigros Auto-play System
 
+2026-10-10 main31／`afaa8f3` 三配置75組／完整圖3／3063 prefix／fault4通過，production
+normal Tap／Hold原raw與數值通過。normal Dense僅145張即`user_stop_aborted`，native2；
+原件無Escape／console分支，原source／raw／STOP保留，後六production及AA/noise/ABBA未跑。
+冷fixture改用可控keyboard／console-registration邊界，正式Escape／Ctrl+C不變；原8 invalid、
+兩種真實Stop loop清理、完整2560 Dense及raw／診斷數值通過。組件不授資格，新整合仍須原
+完整驗證，cost NOT_READY／live UNQUALIFIED，尚未到emulator交接。見[工作包](research/pre_emulator/PLAN.md)。
+
+
 2026-10-10 冷驗證 main30／`f6548e5`：三配置75組／3063 prefix／fault4及production normal
 三項、stress兩項與Debug Tap通過。Stress Dense完整archive正常完成；Debug Hold auditor
 錯把中途已release後的contact重用當搶占。修補按原journal／QPC核對verified backend release，
