@@ -10,6 +10,7 @@
 #include "tap_reset_workload.hpp"
 #include "owner_wait.hpp"
 #include "producer_wait.hpp"
+#include "consumer_priority.hpp"
 #include "pas/journal.hpp"
 #include <algorithm>
 #include <atomic>
@@ -91,6 +92,9 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  // Producer remains independent: normal 20ms; slow/stress 8ms.
  const int cadence=scene=="slow"||n==10000?8:20;
  ProducerDeadlineWait producer_wait;
+ ConsumerPrioritySnapshot consumer_priority_snapshot;
+ WindowsConsumerPriorityApi consumer_priority_api;
+ ConsumerPriorityScope consumer_priority(consumer_priority_api,consumer_priority_snapshot);
  const auto due_epoch=clock.now_ns();
  const std::string generator=tap_streaming?std::string(tap_reset_workload::generator):streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB";
  if(!emit({{"event","producer_schedule"},{"epoch_ns",due_epoch},{"cadence_ms",cadence},{"requested",n},{"generator",generator}}))throw std::runtime_error("producer schedule Journal admission");
@@ -111,7 +115,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
   if(!supervisor_stopped&&(admission_failed||journal.faulted())){safe=false;stop="journal_admission_or_writer_fault";supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
   s.complete=clock.now_ns();if(consumed%100==0)peak_rss=std::max(peak_rss,rss());
  }
- producer.join();const auto counters=latest.counters();latest.close();const auto release_start=clock.now_ns();const bool released=rt.finish();const auto release_end=clock.now_ns();journal.close();const auto end=clock.now_ns();
+ producer.join();const auto counters=latest.counters();latest.close();const auto release_start=clock.now_ns();const bool released=rt.finish();const auto release_end=clock.now_ns();consumer_priority.close();journal.close();const auto end=clock.now_ns();
  std::vector<double> total,recognition,publish,render_times,producer_late,render_owner,render_publication;std::size_t producer_overruns=0,publication_overruns=0;J raw=J::array();std::size_t writer_ok=0,not_consumed=0;
  for(int i=1;i<=n;++i){const auto& s=samples[i];if(s.render_end){render_times.push_back((s.render_end-s.render_start)/1e6);producer_late.push_back((s.render_start-s.producer_due)/1e6);producer_overruns+=s.render_end>s.producer_due+Nanoseconds(cadence)*1'000'000;if(s.publication_return){render_publication.push_back((s.publication_return-s.render_start)/1e6);publication_overruns+=s.publication_return>s.producer_due+Nanoseconds(cadence)*1'000'000;}if(s.owned)render_owner.push_back((s.recognition-s.render_start)/1e6);}if(s.consumed){total.push_back((s.complete-s.capture)/1e6);recognition.push_back((s.recognition-s.capture)/1e6);publish.push_back((s.published-s.capture)/1e6);writer_ok+=s.writer;}else ++not_consumed;
   raw.push_back({{"attempt",i},{"producer_due_ns",s.producer_due},{"render_start_ns",s.render_start},{"render_end_ns",s.render_end},{"publication_return_ns",s.publication_return},{"capture",s.capture},{"published_ok",s.published_ok},{"consumed",s.consumed},{"owned",s.owned},{"published",s.published},{"owner_complete",s.recognition},{"journal_enqueue_complete",s.complete},{"observer_ns",s.observer},{"hook_ns",s.hook},{"owner_ns",s.owner},{"writer_ok",s.writer}});}
@@ -125,6 +129,8 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  result["owner_wait_policy"]="same_consumer_poll_before_wait; min(next_phase_or_expiry,10ms_watchdog); frame_arrival_wakes_early";
  result["producer_wait_policy"]="QPC absolute unchanged epoch/cadence; high-resolution waitable timer; ceil100ns; no coalescing; bounded wait; no fallback";
  result["producer_priority_policy"]="synthetic producer thread only; NORMAL process class; scoped ABOVE_NORMAL; verified query/set/readback/restore; same A/B policy";
+ result["consumer_priority_policy"]="cold consumer thread only; NORMAL process class; scoped ABOVE_NORMAL; explicit verified query/set/readback/restore; same A/B policy; writer unchanged";
+ result["consumer_priority"]={{"thread_id",consumer_priority_snapshot.thread_id},{"process_class",consumer_priority_snapshot.process_class},{"process_class_after_close",consumer_priority_snapshot.process_class_after_close},{"previous",consumer_priority_snapshot.previous},{"requested",consumer_priority_above_normal},{"applied_readback",consumer_priority_snapshot.applied_readback},{"restored_readback",consumer_priority_snapshot.restored_readback},{"applied",consumer_priority_snapshot.applied},{"restored",consumer_priority_snapshot.restored},{"verified",consumer_priority_snapshot.verified()},{"failure",consumer_priority_failure_name(consumer_priority_snapshot.failure)},{"rollback_failure",consumer_priority_failure_name(consumer_priority_snapshot.rollback_failure)},{"fallback_attempted",consumer_priority_snapshot.fallback_attempted}};
  result["phase_lateness_ms"]={{"down",distribution(phase_late[0])},{"move",distribution(phase_late[1])},{"up",distribution(phase_late[2])}};result["journal_admitted_bytes"]=journal.admitted_bytes();result["journal_records"]=journal.admitted_records();result["journal_admission_failed"]=admission_failed;result["supervisor_stopped"]=supervisor_stopped;result["final_release"]={{"requested",rt.final_release.requested_ids},{"failed",rt.final_release.failed_ids},{"unknown",rt.final_release.unknown_ids},{"start",rt.final_release.start_ns},{"return",rt.final_release.return_ns}};
  result["injection_ms"]=distribution(injection);result["all_phase_lateness_ms"]=distribution(late);result["evidence_to_injection_ms"]=distribution(evidence_to_injection);result["receipt_count"]=receipt_count;result["release_calls"]=release_calls;result["provenance"]=provenance;
  result["producer_epoch_ns"]=due_epoch;result["producer_render_ms"]=distribution(render_times);result["producer_schedule_lateness_ms"]=distribution(producer_late);result["render_start_to_owner_ms"]=distribution(render_owner);result["producer_deadline_overruns"]=producer_overruns;result["render_start_to_publication_return_ms"]=distribution(render_publication);result["publication_deadline_overruns"]=publication_overruns;
@@ -148,4 +154,5 @@ int main(int argc,char**argv){try{if(argc<4)throw std::runtime_error("usage pixe
  result["diagnostic_phase_profile_enabled"]=true;result["cost_qualification"]=false;
 #endif
  std::ofstream out(report);out<<result.dump(2)<<'\n';if(!out)return 2;std::cout<<result.at("schema")<<'\n';return result.value("release_verified",false)?0:1;
- }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}
+ }catch(const ConsumerPriorityError&e){std::cerr<<e.what()<<"; rollback="<<consumer_priority_failure_name(e.rollback_reason())<<'\n';return 2;}
+ catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}

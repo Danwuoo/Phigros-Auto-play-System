@@ -1,5 +1,12 @@
 # Phigros Auto-play System
 
+2026-10-11 main32／`aa9de3c` 三配置75組、完整圖3、prefix3063、fault4及production9
+integrity通過；normal三項原成本數值通過，AA12 validity亦全通過，但observer／
+capture-to-owner噪聲不足，ABBA未跑。原raw／913 source snapshot／37 native完整收據保留。
+依使用者最新指示，修補後不全盤重跑既有PASS，做必要新噪聲及未跑ABBA至emulator邊界，
+完成後先不開新thread；見[縮小重驗範圍](docs/research/live-readiness-20261007/NOISE_REPAIR_SCOPE_20261011.md)。
+冷consumer調度候選尚待實測，cost NOT_READY／live UNQUALIFIED；正式production binary不改。
+
 2026-10-10 main31／`afaa8f3` 三配置75組／完整圖3／3063 prefix／fault4通過，production
 normal Tap／Hold原raw與數值通過。normal Dense僅145張即`user_stop_aborted`，native2；
 原件無Escape／console分支，原source／raw／STOP保留，後六production及AA/noise/ABBA未跑。

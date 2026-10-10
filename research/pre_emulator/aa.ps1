@@ -1,12 +1,16 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12',[ValidatePattern('^[a-z0-9-]{1,16}$')][string]$Attempt='main12')
+param([ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12',[ValidatePattern('^[a-z0-9-]{1,16}$')][string]$Attempt='main12',[string]$NoiseRepairBinding='')
 . (Join-Path $PSScriptRoot 'common.ps1');$script:maintenancePath=$PSCommandPath
-LoadBuilds $BuildAttempt
+LoadBuilds $BuildAttempt $NoiseRepairBinding
 $prefixPath=Join-Path $repo ('out/prelive-pre-emulator-prefix-'+$Attempt+'/prefix-receipt.json')
+if($NoiseRepairBinding){$prefixPath=$noiseRepairBuild.original_inventory.prefix_receipt.path}
 $prefix=Get-Content -LiteralPath $prefixPath -Raw|ConvertFrom-Json
-if(-not $prefix.pass -or $prefix.source_commit -cne $commit -or $prefix.frames -ne 3063 -or $prefix.live_ready -or $prefix.device_operations -ne 0 -or $prefix.binary.path -cne (Exe 'current_chain')){throw 'same current full prefix required'}
+$prefixCommit=$commit;$prefixBinary=Exe 'current_chain'
+if($NoiseRepairBinding){$prefixCommit=$noiseRepairBuild.base_build.source_commit;$prefixBinary=@($noiseRepairBuild.base_build.files|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'current_chain.exe'})[0].path}
+if(-not $prefix.pass -or $prefix.source_commit -cne $prefixCommit -or $prefix.frames -ne 3063 -or $prefix.live_ready -or $prefix.device_operations -ne 0 -or $prefix.binary.path -cne $prefixBinary){throw 'exact source-bound functional prefix required'}
 foreach($b in @($prefix.source_manifest,$prefix.binary,$prefix.selection,$prefix.report,$prefix.audit,$prefix.producer_receipt,$prefix.auditor_receipt)){CheckEntry $b}
 $artifact=Join-Path $repo ('out/prelive-pre-emulator-aa-'+$Attempt);Fresh $artifact;[IO.Directory]::CreateDirectory($artifact)|Out-Null
 $environment=Join-Path $artifact 'environment.json'
+if(@(Get-Process cl,cmake,ninja -ErrorAction SilentlyContinue).Count){throw 'heavy builds must finish before cost'}
 NewJson $environment @{platform='windows-x64';time_utc=[DateTime]::UtcNow.ToString('o');os=[Environment]::OSVersion.VersionString;processor=@(Get-CimInstance Win32_Processor|Select-Object Name,NumberOfCores,NumberOfLogicalProcessors);memory_bytes=(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory;background_processes=@(Get-Process|Sort-Object Id|ForEach-Object {@{pid=$_.Id;name=$_.ProcessName;cpu_s=$_.CPU;working_set=$_.WorkingSet64}});source_commit=$commit;source_dirty=$false;configuration='Release';guard=(Binding $gate);tool_snapshot=(Binding $tool);heavy_builds_and_tests_running=$false}
 $oldRoot=Join-Path $repo 'out/retained/consolidation-20261008/worktrees/PAS-windows-readiness-20261007/out/prelive-aa-aa01'
 $old=Get-Content -LiteralPath (Join-Path $oldRoot 'campaign.json') -Raw|ConvertFrom-Json
@@ -22,6 +26,10 @@ $corpus=Join-Path $artifact 'corpus-r2.json';NewJson $corpus @{schema='pas.preli
 $manifest=Join-Path $artifact 'source-manifest.json';$inputs+=@(SourceManifest $manifest)
 $protocol=Join-Path $repo 'docs/research/zero-miss-20261006/windows/PRELIVE_COST_PROTOCOL_R2_20261007.md';if((Binding $protocol).sha256 -cne '0000ad66d05649ebc4f60570b58e9a9a4cb58f7e6629279e4d38a945c8d4c060'){throw 'unchanged R2 protocol'}
 $bindings=@();foreach($p in @(@('candidate_binary',(Exe 'current_chain')),@('analyzer_binary',(Exe 'cost_analysis')),@('auditor_binary',(Exe 'prelive_audit')),@('source_manifest',$manifest),@('profile',(Join-Path $repo 'configs/phigros-hd-assist-five-lead35.json')),@('cost_protocol',$protocol),@('corpus',$corpus),@('environment',$environment),@('process_guard',$gate),@('current_candidate_prefix',$prefixPath),@('maintenance_recipe',$PSCommandPath),@('measurement_prerequisites_plan',(Join-Path $PSScriptRoot 'PLAN.md')))){$b=Binding $p[1];$b.role=$p[0];$bindings+=@($b)}
+if($NoiseRepairBinding){
+ foreach($binding in $bindings){if($binding.role -ceq 'current_candidate_prefix'){$binding.role='base_functional_prefix'}}
+ $b=Binding $NoiseRepairBinding;$b.role='narrow_noise_repair_build';$bindings+=@($b)
+}
 $plans=@();foreach($scene in @('tap-closed-reset-v1','hold-closed-reset-v2','dense')){for($i=1;$i -le 4;$i++){$id=$Attempt+'-'+$scene+'-'+$i;$path=Join-Path $artifact ($id+'.json');Fresh $path;$plans+=@(@{run_id=$id;scene=$scene;mode='A';report_path=$path})}}
 $Campaign=Join-Path $artifact 'campaign.json'
 NewJson $Campaign @{schema='pas.current-rails-campaign-freeze.v2';id=('windows-aa-'+$Attempt);source_commit=$commit;configuration='Release';platform='windows-x64';requested=2560;warmup=256;measurement=2304;cadence_ms=20;scenes=@('tap-closed-reset-v1','hold-closed-reset-v2','dense');bindings=$bindings;planned_runs=$plans;protocol_modified=$false;protocol_revision='R2';old_STOP_resumed=$false;old_results_reused_as_new_runs=$false;live_ready=$false;device_operations=0}
@@ -37,6 +45,10 @@ try{
  for($i=0;$i -lt $plans.Count;$i++){
   $p=$plans[$i];$id=$p.run_id;$stage='pipeline-pre-emulator-'+$id;CostCapacity ('before-'+$id)
   Native $stage (Exe 'current_chain') @('pipeline','A',$p.scene,'2560',$Campaign,$id,$p.report_path) $inputs 900
+  if($NoiseRepairBinding){
+   $priority=(Get-Content -LiteralPath $p.report_path -Raw|ConvertFrom-Json).consumer_priority
+   if(-not $priority.verified -or -not $priority.applied -or -not $priority.restored -or $priority.requested -ne 1 -or $priority.applied_readback -ne 1 -or $priority.process_class -ne 32 -or $priority.process_class_after_close -ne 32 -or $priority.restored_readback -ne $priority.previous -or $priority.failure -cne 'none' -or $priority.rollback_failure -cne 'none' -or $priority.fallback_attempted){throw 'explicit consumer scheduling readback and restoration required'}
+  }
   $audit=Join-Path $artifact ($id+'-audit.json')
   Native ('audit-pre-emulator-'+$id) (Exe 'prelive_audit') @($p.report_path,$audit) @($inputs+$p.report_path+($p.report_path+'.attempts.json')+($p.report_path+'.journal.jsonl')) 900
   $entry=Binding $p.report_path;$entry.run_id=$id;$entry.scene=$p.scene;$entry.audit_path=$audit;$entry.audit_sha256=(Binding $audit).sha256;$entry.process_evidence=ProcessEvidence $stage;$runs+=@($entry)

@@ -1,5 +1,16 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
+# 2026-10-11 最新縮小重驗
+
+main32／aa9de3c的75冷組、完整圖3、3063 prefix、fault4及production9已通過；AA12
+validity全PASS但原noise不足、ABBA未跑。使用者要求修復後不全盤重跑，仍完成啟動前
+必要開發與未跑noise／ABBA；成功至需emulator處停止，先不要建立新thread。
+見[授權及base/delta身分](../../docs/research/live-readiness-20261007/NOISE_REPAIR_SCOPE_20261011.md)。
+只重新編譯必要cold consumer TU與36項priority控制，沿用原source-bound Release libs；
+新current_chain、原analyzer／auditor各自SHA綁定。正式src/include/pas及production binary
+不改；保留原負結果，完整AA12／noise／ABBA原gate不降。後文fresh全盤要求為先前包規則，
+本次以明確使用者縮小重驗指示為準。新delta不是新三配置whole或live資格。
+
 2026-10-10 main31／`afaa8f3` fresh22 TUs、三配置各25組、writer20／auditor93、完整圖3、
 3063 prefix及fault4通過；production normal Tap／Hold完整raw與原數值通過。normal Dense
 native2／2.993s，僅145張、round `user_stop_aborted`，沒有report；guard identity／held／

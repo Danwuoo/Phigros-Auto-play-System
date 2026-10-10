@@ -4,6 +4,14 @@
 
 ## 現行方向
 
+2026-10-11 使用者最新指示：修復後不全盤重跑既有通過測試，但仍完成實機啟動前所有
+必要開發及尚未跑的noise／ABBA。完成至需要emulator的邊界後停止，先不要建立新thread。
+詳見[縮小重驗授權](docs/research/live-readiness-20261007/NOISE_REPAIR_SCOPE_20261011.md)。
+main32／`aa9de3c` 三配置75組／圖3／prefix3063／fault4／production9通過，AA12 validity
+通過但noise不足、ABBA NOT_RUN；原source／raw／STOP及37個native完整索引保留。
+新cold harness修補用原Release正式libs＋新必要TUs，明列base/delta身分及既有PASS來源；
+不冒稱新三配置fresh、whole qualification或live admission。裝置授權沿用，這輪不操作裝置。
+
 2026-10-10 main31／`afaa8f3` fresh22 TUs、三配置各25組、writer20／auditor93、完整圖3、
 3063 prefix及fault4通過；production normal Tap／Hold完整raw與原數值通過。normal Dense
 native2／2.993s，僅145張、round `user_stop_aborted`，沒有report；guard identity／held／

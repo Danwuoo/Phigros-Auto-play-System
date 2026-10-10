@@ -13,7 +13,12 @@ foreach($name in @('NewJson','CheckEntry','Binding','Fresh','InputClosure','Chec
  if($name -ceq 'GateInputs'){$t=$t.Replace('pas.windows-offline-process-gate.v1','pas.windows-offline-process-gate.v3')}
  . ([scriptblock]::Create($t))
 }
-function LoadBuilds([string]$attempt){
+function LoadBuilds([string]$attempt,[string]$noiseRepairBinding=''){
+ if($noiseRepairBinding){
+  . (Join-Path $PSScriptRoot 'noise_repair_build.ps1')
+  LoadNoiseRepairBuild $noiseRepairBinding
+  return
+ }
  $script:builds=@();$script:tests=@();$script:inputs=@($script:maintenancePath,$recipe,(Join-Path $PSScriptRoot 'common.ps1'))
  foreach($mode in @('release','debug','asan')){
   $path=Join-Path $repo ('out/prelive-pre-emulator-evaluation-'+$attempt+'-'+$mode+'/evaluation.json')

@@ -1,6 +1,6 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12',[ValidatePattern('^[a-z0-9-]{1,16}$')][string]$Attempt='main12')
+param([ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12',[ValidatePattern('^[a-z0-9-]{1,16}$')][string]$Attempt='main12',[string]$NoiseRepairBinding='')
 . (Join-Path $PSScriptRoot 'common.ps1');$script:maintenancePath=$PSCommandPath
-LoadBuilds $BuildAttempt
+LoadBuilds $BuildAttempt $NoiseRepairBinding
 $aaRoot=Join-Path $repo ('out/prelive-pre-emulator-aa-'+$Attempt)
 $aaInput=Join-Path $aaRoot 'aa-input.json';$noisePath=Join-Path $aaRoot 'noise-freeze.json';$aaCampaign=Join-Path $aaRoot 'campaign.json'
 $noise=Get-Content -LiteralPath $noisePath -Raw|ConvertFrom-Json;$aa=Get-Content -LiteralPath $aaInput -Raw|ConvertFrom-Json
@@ -23,6 +23,10 @@ $Operation='pipeline';$runs=@();$statuses=@();$batchRows=@();$stopped=$false;$re
 try{for($i=0;$i -lt $plans.Count;$i++){
  $p=$plans[$i];$id=$p.run_id;$stage='pipeline-abba-pre-emulator-'+$id
  Native $stage (Exe 'current_chain') @('pipeline',$p.mode,$p.scene,'2560',$Campaign,$id,$p.report_path) $inputs 900
+ if($NoiseRepairBinding){
+  $priority=(Get-Content -LiteralPath $p.report_path -Raw|ConvertFrom-Json).consumer_priority
+  if(-not $priority.verified -or -not $priority.applied -or -not $priority.restored -or $priority.requested -ne 1 -or $priority.applied_readback -ne 1 -or $priority.process_class -ne 32 -or $priority.process_class_after_close -ne 32 -or $priority.restored_readback -ne $priority.previous -or $priority.failure -cne 'none' -or $priority.rollback_failure -cne 'none' -or $priority.fallback_attempted){throw 'same A/B consumer scheduling readback and restoration required'}
+ }
  $audit=Join-Path $artifact ($id+'-audit.json');$raw=@($p.report_path,($p.report_path+'.attempts.json'),($p.report_path+'.journal.jsonl'))
  Native ('audit-abba-pre-emulator-'+$id) (Exe 'prelive_audit') @($p.report_path,$audit) @($inputs+$raw) 900
  $e=Binding $p.report_path;$e.run_id=$id;$e.scene=$p.scene;$e.audit_path=$audit;$e.audit_sha256=(Binding $audit).sha256;$e.process_evidence=ProcessEvidence $stage;$runs+=@($e)
