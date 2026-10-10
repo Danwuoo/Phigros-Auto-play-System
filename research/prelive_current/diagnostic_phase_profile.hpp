@@ -1,4 +1,5 @@
 #pragma once
+#include "diagnostic_processor.hpp"
 #include "pas/core.hpp"
 #include <array>
 #include <nlohmann/json.hpp>
@@ -14,6 +15,7 @@
 namespace pas::diagnostic_phase {
 struct ThreadSample {
  std::optional<std::uint64_t> cpu_ns,cycles;
+ ProcessorSample processor;
  static ThreadSample read() {
   ThreadSample s;
 #ifdef _WIN32
@@ -24,10 +26,11 @@ struct ThreadSample {
   }
   ULONG64 c=0;if(QueryThreadCycleTime(GetCurrentThread(),&c))s.cycles=c;
 #endif
+  s.processor=ProcessorSample::read();
   return s;
  }
 };
-struct Row {std::string_view name;Nanoseconds wall_ns=0;std::optional<std::uint64_t> cpu_ns,cycles;};
+struct Row {std::string_view name;Nanoseconds wall_ns=0;std::optional<std::uint64_t> cpu_ns,cycles;ProcessorSample processor_begin,processor_end;};
 // Explicitly diagnostic-only. Fixed nine scalar rows, no pixels, leases, plan
 // history, policy inputs, CPU-to-wall conversion, or cost qualification.
 class Profile final {
@@ -39,11 +42,11 @@ public:
  template<class F> void run(std::string_view name,F&& work){
   if(!enabled){work();return;}if(count_==rows_.size())throw std::runtime_error("diagnostic phase bound");
   HostClock wall;const auto start=wall.now_ns();const auto a=ThreadSample::read();work();const auto b=ThreadSample::read();
-  rows_[count_++]={name,wall.now_ns()-start,delta(a.cpu_ns,b.cpu_ns),delta(a.cycles,b.cycles)};
+  rows_[count_++]={name,wall.now_ns()-start,delta(a.cpu_ns,b.cpu_ns),delta(a.cycles,b.cycles),a.processor,b.processor};
  }
  nlohmann::json json() const {
-  auto rows=nlohmann::json::array();for(std::size_t i=0;i<count_;++i){const auto&r=rows_[i];rows.push_back({{"phase",r.name},{"wall_qpc_ns",r.wall_ns},{"thread_kernel_user_ns",r.cpu_ns?nlohmann::json(*r.cpu_ns):nlohmann::json(nullptr)},{"thread_cycles",r.cycles?nlohmann::json(*r.cycles):nlohmann::json(nullptr)}});}
-  return {{"schema","pas.diagnostic-phase-profile.v1"},{"enabled",enabled},{"source_frame",frame_},{"rows",rows},{"row_cap",9},{"cpu_domain","Windows GetThreadTimes kernel+user, 100ns units; quantization not measured"},{"cycles_domain","Windows QueryThreadCycleTime; cycles are not nanoseconds"},{"cost_qualification",false},{"device_operations",0}};
+  auto rows=nlohmann::json::array();for(std::size_t i=0;i<count_;++i){const auto&r=rows_[i];rows.push_back({{"phase",r.name},{"wall_qpc_ns",r.wall_ns},{"thread_kernel_user_ns",r.cpu_ns?nlohmann::json(*r.cpu_ns):nlohmann::json(nullptr)},{"thread_cycles",r.cycles?nlohmann::json(*r.cycles):nlohmann::json(nullptr)},{"processor_begin",r.processor_begin.json()},{"processor_end",r.processor_end.json()}});}
+  return {{"schema","pas.diagnostic-phase-profile.v2"},{"enabled",enabled},{"source_frame",frame_},{"rows",rows},{"row_cap",9},{"cpu_domain","Windows GetThreadTimes kernel+user, 100ns units; quantization not measured"},{"cycles_domain","Windows QueryThreadCycleTime; cycles are not nanoseconds"},{"processor_domain","GetCurrentProcessorNumberEx raw group/number at each sampling endpoint; matching endpoints do not exclude intermediate migration"},{"wall_cpu_difference_is_not_exact_off_cpu_time",true},{"cost_qualification",false},{"device_operations",0}};
  }
 };
 }

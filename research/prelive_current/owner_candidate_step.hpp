@@ -99,7 +99,7 @@ public:
   if(candidate){diagnostic_profile.run("hook_evaluate",[&]{last=hook.evaluate(f,batch,s,ledger,clock_.now_ns(),&checkpoint);});accepted+=last.accepted;unknown+=last.unknown;
    for(std::size_t k=0;k<last.count;++k){terminals+=last.support[k].terminal;bodies+=last.support[k].body;}filtered=last.filtered;evaluation_outcome=last.outcome;
    if(last.interrupted)return fail("candidate_evaluate",last.outcome);
-  }else{const auto e=current_execution::evaluate(*baseline,f,batch,s,ledger,clock_.now_ns(),&checkpoint);evaluation_outcome=e.outcome;if(e.interrupted)return fail("baseline_evaluate",e.outcome);accepted+=e.allowed;filtered=e.filtered;if(e.input.valid&&!e.source_expired&&ledger.valid())for(const auto&t:s.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&ledger.permits_current_target(t.note_id)){filtered.targets.push_back(t);++accepted;}}
+  }else{bool interrupted=false;diagnostic_profile.run("hook_evaluate",[&]{const auto e=current_execution::evaluate(*baseline,f,batch,s,ledger,clock_.now_ns(),&checkpoint);evaluation_outcome=e.outcome;if(e.interrupted){interrupted=true;return;}accepted+=e.allowed;filtered=e.filtered;if(e.input.valid&&!e.source_expired&&ledger.valid())for(const auto&t:s.targets)if((t.note.kind==NoteKind::drag||t.note.kind==NoteKind::flick)&&ledger.permits_current_target(t.note_id)){filtered.targets.push_back(t);++accepted;}});if(interrupted)return fail("baseline_evaluate",evaluation_outcome);}
   if(blocked())return fail("after_evaluate",failure_cause());
   hook_compute=meter.now_ns()-t0;
   if(snapshot_output){std::optional<DiagnosticSnapshot> row;

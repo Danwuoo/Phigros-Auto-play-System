@@ -59,7 +59,7 @@ std::array<std::vector<std::uint8_t>,12> stimulus(std::string_view scene){std::a
 struct Sample {Nanoseconds capture=0,published=0,recognition=0,complete=0,observer=0,hook=0,owner=0,producer_due=0,render_start=0,render_end=0,publication_return=0;bool published_ok=false,consumed=false,owned=false,writer=false;};
 J pipeline(std::string mode,std::string scene,int n,const std::string& report,const J& provenance=nullptr){
 #ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
- if(mode!="B"||scene!="dense"||n!=1000)throw std::runtime_error("diagnostic phase scope: B dense 1000 only");
+ if((mode!="A"&&mode!="B")||scene!="dense"||n!=1000)throw std::runtime_error("diagnostic phase scope: A/B dense 1000 only");
 #endif
  if(n<1000||n>10000||(mode!="A"&&mode!="B")||(scene!="tap"&&scene!=tap_reset_workload::scene&&scene!="hold"&&scene!=streaming_workload::scene&&scene!="dense"&&scene!="slow"&&scene!="writer"&&scene!="rpc"&&scene!="fault"))throw std::runtime_error("pipeline bounds");
  const bool tap_streaming=scene==tap_reset_workload::scene;
@@ -68,6 +68,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  std::vector<std::uint8_t> generated(streaming?streaming_workload::bytes:0);HostClock clock;LatestFrame latest(1280,720,3,&clock);Runtime rt(clock);
 #ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
  rt.step.diagnostic_profile.enabled=true;
+ const auto processor_topology=diagnostic_phase::processor_topology().json();
 #endif
  const bool compressed_stress=n==10000;const int writer_capacity=scene=="writer"?2:8192;Journal journal(report+(compressed_stress?".journal.jsonl.gz":".journal.jsonl"),writer_capacity,[&]{if(scene=="writer")std::this_thread::sleep_for(std::chrono::milliseconds(30));},compressed_stress?Journal::Encoding::gzip:Journal::Encoding::plain);
  std::vector<Sample> samples(n+1);std::atomic<bool> done=false;std::atomic<int> publish_attempts=0;
@@ -135,10 +136,16 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  result["injection_ms"]=distribution(injection);result["all_phase_lateness_ms"]=distribution(late);result["evidence_to_injection_ms"]=distribution(evidence_to_injection);result["receipt_count"]=receipt_count;result["release_calls"]=release_calls;result["provenance"]=provenance;
  result["producer_epoch_ns"]=due_epoch;result["producer_render_ms"]=distribution(render_times);result["producer_schedule_lateness_ms"]=distribution(producer_late);result["render_start_to_owner_ms"]=distribution(render_owner);result["producer_deadline_overruns"]=producer_overruns;result["render_start_to_publication_return_ms"]=distribution(render_publication);result["publication_deadline_overruns"]=publication_overruns;
  result["renderer_storage_bytes"]=streaming?streaming_workload::bytes:12*streaming_workload::bytes;result["generator"]=generator;result["render_timing_scope"]="render start/end separately measured; capture_complete is end of synthetic render; render_start_to_owner includes render; no real capture/RPC qualification";
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ result["processor_topology"]=processor_topology;
+#endif
  return result;
 }
 }
 int main(int argc,char**argv){try{if(argc<4)throw std::runtime_error("usage pixels selection report OR pipeline A/B scene n report");const std::string report=argv[argc-1];reserve_fresh_offline_report(report);J result;
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ if(argc!=6||std::string_view(argv[1])!="pipeline")throw std::runtime_error("standalone diagnostic pipeline only; no campaign qualification");
+#endif
  if(std::string_view(argv[1])=="pixels"&&argc==4)result=pixels(argv[2],report);else if(std::string_view(argv[1])=="pipeline"&&argc==6)result=pipeline(argv[2],argv[3],std::stoi(argv[4]),report);
  else if(std::string_view(argv[1])=="pipeline"&&argc==8){
   FILETIME created{},exited{},kernel{},user{};if(!GetProcessTimes(GetCurrentProcess(),&created,&exited,&kernel,&user))throw std::runtime_error("producer process time");

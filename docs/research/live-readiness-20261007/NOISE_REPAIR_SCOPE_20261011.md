@@ -70,3 +70,26 @@ gRPC Release／Debug library為655596174至2515648002 bytes，超過原256MiB單
 不提高原hash、freeze或closure上限。純維護修正沿用已通過相同C++ component bytes、
 compile source與controls收據，另列新execution source／maintenance amendment；
 不重新編相同TU，也不冒稱新source fresh compile或重用舊producer作新AA測量。
+
+main36 執行來源 `505ae43`、compiled source `42a450c`，沿用 main35 chain SHA
+`fc7c040c4673899b4a237a5917eb734e5c13c088923843a65d49de0ddf9d5a89`。
+全12筆新 AA 的 producer／auditor／gate validity通過，producer／publication overrun0，
+consumer priority 12/12 readback與explicit restore通過；noise native／runner／verification0，
+80.103942秒自然退出。原公式18欄獨立重算一致：observer與capture-to-owner p95／p99
+仍12欄inadequate，owner六欄adequate。noise READY=false、comparison=false，ABBA NOT_RUN；
+不把單一priority變更當已解決。全915 codefiles先逐bytes複製／SHA核對保存於
+`out/prelive-pre-emulator-planning/source-505ae43-noise-snapshot/snapshot.json`。
+
+main36失敗noise的12份journal共2013879133 bytes，逐entry讀回SHA及原件再次核對後，
+保存於56923317-byte ZIP：
+`out/retained/consolidation-20261008/inactive-noise-raw-archive36/original-journals.zip`；
+同目錄proof保存原path／bytes／SHA。原report、attempts、audit、noise數值與STOP保持；
+完整舊raw reader需先還原原path。保留48GiB上限，未刪除payload。
+
+下一個有界診斷只以A／B各一次dense1000補原九段wall／thread CPU／cycles及
+GetCurrentProcessorNumberEx begin/end；每process一次64KiB／256 LP上限的
+RelationProcessorCore topology保存原group／number／EfficiencyClass。
+只fresh編譯chain與summary兩TU，五個原library不持有Profile並逐SHA核對重用。
+端點相同不證明中途未遷移，wall−CPU不是精確off-CPU，cycles不換算QPC；
+不猜P/E編號，不改affinity／CPU sets。此診斷cost qualification=false，不能代替AA／ABBA。
+最新使用者再確認須完成所有啟動實機前可完成的測試／開發；仍不開新thread或emulator。
