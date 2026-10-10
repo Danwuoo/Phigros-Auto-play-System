@@ -1,0 +1,258 @@
+{
+  "aa_validity_pass": 12,
+  "build": {
+    "sha256": "c69890192a4c0564affda5efd4b91a7184de7d3dd9de0c97c06850d3b54617f4",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-evaluation-main39\\build-binding.json",
+    "bytes": 27519
+  },
+  "reader_repair": "Close input-leaf/freeze recursive expansion; keep native 8192-file cap and reader SHA/denominator checks",
+  "source_snapshot": {
+    "sha256": "63e6b2cb20015445b7062138d1d548542e4a434f57ec2778f62a0319d3bb3267",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\source-f28643c-main39-snapshot\\snapshot.json",
+    "bytes": 576886
+  },
+  "reader_post_noise": "PRELAUNCH_METADATA_EXPANSION_CAP_STOP",
+  "create_new_thread": false,
+  "qualification_issued": false,
+  "schema": "pas.narrow-noise-negative-result.v1",
+  "aa_status": {
+    "sha256": "df800533a9b5f8a32503fb31629512727b64ada3e1274179db6adfe561028784",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main39\\status.json",
+    "bytes": 43917
+  },
+  "abba": "NOT_RUN",
+  "noise_rows": {
+    "dense": {
+      "adequate": false,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 19.801109999999923,
+          "adequate": false,
+          "d": 9.900554999999962,
+          "values": [
+            30.615499999999955,
+            20.714944999999993,
+            25.040935000000008,
+            29.842559999999995
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 13.712715999999944,
+          "adequate": false,
+          "d": 6.856357999999972,
+          "values": [
+            44.093924,
+            37.23756600000003,
+            37.99418000000002,
+            42.284288000000025
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 4.621359999999978,
+          "adequate": false,
+          "d": 2.310679999999989,
+          "values": [
+            11.135799999999996,
+            9.566944999999997,
+            10.337340000000008,
+            12.648019999999997
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 13.862825999999934,
+          "adequate": false,
+          "d": 6.931412999999967,
+          "values": [
+            27.79860000000001,
+            20.867187000000044,
+            21.96216900000001,
+            25.92891600000003
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0012349999999999913,
+          "values": [
+            0.007,
+            0.0063,
+            0.006465000000000009,
+            0.0077
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.006727000000000042,
+          "values": [
+            0.02094400000000005,
+            0.014217000000000007,
+            0.0177170000000001,
+            0.023428000000000067
+          ]
+        }
+      }
+    },
+    "hold-closed-reset-v2": {
+      "adequate": false,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 13.973309999999998,
+          "adequate": false,
+          "d": 6.986654999999999,
+          "values": [
+            16.657400000000006,
+            14.488339999999996,
+            23.537884999999996,
+            16.551229999999997
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 28.513214000000033,
+          "adequate": false,
+          "d": 14.256607000000017,
+          "values": [
+            32.521595999999995,
+            18.26498899999998,
+            35.745504000000075,
+            34.83789599999997
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 2.443739999999991,
+          "adequate": false,
+          "d": 1.2218699999999956,
+          "values": [
+            8.0825,
+            9.304369999999995,
+            11.430719999999999,
+            10.236949999999991
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 12.76561199999999,
+          "adequate": false,
+          "d": 6.382805999999995,
+          "values": [
+            19.505099999999985,
+            13.12229399999999,
+            24.75376100000004,
+            20.329145999999994
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0016200000000000728,
+          "values": [
+            0.0322,
+            0.03368499999999999,
+            0.0368,
+            0.03517999999999993
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.004180999999999997,
+          "values": [
+            0.043515999999999985,
+            0.04769699999999998,
+            0.0521420000000001,
+            0.04918399999999992
+          ]
+        }
+      }
+    },
+    "tap-closed-reset-v1": {
+      "adequate": false,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 15.777180000000001,
+          "adequate": false,
+          "d": 7.888590000000001,
+          "values": [
+            20.039939999999994,
+            12.151349999999994,
+            11.190665,
+            11.871779999999996
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 27.85762800000022,
+          "adequate": false,
+          "d": 13.92881400000011,
+          "values": [
+            35.249288000000014,
+            21.320473999999905,
+            20.340498999999898,
+            23.571125
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 4.276739999999993,
+          "adequate": false,
+          "d": 2.1383699999999966,
+          "values": [
+            6.419209999999996,
+            4.2808399999999995,
+            4.198229999999994,
+            4.014264999999997
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 9.813100000000151,
+          "adequate": false,
+          "d": 4.906550000000076,
+          "values": [
+            15.98738000000003,
+            11.080829999999954,
+            10.49781899999993,
+            13.245799999999969
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0037249999999999558,
+          "values": [
+            0.013209999999999946,
+            0.00948499999999999,
+            0.009194999999999981,
+            0.00958499999999999
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.011629000000000132,
+          "values": [
+            0.05601100000000001,
+            0.04438199999999988,
+            0.04739499999999989,
+            0.04419399999999996
+          ]
+        }
+      }
+    }
+  },
+  "owner_adequate": 6,
+  "dense3_warmup_overruns": {
+    "publication": 2,
+    "original_zero_deadline_gate": "streaming Tap/Hold only; dense preloaded original gate unchanged",
+    "producer": 1
+  },
+  "cost_ready": false,
+  "noise": {
+    "sha256": "80d8a513774557caf8c8255794833a3ec0ae1b7d4869cfc3c223e42576eac531",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main39\\noise-freeze.json",
+    "bytes": 10476
+  },
+  "candidate_sha256": "747e27ff67756a36432da51f144fb6f961b1eeb848539a84aabe585f437b93bb",
+  "device_operations": 0,
+  "original_r2_unchanged": true,
+  "live_ready": false,
+  "source_commit": "f28643c646c9ba5637e6b91f8cd4f5753dc225f8",
+  "cold75_or_production9_rerun": false,
+  "observer_capture_to_owner_inadequate": 12
+}

@@ -26,6 +26,16 @@ reader仍兩TUs／34controls；原75／production9不全盤重跑，原R2及正�
 讀取current device/profile/physical實際收據及live啟用接線依需emulator的階段完成，
 這輪先完成其餘所有能冷完成的開發／測試，不建立新thread。
 
+main39／`f28643c`四必要TUs、36／65／43 controls與reader34及實際pre-cost joins通過；
+新AA12 validity全PASS，Tap／Hold producer及publication超期0。原noise 12項不足／owner6
+通過，ABBA NOT_RUN；dense3 warmup producer1／publication2照報，原R2零超期gate僅
+streaming Tap／Hold，未放寬dense原gate。完整負結果及923 source snapshot保留。
+下一候選只把最高raw class每core最低LP選位改成排序末兩個，consumer較低／producer較高，
+仍由有界OS查詢決定，不硬編LP12／14、不聲稱CPU0根因；A/B同policy且65 controls不減。
+只讀post-noise runner在native前因遞迴導入舊freeze／closure leaf中metadata超8192而STOP；
+下一runner封存leaf／freeze本身、不遞迴其歷史file list，reader仍SHA核對、完整denominator
+及before/after joins。原8192上限不改，原75／production9不重跑。
+
 2026-10-10 main31／`afaa8f3` fresh22 TUs、三配置各25組、writer20／auditor93、完整圖3、
 3063 prefix及fault4通過；production normal Tap／Hold完整raw與原數值通過。normal Dense
 native2／2.993s，僅145張、round `user_stop_aborted`，沒有report；guard identity／held／

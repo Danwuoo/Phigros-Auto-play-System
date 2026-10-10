@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main39')
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main40')
 $ErrorActionPreference='Stop'
 # The source and process helpers are shared; LoadBuilds is deliberately unused.
 # main32's Debug/ASan compiler roots are archived, and none is a delta donor.
@@ -164,7 +164,7 @@ $dependencySelection=Join-Path $artifact 'selected-dependency-manifest.json'
 NewJson $dependencySelection @{schema='pas.narrow-noise-repair-dependency-selection.v1';source_commit=$commit;original_dependency_manifest=$baseBuild.dependency_manifest;original_dependency_source_commit=$baseCommit;complete_original_preflight_verified=$dependencyPreflightVerified;complete_original_preflight_files=$dependencies.files.Count;files=$selectedDependencies;selection='Actual nlohmann-json and zlib headers/configuration/import/runtime files only';device_operations=0;live_ready=$false}
 $targets=@('current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')
 $translationUnitSources=@('research/prelive_current/chain.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/tests/worker_affinity_tests.cpp','research/prelive_current/tests/producer_wait_tests.cpp')
-$workerPlacementPolicy='single-group highest raw EfficiencyClass two distinct physical cores, lowest LP per core; consumer first, producer second; exact restore'
+$workerPlacementPolicy='single-group highest raw EfficiencyClass; last two distinct physical cores by ascending lowest LP per core; consumer lower, producer higher; exact restore'
 $corePlan=Join-Path $artifact 'narrow-core-build-plan.json'
 NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';formal_rebuilt=$false;delta_targets=$targets;translation_units=4;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;producer_wait_controls_count=43;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1'

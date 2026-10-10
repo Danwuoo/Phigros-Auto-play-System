@@ -24,10 +24,10 @@ struct Api {
 };
 template<class F> bool rejects(F&& work,Failure reason,Failure rollback=Failure::none){try{work();}catch(const WorkerAffinityError& error){return error.reason()==reason&&error.rollback_reason()==rollback;}catch(...){return false;}return false;}
 void placement_controls(Tests& t){
- {Api api;const auto p=make_worker_placement(api);t.check("highest_class_separate_cores_each_lowest_lp",p.valid()&&p.efficiency_class==1&&p.consumer_core==0&&p.producer_core==2&&p.consumer_number==0&&p.producer_number==4&&p.consumer_mask==1&&p.producer_mask==0x10&&api.topology_reads==1);}
- {Api api;api.core_data.cores[0].efficiency_class=255;api.core_data.cores[2].efficiency_class=255;const auto p=make_worker_placement(api);t.check("raw_class_is_not_hardcoded_to_p_or_e",p.valid()&&p.efficiency_class==255);}
- {Api api;for(auto& core:api.core_data.cores)core.efficiency_class=0;const auto p=make_worker_placement(api);t.check("homogeneous_zero_class_still_two_physical_cores",p.valid()&&p.efficiency_class==0&&p.consumer_mask==1&&p.producer_mask==4);}
- {Api api;std::swap(api.core_data.cores[0],api.core_data.cores[3]);const auto p=make_worker_placement(api);t.check("record_order_does_not_change_lowest_lp_roles",p.valid()&&p.consumer_mask==1&&p.producer_mask==0x10&&p.consumer_core==3);}
+ {Api api;const auto p=make_worker_placement(api);t.check("highest_class_last_two_cores_each_lowest_lp",p.valid()&&p.efficiency_class==1&&p.consumer_core==2&&p.producer_core==3&&p.consumer_number==4&&p.producer_number==6&&p.consumer_mask==0x10&&p.producer_mask==0x40&&api.topology_reads==1);}
+ {Api api;api.core_data.cores[0].efficiency_class=255;api.core_data.cores[2].efficiency_class=255;const auto p=make_worker_placement(api);t.check("raw_class_two_cores_keep_lp_zero_no_number_sentinel",p.valid()&&p.efficiency_class==255&&p.consumer_core==0&&p.producer_core==2&&p.consumer_number==0&&p.producer_number==4&&p.consumer_mask==1&&p.producer_mask==0x10);}
+ {Api api;for(auto& core:api.core_data.cores)core.efficiency_class=0;const auto p=make_worker_placement(api);t.check("homogeneous_zero_class_last_two_physical_cores",p.valid()&&p.efficiency_class==0&&p.consumer_core==2&&p.producer_core==3&&p.consumer_mask==0x10&&p.producer_mask==0x40);}
+ {Api api;std::swap(api.core_data.cores[0],api.core_data.cores[3]);const auto p=make_worker_placement(api);t.check("record_order_does_not_change_last_two_lowest_lp_roles",p.valid()&&p.consumer_mask==0x10&&p.producer_mask==0x40&&p.consumer_core==2&&p.producer_core==0);}
  {Api api;api.process=0;t.check("plan_process_query_failure_before_topology",make_worker_placement(api).failure==Failure::process_query&&api.topology_reads==0);}
  {Api api;api.process=0x80;t.check("plan_normal_process_required_no_mutation",make_worker_placement(api).failure==Failure::normal_process_required&&api.sets==0);}
  {Api api;api.groups=0;t.check("plan_group_query_failure",make_worker_placement(api).failure==Failure::group_query&&api.topology_reads==0);}
@@ -45,7 +45,7 @@ void placement_controls(Tests& t){
  {Api api;api.core_data.cores[2].group=1;t.check("foreign_topology_group_rejected",make_worker_placement(api).failure==Failure::topology_group);}
  {Api api;api.core_data.cores[2].efficiency_class=0;api.core_data.cores[3].efficiency_class=0;t.check("one_highest_core_cannot_use_sibling_or_lower_class",make_worker_placement(api).failure==Failure::two_highest_class_cores_required);}
  {Api api;api.process_mask=0xc3;t.check("selected_lp_outside_process_no_other_core_fallback",make_worker_placement(api).failure==Failure::requested_mask_not_in_process);}
- {Api api;api.process_mask=0xfe;t.check("excluded_lowest_lp_no_sibling_fallback",make_worker_placement(api).failure==Failure::requested_mask_not_in_process);}
+ {Api api;api.process_mask=0xef;t.check("excluded_selected_lowest_lp_no_sibling_fallback",make_worker_placement(api).failure==Failure::requested_mask_not_in_process);}
 }
 void scope_controls(Tests& t){
  static_assert(std::is_trivially_copyable_v<WorkerAffinitySnapshot>);static_assert(sizeof(WorkerAffinitySnapshot)<=192);

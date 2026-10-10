@@ -7,9 +7,11 @@ capture-to-owner噪聲不足，ABBA未跑。原raw／913 source snapshot／37 na
 完成後先不開新thread；見[縮小重驗範圍](docs/research/live-readiness-20261007/NOISE_REPAIR_SCOPE_20261011.md)。
 main36／執行來源`505ae43`、編譯來源`42a450c`的新AA12 validity全通過，noise仍12欄不足；
 ABBA未跑。main37／`156214a`有界A/B診斷通過，observer起訖core不同583/733及558/739；
-main38／`b37516d`核心固定控制65與reader34通過；首筆Tap原gate因producer1／publication2
-超期未通過，原負結果保存。下一修補為producer有界20ms QPC active tail及43項deadline
-控制，仍需原AA／noise／未跑ABBA，成本NOT_READY／live UNQUALIFIED。
+main39／`f28643c`四必要TUs、priority36／affinity65／deadline43及reader34通過。
+新AA12 validity全PASS，streaming Tap／Hold producer與publication超期0；noise仍12欄不足，
+owner六欄通過，ABBA未跑；見[負結果](docs/research/live-readiness-20261007/MAIN39_NOISE_NEGATIVE_20261011.json)。
+下一候選只將最高raw class選位改為按每core最低LP排序的末兩core；不改原R2或門檻。
+仍需新AA／noise及未跑ABBA，成本NOT_READY／live UNQUALIFIED。
 同步補只讀base/delta收據join；最新指示須完成全部啟動實機前可完成的測試／開發，
 完成後停在emulator邊界、先不開新thread。正式production binary保持原來源。
 

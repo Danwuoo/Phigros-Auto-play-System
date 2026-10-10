@@ -71,8 +71,9 @@ struct PlacementPlan {
   std::has_single_bit(producer_mask)&&consumer_mask!=producer_mask&&consumer_core!=producer_core;}
 };
 // Policy reads bounded OS facts, never a diagnostic JSON or gameplay history.
-// Choose the two lowest logical IDs among distinct cores in the highest raw
-// EfficiencyClass; each core contributes its own lowest LP. No lower-class,
+// Choose the last two distinct cores ordered by each core's lowest LP in the
+// highest raw EfficiencyClass; consumer takes the lower, producer the higher.
+// Each core contributes its own lowest LP. No lower-class,
 // sibling-LP or process-mask fallback. Core numbers are OS snapshot ordinals.
 template<class Api> PlacementPlan make_worker_placement(Api& api) noexcept {
  PlacementPlan plan;const auto reject=[&](WorkerAffinityFailure reason){plan.failure=reason;return plan;};
@@ -95,13 +96,13 @@ template<class Api> PlacementPlan make_worker_placement(Api& api) noexcept {
   if(core.efficiency_class>highest)highest=core.efficiency_class;
  }
  if(all!=plan.system_mask)return reject(WorkerAffinityFailure::topology_incomplete);
- std::array<std::size_t,2> selected{topology.count,topology.count};std::array<unsigned,2> numbers{64,64};
+ std::array<std::size_t,2> selected{topology.count,topology.count};std::array<unsigned,2> numbers{0,0};
  for(std::size_t i=0;i<topology.count;++i){const auto& core=topology.cores[i];if(core.efficiency_class!=highest)continue;
   const auto number=static_cast<unsigned>(std::countr_zero(core.mask));
-  if(number<numbers[0]){numbers[1]=numbers[0];selected[1]=selected[0];numbers[0]=number;selected[0]=i;}
-  else if(number<numbers[1]){numbers[1]=number;selected[1]=i;}
+  if(selected[1]==topology.count||number>numbers[1]){numbers[0]=numbers[1];selected[0]=selected[1];numbers[1]=number;selected[1]=i;}
+  else if(selected[0]==topology.count||number>numbers[0]){numbers[0]=number;selected[0]=i;}
  }
- if(selected[1]==topology.count)return reject(WorkerAffinityFailure::two_highest_class_cores_required);
+ if(selected[0]==topology.count)return reject(WorkerAffinityFailure::two_highest_class_cores_required);
  plan.efficiency_class=static_cast<std::uint8_t>(highest);
  plan.consumer_core=static_cast<std::uint16_t>(selected[0]);plan.producer_core=static_cast<std::uint16_t>(selected[1]);
  plan.consumer_number=static_cast<std::uint8_t>(numbers[0]);plan.producer_number=static_cast<std::uint8_t>(numbers[1]);

@@ -137,3 +137,28 @@ attempt1573開始晚18.4794ms，render尚餘0.6206ms、publication超0.6023ms。
 不重設due、不fallback。CPU負載增加照實保留，這是候選修補，不是noise／cost資格。
 原22＋新21 producer controls共43，fresh必要四TUs；reader仍fresh2TUs／34controls。
 所有原R2、正式source／five libraries、容量及停止門檻不改；不重跑75／production9。
+
+main39／`f28643c646c9ba5637e6b91f8cd4f5753dc225f8` fresh4 TUs，priority36／affinity65／
+deadline43全native通過；reader fresh2 TUs／34 controls及actual pre-cost base/delta joins通過。
+chain SHA `747e27ff67756a36432da51f144fb6f961b1eeb848539a84aabe585f437b93bb`。
+AA12 validity全PASS，Tap／Hold producer／publication超期0；dense3 warmup producer1／
+publication2照報，原R2零超期限制本來只適用streaming Tap／Hold，dense不加新資格。
+noise native／runner／verification0，78.3014071秒自然退出、active0；18項公式獨立核對一致，
+observer／capture-to-owner十二項inadequate、owner六項adequate，ABBA NOT_RUN。
+詳見[18項原值與來源索引](MAIN39_NOISE_NEGATIVE_20261011.json)，923 source files已逐SHA
+保存於`out/prelive-pre-emulator-planning/source-f28643c-main39-snapshot/snapshot.json`。
+
+此候選實際consumer LP0／producer LP10，12/12 placement及兩scope readback／restore正常；
+Tap／Dense尾端成本較main36高，不能證明CPU0根因或末兩core必較好。下一候選只改highest
+raw class各core最低LP排序末兩個，consumer較低／producer較高；generic bounded OS policy，
+不讀diagnostic JSON、不硬編12／14，不修改priority／active-tail或原R2，不在同binary重測挑好值。
+必要fresh4 TUs與36／65／43 controls不變；新AA／noise通過後才執行原未跑ABBA36。
+
+post-noise readonly runner在native前因遞迴導入歷史closure leaf／freeze的file lists超8192
+冷STOP，沒有reader數值。修補只封存這些metadata本身並停止展開它們的歷史file list；
+reader仍核對各metadata SHA／完整葉denominator及before/after closure，不提高8192 cap。
+
+main39十二份inactive raw journal共2002144786 bytes，逐entry decoded SHA與原件再核對後，
+lossless保存為56583392-byte ZIP及原path／SHA proof：
+`out/retained/consolidation-20261008/inactive-noise-raw-archive39/original-journals.zip`。
+報告／attempts／noise／STOP均不改；只刪核對後未壓縮副本，完整重讀先restore原path。
