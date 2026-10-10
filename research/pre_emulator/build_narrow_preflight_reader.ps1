@@ -1,5 +1,5 @@
 param([Parameter(Mandatory)][string]$BaseBinding,
-      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main42')
+      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main44')
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'common.ps1')
 $script:maintenancePath=$PSCommandPath
@@ -143,7 +143,7 @@ $controlsStage='test-prelive-narrow-reader-'+$Attempt+'-controls'
 $Operation='tests'
 Native $controlsStage $controlsPin.path @($controlsReport) @($inputs+$files.path+$outputs.path+$configureReceipt.path+$configureClosure.path+$buildReceipt.path+$buildClosure.path) 900
 $report=Get-Content -LiteralPath $controlsReport -Raw|ConvertFrom-Json
-if($report.schema -cne 'pas.qualification-reader-controls.v1' -or $report.failed -ne 0 -or $report.cases_count -ne 40 -or $report.cases.Count -ne 40 -or @($report.cases|Where-Object {$_.pass -ne $true}).Count -or $report.qualification_issued -ne $false -or $report.live_ready -ne $false -or $report.device_operations -ne 0){throw 'all 40 original and narrow preflight reader controls required without qualification'}
+if($report.schema -cne 'pas.qualification-reader-controls.v1' -or $report.failed -ne 0 -or $report.cases_count -ne 46 -or $report.cases.Count -ne 46 -or @($report.cases|Where-Object {$_.pass -ne $true}).Count -or $report.qualification_issued -ne $false -or $report.live_ready -ne $false -or $report.device_operations -ne 0){throw 'all 46 original and narrow preflight reader controls required without qualification'}
 $controlsReceipt=Binding (Join-Path $out ($controlsStage+'/'+$controlsStage+'-verification.json'))
 $controlsClosure=ReaderClosure $controlsStage
 foreach($entry in $outputs){CheckEntry $entry}

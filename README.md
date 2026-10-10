@@ -14,9 +14,13 @@ main40／`f40fecf`末兩core候選的前兩Tap通過，第三Tap producer／publ
 負結果與923 source snapshot保留，後九筆及noise／ABBA未跑。
 main41／`7057be7` producer HIGHEST候選的AA12 validity全PASS、producer／publication全部零超期；
 noise 8／18 adequate、10不足，ABBA未跑，actual reader已重核原前置／新build／AA與18公式。
-下一候選只將consumer thread改為HIGHEST(2)，producer仍2，process仍NORMAL；
-不改原R2、due／cadence、active tail、末兩core選位或門檻，政策由source／controls／plan精確綁定。
-仍需新AA／noise及未跑ABBA，成本NOT_READY／live UNQUALIFIED。
+main42／`96c8c2a` consumer HIGHEST候選的AA12 validity全PASS、producer／publication全部零超期；
+noise仍12欄不足／owner6 adequate，actual reader核對base／delta／AA及18公式全吻合。
+main43／`ba1aaa6`同923 source pins的有界A/B分階段診斷通過，measurement各744；
+observer／hook仍主要成本，全部phase起訖端點一致，CPU量化未量測，不能精確推算off-CPU。
+下一候選只把producer固定active tail由20ms縮至2ms，保留consumer／producer HIGHEST(2)、
+NORMAL process、generic末兩core、absolute due／20ms cadence與原R2；減少整週期忙等，
+實際timer／CPU及噪聲效果仍須新AA／noise與未跑ABBA驗證，成本NOT_READY／live UNQUALIFIED。
 同步補只讀base/delta收據join；最新指示須完成全部啟動實機前可完成的測試／開發，
 完成後停在emulator邊界、先不開新thread。正式production binary保持原來源。
 

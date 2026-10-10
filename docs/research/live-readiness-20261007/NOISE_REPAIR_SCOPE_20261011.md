@@ -209,3 +209,31 @@ AA／ABBA與readonly reader每run按唯一policy核requested/readback及原resto
 main41十二份inactive raw journal共2003731386 bytes，逐entry decoded SHA及原件再核對後，
 lossless保存為56583098-byte ZIP與原path／SHA proof於`inactive-noise-raw-archive41`；
 reports／attempts／noise／STOP不改，只刪已核未壓縮副本，完整重讀須restore原path。
+
+main42／`96c8c2a4b465c041d9117faa8140b9361c0beeae` fresh4 TUs／36／65／43 controls及
+reader fresh2 TUs／40 controls通過；AA12 validity全PASS，producer／publication皆12筆零超期。
+noise native／runner／verification0、73.3545193秒自然退出，但observer／capture-to-owner
+12欄不足，owner六欄adequate，ABBA NOT_RUN。actual reader base／prefix3063／fault4／
+production9／delta／AA／final bytes全PASS、18公式重算吻合，files6835／338912560 bytes，
+正確NOT_READY。source923 snapshot與完整18值見[負結果](MAIN42_NOISE_NEGATIVE_20261011.json)。
+十二份inactive journal共2006924437 bytes，逐entry decoded SHA與原件再核對後，lossless
+封存為56664238-byte ZIP與proof於`inactive-noise-raw-archive42`，完整重讀須restore原path。
+
+main43／`ba1aaa6f3b66db9620e57560e9110387c1d4fc8c`只新增負結果文件，923 code pins與main42
+source snapshot完全一致。既有兩TU的A/B dense1000診斷／兩summary全部native0，measurement
+各744，full owned998／1000，九phase起訖端點皆一致。observer wall sum3672.216／4934.045ms、
+CPU sum3046.875／4187.5ms；hook wall3021.018／4697.656ms、CPU2375／3859.375ms。
+CPU取樣呈15.625ms階梯但量化未獨立量測，不能逐frame相減當off-CPU，cycles不轉QPC；
+診斷不作AA／ABBA資格，見[來源及完整summary索引](MAIN43_PHASE_DIAGNOSTIC_20261011.json)。
+
+下一候選只有producer固定active tail20ms→2ms。20ms cadence下，前次publication至下一due
+不超20ms，所以舊20ms tail常態整周期忙等；這是程式结构，不是已測得熱／OS根因。新2ms
+尾以同high-resolution timer等至due−2ms，保留ceil100ns、4早醒、QPC與pause／2^24 poll界。
+consumer／producer仍HIGHEST(2)、process NORMAL32、generic末兩core與writer不變；原due、
+全部2560 attempts／20ms cadence、R2及門檻不改。新plan／controls／實際compile joins精確綁定
+2ms，舊20ms只許已保存來源配對，不新增任意range fallback。原22＋active21共43 controls
+保留並修訂必要時間期待；真正timer超期仍由新AA／noise原gate照報，不在同binary挑好值。
+Reader新增六項2ms／兩exact legacy／缺欄位／混配／類型／錯run控制，共46項，兩TU不變。
+兩份main43 inactive diagnostic journal共378832511 bytes，逐decoded SHA核對後封存為
+11306658-byte ZIP與proof於`inactive-noise-raw-archive43-repair`。首次helper因ZIP count仍為12
+而在刪除前STOP，原件全保留；該11MB未簽收ZIP另留於`inactive-noise-raw-archive43`，不當正式proof。

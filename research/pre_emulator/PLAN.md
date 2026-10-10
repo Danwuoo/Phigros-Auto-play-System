@@ -2,6 +2,16 @@
 
 # 2026-10-11 最新縮小重驗
 
+main42／`96c8c2a` consumer HIGHEST(2)候選AA12 validity全PASS、producer／publication各12筆零超期，
+noise 12不足／owner6 adequate、ABBA NOT_RUN；actual reader base／delta／AA／18公式及final bytes
+全核對，source snapshot與原負結果保留。main43／`ba1aaa6`同923 source pins的兩TU有界診斷
+通過，A/B measurement各744、九phase端點全一致；主要成本仍observer／hook，CPU量化未量測。
+下一候選只改固定producer active tail20ms→2ms，不改兩thread HIGHEST(2)、NORMAL32、
+generic末兩core／原due與20ms cadence／2560嘗試／4早醒／poll硬界或R2。kernel只等至due−2ms，
+tail繼續QPC／pause；精確plan／controls／compile source綁定新2ms與封存舊20ms。先完成必要
+四TUs與43 deadline controls、兩TU reader／46 controls及實際base/delta核對，再新AA／noise及未跑ABBA。
+不以同binary重複挑好值，不重跑原75／production9；完成所有冷工作後停在emulator邊界。
+
 main32／aa9de3c的75冷組、完整圖3、3063 prefix、fault4及production9已通過；AA12
 validity全PASS但原noise不足、ABBA未跑。使用者要求修復後不全盤重跑，仍完成啟動前
 必要開發與未跑noise／ABBA；成功至需emulator處停止，先不要建立新thread。

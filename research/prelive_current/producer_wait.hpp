@@ -44,9 +44,9 @@ void wait_producer_deadline(const Clock& clock, Nanoseconds deadline, Wait&& wai
  }
  if(clock.now_ns()<deadline)throw std::runtime_error("producer repeated early wake");
 }
-inline constexpr Nanoseconds producer_active_tail_ns=20'000'000;
+inline constexpr Nanoseconds producer_active_tail_ns=2'000'000;
 inline constexpr std::uint32_t producer_active_tail_poll_cap=1u<<24;
-// Fixed, symmetric A/B candidate: sleep only outside the original 20ms tail.
+// Fixed, symmetric A/B candidate: sleep only outside the 2ms active tail.
 // The active tail uses QPC and processor pause, with no OS sleep/yield or due
 // reset. Its additional CPU cost and any actual late return remain measurable.
 template<class Wait,class Pause>

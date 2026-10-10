@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main42')
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main44')
 $ErrorActionPreference='Stop'
 # The source and process helpers are shared; LoadBuilds is deliberately unused.
 # main32's Debug/ASan compiler roots are archived, and none is a delta donor.
@@ -166,7 +166,7 @@ $targets=@('current_chain','consumer_priority_controls','worker_affinity_control
 $translationUnitSources=@('research/prelive_current/chain.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/tests/worker_affinity_tests.cpp','research/prelive_current/tests/producer_wait_tests.cpp')
 $workerPlacementPolicy='single-group highest raw EfficiencyClass; last two distinct physical cores by ascending lowest LP per core; consumer lower, producer higher; exact restore'
 $corePlan=Join-Path $artifact 'narrow-core-build-plan.json'
-NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';formal_rebuilt=$false;delta_targets=$targets;translation_units=4;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;producer_priority_policy='synthetic producer thread only; HIGHEST(2); consumer HIGHEST(2); NORMAL process class(32); scoped query/set/readback/restore; same A/B policy';consumer_priority_requested=2;producer_wait_controls_count=43;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
+NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';formal_rebuilt=$false;delta_targets=$targets;translation_units=4;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;producer_priority_policy='synthetic producer thread only; HIGHEST(2); consumer HIGHEST(2); NORMAL process class(32); scoped query/set/readback/restore; same A/B policy';consumer_priority_requested=2;producer_active_tail_ns=2000000;producer_wait_controls_count=43;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1'
 $toolchain='C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake'
 $guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
@@ -223,7 +223,7 @@ $waitStage='test-prelive-noise-repair-'+$Attempt+'-producer-wait-tests'
 AssertCurrentSource;AssertBaseUnchanged
 Native $waitStage $waitControls @($waitReport) @($inputs+$runtimeFiles.path+$compiledOutputs.path+$configureReceipt.path+$buildReceipts.path+$configureClosure.path+$buildClosures.path+$controlsReport+$controlsReceipt.path+$controlsClosure.path+$affinityReport+$affinityReceipt.path+$affinityClosure.path) 900
 $waitValue=Get-Content -LiteralPath $waitReport -Raw|ConvertFrom-Json
-if($waitValue.schema -cne 'pas.producer-deadline-wait-tests.v1' -or $waitValue.pass -ne $true -or $waitValue.failed -ne 0 -or $waitValue.assertions -ne 43 -or $waitValue.checks.Count -ne 43 -or @($waitValue.checks|Where-Object {$_.pass -ne $true}).Count -or $waitValue.active_tail_ns -ne 20000000 -or $waitValue.active_tail_poll_cap -ne 16777216 -or $waitValue.device_operations -ne 0 -or $waitValue.device_endpoints -ne 0 -or $waitValue.cost_qualification -ne $false -or $waitValue.live_ready -ne $false){throw 'all 43 bounded producer wait controls required without qualification'}
+if($waitValue.schema -cne 'pas.producer-deadline-wait-tests.v1' -or $waitValue.pass -ne $true -or $waitValue.failed -ne 0 -or $waitValue.assertions -ne 43 -or $waitValue.checks.Count -ne 43 -or @($waitValue.checks|Where-Object {$_.pass -ne $true}).Count -or ($waitValue.active_tail_ns -isnot [long] -and $waitValue.active_tail_ns -isnot [int]) -or $waitValue.active_tail_ns -ne 2000000 -or $waitValue.active_tail_poll_cap -ne 16777216 -or $waitValue.device_operations -ne 0 -or $waitValue.device_endpoints -ne 0 -or $waitValue.cost_qualification -ne $false -or $waitValue.live_ready -ne $false){throw 'all 43 bounded 2ms producer wait controls required without qualification'}
 $waitReceipt=Binding (Join-Path $out ($waitStage+'/'+$waitStage+'-verification.json'))
 $waitClosure=ClosurePin $waitStage
 foreach($entry in $compiledOutputs){CheckEntry $entry}

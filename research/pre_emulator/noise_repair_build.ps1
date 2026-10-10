@@ -59,6 +59,20 @@ function NoiseRepairConsumerPriorityPolicy($plan,$controls,$header,$tests){
  NoiseRepairRequire ($hasPlan -and $hasControls -and ($plan.consumer_priority_requested -is [int] -or $plan.consumer_priority_requested -is [long]) -and ($controls.consumer_priority_requested -is [int] -or $controls.consumer_priority_requested -is [long]) -and $plan.consumer_priority_requested -eq 2 -and $controls.consumer_priority_requested -eq 2 -and -not $legacyHeader -and -not $legacyTests) 'new consumer policy requires integer HIGHEST(2) plan/controls and new compiled header/tests'
  return 2
 }
+function NoiseRepairProducerActiveTailPolicy($plan,$controls,$header,$tests){
+ $hasPlan=NoiseRepairProperty $plan 'producer_active_tail_ns'
+ $legacyHeader1=$header.bytes -eq 4804 -and $header.sha256 -ceq '9e9700107d4f07301ef302351fa645cb705a57b1e049f4166eb70604a116ddc2'
+ $legacyTests1=$tests.bytes -eq 12026 -and $tests.sha256 -ceq 'ee3b63b9787b21ebe27bdc3e7b32e571c9a3dd1e7532f5ac1951d8e8932ff7a6'
+ $legacyHeader2=$header.bytes -eq 4998 -and $header.sha256 -ceq 'ee2f57c862d0543a5c6855cd43f4a8aeab157b96bc706acf85b6c5a004595c38'
+ $legacyTests2=$tests.bytes -eq 12056 -and $tests.sha256 -ceq 'ffb5f56676b0e0ef23e92b1a1ffe071cbbe644568c5d660d2a8479ff2ddeb058'
+ NoiseRepairRequire ((NoiseRepairProperty $controls 'active_tail_ns') -and ($controls.active_tail_ns -is [int] -or $controls.active_tail_ns -is [long]) -and $controls.active_tail_poll_cap -eq 16777216) 'producer controls declare integer active-tail and unchanged poll cap'
+ if(-not $hasPlan){
+  NoiseRepairRequire ($controls.active_tail_ns -eq 20000000 -and (($legacyHeader1 -and $legacyTests1) -or ($legacyHeader2 -and $legacyTests2))) 'missing producer tail plan requires exact paired legacy 20ms compiled header/tests'
+  return 20000000
+ }
+ NoiseRepairRequire (($plan.producer_active_tail_ns -is [int] -or $plan.producer_active_tail_ns -is [long]) -and $plan.producer_active_tail_ns -eq 2000000 -and $controls.active_tail_ns -eq 2000000 -and -not $legacyHeader1 -and -not $legacyHeader2 -and -not $legacyTests1 -and -not $legacyTests2) 'new producer tail requires integer 2ms plan/controls and new compiled header/tests'
+ return 2000000
+}
 function NoiseRepairRequireNativeInputs($receipt,$entries){
  $verification=NoiseRepairReadBinding $receipt
  NoiseRepairRequire ($script:noiseRepairSpecs.ContainsKey($verification.stage)) 'consumer policy native stage already verified'
@@ -119,6 +133,11 @@ function NoiseRepairAllowedChange([string]$relative){
  return $false
 }
 function script:NoiseRepairVerifyWorkerPlacement($report){
+ if($script:noiseRepairBuild.producer_wait_required){
+  if($report.PSObject.Properties.Name -ccontains 'producer_active_tail_ns'){
+   NoiseRepairRequire (($report.producer_active_tail_ns -is [int] -or $report.producer_active_tail_ns -is [long]) -and $report.producer_active_tail_ns -eq $script:noiseRepairBuild.producer_active_tail_ns) 'actual producer active-tail must equal compiled integer policy'
+  }else{NoiseRepairRequire ($script:noiseRepairBuild.producer_active_tail_ns -eq 20000000) 'missing runtime producer active-tail only permitted for identified legacy 20ms build'}
+ }
  if(-not $script:noiseRepairBuild.worker_affinity_required){return}
  $p=$report.worker_placement
  NoiseRepairRequire ($p.schema -ceq 'pas.cold-worker-placement.v1' -and $p.valid -eq $true -and $p.failure -ceq 'none' -and $p.active_groups -eq 1 -and $p.process_class -eq 32 -and $p.group -eq 0 -and $p.topology_error -eq 0 -and $p.topology_bytes -gt 0 -and $p.topology_bytes -le 65536 -and $p.topology_cores -ge 2 -and $p.topology_cores -le 256 -and $p.topology_logical_processors -ge 2 -and $p.topology_logical_processors -le 256 -and $p.cost_qualification -eq $false -and $p.device_operations -eq 0) 'bounded actual cold worker placement required'
@@ -278,6 +297,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  NoiseRepairRequire ($corePlan.source_commit -ceq $head -and $corePlan.base_source_commit -ceq $baseCommit -and $corePlan.formal_rebuilt -eq $false) 'delta/core provenance'
  $hasAffinity=@($corePlan.delta_targets) -ccontains 'worker_affinity_controls'
  $hasWait=@($corePlan.delta_targets) -ccontains 'producer_wait_tests'
+ $producerActiveTailNs=$null
  NoiseRepairRequire ((-not $hasWait) -or $hasAffinity) 'active-tail repair includes unchanged affinity policy'
  $expectedTargets=@('current_chain','consumer_priority_controls');if($hasAffinity){$expectedTargets+=@('worker_affinity_controls')};if($hasWait){$expectedTargets+=@('producer_wait_tests')}
  $newExecutables=@($expectedTargets|ForEach-Object {$_+'.exe'})
@@ -326,6 +346,15 @@ function LoadNoiseRepairBuild([string]$bindingPath){
   NoiseRepairCheckNativeReceipt $delta.wait_controls_receipt
   $waitControls=NoiseRepairReadBinding $delta.wait_controls_report
   NoiseRepairRequire ($corePlan.producer_wait_controls_count -ge 22 -and $corePlan.producer_wait_controls_count -le 128 -and $waitControls.schema -ceq 'pas.producer-deadline-wait-tests.v1' -and $waitControls.assertions -eq $corePlan.producer_wait_controls_count -and @($waitControls.checks).Count -eq $corePlan.producer_wait_controls_count -and $waitControls.failed -eq 0 -and @($waitControls.checks|Where-Object {$_.pass -ne $true}).Count -eq 0 -and $waitControls.device_endpoints -eq 0 -and $waitControls.device_operations -eq 0 -and $waitControls.live_ready -eq $false -and $waitControls.cost_qualification -eq $false) 'all declared producer deadline controls required without qualification'
+  $producerSourcePins=@($consumerSourcePins[0])
+  foreach($relative in @('research/prelive_current/producer_wait.hpp','research/prelive_current/tests/producer_wait_tests.cpp')){
+   NoiseRepairRequire ($consumerSources.ContainsKey($relative)) ('compiled producer policy source missing '+$relative)
+   $producerSourcePins+=@($consumerSources[$relative])
+  }
+  $producerActiveTailNs=NoiseRepairProducerActiveTailPolicy $consumerPlan $waitControls $producerSourcePins[1] $producerSourcePins[2]
+  foreach($receipt in @($delta.build_receipts)+@($delta.wait_controls_receipt)){
+   NoiseRepairRequireNativeInputs $receipt (@($consumerManifestPin,$consumerPlanPin)+$producerSourcePins)
+  }
  }
  $compilerEnvironment=NoiseRepairReadBinding $delta.compiler_environment
  NoiseRepairRequire ($delta.compiler_environment_reused -eq $true -and $compilerEnvironment.source_commit -ceq $baseCommit -and $compilerEnvironment.live_ready -eq $false -and $compilerEnvironment.device_operations -eq 0) 'compiler environment retained with original provenance'
@@ -457,6 +486,6 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $script:seal=@{files=@($delta.files)}
  $script:inputs=@($script:noiseRepairActiveInputs.Keys|Sort-Object -Unique)
  $script:noiseRepairBindingPin=$bindingPin
- $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment;worker_affinity_required=$hasAffinity;consumer_priority_requested=$consumerPriorityRequested}
+ $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment;worker_affinity_required=$hasAffinity;consumer_priority_requested=$consumerPriorityRequested;producer_wait_required=$hasWait;producer_active_tail_ns=$producerActiveTailNs}
  $script:noiseRepairPrerequisites=@{source_commit=$baseCommit;scope='Previously passed scopes only; no new-source fresh/full qualification';release_tests=$oldTests;old_configuration_proofs=$oldProofs;compiler_archive_links=$archiveLinks;original_main32_inventory=$delta.original_main32_inventory;formal_source_byte_identical=$true;formal_rebuilt=$false;compiled_source_commit=$compiledCommit;controls_prerequisite_only=$isAmendment;component_rebuilt=(-not $isAmendment);maintenance_only_amendment=$isAmendment;whole_candidate_qualification=$false;live_ready=$false;device_operations=0}
 }
