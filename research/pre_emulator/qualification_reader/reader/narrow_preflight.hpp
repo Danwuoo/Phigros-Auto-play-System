@@ -109,7 +109,7 @@ class Preflight final {
             if(mode=="release"){base_source_=manifest;for(const auto& f:b.at("files"))w::require(base_files_.emplace(key(f),f).second,"unique original Release product binding");}
         }
         w::require(modes==std::set<std::string>{"release","debug","asan"},"all three preserved configuration proofs");
-        for(const auto& proof:inventory_.at("readonly_graphs").at("report")){const auto report=object(proof);w::require(report.at("pass").get<bool>()&&report.at("source_commit")==base_commit&&!report.at("qualification_issued").get<bool>()&&report.at("device_operations")==0,"original independent cold graph proof");}
+        for(const auto& proof:inventory_.at("readonly_graphs")){const auto report=object(proof.at("report"));w::require(report.at("pass").get<bool>()&&report.at("source_commit")==base_commit&&!report.at("qualification_issued").get<bool>()&&report.at("device_operations")==0,"original independent cold graph proof");}
         checks_["base"]={{"pass",true},{"source_commit",base_commit},{"groups_each",25},{"formal_TUs_each",22},{"scope","preserved original proofs; removed graphs not revalidated"}};
     }
     void prefix(){
