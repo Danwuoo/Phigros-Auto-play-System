@@ -36,6 +36,14 @@ streaming Tap／Hold，未放寬dense原gate。完整負結果及923 source snap
 下一runner封存leaf／freeze本身、不遞迴其歷史file list，reader仍SHA核對、完整denominator
 及before/after joins。原8192上限不改，原75／production9不重跑。
 
+main40／`f40fecf`四必要TUs及36／65／43、reader34／actual pre-cost joins通過；
+前兩Tap validity PASS，第三Tap原gate因producer／publication各1超期STOP，後九筆／
+noise／ABBA NOT_RUN。attempt2462開始晚20.7934ms，render .2661ms、publication .1785ms，
+前一publication至該due僅19.6515ms，因此當次無kernel timer分支；失去CPU的具體邊界未量測。
+下一候選只將producer scoped thread priority固定為HIGHEST(2)，consumer仍1／writer原值／
+process NORMAL32、LP generic policy與原20ms tail、所有attempt及R2門檻不變；43 controls
+更新requested/readback期待，不加MMCSS或real-time process，不把假說當實測根因。
+
 2026-10-10 main31／`afaa8f3` fresh22 TUs、三配置各25組、writer20／auditor93、完整圖3、
 3063 prefix及fault4通過；production normal Tap／Hold完整raw與原數值通過。normal Dense
 native2／2.993s，僅145張、round `user_stop_aborted`，沒有report；guard identity／held／

@@ -162,3 +162,23 @@ main39十二份inactive raw journal共2002144786 bytes，逐entry decoded SHA與
 lossless保存為56583392-byte ZIP及原path／SHA proof：
 `out/retained/consolidation-20261008/inactive-noise-raw-archive39/original-journals.zip`。
 報告／attempts／noise／STOP均不改；只刪核對後未壓縮副本，完整重讀先restore原path。
+
+main40／`f40fecf`fresh4 TUs、36／65／43 controls及reader fresh2 TUs／34 controls通過；
+actual只讀pre-cost joins核對原75／prefix3063／fault4／production9及new delta全PASS。
+AA前兩Tap validity PASS，第三Tap原gate `tap_streamed_workload_and_cadence` STOP：
+producer／publication各1超期，2560 published／2559 consumed，後九筆及noise／ABBA未跑。
+923 source files已sealed於`source-f40fecf-main40-snapshot/snapshot.json`；
+見[原負結果與attempt索引](MAIN40_AA_NEGATIVE_20261011.json)。
+
+唯一超期attempt2462開始晚20.7934ms，render .2661ms、publication .1785ms，分別超nextdue
+1.0595／1.2380ms。前一publication到2462due僅19.6515ms，故20ms active tail不會走kernel
+timer分支；不知道延遲在wait入口前、spin中或return到render之間，不能斷言preemption根因。
+2463晚1.2396ms、2464恢復.0012ms；完整2560 due均原epoch+20ms、沒有early render／reset。
+下一調度候選只將producer scoped thread priority1→2（THREAD_PRIORITY_HIGHEST），consumer
+仍1／writer原priority／NORMAL process32／generic末兩core／20ms tail不變。fake與actual
+Windows readback期待同步，43 controls總數不變；不是real-time保證，實際CPU／writer成本仍
+由新source/binary的原AA／noise／ABBA評估，不放寬gate或在同binary重測挑好值。
+
+main40三份inactive Tap journal共36098542 bytes，逐entry decoded SHA及原件再核對後，
+lossless保存為1707589-byte ZIP及proof於`inactive-noise-raw-archive40`；報告／attempts／
+gate／STOP保持，原path完整重讀須restore，沒有刪除原負結果內容。

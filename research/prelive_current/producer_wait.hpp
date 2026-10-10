@@ -9,6 +9,10 @@
 #include <windows.h>
 #endif
 namespace pas::current_rails {
+inline constexpr int producer_priority_requested=2;
+#ifdef _WIN32
+static_assert(producer_priority_requested==THREAD_PRIORITY_HIGHEST);
+#endif
 // Only the offline pixel producer uses this scope. Both A and B use the same
 // policy; consumer, writer, process class, cadence and QPC epoch are unchanged.
 template<class Api> class ProducerPriorityScope final {
@@ -16,9 +20,9 @@ template<class Api> class ProducerPriorityScope final {
 public:
  explicit ProducerPriorityScope(Api& api):api_(api),previous_(api.current()),thread_(api.thread()){
   if(previous_==std::numeric_limits<int>::max())throw std::runtime_error("producer priority query");
-  if(!api_.set(1))throw std::runtime_error("producer priority set");
+  if(!api_.set(producer_priority_requested))throw std::runtime_error("producer priority set");
   active_=true;
-  if(api_.current()!=1){api_.set(previous_);active_=false;throw std::runtime_error("producer priority readback");}
+  if(api_.current()!=producer_priority_requested){api_.set(previous_);active_=false;throw std::runtime_error("producer priority readback");}
  }
  ProducerPriorityScope(const ProducerPriorityScope&)=delete;
  ProducerPriorityScope&operator=(const ProducerPriorityScope&)=delete;
