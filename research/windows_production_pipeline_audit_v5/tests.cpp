@@ -5,6 +5,23 @@
 namespace w=pas::windows_qualification;using J=nlohmann::json;using Ns=std::int64_t;
 #include "cancellation_join.hpp"
 #include "publication_denominator.hpp"
+#include "release_join.hpp"
+struct ReleaseFixture {
+ J first={{"intent",1},{"contact",0},{"phase",0},{"x",400.0},{"y",500.0}};
+ J next={{"intent",2},{"contact",0},{"phase",0},{"x",400.0},{"y",500.0}};
+ J release={{"dispatched",true},{"effect_verified",false},{"requested_ids",J::array({0})},{"failed_ids",J::array()},{"unknown_ids",J::array()},{"start_ns",150},{"return_ns",151}};
+ bool explicit_up=false,multiple=false,empty_before=false,omit_final=false;
+ void verify(){
+  ContactLedger ledger;ledger.begin(first,100,101);ledger.end(first);
+  if(multiple){auto other=first;other["intent"]=3;other["contact"]=1;ledger.begin(other,110,111);ledger.end(other);}
+  if(explicit_up){auto up=first;up["phase"]=2;ledger.begin(up,120,121);ledger.end(up);}
+  if(empty_before){auto empty=release;empty["requested_ids"]=J::array();empty["start_ns"]=130;empty["return_ns"]=131;ledger.release(empty);}
+  ledger.release(release);ledger.begin(next,200,201);ledger.end(next);
+  if(!omit_final){auto last=release;last["requested_ids"]=J::array({0});last["start_ns"]=250;last["return_ns"]=251;ledger.release(last);}
+  ledger.finish();
+  w::require(ledger.released_contacts==(multiple?3:explicit_up?1:2),"release contacts separate from explicit Up");
+ }
+};
 struct Packet{Ns start=200,end=260;};
 struct Fixture {
  J active={{"intent",1},{"contact",0},{"x",400.0},{"y",500.0}};
@@ -103,5 +120,32 @@ int main(int argc,char** argv){try{w::require(argc==2&&!std::filesystem::exists(
  publication_test("negative_publication_counter",false,[](auto& s,auto&,auto&,auto&,auto&){s["published"]=-1;});
  publication_test("oversized_drop_counter",false,[](auto& s,auto&,auto&,auto&,auto&){s["pool_drops"]=std::numeric_limits<std::uint64_t>::max();});
  publication_test("no_successful_publication",false,[](auto& s,auto&,auto&,auto&,auto&){s["published"]=std::uint64_t(0);});
+ const auto release_test=[&](const char* name,bool accept,auto change){ReleaseFixture f;change(f);bool actual=true;try{f.verify();}catch(const std::exception&){actual=false;}checks.push_back({{"id",name},{"pass",actual==accept},{"expected_accept",accept}});failed+=actual!=accept;};
+ release_test("verified_release_then_distinct_intent_reuses_contact",true,[](auto&){});
+ release_test("empty_release_preserves_active_contact",true,[](auto& f){f.empty_before=true;});
+ release_test("verified_release_multiple_own_contacts",true,[](auto& f){f.multiple=true;f.release["requested_ids"]=J::array({0,1});});
+ release_test("explicit_up_then_empty_release",true,[](auto& f){f.explicit_up=true;f.release["requested_ids"]=J::array();});
+ release_test("undispatched_release_rejected",false,[](auto& f){f.release["dispatched"]=false;});
+ release_test("release_cannot_claim_game_effect",false,[](auto& f){f.release["effect_verified"]=true;});
+ release_test("failed_release_rejected",false,[](auto& f){f.release["failed_ids"]=J::array({0});});
+ release_test("unknown_release_rejected",false,[](auto& f){f.release["unknown_ids"]=J::array({0});});
+ release_test("release_unowned_contact_rejected",false,[](auto& f){f.release["requested_ids"]=J::array({1});});
+ release_test("duplicate_release_id_rejected",false,[](auto& f){f.release["requested_ids"]=J::array({0,0});});
+ release_test("negative_release_id_rejected",false,[](auto& f){f.release["requested_ids"]=J::array({-1});});
+ release_test("sixth_contact_release_rejected",false,[](auto& f){f.release["requested_ids"]=J::array({5});});
+ release_test("fractional_release_id_rejected",false,[](auto& f){f.release["requested_ids"]=J::array({0.5});});
+ release_test("release_id_capacity_rejected",false,[](auto& f){f.release["requested_ids"]=J::array({0,1,2,3,4,5});});
+ release_test("release_qpc_reversed_rejected",false,[](auto& f){f.release["return_ns"]=149;});
+ release_test("release_before_down_return_rejected",false,[](auto& f){f.release["start_ns"]=100;});
+ release_test("release_after_next_down_rejected",false,[](auto& f){f.release["return_ns"]=201;});
+ release_test("same_intent_down_cannot_revive_after_release",false,[](auto& f){f.next["intent"]=1;});
+ release_test("empty_release_does_not_allow_contact_steal",false,[](auto& f){f.release["requested_ids"]=J::array();});
+ release_test("up_after_backend_release_cannot_revive",false,[](auto& f){f.next["phase"]=2;});
+ release_test("move_after_backend_release_cannot_revive",false,[](auto& f){f.next["phase"]=1;});
+ release_test("unreleased_final_contact_rejected",false,[](auto& f){f.omit_final=true;});
+ release_test("string_release_qpc_rejected",false,[](auto& f){f.release["start_ns"]="150";});
+ release_test("missing_release_return_rejected",false,[](auto& f){f.release.erase("return_ns");});
+ release_test("release_ids_must_be_array",false,[](auto& f){f.release["requested_ids"]=0;});
+ release_test("up_then_duplicate_backend_release_rejected",false,[](auto& f){f.explicit_up=true;});
  J report={{"schema","pas.production-cancellation-join-controls.v1"},{"checks",checks},{"failed",failed},{"device_operations",0},{"live_ready",false}};std::ofstream out(argv[1]);out<<report.dump(2)<<'\n';w::require(bool(out),"write");std::cout<<"checks="<<checks.size()<<" failed="<<failed<<'\n';return failed?1:0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

@@ -1,5 +1,11 @@
 # Phigros Auto-play System
 
+2026-10-10 冷驗證 main30／`f6548e5`：三配置75組／3063 prefix／fault4及production normal
+三項、stress兩項與Debug Tap通過。Stress Dense完整archive正常完成；Debug Hold auditor
+錯把中途已release後的contact重用當搶占。修補按原journal／QPC核對verified backend release，
+93 controls及七份原full raw組件通過；原STOP保留，ASan後兩項與AA/noise/ABBA未跑。
+新整合完整驗證尚待完成，cost NOT_READY／live UNQUALIFIED，未啟動emulator。
+
 2026-10-09 後續測試範圍已限定：[Chapter Legacy IN 一輪、只記分數、完成後停止](docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
 冷修補整合直接建置三配置的新正式來源；舊 `382d845` stress dense mailbox overrun
 與未執行的 AA／ABBA 保留。新的分數模式停用遊玩持久化，仍須通過當前資格，尚未啟動 emulator。

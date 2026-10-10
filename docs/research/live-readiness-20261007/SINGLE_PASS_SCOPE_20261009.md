@@ -1,5 +1,16 @@
 # 2026-10-09 一輪 IN 測試授權及冷修補
 
+2026-10-10 main30／`f6548e5` 三配置各25／完整圖3／3063 prefix／fault4通過，production
+normal三項完整raw及原數值、stress兩項與Debug Tap integrity通過。stress Dense已正常
+完成（123.951s），原mailbox overrun未重現；stress normal cost false照報。Debug Hold
+producer0，auditor2因未按時間處理backend release而錯判contact重用：raw五次Down／Up0，
+各有成功release且早於下一Down。原907 formal／guard／方向共911份SHA snapshot與raw／
+STOP保留，ASan後兩項、AA12/noise/ABBA36 NOT_RUN，cost NOT_READY／live UNQUALIFIED。
+新只讀join核對原journal順序／sole-owner QPC／own active IDs／無failed或unknown，釋放
+完成後不同intent才可重用；不復活原Down、不把release當explicit Up或game effect。
+原67＋新26共93控制及七份原full raw組件核對通過，新整合仍fresh全包；runtime、完整
+archive與原R2／容量不改，尚未到交接。盤點 `out/prelive-pre-emulator-planning/main30-stage-inventory.json`。
+
 2026-10-10 最新冷結果：main29／`208ad7b` 三配置各25、完整圖三份及3063 prefix
 通過，capture／writer故障通過。RPC producer／auditor均native0，但guard runner125、
 identity false：PID9008 image unknown/error5，原STOP及906 source SHA snapshot保留。

@@ -4,6 +4,18 @@
 
 ## 現行方向
 
+2026-10-10 main30／`f6548e5` 三配置各25、完整圖三份、3063 prefix、fault4通過；
+production normal三項完整raw及原數值、stress Tap／Dense與Debug Tap integrity通過。
+stress Dense producer0／123.951s，未重現mailbox overrun；stress normal cost false照報。
+Debug Hold producer0，auditor2「Down is unique and cannot steal active contact」：原raw
+五次Down各有中途成功backend release，原auditor只在最後處理release而誤判contact重用。
+原907 formal＋方向／guard共911份SHA snapshot、原raw／STOP保留於
+`out/prelive-pre-emulator-planning/main30-stage-inventory.json`；ASan後兩項與AA/noise/ABBA
+NOT_RUN，cost NOT_READY／live UNQUALIFIED。新只讀join按原journal順序及QPC核對release，
+只接受own active IDs／dispatched／無failed或unknown，完成後才可由不同intent重用contact；
+原intent Down不復活，release不計explicit Up、game effect仍unknown。原67＋新26共93控制
+及七份原full raw組件核對通過，不授整體資格。新整合fresh全包，runtime／archive／R2不改。
+
 2026-10-10 main29／`208ad7b` 三配置各25、完整圖三份及3063 prefix通過；RPC audit
 程序收據因未驗image的PID9008 error5而STOP（native0、runner125、identity false）。
 原source／raw／STOP保存，slow／production9／AA12／noise／ABBA36 NOT_RUN。

@@ -1,6 +1,20 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
 2026-10-09 續派範圍見 [一輪分數授權](../../docs/research/live-readiness-20261007/SINGLE_PASS_SCOPE_20261009.md)。
+2026-10-10 main30／`f6548e5` fresh22 TUs三配置各25、完整圖3／prefix3063／fault4通過。
+production normal Tap／Hold／Dense原數值及raw通過，stress Tap／Dense與Debug Tap integrity
+通過；stress Dense producer0／123.951s，原mailbox overrun未重現，normal cost false保留。
+Debug Hold producer0／auditor2：五個Down各有中途成功backend release，原auditor直到最後
+才處理release，錯把下一個不同intent的contact重用當搶占。907 formal及guard／方向共911
+SHA snapshot、原raw／stderr／STOP保存，ASan後兩項及AA12／noise／ABBA36 NOT_RUN。
+盤點 `out/prelive-pre-emulator-planning/main30-stage-inventory.json`；cost NOT_READY／live
+UNQUALIFIED。新診斷join按原journal順序核對receipt及release的sole-owner QPC；最多五個
+own active IDs、dispatched、failed／unknown空、完成後才重用。原Down intent不復活，
+Move／Up必有未釋放的own Down；release單獨計數、不充explicit Up或game effect。
+原67＋新26共93控制及七份原完整raw組件核對通過；normal原數值／stress與Debug負結果照報，
+不授candidate資格。builder每配置要求93 controls；新來源仍fresh三配置及其後原全包。
+runtime、完整archive workload、容量及R2門檻不改；未啟動裝置。
+
 2026-10-10 main29／`208ad7b` 三配置各25、writer20、auditor67、fresh22 TUs及
 三份完整圖／3063 prefix通過。capture／writer故障及audit通過；RPC producer0、
 auditor0/control_pass=true但guard runner125：root-exit未驗image的PID9008 error5，
