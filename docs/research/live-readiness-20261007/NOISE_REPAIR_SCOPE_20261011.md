@@ -59,3 +59,14 @@ main34／`626d32d`兩個target、controls36及全部native／closure通過。AA 
 script binding欄位與caller同名PowerShell參數碰撞，將path變成hashtable，AA campaign
 封存前冷STOP；沒有producer／噪聲量測。改為獨立`noiseRepairBindingPin`，原必要建置
 收據及prelaunch負結果保留；新attempt不重跑75組或production。
+
+main35／`42a450c`必要兩TU及controls36通過。首筆Tap完整2560張、producer／publication
+overrun0、consumer readback／restore及完整raw auditor通過；cost analyzer native2，
+stderr `hash file bound/type`。原native guard identity／held／streams與active0正常，
+原status保留PRODUCED_BUT_UNQUALIFIED／後11筆NOT_RUN，未有noise或ABBA數值。
+新loader誤把全部已核歷史依賴加入每次測量的actual inputs，六個不供該冷runtime使用的
+gRPC Release／Debug library為655596174至2515648002 bytes，超過原256MiB單檔界限。
+修正為明列當次runtime／source／static／receipt metadata，完整依賴仍於loader核對，
+不提高原hash、freeze或closure上限。純維護修正沿用已通過相同C++ component bytes、
+compile source與controls收據，另列新execution source／maintenance amendment；
+不重新編相同TU，也不冒稱新source fresh compile或重用舊producer作新AA測量。

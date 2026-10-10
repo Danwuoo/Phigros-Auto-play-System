@@ -23,6 +23,30 @@ function NoiseRepairCheckBinding($entry){
  }
 }
 function NoiseRepairReadBinding($entry){NoiseRepairCheckBinding $entry;return Get-Content -LiteralPath $entry.path -Raw|ConvertFrom-Json}
+function NoiseRepairAddInputs($entries){
+ foreach($entry in @($entries)){
+  # The existing native reader accepts an actual input only through 256 MiB.
+  # Checked historical dependencies are not automatically execution inputs.
+  NoiseRepairRequire ($null -ne $entry -and $entry.bytes -le 268435456) ('actual native input exceeds existing bound '+$entry.path)
+  NoiseRepairCheckBinding $entry
+  $script:noiseRepairActiveInputs[[IO.Path]::GetFullPath($entry.path)]=$entry
+ }
+}
+function NoiseRepairSameValue($actual,$expected,[string]$label){
+ if($null -eq $actual -or $null -eq $expected){NoiseRepairRequire ($null -eq $actual -and $null -eq $expected) ($label+' null identity');return}
+ if($expected -is [System.Collections.IList]){
+  NoiseRepairRequire ($actual -is [System.Collections.IList] -and $actual.Count -eq $expected.Count) ($label+' array identity')
+  for($index=0;$index -lt $expected.Count;$index++){NoiseRepairSameValue $actual[$index] $expected[$index] ($label+'['+$index+']')}
+ }elseif($expected -is [pscustomobject]){
+  NoiseRepairRequire ($actual -is [pscustomobject]) ($label+' object identity')
+  $names=@($expected.PSObject.Properties.Name);$actualNames=@($actual.PSObject.Properties.Name)
+  NoiseRepairRequire (@(Compare-Object ($names|Sort-Object) ($actualNames|Sort-Object)).Count -eq 0) ($label+' property set')
+  foreach($name in $names){NoiseRepairSameValue $actual.$name $expected.$name ($label+'.'+$name)}
+ }else{NoiseRepairRequire ($actual -ceq $expected) ($label+' value identity')}
+}
+function NoiseRepairMaintenanceChange([string]$relative){
+ return ($relative -in @('AGENTS.md','README.md','research/pre_emulator/PLAN.md') -or $relative -cmatch '^research/pre_emulator/[^/]+[.]ps1$' -or ($relative -cmatch '^docs/.*[.](?:md|json)$' -and $relative -cne 'docs/research/zero-miss-20261006/windows/PRELIVE_COST_PROTOCOL_R2_20261007.md'))
+}
 function NoiseRepairCheckNativeReceipt($entry){
  $verification=NoiseRepairReadBinding $entry
  NoiseRepairRequire ([IO.Path]::GetFileName($entry.path) -ceq ($verification.stage+'-verification.json')) 'native verification identity'
@@ -43,9 +67,9 @@ function NoiseRepairCheckNativeReceipt($entry){
  $closurePin=Binding (Join-Path $pkg ($verification.stage+'-input-closure-verification.json'))
  $closure=NoiseRepairReadBinding $closurePin
  NoiseRepairRequire ($closure.stage -ceq $verification.stage -and $closure.status -ceq 'COMPLETE' -and $closure.pass -eq $true -and $closure.before_verified -eq $true -and $closure.after_verified -eq $true) 'native input closure incomplete'
- NoiseRepairCheckBinding $closure.root
- foreach($pin in @($entry,$commandPin,$freezePin,$specRows[0],$closurePin)+@($verification.entries)) {NoiseRepairCheckBinding $pin}
- foreach($path in @((Join-Path $stageRoot ($verification.stage+'-result.json')),(Join-Path $stageRoot 'state.json'),(Join-Path $stageRoot 'freeze.json'),(Join-Path $stageRoot 'contract.json'))){NoiseRepairCheckBinding (Binding $path)}
+ NoiseRepairAddInputs @($closure.root,$entry,$commandPin,$freezePin,$specRows[0],$closurePin)
+ NoiseRepairAddInputs @($verification.entries)
+ foreach($path in @((Join-Path $stageRoot ($verification.stage+'-result.json')),(Join-Path $stageRoot 'state.json'),(Join-Path $stageRoot 'freeze.json'),(Join-Path $stageRoot 'contract.json'))){NoiseRepairAddInputs @((Binding $path))}
 }
 function NoiseRepairAllowedChange([string]$relative){
  if($relative -in @('AGENTS.md','README.md','research/pre_emulator/PLAN.md','research/prelive_current/chain.cpp','research/prelive_current/consumer_priority.hpp','research/prelive_current/tests/consumer_priority_controls.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/CMakeLists.txt')){return $true}
@@ -56,17 +80,53 @@ function NoiseRepairAllowedChange([string]$relative){
 function LoadNoiseRepairBuild([string]$bindingPath){
  $script:noiseRepairChecked=@{}
  $script:noiseRepairSpecs=@{}
+ $script:noiseRepairActiveInputs=@{}
  $bindingPin=Binding $bindingPath
  $delta=NoiseRepairReadBinding $bindingPin
  NoiseRepairRequire ($delta.schema -ceq 'pas.narrow-noise-repair-build.v1' -and $delta.configuration -ceq 'release' -and $delta.scope -ceq 'noise_and_unrun_abba_only') 'declared narrow Release scope'
  NoiseRepairRequire ($delta.whole_candidate_qualification -eq $false -and $delta.live_ready -eq $false -and $delta.device_operations -eq 0) 'no whole-candidate/live/device qualification'
  $head=(& git -C $repo rev-parse HEAD)
  NoiseRepairRequire ($LASTEXITCODE -eq 0 -and $head -ceq $delta.source_commit -and (& git -C $repo branch --show-current) -ceq 'main' -and -not (& git -C $repo status --porcelain)) 'exact clean current main required'
+ $isAmendment=(NoiseRepairProperty $delta 'maintenance_only_amendment') -and $delta.maintenance_only_amendment -eq $true
+ $compiledCommit=$head;$parentDelta=$null;$compiledManifest=$null;$compiledPlan=$null;$maintenanceChanged=@()
+ if($isAmendment){
+  $compiledCommit=$delta.compiled_source_commit
+  NoiseRepairRequire ($compiledCommit -cmatch '^[0-9a-f]{40}$' -and $compiledCommit -cne $head -and $delta.component_rebuilt -eq $false -and $delta.formal_rebuilt -eq $false) 'explicit maintenance-only compiled identity'
+  & git -C $repo merge-base --is-ancestor $compiledCommit $head
+  NoiseRepairRequire ($LASTEXITCODE -eq 0) 'compiled source must be an ancestor of maintenance source'
+  $parentDelta=NoiseRepairReadBinding $delta.parent_repair_build
+  NoiseRepairRequire ($parentDelta.schema -ceq $delta.schema -and $parentDelta.source_commit -ceq $compiledCommit -and $parentDelta.configuration -ceq 'release' -and $parentDelta.scope -ceq $delta.scope -and $parentDelta.whole_candidate_qualification -eq $false -and $parentDelta.live_ready -eq $false -and $parentDelta.device_operations -eq 0 -and -not $parentDelta.maintenance_only_amendment) 'one original compiled parent repair build'
+  $mutableFields=@('source_commit','source_manifest','core_build_plan','changed_paths','candidate_bytes','additional_inputs')
+  $amendmentFields=@('compiled_source_commit','maintenance_only_amendment','parent_repair_build','compiled_source_manifest','maintenance_changed_paths','formal_rebuilt','component_rebuilt','amendment_proof')
+  foreach($property in $parentDelta.PSObject.Properties){
+   NoiseRepairRequire (NoiseRepairProperty $delta $property.Name) ('amended parent property missing '+$property.Name)
+   if($property.Name -cnotin $mutableFields){NoiseRepairSameValue $delta.($property.Name) $property.Value ('unchanged compiled parent '+$property.Name)}
+  }
+  foreach($property in $delta.PSObject.Properties){NoiseRepairRequire ((NoiseRepairProperty $parentDelta $property.Name) -or $property.Name -cin $amendmentFields) ('undeclared amendment property '+$property.Name)}
+  $maintenanceChanged=@(& git -c core.quotePath=false -C $repo diff --name-only $compiledCommit $head)
+  NoiseRepairRequire ($LASTEXITCODE -eq 0 -and $maintenanceChanged.Count -gt 0 -and @(Compare-Object (@($delta.maintenance_changed_paths)|Sort-Object) ($maintenanceChanged|Sort-Object)).Count -eq 0 -and @($delta.maintenance_changed_paths|Sort-Object -Unique).Count -eq @($delta.maintenance_changed_paths).Count) 'exact maintenance-only changed paths'
+  foreach($relative in $maintenanceChanged){NoiseRepairRequire (NoiseRepairMaintenanceChange $relative) ('compiled target/formal change cannot be amended '+$relative)}
+  NoiseRepairSameBinding $delta.compiled_source_manifest $parentDelta.source_manifest 'original compiled source manifest'
+  $compiledManifest=NoiseRepairReadBinding $parentDelta.source_manifest
+  $compiledPlan=NoiseRepairReadBinding $parentDelta.core_build_plan
+  NoiseRepairRequire ($compiledManifest.source_commit -ceq $compiledCommit -and $compiledManifest.dirty -eq $false -and $compiledPlan.source_commit -ceq $compiledCommit) 'original compiled source/plan identity'
+  NoiseRepairRequire (@($delta.additional_inputs).Count -eq @($parentDelta.additional_inputs).Count) 'same additional input path set'
+  for($index=0;$index -lt @($parentDelta.additional_inputs).Count;$index++){
+   $oldInput=@($parentDelta.additional_inputs)[$index];$newInput=@($delta.additional_inputs)[$index]
+   NoiseRepairRequire ([string]::Equals([IO.Path]::GetFullPath($oldInput.path),[IO.Path]::GetFullPath($newInput.path),[StringComparison]::OrdinalIgnoreCase)) 'same additional input path'
+   if($oldInput.bytes -ne $newInput.bytes -or $oldInput.sha256 -cne $newInput.sha256){
+    $relative=NoiseRepairRelative $newInput.path
+    NoiseRepairRequire ((NoiseRepairMaintenanceChange $relative) -and $relative -cin $maintenanceChanged) ('undeclared additional maintenance input '+$relative)
+   }
+  }
+  NoiseRepairAddInputs @($delta.parent_repair_build,$parentDelta.source_manifest,$parentDelta.core_build_plan)
+ }
+ NoiseRepairAddInputs @($bindingPin,$delta.original_main32_inventory,$delta.base_release_build,$delta.base_release_evaluation,$delta.source_manifest,$delta.dependency_manifest,$delta.core_build_plan,$delta.controls_report,$delta.compiler_environment,$delta.tests_scope_authorization)
  $inventory=NoiseRepairReadBinding $delta.original_main32_inventory
  $baseCommit='aa9de3c13b92e533b1b0e9cb0312cf81e5d2f9de'
  NoiseRepairRequire ($inventory.schema -ceq 'pas.main32-stage-inventory.v1' -and $inventory.source_commit -ceq $baseCommit -and $inventory.original_STOPs_preserved -eq $true) 'original main32 preservation identity'
  NoiseRepairRequire ($inventory.cost_ready -eq $false -and $inventory.live_ready -eq $false -and $inventory.qualification_issued -eq $false -and $inventory.abba36 -ceq 'NOT_RUN') 'original negative state retained'
- foreach($entry in @($inventory.prefix_receipt,$inventory.faults_status,$inventory.production.original_status,$inventory.aa.original_status,$inventory.noise.verdict,$inventory.noise.noise_status,$inventory.noise.native_result)+@($inventory.readonly_graphs.report)){NoiseRepairCheckBinding $entry}
+ NoiseRepairAddInputs (@($inventory.prefix_receipt,$inventory.faults_status,$inventory.production.original_status,$inventory.aa.original_status,$inventory.noise.verdict,$inventory.noise.noise_status,$inventory.noise.native_result)+@($inventory.readonly_graphs.report))
  $releaseRows=@($inventory.cold|Where-Object mode -ceq 'release')
  NoiseRepairRequire ($releaseRows.Count -eq 1) 'one original Release prerequisite'
  NoiseRepairSameBinding $delta.base_release_build $releaseRows[0].build 'base Release build'
@@ -78,7 +138,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $baseFiles=@{}
  foreach($file in $base.files){NoiseRepairCheckBinding $file;$key=[IO.Path]::GetFullPath($file.path);NoiseRepairRequire (-not $baseFiles.ContainsKey($key)) 'duplicate base file';$baseFiles[$key]=$file}
  foreach($receipt in @($base.configure_receipt)+@($base.build_receipts)){NoiseRepairCheckNativeReceipt $receipt}
- NoiseRepairCheckBinding $base.core_build_plan
+ NoiseRepairAddInputs @($base.core_build_plan,$base.source_manifest,$inventory.source_snapshot)
  $baseManifest=NoiseRepairReadBinding $base.source_manifest
  NoiseRepairRequire ($baseManifest.source_commit -ceq $baseCommit -and $baseManifest.dirty -eq $false) 'original formal source identity'
  $snapshot=NoiseRepairReadBinding $inventory.source_snapshot
@@ -86,7 +146,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  NoiseRepairSameBinding $snapshot.formal_manifest $base.source_manifest 'immutable source/formal manifest join'
  $baseSources=@{}
  foreach($row in $snapshot.files){
-  NoiseRepairCheckBinding $row.copy
+  NoiseRepairAddInputs @($row.copy)
   NoiseRepairRequire ($row.copy.bytes -eq $row.original.bytes -and $row.copy.sha256 -ceq $row.original.sha256) 'immutable source copy identity'
   $relative=NoiseRepairRelative $row.original.path
   NoiseRepairRequire (-not $baseSources.ContainsKey($relative)) 'duplicate immutable source'
@@ -119,7 +179,21 @@ function LoadNoiseRepairBuild([string]$bindingPath){
   }else{NoiseRepairRequire ($relative -cin $changed) ('undeclared added source '+$relative)}
  }
  NoiseRepairRequire (@(Compare-Object ($expectedSource|Sort-Object) (@($currentSources.Keys)|Sort-Object)).Count -eq 0) 'complete tracked cooperative source set required'
- foreach($relative in $changed|Where-Object { -not $currentSources.ContainsKey($_) }){NoiseRepairCheckBinding (Binding (Join-Path $repo $relative))}
+ foreach($relative in $changed|Where-Object { -not $currentSources.ContainsKey($_) }){NoiseRepairAddInputs @((Binding (Join-Path $repo $relative)))}
+ if($isAmendment){
+  NoiseRepairRequire ($manifest.compiled_source_commit -ceq $compiledCommit -and $manifest.maintenance_only_amendment -eq $true -and $manifest.component_rebuilt -eq $false -and $manifest.formal_rebuilt -eq $false) 'current manifest must distinguish execution and compiled source'
+  NoiseRepairSameBinding $manifest.original_compiled_source_manifest $parentDelta.source_manifest 'current/compiled source manifest join'
+  $compiledSources=@{}
+  foreach($file in $compiledManifest.files){
+   $relative=NoiseRepairRelative $file.path
+   NoiseRepairRequire (-not $compiledSources.ContainsKey($relative) -and $currentSources.ContainsKey($relative)) ('compiled source missing/duplicate '+$relative)
+   $compiledSources[$relative]=$file
+   $current=$currentSources[$relative]
+   if(-not (NoiseRepairMaintenanceChange $relative)){NoiseRepairSameBinding $current $file ('unchanged compiled code '+$relative)}
+   elseif($current.bytes -ne $file.bytes -or $current.sha256 -cne $file.sha256){NoiseRepairRequire ($relative -cin $maintenanceChanged) ('undeclared maintenance source bytes '+$relative)}
+  }
+  foreach($relative in $currentSources.Keys|Where-Object {-not $compiledSources.ContainsKey($_)}){NoiseRepairRequire ((NoiseRepairMaintenanceChange $relative) -and $relative -cin $maintenanceChanged) ('added compiled code cannot be amended '+$relative)}
+ }
  foreach($file in $baseManifest.files){
   $relative=NoiseRepairRelative $file.path
   if(-not $currentSources.ContainsKey($relative)){NoiseRepairRequire ($relative -cin $changed) ('undeclared removed source '+$relative)}
@@ -135,7 +209,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  foreach($file in $dependencies.files){NoiseRepairCheckBinding $file;$dependencyFiles[[IO.Path]::GetFullPath($file.path)]=$file}
  NoiseRepairRequire (@($delta.base_static_inputs).Count -gt 0) 'base static inputs required'
  foreach($file in $delta.base_static_inputs){
-  NoiseRepairCheckBinding $file;$key=[IO.Path]::GetFullPath($file.path)
+  NoiseRepairAddInputs @($file);$key=[IO.Path]::GetFullPath($file.path)
   if($baseFiles.ContainsKey($key)){NoiseRepairSameBinding $file $baseFiles[$key] 'base static file'}
   elseif($dependencyFiles.ContainsKey($key)){NoiseRepairSameBinding $file $dependencyFiles[$key] 'base installed dependency'}
   else{throw ('noise-repair static input not in base build/dependency closure '+$file.path)}
@@ -144,6 +218,19 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $corePlan=NoiseRepairReadBinding $delta.core_build_plan
  NoiseRepairRequire ($corePlan.source_commit -ceq $head -and $corePlan.base_source_commit -ceq $baseCommit -and $corePlan.formal_rebuilt -eq $false) 'delta/core provenance'
  NoiseRepairRequire (@(Compare-Object (@($corePlan.delta_targets)|Sort-Object) (@('current_chain','consumer_priority_controls')|Sort-Object)).Count -eq 0) 'only the two declared harness targets'
+ if($isAmendment){
+  NoiseRepairRequire ($corePlan.compiled_source_commit -ceq $compiledCommit -and $corePlan.component_rebuilt -eq $false) 'maintenance plan retains compiled-source identity'
+  foreach($property in $compiledPlan.PSObject.Properties){if($property.Name -cne 'source_commit'){NoiseRepairSameValue $corePlan.($property.Name) $property.Value ('unchanged compiled plan '+$property.Name)}}
+  foreach($property in $corePlan.PSObject.Properties){NoiseRepairRequire ((NoiseRepairProperty $compiledPlan $property.Name) -or $property.Name -cin @('compiled_source_commit','component_rebuilt')) ('undeclared amended plan property '+$property.Name)}
+  $amendment=NoiseRepairReadBinding $delta.amendment_proof
+  NoiseRepairRequire ($amendment.schema -ceq 'pas.narrow-noise-maintenance-amendment.v1' -and $amendment.source_commit -ceq $head -and $amendment.compiled_source_commit -ceq $compiledCommit -and $amendment.before_verified -eq $true -and $amendment.after_verified -eq $true -and $amendment.component_rebuilt -eq $false -and $amendment.formal_rebuilt -eq $false -and $amendment.native_operations -eq 0 -and $amendment.controls_rerun -eq $false -and $amendment.whole_candidate_qualification -eq $false -and $amendment.device_operations -eq 0 -and $amendment.live_ready -eq $false) 'maintenance preservation proof only'
+  NoiseRepairSameBinding $amendment.parent_repair_build $delta.parent_repair_build 'amendment/parent join'
+  NoiseRepairSameBinding $amendment.source_manifest $delta.source_manifest 'amendment/current source join'
+  NoiseRepairSameBinding $amendment.core_build_plan $delta.core_build_plan 'amendment/current plan join'
+  NoiseRepairRequire (@(Compare-Object (@($amendment.maintenance_changed_paths)|Sort-Object) ($maintenanceChanged|Sort-Object)).Count -eq 0) 'amendment proof changed paths'
+  foreach($entry in $amendment.preserved_assets){NoiseRepairAddInputs @($entry)}
+  NoiseRepairAddInputs @($delta.amendment_proof)
+ }
  NoiseRepairRequire (@($delta.build_receipts).Count -gt 0) 'delta build receipts required'
  foreach($receipt in $delta.build_receipts){NoiseRepairCheckNativeReceipt $receipt}
  if(NoiseRepairProperty $delta 'configure_receipt'){NoiseRepairCheckNativeReceipt $delta.configure_receipt}
@@ -154,11 +241,12 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  if(NoiseRepairProperty $controls 'real_time_qualification_issued'){NoiseRepairRequire ($controls.real_time_qualification_issued -eq $false) 'controls cannot grant real-time qualification'}
  $compilerEnvironment=NoiseRepairReadBinding $delta.compiler_environment
  NoiseRepairRequire ($delta.compiler_environment_reused -eq $true -and $compilerEnvironment.source_commit -ceq $baseCommit -and $compilerEnvironment.live_ready -eq $false -and $compilerEnvironment.device_operations -eq 0) 'compiler environment retained with original provenance'
- foreach($entry in @($compilerEnvironment.environment,$compilerEnvironment.verification,$compilerEnvironment.state)){NoiseRepairCheckBinding $entry}
+ NoiseRepairAddInputs @($compilerEnvironment.environment,$compilerEnvironment.verification,$compilerEnvironment.state)
  NoiseRepairCheckNativeReceipt $compilerEnvironment.verification
  $declaredClosures=@($delta.configure_input_closure)+@($delta.build_input_closures)+@($delta.controls_input_closure)
  foreach($entry in $declaredClosures){
   $closure=NoiseRepairReadBinding $entry
+  NoiseRepairAddInputs @($entry)
   NoiseRepairRequire ($closure.status -ceq 'COMPLETE' -and $closure.pass -eq $true -and $closure.before_verified -eq $true -and $closure.after_verified -eq $true -and $script:noiseRepairSpecs.ContainsKey($closure.stage)) 'declared native closure must match a completed delta stage'
  }
  NoiseRepairRequire ([string]::Equals([IO.Path]::GetFullPath($delta.tests_scope_authorization.path),(Join-Path $repo 'docs/research/live-readiness-20261007/NOISE_REPAIR_AUTHORIZATION_20261011.json'),[StringComparison]::OrdinalIgnoreCase)) 'current explicit scope authorization path'
@@ -167,7 +255,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  NoiseRepairRequire (@(Compare-Object (@($authorization.allowed_operations)|Sort-Object) (@('aa','abba')|Sort-Object)).Count -eq 0) 'only necessary noise AA and previously unrun ABBA'
  $runtimeFiles=@{}
  foreach($file in $delta.files){
-  NoiseRepairCheckBinding $file;$key=[IO.Path]::GetFullPath($file.path)
+  NoiseRepairAddInputs @($file);$key=[IO.Path]::GetFullPath($file.path)
   NoiseRepairRequire (-not $runtimeFiles.ContainsKey($key)) 'duplicate sealed runtime file'
   $runtimeFiles[$key]=$file
   if($baseFiles.ContainsKey($key)){NoiseRepairSameBinding $file $baseFiles[$key] 'reused runtime file'}
@@ -188,7 +276,11 @@ function LoadNoiseRepairBuild([string]$bindingPath){
   else{NoiseRepairRequire ($baseFiles.ContainsKey($key)) ('byte-identical original tool required '+$name)}
  }
  NoiseRepairRequire (@($delta.compiled_outputs).Count -gt 0) 'complete actual delta output bindings'
- foreach($file in $delta.compiled_outputs){NoiseRepairCheckBinding $file}
+ NoiseRepairAddInputs @($delta.compiled_outputs)
+ # Runtime DLLs beside the reused tools are actual inputs; unrelated legacy
+ # base compiler/cache products and the installed dependency tree are not.
+ $runtimeDirectories=@($delta.files|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.exe'}|ForEach-Object {[IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($_.path))}|Sort-Object -Unique)
+ foreach($file in $base.files|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.dll' -and [IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($_.path)) -in $runtimeDirectories}){NoiseRepairAddInputs @($file)}
  foreach($name in @('current_chain.exe','consumer_priority_controls.exe')){
   $sealed=@($delta.files|Where-Object {[IO.Path]::GetFileName($_.path) -ceq $name})[0]
   $compiled=@($delta.compiled_outputs|Where-Object {[string]::Equals($_.path,$sealed.path,[StringComparison]::OrdinalIgnoreCase)})
@@ -209,16 +301,16 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  NoiseRepairRequire ($ninjaRows.Count -eq 1) 'one actual delta Ninja plan'
  $compilerRows=@(Get-Content -LiteralPath $ninjaRows[0].path|ForEach-Object {$_.Replace('\','/')}|Where-Object {$_ -cmatch '^build .+: CXX_COMPILER'})
  NoiseRepairRequire ($compilerRows.Count -eq 2 -and @($compilerRows|Where-Object {$_ -cmatch '^build CMakeFiles/current_chain[.]dir/'}).Count -eq 1 -and @($compilerRows|Where-Object {$_ -cmatch '^build CMakeFiles/consumer_priority_controls[.]dir/'}).Count -eq 1) 'actual Ninja plan must compile only the two harness targets'
- if(NoiseRepairProperty $delta 'additional_inputs'){foreach($file in $delta.additional_inputs){NoiseRepairCheckBinding $file}}
+ if(NoiseRepairProperty $delta 'additional_inputs'){NoiseRepairAddInputs @($delta.additional_inputs)}
  $oldProofs=@($inventory.cold)
  NoiseRepairRequire ($oldProofs.Count -eq 3 -and @(Compare-Object (@($oldProofs.mode)|Sort-Object) (@('release','debug','asan')|Sort-Object)).Count -eq 0) 'three preserved old configuration proofs'
  foreach($proof in $oldProofs){
-  $evaluation=NoiseRepairReadBinding $proof.evaluation;NoiseRepairCheckBinding $proof.build
+  $evaluation=NoiseRepairReadBinding $proof.evaluation;NoiseRepairAddInputs @($proof.evaluation,$proof.build)
   NoiseRepairRequire ($evaluation.source_commit -ceq $baseCommit -and $evaluation.affected_cold_pass -eq $true -and $evaluation.tests.Count -eq 25 -and $evaluation.live_ready -eq $false -and $evaluation.device_operations -eq 0) 'preserved old25 scope'
   NoiseRepairSameBinding $evaluation.build $proof.build 'old evaluation/build proof'
   # Verify preserved report/native-receipt bytes, without executing a test or
   # resolving archived Debug/ASan compiler-root binaries as current files.
-  foreach($test in $evaluation.tests){NoiseRepairCheckBinding $test.report;NoiseRepairCheckNativeReceipt $test.receipt}
+  foreach($test in $evaluation.tests){NoiseRepairAddInputs @($test.report);NoiseRepairCheckNativeReceipt $test.receipt}
  }
  $archiveLinks=@()
  if(NoiseRepairProperty $delta 'old_configuration_proofs'){
@@ -230,6 +322,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
    NoiseRepairSameBinding $proof.build $original[0].build 'old build proof link'
    if(NoiseRepairProperty $proof 'archive_proof'){
     $archiveProof=NoiseRepairReadBinding $proof.archive_proof
+    NoiseRepairAddInputs @($proof.archive_proof)
     NoiseRepairRequire ($archiveProof.schema -ceq 'pas.recoverable-main32-compiler-archive.v1' -and $archiveProof.source_commit -ceq $baseCommit -and $archiveProof.configuration -ceq $proof.mode -and $archiveProof.all_entry_SHAs_readback_verified -eq $true -and $archiveProof.originals_rechecked -eq $true -and $archiveProof.whole_candidate_qualified -eq $false -and $archiveProof.live_ready -eq $false -and $archiveProof.device_operations -eq 0) 'original recoverable compiler archive proof'
     NoiseRepairSameBinding $archiveProof.build_binding $proof.build 'archive/original build join'
     NoiseRepairSameBinding $proof.archive $archiveProof.archive 'original archive link'
@@ -241,16 +334,16 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  }
  $oldTests=@()
  foreach($test in $baseEvaluation.tests){
-  NoiseRepairCheckBinding $test.report;NoiseRepairCheckNativeReceipt $test.receipt
+  NoiseRepairAddInputs @($test.report);NoiseRepairCheckNativeReceipt $test.receipt
   $copy=@{};foreach($property in $test.PSObject.Properties){$copy[$property.Name]=$property.Value}
   $copy.source_commit=$baseCommit;$copy.prerequisite_only=$true;$copy.scope='Preserved main32 Release prerequisite; not new-source cold qualification'
   $oldTests+=@($copy)
  }
  $guardInputs=@(GateInputs)
- foreach($path in $guardInputs){NoiseRepairCheckBinding (Binding $path)}
+ foreach($path in $guardInputs){NoiseRepairAddInputs @((Binding $path))}
  $guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
- foreach($entry in @($guard.guard_source,$guard.process_source,$guard.cached_identity_controls,$guard.identity_wait_controls)){NoiseRepairCheckBinding $entry}
- foreach($path in @($script:maintenancePath,$recipe,(Join-Path $PSScriptRoot 'common.ps1'),(Join-Path $PSScriptRoot 'noise_repair_build.ps1'))){NoiseRepairCheckBinding (Binding $path)}
+ NoiseRepairAddInputs @($guard.guard_source,$guard.process_source,$guard.cached_identity_controls,$guard.identity_wait_controls)
+ foreach($path in @($script:maintenancePath,$recipe,(Join-Path $PSScriptRoot 'common.ps1'),(Join-Path $PSScriptRoot 'noise_repair_build.ps1'))){NoiseRepairAddInputs @((Binding $path))}
  # Commit globals only after every declared byte and original prerequisite joins.
  NoiseRepairRequire ((& git -C $repo rev-parse HEAD) -ceq $head -and -not (& git -C $repo status --porcelain)) 'source changed while loading delta'
  CheckEntry $bindingPin
@@ -258,8 +351,8 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $script:tests=$oldTests
  $script:commit=$head
  $script:seal=@{files=@($delta.files)}
- $script:inputs=@($script:noiseRepairChecked.Keys|Sort-Object -Unique)
+ $script:inputs=@($script:noiseRepairActiveInputs.Keys|Sort-Object -Unique)
  $script:noiseRepairBindingPin=$bindingPin
- $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base}
- $script:noiseRepairPrerequisites=@{source_commit=$baseCommit;scope='Previously passed scopes only; no new-source fresh/full qualification';release_tests=$oldTests;old_configuration_proofs=$oldProofs;compiler_archive_links=$archiveLinks;original_main32_inventory=$delta.original_main32_inventory;formal_source_byte_identical=$true;formal_rebuilt=$false;whole_candidate_qualification=$false;live_ready=$false;device_operations=0}
+ $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment}
+ $script:noiseRepairPrerequisites=@{source_commit=$baseCommit;scope='Previously passed scopes only; no new-source fresh/full qualification';release_tests=$oldTests;old_configuration_proofs=$oldProofs;compiler_archive_links=$archiveLinks;original_main32_inventory=$delta.original_main32_inventory;formal_source_byte_identical=$true;formal_rebuilt=$false;compiled_source_commit=$compiledCommit;controls_prerequisite_only=$isAmendment;component_rebuilt=(-not $isAmendment);maintenance_only_amendment=$isAmendment;whole_candidate_qualification=$false;live_ready=$false;device_operations=0}
 }
