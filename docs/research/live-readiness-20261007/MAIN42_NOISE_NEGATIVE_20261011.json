@@ -1,0 +1,274 @@
+{
+  "readonly_result": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\main42-narrow-reader-output-post-noise.json",
+    "bytes": 8843,
+    "sha256": "339044ac1ad01d630b90e52d0a81ef8224b3236746e4492273d59425a174f665"
+  },
+  "publication_zero_overrun_runs": 12,
+  "noise_adequate": 6,
+  "source_snapshot": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\source-96c8c2a-main42-snapshot\\snapshot.json",
+    "bytes": 576913,
+    "sha256": "2a1762d36a7dd900e0c0635e5386495e4cb5a00ac76b4c26e1cba76820d52ee4"
+  },
+  "device_operations": 0,
+  "readonly_noise18_exact_recomputed": true,
+  "qualification_issued": false,
+  "original_r2_unchanged": true,
+  "cold75_or_production9_rerun": false,
+  "aa_validity_pass": 12,
+  "candidate": {
+    "bytes": 812544,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main42\\current_chain.exe",
+    "sha256": "d3a17bf3839bae923f1cee9be1856c458aef9ae00de33f6d251f3ba94aa18c23"
+  },
+  "create_new_thread": false,
+  "build": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-evaluation-main42\\build-binding.json",
+    "bytes": 27762,
+    "sha256": "c75f9260770de93591dc4a2706f7e504b23e8a3db211b8a766071665983c2a01"
+  },
+  "noise_inadequate": 12,
+  "noise_rows": {
+    "dense": {
+      "adequate": false,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 19.892889999999994,
+          "adequate": false,
+          "d": 9.946444999999997,
+          "values": [
+            29.006319999999995,
+            19.059874999999998,
+            24.28385,
+            28.560014999999993
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 14.7127499999998,
+          "adequate": false,
+          "d": 7.3563749999999,
+          "values": [
+            40.449329999999996,
+            33.092955000000096,
+            38.82250000000002,
+            37.98641900000002
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 15.731249999999996,
+          "adequate": false,
+          "d": 7.865624999999998,
+          "values": [
+            12.359019999999997,
+            9.3239,
+            11.062100000000001,
+            18.927725
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 19.20905399999957,
+          "adequate": false,
+          "d": 9.604526999999784,
+          "values": [
+            24.129171999999915,
+            14.524645000000131,
+            18.487450000000013,
+            26.139120000000023
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.002745000000000027,
+          "values": [
+            0.0067,
+            0.007025,
+            0.0093,
+            0.006554999999999972
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.0022510000000000654,
+          "values": [
+            0.009921999999999981,
+            0.010015000000000055,
+            0.01311500000000001,
+            0.015366000000000076
+          ]
+        }
+      }
+    },
+    "hold-closed-reset-v2": {
+      "adequate": false,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 23.0468,
+          "adequate": false,
+          "d": 11.5234,
+          "values": [
+            22.542749999999998,
+            21.814239999999945,
+            20.7397,
+            9.216299999999999
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 35.14338000000008,
+          "adequate": false,
+          "d": 17.57169000000004,
+          "values": [
+            41.222225,
+            31.373815999999994,
+            30.2016,
+            12.629909999999958
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 10.83657,
+          "adequate": false,
+          "d": 5.418285,
+          "values": [
+            11.829374999999999,
+            10.882959999999994,
+            11.2432,
+            5.824915
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 28.049254000000005,
+          "adequate": false,
+          "d": 14.024627000000002,
+          "values": [
+            22.752399999999998,
+            22.970979999999997,
+            21.1452,
+            7.120572999999996
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.008924999999999995,
+          "values": [
+            0.042124999999999996,
+            0.0332,
+            0.032,
+            0.0277
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.03065100000000002,
+          "values": [
+            0.08247499999999999,
+            0.051823999999999974,
+            0.0526,
+            0.0377
+          ]
+        }
+      }
+    },
+    "tap-closed-reset-v1": {
+      "adequate": false,
+      "metrics": {
+        "capture_to_owner_ms.p95": {
+          "T": 15.966400000000018,
+          "adequate": false,
+          "d": 7.983200000000009,
+          "values": [
+            8.341694999999989,
+            16.324894999999998,
+            5.835935,
+            9.561395
+          ]
+        },
+        "capture_to_owner_ms.p99": {
+          "T": 10.520270000000032,
+          "adequate": false,
+          "d": 5.260135000000016,
+          "values": [
+            21.646184999999974,
+            26.90631999999999,
+            12.888870999999972,
+            12.854265999999985
+          ]
+        },
+        "observer_ms.p95": {
+          "T": 5.264409999999996,
+          "adequate": false,
+          "d": 2.632204999999998,
+          "values": [
+            2.599014999999997,
+            5.231219999999995,
+            2.0653499999999996,
+            3.2749199999999985
+          ]
+        },
+        "observer_ms.p99": {
+          "T": 9.073140000000048,
+          "adequate": false,
+          "d": 4.536570000000024,
+          "values": [
+            10.87841999999995,
+            15.414989999999975,
+            4.204971999999998,
+            4.625676999999995
+          ]
+        },
+        "owner_ms.p95": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.004030000000000018,
+          "values": [
+            0.008069999999999982,
+            0.0121,
+            0.0077,
+            0.00888499999999999
+          ]
+        },
+        "owner_ms.p99": {
+          "T": 0.25,
+          "adequate": true,
+          "d": 0.007896999999999973,
+          "values": [
+            0.04,
+            0.047290999999999944,
+            0.045396999999999986,
+            0.05329399999999996
+          ]
+        }
+      }
+    }
+  },
+  "schema": "pas.narrow-noise-negative-result.v1",
+  "aa_status": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main42\\status.json",
+    "bytes": 43917,
+    "sha256": "ba62836e8a4f04ad2676236dc099202a4b46e542ec59c0f32c307317c316a1e2"
+  },
+  "producer_zero_overrun_runs": 12,
+  "abba": "NOT_RUN",
+  "cost_ready": false,
+  "outer_native_metadata_projection": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\main42-reader-native-projection.json",
+    "bytes": 738,
+    "sha256": "27889e17ba7f2206c1ca90d448564d6fa54853f8e982f1f2b4b065f984fe6b58"
+  },
+  "noise": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main42\\noise-freeze.json",
+    "bytes": 10286,
+    "sha256": "82d675598a4c9bf14fe5335bab031905277b089dde1a26e7cfc728e5893639b7"
+  },
+  "live_ready": false,
+  "source_commit": "96c8c2a4b465c041d9117faa8140b9361c0beeae",
+  "readonly_base_delta_AA_final_bytes_PASS": true,
+  "lossless_raw_relocation": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-noise-raw-archive42\\proof.json",
+    "sha256": "629d273717ad78fd026b0623fadcfe657d89b52dc3c0f5e060892e7b2c1b931c",
+    "bytes": 5395
+  }
+}
