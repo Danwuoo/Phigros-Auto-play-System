@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main38')
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main39')
 $ErrorActionPreference='Stop'
 # The source and process helpers are shared; LoadBuilds is deliberately unused.
 # main32's Debug/ASan compiler roots are archived, and none is a delta donor.
@@ -100,7 +100,7 @@ $baseCore=ReadBound $baseBuild.core_build_plan
 $dependencies=ReadBound $baseBuild.dependency_manifest
 if($baseManifest.source_commit -cne $baseCommit -or $baseManifest.files.Count -ne 909 -or $snapshot.formal_manifest.sha256 -cne $baseBuild.source_manifest.sha256 -or $baseCore.source_commit -cne $baseCommit -or $baseCore.translation_units -ne 22 -or $dependencies.source_commit -cne $baseCommit -or $dependencies.files.Count -ne 2154 -or -not $dependencies.release_and_debug -or -not $dependencies.protoc_and_plugin){throw 'base formal/source/dependency identities required'}
 # Verify the complete original installed closure once before building. Only
-# files actually used by these three targets enter subsequent native closures.
+# files actually used by these four targets enter subsequent native closures.
 foreach($entry in $dependencies.files){CheckEntry $entry}
 $dependencyPreflightVerified=$true
 $dependencyRoot=[IO.Path]::GetFullPath($dependencies.root)
@@ -141,7 +141,7 @@ if($approvalValue.status -cne 'HUMAN_APPROVED' -or $approvalValue.retained_preli
 $changedPaths=@(& git -c core.quotePath=false -C $repo diff --name-only $baseCommit $commit)
 if($LASTEXITCODE -or -not $changedPaths.Count){throw 'explicit narrow source delta required'}
 foreach($path in $changedPaths){
- $allowed=$path -in @('AGENTS.md','README.md','research/pre_emulator/PLAN.md','research/prelive_current/chain.cpp','research/prelive_current/consumer_priority.hpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/worker_affinity.hpp','research/prelive_current/tests/worker_affinity_tests.cpp','research/prelive_current/diagnostic_processor.hpp','research/prelive_current/diagnostic_phase_profile.hpp','research/prelive_current/diagnostic_phase_summary.cpp','research/prelive_current/owner_candidate_step.hpp','research/prelive_current/runtime.hpp','research/prelive_current/CMakeLists.txt') -or $path -cmatch '^research/pre_emulator/qualification_reader/(?:main[.]cpp|controls[.]cpp|reader/narrow_preflight[.]hpp)$' -or $path -match '^research/pre_emulator/(?:[^/]+[.]ps1|(?:[^/]+/)*CMakeLists[.]txt)$' -or ($path -match '^docs/.*[.](md|json)$' -and $path -cne 'docs/research/zero-miss-20261006/windows/PRELIVE_COST_PROTOCOL_R2_20261007.md')
+ $allowed=$path -in @('AGENTS.md','README.md','research/pre_emulator/PLAN.md','research/prelive_current/chain.cpp','research/prelive_current/consumer_priority.hpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/worker_affinity.hpp','research/prelive_current/tests/worker_affinity_tests.cpp','research/prelive_current/producer_wait.hpp','research/prelive_current/tests/producer_wait_tests.cpp','research/prelive_current/diagnostic_processor.hpp','research/prelive_current/diagnostic_phase_profile.hpp','research/prelive_current/diagnostic_phase_summary.cpp','research/prelive_current/owner_candidate_step.hpp','research/prelive_current/runtime.hpp','research/prelive_current/CMakeLists.txt') -or $path -cmatch '^research/pre_emulator/qualification_reader/(?:main[.]cpp|controls[.]cpp|reader/narrow_preflight[.]hpp)$' -or $path -match '^research/pre_emulator/(?:[^/]+[.]ps1|(?:[^/]+/)*CMakeLists[.]txt)$' -or ($path -match '^docs/.*[.](md|json)$' -and $path -cne 'docs/research/zero-miss-20261006/windows/PRELIVE_COST_PROTOCOL_R2_20261007.md')
  if(-not $allowed -or $path -match '^(src/|include/|CMakeLists[.]txt$)'){throw ('delta outside cold harness/maintenance scope: '+$path)}
 }
 $trackedSourcePaths=@(& git -c core.quotePath=false -C $repo ls-files|Where-Object {$_ -cne 'apps/runtime_x11_p/aux/CMakeLists.txt' -and $_ -match '(\.(cpp|hpp|h|ps1|proto|in)$|(^|/)CMakeLists\.txt$)'})
@@ -162,11 +162,11 @@ $sourceManifest=Join-Path $artifact 'source-manifest.json'
 NewJson $sourceManifest @{schema='pas.cooperative-source.v1';source_commit=$commit;dirty=$false;files=$sourceEntries;base_source_commit=$baseCommit;device_operations=0;live_ready=$false}
 $dependencySelection=Join-Path $artifact 'selected-dependency-manifest.json'
 NewJson $dependencySelection @{schema='pas.narrow-noise-repair-dependency-selection.v1';source_commit=$commit;original_dependency_manifest=$baseBuild.dependency_manifest;original_dependency_source_commit=$baseCommit;complete_original_preflight_verified=$dependencyPreflightVerified;complete_original_preflight_files=$dependencies.files.Count;files=$selectedDependencies;selection='Actual nlohmann-json and zlib headers/configuration/import/runtime files only';device_operations=0;live_ready=$false}
-$targets=@('current_chain','consumer_priority_controls','worker_affinity_controls')
-$translationUnitSources=@('research/prelive_current/chain.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/tests/worker_affinity_tests.cpp')
+$targets=@('current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')
+$translationUnitSources=@('research/prelive_current/chain.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/tests/worker_affinity_tests.cpp','research/prelive_current/tests/producer_wait_tests.cpp')
 $workerPlacementPolicy='single-group highest raw EfficiencyClass two distinct physical cores, lowest LP per core; consumer first, producer second; exact restore'
 $corePlan=Join-Path $artifact 'narrow-core-build-plan.json'
-NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';formal_rebuilt=$false;delta_targets=$targets;translation_units=3;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
+NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';formal_rebuilt=$false;delta_targets=$targets;translation_units=4;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;producer_wait_controls_count=43;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1'
 $toolchain='C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake'
 $guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
@@ -178,10 +178,10 @@ Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $PSScriptRoo
 $configureReceipt=Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json'))
 $configureClosure=ClosurePin $configure
 
-# Ninja's concrete compile graph must contain exactly the three delta TUs.
+# Ninja's concrete compile graph must contain exactly the four delta TUs.
 $ninja=(Get-Content -LiteralPath (Join-Path $root 'build.ninja') -Raw).Replace('\','/')
 $objects=@([regex]::Matches($ninja,'(?m)^build ([^\r\n:]+[.]obj): CXX_COMPILER[^\r\n]*')|ForEach-Object {$_.Groups[1].Value})
-if($objects.Count -ne 3 -or @($objects|Where-Object {$_ -notmatch '^CMakeFiles/(current_chain|consumer_priority_controls|worker_affinity_controls)[.]dir/'}).Count -or @($objects|Where-Object {$_ -match '^CMakeFiles/current_chain[.]dir/'}).Count -ne 1 -or @($objects|Where-Object {$_ -match '^CMakeFiles/consumer_priority_controls[.]dir/'}).Count -ne 1 -or @($objects|Where-Object {$_ -match '^CMakeFiles/worker_affinity_controls[.]dir/'}).Count -ne 1 -or $ninja -match 'production/CMakeFiles/pas_core[.]dir/' -or $ninja -notmatch '/O2 /Ob2 /DNDEBUG' -or $ninja -notmatch '(?:/|-)MD(?: |\r?\n)'){throw 'exact three Release delta TUs and unchanged flags required'}
+if($objects.Count -ne 4 -or @($objects|Where-Object {$_ -notmatch '^CMakeFiles/(current_chain|consumer_priority_controls|worker_affinity_controls|producer_wait_tests)[.]dir/'}).Count -or @($objects|Where-Object {$_ -match '^CMakeFiles/current_chain[.]dir/'}).Count -ne 1 -or @($objects|Where-Object {$_ -match '^CMakeFiles/consumer_priority_controls[.]dir/'}).Count -ne 1 -or @($objects|Where-Object {$_ -match '^CMakeFiles/worker_affinity_controls[.]dir/'}).Count -ne 1 -or @($objects|Where-Object {$_ -match '^CMakeFiles/producer_wait_tests[.]dir/'}).Count -ne 1 -or $ninja -match 'production/CMakeFiles/pas_core[.]dir/' -or $ninja -notmatch '/O2 /Ob2 /DNDEBUG' -or $ninja -notmatch '(?:/|-)MD(?: |\r?\n)'){throw 'exact four Release delta TUs and unchanged flags required'}
 $buildReceipts=@();$buildClosures=@()
 foreach($target in $targets){
  $stage='build-prelive-noise-repair-'+$Attempt+'-'+$target.Replace('_','-')
@@ -191,15 +191,15 @@ foreach($target in $targets){
  $buildClosures+=@(ClosurePin $stage)
 }
 AssertCurrentSource;AssertBaseUnchanged
-$chain=Join-Path $root 'current_chain.exe';$controls=Join-Path $root 'consumer_priority_controls.exe';$affinityControls=Join-Path $root 'worker_affinity_controls.exe';$zDll=Join-Path $root 'z.dll'
-$newRuntime=@(Binding $chain;Binding $controls;Binding $affinityControls;Binding $zDll)
-if($newRuntime[3].sha256 -cne $baseRuntimeDlls[0].sha256 -or $newRuntime[3].bytes -ne $baseRuntimeDlls[0].bytes){throw 'new runtime z.dll must match original base bytes'}
+$chain=Join-Path $root 'current_chain.exe';$controls=Join-Path $root 'consumer_priority_controls.exe';$affinityControls=Join-Path $root 'worker_affinity_controls.exe';$waitControls=Join-Path $root 'producer_wait_tests.exe';$zDll=Join-Path $root 'z.dll'
+$newRuntime=@(Binding $chain;Binding $controls;Binding $affinityControls;Binding $waitControls;Binding $zDll)
+if($newRuntime[4].sha256 -cne $baseRuntimeDlls[0].sha256 -or $newRuntime[4].bytes -ne $baseRuntimeDlls[0].bytes){throw 'new runtime z.dll must match original base bytes'}
 $runtimeFiles=@($newRuntime)+$baseExecutables+$baseRuntimeDlls
-if(@($runtimeFiles|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.exe'}).Count -ne 7 -or @($runtimeFiles.path|Sort-Object -Unique).Count -ne $runtimeFiles.Count){throw 'unique seven executable runtime seal required'}
+if(@($runtimeFiles|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.exe'}).Count -ne 8 -or @($runtimeFiles.path|Sort-Object -Unique).Count -ne $runtimeFiles.Count){throw 'unique eight executable runtime seal required'}
 $compiledOutputs=@(Get-ChildItem -LiteralPath $root -File -Recurse|ForEach-Object {Binding $_.FullName})
 $compiledObjects=@($compiledOutputs|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.obj'})
-$targetObjects=@($compiledObjects|Where-Object {$_.path.Replace('\','/') -cmatch '/CMakeFiles/(?:current_chain|consumer_priority_controls|worker_affinity_controls)[.]dir/'})
-if($targetObjects.Count -ne 3 -or @($targetObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'chain.cpp.obj'}).Count -ne 1 -or @($targetObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'consumer_priority_tests.cpp.obj'}).Count -ne 1 -or @($targetObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'worker_affinity_tests.cpp.obj'}).Count -ne 1){throw 'only declared three narrow target objects permitted'}
+$targetObjects=@($compiledObjects|Where-Object {$_.path.Replace('\','/') -cmatch '/CMakeFiles/(?:current_chain|consumer_priority_controls|worker_affinity_controls|producer_wait_tests)[.]dir/'})
+if($targetObjects.Count -ne 4 -or @($targetObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'chain.cpp.obj'}).Count -ne 1 -or @($targetObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'consumer_priority_tests.cpp.obj'}).Count -ne 1 -or @($targetObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'worker_affinity_tests.cpp.obj'}).Count -ne 1 -or @($targetObjects|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'producer_wait_tests.cpp.obj'}).Count -ne 1){throw 'only declared four narrow target objects permitted'}
 foreach($object in $compiledObjects|Where-Object {$_ -notin $targetObjects}){if($object.path.Replace('\','/') -cnotmatch '/(?:CompilerIdCXX/CMakeCXXCompilerId[.]obj|CMakeFiles/ShowIncludes/main[.]obj)$'){throw 'unexpected formal or unrelated object in narrow root'}}
 $seal=@{files=$runtimeFiles}
 $controlsReport=Join-Path $artifact 'consumer-priority-controls.json'
@@ -218,9 +218,17 @@ $affinityValue=Get-Content -LiteralPath $affinityReport -Raw|ConvertFrom-Json
 if($affinityValue.schema -cne 'pas.worker-affinity-tests.v1' -or -not $affinityValue.pass -or $affinityValue.failed -ne 0 -or $affinityValue.assertions -ne 65 -or $affinityValue.checks.Count -ne 65 -or @($affinityValue.checks|Where-Object {-not $_.pass}).Count -or $affinityValue.device_operations -ne 0 -or $affinityValue.device_endpoints -ne 0 -or $affinityValue.cost_qualification -or $affinityValue.live_ready){throw 'all 65 worker affinity controls required without qualification'}
 $affinityReceipt=Binding (Join-Path $out ($affinityStage+'/'+$affinityStage+'-verification.json'))
 $affinityClosure=ClosurePin $affinityStage
+$waitReport=Join-Path $artifact 'producer-wait-controls.json'
+$waitStage='test-prelive-noise-repair-'+$Attempt+'-producer-wait-tests'
+AssertCurrentSource;AssertBaseUnchanged
+Native $waitStage $waitControls @($waitReport) @($inputs+$runtimeFiles.path+$compiledOutputs.path+$configureReceipt.path+$buildReceipts.path+$configureClosure.path+$buildClosures.path+$controlsReport+$controlsReceipt.path+$controlsClosure.path+$affinityReport+$affinityReceipt.path+$affinityClosure.path) 900
+$waitValue=Get-Content -LiteralPath $waitReport -Raw|ConvertFrom-Json
+if($waitValue.schema -cne 'pas.producer-deadline-wait-tests.v1' -or $waitValue.pass -ne $true -or $waitValue.failed -ne 0 -or $waitValue.assertions -ne 43 -or $waitValue.checks.Count -ne 43 -or @($waitValue.checks|Where-Object {$_.pass -ne $true}).Count -or $waitValue.active_tail_ns -ne 20000000 -or $waitValue.active_tail_poll_cap -ne 16777216 -or $waitValue.device_operations -ne 0 -or $waitValue.device_endpoints -ne 0 -or $waitValue.cost_qualification -ne $false -or $waitValue.live_ready -ne $false){throw 'all 43 bounded producer wait controls required without qualification'}
+$waitReceipt=Binding (Join-Path $out ($waitStage+'/'+$waitStage+'-verification.json'))
+$waitClosure=ClosurePin $waitStage
 foreach($entry in $compiledOutputs){CheckEntry $entry}
 AssertCurrentSource;AssertBaseUnchanged
 $candidateBytes=CheckCandidateCapacity
 $bindingPath=Join-Path $artifact 'build-binding.json'
-NewJson $bindingPath @{schema='pas.narrow-noise-repair-build.v1';source_commit=$commit;configuration='release';scope=$scope;whole_candidate_qualification=$false;live_ready=$false;device_operations=0;base_source_commit=$baseCommit;base_release_build=$baseBuildPin;base_release_evaluation=$baseEvaluationPin;original_main32_inventory=$inventoryPin;source_manifest=(Binding $sourceManifest);dependency_manifest=$baseBuild.dependency_manifest;selected_dependency_manifest=(Binding $dependencySelection);core_build_plan=(Binding $corePlan);base_static_inputs=$staticInputs;build_root=$root;files=$runtimeFiles;compiled_outputs=$compiledOutputs;configure_receipt=$configureReceipt;configure_input_closure=$configureClosure;build_receipts=$buildReceipts;build_input_closures=$buildClosures;controls_receipt=$controlsReceipt;controls_report=(Binding $controlsReport);controls_input_closure=$controlsClosure;affinity_controls_receipt=$affinityReceipt;affinity_controls_report=(Binding $affinityReport);affinity_controls_input_closure=$affinityClosure;compiler_environment=$environmentPin;compiler_environment_reused=$true;tests_scope_authorization=$scopePin;old_configuration_proofs=$oldProofs;old_core_tests_prerequisite_only=$true;changed_paths=@($changedPaths|Sort-Object -Unique);additional_inputs=@(Binding $scopeDocument;Binding $approval);candidate_bytes=$candidateBytes;candidate_cap=6442450944}
+NewJson $bindingPath @{schema='pas.narrow-noise-repair-build.v1';source_commit=$commit;configuration='release';scope=$scope;whole_candidate_qualification=$false;live_ready=$false;device_operations=0;base_source_commit=$baseCommit;base_release_build=$baseBuildPin;base_release_evaluation=$baseEvaluationPin;original_main32_inventory=$inventoryPin;source_manifest=(Binding $sourceManifest);dependency_manifest=$baseBuild.dependency_manifest;selected_dependency_manifest=(Binding $dependencySelection);core_build_plan=(Binding $corePlan);base_static_inputs=$staticInputs;build_root=$root;files=$runtimeFiles;compiled_outputs=$compiledOutputs;configure_receipt=$configureReceipt;configure_input_closure=$configureClosure;build_receipts=$buildReceipts;build_input_closures=$buildClosures;controls_receipt=$controlsReceipt;controls_report=(Binding $controlsReport);controls_input_closure=$controlsClosure;affinity_controls_receipt=$affinityReceipt;affinity_controls_report=(Binding $affinityReport);affinity_controls_input_closure=$affinityClosure;wait_controls_binary=$newRuntime[3];wait_controls_receipt=$waitReceipt;wait_controls_report=(Binding $waitReport);wait_controls_input_closure=$waitClosure;compiler_environment=$environmentPin;compiler_environment_reused=$true;tests_scope_authorization=$scopePin;old_configuration_proofs=$oldProofs;old_core_tests_prerequisite_only=$true;changed_paths=@($changedPaths|Sort-Object -Unique);additional_inputs=@(Binding $scopeDocument;Binding $approval);candidate_bytes=$candidateBytes;candidate_cap=6442450944}
 Write-Output $bindingPath

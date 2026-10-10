@@ -116,3 +116,24 @@ single active group；不猜跨group還原、不選同core sibling、不默默fa
 `out/retained/consolidation-20261008/inactive-cold-diagnostic-raw-archive38/original-journals.zip`。
 同目錄proof保存原path／bytes／SHA，原報告與summary保持；只刪核對後未壓縮副本。
 新AA／ABBA raw與當前main32正式前置證據未移動；原診斷完整重讀先restore原path。
+
+main38／`b37516d15a13a9b254e2e3caec32c387fa45cdd6` fresh3 TUs、priority36／affinity65
+與reader fresh2 TUs／34 controls全native通過。實際只讀bundle核對原三配置／prefix3063／
+fault4／production9／新narrow build均PASS；AA／noise／ABBA缺少，正確NOT_READY，未發資格。
+新chain SHA `c46b6a70f3a39a7aef0488f40b864d7080f41a7895b7cb6458aed00491f5d469`。
+首筆Tap2560 producer native0，priority及兩affinity scope還原verified，但controller新helper
+未跨LoadBuilds作用域，STOP於auditor之前。另以原source、原完整raw補audit與gate封存：
+audit integrity PASS／native0；原gate native0、validity=false，failure
+`tap_streamed_workload_and_cadence`。producer超期1／publication2，不能由修腳本升格通過。
+原status／raw／STOP、後11筆NOT_RUN、noise／ABBA NOT_RUN不改；923 source files逐SHA
+複製保存於`out/prelive-pre-emulator-planning/source-b37516d-main38-snapshot/snapshot.json`。
+
+原attempt811開始晚27.4477ms，render及publication超下一deadline8.2108／9.1408ms；
+attempt1573開始晚18.4794ms，render尚餘0.6206ms、publication超0.6023ms。
+沒有timer-arm／signal／resume邊界，不能認定OS timer或特定排程根因。下一候選仍保留
+原epoch、2560全attempt及20ms cadence，producer在專用core以固定20ms QPC active tail
+避免每周期睡至deadline；較遠deadline用原high-resolution timer睡到tail，ceil100ns，
+四次early wake上限。tail只QPC／YieldProcessor，poll硬上限2^24；不早render、不跳attempt、
+不重設due、不fallback。CPU負載增加照實保留，這是候選修補，不是noise／cost資格。
+原22＋新21 producer controls共43，fresh必要四TUs；reader仍fresh2TUs／34controls。
+所有原R2、正式source／five libraries、容量及停止門檻不改；不重跑75／production9。

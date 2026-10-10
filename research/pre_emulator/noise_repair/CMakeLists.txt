@@ -24,7 +24,11 @@ target_link_libraries(consumer_priority_controls PRIVATE nlohmann_json::nlohmann
 add_executable(worker_affinity_controls "${PAS_WORKSPACE}/research/prelive_current/tests/worker_affinity_tests.cpp")
 target_include_directories(worker_affinity_controls PRIVATE "${PAS_WORKSPACE}/include" "${PAS_WORKSPACE}/research/prelive_current")
 target_link_libraries(worker_affinity_controls PRIVATE nlohmann_json::nlohmann_json)
-foreach(target current_chain consumer_priority_controls worker_affinity_controls)
+add_executable(producer_wait_tests "${PAS_WORKSPACE}/research/prelive_current/tests/producer_wait_tests.cpp")
+target_include_directories(producer_wait_tests PRIVATE "${PAS_WORKSPACE}/include" "${PAS_WORKSPACE}/research/prelive_current")
+# Only HostClock's existing QPC definitions are pulled from the preserved core.
+target_link_libraries(producer_wait_tests PRIVATE pas_core nlohmann_json::nlohmann_json)
+foreach(target current_chain consumer_priority_controls worker_affinity_controls producer_wait_tests)
  target_compile_options(${target} PRIVATE /W4 /permissive- /EHsc)
  target_link_options(${target} PRIVATE /INCREMENTAL:NO /STACK:8388608)
 endforeach()

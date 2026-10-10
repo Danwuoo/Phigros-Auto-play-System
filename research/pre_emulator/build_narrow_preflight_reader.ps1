@@ -1,5 +1,5 @@
 param([Parameter(Mandatory)][string]$BaseBinding,
-      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main38')
+      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main39')
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'common.ps1')
 $script:maintenancePath=$PSCommandPath
@@ -37,7 +37,8 @@ $candidate=ReaderRead $candidatePin
 if($candidate.schema -cne 'pas.narrow-noise-repair-build.v1' -or $candidate.source_commit -cne $head -or $candidate.configuration -cne 'release' -or $candidate.scope -cne 'noise_and_unrun_abba_only' -or $candidate.base_source_commit -cne $baseCommit -or $candidate.maintenance_only_amendment -or $candidate.whole_candidate_qualification -ne $false -or $candidate.live_ready -ne $false -or $candidate.device_operations -ne 0){throw 'same clean source narrow candidate required without qualification'}
 $candidateSource=ReaderRead $candidate.source_manifest
 $candidateCore=ReaderRead $candidate.core_build_plan
-if($candidateSource.schema -cne 'pas.cooperative-source.v1' -or $candidateSource.source_commit -cne $head -or $candidateSource.dirty -ne $false -or $candidateCore.schema -cne 'pas.narrow-noise-repair-core-build-plan.v1' -or $candidateCore.source_commit -cne $head -or $candidateCore.formal_rebuilt -ne $false -or $candidateCore.translation_units -ne 3 -or @($candidateCore.delta_targets).Count -ne 3 -or @($candidateCore.delta_targets|Where-Object {$_ -notin @('current_chain','consumer_priority_controls','worker_affinity_controls')}).Count){throw 'same source three-TU narrow candidate metadata required'}
+$candidateTargets=@('current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')
+if($candidateSource.schema -cne 'pas.cooperative-source.v1' -or $candidateSource.source_commit -cne $head -or $candidateSource.dirty -ne $false -or $candidateCore.schema -cne 'pas.narrow-noise-repair-core-build-plan.v1' -or $candidateCore.source_commit -cne $head -or $candidateCore.formal_rebuilt -ne $false -or $candidateCore.translation_units -ne 4 -or $candidateCore.producer_wait_controls_count -ne 43 -or @($candidateCore.delta_targets).Count -ne 4 -or @($candidateCore.delta_targets|Sort-Object -Unique).Count -ne 4 -or @(Compare-Object ($candidateTargets|Sort-Object) (@($candidateCore.delta_targets)|Sort-Object)).Count){throw 'same source four-TU narrow candidate metadata required'}
 # The existing whole-source manifest is the source identity of both builds.
 # Candidate binaries and its five imported libraries are not reader inputs.
 $tracked=@(& git -c core.quotePath=false -C $repo ls-files|Where-Object {$_ -cne 'apps/runtime_x11_p/aux/CMakeLists.txt' -and $_ -cmatch '(\.(cpp|hpp|h|ps1|proto|in)$|(^|/)CMakeLists\.txt$)'})
@@ -69,11 +70,11 @@ while($pending.Count){
   if(Test-Path -LiteralPath $local -PathType Leaf){$pending.Enqueue($local)}elseif(Test-Path -LiteralPath $workspace -PathType Leaf){$pending.Enqueue($workspace)}else{throw ('unresolved reader include: '+$include)}
  }
 }
-$candidateMetadata=@($candidatePin,$candidate.source_manifest,$candidate.core_build_plan,$candidate.dependency_manifest,$candidate.configure_receipt,$candidate.configure_input_closure)+@($candidate.build_receipts)+@($candidate.build_input_closures)+@($candidate.controls_report,$candidate.controls_receipt,$candidate.controls_input_closure,$candidate.affinity_controls_report,$candidate.affinity_controls_receipt,$candidate.affinity_controls_input_closure)
+$candidateMetadata=@($candidatePin,$candidate.source_manifest,$candidate.core_build_plan,$candidate.dependency_manifest,$candidate.configure_receipt,$candidate.configure_input_closure)+@($candidate.build_receipts)+@($candidate.build_input_closures)+@($candidate.controls_report,$candidate.controls_receipt,$candidate.controls_input_closure,$candidate.affinity_controls_report,$candidate.affinity_controls_receipt,$candidate.affinity_controls_input_closure,$candidate.wait_controls_report,$candidate.wait_controls_receipt,$candidate.wait_controls_input_closure)
 foreach($entry in $candidateMetadata){CheckEntry $entry}
 $null=ReaderReceipt $candidate.configure_receipt
 foreach($entry in $candidate.build_receipts){$null=ReaderReceipt $entry}
-$null=ReaderReceipt $candidate.controls_receipt;$null=ReaderReceipt $candidate.affinity_controls_receipt
+$null=ReaderReceipt $candidate.controls_receipt;$null=ReaderReceipt $candidate.affinity_controls_receipt;$null=ReaderReceipt $candidate.wait_controls_receipt
 
 $originalDependencies=ReaderRead $candidate.dependency_manifest
 if($originalDependencies.source_commit -cne $baseCommit -or $originalDependencies.files.Count -ne 2154){throw 'original dependency manifest provenance required'}

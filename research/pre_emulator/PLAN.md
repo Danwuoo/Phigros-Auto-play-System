@@ -17,6 +17,12 @@ core及各自最低LP；consumer先、producer後，A/B同policy，writer在scop
 不改；保留原負結果，完整AA12／noise／ABBA原gate不降。後文fresh全盤要求為先前包規則，
 本次以明確使用者縮小重驗指示為準。新delta不是新三配置whole或live資格。
 同步補既有main32 preservation與新narrow cost的只讀bundle joins，不授qualified token。
+main38／`b37516d` fresh3TU／priority36／affinity65、reader fresh2TU／34 controls及實際base
+bundle joins通過；首Tap2560原raw audit通過，但原gate因producer1／publication2超期失敗。
+controller helper scope STOP亦保留，923 source snapshot及原status不改。下一修補原due與
+全部attempt不變，producer固定20ms QPC active tail／2^24 poll硬界，遠距原timer到tail；
+CPU成本照報，不能推定OS延遲根因。只fresh四必要TUs與原22＋新21共43 deadline controls，
+reader仍兩TUs／34controls；原75／production9不全盤重跑，原R2及正式libs不改。
 讀取current device/profile/physical實際收據及live啟用接線依需emulator的階段完成，
 這輪先完成其餘所有能冷完成的開發／測試，不建立新thread。
 

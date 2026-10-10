@@ -40,6 +40,34 @@ void wait_producer_deadline(const Clock& clock, Nanoseconds deadline, Wait&& wai
  }
  if(clock.now_ns()<deadline)throw std::runtime_error("producer repeated early wake");
 }
+inline constexpr Nanoseconds producer_active_tail_ns=20'000'000;
+inline constexpr std::uint32_t producer_active_tail_poll_cap=1u<<24;
+// Fixed, symmetric A/B candidate: sleep only outside the original 20ms tail.
+// The active tail uses QPC and processor pause, with no OS sleep/yield or due
+// reset. Its additional CPU cost and any actual late return remain measurable.
+template<class Wait,class Pause>
+void wait_producer_deadline_with_active_tail(const Clock& clock,Nanoseconds deadline,Wait&& wait,Pause&& pause){
+ Nanoseconds prior=-1;
+ const auto read=[&](){
+  const auto now=clock.now_ns();
+  if(now<0||deadline<0)throw std::runtime_error("producer QPC domain");
+  if(now<prior)throw std::runtime_error("producer nonmonotonic QPC");
+  prior=now;return now;
+ };
+ auto now=read();if(now>=deadline)return;
+ if(deadline-now>100'000'000)throw std::runtime_error("producer wait horizon");
+ int waits=0;
+ while(now<deadline&&deadline-now>producer_active_tail_ns){
+  if(waits==4)throw std::runtime_error("producer repeated early wake");
+  const auto remaining=deadline-now-producer_active_tail_ns;
+  wait(remaining/100+(remaining%100!=0));++waits;now=read();
+ }
+ std::uint32_t polls=0;
+ while(now<deadline){
+  if(polls==producer_active_tail_poll_cap)throw std::runtime_error("producer active tail poll bound");
+  pause();++polls;now=read();
+ }
+}
 #ifdef _WIN32
 struct WindowsProducerPriorityApi {
  WindowsProducerPriorityApi(){if(GetPriorityClass(GetCurrentProcess())!=NORMAL_PRIORITY_CLASS)throw std::runtime_error("producer normal process class required");}
@@ -54,12 +82,12 @@ public:
  ProducerDeadlineWait(const ProducerDeadlineWait&)=delete;
  ProducerDeadlineWait& operator=(const ProducerDeadlineWait&)=delete;
  ~ProducerDeadlineWait(){if(timer_){CancelWaitableTimer(timer_);CloseHandle(timer_);}}
- void wait_until(const Clock& clock,Nanoseconds deadline){wait_producer_deadline(clock,deadline,[&](Nanoseconds ticks){
+ void wait_until(const Clock& clock,Nanoseconds deadline){wait_producer_deadline_with_active_tail(clock,deadline,[&](Nanoseconds ticks){
   LARGE_INTEGER due;due.QuadPart=-ticks;
   if(!SetWaitableTimerEx(timer_,&due,0,nullptr,nullptr,nullptr,0))throw std::runtime_error("producer timer arm");
   const auto result=WaitForSingleObject(timer_,250);
   if(result!=WAIT_OBJECT_0)throw std::runtime_error("producer bounded timer wait");
- });}
+ },[]{YieldProcessor();});}
 };
 #endif
 }
