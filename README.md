@@ -12,8 +12,10 @@ main39／`f28643c`四必要TUs、priority36／affinity65／deadline43及reader34
 owner六欄通過，ABBA未跑；見[負結果](docs/research/live-readiness-20261007/MAIN39_NOISE_NEGATIVE_20261011.json)。
 main40／`f40fecf`末兩core候選的前兩Tap通過，第三Tap producer／publication各1超期；
 負結果與923 source snapshot保留，後九筆及noise／ABBA未跑。
-下一候選只將producer thread改為HIGHEST(2)，consumer仍ABOVE_NORMAL(1)，process仍NORMAL；
-不改原R2、due／cadence、active tail、末兩core選位或門檻。
+main41／`7057be7` producer HIGHEST候選的AA12 validity全PASS、producer／publication全部零超期；
+noise 8／18 adequate、10不足，ABBA未跑，actual reader已重核原前置／新build／AA與18公式。
+下一候選只將consumer thread改為HIGHEST(2)，producer仍2，process仍NORMAL；
+不改原R2、due／cadence、active tail、末兩core選位或門檻，政策由source／controls／plan精確綁定。
 仍需新AA／noise及未跑ABBA，成本NOT_READY／live UNQUALIFIED。
 同步補只讀base/delta收據join；最新指示須完成全部啟動實機前可完成的測試／開發，
 完成後停在emulator邊界、先不開新thread。正式production binary保持原來源。

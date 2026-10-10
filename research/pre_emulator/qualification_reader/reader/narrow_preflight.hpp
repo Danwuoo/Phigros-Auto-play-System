@@ -18,6 +18,18 @@ inline void pin_shape(const J& p){
         p.at("bytes").is_number_unsigned()&&w::hex(p.at("sha256").get<std::string>(),64),"complete existing receipt binding");
     for(const auto& part:fs::path(p.at("path").get<std::string>()))w::require(part!="."&&part!="..","receipt path traversal");
 }
+inline bool legacy_priority_header(const J& pin){return pin.at("bytes")==9155&&pin.at("sha256")=="22e2ae774920f223a4f358d800912d86c6fe1976c4452edd8f22d95a1c024cd8";}
+inline bool legacy_priority_tests(const J& pin){return pin.at("bytes")==11370&&pin.at("sha256")=="083e294be6fe79d249bf8f89c65c3adedab28cc66beab09b85c5c2406a06a413";}
+inline int priority_policy(const J& plan,const J& controls,const J& header,const J& tests){
+    pin_shape(header);pin_shape(tests);const bool old_header=legacy_priority_header(header),old_tests=legacy_priority_tests(tests);
+    const bool has_plan=plan.contains("consumer_priority_requested"),has_controls=controls.contains("consumer_priority_requested");
+    if(!has_plan&&!has_controls){w::require(old_header&&old_tests,"missing priority policy only accepted for exact legacy header/tests");return 1;}
+    w::require(has_plan&&has_controls&&plan.at("consumer_priority_requested").is_number_integer()&&controls.at("consumer_priority_requested").is_number_integer()&&plan.at("consumer_priority_requested")==2&&controls.at("consumer_priority_requested")==2,"new priority policy requires matching integer2 plan/controls");
+    w::require(!old_header&&!old_tests,"new priority policy cannot mix legacy header/tests");return 2;
+}
+inline void verify_priority(const J& p,int expected){
+    w::require((expected==1||expected==2)&&p.at("requested").is_number_integer()&&p.at("applied_readback").is_number_integer()&&p.at("previous").is_number_integer()&&p.at("restored_readback").is_number_integer()&&p.at("requested")==expected&&p.at("applied_readback")==expected&&p.at("applied").get<bool>()&&p.at("restored").get<bool>()&&p.at("verified").get<bool>()&&p.at("process_class")==32&&p.at("process_class_after_close")==32&&p.at("restored_readback")==p.at("previous")&&p.at("failure")=="none"&&p.at("rollback_failure")=="none"&&!p.at("fallback_attempted").get<bool>(),"actual consumer priority exact requested/readback/restore/NORMAL32 policy");
+}
 inline bool maintenance_path(std::string_view p){
     if(p=="AGENTS.md"||p=="README.md"||p=="research/pre_emulator/PLAN.md")return true;
     if(p.starts_with("research/pre_emulator/")&&p.ends_with(".ps1")&&p.substr(22).find('/')==std::string_view::npos)return true;
@@ -46,6 +58,7 @@ class Preflight final {
     std::map<std::string,J> processes_,base_sources_,base_files_;
     std::set<std::string> cost_identities_;
     std::string execution_,compiled_,manual_sha_;
+    int consumer_priority_requested_=0;
     J checks_=J::object(),issues_=J::array(),provenance_=J::object();bool rejected_=false,ready_=true,aa_ok_=false,noise_ok_=false;
     CostCampaign aa_,abba_;
     static std::string key(const J& p){pin_shape(p);return fs::path(p.at("path").get<std::string>()).lexically_normal().generic_string();}
@@ -167,17 +180,24 @@ class Preflight final {
         const auto deps=object(delta_.at("dependency_manifest"));w::require(deps.at("source_commit")==base_commit&&same_pin(delta_.at("dependency_manifest"),base.at("dependency_manifest")),"original dependency manifest provenance");
         if(delta_.contains("selected_dependency_manifest")){const auto selected=object(delta_.at("selected_dependency_manifest"));w::require(selected.at("schema")=="pas.narrow-noise-repair-dependency-selection.v1"&&same_pin(selected.at("original_dependency_manifest"),delta_.at("dependency_manifest")),"actual narrow dependency selection");r_.entries(selected.at("files"));}
         r_.entries(delta_.at("additional_inputs"));const auto authorization=object(delta_.at("tests_scope_authorization"));w::require(authorization.at("schema")=="pas.user-directed-narrow-noise-repair-scope.v1"&&authorization.at("status")=="HUMAN_AUTHORIZED"&&authorization.at("scope")=="noise_and_unrun_abba_only"&&!authorization.at("full_75_rerun_required").get<bool>()&&!authorization.at("production_pass_rerun_required").get<bool>()&&authorization.at("device_operations")==0&&!authorization.at("live_ready").get<bool>(),"preserved user-directed narrow test scope");
+        J compiled_manifest=source_,compiled_manifest_pin=delta_.at("source_manifest");
         if(delta_.value("maintenance_only_amendment",false)){
             const auto parent=object(delta_.at("parent_repair_build"));same_parent(delta_,parent);w::require(parent.at("source_commit")==compiled_&&!parent.value("maintenance_only_amendment",false)&&same_pin(delta_.at("compiled_source_manifest"),parent.at("source_manifest"))&&!delta_.at("component_rebuilt").get<bool>()&&!delta_.at("formal_rebuilt").get<bool>(),"one preserved compiled parent, no recompilation");
-            const auto old=object(parent.at("source_manifest"));std::set<std::string> old_paths;for(const auto& f:old.at("files")){const auto path=relative(f);old_paths.insert(path);w::require(current.contains(path)&&(maintenance_path(path)||same_pin(current.at(path),f)),"nonmaintenance compiled source changed");}
+            const auto old=object(parent.at("source_manifest"));compiled_manifest=old;compiled_manifest_pin=parent.at("source_manifest");std::set<std::string> old_paths;for(const auto& f:old.at("files")){const auto path=relative(f);old_paths.insert(path);w::require(current.contains(path)&&(maintenance_path(path)||same_pin(current.at(path),f)),"nonmaintenance compiled source changed");}
             for(const auto& [path,pin]:current){(void)pin;w::require(old_paths.contains(path)||maintenance_path(path),"new nonmaintenance source in preserved compiled execution");}
             auto parent_plan=object(parent.at("core_build_plan")),compiled_plan=plan;for(const auto* k:{"source_commit","compiled_source_commit","component_rebuilt","formal_rebuilt"}){parent_plan.erase(k);compiled_plan.erase(k);}w::require(parent_plan==compiled_plan,"unchanged parent targets/static/compiler provenance");
             const auto proof=object(delta_.at("amendment_proof"));w::require(proof.at("schema")=="pas.narrow-noise-maintenance-amendment.v1"&&proof.at("source_commit")==execution_&&proof.at("compiled_source_commit")==compiled_&&proof.at("before_verified").get<bool>()&&proof.at("after_verified").get<bool>()&&proof.at("native_operations")==0&&!proof.at("controls_rerun").get<bool>()&&same_pin(proof.at("parent_repair_build"),delta_.at("parent_repair_build"))&&same_pin(proof.at("source_manifest"),delta_.at("source_manifest"))&&same_pin(proof.at("core_build_plan"),delta_.at("core_build_plan")),"maintenance-only preservation proof");
         }else w::require(execution_==compiled_,"unamended execution/compiled identity");
         r_.entries(delta_.at("files"));r_.entries(delta_.at("compiled_outputs"));
-        for(const auto& pin:delta_.at("build_receipts"))by_verification(pin);by_verification(delta_.at("configure_receipt"));const auto control=by_verification(delta_.at("controls_receipt"));
+        std::vector<Native> build_processes;for(const auto& pin:delta_.at("build_receipts"))build_processes.push_back(by_verification(pin));by_verification(delta_.at("configure_receipt"));const auto control=by_verification(delta_.at("controls_receipt"));
         const auto report=object(delta_.at("controls_report"));w::require(report.at("schema")=="pas.consumer-priority-tests.v1"&&report.at("assertions")==36&&report.at("checks").size()==36&&report.at("failed")==0&&report.at("pass").get<bool>()&&report.at("device_endpoints")==0&&report.at("device_operations")==0&&!report.at("live_ready").get<bool>()&&!report.at("cost_qualification").get<bool>(),"preserved original controls36");for(const auto& c:report.at("checks"))w::require(c.at("pass").get<bool>(),"consumer priority control failed");
         w::require(std::find(control.spec.at("argv").begin(),control.spec.at("argv").end(),delta_.at("controls_report").at("path"))!=control.spec.at("argv").end(),"native controls output join");
+        std::map<std::string,J> compiled_sources;for(const auto& pin:compiled_manifest.at("files"))w::require(compiled_sources.emplace(relative(pin),pin).second,"unique actual compiled source pins");
+        const auto& priority_header=compiled_sources.at("research/prelive_current/consumer_priority.hpp");const auto& priority_tests=compiled_sources.at("research/prelive_current/tests/consumer_priority_tests.cpp");const auto& priority_chain=compiled_sources.at("research/prelive_current/chain.cpp");
+        consumer_priority_requested_=priority_policy(plan,report,priority_header,priority_tests);
+        const auto source_join=[&](const Native& p){for(const auto& pin:std::array<J,4>{compiled_manifest_pin,priority_header,priority_tests,priority_chain})w::require(p.inputs.contains(key(pin))&&same_pin(p.inputs.at(key(pin)),pin),"actual compiled manifest/chain/priority header/tests in native input closure");};
+        for(const auto& p:build_processes)source_join(p);source_join(control);
+        bool controls_binary=false;for(const auto& pin:delta_.at("files"))if(fs::path(pin.at("path").get<std::string>()).filename()=="consumer_priority_controls.exe")controls_binary|=same_path_text(control.spec.at("exe").get<std::string>(),pin.at("path").get<std::string>());w::require(controls_binary,"actual controls image in sealed narrow runtime files");
         if(affinity){const auto process=by_verification(delta_.at("affinity_controls_receipt"));const auto affinity_report=object(delta_.at("affinity_controls_report"));w::require(affinity_report.at("schema")=="pas.worker-affinity-tests.v1"&&affinity_report.at("assertions")==65&&affinity_report.at("checks").size()==65&&affinity_report.at("failed")==0&&affinity_report.at("pass").get<bool>()&&affinity_report.at("device_operations")==0&&affinity_report.at("device_endpoints")==0&&!affinity_report.at("cost_qualification").get<bool>()&&!affinity_report.at("live_ready").get<bool>()&&process.spec.at("argv")==J::array({delta_.at("affinity_controls_report").at("path")}),"existing worker-affinity controls65/native join");for(const auto& c:affinity_report.at("checks"))w::require(c.at("pass").get<bool>(),"worker-affinity control failed");}
         if(active_tail){
             const auto process=by_verification(delta_.at("wait_controls_receipt"));const auto wait_report=object(delta_.at("wait_controls_report"));
@@ -187,7 +207,7 @@ class Preflight final {
         for(const auto& p:delta_.at("old_configuration_proofs"))if(p.contains("archive_proof")){
             const auto proof=object(p.at("archive_proof"));w::require(proof.at("schema")=="pas.recoverable-main32-compiler-archive.v1"&&proof.at("source_commit")==base_commit&&proof.at("all_entry_SHAs_readback_verified").get<bool>()&&proof.at("originals_rechecked").get<bool>()&&same_pin(proof.at("build_binding"),p.at("build"))&&same_pin(proof.at("archive"),p.at("archive")),"preserved compiler ZIP proof");pin_shape(p.at("archive"));const fs::path archive=p.at("archive").at("path").get<std::string>();w::require(fs::is_regular_file(archive)&&fs::file_size(archive)==p.at("archive").at("bytes"),"compiler ZIP preservation existence/length");
         }
-        provenance_={{"base_formal_source_commit",base_commit},{"compiled_harness_source_commit",compiled_},{"execution_source_commit",execution_},{"formal_rebuilt",false},{"component_rebuilt",!delta_.value("maintenance_only_amendment",false)},{"old_controls_prerequisite_only",delta_.value("maintenance_only_amendment",false)},{"parent_repair_build",delta_.value("parent_repair_build",J(nullptr))},{"original_inventory",required("original_inventory")},{"narrow_build",required("narrow_build")}};
+        provenance_={{"base_formal_source_commit",base_commit},{"compiled_harness_source_commit",compiled_},{"execution_source_commit",execution_},{"consumer_priority_requested",consumer_priority_requested_},{"formal_rebuilt",false},{"component_rebuilt",!delta_.value("maintenance_only_amendment",false)},{"old_controls_prerequisite_only",delta_.value("maintenance_only_amendment",false)},{"parent_repair_build",delta_.value("parent_repair_build",J(nullptr))},{"original_inventory",required("original_inventory")},{"narrow_build",required("narrow_build")}};
     }
     CostCampaign campaign(const J& pin,bool abba){
         CostCampaign c{pin,object(pin),{}, {}};const auto& v=c.value;
@@ -205,6 +225,7 @@ class Preflight final {
         bool valid=true;
         w::require(rows.size()==c.value.at("planned_runs").size(),"all planned runs present");std::size_t i=0;
         for(const auto& e:rows){const auto& plan=c.value.at("planned_runs")[i++];auto report=object(e,w::MiB);const auto& prov=report.at("provenance");
+            verify_priority(report.at("consumer_priority"),consumer_priority_requested_);
             w::require(e.at("run_id")==plan.at("run_id")&&e.at("scene")==plan.at("scene")&&report.at("mode")==plan.at("mode")&&report.at("scene")==plan.at("scene")&&same_path_text(e.at("path").get<std::string>(),plan.at("report_path").get<std::string>()),"run/report plan join");
             const auto producer=native(e.at("process_evidence"));w::require(same_path_text(producer.spec.at("exe").get<std::string>(),c.bindings.at("candidate_binary").at("path").get<std::string>())&&producer.spec.at("argv")==J::array({"pipeline",plan.at("mode"),plan.at("scene"),"2560",c.pin.at("path"),plan.at("run_id"),e.at("path")}),"actual frozen producer command");
             w::require(prov.at("schema")=="pas.current-rails-run-provenance.v1"&&prov.at("campaign_sha256")==c.pin.at("sha256")&&prov.at("campaign_id")==c.value.at("id")&&prov.at("source_commit")==execution_&&prov.at("run_id")==plan.at("run_id")&&prov.at("scene")==plan.at("scene")&&prov.at("mode")==plan.at("mode")&&prov.at("requested")==2560&&same_path_text(prov.at("report_path").get<std::string>(),e.at("path").get<std::string>())&&prov.at("process").at("pid")==producer.facts.at("pid")&&prov.at("process").at("creation_filetime")==producer.facts.at("creation_filetime"),"fresh source/campaign/process identity");

@@ -25,7 +25,7 @@ try{for($i=0;$i -lt $plans.Count;$i++){
  Native $stage (Exe 'current_chain') @('pipeline',$p.mode,$p.scene,'2560',$Campaign,$id,$p.report_path) $inputs 900
  if($NoiseRepairBinding){
   $priority=(Get-Content -LiteralPath $p.report_path -Raw|ConvertFrom-Json).consumer_priority
-  if(-not $priority.verified -or -not $priority.applied -or -not $priority.restored -or $priority.requested -ne 1 -or $priority.applied_readback -ne 1 -or $priority.process_class -ne 32 -or $priority.process_class_after_close -ne 32 -or $priority.restored_readback -ne $priority.previous -or $priority.failure -cne 'none' -or $priority.rollback_failure -cne 'none' -or $priority.fallback_attempted){throw 'same A/B consumer scheduling readback and restoration required'}
+  if(-not $priority.verified -or -not $priority.applied -or -not $priority.restored -or $priority.requested -ne $noiseRepairBuild.consumer_priority_requested -or $priority.applied_readback -ne $noiseRepairBuild.consumer_priority_requested -or $priority.process_class -ne 32 -or $priority.process_class_after_close -ne 32 -or $priority.restored_readback -ne $priority.previous -or $priority.failure -cne 'none' -or $priority.rollback_failure -cne 'none' -or $priority.fallback_attempted){throw 'same A/B consumer scheduling readback and restoration required'}
   NoiseRepairVerifyWorkerPlacement (Get-Content -LiteralPath $p.report_path -Raw|ConvertFrom-Json)
  }
  $audit=Join-Path $artifact ($id+'-audit.json');$raw=@($p.report_path,($p.report_path+'.attempts.json'),($p.report_path+'.journal.jsonl'))

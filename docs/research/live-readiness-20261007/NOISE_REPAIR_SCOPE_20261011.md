@@ -182,3 +182,30 @@ Windows readback期待同步，43 controls總數不變；不是real-time保證�
 main40三份inactive Tap journal共36098542 bytes，逐entry decoded SHA及原件再核對後，
 lossless保存為1707589-byte ZIP及proof於`inactive-noise-raw-archive40`；報告／attempts／
 gate／STOP保持，原path完整重讀須restore，沒有刪除原負結果內容。
+
+main41／`7057be7`fresh4 TUs及36／65／43 controls、reader fresh2 TUs／34 controls通過。
+chain SHA `0e2cc31dbeba1b4eee5d4bd7bdc21dd54dcf0cf7b4257253dad52de065bd2a9a`。
+新AA12 validity全PASS，producer／publication超期12/12皆0，兩affinity scope及consumer
+priority readback／restore全核對。noise native／runner／verification0、80.6176276秒自然退出，
+owner六項及dense observer／capture-to-owner p99兩項adequate，其餘十項inadequate；
+ABBA NOT_RUN。完整18原值及source／binary／receipt索引見[main41負結果](MAIN41_NOISE_NEGATIVE_20261011.json)。
+923 source snapshot已保存；actual post-noise reader核對base／prefix3063／fault4／production9／
+delta／AA12／final bytes全PASS，18公式全部重算吻合，files6760、正確NOT_READY，未發資格。
+
+此actual runner外層Native是明列metadata projection：closure roots／freeze／leaf metadata
+為BFS terminal，不宣稱外層凍結全部transitive leaf payload；actual source／runtime／selected
+dependencies仍作外層inputs。readonly Reader仍逐直接leaf SHA、完整identity分母、completed
+native before/after seals及finish再次SHA核對；原Native8192files／128leaves及reader32768files
+各自上限不改，不重讀歷史raw或大ZIP、不冒稱移除的compiler graphs已重新驗證。
+
+下一候選只提高consumer scoped thread1→2（HIGHEST），producer2／NORMAL32／writer原值／
+generic末兩core／20ms tail全部不變。新controls scalar與corePlan.consumer_priority_requested
+必須同為2，source／fresh compile／controls native joins照核；缺scalar／缺plan的舊1只准
+已封存legacy header與tests SHA pair，不給任意缺欄位default或priority範圍fallback。
+AA／ABBA與readonly reader每run按唯一policy核requested/readback及原restore／failure條件。
+36／65／43不增減；reader新增六個有界舊1／新2／缺欄位／混合／不一致／錯runtime控制為40。
+這仍是調度候選，不是已確認噪聲根因或real-time保證；原R2及old75／production9範圍不改。
+
+main41十二份inactive raw journal共2003731386 bytes，逐entry decoded SHA及原件再核對後，
+lossless保存為56583098-byte ZIP與原path／SHA proof於`inactive-noise-raw-archive41`；
+reports／attempts／noise／STOP不改，只刪已核未壓縮副本，完整重讀須restore原path。

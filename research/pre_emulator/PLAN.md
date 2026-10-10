@@ -44,6 +44,15 @@ noise／ABBA NOT_RUN。attempt2462開始晚20.7934ms，render .2661ms、publicat
 process NORMAL32、LP generic policy與原20ms tail、所有attempt及R2門檻不變；43 controls
 更新requested/readback期待，不加MMCSS或real-time process，不把假說當實測根因。
 
+main41／`7057be7`四必要TUs及36／65／43、reader34／actual pre-cost joins通過；
+AA12 validity全部PASS、producer／publication超期12/12皆0。noise8項adequate／10不足，
+ABBA NOT_RUN；actual只讀post-noise核對base／prefix／fault／production／delta／AA／final
+bytes PASS，18公式全部一致、files6760、正確NOT_READY，未發live資格。
+下一候選只將consumer scoped priority1→2，producer2／NORMAL32／其他policy不變。
+新plan及controls以consumer_priority_requested精確綁定2，舊1只接受已識別legacy header／
+tests SHA pair；AA／ABBA及reader按該唯一值核對requested/readback與原restore安全條件。
+必要四TUs及36／65／43不增減，reader新增六policy fixtures為40；不全盤重跑原75／production9。
+
 2026-10-10 main31／`afaa8f3` fresh22 TUs、三配置各25組、writer20／auditor93、完整圖3、
 3063 prefix及fault4通過；production normal Tap／Hold完整raw與原數值通過。normal Dense
 native2／2.993s，僅145張、round `user_stop_aborted`，沒有report；guard identity／held／

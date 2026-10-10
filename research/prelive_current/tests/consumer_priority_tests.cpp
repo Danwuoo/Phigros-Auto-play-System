@@ -37,16 +37,16 @@ void controls(Tests& t) {
  {
   PriorityApi api;ConsumerPrioritySnapshot receipt;
   {ConsumerPriorityScope scope(api,receipt);
-   t.check("current_consumer_above_normal_normal_process",api.value==1&&api.process==0x20&&api.writes[0]==1&&receipt.thread_id==7&&receipt.previous==-1&&receipt.applied&&!receipt.verified());
+   t.check("current_consumer_highest_normal_process",api.value==2&&consumer_priority_requested==2&&api.process==0x20&&api.writes[0]==2&&receipt.thread_id==7&&receipt.previous==-1&&receipt.applied&&!receipt.verified());
    scope.close();t.check("explicit_close_restores_exact_previous",api.value==-1&&receipt.restored_readback==-1&&receipt.restored&&receipt.verified());
    const auto calls=api.sets;scope.close();t.check("close_idempotent_no_second_write",api.sets==calls);
   }
   t.check("verified_close_needs_no_destructor_fallback",api.sets==2&&!receipt.fallback_attempted);
  }
  {
-  PriorityApi api;api.value=1;ConsumerPrioritySnapshot receipt;
+  PriorityApi api;api.value=2;ConsumerPrioritySnapshot receipt;
   {ConsumerPriorityScope scope(api,receipt);scope.close();}
-  t.check("already_above_normal_restored_without_demotion",api.value==1&&receipt.previous==1&&receipt.verified());
+  t.check("already_highest_restored_without_demotion",api.value==2&&receipt.previous==2&&receipt.verified());
  }
  for(const bool failed_query:{false,true}) {
   PriorityApi api;api.process=failed_query?0:0x80;ConsumerPrioritySnapshot receipt;
@@ -80,7 +80,7 @@ void controls(Tests& t) {
  }
  {
   PriorityApi api;api.fail_read=2;api.fail_set=2;ConsumerPrioritySnapshot receipt;
-  t.check("failed_constructor_retains_apply_and_rollback_set_failure",rejects([&]{ConsumerPriorityScope scope(api,receipt);},Failure::priority_readback_query,Failure::rollback_set)&&api.value==1&&receipt.failure==Failure::priority_readback_query&&receipt.rollback_failure==Failure::rollback_set&&!receipt.rollback_restored&&!receipt.verified());
+  t.check("failed_constructor_retains_apply_and_rollback_set_failure",rejects([&]{ConsumerPriorityScope scope(api,receipt);},Failure::priority_readback_query,Failure::rollback_set)&&api.value==2&&receipt.failure==Failure::priority_readback_query&&receipt.rollback_failure==Failure::rollback_set&&!receipt.rollback_restored&&!receipt.verified());
  }
  {
   PriorityApi api;api.fail_read=2;api.change_thread_at=3;ConsumerPrioritySnapshot receipt;
@@ -92,7 +92,7 @@ void controls(Tests& t) {
  }
  {
   PriorityApi api;api.fail_read=2;api.ignore_set=2;ConsumerPrioritySnapshot receipt;
-  t.check("rollback_write_success_but_mismatch_is_typed",rejects([&]{ConsumerPriorityScope scope(api,receipt);},Failure::priority_readback_query,Failure::rollback_readback_mismatch)&&api.value==1&&!receipt.rollback_restored);
+  t.check("rollback_write_success_but_mismatch_is_typed",rejects([&]{ConsumerPriorityScope scope(api,receipt);},Failure::priority_readback_query,Failure::rollback_readback_mismatch)&&api.value==2&&!receipt.rollback_restored);
  }
  {
   PriorityApi api;ConsumerPrioritySnapshot receipt;
@@ -119,7 +119,7 @@ void controls(Tests& t) {
  {
   PriorityApi api;ConsumerPrioritySnapshot receipt;
   {ConsumerPriorityScope scope(api,receipt);api.ignore_set=2;
-   t.check("restore_write_success_mismatch_rejected",rejects([&]{scope.close();},Failure::restore_readback_mismatch)&&api.value==1&&!receipt.restored);
+   t.check("restore_write_success_mismatch_rejected",rejects([&]{scope.close();},Failure::restore_readback_mismatch)&&api.value==2&&!receipt.restored);
   }
   t.check("restore_mismatch_cleanup_not_admission",api.value==-1&&receipt.failure==Failure::restore_readback_mismatch&&!receipt.verified());
  }
@@ -131,7 +131,7 @@ void controls(Tests& t) {
  {
   PriorityApi api;ConsumerPrioritySnapshot receipt;
   {ConsumerPriorityScope scope(api,receipt);api.id=8;}
-  t.check("wrong_thread_destructor_does_not_mutate",api.sets==1&&api.value==1&&receipt.fallback_failure==Failure::wrong_thread&&!receipt.verified());
+  t.check("wrong_thread_destructor_does_not_mutate",api.sets==1&&api.value==2&&receipt.fallback_failure==Failure::wrong_thread&&!receipt.verified());
  }
  for(int variant=0;variant<3;++variant) {
   PriorityApi api;ConsumerPrioritySnapshot receipt;
@@ -156,12 +156,12 @@ int main(int argc,char** argv) {
   WindowsConsumerPriorityApi api;ConsumerPrioritySnapshot receipt;
   const auto process=api.process_class(),thread=api.thread();const auto before=api.current();
   {ConsumerPriorityScope scope(api,receipt);
-   t.check("actual_windows_current_thread_readback",api.current()==THREAD_PRIORITY_ABOVE_NORMAL&&api.thread()==thread&&api.process_class()==process);
+   t.check("actual_windows_current_thread_highest_readback",api.current()==THREAD_PRIORITY_HIGHEST&&api.thread()==thread&&api.process_class()==process);
    scope.close();
   }
   t.check("actual_windows_exact_prior_restored_normal_process",api.current()==before&&api.process_class()==process&&receipt.verified()&&!receipt.fallback_attempted);
 #endif
-  J result={{"schema","pas.consumer-priority-tests.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",t.failed==0},
+  J result={{"schema","pas.consumer-priority-tests.v1"},{"consumer_priority_requested",consumer_priority_requested},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",t.failed==0},
    {"cost_qualification",false},{"live_ready",false},{"device_endpoints",0},{"device_operations",0},{"qualification_scope","current-thread scheduling contract only; noise and physical remain separate"}};
   std::ofstream out(argv[1],std::ios::binary);out<<result.dump(2)<<'\n';if(!out)throw std::runtime_error("consumer priority test output write");
   std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<'\n';return t.failed?1:0;

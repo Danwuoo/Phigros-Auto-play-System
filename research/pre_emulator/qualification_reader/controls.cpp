@@ -49,6 +49,18 @@ int main(int argc,char** argv){try{
  check("narrow_supplied_cost_bindings",n::supplied(J{{"aa_input",pin},{"aa_status",pin}},{"aa_input","aa_status"}));
  check("narrow_original_noise_positive",g::cc::noise({1.,1.,1.,1.},"observer_ms").adequate);
  check("narrow_original_noise_negative",!g::cc::noise({1.,2.,3.,4.},"observer_ms").adequate);
+ J legacy_header={{"path",(root/"consumer_priority.hpp").string()},{"bytes",std::uint64_t(9155)},{"sha256","22e2ae774920f223a4f358d800912d86c6fe1976c4452edd8f22d95a1c024cd8"}};
+ J legacy_tests={{"path",(root/"consumer_priority_tests.cpp").string()},{"bytes",std::uint64_t(11370)},{"sha256","083e294be6fe79d249bf8f89c65c3adedab28cc66beab09b85c5c2406a06a413"}};
+ auto new_header=legacy_header,new_tests=legacy_tests;new_header["sha256"]=std::string(64,'1');new_tests["sha256"]=std::string(64,'2');
+ J priority={{"requested",1},{"applied_readback",1},{"previous",0},{"restored_readback",0},{"applied",true},{"restored",true},{"verified",true},{"process_class",32},{"process_class_after_close",32},{"failure","none"},{"rollback_failure","none"},{"fallback_attempted",false}};
+ check("narrow_priority_exact_legacy_one",n::priority_policy(J::object(),J::object(),legacy_header,legacy_tests)==1&&!rejects([&]{n::verify_priority(priority,1);}));
+ const J highest={{"consumer_priority_requested",2}};priority["requested"]=2;priority["applied_readback"]=2;
+ check("narrow_priority_explicit_new_two",n::priority_policy(highest,highest,new_header,new_tests)==2&&!rejects([&]{n::verify_priority(priority,2);}));
+ check("narrow_priority_unknown_missing_reject",rejects([&]{n::priority_policy(J::object(),J::object(),new_header,new_tests);}));
+ check("narrow_priority_plan_report_mismatch_reject",rejects([&]{n::priority_policy(highest,J{{"consumer_priority_requested",1}},new_header,new_tests);}));
+ check("narrow_priority_new_scalar_legacy_mix_reject",rejects([&]{n::priority_policy(highest,highest,legacy_header,new_tests);})&&rejects([&]{n::priority_policy(highest,highest,new_header,legacy_tests);}));
+ auto wrong_requested=priority,wrong_readback=priority;wrong_requested["requested"]=1;wrong_readback["applied_readback"]=1;
+ check("narrow_priority_wrong_requested_readback_reject",rejects([&]{n::verify_priority(wrong_requested,2);})&&rejects([&]{n::verify_priority(wrong_readback,2);}));
  g::Reader missing_reader(root);n::Preflight missing(missing_reader,root,J{{"schema","pas.readonly-narrow-preflight-input.v1"},{"device_operations",0}});const auto missing_report=missing.run();
  check("narrow_missing_receipts_structured_no_admission",missing_report.at("status")=="REJECTED"&&!missing_report.at("pass").get<bool>()&&!missing_report.at("qualification_issued").get<bool>()&&!missing_report.at("live_ready").get<bool>()&&missing_report.at("device_operations")==0&&missing_report.at("issues")[0].at("reason")=="missing input binding: gate"&&!missing_report.at("raw_revalidation_performed").get<bool>());
  r.finish();save("abc","abd");check("post_read_mutation_reject",rejects([&]{r.finish();}));

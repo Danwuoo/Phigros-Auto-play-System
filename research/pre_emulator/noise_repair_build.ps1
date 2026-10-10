@@ -47,6 +47,45 @@ function NoiseRepairSameValue($actual,$expected,[string]$label){
 function NoiseRepairMaintenanceChange([string]$relative){
  return ($relative -in @('AGENTS.md','README.md','research/pre_emulator/PLAN.md') -or $relative -cmatch '^research/pre_emulator/[^/]+[.]ps1$' -or ($relative -cmatch '^docs/.*[.](?:md|json)$' -and $relative -cne 'docs/research/zero-miss-20261006/windows/PRELIVE_COST_PROTOCOL_R2_20261007.md'))
 }
+function NoiseRepairConsumerPriorityPolicy($plan,$controls,$header,$tests){
+ $hasPlan=NoiseRepairProperty $plan 'consumer_priority_requested'
+ $hasControls=NoiseRepairProperty $controls 'consumer_priority_requested'
+ $legacyHeader=$header.bytes -eq 9155 -and $header.sha256 -ceq '22e2ae774920f223a4f358d800912d86c6fe1976c4452edd8f22d95a1c024cd8'
+ $legacyTests=$tests.bytes -eq 11370 -and $tests.sha256 -ceq '083e294be6fe79d249bf8f89c65c3adedab28cc66beab09b85c5c2406a06a413'
+ if(-not $hasPlan -and -not $hasControls){
+  NoiseRepairRequire ($legacyHeader -and $legacyTests) 'missing consumer policy requires exact legacy compiled header/tests'
+  return 1
+ }
+ NoiseRepairRequire ($hasPlan -and $hasControls -and ($plan.consumer_priority_requested -is [int] -or $plan.consumer_priority_requested -is [long]) -and ($controls.consumer_priority_requested -is [int] -or $controls.consumer_priority_requested -is [long]) -and $plan.consumer_priority_requested -eq 2 -and $controls.consumer_priority_requested -eq 2 -and -not $legacyHeader -and -not $legacyTests) 'new consumer policy requires integer HIGHEST(2) plan/controls and new compiled header/tests'
+ return 2
+}
+function NoiseRepairRequireNativeInputs($receipt,$entries){
+ $verification=NoiseRepairReadBinding $receipt
+ NoiseRepairRequire ($script:noiseRepairSpecs.ContainsKey($verification.stage)) 'consumer policy native stage already verified'
+ $closure=NoiseRepairReadBinding (Binding (Join-Path $pkg ($verification.stage+'-input-closure-verification.json')))
+ $root=NoiseRepairReadBinding $closure.root
+ NoiseRepairRequire ($root.schema -ceq 'pas.current-input-closure.v1' -and $root.stage -ceq $verification.stage -and @($root.leaves).Count -eq $closure.leaf_count -and $root.leaf_count -eq $closure.leaf_count -and $root.files_count -eq $closure.files_count) 'consumer policy native closure root join'
+ $members=@{};$index=0
+ foreach($leafPin in $root.leaves){
+  $leaf=NoiseRepairReadBinding $leafPin
+  NoiseRepairRequire ($leaf.schema -ceq 'pas.current-input-closure-leaf.v1' -and $leaf.stage -ceq $verification.stage -and $leaf.index -eq $index -and @($leaf.files).Count -gt 0 -and @($leaf.files).Count -le 64) 'consumer policy ordered native closure leaf'
+  foreach($file in $leaf.files){
+   NoiseRepairRequire ($file.path -and $file.bytes -ge 0 -and $file.sha256 -cmatch '^[0-9a-f]{64}$') 'consumer policy native input pin shape'
+   $key=[IO.Path]::GetFullPath($file.path)
+   NoiseRepairRequire (-not $members.ContainsKey($key)) 'consumer policy duplicate native input'
+   $members[$key]=$file
+  }
+  $index++
+ }
+ NoiseRepairRequire ($members.Count -eq $closure.files_count) 'consumer policy complete native closure metadata'
+ foreach($entry in $entries){
+  $key=[IO.Path]::GetFullPath($entry.path)
+  NoiseRepairRequire ($members.ContainsKey($key)) ('consumer compiled source missing from actual native inputs '+$entry.path)
+  NoiseRepairSameBinding $members[$key] $entry 'consumer compiled source/native input join'
+ }
+ # Only small leaf metadata is added; historical leaf members are not rehashed.
+ NoiseRepairAddInputs @($root.leaves)
+}
 function NoiseRepairCheckNativeReceipt($entry){
  $verification=NoiseRepairReadBinding $entry
  NoiseRepairRequire ([IO.Path]::GetFileName($entry.path) -ceq ($verification.stage+'-verification.json')) 'native verification identity'
@@ -264,6 +303,17 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  NoiseRepairRequire ($controls.schema -ceq 'pas.consumer-priority-tests.v1' -and $controls.assertions -eq 36 -and @($controls.checks).Count -eq 36 -and $controls.failed -eq 0 -and $controls.pass -eq $true -and @($controls.checks|Where-Object {$_.pass -ne $true}).Count -eq 0) 'all 36 consumer priority controls required'
  NoiseRepairRequire ($controls.device_operations -eq 0 -and $controls.device_endpoints -eq 0 -and $controls.live_ready -eq $false -and $controls.cost_qualification -eq $false) 'controlled harness regression scope'
  if(NoiseRepairProperty $controls 'real_time_qualification_issued'){NoiseRepairRequire ($controls.real_time_qualification_issued -eq $false) 'controls cannot grant real-time qualification'}
+ $consumerSources=$currentSources;$consumerManifestPin=$delta.source_manifest;$consumerPlanPin=$delta.core_build_plan;$consumerPlan=$corePlan
+ if($isAmendment){$consumerSources=$compiledSources;$consumerManifestPin=$parentDelta.source_manifest;$consumerPlanPin=$parentDelta.core_build_plan;$consumerPlan=$compiledPlan}
+ $consumerSourcePins=@()
+ foreach($relative in @('research/prelive_current/chain.cpp','research/prelive_current/consumer_priority.hpp','research/prelive_current/tests/consumer_priority_tests.cpp')){
+  NoiseRepairRequire ($consumerSources.ContainsKey($relative)) ('compiled consumer policy source missing '+$relative)
+  $consumerSourcePins+=@($consumerSources[$relative])
+ }
+ $consumerPriorityRequested=NoiseRepairConsumerPriorityPolicy $consumerPlan $controls $consumerSourcePins[1] $consumerSourcePins[2]
+ foreach($receipt in @($delta.build_receipts)+@($delta.controls_receipt)){
+  NoiseRepairRequireNativeInputs $receipt (@($consumerManifestPin,$consumerPlanPin)+$consumerSourcePins)
+ }
  if($hasAffinity){
   NoiseRepairAddInputs @($delta.affinity_controls_report)
   NoiseRepairCheckNativeReceipt $delta.affinity_controls_receipt
@@ -407,6 +457,6 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $script:seal=@{files=@($delta.files)}
  $script:inputs=@($script:noiseRepairActiveInputs.Keys|Sort-Object -Unique)
  $script:noiseRepairBindingPin=$bindingPin
- $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment;worker_affinity_required=$hasAffinity}
+ $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment;worker_affinity_required=$hasAffinity;consumer_priority_requested=$consumerPriorityRequested}
  $script:noiseRepairPrerequisites=@{source_commit=$baseCommit;scope='Previously passed scopes only; no new-source fresh/full qualification';release_tests=$oldTests;old_configuration_proofs=$oldProofs;compiler_archive_links=$archiveLinks;original_main32_inventory=$delta.original_main32_inventory;formal_source_byte_identical=$true;formal_rebuilt=$false;compiled_source_commit=$compiledCommit;controls_prerequisite_only=$isAmendment;component_rebuilt=(-not $isAmendment);maintenance_only_amendment=$isAmendment;whole_candidate_qualification=$false;live_ready=$false;device_operations=0}
 }

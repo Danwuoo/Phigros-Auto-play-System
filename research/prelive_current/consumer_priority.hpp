@@ -37,7 +37,7 @@ inline const char* consumer_priority_failure_name(ConsumerPriorityFailure failur
  }
  return "consumer_priority_unknown_failure";
 }
-inline constexpr int consumer_priority_above_normal=1;
+inline constexpr int consumer_priority_requested=2;
 inline constexpr int consumer_priority_query_error=std::numeric_limits<int>::max();
 inline constexpr std::uint32_t consumer_priority_normal_process_class=0x20;
 
@@ -60,7 +60,7 @@ struct ConsumerPrioritySnapshot {
    rollback_failure==ConsumerPriorityFailure::none&&fallback_failure==ConsumerPriorityFailure::none&&
    process_class==consumer_priority_normal_process_class&&
    process_class_after_close==consumer_priority_normal_process_class&&
-   applied_readback==consumer_priority_above_normal&&restored_readback==previous;
+   applied_readback==consumer_priority_requested&&restored_readback==previous;
  }
 };
 class ConsumerPriorityError final : public std::runtime_error {
@@ -103,9 +103,9 @@ public:
   receipt_.previous=api_.current();
   if(receipt_.previous==consumer_priority_query_error)reject(ConsumerPriorityFailure::priority_query);
   if(api_.thread()!=receipt_.thread_id)reject(ConsumerPriorityFailure::wrong_thread);
-  if(!api_.set(consumer_priority_above_normal))reject(ConsumerPriorityFailure::priority_set);
+  if(!api_.set(consumer_priority_requested))reject(ConsumerPriorityFailure::priority_set);
   receipt_.set_succeeded=true;receipt_.applied_readback=api_.current();
-  if(receipt_.applied_readback!=consumer_priority_above_normal) {
+  if(receipt_.applied_readback!=consumer_priority_requested) {
    const auto reason=receipt_.applied_readback==consumer_priority_query_error?
     ConsumerPriorityFailure::priority_readback_query:ConsumerPriorityFailure::priority_readback_mismatch;
    receipt_.failure=reason;rollback();reject(reason);
@@ -139,7 +139,7 @@ public:
  }
 };
 #ifdef _WIN32
-static_assert(consumer_priority_above_normal==THREAD_PRIORITY_ABOVE_NORMAL);
+static_assert(consumer_priority_requested==THREAD_PRIORITY_HIGHEST);
 static_assert(consumer_priority_query_error==THREAD_PRIORITY_ERROR_RETURN);
 static_assert(consumer_priority_normal_process_class==NORMAL_PRIORITY_CLASS);
 struct WindowsConsumerPriorityApi {

@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main41')
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main42')
 $ErrorActionPreference='Stop'
 # The source and process helpers are shared; LoadBuilds is deliberately unused.
 # main32's Debug/ASan compiler roots are archived, and none is a delta donor.
@@ -166,7 +166,7 @@ $targets=@('current_chain','consumer_priority_controls','worker_affinity_control
 $translationUnitSources=@('research/prelive_current/chain.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/tests/worker_affinity_tests.cpp','research/prelive_current/tests/producer_wait_tests.cpp')
 $workerPlacementPolicy='single-group highest raw EfficiencyClass; last two distinct physical cores by ascending lowest LP per core; consumer lower, producer higher; exact restore'
 $corePlan=Join-Path $artifact 'narrow-core-build-plan.json'
-NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';formal_rebuilt=$false;delta_targets=$targets;translation_units=4;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;producer_priority_policy='synthetic producer thread only; HIGHEST(2); consumer ABOVE_NORMAL(1); NORMAL process class(32); scoped query/set/readback/restore; same A/B policy';producer_wait_controls_count=43;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
+NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';formal_rebuilt=$false;delta_targets=$targets;translation_units=4;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;producer_priority_policy='synthetic producer thread only; HIGHEST(2); consumer HIGHEST(2); NORMAL process class(32); scoped query/set/readback/restore; same A/B policy';consumer_priority_requested=2;producer_wait_controls_count=43;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1'
 $toolchain='C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake'
 $guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
@@ -207,7 +207,7 @@ $controlsStage='test-prelive-noise-repair-'+$Attempt+'-consumer-priority-control
 $Operation='tests'
 Native $controlsStage $controls @($controlsReport) @($inputs+$runtimeFiles.path+$compiledOutputs.path+$configureReceipt.path+$buildReceipts.path+$configureClosure.path+$buildClosures.path) 900
 $report=Get-Content -LiteralPath $controlsReport -Raw|ConvertFrom-Json
-if($report.schema -cne 'pas.consumer-priority-tests.v1' -or -not $report.pass -or $report.failed -ne 0 -or $report.assertions -ne 36 -or $report.checks.Count -ne 36 -or @($report.checks|Where-Object {-not $_.pass}).Count -or $report.device_operations -ne 0 -or $report.device_endpoints -ne 0 -or $report.cost_qualification -or $report.live_ready){throw 'all 36 consumer priority controls required without qualification'}
+if($report.schema -cne 'pas.consumer-priority-tests.v1' -or -not $report.pass -or $report.failed -ne 0 -or $report.assertions -ne 36 -or $report.checks.Count -ne 36 -or @($report.checks|Where-Object {-not $_.pass}).Count -or ($report.consumer_priority_requested -isnot [long] -and $report.consumer_priority_requested -isnot [int]) -or $report.consumer_priority_requested -ne 2 -or $report.device_operations -ne 0 -or $report.device_endpoints -ne 0 -or $report.cost_qualification -or $report.live_ready){throw 'all 36 consumer HIGHEST(2) priority controls required without qualification'}
 $controlsReceipt=Binding (Join-Path $out ($controlsStage+'/'+$controlsStage+'-verification.json'))
 $controlsClosure=ClosurePin $controlsStage
 $affinityReport=Join-Path $artifact 'worker-affinity-controls.json'
