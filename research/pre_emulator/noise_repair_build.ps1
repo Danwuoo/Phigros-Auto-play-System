@@ -207,7 +207,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  }
  $ninjaRows=@($delta.compiled_outputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'build.ninja'})
  NoiseRepairRequire ($ninjaRows.Count -eq 1) 'one actual delta Ninja plan'
- $compilerRows=@(Get-Content -LiteralPath $ninjaRows[0].path|Where-Object {$_ -cmatch '^build .+: CXX_COMPILER'})
+ $compilerRows=@(Get-Content -LiteralPath $ninjaRows[0].path|ForEach-Object {$_.Replace('\','/')}|Where-Object {$_ -cmatch '^build .+: CXX_COMPILER'})
  NoiseRepairRequire ($compilerRows.Count -eq 2 -and @($compilerRows|Where-Object {$_ -cmatch '^build CMakeFiles/current_chain[.]dir/'}).Count -eq 1 -and @($compilerRows|Where-Object {$_ -cmatch '^build CMakeFiles/consumer_priority_controls[.]dir/'}).Count -eq 1) 'actual Ninja plan must compile only the two harness targets'
  if(NoiseRepairProperty $delta 'additional_inputs'){foreach($file in $delta.additional_inputs){NoiseRepairCheckBinding $file}}
  $oldProofs=@($inventory.cold)

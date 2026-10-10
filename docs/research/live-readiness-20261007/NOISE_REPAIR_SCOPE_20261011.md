@@ -49,3 +49,8 @@ producer原ABOVE_NORMAL、writer、frame cadence、QPC epoch、workload與原R2�
 重測、重排配對或改原noise公式／coverage／deadline／RSS門檻。失敗停止該批並照報。
 通過後原未跑ABBA36仍須完成；noise或ABBA通過都不發live admission。
 保留retained48GiB／free20GiB及原stage、candidate、raw、metadata caps。
+
+main33／`c3a51ca` configure native／runner／verification皆0。後續graph檢查原以
+POSIX分隔符及`/MD`辨識，Windows Ninja實際使用反斜線及等價MSVC `-MD`，因而冷STOP；
+沒有compile／controls／AA量測。保留原configure與STOP，修正路徑正規化及相同runtime
+flag辨識後用新attempt，不放寬兩TU、Release flags或原測量契約。

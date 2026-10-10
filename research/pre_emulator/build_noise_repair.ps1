@@ -161,9 +161,9 @@ $configureReceipt=Binding (Join-Path $out ($configure+'/'+$configure+'-verificat
 $configureClosure=ClosurePin $configure
 
 # Ninja's concrete compile graph must contain exactly the two delta TUs.
-$ninja=Get-Content -LiteralPath (Join-Path $root 'build.ninja') -Raw
+$ninja=(Get-Content -LiteralPath (Join-Path $root 'build.ninja') -Raw).Replace('\','/')
 $objects=@([regex]::Matches($ninja,'(?m)^build ([^\r\n:]+[.]obj): CXX_COMPILER[^\r\n]*')|ForEach-Object {$_.Groups[1].Value})
-if($objects.Count -ne 2 -or @($objects|Where-Object {$_ -notmatch '^CMakeFiles/(current_chain|consumer_priority_controls)[.]dir/'}).Count -or $ninja -match 'production/CMakeFiles/pas_core[.]dir/' -or $ninja -notmatch '/O2 /Ob2 /DNDEBUG' -or $ninja -notmatch '/MD(?: |\r?\n)'){throw 'exact two Release delta TUs and unchanged flags required'}
+if($objects.Count -ne 2 -or @($objects|Where-Object {$_ -notmatch '^CMakeFiles/(current_chain|consumer_priority_controls)[.]dir/'}).Count -or $ninja -match 'production/CMakeFiles/pas_core[.]dir/' -or $ninja -notmatch '/O2 /Ob2 /DNDEBUG' -or $ninja -notmatch '(?:/|-)MD(?: |\r?\n)'){throw 'exact two Release delta TUs and unchanged flags required'}
 $buildReceipts=@();$buildClosures=@()
 foreach($target in @('current_chain','consumer_priority_controls')){
  $stage='build-prelive-noise-repair-'+$Attempt+'-'+$target.Replace('_','-')
