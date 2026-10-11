@@ -1,5 +1,6 @@
 # Explicit CPU component repair branch. Original qualification is preserved,
 # never converted into qualification of the rebuilt formal/action components.
+if(-not (Get-Variable -Name noiseRepairBuild -Scope Script -ErrorAction SilentlyContinue)){$script:noiseRepairBuild=$null}
 function ComponentDeltaTargets { return @('current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests','pas_core','own_bridge','owner_checkpoint_tests','owner_expiry_tests','component_mask_tests','uniform_fnv_tests') }
 function ComponentDeltaExecutables { return @(ComponentDeltaTargets|Where-Object {$_ -notin @('pas_core','own_bridge')}) }
 function ComponentDeltaUnits {
@@ -53,9 +54,59 @@ function script:ComponentDeltaValidateColdProducerWait($report) {
   ComponentDeltaColdProducerBool $report 'producer_no_kernel_wait' $true
  }else{$null=ComponentDeltaColdProducerInteger $report 'producer_active_tail_ns' 2000000 2000000}
 }
+function script:ComponentDeltaValidateProcessQos($snapshot) {
+ ComponentDeltaColdProducerText $snapshot 'schema' 'pas.cold-process-qos.v1'
+ ComponentDeltaColdProducerText $snapshot 'policy' 'own_cold_process_execution_speed_high_qos'
+ foreach($pair in @(@('version',1),@('execution_speed_mask',1),@('supported_mask',5),@('process_class_before',32),@('process_class_after_close',32),@('device_operations',0))){$null=ComponentDeltaColdProducerInteger $snapshot $pair[0] $pair[1] $pair[1]}
+ foreach($name in @('constructor_attempted','previous_available','requested_available','set_attempted','set_succeeded','applied_available','applied','close_attempted','restore_set_attempted','restore_set_succeeded','restored_available','restored','verified')){ComponentDeltaColdProducerBool $snapshot $name $true}
+ foreach($name in @('rollback_attempted','rollback_available','rollback_restored','fallback_attempted','fallback_available','fallback_restored','cost_qualification','live_ready')){ComponentDeltaColdProducerBool $snapshot $name $false}
+ foreach($name in @('failure','rollback_failure','fallback_failure')){ComponentDeltaColdProducerText $snapshot $name 'none'}
+ $pidBefore=ComponentDeltaColdProducerInteger $snapshot 'process_id' 1 4294967295
+ $threadBefore=ComponentDeltaColdProducerInteger $snapshot 'owner_thread_id' 1 4294967295
+ ComponentDeltaColdProducerRequire ((ComponentDeltaColdProducerInteger $snapshot 'close_process_id' 1 4294967295) -eq $pidBefore -and (ComponentDeltaColdProducerInteger $snapshot 'close_thread_id' 1 4294967295) -eq $threadBefore) 'QoS own process and same main-thread explicit close'
+ $states=@{}
+ foreach($name in @('previous','requested','applied_readback','restored_readback')){
+  $state=ComponentDeltaColdProducerField $snapshot $name
+  $null=ComponentDeltaColdProducerInteger $state 'version' 1 1
+  $control=[uint32](ComponentDeltaColdProducerInteger $state 'control_mask' 0 5)
+  $stateMask=[uint32](ComponentDeltaColdProducerInteger $state 'state_mask' 0 5)
+  ComponentDeltaColdProducerRequire (($control -band 2) -eq 0 -and ($stateMask -band 2) -eq 0) 'QoS only documented execution-speed/timer-resolution bits'
+  $states[$name]=@{control=$control;state=$stateMask}
+ }
+ ComponentDeltaColdProducerRequire ($states.requested.control -eq ($states.previous.control -bor 1) -and $states.requested.state -eq ($states.previous.state -band 4)) 'QoS only execution-speed bit changes; all other supported bits preserved'
+ ComponentDeltaColdProducerRequire ($states.applied_readback.control -eq $states.requested.control -and $states.applied_readback.state -eq $states.requested.state -and $states.restored_readback.control -eq $states.previous.control -and $states.restored_readback.state -eq $states.previous.state) 'QoS exact applied readback and full prior restoration'
+ foreach($name in @('rollback_readback','fallback_readback')){
+  $state=ComponentDeltaColdProducerField $snapshot $name
+  foreach($field in @('version','control_mask','state_mask')){$null=ComponentDeltaColdProducerInteger $state $field 0 0}
+ }
+ foreach($name in @('query_previous','set_requested','query_applied','set_restore','query_restored')){
+  $api=ComponentDeltaColdProducerField $snapshot $name
+  ComponentDeltaColdProducerBool $api 'sampled' $true
+  $null=ComponentDeltaColdProducerInteger $api 'status' 1 4294967295
+  $null=ComponentDeltaColdProducerInteger $api 'error' 0 0
+ }
+ foreach($name in @('set_rollback','query_rollback','set_fallback','query_fallback')){
+  $api=ComponentDeltaColdProducerField $snapshot $name
+  ComponentDeltaColdProducerBool $api 'sampled' $false
+  foreach($field in @('status','error')){$null=ComponentDeltaColdProducerInteger $api $field 0 0}
+ }
+}
+function script:ComponentDeltaValidateProcessQosControls($controls) {
+ ComponentDeltaColdProducerText $controls 'schema' 'pas.cold-process-qos-controls.v1'
+ ComponentDeltaColdProducerText $controls 'policy' 'own_cold_process_execution_speed_high_qos'
+ foreach($pair in @(@('assertions',24),@('failed',0),@('version',1),@('execution_speed_mask',1),@('supported_mask',5),@('device_operations',0))){$null=ComponentDeltaColdProducerInteger $controls $pair[0] $pair[1] $pair[1]}
+ foreach($name in @('pass','synthetic_api_controls','actual_windows_restore_control')){ComponentDeltaColdProducerBool $controls $name $true}
+ foreach($name in @('cost_qualification','live_ready')){ComponentDeltaColdProducerBool $controls $name $false}
+ $checks=ComponentDeltaColdProducerField $controls 'checks'
+ ComponentDeltaColdProducerRequire ($checks -is [array] -and $checks.Count -eq 24) 'QoS separate exact controls24'
+ $ids=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+ foreach($case in $checks){$id=ComponentDeltaColdProducerField $case 'id';ComponentDeltaColdProducerRequire ($id -is [string] -and $id.Length -gt 0 -and $ids.Add($id)) 'QoS controls unique nonempty ids';ComponentDeltaColdProducerBool $case 'pass' $true}
+ ComponentDeltaValidateProcessQos (ComponentDeltaColdProducerField $controls 'actual_windows_snapshot')
+}
 function script:ComponentDeltaValidateColdProducer($report) {
  $null=ComponentDeltaColdProducerInteger $report 'producer_priority_requested' 2 2
  ComponentDeltaValidateColdProducerWait $report
+ if(($null -ne $script:noiseRepairBuild -and $script:noiseRepairBuild.process_qos_required) -or $report.PSObject.Properties.Name -ccontains 'process_qos' -or ($report -is [Collections.IDictionary] -and $report.Contains('process_qos'))){ComponentDeltaValidateProcessQos (ComponentDeltaColdProducerField $report 'process_qos')}
  $plan=ComponentDeltaColdProducerField $report 'worker_placement'
  ComponentDeltaColdProducerText $plan 'schema' 'pas.cold-worker-placement.v1'
  ComponentDeltaColdProducerBool $plan 'valid' $true;ComponentDeltaColdProducerText $plan 'failure' 'none'
@@ -117,6 +168,7 @@ function script:ComponentDeltaValidateColdProducerControls($report) {
   $mode=ComponentDeltaColdProducerField $stop 'mode';ComponentDeltaColdProducerRequire ($mode -is [string] -and $mode -cin @('escape','console') -and $modes.Add($mode)) 'one escape and one console producer snapshot'
   $joined=@{producer_priority_requested=$priority;producer_active_tail_ns=$tail;worker_placement=(ComponentDeltaColdProducerField $stop 'worker_placement');producer_affinity=(ComponentDeltaColdProducerField $stop 'producer_affinity');producer_priority=(ComponentDeltaColdProducerField $stop 'producer_priority')}
   if($tail -eq 0){foreach($name in @('producer_wait_policy','producer_active_wait_horizon_ns','producer_active_wait_poll_cap','producer_no_kernel_wait')){$joined[$name]=ComponentDeltaColdProducerField $controls $name}}
+  if(($null -ne $script:noiseRepairBuild -and $script:noiseRepairBuild.process_qos_required) -or $report.PSObject.Properties.Name -ccontains 'process_qos'){$joined.process_qos=ComponentDeltaColdProducerField $report 'process_qos'}
   ComponentDeltaValidateColdProducer $joined
  }
 }

@@ -137,6 +137,9 @@ int main(int argc,char** argv){try{
         {"scope","finite no-persistence lifecycle; exact Down/Up/cancel balance; no Hold semantic or cost qualification"}};
     report["instrumented_build"]=instrumented;
     report["real_time_qualification_issued"]=false;
+    pas::current_rails::ColdProcessQosSnapshot process_qos;
+    pas::current_rails::WindowsColdProcessQosApi process_qos_api;
+    pas::current_rails::run_cold_process_qos(process_qos_api,process_qos,[&]{
     if(operation=="invalid"){
         // Fake-clock regression: both on-time and severely late workloads leave
         // the same 64 result slots at 20 ms spacing, without shifting workload.
@@ -240,6 +243,9 @@ int main(int argc,char** argv){try{
         }
         report["no_gameplay_files_created"]=true;report["literal_production_source_executed"]=true;
     }
+    });
+    require(process_qos.verified(),"score-only cold process QoS must explicitly restore after joined workers");
+    report["process_qos"]=pas::current_rails::cold_process_qos_json(process_qos);
     report["keyboard_is_test_double"]=true;report["console_registration_is_test_double"]=true;
     report["producer_priority_requested"]=pas::current_rails::producer_priority_requested;
     report["producer_wait_policy"]="full_period_active_qpc";report["producer_active_tail_ns"]=0;

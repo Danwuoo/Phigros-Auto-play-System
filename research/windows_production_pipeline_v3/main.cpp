@@ -214,8 +214,12 @@ int main(int argc,char** argv){try{
  // Same translation unit, exact production implementation. This test-only
  // wrapper and boundary symbols cannot grant a token to the production exe.
  state.producer_wait_diagnostics=true;state.attempts.resize(std::size_t(state.requested)+64);
+ pas::current_rails::ColdProcessQosSnapshot process_qos;
+ pas::current_rails::WindowsColdProcessQosApi process_qos_api;
  std::exception_ptr run_failure;
- try{pas::run_manual_session_impl(config_path.string(),"endpoint-free-test-double",true,0,false,false,true,pas::ManualVariant::current_candidate);}
+ try{pas::current_rails::run_cold_process_qos(process_qos_api,process_qos,[&]{
+  pas::run_manual_session_impl(config_path.string(),"endpoint-free-test-double",true,0,false,false,true,pas::ManualVariant::current_candidate);
+ });}
  catch(...){run_failure=std::current_exception();}
  J wait_diagnostic;
  try{wait_diagnostic=save_wait_diagnostics(root,run_failure?"joined_exception":"joined_completion");}
@@ -225,6 +229,7 @@ int main(int argc,char** argv){try{
    {"worker_placement",producer_placement::plan_json(state.producer_placement.placement)},
    {"producer_affinity",producer_placement::affinity_json(state.producer_placement.affinity)},
    {"producer_priority",producer_placement::priority_json(state.producer_placement)},
+   {"process_qos",pas::current_rails::cold_process_qos_json(process_qos)},
    {"qualification_issued",false},{"cost_ready",false},{"live_ready",false},{"device_operations",0}});}
   catch(const std::exception& e){std::cerr<<"partial producer wait failure marker save failed: "<<e.what()<<'\n';}
   std::rethrow_exception(run_failure);
@@ -248,6 +253,8 @@ int main(int argc,char** argv){try{
  PROCESS_MEMORY_COUNTERS memory{};memory.cb=sizeof(memory);require(K32GetProcessMemoryInfo(GetCurrentProcess(),&memory,sizeof(memory))!=0,"OS peak RSS");
  J report={{"schema","pas.windows-production-pipeline-cold.v1"},{"scene",state.scene},{"requested",state.requested},{"warmup",256},{"measurement_attempts",state.requested-256},{"cadence_ms",state.cadence},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},{"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},{"public_entry_rejected",rejected},{"endpoint_free",true},{"preflight_is_test_double",true},{"capture_is_test_double",true},{"touch_is_test_double",true},{"production_packet_action_wake_archive_executed",true},{"real_capture_rpc_measured",false},{"device_operations",0},{"live_ready",false},{"archive_root",session.string()},{"summary",summary},{"round_summary",round_summary},{"owner_measurement_eligible",capture_to_owner.size()},{"owner_measurement_coverage",double(capture_to_owner.size())/(state.requested-256)},{"capture_to_owner_start_ms",dist(capture_to_owner)},{"packet_wait_ms",dist(packet_wait)},{"hook_ms",dist(hook)},{"owner_ms",dist(owner_ms)},{"measurement_phase_lateness_ms",dist(late)},{"down",state.downs},{"move",state.moves},{"up",state.ups},{"release_calls",state.releases},{"single_touch_owner",state.touch_owner.has_value()},{"full_journal_rows",rows},{"full_journal_bytes",bytes},{"full_journal_decoded_bytes",decoded},{"event_encoding","gzip-jsonl-v1"},{"rss_peak_os",memory.PeakWorkingSetSize},{"scope","literal production Packet/Wake/pool/perception/action/supervisor/SessionArchive; synthetic boundaries and result; no device or physical qualification"}};
  require(state.producer_placement.verified(),"cold producer placement/priority must explicitly restore after joined capture worker");
+ require(process_qos.verified(),"cold own-process QoS must explicitly restore after all manual-session workers join");
+ report["process_qos"]=pas::current_rails::cold_process_qos_json(process_qos);
  report["producer_priority_policy"]="synthetic capture thread only; NORMAL process class; scoped HIGHEST2; actual query/set/readback/explicit restore";
  report["producer_priority_requested"]=pas::current_rails::producer_priority_requested;
  report["producer_wait_policy"]="full_period_active_qpc";

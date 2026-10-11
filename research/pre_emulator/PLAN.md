@@ -1,3 +1,13 @@
+2026-10-11 最新 main54／`35073ef`：CPU32／584、原wait43／diagnostic20／active12、reader2／原81／active-policy12、production52／七控制及runtime18來源／36副本通過。normal Tap producer／auditor Native皆0、完整raw10／3,332,367B integrity通過，原數值pool drops4、producer／callback deadline overruns65而STOP；Hold／Dense／AA／noise／ABBA未跑。原946份source、raw、STOP、兩Native8與1944 leaf／24parents／31shards見[main54負結果](../../docs/research/live-readiness-20261007/MAIN54_PRODUCTION_TAP_NEGATIVE_20261011.json)。原main32 PASS保留，latest completed noise仍main44的6／18 adequate，ABBA0／36。
+
+本輪actual wait診斷：measurement2136 full active spin跨1313.0831ms／28327polls，lateness1293.2918ms，kernel calls0；前callback至wait .0003ms、afterwait至render0、render .3464ms／callback .1231ms。CPU原樣本零差的accounting granularity未知，不能據此認定精確off-CPU、OS／guard根因。actual54 Native UTC前後30秒無Kernel-Power／Power-Troubleshooter含506／507或Kernel-General clock-change1事件；不能由無事件完全排除漏記。
+
+下一main55為實驗cold own-process HighQoS候選：以正式Get／SetProcessInformation(ProcessPowerThrottling)讀完整prior，只控制execution-speed位元並保留其他documented位元，explicit query／set／readback／exact restore；未知／失敗拒絕，析構fallback不授verified。scope影響own cold process所有worker含writer，AA A／B一致；正式capture／manual runtime與host registry／power plan不改，process NORMAL32、thread HIGHEST2、full_period_active_qpc與原workload／期限／成本界限不改。QoS分類是官方支援的候選理由，尚未證明main54原因或有效性；必要控制與成本仍待fresh Native，不冒PASS或live資格。
+
+新QoS控制分列24項（23個fake API邊界＋1個actual Windows full-state還原），readonly另列12項policy／型別／身分／完整還原拒絕控制，原43／584／diagnostic20／active12／reader81／active-policy12分母保持。actual Windows snapshot須綁定該Native PID；AA／ABBA各producer須綁各自PID及consumer main thread。這些控制與main55成本尚待fresh Native，不能以合成資料通過代替實際量測。
+
+依最新授權只完成必要cold開發／Normal3／AA12／noise18／未跑ABBA36及完整readonly，原75／production9不全盤重跑；retained48GiB／minimum-free20GiB與原R2保持。完成到emulator邊界停止，本轮不啟動裝置、不建立新thread。以下main53／54 proposed字樣為原歷史記錄。
+
 2026-10-11 最新 main53／`11079f8`：CPU32／584、reader2／81、production52／七控制、runtime18來源／36副本通過；原 producer wait43 與新 diagnostic20 分列通過。normal Tap 完整 raw10／3,321,144B integrity 通過，producer／auditor Native 皆0；原數值 pool drops6、producer／callback deadline overruns149而 STOP。完整946份 source、原 raw／STOP與小收據見[main53負結果](../../docs/research/live-readiness-20261007/MAIN53_PRODUCTION_TAP_NEGATIVE_20261011.json)。Hold／Dense／AA／noise／ABBA未跑。
 
 新有界 wait telemetry 定位兩次 blocking wait：warm149 設17.6978ms、Wait跨782.3458ms；measurement1996設17.5702ms、跨825.7037ms，皆 raw WAIT_OBJECT_0、無 spin；不能由 thread CPU counter零差認定精確off-CPU，也不能推定 timer signal、dispatch、sleep 或 guard 根因。只讀 power 記錄未見該輪 sleep／resume，目前 idle sleep AC／DC為Never；guard無runtime suspend，沒有逐poll交集資料。原 main32 PASS不撤銷。

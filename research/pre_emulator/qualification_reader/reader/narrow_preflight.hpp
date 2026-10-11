@@ -85,6 +85,85 @@ inline void verify_active_tail(const J& report,std::int64_t expected){
     if(!report.contains("producer_active_tail_ns")){w::require(expected==20'000'000,"new producer active-tail run scalar missing");return;}
     w::require(report.at("producer_active_tail_ns").is_number_integer()&&report.at("producer_active_tail_ns")==expected,"actual producer active-tail run scalar/type mismatch");
 }
+inline constexpr const char* process_qos_policy_name="own_cold_process_execution_speed_high_qos";
+inline std::uint32_t qos_integer(const J& value){
+    w::require(value.is_number_integer()&&value>=0&&value<=std::numeric_limits<std::uint32_t>::max(),"typed process QoS DWORD");return value.get<std::uint32_t>();
+}
+inline void verify_process_qos_state(const J& value){
+    w::require(value.is_object()&&qos_integer(value.at("version"))==1&&
+        (qos_integer(value.at("control_mask"))&~5u)==0&&(qos_integer(value.at("state_mask"))&~5u)==0,"exact supported process QoS state/version");
+}
+inline void verify_process_qos_snapshot(const J& value,std::uint32_t native_pid){
+    w::require(value.is_object()&&value.at("schema").is_string()&&value.at("schema")=="pas.cold-process-qos.v1"&&
+        value.at("policy").is_string()&&value.at("policy")==process_qos_policy_name,"actual cold process QoS schema/policy");
+    w::require(qos_integer(value.at("version"))==1&&qos_integer(value.at("execution_speed_mask"))==1&&qos_integer(value.at("supported_mask"))==5,"exact process QoS version/masks");
+    const auto pid=qos_integer(value.at("process_id")),thread=qos_integer(value.at("owner_thread_id"));
+    w::require(native_pid!=0&&pid==native_pid&&thread!=0&&qos_integer(value.at("close_process_id"))==pid&&qos_integer(value.at("close_thread_id"))==thread&&
+        qos_integer(value.at("process_class_before"))==32&&qos_integer(value.at("process_class_after_close"))==32,"own native process/thread and NORMAL32 QoS identity");
+    for(const auto* key:{"verified","constructor_attempted","previous_available","requested_available","set_attempted","set_succeeded","applied_available","applied","close_attempted","restore_set_attempted","restore_set_succeeded","restored_available","restored"})
+        w::require(value.at(key).is_boolean()&&value.at(key).get<bool>(),"typed verified process QoS success flags");
+    for(const auto* key:{"rollback_attempted","rollback_available","rollback_restored","fallback_attempted","fallback_available","fallback_restored","cost_qualification","live_ready"})
+        w::require(value.at(key).is_boolean()&&!value.at(key).get<bool>(),"no process QoS rollback/fallback or qualification");
+    for(const auto* key:{"failure","rollback_failure","fallback_failure"})w::require(value.at(key).is_string()&&value.at(key)=="none","process QoS failure rejected");
+    w::require(qos_integer(value.at("device_operations"))==0,"cold process QoS device0");
+    for(const auto* key:{"previous","requested","applied_readback","restored_readback"})verify_process_qos_state(value.at(key));
+    for(const auto* key:{"rollback_readback","fallback_readback"}){
+        const auto& unused=value.at(key);w::require(unused.is_object(),"complete unavailable process QoS readback");
+        for(const auto* field:{"version","control_mask","state_mask"})w::require(qos_integer(unused.at(field))==0,"unused process QoS readback retains zero facts");
+    }
+    const auto& prior=value.at("previous");const auto& requested=value.at("requested");
+    w::require(qos_integer(requested.at("control_mask"))==(qos_integer(prior.at("control_mask"))|1u)&&
+        qos_integer(requested.at("state_mask"))==(qos_integer(prior.at("state_mask"))&~1u)&&
+        value.at("applied_readback")==requested&&value.at("restored_readback")==prior,"only execution-speed bit changes; exact applied/restore including timer bit");
+    for(const auto* key:{"query_previous","set_requested","query_applied","set_restore","query_restored"}){
+        const auto& api=value.at(key);w::require(api.is_object()&&api.at("sampled").is_boolean()&&api.at("sampled").get<bool>()&&
+            qos_integer(api.at("status"))!=0&&qos_integer(api.at("error"))==0,"actual successful process QoS get/set APIs");
+    }
+    for(const auto* key:{"set_rollback","query_rollback","set_fallback","query_fallback"}){
+        const auto& api=value.at(key);w::require(api.is_object()&&api.at("sampled").is_boolean()&&!api.at("sampled").get<bool>(),"process QoS rollback/fallback APIs not sampled");
+        w::require(qos_integer(api.at("status"))==0&&qos_integer(api.at("error"))==0,"unused process QoS APIs retain unsampled zero facts");
+    }
+}
+inline void verify_process_qos_controls(const J& value,std::uint32_t native_pid){
+    w::require(value.is_object()&&value.at("schema").is_string()&&value.at("schema")=="pas.cold-process-qos-controls.v1"&&
+        value.at("assertions").is_number_integer()&&value.at("assertions")==24&&value.at("checks").is_array()&&value.at("checks").size()==24&&
+        value.at("failed").is_number_integer()&&value.at("failed")==0,"separate process QoS controls24 schema/denominator");
+    for(const auto* key:{"pass","synthetic_api_controls","actual_windows_restore_control"})w::require(value.at(key).is_boolean()&&value.at(key).get<bool>(),"typed process QoS positive controls");
+    for(const auto* key:{"cost_qualification","live_ready"})w::require(value.at(key).is_boolean()&&!value.at(key).get<bool>(),"process QoS controls do not qualify cost/live");
+    w::require(qos_integer(value.at("device_operations"))==0&&value.at("policy").is_string()&&value.at("policy")==process_qos_policy_name&&
+        qos_integer(value.at("version"))==1&&qos_integer(value.at("execution_speed_mask"))==1&&qos_integer(value.at("supported_mask"))==5,"exact cold process QoS controls policy/masks");
+    std::set<std::string> ids;for(const auto& check:value.at("checks"))w::require(check.is_object()&&check.at("id").is_string()&&!check.at("id").get<std::string>().empty()&&
+        ids.insert(check.at("id").get<std::string>()).second&&check.at("pass").is_boolean()&&check.at("pass").get<bool>(),"unique typed passing process QoS controls24");
+    verify_process_qos_snapshot(value.at("actual_windows_snapshot"),native_pid);
+}
+inline bool legacy_qos_header(const J& pin){return pin.at("bytes")==13299&&pin.at("sha256")=="925cbad472141db860990f349503a93a7cdb3dc042e39201988d02f36e04f1a2";}
+inline bool legacy_qos_tests(const J& pin){return pin.at("bytes")==32590&&pin.at("sha256")=="1be55d92023609a1feb84c20aaea0ae6e0adbeebde80923839add0bac15c118f";}
+inline bool legacy_no_qos_two_ms_pair(const J& header,const J& tests){
+    return (header.at("bytes")==4994&&header.at("sha256")=="60a22dadc78f71d895e2488c55ed32222af5cbd294a98c60f8b1fd0dc509dee1"&&
+        tests.at("bytes")==12586&&tests.at("sha256")=="5054887016f4ebdc8a43681c14faabe99fb0740045df9c48b4ea49214ff723cb")||
+        (header.at("bytes")==10760&&header.at("sha256")=="8fc675f9d1e95a4809379e643a7dc4487e01e30a92c52e2a080e578c5e7ef0f9"&&
+        tests.at("bytes")==23479&&tests.at("sha256")=="9efc0314f7415bed15cb70f6de2c1b3fe3242aa9fc3f83acb66ff45b0bca9adb");
+}
+inline bool process_qos_policy(const J& plan,const J& controls,const J& header,const J& tests,std::int64_t tail,std::uint32_t native_pid){
+    pin_shape(header);pin_shape(tests);const bool declared=plan.contains("process_qos_policy"),reported=controls.contains("process_qos_controls");
+    if(!declared&&!reported){
+        w::require(!plan.contains("process_qos_controls_count"),"process QoS count cannot downgrade to missing policy");
+        w::require(tail!=0||(legacy_qos_header(header)&&legacy_qos_tests(tests)),"missing full-active process QoS policy only accepted for exact main54 header/tests");
+        w::require(tail!=2'000'000||legacy_no_qos_two_ms_pair(header,tests),"missing process QoS at 2ms only accepted for exact historical paired header/tests");return false;
+    }
+    w::require(declared&&reported&&tail==0&&plan.at("process_qos_policy").is_string()&&plan.at("process_qos_policy")==process_qos_policy_name&&
+        plan.at("process_qos_controls_count").is_number_integer()&&plan.at("process_qos_controls_count")==24&&
+        plan.at("producer_wait_policy").is_string()&&plan.at("producer_wait_policy")=="full_period_active_qpc"&&
+        plan.at("producer_active_tail_ns").is_number_integer()&&plan.at("producer_active_tail_ns")==0,"new process QoS requires explicit plan/controls24 policy with full-active wait");
+    w::require(!legacy_qos_header(header)&&!legacy_qos_tests(tests)&&!legacy_tail_header(header)&&!legacy_tail_tests(tests),"new process QoS cannot mix legacy compiled sources");
+    verify_process_qos_controls(controls.at("process_qos_controls"),native_pid);return true;
+}
+inline void verify_process_qos(const J& report,bool enabled,std::uint32_t native_pid){
+    if(!enabled){w::require(!report.contains("process_qos")&&!report.contains("process_qos_policy"),"legacy run cannot declare unbound process QoS");return;}
+    if(report.contains("process_qos_policy"))w::require(report.at("process_qos_policy").is_string()&&report.at("process_qos_policy")==process_qos_policy_name,"runtime process QoS scalar policy mismatch");
+    verify_process_qos_snapshot(report.at("process_qos"),native_pid);
+    if(report.contains("consumer_priority"))w::require(qos_integer(report.at("consumer_priority").at("thread_id"))==qos_integer(report.at("process_qos").at("owner_thread_id")),"process QoS owns the current consumer main thread");
+}
 inline bool maintenance_path(std::string_view p){
     if(p=="AGENTS.md"||p=="README.md"||p=="research/pre_emulator/PLAN.md")return true;
     if(p.starts_with("research/pre_emulator/")&&p.ends_with(".ps1")&&p.substr(22).find('/')==std::string_view::npos)return true;
@@ -115,7 +194,7 @@ class Preflight final {
     std::string execution_,compiled_,manual_sha_;
     int consumer_priority_requested_=0;
     std::int64_t producer_active_tail_ns_=0;
-    bool producer_wait_policy_bound_=false;
+    bool producer_wait_policy_bound_=false,process_qos_policy_bound_=false,process_qos_enabled_=false;
     J checks_=J::object(),issues_=J::array(),provenance_=J::object();bool rejected_=false,ready_=true,aa_ok_=false,noise_ok_=false;
     CostCampaign aa_,abba_;
     static std::string key(const J& p){pin_shape(p);return fs::path(p.at("path").get<std::string>()).lexically_normal().generic_string();}
@@ -239,6 +318,7 @@ class Preflight final {
         }
         const bool active_tail=component_cpu||plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls","worker_affinity_controls","producer_wait_tests"});
         const bool affinity=active_tail||plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls","worker_affinity_controls"});
+        w::require(active_tail||(!plan.contains("process_qos_policy")&&!plan.contains("process_qos_controls_count")),"process QoS requires joined producer-wait controls/source branch");
         if(!component_cpu)w::require(!plan.at("formal_rebuilt").get<bool>()&&(affinity||plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls"}))&&(active_tail?plan.at("translation_units")==4:affinity?plan.at("translation_units")==3:!plan.contains("translation_units")||plan.at("translation_units")==2),"declared narrow harness targets with unchanged formal source");
         w::require(delta_.at("base_static_inputs").size()==5&&plan.at("base_static_inputs")==delta_.at("base_static_inputs"),"five exact imported static inputs");for(const auto& f:delta_.at("base_static_inputs")){w::require(base_files_.contains(key(f))&&same_pin(f,base_files_.at(key(f))),"original formal/static library binding");r_.bound(f);}
         const auto deps=object(delta_.at("dependency_manifest"));w::require(deps.at("source_commit")==base_commit&&same_pin(delta_.at("dependency_manifest"),base.at("dependency_manifest")),"original dependency manifest provenance");
@@ -268,6 +348,7 @@ class Preflight final {
             w::require(plan.at("producer_wait_controls_count")==43&&wait_report.at("schema")=="pas.producer-deadline-wait-tests.v1"&&wait_report.at("assertions")==43&&wait_report.at("checks").size()==43&&wait_report.at("failed")==0&&wait_report.at("pass").get<bool>()&&wait_report.at("device_endpoints")==0&&wait_report.at("device_operations")==0&&!wait_report.at("cost_qualification").get<bool>()&&!wait_report.at("live_ready").get<bool>()&&wait_report.at("active_tail_poll_cap")==16'777'216&&process.spec.at("argv")==J::array({delta_.at("wait_controls_report").at("path")}),"all 43 original/active-tail producer deadline controls/native join");
             const auto& wait_header=compiled_sources.at("research/prelive_current/producer_wait.hpp");const auto& wait_tests=compiled_sources.at("research/prelive_current/tests/producer_wait_tests.cpp");producer_active_tail_ns_=active_tail_policy(plan,wait_report,wait_header,wait_tests);producer_wait_policy_bound_=true;
             if(producer_active_tail_ns_==0)verify_wait_diagnostic_controls(wait_report.at("diagnostic_controls"));
+            process_qos_enabled_=process_qos_policy(plan,wait_report,wait_header,wait_tests,producer_active_tail_ns_,qos_integer(process.facts.at("pid")));process_qos_policy_bound_=true;
             const auto wait_source_join=[&](const Native& p){for(const auto& pin:std::array<J,5>{compiled_manifest_pin,compiled_core_plan_pin,priority_chain,wait_header,wait_tests})w::require(p.inputs.contains(key(pin))&&same_pin(p.inputs.at(key(pin)),pin),"actual compiled manifest/coreplan/chain/producer wait header/tests in native input closure");};
             for(const auto& p:build_processes)wait_source_join(p);wait_source_join(process);
             bool wait_binary=false;for(const auto& pin:delta_.at("files"))if(fs::path(pin.at("path").get<std::string>()).filename()=="producer_wait_tests.exe")wait_binary|=same_path_text(process.spec.at("exe").get<std::string>(),pin.at("path").get<std::string>());w::require(wait_binary,"actual producer wait controls image in sealed narrow runtime files");
@@ -331,6 +412,7 @@ class Preflight final {
             if(producer_wait_policy_bound_)verify_active_tail(report,producer_active_tail_ns_);
             w::require(e.at("run_id")==plan.at("run_id")&&e.at("scene")==plan.at("scene")&&report.at("mode")==plan.at("mode")&&report.at("scene")==plan.at("scene")&&same_path_text(e.at("path").get<std::string>(),plan.at("report_path").get<std::string>()),"run/report plan join");
             const auto producer=native(e.at("process_evidence"));w::require(same_path_text(producer.spec.at("exe").get<std::string>(),c.bindings.at("candidate_binary").at("path").get<std::string>())&&producer.spec.at("argv")==J::array({"pipeline",plan.at("mode"),plan.at("scene"),"2560",c.pin.at("path"),plan.at("run_id"),e.at("path")}),"actual frozen producer command");
+            verify_process_qos(report,process_qos_policy_bound_&&process_qos_enabled_,qos_integer(producer.facts.at("pid")));
             w::require(prov.at("schema")=="pas.current-rails-run-provenance.v1"&&prov.at("campaign_sha256")==c.pin.at("sha256")&&prov.at("campaign_id")==c.value.at("id")&&prov.at("source_commit")==execution_&&prov.at("run_id")==plan.at("run_id")&&prov.at("scene")==plan.at("scene")&&prov.at("mode")==plan.at("mode")&&prov.at("requested")==2560&&same_path_text(prov.at("report_path").get<std::string>(),e.at("path").get<std::string>())&&prov.at("process").at("pid")==producer.facts.at("pid")&&prov.at("process").at("creation_filetime")==producer.facts.at("creation_filetime"),"fresh source/campaign/process identity");
             for(const auto& [role,b]:c.bindings){(void)role;w::require(producer.inputs.contains(key(b))&&same_pin(producer.inputs.at(key(b)),b),"every campaign member in producer closure");}
             const auto source=object(c.bindings.at("source_manifest"));for(const auto& f:source.at("files"))w::require(producer.inputs.contains(key(f))&&same_pin(producer.inputs.at(key(f)),f),"every execution source member in producer closure");

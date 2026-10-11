@@ -142,6 +142,27 @@ function NoiseRepairCheckNativeReceipt($entry){
  NoiseRepairAddInputs @($verification.entries)
  foreach($path in @((Join-Path $stageRoot ($verification.stage+'-result.json')),(Join-Path $stageRoot 'state.json'),(Join-Path $stageRoot 'freeze.json'),(Join-Path $stageRoot 'contract.json'))){NoiseRepairAddInputs @((Binding $path))}
 }
+function NoiseRepairProcessQosPolicy($plan,$controls,$header,$tests) {
+ $hasPolicy=NoiseRepairProperty $plan 'process_qos_policy'
+ $hasControls=NoiseRepairProperty $controls 'process_qos_controls'
+ $original54Header=$header.bytes -eq 13299 -and $header.sha256 -ceq '925cbad472141db860990f349503a93a7cdb3dc042e39201988d02f36e04f1a2'
+ $original54Tests=$tests.bytes -eq 32590 -and $tests.sha256 -ceq '1be55d92023609a1feb84c20aaea0ae6e0adbeebde80923839add0bac15c118f'
+ if(-not $hasPolicy){
+  NoiseRepairRequire (-not $hasControls -and -not (NoiseRepairProperty $plan 'process_qos_controls_count')) 'QoS controls/count cannot borrow an undeclared legacy policy'
+  if(NoiseRepairProperty $plan 'producer_wait_policy') {NoiseRepairRequire ($original54Header -and $original54Tests) 'unscoped full-active policy only accepted for exact historical54 compiled source pair'}
+  elseif((NoiseRepairProperty $plan 'producer_active_tail_ns') -and $plan.producer_active_tail_ns -eq 2000000){
+   # Exact sealed 2ms pairs: main44/47-52 and diagnostic-only main53.
+   # New QoS sources cannot downgrade by removing their policy/control fields.
+   $legacy2ms=($header.bytes -eq 4994 -and $header.sha256 -ceq '60a22dadc78f71d895e2488c55ed32222af5cbd294a98c60f8b1fd0dc509dee1' -and $tests.bytes -eq 12586 -and $tests.sha256 -ceq '5054887016f4ebdc8a43681c14faabe99fb0740045df9c48b4ea49214ff723cb') -or ($header.bytes -eq 10760 -and $header.sha256 -ceq '8fc675f9d1e95a4809379e643a7dc4487e01e30a92c52e2a080e578c5e7ef0f9' -and $tests.bytes -eq 23479 -and $tests.sha256 -ceq '9efc0314f7415bed15cb70f6de2c1b3fe3242aa9fc3f83acb66ff45b0bca9adb')
+   NoiseRepairRequire $legacy2ms 'missing QoS 2ms policy only accepted for exact paired historical compiled sources'
+  }
+  return $false
+ }
+ NoiseRepairRequire ($hasControls -and $plan.process_qos_policy -is [string] -and $plan.process_qos_policy -ceq 'own_cold_process_execution_speed_high_qos' -and ($plan.process_qos_controls_count -is [int] -or $plan.process_qos_controls_count -is [long]) -and $plan.process_qos_controls_count -eq 24 -and -not $original54Header -and -not $original54Tests) 'declared new own-process QoS policy/count and new compiled source pair'
+ NoiseRepairRequire ($plan.producer_wait_policy -is [string] -and $plan.producer_wait_policy -ceq 'full_period_active_qpc' -and $plan.producer_active_tail_ns -eq 0 -and $controls.pass -is [bool] -and $controls.pass) 'QoS candidate keeps explicit full-active policy and all original/nested controls PASS'
+ ComponentDeltaValidateProcessQosControls $controls.process_qos_controls
+ return $true
+}
 function NoiseRepairCpuBuildGroups {
  return @([pscustomobject]@{targets=@('pas_core')},[pscustomobject]@{targets=@('own_bridge','current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')},[pscustomobject]@{targets=@('owner_checkpoint_tests','owner_expiry_tests','component_mask_tests','uniform_fnv_tests')})
 }
@@ -196,6 +217,7 @@ function NoiseRepairAllowedChange([string]$relative,[bool]$allowCpu=$false){
  return $false
 }
 function script:NoiseRepairVerifyWorkerPlacement($report){
+ if($script:noiseRepairBuild.process_qos_required){ComponentDeltaValidateProcessQos (ComponentDeltaColdProducerField $report 'process_qos')}
  if($script:noiseRepairBuild.producer_wait_required){
   if($report.PSObject.Properties.Name -ccontains 'producer_active_tail_ns'){
    NoiseRepairRequire (($report.producer_active_tail_ns -is [int] -or $report.producer_active_tail_ns -is [long]) -and $report.producer_active_tail_ns -eq $script:noiseRepairBuild.producer_active_tail_ns) 'actual producer active-tail must equal compiled integer policy'
@@ -429,6 +451,12 @@ function LoadNoiseRepairBuild([string]$bindingPath){
    $producerSourcePins+=@($consumerSources[$relative])
   }
   $producerActiveTailNs=NoiseRepairProducerActiveTailPolicy $consumerPlan $waitControls $producerSourcePins[1] $producerSourcePins[2]
+  $processQosRequired=NoiseRepairProcessQosPolicy $consumerPlan $waitControls $producerSourcePins[1] $producerSourcePins[2]
+  if($processQosRequired){
+   $waitVerification=NoiseRepairReadBinding $delta.wait_controls_receipt
+   $waitNative=NoiseRepairReadBinding (Binding (Join-Path (Join-Path $out $waitVerification.stage) ($waitVerification.stage+'-result.json')))
+   NoiseRepairRequire ($waitControls.process_qos_controls.actual_windows_snapshot.process_id -eq $waitNative.facts.pid) 'actual QoS control snapshot must join the verified own Native PID'
+  }
   foreach($receipt in @($delta.build_receipts)+@($delta.wait_controls_receipt)){
    NoiseRepairRequireNativeInputs $receipt (@($consumerManifestPin,$consumerPlanPin)+$producerSourcePins)
   }
@@ -600,6 +628,6 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  $script:seal=@{files=@($delta.files)}
  $script:inputs=@($script:noiseRepairActiveInputs.Keys|Sort-Object -Unique)
  $script:noiseRepairBindingPin=$bindingPin
- $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment;worker_affinity_required=$hasAffinity;consumer_priority_requested=$consumerPriorityRequested;producer_wait_required=$hasWait;producer_active_tail_ns=$producerActiveTailNs}
+ $script:noiseRepairBuild=@{original_inventory=$inventory;base_build=$base;compiled_source_commit=$compiledCommit;maintenance_only_amendment=$isAmendment;worker_affinity_required=$hasAffinity;consumer_priority_requested=$consumerPriorityRequested;producer_wait_required=$hasWait;producer_active_tail_ns=$producerActiveTailNs;process_qos_required=($hasWait -and $processQosRequired)}
  $script:noiseRepairPrerequisites=@{source_commit=$baseCommit;scope='Previously passed scopes only; no new-source fresh/full qualification';release_tests=$oldTests;old_configuration_proofs=$oldProofs;compiler_archive_links=$archiveLinks;original_main32_inventory=$delta.original_main32_inventory;formal_source_byte_identical=(-not $cpuDelta);formal_rebuilt=$cpuDelta;formal_changed_paths=@($delta.formal_changed_paths);effective_linked_static_inputs=@($delta.linked_static_inputs);compiled_source_commit=$compiledCommit;controls_prerequisite_only=$isAmendment;component_rebuilt=(-not $isAmendment);maintenance_only_amendment=$isAmendment;whole_candidate_qualification=$false;live_ready=$false;device_operations=0}
 }

@@ -176,6 +176,91 @@ J active_wait_tests(){
   {"synthetic_api_controls",true},{"device_operations",0},{"cost_qualification",false},{"live_ready",false},{"policy",producer_active_wait_policy},
   {"horizon_ns",producer_active_wait_horizon_ns},{"poll_cap",producer_active_wait_poll_cap},{"no_kernel_wait",true},{"cpu_cost","unknown"}};
 }
+// Separate API-state/cleanup controls, with no timing or cost assertion.
+struct QosApiDouble {
+ ColdProcessQosState value{1,0,0};std::uint32_t pid=41,tid=7,priority_class=0x20;
+ int reads=0,sets=0,fail_read=0,fail_set=0,mismatch_read=0,ignore_set=0;
+ bool failed_set_mutates=false;
+ std::uint32_t process()const noexcept{return pid;}
+ std::uint32_t thread()const noexcept{return tid;}
+ std::uint32_t process_class()const noexcept{return priority_class;}
+ ColdProcessQosApiResult get(ColdProcessQosState& s)noexcept{
+  ++reads;s=value;if(reads==fail_read)return {0,87,true};
+  if(reads==mismatch_read)s.state_mask^=4;return {1,0,true};
+ }
+ ColdProcessQosApiResult set(const ColdProcessQosState& s)noexcept{
+  ++sets;if(sets==fail_set){if(failed_set_mutates)value=s;return {0,5,true};}
+  if(sets!=ignore_set)value=s;return {1,0,true};
+ }
+};
+template<class Api,class Body> std::string qos_error(Api& a,ColdProcessQosSnapshot& s,Body&& body){
+ try{run_cold_process_qos(a,s,std::forward<Body>(body));}catch(const std::exception& e){return e.what();}return {};
+}
+J process_qos_tests(){
+ Tests q;using F=ColdProcessQosFailure;using S=ColdProcessQosSnapshot;
+ {QosApiDouble a;S s;bool body=false;int closed_reads=0,closed_sets=0;
+  {ColdProcessQosScope scope(a,s);body=a.value==ColdProcessQosState{1,1,0};scope.close();closed_reads=a.reads;closed_sets=a.sets;scope.close();}
+  q.check("system_managed_prior_exact_restore_and_idempotent_close",body&&s.verified()&&a.value==ColdProcessQosState{1,0,0}&&a.reads==closed_reads&&a.sets==closed_sets&&a.reads==3&&a.sets==2);}
+ {QosApiDouble a;a.value={1,1,1};S s;bool high=false;const auto error=qos_error(a,s,[&]{high=a.value==ColdProcessQosState{1,1,0};});
+  q.check("Eco_prior_execution_bit_disabled_then_full_prior_restored",error.empty()&&high&&s.verified()&&a.value==ColdProcessQosState{1,1,1});}
+ {QosApiDouble a;a.value={1,1,0};S s;const auto error=qos_error(a,s,[]{});
+  q.check("already_High_prior_is_queried_set_readback_and_restored",error.empty()&&s.verified()&&s.previous==s.requested&&a.sets==2);}
+ {QosApiDouble a;a.value={1,4,4};S s;bool kept=false;const auto error=qos_error(a,s,[&]{kept=a.value==ColdProcessQosState{1,5,4};});
+  q.check("known_timer_resolution_control_and_state_bits_preserved",error.empty()&&kept&&s.verified()&&a.value==ColdProcessQosState{1,4,4});}
+ {QosApiDouble a;a.value={1,4,0};S s;bool kept=false;{ColdProcessQosScope scope(a,s);kept=a.value==ColdProcessQosState{1,5,0};}
+  q.check("destructor_only_restore_cannot_issue_verified_and_keeps_known_off_bit",kept&&!s.verified()&&!s.close_attempted&&s.fallback_attempted&&s.fallback_restored&&a.value==ColdProcessQosState{1,4,0});}
+ {QosApiDouble a;a.fail_read=1;S s;bool body=false;const auto error=qos_error(a,s,[&]{body=true;});
+  q.check("prior_query_error_preserves_raw_status_and_never_sets",!error.empty()&&s.failure==F::prior_query&&s.query_previous.sampled&&s.query_previous.status==0&&s.query_previous.error==87&&!body&&a.sets==0&&!s.verified());}
+ {QosApiDouble a;a.value.version=2;S s;const auto error=qos_error(a,s,[]{});
+  q.check("unknown_version_rejected_before_state_mutation",!error.empty()&&s.failure==F::prior_version&&a.sets==0&&!s.requested_available);}
+ {QosApiDouble a;a.value.control_mask=2;S s;const auto error=qos_error(a,s,[]{});
+  q.check("unknown_control_bit_rejected_without_guessing_mask",!error.empty()&&s.failure==F::prior_bits&&a.sets==0);}
+ {QosApiDouble a;a.value.state_mask=8;S s;const auto error=qos_error(a,s,[]{});
+  q.check("unknown_state_bit_rejected_without_guessing_mask",!error.empty()&&s.failure==F::prior_bits&&a.sets==0);}
+ {QosApiDouble a;a.priority_class=0x80;S s;const auto error=qos_error(a,s,[]{});
+  q.check("non_NORMAL_process_rejected_before_query_or_set",!error.empty()&&s.failure==F::process_class&&a.reads==0&&a.sets==0);}
+ {bool rejected=true;for(const bool process:{false,true}){QosApiDouble a;if(process)a.pid=0;else a.tid=0;S s;const auto error=qos_error(a,s,[]{});rejected&=!error.empty()&&s.failure==F::identity&&a.reads==0&&a.sets==0;}
+  q.check("zero_process_or_owner_thread_identity_rejected_before_API",rejected);}
+ {QosApiDouble a;a.fail_set=1;a.failed_set_mutates=true;S s;bool body=false;const auto error=qos_error(a,s,[&]{body=true;});
+  q.check("failed_apply_with_side_effect_is_rolled_back_but_stays_failed",!error.empty()&&s.failure==F::requested_set&&s.set_requested.error==5&&s.rollback_restored&&s.rollback_available&&a.value==s.previous&&!body&&!s.verified());}
+ {QosApiDouble a;a.fail_read=2;S s;const auto error=qos_error(a,s,[]{});
+  q.check("applied_query_failure_has_verified_rollback_and_sticky_reason",!error.empty()&&s.failure==F::applied_query&&s.rollback_restored&&!s.applied_available&&!s.verified());}
+ {QosApiDouble a;a.mismatch_read=2;S s;const auto error=qos_error(a,s,[]{});
+  q.check("full_applied_readback_including_other_bit_must_match",!error.empty()&&s.failure==F::applied_mismatch&&s.applied_available&&s.rollback_restored&&!s.verified());}
+ {QosApiDouble a;a.mismatch_read=2;a.fail_set=2;S s;const auto error=qos_error(a,s,[]{});
+  q.check("constructor_rollback_set_error_records_bounded_fallback_not_PASS",!error.empty()&&s.failure==F::applied_mismatch&&s.rollback_failure==F::restore_set&&s.fallback_attempted&&s.fallback_restored&&a.sets==3&&a.value==s.previous&&!s.verified());}
+ {QosApiDouble a;a.ignore_set=1;a.fail_read=3;S s;const auto error=qos_error(a,s,[]{});
+  q.check("constructor_rollback_query_error_retained_after_fallback_restore",!error.empty()&&s.failure==F::applied_mismatch&&s.rollback_failure==F::restored_query&&s.query_rollback.error==87&&s.fallback_restored&&a.reads==4&&!s.verified());}
+ {QosApiDouble a;a.ignore_set=1;a.mismatch_read=3;S s;const auto error=qos_error(a,s,[]{});
+  q.check("constructor_rollback_fullstate_mismatch_never_becomes_verified",!error.empty()&&s.rollback_available&&!s.rollback_restored&&s.rollback_failure==F::restored_mismatch&&s.fallback_restored&&!s.verified());}
+ {QosApiDouble a;S s;bool rejected=false;{ColdProcessQosScope scope(a,s);a.tid=8;try{scope.close();}catch(...){rejected=true;}const bool untouched=a.sets==1;a.tid=7;rejected&=untouched;}
+  q.check("wrong_thread_close_never_mutates_foreign_thread_and_failure_sticky",rejected&&s.failure==F::wrong_thread&&s.fallback_restored&&a.value==s.previous&&!s.verified());}
+ {QosApiDouble a;S s;bool rejected=false;{ColdProcessQosScope scope(a,s);a.pid=42;try{scope.close();}catch(...){rejected=true;}const bool untouched=a.sets==1;a.pid=41;rejected&=untouched;}
+  q.check("wrong_process_close_never_mutates_foreign_process",rejected&&s.failure==F::wrong_process&&s.fallback_restored&&!s.verified());}
+ {QosApiDouble a;S s;const auto error=qos_error(a,s,[&]{a.fail_set=2;throw std::runtime_error("original body exception");});
+  q.check("body_exception_survives_restore_set_error_and_fallback_is_unqualified",error=="original body exception"&&s.failure==F::restore_set&&s.fallback_restored&&a.value==s.previous&&!s.verified());}
+ {QosApiDouble a;S s;const auto error=qos_error(a,s,[&]{a.fail_read=3;});
+  q.check("explicit_restore_query_failure_cannot_be_repaired_into_PASS",!error.empty()&&s.failure==F::restored_query&&!s.restored_available&&s.fallback_restored&&!s.verified());}
+ {bool retained=true;for(const bool fallback_fail:{false,true}){QosApiDouble a;S s;const auto error=qos_error(a,s,[&]{a.mismatch_read=3;if(fallback_fail)a.fail_read=4;});
+  retained&=!error.empty()&&s.failure==F::restored_mismatch&&s.restored_available&&!s.restored&&s.fallback_attempted&&!s.verified()&&
+   (fallback_fail?s.fallback_failure==F::restored_query&&!s.fallback_available&&!s.fallback_restored:s.fallback_restored&&s.fallback_failure==F::none);}
+  q.check("explicit_restore_fullstate_mismatch_and_failed_fallback_are_retained",retained);}
+ {QosApiDouble a;S s;const auto error=qos_error(a,s,[&]{a.priority_class=0x80;});
+  q.check("process_class_after_body_requires_NORMAL_even_after_exact_restore",!error.empty()&&s.failure==F::process_class_after_close&&s.process_class_after_close==0x80&&s.restored&&a.value==s.previous&&!s.verified());}
+ J actual=nullptr;bool actual_windows=false;
+#ifdef _WIN32
+ {WindowsColdProcessQosApi a;S s;const auto error=qos_error(a,s,[]{});actual=cold_process_qos_json(s);actual_windows=true;
+  q.check("actual_Windows_own_process_HighQoS_full_readback_and_exact_restore",error.empty()&&s.verified()&&s.process_id==GetCurrentProcessId()&&s.owner_thread_id==GetCurrentThreadId()&&a.process_class()==NORMAL_PRIORITY_CLASS);}
+#else
+ {QosApiDouble a;S s;bool rejected=false;{ColdProcessQosScope scope(a,s);a.fail_set=2;try{scope.close();}catch(...){rejected=true;}a.fail_read=4;}
+  q.check("nonWindows_fallback_query_failure_remains_unknown_and_unqualified",rejected&&s.fallback_failure==F::restored_query&&!s.fallback_available&&!s.verified());}
+#endif
+ if(q.checks.size()!=24)throw std::runtime_error("fixed process QoS control denominator");
+ return {{"schema","pas.cold-process-qos-controls.v1"},{"assertions",q.checks.size()},{"checks",q.checks},{"failed",q.failed},{"pass",q.failed==0},
+  {"policy",cold_process_qos_policy},{"version",cold_process_qos_version},{"execution_speed_mask",cold_process_qos_execution_speed_mask},
+  {"supported_mask",cold_process_qos_supported_mask},{"synthetic_api_controls",true},{"actual_windows_restore_control",actual_windows},
+  {"actual_windows_snapshot",actual},{"device_operations",0},{"cost_qualification",false},{"live_ready",false}};
+}
 int main(int argc,char**argv){try{if(argc!=2||std::filesystem::exists(argv[1]))throw std::runtime_error("fresh test output");Tests t;FakeClock c;int calls=0;Nanoseconds ticks=0;
  priority_tests(t);auto wait=[&](Nanoseconds n){++calls;ticks=n;c.set(c.now_ns()+100*n);};
  c.set(1000);wait_producer_deadline(c,1000,wait);t.check("due_now_does_not_wait",calls==0);
@@ -193,6 +278,6 @@ int main(int argc,char**argv){try{if(argc!=2||std::filesystem::exists(argv[1]))t
  {HostClock real;ProducerDeadlineWait timer;const auto due=real.now_ns()+20'000'000;timer.wait_until(real,due);t.check("real_Windows_timer_not_before_QPC_due",real.now_ns()>=due);}
 #endif
  active_tail_tests(t);
- const auto diagnostic_controls=diagnostic_trace_tests();const auto active_wait_controls=active_wait_tests();const bool pass=t.failed==0&&diagnostic_controls.at("pass").get<bool>()&&active_wait_controls.at("pass").get<bool>();
- J r={{"schema","pas.producer-deadline-wait-tests.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",pass},{"diagnostic_controls",diagnostic_controls},{"active_wait_controls",active_wait_controls},{"device_endpoints",0},{"device_operations",0},{"cost_qualification",false},{"live_ready",false},{"active_tail_ns",producer_active_tail_ns},{"active_tail_poll_cap",producer_active_tail_poll_cap},{"qualification_scope","functional timer/fake-clock contract only; active-tail CPU and actual cadence cost separately gated"}};std::ofstream f(argv[1]);f<<r.dump(2)<<'\n';if(!f)throw std::runtime_error("write");std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<" diagnostic_assertions="<<diagnostic_controls.at("assertions")<<" diagnostic_failed="<<diagnostic_controls.at("failed")<<" active_wait_assertions="<<active_wait_controls.at("assertions")<<" active_wait_failed="<<active_wait_controls.at("failed")<<'\n';return pass?0:1;
+ const auto diagnostic_controls=diagnostic_trace_tests();const auto active_wait_controls=active_wait_tests();const auto process_qos_controls=process_qos_tests();const bool pass=t.failed==0&&diagnostic_controls.at("pass").get<bool>()&&active_wait_controls.at("pass").get<bool>()&&process_qos_controls.at("pass").get<bool>();
+ J r={{"schema","pas.producer-deadline-wait-tests.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",pass},{"diagnostic_controls",diagnostic_controls},{"active_wait_controls",active_wait_controls},{"process_qos_controls",process_qos_controls},{"device_endpoints",0},{"device_operations",0},{"cost_qualification",false},{"live_ready",false},{"active_tail_ns",producer_active_tail_ns},{"active_tail_poll_cap",producer_active_tail_poll_cap},{"qualification_scope","functional timer/fake-clock contract only; active-tail CPU and actual cadence cost separately gated"}};std::ofstream f(argv[1]);f<<r.dump(2)<<'\n';if(!f)throw std::runtime_error("write");std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<" diagnostic_assertions="<<diagnostic_controls.at("assertions")<<" diagnostic_failed="<<diagnostic_controls.at("failed")<<" active_wait_assertions="<<active_wait_controls.at("assertions")<<" active_wait_failed="<<active_wait_controls.at("failed")<<" process_qos_assertions="<<process_qos_controls.at("assertions")<<" process_qos_failed="<<process_qos_controls.at("failed")<<'\n';return pass?0:1;
  }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}

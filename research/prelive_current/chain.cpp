@@ -64,6 +64,8 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  if((mode!="A"&&mode!="B")||scene!="dense"||n!=1000)throw std::runtime_error("diagnostic phase scope: A/B dense 1000 only");
 #endif
  if(n<1000||n>10000||(mode!="A"&&mode!="B")||(scene!="tap"&&scene!=tap_reset_workload::scene&&scene!="hold"&&scene!=streaming_workload::scene&&scene!="dense"&&scene!="slow"&&scene!="writer"&&scene!="rpc"&&scene!="fault"))throw std::runtime_error("pipeline bounds");
+ ColdProcessQosSnapshot process_qos;WindowsColdProcessQosApi process_qos_api;J qos_result;
+ run_cold_process_qos(process_qos_api,process_qos,[&]{
  const bool tap_streaming=scene==tap_reset_workload::scene;
  const bool streaming=scene==streaming_workload::scene||tap_streaming;
  const auto images=streaming?std::array<std::vector<std::uint8_t>,12>{}:stimulus(scene);
@@ -152,7 +154,10 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
 #ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
  result["processor_topology"]=processor_topology;
 #endif
- return result;
+ qos_result=std::move(result);
+ });
+ if(!process_qos.verified())throw std::runtime_error("cold process QoS explicit restore required");
+ qos_result["process_qos"]=cold_process_qos_json(process_qos);return qos_result;
 }
 }
 int main(int argc,char**argv){try{if(argc<4)throw std::runtime_error("usage pixels selection report OR pipeline A/B scene n report");const std::string report=argv[argc-1];reserve_fresh_offline_report(report);J result;
