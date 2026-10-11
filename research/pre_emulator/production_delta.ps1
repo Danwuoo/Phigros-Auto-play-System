@@ -1,6 +1,6 @@
 param([Parameter(Mandatory)][string]$ProductionBuildBinding,
       [Parameter(Mandatory)][string]$NoiseRepairBinding,
-      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main50')
+      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main51')
 . (Join-Path $PSScriptRoot 'common.ps1')
 # Keep the complete existing receipt/helper set in this script's scope. A
 # dot-source only inside LoadBuilds would lose its local helpers on return.
@@ -57,9 +57,32 @@ foreach($role in @(@{name='pas_core';count=22},@{name='pas_current_candidate';co
  NoiseRepairRequire ($filesByPath.ContainsKey($library) -and @($objects|Where-Object {$_.path.Replace('\','/').Contains('/production/CMakeFiles/'+$role.name+'.dir/',[StringComparison]::Ordinal)}).Count -eq $role.count) 'fresh production library and exact actual object role'
 }
 
+$runtimePlan=NoiseRepairReadBinding $production.runtime_copy_plan
+$runtimeProof=NoiseRepairReadBinding $production.runtime_copy_verification
+NoiseRepairSameBinding $core.runtime_copy_plan $production.runtime_copy_plan 'same bounded deployment plan/core join'
+NoiseRepairSameBinding $runtimeProof.plan $production.runtime_copy_plan 'same actual deployment proof/plan join'
+NoiseRepairSameBinding $runtimePlan.dependency_manifest $production.dependency_manifest 'same complete installed runtime provenance'
+NoiseRepairRequire ($runtimePlan.schema -ceq 'pas.bound-release-runtime-copy-plan.v1' -and $runtimeProof.schema -ceq 'pas.bound-release-runtime-copy-verification.v1' -and $runtimePlan.source_commit -ceq $commit -and $runtimeProof.source_commit -ceq $commit -and $runtimePlan.applocal_enabled -is [bool] -and -not $runtimePlan.applocal_enabled -and $runtimePlan.held_identity_cap -eq 64 -and $runtimeProof.pass -is [bool] -and $runtimeProof.pass -and $runtimeProof.exact_original_dependency_bytes -is [bool] -and $runtimeProof.exact_original_dependency_bytes) 'actual exact bounded Release deployment'
+$runtimeBin=[IO.Path]::GetFullPath((Join-Path $repo 'out/vcpkg_installed/x64-windows/bin'))
+$expectedRuntime=@($dependencies.files|Where-Object {[IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($_.path)) -ceq $runtimeBin -and [IO.Path]::GetExtension($_.path) -ceq '.dll'}|Sort-Object path)
+NoiseRepairRequire (@($expectedRuntime).Count -gt 0 -and @($expectedRuntime).Count -le 64 -and $runtimePlan.source_directory -ceq $runtimeBin -and $runtimePlan.source_file_count -eq @($expectedRuntime).Count -and @($runtimePlan.source_files).Count -eq @($expectedRuntime).Count -and $runtimePlan.copy_file_count -eq 2*@($expectedRuntime).Count -and @($runtimeProof.copies).Count -eq $runtimePlan.copy_file_count -and $runtimeProof.file_count -eq $runtimePlan.copy_file_count) 'complete installed Release runtime denominator'
+$expectedDestinations=@($buildRoot,(Join-Path $buildRoot 'production'))
+NoiseRepairRequire (@($runtimePlan.destinations).Count -eq 2 -and @(Compare-Object (@($runtimePlan.destinations)|Sort-Object) ($expectedDestinations|Sort-Object)).Count -eq 0) 'only two actual production runtime directories'
+$runtimeCopySeen=@{}
+for($index=0;$index -lt @($expectedRuntime).Count;$index++){NoiseRepairSameBinding $runtimePlan.source_files[$index] $expectedRuntime[$index] 'exact ordered original installed DLL pin'}
+foreach($row in $runtimeProof.copies){
+ $sources=@($expectedRuntime|Where-Object path -ceq $row.source.path);NoiseRepairRequire ($sources.Count -eq 1) 'one original Release DLL source for every copy'
+ NoiseRepairSameBinding $row.source $sources[0] 'exact source DLL bytes'
+ $copyPath=[IO.Path]::GetFullPath($row.copy.path)
+ NoiseRepairRequire (-not $runtimeCopySeen.ContainsKey($copyPath) -and [IO.Path]::GetDirectoryName($copyPath) -cin $expectedDestinations -and [IO.Path]::GetFileName($copyPath) -ceq [IO.Path]::GetFileName($row.source.path) -and $row.copy.bytes -eq $row.source.bytes -and $row.copy.sha256 -ceq $row.source.sha256 -and $filesByPath.ContainsKey($copyPath)) 'unique actual sealed runtime copy/source equality'
+ NoiseRepairSameBinding $row.copy $filesByPath[$copyPath] 'runtime copy is actual final production output'
+ CheckEntry $row.source;CheckEntry $row.copy;$runtimeCopySeen[$copyPath]=$true
+}
+foreach($document in @($runtimePlan,$runtimeProof)){NoiseRepairRequire ($document.device_operations -eq 0 -and $document.qualification_issued -is [bool] -and -not $document.qualification_issued -and $document.live_ready -is [bool] -and -not $document.live_ready) 'deployment provenance alone cannot grant qualification'}
+
 function AssertCurrentProduction {
  NoiseRepairRequire ((& git -C $repo rev-parse HEAD) -ceq $commit -and (& git -C $repo branch --show-current) -ceq 'main' -and -not (& git -C $repo status --porcelain)) 'same exact clean main throughout normal3 production'
- foreach($entry in @($manifest.files)+@($production.files)+@($productionPin,$production.source_manifest,$production.dependency_manifest,$production.core_build_plan,$noisePin)){CheckEntry $entry}
+ foreach($entry in @($manifest.files)+@($production.files)+@($productionPin,$production.source_manifest,$production.dependency_manifest,$production.core_build_plan,$production.runtime_copy_plan,$production.runtime_copy_verification,$noisePin)){CheckEntry $entry}
 }
 function VerifyProductionReceipt($receipt,$closure,$required){
  NoiseRepairCheckNativeReceipt $receipt
@@ -72,9 +95,10 @@ function VerifyProductionReceipt($receipt,$closure,$required){
  NoiseRepairRequireNativeInputs $receipt $required
  return $script:noiseRepairSpecs[$verification.stage]
 }
-$compileInputs=@($production.source_manifest,$production.dependency_manifest,$production.core_build_plan,$noise.compiler_environment)+@($manifest.files)+@($dependencies.files)
+$compileInputs=@($production.source_manifest,$production.dependency_manifest,$production.core_build_plan,$noise.compiler_environment,$production.runtime_copy_plan)+@($manifest.files)+@($dependencies.files)
 AssertCurrentProduction
 $null=VerifyProductionReceipt $production.configure_receipt $production.configure_input_closure $compileInputs
+$boundedBuildInputs=@($compileInputs)+@($production.runtime_copy_verification)+@($runtimeProof.copies.copy)
 $expectedBuildGroups=@(@{id='core';targets=@('pas_core')},@{id='action';targets=@('pas_current_candidate')},@{id='emulator';targets=@('pas_emulator')},@{id='bench';targets=@('pas_bench')},@{id='entry';targets=@('pas','candidate_admission_controls','candidate_receipt_collector_controls','production_entry_controls')},@{id='pipeline';targets=@('score_only_controls','production_pipeline_cold','production_pipeline_audit')})
 NoiseRepairRequire (@($production.build_receipts).Count -eq 6 -and @($production.build_input_closures).Count -eq 6 -and @($production.build_target_groups).Count -eq 6 -and @($core.build_target_groups).Count -eq 6) 'exact six complete bounded fresh production build receipts/closures'
 for($index=0;$index -lt 6;$index++){
@@ -82,7 +106,7 @@ for($index=0;$index -lt 6;$index++){
  foreach($groups in @($production.build_target_groups,$core.build_target_groups)){
   NoiseRepairRequire ($groups[$index].id -ceq $expected.id -and @($groups[$index].targets).Count -eq @($expected.targets).Count -and @(Compare-Object (@($groups[$index].targets)|Sort-Object) (@($expected.targets)|Sort-Object)).Count -eq 0) 'exact ordered six production target groups'
  }
- $null=VerifyProductionReceipt $production.build_receipts[$index] $production.build_input_closures[$index] $compileInputs
+ $null=VerifyProductionReceipt $production.build_receipts[$index] $production.build_input_closures[$index] $boundedBuildInputs
  $proof=NoiseRepairReadBinding $production.build_receipts[$index]
  NoiseRepairRequire ($proof.stage -ceq ('build-production-delta-'+$Attempt+'-'+$expected.id)) 'actual ordered bounded production stage join'
 }
@@ -94,7 +118,7 @@ foreach($target in $expectedControls){
  $row=$rows[0];$binaryKey=[IO.Path]::GetFullPath($row.binary.path)
  NoiseRepairRequire ($filesByPath.ContainsKey($binaryKey)) 'affected control image is in fresh production outputs'
  NoiseRepairSameBinding $row.binary $filesByPath[$binaryKey] 'affected production control binary'
- $spec=VerifyProductionReceipt $row.receipt $row.input_closure (@($compileInputs)+@($production.files)+$buildProofs)
+ $spec=VerifyProductionReceipt $row.receipt $row.input_closure (@($boundedBuildInputs)+@($production.files)+$buildProofs)
  NoiseRepairRequire ([string]::Equals($spec.exe,$row.binary.path,[StringComparison]::OrdinalIgnoreCase)) 'actual affected control image/native join'
  $value=NoiseRepairReadBinding $row.report
  NoiseRepairRequire ($value.failed -eq 0 -and $value.device_operations -eq 0 -and $value.live_ready -eq $false) 'endpoint-free successful affected production controls'
@@ -126,7 +150,7 @@ Fresh $artifact;[IO.Directory]::CreateDirectory($artifact)|Out-Null
 $plans=@();foreach($scene in @('tap','hold','dense')){$plans+=@(@{id=('normal-'+$scene);mode='release';scene=$scene;n=2560;warmup=256;measurement=2304;cadence=20})}
 $planPath=Join-Path $artifact 'plan.json'
 NewJson $planPath @{schema='pas.pre-emulator-production-plan.v1';source_commit=$commit;plans=$plans;production_build=$productionPin;noise_repair_build=$noisePin;production_binary_executed=$false;scope='Necessary current endpoint-free normal3 only; original75/prod9 remain historical prerequisites';qualification_issued=$false;device_operations=0;live_ready=$false}
-$inputs=@($script:noiseRepairActiveInputs.Keys)+@($productionPin.path,$noisePin.path,$planPath,$production.source_manifest.path,$production.dependency_manifest.path,$production.core_build_plan.path)+@($manifest.files.path)+@($dependencies.files.path)+@($production.files.path)+$buildProofs.path+@($production.controls.binary.path)+@($production.controls.report.path)+@($production.controls.receipt.path)+@($production.controls.input_closure.path)
+$inputs=@($script:noiseRepairActiveInputs.Keys)+@($productionPin.path,$noisePin.path,$planPath,$production.source_manifest.path,$production.dependency_manifest.path,$production.core_build_plan.path,$production.runtime_copy_plan.path,$production.runtime_copy_verification.path)+@($manifest.files.path)+@($dependencies.files.path)+@($production.files.path)+$buildProofs.path+@($production.controls.binary.path)+@($production.controls.report.path)+@($production.controls.receipt.path)+@($production.controls.input_closure.path)
 $inputs=@($inputs|Sort-Object -Unique)
 $Operation='pipeline';$rows=@();$stopped=$false;$reason='';$activePlan=$null;$activeStage='';$activePhase=''
 try{foreach($p in $plans){

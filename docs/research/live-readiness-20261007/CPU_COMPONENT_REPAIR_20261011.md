@@ -1,3 +1,5 @@
+2026-10-11 main50 `775d5c1` CPU32/584 controls7、reader2/81、pre-cost actual source/base joins通過；production core/action/emulator/bench四groups通過，entry在24.205001s因`held-identity-cap64` STOP，runner125/native exit unknown，identityfalse/cleanupunknown，streams完整、active0及64 held全部signaled。原33小pins/full945source/native/logs/checkpoints保留於`MAIN50_PRODUCTION_ENTRY_NEGATIVE_20261011.json`；沒有compiler error結論，pipeline/affected controls/normal3/AA/noise/ABBA未跑。下一main51只修冷build runtime部署：configure時applocal OFF，以完整original installed Release/bin十八DLL pins直接file(COPY)到root/production，逐來源及兩副本SHA、actual52graph/seals/before-after核對；原六groups/52TUs/64held及R2不改。此修補不是main50 STOP轉PASS，current fresh收據與noise/ABBA仍待實際取得；不重跑原75/prod9，完成至emulator邊界停止、無新thread。
+
 # CPU component 修補與啟動前軟體工作
 
 2026-10-11 最新冷修補：main49／`bffd61f` 必要CPU32及七control executions完成，保留原binary／Native／source快照；

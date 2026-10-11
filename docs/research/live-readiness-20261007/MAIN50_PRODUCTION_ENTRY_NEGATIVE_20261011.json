@@ -1,0 +1,260 @@
+{
+  "schema": "pas.production-entry-owned-process-negative.v1",
+  "attempt": "main50",
+  "source_commit": "775d5c15ae04e23d9f34f589d350b036dfbca528",
+  "preserved_utc": "2026-10-11T05:06:16.2411904Z",
+  "status": "STOP",
+  "stage": "build-production-delta-main50-entry",
+  "reason": "held-identity-cap64",
+  "failure_class": "owned-process held identity capacity",
+  "compile_error_not_established": true,
+  "native_exit": null,
+  "runner_exit": 125,
+  "outer_session": 69445,
+  "outer_session_exit_reported_by_controller": 1,
+  "elapsed_s": 24.205001,
+  "identity_trusted": false,
+  "cleanup": "unknown",
+  "descendants": "unknown",
+  "streams_completed": true,
+  "active_final": 0,
+  "pinned_identity_count": 64,
+  "held_waits_count": 64,
+  "held_all_signaled": true,
+  "held_waits_all_signaled": true,
+  "termination_returned": true,
+  "verification_pending": false,
+  "verification_reason": "process-integrity",
+  "native_evidence": {
+    "specification": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry-inputs\\spec.json",
+      "bytes": 29119,
+      "sha256": "f6963b5c6d4a42ea1a18902902ec995ced1c816b0df36b9a9499515789a9eb49"
+    },
+    "input_closure": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\build-production-delta-main50-entry-input-closure-verification.json",
+      "bytes": 1163,
+      "sha256": "74d5eaf2c242781501d9b864db6b0f87b72651f26722449740890c4464abe0a8"
+    },
+    "result": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-result.json",
+      "bytes": 39864,
+      "sha256": "e37fef02ecfc2ee53b8cd96664e9cfb4748885d515e88c84120321f6ec6a02ef"
+    },
+    "verification": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-verification.json",
+      "bytes": 39915,
+      "sha256": "3003741bf280676a17c3b8470ef7a9265b84ee98ec2c6821d9f896f1171f8941"
+    },
+    "freeze": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\freeze.json",
+      "bytes": 50427,
+      "sha256": "fb66efb9b0fd654f6ca5a570c609f26c1cff343375ed3a9ae5d8439f79d82489"
+    },
+    "state": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\state.json",
+      "bytes": 604,
+      "sha256": "9061ac5d3e66146b6986df7c6593872d1cb8accbde30d6fd435c7fd80c2979b4"
+    },
+    "contract": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\contract.json",
+      "bytes": 499,
+      "sha256": "3b6951e424a98b05baba5fe1a9e318b2412154e83881c335e0bd0c49b3914293"
+    },
+    "command": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-command.json",
+      "bytes": 728,
+      "sha256": "4c0c6b2087f1fc4dda1210c37c0cc203c702365bf8840a5c93810f7e2922cbba"
+    }
+  },
+  "native_evidence_roles_available": 8,
+  "native8_presence_is_not_integrity_pass": true,
+  "stdout": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry.stdout.log",
+    "bytes": 4860,
+    "sha256": "60a90b402c3995f71762aec98781ab83cd35702d45a460dba8a3a849e4fae7a9"
+  },
+  "stderr": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "checkpoints": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-checkpoint-0.json",
+      "bytes": 1249,
+      "sha256": "d5102b9ecadfe054ae9251d92e994b398812550da96e70227e0102ff2bc74990"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-checkpoint-1.json",
+      "bytes": 1255,
+      "sha256": "c13f0a5c523fe98a9272b9df43e0ebee05666719adb2b87c187956743c85f72f"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-checkpoint-2.json",
+      "bytes": 1241,
+      "sha256": "0094cc083a5dad28e09fb3e900dcf6831ceb3c7e41eb5d8bdf15d72fd99da5ef"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-checkpoint-3.json",
+      "bytes": 1795,
+      "sha256": "43f691ae1ba1b72ce1c64af5f539eb0f9506e8172ca5958cba53d6411e1ad619"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-checkpoint-4.json",
+      "bytes": 1799,
+      "sha256": "e7f80ca33e5685c0f5576d859ccf42affedb308742c327c2a768376fb61b0ee4"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-checkpoint-5.json",
+      "bytes": 39880,
+      "sha256": "410bad7e433172b222c810351aa9c20ae6e8b992170ffba8593b13ea3ce12a0d"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-checkpoint-6.json",
+      "bytes": 99,
+      "sha256": "7948dee17a688532f520d97e59f5298084ec35516ac90035f87a554d334c2713"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-entry\\build-production-delta-main50-entry-checkpoint-7.json",
+      "bytes": 99,
+      "sha256": "7948dee17a688532f520d97e59f5298084ec35516ac90035f87a554d334c2713"
+    }
+  ],
+  "production_completed_groups": [
+    {
+      "group": "core",
+      "native_exit": 0,
+      "runner_exit": 0,
+      "pending": false,
+      "identity_trusted": true,
+      "streams_completed": true,
+      "active_final": 0,
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-core\\build-production-delta-main50-core-result.json",
+        "bytes": 18197,
+        "sha256": "a59efb0c9ad9bf7dfe73cf1c6cac8f41c8ebb6f433e5f2f95f5f6ed9145ce66b"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-core\\build-production-delta-main50-core-verification.json",
+        "bytes": 3422,
+        "sha256": "5d8fc51c8cf5172ed7ecd89dcbcc3b6ee9089fc7ed554a2e23931fa040608dd1"
+      }
+    },
+    {
+      "group": "action",
+      "native_exit": 0,
+      "runner_exit": 0,
+      "pending": false,
+      "identity_trusted": true,
+      "streams_completed": true,
+      "active_final": 0,
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-action\\build-production-delta-main50-action-result.json",
+        "bytes": 10745,
+        "sha256": "11f51904b224d8403c5d50efe6cedb2b9c615997eeb52f466f6fe4adccb9c7ed"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-action\\build-production-delta-main50-action-verification.json",
+        "bytes": 3472,
+        "sha256": "fcd0aaafcd4924edee85eb78ef1b5c56c5d8b3eabf7e718aaa00dfc71025cc6a"
+      }
+    },
+    {
+      "group": "emulator",
+      "native_exit": 0,
+      "runner_exit": 0,
+      "pending": false,
+      "identity_trusted": true,
+      "streams_completed": true,
+      "active_final": 0,
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-emulator\\build-production-delta-main50-emulator-result.json",
+        "bytes": 13856,
+        "sha256": "e90b932fa5380bac3679b5c113bb45eee2056c6010280278baf3a5fb57e56233"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-emulator\\build-production-delta-main50-emulator-verification.json",
+        "bytes": 3523,
+        "sha256": "ab066d87baa408925066b0104a2c7ebf0e580ee602f5d6d4386ea7becdece8d1"
+      }
+    },
+    {
+      "group": "bench",
+      "native_exit": 0,
+      "runner_exit": 0,
+      "pending": false,
+      "identity_trusted": true,
+      "streams_completed": true,
+      "active_final": 0,
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-bench\\build-production-delta-main50-bench-result.json",
+        "bytes": 9465,
+        "sha256": "9bfc6897550d1128434fa8cf8198ebd1e3364092860011b55b39d9b85fa45da4"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-production-delta-main50-bench\\build-production-delta-main50-bench-verification.json",
+        "bytes": 3446,
+        "sha256": "0e5247f1339d126965d7aa7b2d5bffc05bfeb5f03b7e940abebbbb064c6087d5"
+      }
+    }
+  ],
+  "complete_source_snapshot": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\source-775d5c1-main50-snapshot\\snapshot.json",
+    "bytes": 597037,
+    "sha256": "2e5a9fa415581a36d65ec754e0aba4fbc55b0311ce3ff0977a2d9ccd8aa1b616"
+  },
+  "source_snapshot_files_reported": 945,
+  "source_files_recopied": 0,
+  "source_manifest": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-evaluation-main50\\source-manifest.json",
+    "bytes": 235802,
+    "sha256": "e779d62acc0c38fa01a57c37f5490179873fcf9b4dd38d6154842141210160c6"
+  },
+  "cpu_build": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-evaluation-main50\\build-binding.json",
+    "bytes": 60440,
+    "sha256": "e5bf16dfc0bd3a33fcd37985611f604f9b9c93a365346dc1c57b22774a0bea0e"
+  },
+  "reader_build": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-evaluation-main50\\build-binding.json",
+    "bytes": 32701,
+    "sha256": "6baea97c611b0a7275e48fa8d4fabe36f58bdadd6f46fe1a0e4eac1329eff6f9"
+  },
+  "readonly_pre_cost": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\main50-narrow-reader-output-pre-cost.json",
+    "bytes": 3341,
+    "sha256": "6a8556e07b3bb089ad568636bc8d20aee2c8b6939bef4c0daa527b7a9cb21184"
+  },
+  "fresh_core_plan": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-evaluation-main50-release\\fresh-core-build-plan.json",
+    "bytes": 1781,
+    "sha256": "1f159b3306c09f06fc4ab67d2844f0a39af495f1c8efb3e2de6aa99efb0dd412"
+  },
+  "prebuild_source_graph": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-evaluation-main50-release\\prebuild-source-graph.json",
+    "bytes": 1533,
+    "sha256": "b89ad3fdd1ea686375ee83886cd710542c2a38e48ba3e77a2d9a31ab3a75f765"
+  },
+  "pipeline": "NOT_RUN",
+  "affected_controls": "NOT_RUN",
+  "normal3": "NOT_RUN",
+  "AA": "NOT_RUN",
+  "noise": "NOT_RUN",
+  "ABBA": "NOT_RUN",
+  "readonly_post_cost": "NOT_RUN",
+  "latest_actual_noise_source": "79f8f37cfb1f52c9259bf7dc729d6434b580e92f",
+  "latest_actual_noise_adequate": 6,
+  "latest_actual_noise_inadequate": 12,
+  "latest_actual_ABBA": "NOT_RUN",
+  "original75_and_production9_repeated": false,
+  "raw_and_original_native_unchanged": true,
+  "raw_or_zip_rehashed": false,
+  "preservation_index_only": true,
+  "qualification_issued": false,
+  "cost_ready": false,
+  "live_ready": false,
+  "device_operations": 0,
+  "native_launches_by_this_writer": 0,
+  "create_new_thread": false
+}

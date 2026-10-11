@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main50',[Parameter(Mandatory)][string]$NoiseRepairBinding)
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main51',[Parameter(Mandatory)][string]$NoiseRepairBinding)
 . (Join-Path $PSScriptRoot 'common.ps1')
 $script:maintenancePath=$PSCommandPath
 LoadBuilds 'main32' $NoiseRepairBinding
@@ -13,13 +13,36 @@ $dependencyManifest=$candidate.dependency_manifest
 $manifest=Get-Content -LiteralPath $sourceManifest.path -Raw|ConvertFrom-Json
 $dependencies=Get-Content -LiteralPath $dependencyManifest.path -Raw|ConvertFrom-Json
 foreach($entry in @($manifest.files)+@($dependencies.files)){CheckEntry $entry}
+$runtimeBin=[IO.Path]::GetFullPath((Join-Path $repo 'out/vcpkg_installed/x64-windows/bin'))
+$runtimeDlls=@($dependencies.files|Where-Object {
+ [IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($_.path)) -ceq $runtimeBin -and
+ [IO.Path]::GetExtension($_.path) -ceq '.dll'
+}|Sort-Object path)
+if($runtimeDlls.Count -lt 1 -or $runtimeDlls.Count -gt 64 -or @($runtimeDlls.path|Sort-Object -Unique).Count -ne $runtimeDlls.Count){throw 'bounded exact Release runtime DLL manifest required'}
+$actualRuntimeDlls=@(Get-ChildItem -LiteralPath $runtimeBin -File -Filter '*.dll'|ForEach-Object {[IO.Path]::GetFullPath($_.FullName)})
+if(@(Compare-Object (@($runtimeDlls.path)|Sort-Object) ($actualRuntimeDlls|Sort-Object)).Count){throw 'all installed Release DLLs must have original dependency pins'}
+foreach($entry in $runtimeDlls){CheckEntry $entry}
+$runtimePlan=Join-Path $artifact 'runtime-copy-plan.json'
+$runtimeDestinations=@($root,(Join-Path $root 'production'))
+NewJson $runtimePlan @{schema='pas.bound-release-runtime-copy-plan.v1';source_commit=$commit;dependency_manifest=$dependencyManifest;source_directory=$runtimeBin;source_files=$runtimeDlls;destinations=$runtimeDestinations;source_file_count=$runtimeDlls.Count;copy_file_count=2*$runtimeDlls.Count;applocal_enabled=$false;copy_method='CMake configure file(COPY); exact whole installed Release/bin list';held_identity_cap=64;device_operations=0;qualification_issued=$false;live_ready=$false}
+function AssertProductionRuntimeCopies {
+ $copies=@()
+ foreach($directory in $runtimeDestinations){foreach($entry in $runtimeDlls){
+  CheckEntry $entry
+  $copy=Binding (Join-Path $directory ([IO.Path]::GetFileName($entry.path)))
+  if($copy.bytes -ne $entry.bytes -or $copy.sha256 -cne $entry.sha256){throw 'production runtime copy must match exact installed dependency bytes'}
+  $copies+=@(@{source=$entry;copy=$copy})
+ }}
+ if($copies.Count -ne 2*$runtimeDlls.Count){throw 'complete runtime copy denominator'}
+ return $copies
+}
 $corePlan=Join-Path $artifact 'fresh-core-build-plan.json'
 $buildGroups=@(@{id='core';targets=@('pas_core')},@{id='action';targets=@('pas_current_candidate')},@{id='emulator';targets=@('pas_emulator')},@{id='bench';targets=@('pas_bench')},@{id='entry';targets=@('pas','candidate_admission_controls','candidate_receipt_collector_controls','production_entry_controls')},@{id='pipeline';targets=@('score_only_controls','production_pipeline_cold','production_pipeline_audit')})
-NewJson $corePlan @{schema='pas.fresh-core-build-plan.v1';source_commit=$commit;configuration='release';translation_units=22;old_donor_objects_used=$false;component_cpu_delta=$true;formal_changed_paths=$candidate.formal_changed_paths;compiler_snapshot=(Binding $tool);build_target_groups=$buildGroups;device_operations=0;live_ready=$false;scope='Fresh production binary and affected controls; six bounded build groups retain original held-identity-cap64; no repeat of original75/prod9'}
+NewJson $corePlan @{schema='pas.fresh-core-build-plan.v1';source_commit=$commit;configuration='release';translation_units=22;old_donor_objects_used=$false;component_cpu_delta=$true;formal_changed_paths=$candidate.formal_changed_paths;compiler_snapshot=(Binding $tool);runtime_copy_plan=(Binding $runtimePlan);build_target_groups=$buildGroups;device_operations=0;live_ready=$false;scope='Fresh production binary and affected controls; six bounded build groups retain original held-identity-cap64; no repeat of original75/prod9'}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1'
 $toolchain='C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake'
 $guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
-$stageInputs=@($inputs)+@($PSCommandPath,$sourceManifest.path,$dependencyManifest.path,$corePlan,$adapter,$toolchain,$environmentBinding)+@($manifest.files.path)+@($dependencies.files.path)+(GateInputs)+@($guard.guard_source.path,$guard.process_source.path,$guard.cached_identity_controls.path,$guard.identity_wait_controls.path)
+$stageInputs=@($inputs)+@($PSCommandPath,$sourceManifest.path,$dependencyManifest.path,$corePlan,$runtimePlan,$adapter,$toolchain,$environmentBinding)+@($manifest.files.path)+@($dependencies.files.path)+(GateInputs)+@($guard.guard_source.path,$guard.process_source.path,$guard.cached_identity_controls.path,$guard.identity_wait_controls.path)
 function AssertProductionSource {
  if((& git -C $repo rev-parse HEAD) -cne $commit -or (& git -C $repo branch --show-current) -cne 'main' -or (& git -C $repo status --porcelain)){throw 'production source must remain exact clean main'}
  foreach($entry in $manifest.files){CheckEntry $entry}
@@ -30,7 +53,7 @@ function ProductionClosure([string]$stage){
  if($value.stage -cne $stage -or $value.status -cne 'COMPLETE' -or $value.pass -ne $true -or $value.before_verified -ne $true -or $value.after_verified -ne $true){throw 'production actual native before/after closure required'}
  return $pin
 }
-$options=@(('-DCMAKE_TOOLCHAIN_FILE='+$toolchain),('-DVCPKG_INSTALLED_DIR='+(Join-Path $repo 'out/vcpkg_installed')),'-DVCPKG_TARGET_TRIPLET=x64-windows','-DVCPKG_MANIFEST_MODE=OFF','-DCMAKE_CXX_SCAN_FOR_MODULES=OFF','-DCMAKE_HAVE_LIB_PTHREAD:INTERNAL=','-DCMAKE_HAVE_PTHREADS_CREATE:INTERNAL=','-DCMAKE_HAVE_PTHREAD_CREATE:INTERNAL=','-DCMAKE_CXX_FLAGS_RELEASE=/O2 /Ob2 /DNDEBUG','-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL')
+$options=@(('-DCMAKE_TOOLCHAIN_FILE='+$toolchain),('-DVCPKG_INSTALLED_DIR='+(Join-Path $repo 'out/vcpkg_installed')),'-DVCPKG_TARGET_TRIPLET=x64-windows','-DVCPKG_MANIFEST_MODE=OFF','-DCMAKE_CXX_SCAN_FOR_MODULES=OFF','-DCMAKE_HAVE_LIB_PTHREAD:INTERNAL=','-DCMAKE_HAVE_PTHREADS_CREATE:INTERNAL=','-DCMAKE_HAVE_PTHREAD_CREATE:INTERNAL=','-DCMAKE_CXX_FLAGS_RELEASE=/O2 /Ob2 /DNDEBUG','-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL','-DVCPKG_APPLOCAL_DEPS=OFF',('-DPAS_PRELIVE_BOUND_RUNTIME_DLLS='+(@($runtimeDlls.path|ForEach-Object {$_.Replace([char]92,[char]47)}) -join ';')))
 # Validate only the selected source graph before compiling; actual Native builds and physical member checks still follow.
 function Production52Require([bool]$ok,[string]$why){if(-not $ok){throw ('production52 prebuild: '+$why)}}
 function Production52Path([string]$p){return [IO.Path]::GetFullPath($p).Replace([char]92,[char]47).ToLowerInvariant()}
@@ -163,8 +186,14 @@ AssertProductionSource
 Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=$PSScriptRoot;BuildRoot=$root;StageName=$configure;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Configure';Configuration='Release';Inputs=$stageInputs;Options=$options}
 $configureReceipt=Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json'))
 $configureClosure=ProductionClosure $configure
+$runtimeCopies=@(AssertProductionRuntimeCopies)
+$runtimeVerification=Join-Path $artifact 'runtime-copy-verification.json'
+NewJson $runtimeVerification @{schema='pas.bound-release-runtime-copy-verification.v1';source_commit=$commit;plan=(Binding $runtimePlan);copies=$runtimeCopies;file_count=$runtimeCopies.Count;exact_original_dependency_bytes=$true;pass=$true;device_operations=0;qualification_issued=$false;live_ready=$false}
+$stageInputs+=@($runtimeVerification)+@($runtimeCopies.copy.path)
 $ninja=(Get-Content -LiteralPath (Join-Path $root 'build.ninja') -Raw).Replace('\','/')
 $productionGraph=Production52AssertGraph $ninja $repo $root $manifest.files
+if($ninja -match 'applocal[.]ps1'){throw 'bounded deployment must not retain per-target applocal descendants'}
+$productionGraph.runtime_copy_verification=Binding $runtimeVerification
 $graphPath=Join-Path $artifact 'prebuild-source-graph.json'
 $productionGraph.source_commit=$commit
 $productionGraph.configure_receipt=$configureReceipt
@@ -243,7 +272,7 @@ foreach($mode in @('invalid','tap','hold','dense')){
  }
  $controlRows+=@(@{target=('score_only_'+$mode);binary=$score[0];report=(Binding $report);receipt=(Binding (Join-Path $out ($test+'/'+$test+'-verification.json')));input_closure=(ProductionClosure $test)})
 }
-AssertProductionSource;foreach($entry in $files){CheckEntry $entry}
+AssertProductionSource;$null=@(AssertProductionRuntimeCopies);foreach($entry in $files){CheckEntry $entry}
 $binding=Join-Path $artifact 'build-binding.json'
-NewJson $binding @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration='release';source_manifest=$sourceManifest;dependency_manifest=$dependencyManifest;core_build_plan=(Binding $corePlan);build_root=$root;files=$files;configure_receipt=$configureReceipt;configure_input_closure=$configureClosure;build_receipts=$buildReceipts;build_input_closures=$buildClosures;build_target_groups=$buildGroups;controls=$controlRows;component_cpu_delta=$true;formal_rebuilt=$true;formal_changed_paths=$candidate.formal_changed_paths;old_configuration_prerequisite_only=$true;noise_repair_build=(Binding ([IO.Path]::GetFullPath($NoiseRepairBinding)));whole_candidate_qualification=$false;qualification_issued=$false;cost_ready=$false;device_operations=0;live_ready=$false}
+NewJson $binding @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration='release';source_manifest=$sourceManifest;dependency_manifest=$dependencyManifest;core_build_plan=(Binding $corePlan);runtime_copy_plan=(Binding $runtimePlan);runtime_copy_verification=(Binding $runtimeVerification);build_root=$root;files=$files;configure_receipt=$configureReceipt;configure_input_closure=$configureClosure;build_receipts=$buildReceipts;build_input_closures=$buildClosures;build_target_groups=$buildGroups;controls=$controlRows;component_cpu_delta=$true;formal_rebuilt=$true;formal_changed_paths=$candidate.formal_changed_paths;old_configuration_prerequisite_only=$true;noise_repair_build=(Binding ([IO.Path]::GetFullPath($NoiseRepairBinding)));whole_candidate_qualification=$false;qualification_issued=$false;cost_ready=$false;device_operations=0;live_ready=$false}
 Write-Output $binding

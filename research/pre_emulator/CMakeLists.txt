@@ -83,3 +83,34 @@ target_link_libraries(qualification_reader PRIVATE nlohmann_json::nlohmann_json 
 add_executable(qualification_reader_controls qualification_reader/controls.cpp)
 target_include_directories(qualification_reader_controls PRIVATE "${PAS_REPO}")
 target_link_libraries(qualification_reader_controls PRIVATE nlohmann_json::nlohmann_json bcrypt)
+
+# The current owned build retains the original 64 process-identity limit.
+# Deploy the exact manifest-bound Release DLL list in the configure process;
+# the caller verifies every source and both copies before/after later stages.
+# Do not invoke a separate recursive applocal scanner for each executable.
+if(PAS_PRELIVE_BOUND_RUNTIME_DLLS)
+ if(NOT WIN32 OR NOT CMAKE_BUILD_TYPE STREQUAL "Release" OR VCPKG_APPLOCAL_DEPS)
+  message(FATAL_ERROR "Bound runtime deployment requires Windows Release and applocal OFF")
+ endif()
+ set(PAS_RUNTIME_UNIQUE ${PAS_PRELIVE_BOUND_RUNTIME_DLLS})
+ list(REMOVE_DUPLICATES PAS_RUNTIME_UNIQUE)
+ list(LENGTH PAS_PRELIVE_BOUND_RUNTIME_DLLS PAS_RUNTIME_COUNT)
+ list(LENGTH PAS_RUNTIME_UNIQUE PAS_RUNTIME_UNIQUE_COUNT)
+ if(PAS_RUNTIME_COUNT LESS 1 OR PAS_RUNTIME_COUNT GREATER 64 OR
+    NOT PAS_RUNTIME_COUNT EQUAL PAS_RUNTIME_UNIQUE_COUNT)
+  message(FATAL_ERROR "Bound unique installed Release DLL list required")
+ endif()
+ get_filename_component(PAS_RUNTIME_BIN
+  "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin" ABSOLUTE)
+ foreach(PAS_RUNTIME_DLL IN LISTS PAS_PRELIVE_BOUND_RUNTIME_DLLS)
+  get_filename_component(PAS_RUNTIME_PARENT "${PAS_RUNTIME_DLL}" DIRECTORY)
+  get_filename_component(PAS_RUNTIME_EXTENSION "${PAS_RUNTIME_DLL}" LAST_EXT)
+  if(NOT IS_ABSOLUTE "${PAS_RUNTIME_DLL}" OR NOT EXISTS "${PAS_RUNTIME_DLL}" OR
+     NOT PAS_RUNTIME_PARENT STREQUAL PAS_RUNTIME_BIN OR
+     NOT PAS_RUNTIME_EXTENSION STREQUAL ".dll")
+   message(FATAL_ERROR "Only the caller's exact installed Release/bin DLLs may be copied")
+  endif()
+  file(COPY "${PAS_RUNTIME_DLL}" DESTINATION "${CMAKE_BINARY_DIR}")
+  file(COPY "${PAS_RUNTIME_DLL}" DESTINATION "${CMAKE_BINARY_DIR}/production")
+ endforeach()
+endif()
