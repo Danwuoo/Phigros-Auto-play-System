@@ -343,7 +343,10 @@ function LoadColdHarnessDeltaBuild($bindingPin,$delta) {
  }
  if($hasMotion){
   NoiseRepairRequire (@($motion.original_archive_members).Count -eq 2) 'two original motion core members';$index=0
-  foreach($role in @('cpu_pas_core','production_pas_core')){$row=@($delta.imported_static_libraries|Where-Object role -ceq $role);$tuple=@($row[0].translation_units|Where-Object relative_source -ceq 'src/game_motion.cpp');NoiseRepairRequire ($tuple.Count -eq 1) 'one actual historical motion core member';$member=$motion.original_archive_members[$index++];ComponentDeltaColdProducerText $member 'role' $role;NoiseRepairSameBinding $member.archive $row[0].binary 'preserved motion archive';NoiseRepairSameBinding $member.member $tuple[0].historical_object 'preserved motion member';NoiseRepairSameBinding $member.source $tuple[0].original_source 'preserved original motion compile source'}
+  foreach($role in @('cpu_pas_core','production_pas_core')){$row=@($delta.imported_static_libraries|Where-Object role -ceq $role);
+   NoiseRepairRequire ($row.Count -eq 1 -and $row[0].replaced_archive_sources -is [array] -and @($row[0].replaced_archive_sources).Count -eq 1 -and $row[0].replaced_archive_sources[0] -ceq 'src/game_motion.cpp') 'exact declared original motion replacement source array'
+   ComponentDeltaColdProducerText $row[0] 'replacement_target' 'game_motion_delta'
+   $tuple=@($row[0].translation_units|Where-Object relative_source -ceq 'src/game_motion.cpp');NoiseRepairRequire ($tuple.Count -eq 1) 'one actual historical motion core member';$member=$motion.original_archive_members[$index++];ComponentDeltaColdProducerText $member 'role' $role;NoiseRepairSameBinding $member.archive $row[0].binary 'preserved motion archive';NoiseRepairSameBinding $member.member $tuple[0].historical_object 'preserved motion member';NoiseRepairSameBinding $member.source $tuple[0].original_source 'preserved original motion compile source'}
  }
  foreach($entry in $delta.base_original_build_processes){$null=ColdHarnessNative $entry.Native8 @()}
  foreach($entry in $production.controls){$report=NoiseRepairReadBinding $entry.report;NoiseRepairRequire ($report.failed -eq 0 -and $report.device_operations -eq 0 -and $report.live_ready -eq $false) 'original55 production controls preserved';NoiseRepairCheckNativeReceipt $entry.receipt}

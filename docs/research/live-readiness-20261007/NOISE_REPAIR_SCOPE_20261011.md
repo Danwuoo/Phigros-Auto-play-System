@@ -1,3 +1,7 @@
+2026-10-12 最新 actual main79／`4ea686a`：14 fresh compile occurrences、10 build/control Native及26個原motion回歸PASS；pre-cost Native2／runner2／verification0因actual core rows缺`replaced_archive_sources`而REJECT narrow_build。原11個Native8與完整負結果見[main79保存](MAIN79_BUILD_REGRESSION_PASS_PRE_COST_STOP_20261012.json)。Normal3／AA12／noise18／ABBA36皆NOT_RUN，cost NOT_READY／live UNQUALIFIED。
+
+下一必要修補只補兩個core的exact motion replacement宣告與loader／既有reader12反例，見[修補契約](MOTION_ARCHIVE_DECLARATION_REPAIR_20261012.md)。像素策略與原R2／全部數值不變；fresh必要14與controls後續pre-cost→Normal3→AA12／noise18→未跑ABBA36→full readonly→collection邊界，不重跑原75／production9。容量整理已完成索引，source／raw／原負結果／STOP保留；使用者離開仍完成全部可冷工作至emulator邊界，本輪不開装置、新thread或ETW。以下較早最新／proposed皆歷史。
+
 2026-10-12 最新 actual main78／`43359f8`：14 fresh compile occurrences 的 configure／build Native、runner、verification皆0，完整held／streams／active0；首affinity control因48GiB總量50,029,647,183B＋原build reserve1.5GiB超限而NOT_LAUNCHED。不是控制或producer失敗，26 regression／Normal3／AA12／noise／ABBA皆NOT_RUN；原source／14objects／兩Native8及capacity STOP見[main78保存](MAIN78_COMPILE_PASS_CAPACITY_STOP_20261012.json)。main77的Normal3／AA12 PASS、noise13／18及ABBA NOT_RUN仍是歷史結果，cost NOT_READY／live UNQUALIFIED。
 
 後續只修正已封存build之後控制階段使用原tests1GiB reserve，48GiB／minimum-free20GiB及全部數值不變；必要新HEAD依現有來源契約fresh14，不重跑原75／production9。另沿用既有逐entry decoded SHA／原件再次核對的lossless歷史封存方式，保持原source／raw payload／負結果／STOP可恢復；回收前不授資格。使用者離開仍完成全部可冷工作至emulator邊界，本輪不開裝置、新thread或ETW recording。以下較早最新／proposed為歷史。

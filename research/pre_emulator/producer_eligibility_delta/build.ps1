@@ -144,6 +144,11 @@ foreach($role in @('current_rails','current_front','exact_bvi_v3')){$row=DLibrar
 foreach($role in @('own_bridge','pas_core')){$row=DLibrary ('cpu_'+$role) $cpu $cpuPin $baseCommit $cpu.source_manifest $baseMap ($role+'.lib');$expected=@($cpu.linked_static_inputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq ($role+'.lib')});DRequire ($expected.Count -eq 1 -and (DSame $row.binary $expected[0])) 'actual CPU55 effective role';$libraries+=@($row)}
 foreach($role in @('pas_core','pas_current_candidate','pas_proto')){$libraries+=@(DLibrary ('production_'+$role) $base $basePin $baseCommit $base.source_manifest $baseMap ('production/'+$role+'.lib'))}
 foreach($role in @('pas_emulator','pas_bench')){$row=DLibrary ('verification_'+$role) $base $basePin $baseCommit $base.source_manifest $baseMap ('production/'+$role+'.lib');if($role -ceq 'pas_emulator'){$row.replaced_archive_sources=@('src/candidate_admission.cpp');$row.replacement_target='candidate_admission_delta'};$libraries+=@($row)}
+if($MotionSourceDelta){
+ foreach($row in $libraries){if($row.role -cin @('cpu_pas_core','production_pas_core')){
+  $row.replaced_archive_sources=@('src/game_motion.cpp');$row.replacement_target='game_motion_delta'
+ }}
+}
 $baseGraph=DOutput $base 'build.ninja';$baseGraphText=(DReadText $baseGraph).Replace('\','/');$appRows=@([regex]::Matches($baseGraphText,'(?m)^build (production/CMakeFiles/pas[.]dir/[^\r\n:]+[.]obj): CXX_COMPILER[^ \r\n]+[ \t]+([^|\r\n]+)')|Where-Object {$_.Groups[2].Value.Trim().Replace('$:',':').Replace('$ ',' ').EndsWith('/apps/pas/main.cpp',[StringComparison]::OrdinalIgnoreCase)})
 DRequire ($appRows.Count -eq 1) 'one original base55 app object compile edge';$baseAppObject=DOutput $base $appRows[0].Groups[1].Value;CheckEntry $baseAppObject
 $tracked=@(& git -c core.quotePath=false -C $repo ls-files|Where-Object {$_ -cne 'apps/runtime_x11_p/aux/CMakeLists.txt' -and $_ -cmatch '(\.(cpp|hpp|h|ps1|proto|in)$|(^|/)CMakeLists\.txt$)'})
