@@ -144,6 +144,45 @@ void wait_producer_deadline_with_active_tail(const Clock& clock,Nanoseconds dead
   throw;
  }
 }
+// Separate cold-only candidate. The whole remaining QPC period is active;
+// there is no timer creation, arming, blocking wait, Sleep or OS thread yield.
+// CPU cost is unknown until measured. YieldProcessor is only a processor pause.
+inline constexpr Nanoseconds producer_active_wait_horizon_ns=100'000'000;
+inline constexpr std::uint32_t producer_active_wait_poll_cap=1u<<24;
+inline constexpr char producer_active_wait_policy[]="full_period_active_qpc";
+template<class Pause>
+void wait_producer_deadline_active(const Clock& clock,Nanoseconds deadline,Pause&& pause,
+                                   ProducerWaitTrace* trace=nullptr){
+ if(trace){*trace={};trace->due_ns=deadline;trace->entered=true;}
+ Nanoseconds prior=-1;
+ const auto read=[&](){
+  if(trace)trace->phase=ProducerWaitPhase::qpc;
+  const auto now=clock.now_ns();
+  if(trace){if(!trace->qpc_reads)trace->first_qpc_ns=now;trace->last_qpc_ns=now;++trace->qpc_reads;}
+  if(now<0||deadline<0){if(trace)trace->failure=ProducerWaitFailure::clock_domain;throw std::runtime_error("producer QPC domain");}
+  if(now<prior){if(trace)trace->failure=ProducerWaitFailure::nonmonotonic_clock;throw std::runtime_error("producer nonmonotonic QPC");}
+  prior=now;return now;
+ };
+ const auto complete=[&](){if(trace){trace->completed=true;trace->phase=ProducerWaitPhase::complete;}};
+ try {
+  auto now=read();if(now>=deadline){complete();return;}
+  if(deadline-now>producer_active_wait_horizon_ns){if(trace)trace->failure=ProducerWaitFailure::horizon;throw std::runtime_error("producer wait horizon");}
+  if(trace){trace->spin_entered=true;trace->spin_enter_ns=now;}
+  std::uint32_t polls=0;
+  while(now<deadline){
+   if(trace)trace->phase=ProducerWaitPhase::spin;
+   if(polls==producer_active_wait_poll_cap){if(trace)trace->failure=ProducerWaitFailure::spin_bound;throw std::runtime_error("producer active wait poll bound");}
+   if(trace)++trace->spin_pause_calls;
+   pause();++polls;if(trace)trace->spin_poll_count=polls;now=read();
+  }
+  if(trace){trace->spin_completed=true;trace->spin_return_ns=now;}
+  complete();
+ }catch(...){
+  if(trace){trace->failure_phase=trace->phase;if(trace->failure==ProducerWaitFailure::none)
+   trace->failure=trace->phase==ProducerWaitPhase::qpc?ProducerWaitFailure::clock_read:ProducerWaitFailure::pause_callback;}
+  throw;
+ }
+}
 #ifdef _WIN32
 inline ProducerThreadCpuSample sample_producer_thread_cpu() noexcept {
  FILETIME created{},exited{},kernel{},user{};const auto status=GetThreadTimes(GetCurrentThread(),&created,&exited,&kernel,&user);
@@ -180,6 +219,12 @@ public:
    auto* kernel=trace?&trace->kernels[trace->kernel_calls-1]:nullptr;
    producer_kernel_wait_phase(clock,ticks,api,kernel,trace?&trace->phase:nullptr);
   },[]{YieldProcessor();},trace);
+ }
+};
+class ActiveProducerDeadlineWait final {
+public:
+ void wait_until(const Clock& clock,Nanoseconds deadline,ProducerWaitTrace* trace=nullptr){
+  wait_producer_deadline_active(clock,deadline,[]{YieldProcessor();},trace);
  }
 };
 #endif

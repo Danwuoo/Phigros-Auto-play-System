@@ -124,7 +124,8 @@ J save_wait_diagnostics(const fs::path& root,const char* completion){
   {"cpu_columns",{"kernel_100ns","user_100ns","status","error","sampled"}},
   {"segment_row_cap",wait_diagnostic_segment_rows},{"segment_cap",wait_diagnostic_max_segments},{"file_byte_cap",wait_diagnostic_file_cap},
   {"kernel_sample_cap",pas::current_rails::producer_wait_kernel_cap},{"spin_poll_cap",pas::current_rails::producer_active_tail_poll_cap},
-  {"active_tail_ns",pas::current_rails::producer_active_tail_ns},{"kernel_timeout_ms",250},{"horizon_ns",100'000'000},
+  {"wait_policy","full_period_active_qpc"},{"active_tail_ns",0},{"kernel_timeout_ms",nullptr},{"no_kernel_wait",true},
+  {"horizon_ns",pas::current_rails::producer_active_wait_horizon_ns},
   {"summary",summary},{"segments",segments},{"diagnostic_only",true},{"instrumentation_overhead_measured",false},
   {"cost_qualification",false},{"physical_qualification",false},{"live_ready",false},{"device_operations",0}});
  return {{"index",pin},{"summary",summary},{"diagnostic_only",true},{"qualification_issued",false}};
@@ -154,7 +155,7 @@ void GrpcCapture::stream(std::stop_token stop,const std::function<void(Frame&&)>
   cold::state.producer_wait_thread_id=GetCurrentThreadId();
   if(const auto* host=dynamic_cast<const HostClock*>(&clock_))cold::state.producer_wait_qpc_frequency=host->frequency();
  }
- current_rails::ProducerDeadlineWait wait;const auto epoch=clock_.now_ns();
+ current_rails::ActiveProducerDeadlineWait wait;const auto epoch=clock_.now_ns();
  result_epoch=epoch+Nanoseconds(cold::state.requested)*cold::state.cadence*1'000'000;
  std::vector<std::uint8_t> storage(1280*720*3);cold::state.attempts.resize(std::size_t(cold::state.requested)+64);
  for(int i=0;i<cold::state.requested+64&&!stop.stop_requested()&&!cold::state.cancelled;++i){
@@ -247,9 +248,13 @@ int main(int argc,char** argv){try{
  PROCESS_MEMORY_COUNTERS memory{};memory.cb=sizeof(memory);require(K32GetProcessMemoryInfo(GetCurrentProcess(),&memory,sizeof(memory))!=0,"OS peak RSS");
  J report={{"schema","pas.windows-production-pipeline-cold.v1"},{"scene",state.scene},{"requested",state.requested},{"warmup",256},{"measurement_attempts",state.requested-256},{"cadence_ms",state.cadence},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},{"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},{"public_entry_rejected",rejected},{"endpoint_free",true},{"preflight_is_test_double",true},{"capture_is_test_double",true},{"touch_is_test_double",true},{"production_packet_action_wake_archive_executed",true},{"real_capture_rpc_measured",false},{"device_operations",0},{"live_ready",false},{"archive_root",session.string()},{"summary",summary},{"round_summary",round_summary},{"owner_measurement_eligible",capture_to_owner.size()},{"owner_measurement_coverage",double(capture_to_owner.size())/(state.requested-256)},{"capture_to_owner_start_ms",dist(capture_to_owner)},{"packet_wait_ms",dist(packet_wait)},{"hook_ms",dist(hook)},{"owner_ms",dist(owner_ms)},{"measurement_phase_lateness_ms",dist(late)},{"down",state.downs},{"move",state.moves},{"up",state.ups},{"release_calls",state.releases},{"single_touch_owner",state.touch_owner.has_value()},{"full_journal_rows",rows},{"full_journal_bytes",bytes},{"full_journal_decoded_bytes",decoded},{"event_encoding","gzip-jsonl-v1"},{"rss_peak_os",memory.PeakWorkingSetSize},{"scope","literal production Packet/Wake/pool/perception/action/supervisor/SessionArchive; synthetic boundaries and result; no device or physical qualification"}};
  require(state.producer_placement.verified(),"cold producer placement/priority must explicitly restore after joined capture worker");
- report["producer_priority_policy"]="synthetic capture thread only; NORMAL process class; scoped HIGHEST2; actual query/set/readback/explicit restore; existing 2ms active tail";
+ report["producer_priority_policy"]="synthetic capture thread only; NORMAL process class; scoped HIGHEST2; actual query/set/readback/explicit restore";
  report["producer_priority_requested"]=pas::current_rails::producer_priority_requested;
- report["producer_active_tail_ns"]=pas::current_rails::producer_active_tail_ns;
+ report["producer_wait_policy"]="full_period_active_qpc";
+ report["producer_active_tail_ns"]=0;
+ report["producer_active_wait_horizon_ns"]=pas::current_rails::producer_active_wait_horizon_ns;
+ report["producer_active_wait_poll_cap"]=pas::current_rails::producer_active_wait_poll_cap;
+ report["producer_no_kernel_wait"]=true;
  report["worker_placement"]=producer_placement::plan_json(state.producer_placement.placement);
  report["producer_affinity"]=producer_placement::affinity_json(state.producer_placement.affinity);
  report["producer_priority"]=producer_placement::priority_json(state.producer_placement);

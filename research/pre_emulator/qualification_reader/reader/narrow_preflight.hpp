@@ -33,15 +33,55 @@ inline void verify_priority(const J& p,int expected){
 }
 inline bool legacy_tail_header(const J& p){return (p.at("bytes")==4804&&p.at("sha256")=="9e9700107d4f07301ef302351fa645cb705a57b1e049f4166eb70604a116ddc2")||(p.at("bytes")==4998&&p.at("sha256")=="ee2f57c862d0543a5c6855cd43f4a8aeab157b96bc706acf85b6c5a004595c38");}
 inline bool legacy_tail_tests(const J& p){return (p.at("bytes")==12026&&p.at("sha256")=="ee3b63b9787b21ebe27bdc3e7b32e571c9a3dd1e7532f5ac1951d8e8932ff7a6")||(p.at("bytes")==12056&&p.at("sha256")=="ffb5f56676b0e0ef23e92b1a1ffe071cbbe644568c5d660d2a8479ff2ddeb058");}
+inline void verify_active_wait_controls(const J& c){
+    w::require(c.is_object()&&c.at("schema").is_string()&&c.at("schema")=="pas.producer-active-qpc-controls.v1"&&
+        c.at("assertions").is_number_integer()&&c.at("assertions")==12&&c.at("checks").is_array()&&c.at("checks").size()==12&&
+        c.at("failed").is_number_integer()&&c.at("failed")==0,"separate active QPC controls12 schema/denominator");
+    for(const auto* key:{"pass","synthetic_api_controls","no_kernel_wait"})w::require(c.at(key).is_boolean()&&c.at(key).get<bool>(),"typed active QPC positive control flags");
+    for(const auto* key:{"cost_qualification","live_ready"})w::require(c.at(key).is_boolean()&&!c.at(key).get<bool>(),"active QPC controls are synthetic, not qualification");
+    w::require(c.at("device_operations").is_number_integer()&&c.at("device_operations")==0&&c.at("policy").is_string()&&c.at("policy")=="full_period_active_qpc"&&
+        c.at("horizon_ns").is_number_integer()&&c.at("horizon_ns")==100'000'000&&c.at("poll_cap").is_number_integer()&&c.at("poll_cap")==16'777'216,"exact bounded active QPC control policy");
+    std::set<std::string> ids;for(const auto& check:c.at("checks"))w::require(check.is_object()&&check.at("id").is_string()&&!check.at("id").get<std::string>().empty()&&
+        ids.insert(check.at("id").get<std::string>()).second&&check.at("pass").is_boolean()&&check.at("pass").get<bool>(),"unique typed passing active QPC controls");
+}
+inline void verify_wait_diagnostic_controls(const J& c){
+    w::require(c.is_object()&&c.at("schema").is_string()&&c.at("schema")=="pas.producer-wait-diagnostic-controls.v1"&&
+        c.at("assertions").is_number_integer()&&c.at("assertions")==20&&c.at("checks").is_array()&&c.at("checks").size()==20&&
+        c.at("failed").is_number_integer()&&c.at("failed")==0,"separate producer wait diagnostic controls20 schema/denominator");
+    for(const auto* key:{"pass","synthetic_api_controls"})w::require(c.at(key).is_boolean()&&c.at(key).get<bool>(),"typed producer wait diagnostic positive control flags");
+    for(const auto* key:{"cost_qualification","live_ready"})w::require(c.at(key).is_boolean()&&!c.at(key).get<bool>(),"producer wait diagnostic controls cannot qualify cost/live");
+    w::require(c.at("device_operations").is_number_integer()&&c.at("device_operations")==0&&c.at("kernel_sample_cap").is_number_integer()&&c.at("kernel_sample_cap")==4,"original bounded producer wait diagnostic controls");
+    std::set<std::string> ids;for(const auto& check:c.at("checks"))w::require(check.is_object()&&check.at("id").is_string()&&!check.at("id").get<std::string>().empty()&&
+        ids.insert(check.at("id").get<std::string>()).second&&check.at("pass").is_boolean()&&check.at("pass").get<bool>(),"unique typed passing producer wait diagnostic controls");
+}
 inline std::int64_t active_tail_policy(const J& plan,const J& controls,const J& header,const J& tests){
     pin_shape(header);pin_shape(tests);
     const bool paired=(header.at("bytes")==4804&&header.at("sha256")=="9e9700107d4f07301ef302351fa645cb705a57b1e049f4166eb70604a116ddc2"&&tests.at("bytes")==12026&&tests.at("sha256")=="ee3b63b9787b21ebe27bdc3e7b32e571c9a3dd1e7532f5ac1951d8e8932ff7a6")||(header.at("bytes")==4998&&header.at("sha256")=="ee2f57c862d0543a5c6855cd43f4a8aeab157b96bc706acf85b6c5a004595c38"&&tests.at("bytes")==12056&&tests.at("sha256")=="ffb5f56676b0e0ef23e92b1a1ffe071cbbe644568c5d660d2a8479ff2ddeb058");
     w::require(controls.at("active_tail_ns").is_number_integer(),"integer producer active-tail controls report required");
+    if(plan.contains("producer_wait_policy")){
+        w::require(plan.at("producer_wait_policy").is_string()&&plan.at("producer_wait_policy")=="full_period_active_qpc"&&
+            plan.at("producer_active_tail_ns").is_number_integer()&&plan.at("producer_active_tail_ns")==0&&controls.at("active_tail_ns")==2'000'000&&
+            !legacy_tail_header(header)&&!legacy_tail_tests(tests),"explicit full active policy/new compiled sources with original 2ms controls retained");
+        w::require(plan.at("producer_active_wait_horizon_ns").is_number_integer()&&plan.at("producer_active_wait_horizon_ns")==100'000'000&&
+            plan.at("producer_active_wait_poll_cap").is_number_integer()&&plan.at("producer_active_wait_poll_cap")==16'777'216,"exact full active QPC plan bounds");
+        w::require(plan.at("producer_wait_controls_count").is_number_integer()&&plan.at("producer_wait_controls_count")==43&&
+            plan.at("producer_active_wait_controls_count").is_number_integer()&&plan.at("producer_active_wait_controls_count")==12,"separate original43 and active12 plan denominators");
+        verify_active_wait_controls(controls.at("active_wait_controls"));return 0;
+    }
+    w::require(!controls.contains("active_wait_controls")&&!plan.contains("producer_active_wait_horizon_ns")&&!plan.contains("producer_active_wait_poll_cap"),"full active fields cannot borrow a legacy tail policy");
     if(!plan.contains("producer_active_tail_ns")){w::require(paired&&controls.at("active_tail_ns")==20'000'000,"missing active-tail policy only accepted for an exact paired legacy20ms source");return 20'000'000;}
     w::require(plan.at("producer_active_tail_ns").is_number_integer()&&plan.at("producer_active_tail_ns")==2'000'000&&controls.at("active_tail_ns")==2'000'000&&!legacy_tail_header(header)&&!legacy_tail_tests(tests),"new active-tail policy requires integer2ms plan/report and new compiled header/tests");return 2'000'000;
 }
 inline void verify_active_tail(const J& report,std::int64_t expected){
+    if(expected==0){
+        w::require(report.at("producer_wait_policy").is_string()&&report.at("producer_wait_policy")=="full_period_active_qpc"&&
+            report.at("producer_active_tail_ns").is_number_integer()&&report.at("producer_active_tail_ns")==0&&
+            report.at("producer_active_wait_horizon_ns").is_number_integer()&&report.at("producer_active_wait_horizon_ns")==100'000'000&&
+            report.at("producer_active_wait_poll_cap").is_number_integer()&&report.at("producer_active_wait_poll_cap")==16'777'216&&
+            report.at("producer_no_kernel_wait").is_boolean()&&report.at("producer_no_kernel_wait").get<bool>(),"actual exact bounded full active QPC run policy");return;
+    }
     w::require(expected==2'000'000||expected==20'000'000,"known SHA-bound producer active-tail policy");
+    w::require(!report.contains("producer_wait_policy")||report.at("producer_wait_policy")!="full_period_active_qpc","legacy tail run cannot declare full active policy");
     if(!report.contains("producer_active_tail_ns")){w::require(expected==20'000'000,"new producer active-tail run scalar missing");return;}
     w::require(report.at("producer_active_tail_ns").is_number_integer()&&report.at("producer_active_tail_ns")==expected,"actual producer active-tail run scalar/type mismatch");
 }
@@ -75,6 +115,7 @@ class Preflight final {
     std::string execution_,compiled_,manual_sha_;
     int consumer_priority_requested_=0;
     std::int64_t producer_active_tail_ns_=0;
+    bool producer_wait_policy_bound_=false;
     J checks_=J::object(),issues_=J::array(),provenance_=J::object();bool rejected_=false,ready_=true,aa_ok_=false,noise_ok_=false;
     CostCampaign aa_,abba_;
     static std::string key(const J& p){pin_shape(p);return fs::path(p.at("path").get<std::string>()).lexically_normal().generic_string();}
@@ -225,7 +266,8 @@ class Preflight final {
         if(active_tail){
             const auto process=by_verification(delta_.at("wait_controls_receipt"));const auto wait_report=object(delta_.at("wait_controls_report"));
             w::require(plan.at("producer_wait_controls_count")==43&&wait_report.at("schema")=="pas.producer-deadline-wait-tests.v1"&&wait_report.at("assertions")==43&&wait_report.at("checks").size()==43&&wait_report.at("failed")==0&&wait_report.at("pass").get<bool>()&&wait_report.at("device_endpoints")==0&&wait_report.at("device_operations")==0&&!wait_report.at("cost_qualification").get<bool>()&&!wait_report.at("live_ready").get<bool>()&&wait_report.at("active_tail_poll_cap")==16'777'216&&process.spec.at("argv")==J::array({delta_.at("wait_controls_report").at("path")}),"all 43 original/active-tail producer deadline controls/native join");
-            const auto& wait_header=compiled_sources.at("research/prelive_current/producer_wait.hpp");const auto& wait_tests=compiled_sources.at("research/prelive_current/tests/producer_wait_tests.cpp");producer_active_tail_ns_=active_tail_policy(plan,wait_report,wait_header,wait_tests);
+            const auto& wait_header=compiled_sources.at("research/prelive_current/producer_wait.hpp");const auto& wait_tests=compiled_sources.at("research/prelive_current/tests/producer_wait_tests.cpp");producer_active_tail_ns_=active_tail_policy(plan,wait_report,wait_header,wait_tests);producer_wait_policy_bound_=true;
+            if(producer_active_tail_ns_==0)verify_wait_diagnostic_controls(wait_report.at("diagnostic_controls"));
             const auto wait_source_join=[&](const Native& p){for(const auto& pin:std::array<J,5>{compiled_manifest_pin,compiled_core_plan_pin,priority_chain,wait_header,wait_tests})w::require(p.inputs.contains(key(pin))&&same_pin(p.inputs.at(key(pin)),pin),"actual compiled manifest/coreplan/chain/producer wait header/tests in native input closure");};
             for(const auto& p:build_processes)wait_source_join(p);wait_source_join(process);
             bool wait_binary=false;for(const auto& pin:delta_.at("files"))if(fs::path(pin.at("path").get<std::string>()).filename()=="producer_wait_tests.exe")wait_binary|=same_path_text(process.spec.at("exe").get<std::string>(),pin.at("path").get<std::string>());w::require(wait_binary,"actual producer wait controls image in sealed narrow runtime files");
@@ -286,7 +328,7 @@ class Preflight final {
         w::require(rows.size()==c.value.at("planned_runs").size(),"all planned runs present");std::size_t i=0;
         for(const auto& e:rows){const auto& plan=c.value.at("planned_runs")[i++];auto report=object(e,w::MiB);const auto& prov=report.at("provenance");
             verify_priority(report.at("consumer_priority"),consumer_priority_requested_);
-            if(producer_active_tail_ns_)verify_active_tail(report,producer_active_tail_ns_);
+            if(producer_wait_policy_bound_)verify_active_tail(report,producer_active_tail_ns_);
             w::require(e.at("run_id")==plan.at("run_id")&&e.at("scene")==plan.at("scene")&&report.at("mode")==plan.at("mode")&&report.at("scene")==plan.at("scene")&&same_path_text(e.at("path").get<std::string>(),plan.at("report_path").get<std::string>()),"run/report plan join");
             const auto producer=native(e.at("process_evidence"));w::require(same_path_text(producer.spec.at("exe").get<std::string>(),c.bindings.at("candidate_binary").at("path").get<std::string>())&&producer.spec.at("argv")==J::array({"pipeline",plan.at("mode"),plan.at("scene"),"2560",c.pin.at("path"),plan.at("run_id"),e.at("path")}),"actual frozen producer command");
             w::require(prov.at("schema")=="pas.current-rails-run-provenance.v1"&&prov.at("campaign_sha256")==c.pin.at("sha256")&&prov.at("campaign_id")==c.value.at("id")&&prov.at("source_commit")==execution_&&prov.at("run_id")==plan.at("run_id")&&prov.at("scene")==plan.at("scene")&&prov.at("mode")==plan.at("mode")&&prov.at("requested")==2560&&same_path_text(prov.at("report_path").get<std::string>(),e.at("path").get<std::string>())&&prov.at("process").at("pid")==producer.facts.at("pid")&&prov.at("process").at("creation_filetime")==producer.facts.at("creation_filetime"),"fresh source/campaign/process identity");

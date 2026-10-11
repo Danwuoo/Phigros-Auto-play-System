@@ -67,6 +67,23 @@ function NoiseRepairProducerActiveTailPolicy($plan,$controls,$header,$tests){
  $legacyHeader2=$header.bytes -eq 4998 -and $header.sha256 -ceq 'ee2f57c862d0543a5c6855cd43f4a8aeab157b96bc706acf85b6c5a004595c38'
  $legacyTests2=$tests.bytes -eq 12056 -and $tests.sha256 -ceq 'ffb5f56676b0e0ef23e92b1a1ffe071cbbe644568c5d660d2a8479ff2ddeb058'
  NoiseRepairRequire ((NoiseRepairProperty $controls 'active_tail_ns') -and ($controls.active_tail_ns -is [int] -or $controls.active_tail_ns -is [long]) -and $controls.active_tail_poll_cap -eq 16777216) 'producer controls declare integer active-tail and unchanged poll cap'
+ if(NoiseRepairProperty $plan 'producer_wait_policy'){
+  NoiseRepairRequire ($plan.producer_wait_policy -is [string] -and $plan.producer_wait_policy -ceq 'full_period_active_qpc' -and $hasPlan -and ($plan.producer_active_tail_ns -is [int] -or $plan.producer_active_tail_ns -is [long]) -and $plan.producer_active_tail_ns -eq 0 -and $controls.active_tail_ns -eq 2000000 -and -not $legacyHeader1 -and -not $legacyHeader2 -and -not $legacyTests1 -and -not $legacyTests2) 'explicit full-period active policy with separate original 2ms controls and new compiled sources'
+  foreach($pair in @(@('producer_active_wait_horizon_ns',100000000),@('producer_active_wait_poll_cap',16777216))){$field=$plan.($pair[0]);NoiseRepairRequire (($field -is [int] -or $field -is [long]) -and $field -eq $pair[1]) 'exact bounded active wait plan integers'}
+  foreach($pair in @(@('producer_wait_controls_count',43),@('producer_active_wait_controls_count',12))){$field=$plan.($pair[0]);NoiseRepairRequire (($field -is [int] -or $field -is [long]) -and $field -eq $pair[1]) 'explicit unchanged original and separate active control denominators'}
+  NoiseRepairRequire ($controls.pass -is [bool] -and $controls.pass -and $controls.failed -eq 0 -and $controls.assertions -eq 43 -and $controls.checks.Count -eq 43 -and @($controls.checks|Where-Object {$_.pass -isnot [bool] -or -not $_.pass}).Count -eq 0) 'full-active build keeps original43 and aggregate control PASS'
+  $diagnostic=$controls.diagnostic_controls
+  NoiseRepairRequire ($diagnostic.schema -ceq 'pas.producer-wait-diagnostic-controls.v1' -and $diagnostic.assertions -eq 20 -and $diagnostic.checks.Count -eq 20 -and $diagnostic.failed -eq 0 -and @($diagnostic.checks|Where-Object {$_.pass -isnot [bool] -or -not $_.pass}).Count -eq 0 -and $diagnostic.kernel_sample_cap -eq 4 -and $diagnostic.device_operations -eq 0) 'full-active build keeps separate diagnostic20 PASS'
+  foreach($pair in @(@('pass',$true),@('synthetic_api_controls',$true),@('cost_qualification',$false),@('live_ready',$false))){$field=$diagnostic.($pair[0]);NoiseRepairRequire ($field -is [bool] -and $field -eq $pair[1]) 'typed diagnostic20 flags'}
+  $active=$controls.active_wait_controls
+  NoiseRepairRequire ($active.schema -ceq 'pas.producer-active-qpc-controls.v1' -and $active.policy -ceq 'full_period_active_qpc' -and $active.assertions -eq 12 -and $active.checks.Count -eq 12 -and $active.failed -eq 0 -and @($active.checks|Where-Object {$_.pass -isnot [bool] -or -not $_.pass}).Count -eq 0) 'separate active QPC controls12 required'
+  foreach($pair in @(@('pass',$true),@('synthetic_api_controls',$true),@('no_kernel_wait',$true),@('cost_qualification',$false),@('live_ready',$false))){$field=$active.($pair[0]);NoiseRepairRequire ($field -is [bool] -and $field -eq $pair[1]) 'typed active QPC control flags'}
+  foreach($pair in @(@('assertions',12),@('failed',0),@('horizon_ns',100000000),@('poll_cap',16777216),@('device_operations',0))){$field=$active.($pair[0]);NoiseRepairRequire (($field -is [int] -or $field -is [long]) -and $field -eq $pair[1]) 'typed active QPC control limits'}
+  $activeIds=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+  foreach($check in $active.checks){NoiseRepairRequire ($check.id -is [string] -and $check.id.Length -gt 0 -and $activeIds.Add($check.id)) 'unique nonempty active QPC control ids'}
+  return 0
+ }
+ NoiseRepairRequire (-not (NoiseRepairProperty $controls 'active_wait_controls') -and -not (NoiseRepairProperty $plan 'producer_active_wait_horizon_ns') -and -not (NoiseRepairProperty $plan 'producer_active_wait_poll_cap')) 'full active fields cannot borrow legacy tail policy'
  if(-not $hasPlan){
   NoiseRepairRequire ($controls.active_tail_ns -eq 20000000 -and (($legacyHeader1 -and $legacyTests1) -or ($legacyHeader2 -and $legacyTests2))) 'missing producer tail plan requires exact paired legacy 20ms compiled header/tests'
   return 20000000
@@ -183,6 +200,10 @@ function script:NoiseRepairVerifyWorkerPlacement($report){
   if($report.PSObject.Properties.Name -ccontains 'producer_active_tail_ns'){
    NoiseRepairRequire (($report.producer_active_tail_ns -is [int] -or $report.producer_active_tail_ns -is [long]) -and $report.producer_active_tail_ns -eq $script:noiseRepairBuild.producer_active_tail_ns) 'actual producer active-tail must equal compiled integer policy'
   }else{NoiseRepairRequire ($script:noiseRepairBuild.producer_active_tail_ns -eq 20000000) 'missing runtime producer active-tail only permitted for identified legacy 20ms build'}
+  if($script:noiseRepairBuild.producer_active_tail_ns -eq 0){
+   NoiseRepairRequire ($report.producer_wait_policy -is [string] -and $report.producer_wait_policy -ceq 'full_period_active_qpc' -and $report.producer_no_kernel_wait -is [bool] -and $report.producer_no_kernel_wait) 'actual full-period active QPC policy and no kernel wait required'
+   foreach($pair in @(@('producer_active_wait_horizon_ns',100000000),@('producer_active_wait_poll_cap',16777216))){$field=$report.($pair[0]);NoiseRepairRequire (($field -is [int] -or $field -is [long]) -and $field -eq $pair[1]) 'actual bounded active QPC limits'}
+  }else{NoiseRepairRequire (-not (NoiseRepairProperty $report 'producer_wait_policy') -or $report.producer_wait_policy -cne 'full_period_active_qpc') 'legacy tail cannot declare full-period active policy'}
  }
  if(-not $script:noiseRepairBuild.worker_affinity_required){return}
  $p=$report.worker_placement

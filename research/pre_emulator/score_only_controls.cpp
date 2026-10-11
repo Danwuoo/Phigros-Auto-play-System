@@ -99,7 +99,9 @@ J placement_controls(){
     J report={{"schema","pas.cold-producer-placement-controls.v1"},{"checks",cases.size()},
         {"passed",cases.size()-std::size_t(failed)},{"failed",failed},{"cases",cases},
         {"producer_priority_requested",pas::current_rails::producer_priority_requested},
-        {"producer_active_tail_ns",pas::current_rails::producer_active_tail_ns},
+        {"producer_wait_policy","full_period_active_qpc"},{"producer_active_tail_ns",0},
+        {"producer_active_wait_horizon_ns",pas::current_rails::producer_active_wait_horizon_ns},
+        {"producer_active_wait_poll_cap",pas::current_rails::producer_active_wait_poll_cap},{"producer_no_kernel_wait",true},
         {"synthetic_api_controls",true},{"device_operations",0},{"cost_qualification",false},{"live_ready",false}};
     if(failed)throw std::runtime_error("cold producer placement orchestration controls failed: "+report.dump());
     return report;
@@ -240,7 +242,10 @@ int main(int argc,char** argv){try{
     }
     report["keyboard_is_test_double"]=true;report["console_registration_is_test_double"]=true;
     report["producer_priority_requested"]=pas::current_rails::producer_priority_requested;
-    report["producer_active_tail_ns"]=pas::current_rails::producer_active_tail_ns;
+    report["producer_wait_policy"]="full_period_active_qpc";report["producer_active_tail_ns"]=0;
+    report["producer_active_wait_horizon_ns"]=pas::current_rails::producer_active_wait_horizon_ns;
+    report["producer_active_wait_poll_cap"]=pas::current_rails::producer_active_wait_poll_cap;
+    report["producer_no_kernel_wait"]=true;
     report["worker_placement"]=producer_placement::plan_json(state.producer_placement.placement);
     report["producer_affinity"]=producer_placement::affinity_json(state.producer_placement.affinity);
     report["producer_priority"]=producer_placement::priority_json(state.producer_placement);

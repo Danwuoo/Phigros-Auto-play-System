@@ -44,9 +44,18 @@ function script:ComponentDeltaColdProducerText($value,[string]$name,[string]$exp
 function script:ComponentDeltaColdProducerMask($value,[string]$name) {
  return [uint64](ComponentDeltaColdProducerInteger $value $name 1 ([bigint]::Parse('18446744073709551615')))
 }
+function script:ComponentDeltaValidateColdProducerWait($report) {
+ if($report.PSObject.Properties.Name -ccontains 'producer_wait_policy' -or ($report -is [System.Collections.IDictionary] -and $report.Contains('producer_wait_policy'))){
+  ComponentDeltaColdProducerText $report 'producer_wait_policy' 'full_period_active_qpc'
+  $null=ComponentDeltaColdProducerInteger $report 'producer_active_tail_ns' 0 0
+  $null=ComponentDeltaColdProducerInteger $report 'producer_active_wait_horizon_ns' 100000000 100000000
+  $null=ComponentDeltaColdProducerInteger $report 'producer_active_wait_poll_cap' 16777216 16777216
+  ComponentDeltaColdProducerBool $report 'producer_no_kernel_wait' $true
+ }else{$null=ComponentDeltaColdProducerInteger $report 'producer_active_tail_ns' 2000000 2000000}
+}
 function script:ComponentDeltaValidateColdProducer($report) {
  $null=ComponentDeltaColdProducerInteger $report 'producer_priority_requested' 2 2
- $null=ComponentDeltaColdProducerInteger $report 'producer_active_tail_ns' 2000000 2000000
+ ComponentDeltaValidateColdProducerWait $report
  $plan=ComponentDeltaColdProducerField $report 'worker_placement'
  ComponentDeltaColdProducerText $plan 'schema' 'pas.cold-worker-placement.v1'
  ComponentDeltaColdProducerBool $plan 'valid' $true;ComponentDeltaColdProducerText $plan 'failure' 'none'
@@ -90,7 +99,8 @@ function script:ComponentDeltaValidateColdProducerControls($report) {
  ComponentDeltaColdProducerText $controls 'schema' 'pas.cold-producer-placement-controls.v1'
  foreach($name in @('checks','passed')){$null=ComponentDeltaColdProducerInteger $controls $name 27 27}
  foreach($name in @('failed','device_operations')){$null=ComponentDeltaColdProducerInteger $controls $name 0 0}
- $priority=ComponentDeltaColdProducerInteger $controls 'producer_priority_requested' 2 2;$tail=ComponentDeltaColdProducerInteger $controls 'producer_active_tail_ns' 2000000 2000000
+ $priority=ComponentDeltaColdProducerInteger $controls 'producer_priority_requested' 2 2;ComponentDeltaValidateColdProducerWait $controls
+ $tail=ComponentDeltaColdProducerField $controls 'producer_active_tail_ns'
  ComponentDeltaColdProducerBool $controls 'synthetic_api_controls' $true
  foreach($name in @('cost_qualification','live_ready')){ComponentDeltaColdProducerBool $controls $name $false}
  $cases=ComponentDeltaColdProducerField $controls 'cases'
@@ -106,6 +116,7 @@ function script:ComponentDeltaValidateColdProducerControls($report) {
  foreach($stop in $stops){
   $mode=ComponentDeltaColdProducerField $stop 'mode';ComponentDeltaColdProducerRequire ($mode -is [string] -and $mode -cin @('escape','console') -and $modes.Add($mode)) 'one escape and one console producer snapshot'
   $joined=@{producer_priority_requested=$priority;producer_active_tail_ns=$tail;worker_placement=(ComponentDeltaColdProducerField $stop 'worker_placement');producer_affinity=(ComponentDeltaColdProducerField $stop 'producer_affinity');producer_priority=(ComponentDeltaColdProducerField $stop 'producer_priority')}
+  if($tail -eq 0){foreach($name in @('producer_wait_policy','producer_active_wait_horizon_ns','producer_active_wait_poll_cap','producer_no_kernel_wait')){$joined[$name]=ComponentDeltaColdProducerField $controls $name}}
   ComponentDeltaValidateColdProducer $joined
  }
 }
