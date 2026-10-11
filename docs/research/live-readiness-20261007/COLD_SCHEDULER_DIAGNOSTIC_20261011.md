@@ -15,3 +15,5 @@ reader 使用 RAW_TIMESTAMP、ETL PerfFreq及當輪實際 producer TID。compone
 main58／eec2167 的三TU建置及controller32／reader20共52控制實際通過，configure／build／兩控制4個Native8均0，原收據保留。交叉審查修正runner的ready→request時間／身分join、STOP final-flush statistics及controller／watchdog actual exit核對；新維護來源另作fresh必要工具建置，原main58結果不改。512MiB約束指兩個C++診斷程序的 committed memory，PowerShell維護launcher不納入此數字；reader512MiB僅在兩程序實際退出後使用。
 
 目前 recording NOT_RUN、cost NOT_READY、live UNQUALIFIED。
+
+為把75秒用於實際量測，producer的原 input-closure／capacity／params核對在session前完成，原owned guard／Native8照常執行；停止session後再做原after核對。容量以.NET逐檔enumeration加總，48GiB／minimum-free20GiB／原reserve不變；補計先前main32→base55原短路徑副本`out/s55aa03`，不重hash原大型raw／libs。

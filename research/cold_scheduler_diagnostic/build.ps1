@@ -9,6 +9,7 @@ param([Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{40}$')][string]$FrozenHe
 $ErrorActionPreference='Stop'
 $taskBuildScript=$PSCommandPath
 . (Join-Path $PSScriptRoot '../pre_emulator/common.ps1')
+. (Join-Path $PSScriptRoot 'capacity.ps1')
 $script:maintenancePath=$taskBuildScript
 $Operation='build'
 $base57='5dce75d12c63ed51de5d996cedcd44e29d729841'

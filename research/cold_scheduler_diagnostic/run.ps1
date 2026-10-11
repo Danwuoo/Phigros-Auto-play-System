@@ -5,6 +5,7 @@ param([Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{40}$')][string]$FrozenHe
 $ErrorActionPreference='Stop'
 $workspace=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 . (Join-Path $workspace 'research/pre_emulator/common.ps1')
+. (Join-Path $workspace 'research/cold_scheduler_diagnostic/capacity.ps1')
 $script:maintenancePath=$PSCommandPath;$Operation='pipeline'
 function Require([bool]$ok,[string]$why){if(-not $ok){throw ('cold scheduler diagnostic: '+$why)}}
 function ReadPin($pin,[long]$cap=4194304){CheckEntry $pin;Require ($pin.bytes -le $cap) 'metadata cap';Get-Content -LiteralPath $pin.path -Raw|ConvertFrom-Json}
@@ -52,6 +53,10 @@ $launchPin=Binding $launchPath;$guard=Get-Content -LiteralPath $gate -Raw|Conver
 $inputs=@($pins.path)+@($planPath,$launchPath)+(GateInputs)+@($guard.guard_source.path,$guard.process_source.path,$guard.cached_identity_controls.path,$guard.identity_wait_controls.path)
 $producerStage='producer-cold-scheduler-main58-r01';$auditorStage='audit-cold-scheduler-main58-r01';$readerStage='read-cold-scheduler-main58-r01'
 $producerSpec=PrepareNative $producerStage $producer[0].path @('tap','2560','20',$root) $inputs
+ $producerParams=Join-Path $pkg ($producerStage+'-params.json')
+ Capacity $producerStage 'before'
+ NewJson $producerParams @{script=(Join-Path $repo 'research/windows_process_guard_v3/invoke.ps1');arguments=@{Specification=$producerSpec;GateReceipt=$gate}}
+ CheckClosure $producerStage 'before'
 Capacity 'scheduler-main58-r01' 'before'
 $phase='elevation';$launch=$null;$ready=$null;$producerEvidence=$null;$auditEvidence=$null;$readerEvidence=$null;$reportPin=$null;$auditPin=$null;$readerPin=$null;$diagnosticIndex=$null;$selectedGap=$null
 try {
@@ -69,7 +74,7 @@ try {
  Require ($ready.observed_qpc -lt $ready.deadline_qpc -and [Diagnostics.Stopwatch]::GetTimestamp() -lt $ready.deadline_qpc) 'original shared deadline still active before producer'
  Require ($ready.instance.handle -gt 0 -and $ready.instance.clock -eq 1 -and $ready.instance.enable_flags -eq 268437520 -and $ready.instance.maximum_file_mb -eq 128 -and $ready.instance.maximum_buffers*$ready.instance.buffer_kb*1024 -le 67108864) 'actual trace flags and normalized bounds'
  $phase='producer'
- try {Stage $producerStage (Join-Path $repo 'research/windows_process_guard_v3/invoke.ps1') @{Specification=$producerSpec;GateReceipt=$gate};$producerEvidence=ProcessEvidence $producerStage}
+ try {& $pwsh -NoProfile -File (Join-Path $repo 'research/main_consolidation/stage.ps1') -Parameters $producerParams;Require ($LASTEXITCODE -eq 0) 'original owned producer wrapper exit';Receipt $producerStage;$producerEvidence=ProcessEvidence $producerStage}
  finally {if(-not(Test-Path -LiteralPath (Join-Path $artifact 'stop.json'))){AtomicJson (Join-Path $artifact 'stop.json') @{schema='pas.cold-scheduler-trace-stop.v1';request_sha256=$ready.request_sha256;session_guid=$ready.session_guid;handle=$ready.instance.handle}}}
  $phase='trace_stop'
  $waitUntil=[Diagnostics.Stopwatch]::GetTimestamp()+10*[Diagnostics.Stopwatch]::Frequency
@@ -89,6 +94,7 @@ try {
  Require ($launchResult.schema -ceq 'pas.cold-scheduler-elevated-launch-result.v1' -and $launchResult.execution_source_commit -ceq $FrozenHead -and $launchResult.controller_pid -eq $controllerReport.process_id -and $launchResult.watchdog_pid -eq $watchdogReport.process_id -and $launchResult.controller_exit -is [int] -and $launchResult.watchdog_exit -is [int] -and $launchResult.controller_exit -eq 0 -and $launchResult.watchdog_exit -eq 0) 'actual independently exited diagnostic processes'
  Bool $launchResult 'controller_exited' $true;Bool $launchResult 'watchdog_exited' $true
  Require ($controllerReport.reason -ceq 'requested_stop') 'original deadline/abnormal stop preserved as negative'
+ CheckClosure $producerStage 'after';Capacity $producerStage 'after';ClosureReceipt $producerStage $true
  $reportPin=Binding (Join-Path $root 'report.json');$r=ReadPin $reportPin
  Require ($r.schema -ceq 'pas.windows-production-pipeline-cold.v1' -and $r.source_build_commit -ceq $b.base_source_commit -and $r.diagnostic_component_identity.source_commit -ceq $b.delta_source_commit -and $r.actual_manual_translation_unit_sha256 -ceq $b.base_manual_source.sha256 -and $r.requested -eq 2560 -and $r.cadence_ms -eq 20 -and $r.scene -ceq 'tap' -and $r.device_operations -eq 0) 'unchanged actual component workload and provenance'
  $native=ReadPin $producerEvidence.result;Require ($r.process_qos.process_id -eq $native.facts.pid) 'actual own producer PID'
@@ -116,6 +122,7 @@ try {
 } catch {
  $reason=$_.Exception.Message
  if($ready -and -not(Test-Path -LiteralPath (Join-Path $artifact 'stop.json'))){try{AtomicJson (Join-Path $artifact 'stop.json') @{schema='pas.cold-scheduler-trace-stop.v1';request_sha256=$ready.request_sha256;session_guid=$ready.session_guid;handle=$ready.instance.handle}}catch{}}
+ if(Test-Path -LiteralPath (Join-Path $out ($producerStage+'/'+$producerStage+'-verification.json'))){try{CheckClosure $producerStage 'after';Capacity $producerStage 'after';ClosureReceipt $producerStage $false $reason}catch{}}
  NewJson (Join-Path $artifact 'stop-status.json') @{schema='pas.cold-scheduler-measurement-stop.v1';execution_source_commit=$FrozenHead;phase=$phase;reason=$reason;tool_build=$toolPin;component_build=$bindingPin;plan=(Binding $planPath);producer_process=$producerEvidence;audit_process=$auditEvidence;reader_process=$readerEvidence;report=$reportPin;audit=$auditPin;scheduler_summary=$readerPin;diagnostic_index=$diagnosticIndex;selected_gap=$selectedGap;qualification_issued=$false;cost_ready=$false;live_ready=$false;device_operations=0}
  throw
 }
