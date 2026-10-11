@@ -155,7 +155,7 @@ inline nlohmann::json affinity_json(const rails::WorkerAffinitySnapshot& s){
   {"fallback_failure",rails::worker_affinity_failure_name(s.fallback_failure)}};
 }
 inline nlohmann::json plan_json(const rails::PlacementPlan& p,bool consumer_affinity_applied=false){
- auto topology=nlohmann::json::array(),eligible=nlohmann::json::array();
+ auto topology=nlohmann::json::array(),consumer_eligible=nlohmann::json::array(),producer_eligible=nlohmann::json::array();
  // Even a rejected plan cannot make report serialization unbounded.
  for(std::size_t core=0;p.topology_available&&core<p.topology_cores&&core<64;++core){
   const auto mask=p.physical_core_mask(core);if(!mask)continue;
@@ -164,12 +164,14 @@ inline nlohmann::json plan_json(const rails::PlacementPlan& p,bool consumer_affi
    {"efficiency_class",p.topology_class_by_lp[number]}});
  }
  for(unsigned number=0;number<64;++number){const auto mask=std::uint64_t{1}<<number;
-  if(!p.topology_available||!(p.producer_mask&mask))continue;
+  if(!p.topology_available||!((p.consumer_mask|p.producer_mask)&mask))continue;
   const auto core=p.topology_core_by_lp[number];
-  eligible.push_back({{"core",core},{"number",number},{"mask",mask},
+  if(p.consumer_mask&mask)consumer_eligible.push_back({{"core",core},{"number",number},{"mask",mask},
+   {"physical_core_mask",p.physical_core_mask(core)}});
+  if(p.producer_mask&mask)producer_eligible.push_back({{"core",core},{"number",number},{"mask",mask},
    {"physical_core_mask",p.physical_core_mask(core)}});
  }
- return {{"schema","pas.cold-worker-placement.v2"},{"valid",p.valid()},
+ return {{"schema","pas.cold-worker-placement.v3"},{"valid",p.valid()},
   {"failure",rails::worker_affinity_failure_name(p.failure)},{"active_groups",p.active_groups},
   {"process_class",p.process_class},{"group",p.group},{"process_mask",p.process_mask},
   {"system_mask",p.system_mask},{"consumer_mask",p.consumer_mask},{"producer_mask",p.producer_mask},
@@ -180,12 +182,15 @@ inline nlohmann::json plan_json(const rails::PlacementPlan& p,bool consumer_affi
   {"topology_logical_processors",p.topology_logical_processors},
   {"topology_available",p.topology_available},{"topology_core_records",std::move(topology)},
   {"policy_id",rails::producer_eligibility_policy_id},{"policy_version",rails::producer_eligibility_policy_version},
-  {"consumer_core_mask",p.consumer_core_mask},{"producer_anchor_mask",p.producer_anchor_mask},
-  {"producer_eligible_core_count",p.producer_eligible_core_count},{"producer_eligible_cores",std::move(eligible)},
+  {"consumer_core_mask",p.consumer_core_mask},{"consumer_anchor_mask",p.consumer_anchor_mask},{"producer_anchor_mask",p.producer_anchor_mask},
+  {"consumer_physical_core_mask",p.consumer_physical_core_mask},{"producer_physical_core_mask",p.producer_physical_core_mask},
+  {"consumer_eligible_core_count",p.consumer_eligible_core_count},{"consumer_eligible_cores",std::move(consumer_eligible)},
+  {"producer_eligible_core_count",p.producer_eligible_core_count},{"producer_eligible_cores",std::move(producer_eligible)},
   {"consumer_affinity_applied",consumer_affinity_applied},
+  {"consumer_anchor_role","identity anchor only; consumer_mask is the complete eligible union"},
   {"producer_anchor_role","identity anchor only; producer_mask is the complete eligible union"},
   {"writer_affinity_order","cold caller constructs writer before applying worker affinity"},
-  {"policy","single group; highest raw EfficiencyClass; one lowest LP per available physical core; exclude the entire reserved consumer physical core; last-two lowest-LP consumer and producer identity anchor unchanged; no sibling/lower-class fallback; writer created before affinity; exact original affinity restore; same A/B"},
+  {"policy","single group; highest raw EfficiencyClass; seed unchanged last-two lowest-LP consumer and producer identity anchors; assign remaining available core-lowest-LPs ascending, consumer first then producer alternating; disjoint whole physical core sets; no sibling/lower-class fallback; writer created before affinity; exact original affinity restore; same A/B"},
   {"qualification_issued",false},{"live_ready",false},{"cost_qualification",false},{"device_operations",0}};
 }
 #if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA

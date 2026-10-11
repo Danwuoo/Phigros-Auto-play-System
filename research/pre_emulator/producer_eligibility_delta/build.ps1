@@ -13,7 +13,7 @@ $script:maintenancePath=$taskBuildScript
 $Operation='build'
 $baseCommit='12ec0550e882e3b06751d67fa67c43dda3e9312b'
 $originalCommit='aa9de3c13b92e533b1b0e9cb0312cf81e5d2f9de'
-$deltaPolicy='highest_raw_efficiency_class_one_lp_per_core_excluding_consumer'
+$deltaPolicy='highest_raw_efficiency_class_disjoint_balanced_core_lowest_lps'
 # These nested controls have separate denominators; original controls retain
 # their own existing counts and meanings.
 $eligibilityControlsCount=12
@@ -28,6 +28,7 @@ function DPath([string]$path){$full=[IO.Path]::GetFullPath($(if([IO.Path]::IsPat
 function DRelative([string]$path){return [IO.Path]::GetRelativePath($repo,(DPath $path)).Replace('\','/')}
 function AssertHead{DRequire ((& git -C $repo rev-parse HEAD) -ceq $FrozenHead -and (& git -C $repo branch --show-current) -ceq 'main' -and -not (& git -C $repo status --porcelain)) 'exact frozen clean main'}
 function AssertInputs{AssertHead;foreach($pin in @($sourcePins)+@($sourceCopies)+@($fixedPins)){CheckEntry $pin}}
+function AssertControlInputs{AssertHead;foreach($pin in @($sourcePins)+@($sourceCopies)+@($fixedPins)){if(-not $controlCompileOnlyPaths.Contains([IO.Path]::GetFullPath($pin.path))){CheckEntry $pin}}}
 function DOutput($binding,[string]$relative){$expected=[IO.Path]::GetFullPath((Join-Path $binding.build_root $relative));$found=@((@($binding.files)+@($binding.compiled_outputs))|Where-Object {$null -ne $_ -and $_.path -and [IO.Path]::GetFullPath($_.path) -ceq $expected}|Group-Object path|ForEach-Object {$_.Group[0]});DRequire ($found.Count -eq 1) ('one sealed original output '+$relative);return $found[0]}
 function DSourceMap($manifest){$map=@{};foreach($pin in $manifest.files){$relative=DRelative $pin.path;DRequire (-not $map.ContainsKey($relative)) 'unique original source';$map[$relative]=$pin};return $map}
 function DControls($report,[string]$schema,[int]$count){DRequire ($report.schema -ceq $schema) 'separate controls schema';DInt $report 'assertions' $count;DInt $report 'failed' 0;DBool $report 'pass' $true;DRequire (@($report.checks).Count -eq $count) 'separate controls denominator';$ids=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);foreach($case in $report.checks){DRequire ($case.id -is [string] -and $case.id.Length -gt 0 -and $ids.Add($case.id)) 'unique nonempty control id';DBool $case 'pass' $true};DInt $report 'device_operations' 0;foreach($field in @('qualification_issued','cost_qualification','live_ready')){if($report.PSObject.Properties.Name -ccontains $field){DBool $report $field $false}}}
@@ -207,25 +208,25 @@ $controlCompileOnlyLargeDependencies=@($dependencySelection.files|Where-Object {
 $controlCompileOnlyPaths=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 foreach($pin in $controlCompileOnlyLargeDependencies){$null=$controlCompileOnlyPaths.Add([IO.Path]::GetFullPath($pin.path))}
 $controlPolicyPath=Join-Path $artifact 'control-input-policy.json'
-NewJson $controlPolicyPath @{schema='pas.cold-controls-input-policy.v1';source_commit=$FrozenHead;selected_dependency_manifest=(Binding $selectedDependencyPath);compile_only_large_installed_archives=$controlCompileOnlyLargeDependencies;configure_and_build_keep_all_selected_dependencies=$true;actual_images_runtime_sources_objects_imported_libraries_preserved=$true;controls_counts_unchanged=$true;qualification_issued=$false;device_operations=0} 4194304
+NewJson $controlPolicyPath @{schema='pas.cold-controls-input-policy.v1';source_commit=$FrozenHead;selected_dependency_manifest=(Binding $selectedDependencyPath);compile_only_large_installed_archives=$controlCompileOnlyLargeDependencies;configure_and_build_keep_all_selected_dependencies=$true;final_full_dependency_recheck_preserved=$true;control_assertions_use_same_compile_only_exclusion=$true;actual_images_runtime_sources_objects_imported_libraries_preserved=$true;controls_counts_unchanged=$true;qualification_issued=$false;device_operations=0} 4194304
 $controlInputs=@($inputs+$outputs.path+$buildProof.Values.path|Where-Object {-not $controlCompileOnlyPaths.Contains([IO.Path]::GetFullPath($_))})+@($controlPolicyPath)
-$affinityReport=Join-Path $artifact 'worker-affinity-controls.json';$test='test-producer-eligibility-'+$Attempt+'-affinity';AssertInputs
+$affinityReport=Join-Path $artifact 'worker-affinity-controls.json';$test='test-producer-eligibility-'+$Attempt+'-affinity';AssertControlInputs
 Native $test $exes.worker_affinity_controls.path @($affinityReport) $controlInputs 300
 $affinityProof=DProof $test;$affinity=DRead (Binding $affinityReport);DControls $affinity 'pas.worker-affinity-tests.v1' 65
 DControls $affinity.eligibility_controls 'pas.cold-producer-eligibility-controls.v1' $eligibilityControlsCount
 DEligibilityIdentity $affinity;DRequire ($affinity.producer_eligibility_policy_id -ceq $deltaPolicy) 'actual affinity policy id'
 $script:noiseRepairBuild=@{process_qos_required=$true;producer_wait_required=$true;producer_active_tail_ns=0;worker_affinity_required=$true}
-$scoreRows=@();foreach($scene in @('invalid','tap','hold','dense')){$root=Join-Path $artifact ('score-only-'+$scene);Fresh $root;$test='test-producer-eligibility-'+$Attempt+'-score-'+$scene;AssertInputs
+$scoreRows=@();foreach($scene in @('invalid','tap','hold','dense')){$root=Join-Path $artifact ('score-only-'+$scene);Fresh $root;$test='test-producer-eligibility-'+$Attempt+'-score-'+$scene;AssertControlInputs
  Native $test $exes.score_only_controls.path @($scene,$root) $controlInputs 300
  $proof=DProof $test;$reportPin=Binding (Join-Path $root 'control-report.json');$report=DRead $reportPin
  DRequire ($report.schema -ceq 'pas.score-only-literal-controls.v1' -and $report.base_component_source_commit -ceq $baseCommit -and $report.actual_manual_translation_unit_sha256 -ceq $manual.sha256) 'literal score-only base55 manual source';DBool $report 'pass' $true;DInt $report 'failed' 0;DInt $report 'device_operations' 0;foreach($flag in @('cost_qualification','physical_qualification','whole_candidate_qualification_issued')){DBool $report $flag $false};DBool $report 'no_gameplay_files_created' $true
- DEligibilityIdentity $report;ComponentDeltaValidateColdProducer $report
+ DEligibilityIdentity $report;ComponentDeltaValidateColdProducer $report 'pas.cold-worker-placement.v3'
  $result=DRead $proof.result;DRequire ($report.process_qos.process_id -eq $result.facts.pid) 'actual score QoS bound to its Native PID'
  if($scene -ceq 'invalid'){DInt $report 'invalid_requests_rejected_before_io' 8;DInt $report 'controlled_stop_lifecycle_cases' 2;DInt $report 'result_tail_fake_clock_cases' 4;DRequire ($report.producer_placement_controls.checks -eq 27 -and $report.producer_placement_controls.passed -eq 27 -and $report.producer_placement_controls.failed -eq 0 -and @($report.producer_placement_controls.cases).Count -eq 27) 'original placement27 separate'}
- if($scene -ceq 'invalid'){ComponentDeltaValidateColdProducerControls $report}
+ if($scene -ceq 'invalid'){ComponentDeltaValidateColdProducerControls $report 'pas.cold-worker-placement.v3'}
  $scoreRows+=@(@{target=('score_only_'+$scene);binary=$exes.score_only_controls;report=$reportPin;Native8=$proof})
 }
-$readerReport=Join-Path $artifact 'qualification-reader-controls.json';$test='test-producer-eligibility-'+$Attempt+'-reader';AssertInputs
+$readerReport=Join-Path $artifact 'qualification-reader-controls.json';$test='test-producer-eligibility-'+$Attempt+'-reader';AssertControlInputs
 Native $test $exes.qualification_reader_controls.path @($readerReport) $controlInputs 300
 $readerProof=DProof $test;$reader=DRead (Binding $readerReport)
 DRequire ($reader.schema -ceq 'pas.qualification-reader-controls.v1' -and @($reader.cases).Count -eq 81) 'original reader81 schema/array';DInt $reader 'cases_count' 81;DInt $reader 'failed' 0;DInt $reader 'device_operations' 0;DBool $reader 'qualification_issued' $false;DBool $reader 'live_ready' $false
@@ -233,7 +234,7 @@ $readerIds=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 DControls $reader.active_wait_policy_controls 'pas.active-wait-policy-reader-controls.v1' 12
 DControls $reader.process_qos_policy_controls 'pas.process-qos-policy-reader-controls.v1' 12
 DControls $reader.cold_harness_delta_controls 'pas.cold-harness-delta-reader-controls.v1' $eligibilityReaderControlsCount
-$verificationReport=Join-Path $artifact 'candidate-verification-controls.json';$test='test-producer-eligibility-'+$Attempt+'-verification';AssertInputs
+$verificationReport=Join-Path $artifact 'candidate-verification-controls.json';$test='test-producer-eligibility-'+$Attempt+'-verification';AssertControlInputs
 Native $test $exes.candidate_admission_controls.path @($verificationReport) $controlInputs 300
 $verificationProof=DProof $test;$verificationReportPin=Binding $verificationReport;$verificationControls=DRead $verificationReportPin
 DControls $verificationControls 'pas.candidate-admission-controls.v1' 82

@@ -275,3 +275,17 @@ Reader新增六項2ms／兩exact legacy／缺欄位／混配／類型／錯run�
 兩份main43 inactive diagnostic journal共378832511 bytes，逐decoded SHA核對後封存為
 11306658-byte ZIP與proof於`inactive-noise-raw-archive43-repair`。首次helper因ZIP count仍為12
 而在刪除前STOP，原件全保留；該11MB未簽收ZIP另留於`inactive-noise-raw-archive43`，不當正式proof。
+
+## 2026-10-12 main76 實際結果及下一候選
+
+main76 `2fddccd10607726128ea6a0f296fcf843e40acd0` 必要10個fresh冷TUs及9個build/control Native stages通過；actual pre-cost reader保留原75／prefix3063／fault4／production9來源核對，新Normal Tap／Hold／Dense三項full raw與原數值門檻均PASS。AA12完整raw與單筆validity全PASS，noise14／18 adequate、4／18不足，ABBA NOT_RUN；cost NOT_READY、live UNQUALIFIED。原source／copy／report／raw／STOP及53個Native8完整索引保留於[main76收據](MAIN76_NORMAL_AA_PASS_NOISE14_STOP_20261012.json)。Noise分析Native0／162.536161s，outer workflow1是既有「noise不足不開ABBA」停止，沒有新的producer失敗。
+
+不足項為Tap capture-to-owner p99、Hold observer p99、Dense observer與capture-to-owner p99。原attempts分位數重算吻合，未發現分母缺陷。Tap尾部主要包含開始observer前的空檔；Hold／Dense含observer wall尾部，沒有consumer ETW或逐段CPU量測，不能把wall直接認定為preemption、CPU熱或某個外部process。未新增ETW錄製。
+
+下一單一候選為`pas.cold-worker-placement.v3`／`highest_raw_efficiency_class_disjoint_balanced_core_lowest_lps`／version3。保留原末兩highest-raw-class核心的consumer／producer anchors，其他可用highest-class cores按lowest LP排序後輪流consumer-first／producer-next，兩worker各一組互斥physical cores，每core只取lowest LP。兩mask為各自eligible union，完整physical-core unions互斥；原anchor不可用仍拒絕，無SMT／lower-class fallback。兩core主機仍各singleton，不加四core門檻。本機預期consumer LP0／12、producer LP10／14；這只是通用調度候選，不是根因證明、CPU獨占或已修好聲稱。Migration/cache及producer少一個eligible core的成本，由新actual必要成本判斷。
+
+原priority HIGHEST(2)、process NORMAL(32)、QoS/readback/restore、writer-before-affinity、2560／20ms、raw/archive容量、R2／noise／ABBA原門檻不改。沿既有10-TU overlay與原正式libs；不重跑原三配置75／production9。只完成變更所需控制及新的必要成本、尚未完成noise／ABBA與最後collection-preflight，至需要emulator邊界停止；這輪不開裝置或新thread。
+
+控制流程僅排除原selected installed dependency中超256MiB的compile-only `.lib`，以canonical path／bytes／SHA精確核對；actual images/runtime/sources/objects/imported project libs與控制分母皆保留。Configure／build前後與最後整份依賴核對仍包含全507 selected dependencies；每個control的前置assert採相同compile-only排除，避免反覆讀同一份2.298GB archive。這不是量測或資格門檻放寬。
+
+main76只讀attempts timing分解：`out/planning/main76-p99-timing-decomposition.json`，51855B／SHA256 `bed06c98e2457e145ac70c6d02719e1a1424d7d87f1637e4f66d9b48a820b75f`。只讀12份小report／attempts與少量既有Tap/Hold journal行；未新增Native、ETW或diagnostic錄製。全部measurement分位數與原report差值0；既有skip及不同owned分母照報，不省略長尾樣本。診斷不回饋runtime策略，也不授予cost或live資格。

@@ -103,11 +103,15 @@ function script:ComponentDeltaValidateProcessQosControls($controls) {
  foreach($case in $checks){$id=ComponentDeltaColdProducerField $case 'id';ComponentDeltaColdProducerRequire ($id -is [string] -and $id.Length -gt 0 -and $ids.Add($id)) 'QoS controls unique nonempty ids';ComponentDeltaColdProducerBool $case 'pass' $true}
  ComponentDeltaValidateProcessQos (ComponentDeltaColdProducerField $controls 'actual_windows_snapshot')
 }
-function script:ComponentDeltaValidateEligibilityPlacement($plan,[bool]$consumerApplied) {
- ComponentDeltaColdProducerText $plan 'schema' 'pas.cold-worker-placement.v2'
- ComponentDeltaColdProducerText $plan 'policy_id' 'highest_raw_efficiency_class_one_lp_per_core_excluding_consumer'
+function script:ComponentDeltaValidateEligibilityPlacement($plan,[bool]$consumerApplied,[string]$expectedSchema='') {
+ $schema=ComponentDeltaColdProducerField $plan 'schema'
+ ComponentDeltaColdProducerRequire ($schema -is [string] -and $schema -cin @('pas.cold-worker-placement.v2','pas.cold-worker-placement.v3')) 'exact known eligibility placement schema'
+ if($expectedSchema){ComponentDeltaColdProducerText $plan 'schema' $expectedSchema}
+ $balanced=$schema -ceq 'pas.cold-worker-placement.v3'
+ $policy=if($balanced){'highest_raw_efficiency_class_disjoint_balanced_core_lowest_lps'}else{'highest_raw_efficiency_class_one_lp_per_core_excluding_consumer'}
+ ComponentDeltaColdProducerText $plan 'policy_id' $policy
  ComponentDeltaColdProducerText $plan 'producer_anchor_role' 'identity anchor only; producer_mask is the complete eligible union'
- $null=ComponentDeltaColdProducerInteger $plan 'policy_version' 2 2
+ $version=if($balanced){3}else{2};$null=ComponentDeltaColdProducerInteger $plan 'policy_version' $version $version
  foreach($key in @('valid','topology_available')){ComponentDeltaColdProducerBool $plan $key $true}
  foreach($key in @('qualification_issued','cost_qualification','live_ready')){ComponentDeltaColdProducerBool $plan $key $false}
  ComponentDeltaColdProducerBool $plan 'consumer_affinity_applied' $consumerApplied
@@ -117,26 +121,46 @@ function script:ComponentDeltaValidateEligibilityPlacement($plan,[bool]$consumer
  $process=ComponentDeltaColdProducerMask $plan 'process_mask';$system=ComponentDeltaColdProducerMask $plan 'system_mask';$consumer=ComponentDeltaColdProducerMask $plan 'consumer_mask';$producer=ComponentDeltaColdProducerMask $plan 'producer_mask';$anchor=ComponentDeltaColdProducerMask $plan 'producer_anchor_mask'
  $consumerNumber=ComponentDeltaColdProducerInteger $plan 'consumer_number' 0 63;$producerNumber=ComponentDeltaColdProducerInteger $plan 'producer_number' 0 63
  $consumerCore=ComponentDeltaColdProducerInteger $plan 'consumer_core' 0 255;$producerCore=ComponentDeltaColdProducerInteger $plan 'producer_core' 0 255
- ComponentDeltaColdProducerRequire (($process -band $system) -eq $process -and $consumer -eq ([uint64]1 -shl $consumerNumber) -and ($consumer -band $process) -eq $consumer -and $anchor -eq ([uint64]1 -shl $producerNumber)) 'exact process/consumer/anchor mask'
+ $consumerAnchor=[uint64]1 -shl $consumerNumber
+ ComponentDeltaColdProducerRequire (($process -band $system) -eq $process -and ($consumer -band $process) -eq $consumer -and $anchor -eq ([uint64]1 -shl $producerNumber)) 'exact process/consumer/anchor mask'
+ if($balanced){ComponentDeltaColdProducerRequire ((ComponentDeltaColdProducerMask $plan 'consumer_anchor_mask') -eq $consumerAnchor) 'exact consumer identity anchor'}else{ComponentDeltaColdProducerRequire ($consumer -eq $consumerAnchor) 'v2 exact singleton consumer mask'}
  $records=ComponentDeltaColdProducerField $plan 'topology_core_records';$count=ComponentDeltaColdProducerInteger $plan 'topology_cores' 2 64
  ComponentDeltaColdProducerRequire ($records -is [array] -and $records.Count -eq $count) 'full bounded topology records'
+ if($balanced){$logical=ComponentDeltaColdProducerInteger $plan 'topology_logical_processors' 1 64;ComponentDeltaColdProducerRequire ($logical -eq [Numerics.BitOperations]::PopCount([uint64]$system)) 'v3 complete logical-processor denominator equals system mask popcount'}
+ $maximumCore=if($balanced){$count-1}else{255}
  $cores=@{};[uint64]$all=0;$highest=-1;[uint64]$wholeConsumer=0
- foreach($row in $records){$core=ComponentDeltaColdProducerInteger $row 'core' 0 255;$lp=ComponentDeltaColdProducerInteger $row 'lowest_lp' 0 63;$class=ComponentDeltaColdProducerInteger $row 'efficiency_class' 0 255;$mask=ComponentDeltaColdProducerMask $row 'mask'
+ foreach($row in $records){$core=ComponentDeltaColdProducerInteger $row 'core' 0 $maximumCore;$lp=ComponentDeltaColdProducerInteger $row 'lowest_lp' 0 63;$class=ComponentDeltaColdProducerInteger $row 'efficiency_class' 0 255;$mask=ComponentDeltaColdProducerMask $row 'mask'
   ComponentDeltaColdProducerRequire (-not $cores.ContainsKey([string]$core) -and ($mask -band $all) -eq 0 -and ($mask -band $system) -eq $mask -and ($mask -band ([uint64]1 -shl $lp)) -ne 0 -and ($lp -eq 0 -or ($mask -band (([uint64]1 -shl $lp)-1)) -eq 0)) 'unique physical core mask and lowest actual LP'
   $cores[[string]$core]=$row;$all=$all -bor $mask;$highest=[Math]::Max($highest,$class)
   if($core -eq $consumerCore){ComponentDeltaColdProducerRequire ($lp -eq $consumerNumber) 'consumer uses its lowest LP';$wholeConsumer=$mask}
  }
  ComponentDeltaColdProducerRequire ($all -eq $system -and $wholeConsumer -gt 0 -and $wholeConsumer -eq (ComponentDeltaColdProducerMask $plan 'consumer_core_mask') -and $highest -eq (ComponentDeltaColdProducerInteger $plan 'efficiency_class' 0 255)) 'complete raw topology/system mask and highest class'
  $highestCores=@($records|Where-Object efficiency_class -eq $highest|Sort-Object lowest_lp);ComponentDeltaColdProducerRequire ($highestCores.Count -ge 2 -and $highestCores[-2].core -eq $consumerCore -and $highestCores[-2].lowest_lp -eq $consumerNumber -and $highestCores[-1].core -eq $producerCore -and $highestCores[-1].lowest_lp -eq $producerNumber -and ($anchor -band $process) -eq $anchor) 'exact last two highest-class physical core identity anchors'
- $expected=@{};[uint64]$union=0
- foreach($row in $records){$bit=[uint64]1 -shl $row.lowest_lp;if($row.efficiency_class -eq $highest -and $row.core -ne $consumerCore -and ($bit -band $process) -eq $bit){$expected[[string]$row.core]=$row;$union=$union -bor $bit}}
+ $expected=@{};$consumerExpected=@{};[uint64]$union=0;[uint64]$consumerUnion=$consumerAnchor;[uint64]$wholeProducer=0;[uint64]$consumerPhysical=$wholeConsumer
+ if($balanced){
+  $consumerExpected[[string]$consumerCore]=$cores[[string]$consumerCore];$expected[[string]$producerCore]=$cores[[string]$producerCore];$union=$anchor;$wholeProducer=[uint64]$cores[[string]$producerCore].mask
+  $index=0
+  foreach($row in $highestCores){
+   $bit=[uint64]1 -shl $row.lowest_lp
+   if($row.core -eq $consumerCore -or $row.core -eq $producerCore -or ($bit -band $process) -ne $bit){continue}
+   if(($index % 2) -eq 0){$consumerExpected[[string]$row.core]=$row;$consumerUnion=$consumerUnion -bor $bit;$consumerPhysical=$consumerPhysical -bor [uint64]$row.mask}else{$expected[[string]$row.core]=$row;$union=$union -bor $bit;$wholeProducer=$wholeProducer -bor [uint64]$row.mask}
+   $index++
+  }
+  ComponentDeltaColdProducerRequire ($consumer -eq $consumerUnion -and (ComponentDeltaColdProducerMask $plan 'consumer_physical_core_mask') -eq $consumerPhysical -and (ComponentDeltaColdProducerMask $plan 'producer_physical_core_mask') -eq $wholeProducer -and ($consumerPhysical -band $wholeProducer) -eq 0 -and ($consumerAnchor -band $consumer) -eq $consumerAnchor -and ($consumer -band $wholeProducer) -eq 0 -and ($producer -band $consumerPhysical) -eq 0) 'v3 exact deterministic balanced whole-core partition'
+  $consumerEligible=ComponentDeltaColdProducerField $plan 'consumer_eligible_cores';$consumerCount=ComponentDeltaColdProducerInteger $plan 'consumer_eligible_core_count' 1 64
+  ComponentDeltaColdProducerRequire ($consumerEligible -is [array] -and $consumerEligible.Count -eq $consumerExpected.Count -and $consumerCount -eq $consumerExpected.Count) 'v3 exact consumer eligible denominator'
+  foreach($row in $consumerEligible){$core=ComponentDeltaColdProducerInteger $row 'core' 0 255;ComponentDeltaColdProducerRequire ($consumerExpected.ContainsKey([string]$core)) 'unique declared consumer physical core';$raw=$consumerExpected[[string]$core];$number=ComponentDeltaColdProducerInteger $row 'number' 0 63;ComponentDeltaColdProducerRequire ($number -eq $raw.lowest_lp -and (ComponentDeltaColdProducerMask $row 'mask') -eq ([uint64]1 -shl $number) -and (ComponentDeltaColdProducerMask $row 'physical_core_mask') -eq $raw.mask) 'consumer entry exact raw core/mask/lowest LP';$consumerExpected.Remove([string]$core)}
+  ComponentDeltaColdProducerRequire ($consumerExpected.Count -eq 0) 'complete consumer eligible-core list'
+ }else{
+  foreach($row in $records){$bit=[uint64]1 -shl $row.lowest_lp;if($row.efficiency_class -eq $highest -and $row.core -ne $consumerCore -and ($bit -band $process) -eq $bit){$expected[[string]$row.core]=$row;$union=$union -bor $bit}}
+ }
  $eligible=ComponentDeltaColdProducerField $plan 'producer_eligible_cores';$eligibleCount=ComponentDeltaColdProducerInteger $plan 'producer_eligible_core_count' 1 64
- ComponentDeltaColdProducerRequire ($eligible -is [array] -and $eligible.Count -eq $expected.Count -and $eligibleCount -eq $expected.Count -and $producer -eq $union -and ($producer -band $wholeConsumer) -eq 0 -and ($anchor -band $producer) -eq $anchor -and $producerCore -ne $consumerCore -and $expected.ContainsKey([string]$producerCore) -and $expected[[string]$producerCore].lowest_lp -eq $producerNumber) 'all and only eligible core-lowest LPs excluding complete consumer core'
+ ComponentDeltaColdProducerRequire ($eligible -is [array] -and $eligible.Count -eq $expected.Count -and $eligibleCount -eq $expected.Count -and $producer -eq $union -and ($producer -band $consumerPhysical) -eq 0 -and ($anchor -band $producer) -eq $anchor -and $producerCore -ne $consumerCore -and $expected.ContainsKey([string]$producerCore) -and $expected[[string]$producerCore].lowest_lp -eq $producerNumber) 'all and only eligible core-lowest LPs excluding complete consumer cores'
  foreach($row in $eligible){$core=ComponentDeltaColdProducerInteger $row 'core' 0 255;ComponentDeltaColdProducerRequire ($expected.ContainsKey([string]$core)) 'unique declared eligible physical core';$raw=$expected[[string]$core];$number=ComponentDeltaColdProducerInteger $row 'number' 0 63;ComponentDeltaColdProducerRequire ($number -eq $raw.lowest_lp -and (ComponentDeltaColdProducerMask $row 'mask') -eq ([uint64]1 -shl $number) -and (ComponentDeltaColdProducerMask $row 'physical_core_mask') -eq $raw.mask) 'eligible entry exact raw core/mask/lowest LP';$expected.Remove([string]$core)}
  ComponentDeltaColdProducerRequire ($expected.Count -eq 0) 'complete eligible-core list'
 }
 function script:ComponentDeltaValidateEligibilityIdentity($report) {
- ComponentDeltaColdProducerRequire ($null -ne $script:coldHarnessDeltaBuild) 'explicit loaded cold harness required for v2 runtime'
+ ComponentDeltaColdProducerRequire ($null -ne $script:coldHarnessDeltaBuild) 'explicit loaded cold harness required for eligibility runtime'
  $identity=ComponentDeltaColdProducerField $report 'producer_eligibility_delta_identity'
  ComponentDeltaColdProducerText $identity 'schema' 'pas.cold-producer-eligibility-identity.v1'
  ComponentDeltaColdProducerText $identity 'source_commit' $script:coldHarnessDeltaBuild.source_commit
@@ -146,13 +170,14 @@ function script:ComponentDeltaValidateEligibilityIdentity($report) {
  ComponentDeltaColdProducerBool $identity 'source_dirty' $false
  foreach($key in @('qualification_issued','cost_qualification','live_ready')){ComponentDeltaColdProducerBool $identity $key $false};$null=ComponentDeltaColdProducerInteger $identity 'device_operations' 0 0
 }
-function script:ComponentDeltaValidateColdProducer($report) {
+function script:ComponentDeltaValidateColdProducer($report,[string]$expectedPlacementSchema='') {
  $null=ComponentDeltaColdProducerInteger $report 'producer_priority_requested' 2 2
  ComponentDeltaValidateColdProducerWait $report
  if(($null -ne $script:noiseRepairBuild -and $script:noiseRepairBuild.process_qos_required) -or $report.PSObject.Properties.Name -ccontains 'process_qos' -or ($report -is [Collections.IDictionary] -and $report.Contains('process_qos'))){ComponentDeltaValidateProcessQos (ComponentDeltaColdProducerField $report 'process_qos')}
  $plan=ComponentDeltaColdProducerField $report 'worker_placement'
- $eligibility=$plan.schema -ceq 'pas.cold-worker-placement.v2'
- if($eligibility){ComponentDeltaValidateEligibilityPlacement $plan $false}else{
+ $eligibility=$plan.schema -cin @('pas.cold-worker-placement.v2','pas.cold-worker-placement.v3')
+ if($expectedPlacementSchema){ComponentDeltaColdProducerText $plan 'schema' $expectedPlacementSchema}
+ if($eligibility){ComponentDeltaValidateEligibilityPlacement $plan $false $expectedPlacementSchema}else{
  ComponentDeltaColdProducerText $plan 'schema' 'pas.cold-worker-placement.v1'
  ComponentDeltaColdProducerBool $plan 'valid' $true;ComponentDeltaColdProducerText $plan 'failure' 'none'
  foreach($name in @('active_groups','process_class','group','topology_error','device_operations')){
@@ -192,7 +217,7 @@ function script:ComponentDeltaValidateColdProducer($report) {
  $previous=ComponentDeltaColdProducerInteger $priority 'previous' -2147483648 2147483647;$restored=ComponentDeltaColdProducerInteger $priority 'restored' -2147483648 2147483647
  ComponentDeltaColdProducerRequire ($priorityThread -eq $affinityThread -and $previous -eq $restored) 'priority same owner thread and exact explicit restoration'
 }
-function script:ComponentDeltaValidateColdProducerControls($report) {
+function script:ComponentDeltaValidateColdProducerControls($report,[string]$expectedPlacementSchema='') {
  $controls=ComponentDeltaColdProducerField $report 'producer_placement_controls'
  ComponentDeltaColdProducerText $controls 'schema' 'pas.cold-producer-placement-controls.v1'
  foreach($name in @('checks','passed')){$null=ComponentDeltaColdProducerInteger $controls $name 27 27}
@@ -216,7 +241,7 @@ function script:ComponentDeltaValidateColdProducerControls($report) {
   $joined=@{producer_priority_requested=$priority;producer_active_tail_ns=$tail;worker_placement=(ComponentDeltaColdProducerField $stop 'worker_placement');producer_affinity=(ComponentDeltaColdProducerField $stop 'producer_affinity');producer_priority=(ComponentDeltaColdProducerField $stop 'producer_priority')}
   if($tail -eq 0){foreach($name in @('producer_wait_policy','producer_active_wait_horizon_ns','producer_active_wait_poll_cap','producer_no_kernel_wait')){$joined[$name]=ComponentDeltaColdProducerField $controls $name}}
   if(($null -ne $script:noiseRepairBuild -and $script:noiseRepairBuild.process_qos_required) -or $report.PSObject.Properties.Name -ccontains 'process_qos'){$joined.process_qos=ComponentDeltaColdProducerField $report 'process_qos'}
-  ComponentDeltaValidateColdProducer $joined
+  ComponentDeltaValidateColdProducer $joined $expectedPlacementSchema
  }
 }
 function ComponentDeltaFormalPaths($changed) {return @($changed|Where-Object {$_ -cmatch '^(?:src/|include/|apps/pas/)' -or $_ -ceq 'CMakeLists.txt'}|Sort-Object -Unique)}

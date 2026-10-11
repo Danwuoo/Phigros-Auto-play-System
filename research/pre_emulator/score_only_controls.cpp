@@ -42,8 +42,8 @@ J placement_controls(){
     J cases=J::array();int failed=0;
     const auto check=[&](const char* id,bool pass){cases.push_back({{"id",id},{"pass",pass}});failed+=!pass;};
     {PlacementAffinityDouble a,writer,consumer;PlacementPriorityDouble p;S s;const auto plan=make_worker_placement(a);
-     bool role=false;const auto error=placement_error(a,p,plan,s,[&]{role=a.value.mask==0x41&&!(a.value.mask&plan.consumer_core_mask)&&p.value==2;});
-     check("actual_body_uses_complete_eligible_mask_and_HIGHEST2_v2",error.empty()&&role&&s.verified());
+     bool role=false;const auto error=placement_error(a,p,plan,s,[&]{role=a.value.mask==plan.producer_mask&&!(a.value.mask&plan.consumer_physical_core_mask)&&p.value==2;});
+     check("actual_body_uses_complete_eligible_mask_and_HIGHEST2_v3",error.empty()&&role&&s.verified());
      check("no_process_consumer_or_writer_mutation",a.process==0x20&&writer.value.mask==0xff&&writer.sets==0&&consumer.value.mask==0xff&&consumer.sets==0);
      check("successful_body_explicitly_restores_both_original_values",a.value.mask==0xff&&p.value==0&&s.affinity.close_attempted&&s.priority_close_attempted&&!s.affinity.fallback_attempted);}
     {PlacementAffinityDouble a;PlacementPriorityDouble p;S s;const auto plan=make_worker_placement(a);a.value.mask=8;p.value=-1;

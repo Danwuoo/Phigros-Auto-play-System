@@ -137,6 +137,7 @@ inline void objects(const J& delta,const Graph& graph){
 // Cold scheduling and verification overlays are separate from fresh32/fresh52.
 inline constexpr const char* eligibility_base_commit="12ec0550e882e3b06751d67fa67c43dda3e9312b";
 inline constexpr const char* eligibility_policy="highest_raw_efficiency_class_one_lp_per_core_excluding_consumer";
+inline constexpr const char* eligibility_policy_v3="highest_raw_efficiency_class_disjoint_balanced_core_lowest_lps";
 inline J eligibility_targets(){return J::array({"current_chain","worker_affinity_controls","production_pipeline_cold","score_only_controls","qualification_reader","qualification_reader_controls","candidate_admission_delta","pas","candidate_admission_controls"});}
 inline J eligibility_units(){
     J a=J::array();const auto add=[&](const char* target,const char* source){a.push_back({{"target",target},{"relative_source",source}});};
@@ -154,7 +155,7 @@ inline void eligibility_declaration(const J& d,const J& p){
     w::require(d.at("schema")=="pas.cold-producer-eligibility-delta-build.v1"&&p.at("schema")=="pas.cold-producer-eligibility-delta-plan.v1","explicit cold delta schema");
     for(const auto* key:{"source_commit","base_source_commit","targets","translation_unit_count"})w::require(d.at(key)==p.at(key),"cold build/plan identity");
     w::require(d.at("base_source_commit")==eligibility_base_commit&&d.at("configuration")=="release"&&p.at("configuration")=="release"&&d.at("source_commit").is_string()&&w::hex(d.at("source_commit").get<std::string>(),40),"cold compiled/base identity");
-    for(const auto* value:{&d,&p}){eligibility_bool(*value,"cold_harness_delta",true);eligibility_bool(*value,"formal_rebuilt",false);eligibility_scope(*value);w::require(eligibility_uint(*value,"translation_unit_count")==10&&value->at("targets")==eligibility_targets(),"exact ten cold occurrences/nine targets");}
+    for(const auto* value:{&d,&p}){w::require(value->at("producer_eligibility_policy")==eligibility_policy_v3,"current cold declaration requires balanced v3 policy");eligibility_bool(*value,"cold_harness_delta",true);eligibility_bool(*value,"formal_rebuilt",false);eligibility_scope(*value);w::require(eligibility_uint(*value,"translation_unit_count")==10&&value->at("targets")==eligibility_targets(),"exact ten cold occurrences/nine targets");}
     for(const auto* value:{&d,&p}){w::require(value->at("translation_units").is_array()&&value->at("translation_units").size()==10,"ten cold source occurrences");J actual=J::array();for(const auto& t:value->at("translation_units"))actual.push_back({{"target",t.at("target")},{"relative_source",t.at("relative_source")}});w::require(actual==eligibility_units(),"literal ordered cold source occurrences");}
     std::set<std::string> roles;for(const auto& lib:d.at("imported_static_libraries")){w::require(roles.insert(lib.at("role").get<std::string>()).second,"unique imported cold role");eligibility_bool(lib,"historical_import",true);eligibility_bool(lib,"freshly_rebuilt",false);w::require(w::hex(lib.at("compiled_source_commit").get<std::string>(),40),"imported original compile identity");}
     w::require(roles==std::set<std::string>{"cpu_current_rails","cpu_current_front","cpu_exact_bvi_v3","cpu_own_bridge","cpu_pas_core","production_pas_core","production_pas_current_candidate","production_pas_proto","verification_pas_emulator","verification_pas_bench"},"exact original ten imported roles");
@@ -179,7 +180,7 @@ inline Graph eligibility_graph(const J& d,const fs::path& workspace,const std::s
 }
 inline void eligibility_objects(const J& d,const Graph& g){std::set<std::string> objects;const fs::path root=d.at("build_root").get<std::string>();for(const auto& pin:d.at("compiled_outputs")){const fs::path path=pin.at("path").get<std::string>();if(path.extension()!=".obj")continue;const auto rel=path.lexically_relative(root).generic_string();if(g.objects.contains(rel))w::require(objects.insert(rel).second,"unique sealed cold object");else w::require(rel.ends_with("/CompilerIdCXX/CMakeCXXCompilerId.obj")||rel=="CMakeFiles/ShowIncludes/main.obj","no undeclared fresh formal objects");}w::require(objects.size()==10,"every actual ten cold objects sealed");}
 inline void eligibility_checks(const J& report,const char* schema,std::size_t count){w::require(report.at("schema")==schema&&eligibility_uint(report,"assertions")==count&&eligibility_uint(report,"failed")==0&&report.at("checks").is_array()&&report.at("checks").size()==count,"separate cold control denominator");eligibility_bool(report,"pass",true);eligibility_scope(report);std::set<std::string> ids;for(const auto& c:report.at("checks")){w::require(c.at("id").is_string()&&!c.at("id").get<std::string>().empty()&&ids.insert(c.at("id").get<std::string>()).second,"unique cold controls");eligibility_bool(c,"pass",true);}}
-inline void eligibility_placement(const J& p,bool consumer_applied){
+inline void eligibility_placement_v2(const J& p,bool consumer_applied){
     w::require(p.at("schema")=="pas.cold-worker-placement.v2"&&p.at("policy_id")==eligibility_policy&&eligibility_uint(p,"policy_version")==2,"strict eligibility policy identity");eligibility_bool(p,"valid",true);w::require(p.at("failure")=="none","successful topology selection");eligibility_scope(p);eligibility_bool(p,"consumer_affinity_applied",consumer_applied);
     eligibility_bool(p,"topology_available",true);w::require(p.at("producer_anchor_role")=="identity anchor only; producer_mask is the complete eligible union","producer anchor is identity only");
     w::require(eligibility_uint(p,"group")==0&&eligibility_uint(p,"active_groups")==1&&eligibility_uint(p,"process_class")==32&&eligibility_uint(p,"topology_error")==0&&eligibility_uint(p,"topology_bytes",65536)>0,"bounded single-group topology");
@@ -192,9 +193,64 @@ inline void eligibility_placement(const J& p,bool consumer_applied){
     const auto& eligible=p.at("producer_eligible_cores");w::require(!expected.empty()&&eligible.is_array()&&eligible.size()==expected.size()&&eligibility_uint(p,"producer_eligible_core_count",64)==expected.size()&&producer==union_mask&&!(producer&whole_consumer)&&(anchor&producer)==anchor,"all and only eligible LP union excluding entire consumer core");
     for(const auto& c:eligible){const auto id=eligibility_uint(c,"core",255);w::require(expected.contains(id)&&c==expected.at(id),"exact unique eligible physical core entry");expected.erase(id);}w::require(expected.empty()&&eligibility_uint(p,"producer_core",255)!=consumer_core,"complete eligible core list");
 }
+inline void eligibility_placement(const J& p,bool consumer_applied){
+    // Historical v2 receipts retain their original selection contract. The new
+    // policy is recomputed from the complete raw topology, not accepted from
+    // producer/consumer lists or masks supplied by a report.
+    if(p.at("schema")=="pas.cold-worker-placement.v2"){
+        eligibility_placement_v2(p,consumer_applied);return;
+    }
+    w::require(p.at("schema")=="pas.cold-worker-placement.v3"&&p.at("policy_id")==eligibility_policy_v3&&eligibility_uint(p,"policy_version")==3,"strict balanced eligibility policy identity");
+    eligibility_bool(p,"valid",true);w::require(p.at("failure")=="none","successful topology selection");eligibility_scope(p);eligibility_bool(p,"consumer_affinity_applied",consumer_applied);
+    eligibility_bool(p,"topology_available",true);w::require(p.at("producer_anchor_role")=="identity anchor only; producer_mask is the complete eligible union","producer anchor is identity only");
+    w::require(eligibility_uint(p,"group")==0&&eligibility_uint(p,"active_groups")==1&&eligibility_uint(p,"process_class")==32&&eligibility_uint(p,"topology_error")==0&&eligibility_uint(p,"topology_bytes",65536)>0,"bounded single-group topology");
+    const auto process=eligibility_uint(p,"process_mask"),system=eligibility_uint(p,"system_mask");
+    const auto consumer_core=eligibility_uint(p,"consumer_core",255),producer_core=eligibility_uint(p,"producer_core",255);
+    const auto consumer_number=eligibility_uint(p,"consumer_number",63),producer_number=eligibility_uint(p,"producer_number",63);
+    const auto consumer_anchor=eligibility_uint(p,"consumer_anchor_mask"),producer_anchor=eligibility_uint(p,"producer_anchor_mask");
+    w::require(process&&system&&(process&system)==process&&consumer_core!=producer_core&&consumer_anchor==(std::uint64_t(1)<<consumer_number)&&producer_anchor==(std::uint64_t(1)<<producer_number)&&((consumer_anchor|producer_anchor)&process)==(consumer_anchor|producer_anchor),"exact available original consumer/producer anchor bits");
+    const auto& records=p.at("topology_core_records");
+    w::require(records.is_array()&&records.size()>=2&&records.size()<=64&&eligibility_uint(p,"topology_cores",256)==records.size(),"bounded full raw core records");
+    std::map<std::uint64_t,const J*> raw;std::uint64_t all=0,highest=0;
+    for(const auto& c:records){
+        const auto mask=eligibility_uint(c,"mask"),lp=eligibility_uint(c,"lowest_lp",63),id=eligibility_uint(c,"core",255);
+        w::require(id<records.size()&&mask&&!(mask&all)&&(mask&system)==mask&&raw.emplace(id,&c).second&&(mask&(std::uint64_t(1)<<lp))&&!(lp&&mask&((std::uint64_t(1)<<lp)-1)),"unique complete physical masks and actual lowest LP");
+        all|=mask;highest=std::max(highest,eligibility_uint(c,"efficiency_class",255));
+    }
+    w::require(all==system&&eligibility_uint(p,"topology_logical_processors",64)==std::popcount(system)&&highest==eligibility_uint(p,"efficiency_class",255),"full raw topology/highest class/LP denominator");
+    std::vector<std::pair<std::uint64_t,std::uint64_t>> highest_cores;
+    for(const auto& c:records)if(eligibility_uint(c,"efficiency_class",255)==highest)highest_cores.emplace_back(eligibility_uint(c,"lowest_lp",63),eligibility_uint(c,"core",255));
+    std::sort(highest_cores.begin(),highest_cores.end());
+    w::require(highest_cores.size()>=2&&highest_cores[highest_cores.size()-2]==std::pair<std::uint64_t,std::uint64_t>{consumer_number,consumer_core}&&highest_cores.back()==std::pair<std::uint64_t,std::uint64_t>{producer_number,producer_core}&&eligibility_uint(*raw.at(consumer_core),"mask")==eligibility_uint(p,"consumer_core_mask"),"original last-two anchors chosen before process availability");
+    std::map<std::uint64_t,J> expected_consumer,expected_producer;
+    std::uint64_t consumer_mask=0,producer_mask=0,consumer_physical=0,producer_physical=0;
+    const auto assign=[&](std::uint64_t core,bool consumer){
+        const auto& c=*raw.at(core);const auto lp=eligibility_uint(c,"lowest_lp",63),bit=std::uint64_t(1)<<lp,physical=eligibility_uint(c,"mask");
+        auto& expected=consumer?expected_consumer:expected_producer;
+        w::require(expected.emplace(core,J{{"core",core},{"number",lp},{"mask",bit},{"physical_core_mask",physical}}).second,"one assignment per eligible physical core");
+        (consumer?consumer_mask:producer_mask)|=bit;(consumer?consumer_physical:producer_physical)|=physical;
+    };
+    assign(consumer_core,true);assign(producer_core,false);bool consumer_next=true;
+    for(const auto& [lp,core]:highest_cores){
+        if(core==consumer_core||core==producer_core||!(process&(std::uint64_t(1)<<lp)))continue;
+        assign(core,consumer_next);consumer_next=!consumer_next;
+    }
+    const auto verify_side=[&](const char* list,const char* count,const char* mask,const char* physical,const std::map<std::uint64_t,J>& expected,std::uint64_t selected,std::uint64_t whole){
+        const auto& eligible=p.at(list);w::require(eligible.is_array()&&eligible.size()==expected.size()&&eligibility_uint(p,count,64)==expected.size()&&eligibility_uint(p,mask)==selected&&eligibility_uint(p,physical)==whole,"complete balanced eligible count/LP/physical unions");
+        std::set<std::uint64_t> seen;for(const auto& c:eligible){const auto id=eligibility_uint(c,"core",255);w::require(expected.contains(id)&&seen.insert(id).second&&c==expected.at(id),"exact unique balanced eligible physical core entry");}
+        w::require(seen.size()==expected.size(),"every balanced eligible physical core represented");
+    };
+    verify_side("consumer_eligible_cores","consumer_eligible_core_count","consumer_mask","consumer_physical_core_mask",expected_consumer,consumer_mask,consumer_physical);
+    verify_side("producer_eligible_cores","producer_eligible_core_count","producer_mask","producer_physical_core_mask",expected_producer,producer_mask,producer_physical);
+    w::require(consumer_mask&&producer_mask&&!(consumer_physical&producer_physical)&&!(consumer_mask&producer_physical)&&!(producer_mask&consumer_physical)&&(consumer_mask&consumer_anchor)==consumer_anchor&&(producer_mask&producer_anchor)==producer_anchor,"whole physical core disjointness and retained anchors");
+}
+inline void eligibility_current_placement(const J& p,const J& declaration,bool consumer_applied){
+    w::require(declaration.at("producer_eligibility_policy")==eligibility_policy_v3&&p.at("schema")=="pas.cold-worker-placement.v3"&&p.at("policy_id")==declaration.at("producer_eligibility_policy")&&eligibility_uint(p,"policy_version")==3,"current runtime placement matches declared v3 policy");
+    eligibility_placement(p,consumer_applied);
+}
 inline void eligibility_identity(const J& report,const J& delta,const J& manifest,bool consumer_applied){
     const auto& i=report.at("producer_eligibility_delta_identity");w::require(i.at("schema")=="pas.cold-producer-eligibility-identity.v1"&&i.at("source_commit")==delta.at("source_commit")&&i.at("base_source_commit")==eligibility_base_commit,"compiled cold harness identity");eligibility_bool(i,"source_dirty",false);eligibility_scope(i);
-    w::require(i.at("worker_affinity_sha256")==eligibility_manifest_pin(manifest,"research/prelive_current/worker_affinity.hpp").at("sha256")&&i.at("producer_placement_sha256")==eligibility_manifest_pin(manifest,"research/windows_production_pipeline_v3/producer_placement.hpp").at("sha256"),"actual compiled eligibility header hashes");const auto& p=report.at("worker_placement");eligibility_placement(p,consumer_applied);
+    w::require(i.at("worker_affinity_sha256")==eligibility_manifest_pin(manifest,"research/prelive_current/worker_affinity.hpp").at("sha256")&&i.at("producer_placement_sha256")==eligibility_manifest_pin(manifest,"research/windows_production_pipeline_v3/producer_placement.hpp").at("sha256"),"actual compiled eligibility header hashes");const auto& p=report.at("worker_placement");eligibility_current_placement(p,delta,consumer_applied);
     const auto verify=[&](const J& a,const char* role){const auto mask=eligibility_uint(p,role);for(const auto* key:{"verified","applied","restored","previous_available","applied_available","restored_available","close_attempted"})eligibility_bool(a,key,true);for(const auto* key:{"failure","rollback_failure","fallback_failure"})w::require(a.at(key)=="none","affinity no failures");eligibility_bool(a,"fallback_attempted",false);eligibility_bool(a,"rollback_attempted",false);w::require(eligibility_uint(a,"thread_id")>0&&eligibility_uint(a,"active_groups")==1&&eligibility_uint(a,"process_class")==32&&a.at("process_mask")==p.at("process_mask")&&a.at("system_mask")==p.at("system_mask"),"actual thread/process/system affinity join");
         if(consumer_applied){w::require(a.at("schema")=="pas.cold-worker-affinity.v1","original AA affinity snapshot schema");for(const auto* field:{"requested","applied_readback","previous","restored_readback"})w::require(eligibility_uint(a.at(field),"group")==0,"AA affinity group zero");w::require(eligibility_uint(a.at("requested"),"mask")==mask&&a.at("applied_readback")==a.at("requested")&&eligibility_uint(a.at("previous"),"mask")>0&&a.at("restored_readback")==a.at("previous"),"exact AA requested/readback/restore");}
         else{for(const auto* field:{"requested_group","applied_group","previous_group","restored_group"})w::require(eligibility_uint(a,field)==0,"normal affinity group zero");w::require(eligibility_uint(a,"requested_mask")==mask&&a.at("applied_mask")==a.at("requested_mask")&&eligibility_uint(a,"previous_mask")>0&&a.at("restored_mask")==a.at("previous_mask"),"exact normal requested/readback/restore");}
