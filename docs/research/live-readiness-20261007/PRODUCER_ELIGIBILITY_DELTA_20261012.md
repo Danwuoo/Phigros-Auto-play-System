@@ -46,3 +46,9 @@ main69／`62cc0c8` 的 configure Native0／runner0／5.938s 通過，pre-build g
 PowerShell function boundary 把空 pipeline 轉為 null，原 `@($required).Count` 在 function
 內誤算為1。新 recipe先正規化成真正空 array，五個有 imported roles 的 target仍保持
 exact path／role／unique／complete 檢查；同樣十個 fresh compile occurrences另以新來源建置。
+
+main70／`cfaaf29` configure Native0／6.377s、actual圖八個targets的role核對通過。
+Compile Native2／runner2／32.239s，held／streams正常、active0，未跑 controls 或量測。
+三個新接線編譯錯誤為 JSON 與 string_view 比較歧義、缺 production_reader include、
+新測試 lambda 未 capture formal。原 Native8／logs／source copies／STOP見
+[編譯負結果](MAIN70_ELIGIBILITY_COMPILE_STOP_20261012.json)，不把已產生部分object當完整build。

@@ -127,7 +127,7 @@ int main(int argc,char** argv){try{
     delta_check("wrong_tests_source_SHA_reject",[](J&,J& c){c["verification_delta_identity"]["candidate_admission_tests_sha256"]=different_sha;});
     delta_check("dirty_or_fresh_formal_claim_reject",[](J& d,J& c){d["verification_delta"]["formal_rebuilt"]=true;c["verification_delta_identity"]["source_dirty"]=true;});
     delta_check("frozen_files_cannot_adopt_new_candidate_reject",[](J& d,J&){d["production_build"]["files"].push_back(d["input"]["candidate_binary"]);});
-    delta_check("execution_cost_must_bind_new_delta_reject",[](J& d,J&){d["cold_preflight"]["provenance"]["execution_source_commit"]=formal;});
+    delta_check("execution_cost_must_bind_new_delta_reject",[&formal](J& d,J&){d["cold_preflight"]["provenance"]["execution_source_commit"]=formal;});
     delta_check("numerical_gate_never_replaced_by_delta_reject",[](J& d,J&){d["cold_preflight"]["checks"]["noise"]["pass"]=false;});
     if(delta_tests.checks.size()!=12)throw std::runtime_error("separate verification12 denominator");
     J report={{"schema","pas.candidate-admission-controls.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",t.failed==0},{"synthetic_fixture_only",true},{"qualification_issued",false},{"live_ready",false},{"device_operations",0},{"gameplay_files_created",0}};

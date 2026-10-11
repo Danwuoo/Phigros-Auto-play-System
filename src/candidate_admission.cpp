@@ -8,6 +8,7 @@
 #include "verification_delta_identity.hpp"
 #endif
 #include "research/pre_emulator/qualification_reader/reader/narrow_preflight.hpp"
+#include "research/pre_emulator/qualification_reader/reader/production_reader.hpp"
 #include <atomic>
 #include <cmath>
 #include <map>
