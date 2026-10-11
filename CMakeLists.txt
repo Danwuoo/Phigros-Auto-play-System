@@ -67,7 +67,7 @@ if(MSVC)
   target_compile_options(pas_current_candidate PRIVATE /W4 /permissive- /EHsc)
 endif()
 
-add_library(pas_emulator STATIC src/emulator.cpp src/grpc_transport.cpp src/runtime.cpp src/manual_session.cpp)
+add_library(pas_emulator STATIC src/emulator.cpp src/grpc_transport.cpp src/runtime.cpp src/manual_session.cpp src/candidate_admission.cpp src/candidate_receipts.cpp)
 target_include_directories(pas_emulator PUBLIC include)
 target_link_libraries(pas_emulator PUBLIC pas_core pas_proto pas_current_candidate)
 execute_process(COMMAND git rev-parse HEAD WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -83,7 +83,18 @@ set(PAS_BUILD_HASH_JSON "{")
 foreach(PAS_BUILD_FILE src/game.cpp src/game_clip_replay.cpp src/game_cold_pipeline.cpp src/game_cold_corpus.cpp src/game_motion.cpp src/game_tracking.cpp src/game_tracking_methods.cpp
     src/core.cpp src/emulator.cpp src/config.cpp src/analysis.cpp include/pas/analysis.hpp include/pas/core.hpp include/pas/game.hpp include/pas/strategy_version.hpp src/game_session.cpp src/manual_session.cpp src/runtime.cpp src/session_archive.cpp
     src/journal.cpp include/pas/journal.hpp include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp include/pas/session_pixel_clips.hpp src/session_pixel_clips.cpp apps/pas/main.cpp include/pas/session_recording.hpp src/session_recording.cpp include/pas/runtime.hpp
-    include/pas/candidate_admission.hpp include/pas/candidate_packet.hpp
+    include/pas/candidate_admission.hpp src/candidate_admission.cpp tests/candidate_admission_tests.cpp include/pas/candidate_packet.hpp
+    include/pas/candidate_receipts.hpp src/candidate_receipts.cpp tests/candidate_receipt_collector_tests.cpp include/pas/touch_evidence.hpp include/pas/emulator.hpp include/pas/grpc_transport.hpp
+    include/pas/config.hpp include/pas/adb.hpp
+    research/pre_emulator/qualification_reader/reader/narrow_preflight.hpp
+    research/pre_emulator/qualification_reader/reader/component_delta.hpp
+    research/pre_emulator/qualification_reader/reader/cooperative_build.hpp
+    research/pre_emulator/qualification_reader/reader/cost_reader.hpp
+    research/pre_emulator/qualification_reader/reader/graph_reader.hpp
+    research/pre_emulator/qualification_reader/reader/streamed_hash.hpp
+    research/prelive_current/cost_analysis.cpp research/prelive_current/evidence_hash.hpp
+    research/prelive_current/campaign_provenance.hpp research/prelive_current/input_closure.hpp
+    research/windows_cost_comparison/metrics.hpp research/windows_qualification/verifier.hpp
     include/pas/diagnostic_snapshot.hpp include/pas/diagnostic_json.hpp include/pas/lossless_event_stream.hpp
     research/prelive_current/owner_candidate_step.hpp research/prelive_current/receipt_stream.hpp
     research/prelive_current/current.hpp research/prelive_current/current.cpp research/prelive_current/tail_current.hpp
@@ -98,7 +109,7 @@ foreach(PAS_BUILD_FILE src/game.cpp src/game_clip_replay.cpp src/game_cold_pipel
 endforeach()
 string(REGEX REPLACE ",$" "}" PAS_BUILD_HASH_JSON "${PAS_BUILD_HASH_JSON}")
 configure_file(cmake/session_build_provenance.hpp.in generated/session_build_provenance.hpp @ONLY)
-target_include_directories(pas_emulator PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated")
+target_include_directories(pas_emulator PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated" "${CMAKE_CURRENT_SOURCE_DIR}")
 if(PAS_HD9_TRACE_BASELINE_LIBRARY)
   add_executable(pas_hd9_original_trace tests/hd9_trace_main.cpp src/game_session.cpp)
   target_include_directories(pas_hd9_original_trace PRIVATE include)
@@ -145,6 +156,10 @@ endif()
 enable_testing()
 add_executable(pas_disabled_live_seam_tests research/prelive_current/disabled_live_seam_tests.cpp)
 target_link_libraries(pas_disabled_live_seam_tests PRIVATE pas_current_candidate)
+add_executable(candidate_admission_controls tests/candidate_admission_tests.cpp)
+target_link_libraries(candidate_admission_controls PRIVATE pas_emulator)
+add_executable(candidate_receipt_collector_controls tests/candidate_receipt_collector_tests.cpp)
+target_link_libraries(candidate_receipt_collector_controls PRIVATE pas_emulator)
 add_executable(pas_grpc_latency apps/grpc_latency/main.cpp)
 target_link_libraries(pas_grpc_latency PRIVATE pas_emulator pas_core CLI11::CLI11 winmm)
 if(MSVC)

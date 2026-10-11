@@ -9,7 +9,10 @@
 詳見[縮小重驗授權](docs/research/live-readiness-20261007/NOISE_REPAIR_SCOPE_20261011.md)。
 main32／`aa9de3c` 三配置75組／圖3／prefix3063／fault4／production9通過，AA12 validity
 通過但noise不足、ABBA NOT_RUN；原source／raw／STOP及37個native完整索引保留。
-新cold harness修補用原Release正式libs＋新必要TUs，明列base/delta身分及既有PASS來源；
+main44／`79f8f37` AA12 validity通過、noise6／18 adequate、ABBA NOT_RUN，負結果保留。
+下一候選依[CPU等值修補](docs/research/live-readiness-20261007/CPU_COMPONENT_REPAIR_20261011.md)
+fresh core22／bridge2與必要控制，三個未改動Release libs維持原pins；正式入口／收據工具
+亦fresh建置並跑必要normal3，不全盤重跑原75／production9。明列base／delta及既有PASS來源，
 不冒稱新三配置fresh、whole qualification或live admission。裝置授權沿用，這輪不操作裝置。
 
 2026-10-10 main31／`afaa8f3` fresh22 TUs、三配置各25組、writer20／auditor93、完整圖3、

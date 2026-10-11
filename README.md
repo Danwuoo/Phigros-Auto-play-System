@@ -1,5 +1,7 @@
 # Phigros Auto-play System
 
+2026-10-11 最新續作：main44 AA12通過但noise仍12欄不足，負結果已保存；正在完成 CPU 等值修補、完整 validator 與正式 binary 接線。修補只跑受影響控制、新noise及未跑ABBA；完成後停在emulator邊界，不開新thread。見[本輪實作契約](docs/research/live-readiness-20261007/CPU_COMPONENT_REPAIR_20261011.md)。
+
 2026-10-11 main32／`aa9de3c` 三配置75組、完整圖3、prefix3063、fault4及production9
 integrity通過；normal三項原成本數值通過，AA12 validity亦全通過，但observer／
 capture-to-owner噪聲不足，ABBA未跑。原raw／913 source snapshot／37 native完整收據保留。

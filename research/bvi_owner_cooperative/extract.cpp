@@ -7,10 +7,39 @@
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <utility>
 namespace bvi::owner_cooperative {
 namespace {
 constexpr std::uint64_t budget=6291456,seed=1469598103934665603ULL;
 std::uint64_t hash(std::uint64_t h,std::uint8_t b){return (h^b)*1099511628211ULL;}
+constexpr std::uint64_t fnv_prime=1099511628211ULL;
+constexpr std::uint64_t fnv_power8=[](){std::uint64_t p=1;for(int i=0;i<8;++i)p*=fnv_prime;return p;}();
+template<std::size_t Byte> constexpr auto make_uniform_offsets(){
+ std::array<std::uint64_t,256> offsets{};
+ for(std::size_t low=0;low<offsets.size();++low){auto h=static_cast<std::uint64_t>(low);for(int i=0;i<8;++i)h=(h^Byte)*fnv_prime;offsets[low]=h-static_cast<std::uint64_t>(low)*fnv_power8;}
+ return offsets;
+}
+template<std::size_t Byte> inline constexpr auto uniform_offsets=make_uniform_offsets<Byte>();
+template<std::size_t... Byte> constexpr auto make_uniform_table(std::index_sequence<Byte...>){return std::array<std::array<std::uint64_t,256>,256>{uniform_offsets<Byte>...};}
+// Exactly 512 KiB of immutable algorithm constants, not retained frame data.
+constexpr auto uniform_table=make_uniform_table(std::make_index_sequence<256>{});
+static_assert(sizeof(uniform_table)==524288);
+std::uint64_t hash_rgb_bytes(std::uint64_t h,const std::uint8_t* bytes,std::size_t size){
+ while(size>=8){
+  std::uint64_t word;std::memcpy(&word,bytes,sizeof(word));
+  const auto byte=bytes[0];
+  if(word==static_cast<std::uint64_t>(byte)*0x0101010101010101ULL){
+   // If h and low=h&255 differ by a multiple of 256, XOR with one byte
+   // leaves that difference unchanged. Each multiplication scales it by P.
+   // Thus eight identical bytes give P^8*h + (F_b^8(low)-P^8*low),
+   // modulo 2^64, for every starting h and every byte b.
+   h=h*fnv_power8+uniform_table[byte][h&255];
+  }else{for(int i=0;i<8;++i)h=hash(h,bytes[i]);}
+  bytes+=8;size-=8;
+ }
+ for(std::size_t i=0;i<size;++i)h=hash(h,bytes[i]);
+ return h;
+}
 Point add(Point a,Point b){return {a.x+b.x,a.y+b.y};}Point mul(Point a,double k){return {a.x*k,a.y*k};}Point sub(Point a,Point b){return {a.x-b.x,a.y-b.y};}double dot(Point a,Point b){return a.x*b.x+a.y*b.y;}
 Point u(double a){return {std::cos(a),std::sin(a)};}Point v(double a){return {-std::sin(a),std::cos(a)};}
 bool finite(const Query&q){return std::isfinite(q.front.x)&&std::isfinite(q.front.y)&&std::isfinite(q.width)&&std::isfinite(q.depth)&&std::isfinite(q.angle)&&q.width>=4&&q.width<=4096&&q.depth>0&&q.depth<=4095;}
@@ -27,7 +56,7 @@ Observation extract(const Candidate& candidate,const View&f,std::span<const Quer
  if(!capacity_valid(queries.size(),lines.size(),candidate.metadata_bytes(),0))return invalid("capacity overflow");
  for(const auto&l:lines)if(!std::isfinite(l.angle)||!std::isfinite(l.center.x)||!std::isfinite(l.center.y)||!std::isfinite(l.length)||l.length<=0)return invalid("nonfinite line");
  // One borrowed current RGB frame only. Signature equality is approximate, not full past-byte equality.
- out.rgb_signature=seed;for(int y=0;y<f.height;++y){if(y%32==0&&!poll())return invalid("owner checkpoint stopped");for(int x=0;x<f.width;++x){auto i=static_cast<std::size_t>(y)*f.stride+x*3;for(int c=0;c<3;++c)out.rgb_signature=hash(out.rgb_signature,f.rgb[i+c]);++out.probes;}}
+ out.rgb_signature=seed;for(int y=0;y<f.height;++y){if(y%32==0&&!poll())return invalid("owner checkpoint stopped");out.rgb_signature=hash_rgb_bytes(out.rgb_signature,f.rgb.data()+static_cast<std::size_t>(y)*f.stride,static_cast<std::size_t>(f.width)*3);out.probes+=static_cast<std::uint64_t>(f.width);}
  for(std::size_t i=0;i<queries.size();++i){if(!poll())return invalid("owner checkpoint stopped");auto&q=queries[i];if(!finite(q))return invalid("nonfinite/ROI bound");auto&d=out.parts[i];d.q=q;d.key=f.key;d.rgb_signature=out.rgb_signature;auto tu=u(q.angle),nv=v(q.angle);std::uint64_t start=out.probes;
   if(q.tap){auto p1=pixel(f,add(q.front,mul(nv,-3)),out.probes),p2=pixel(f,add(q.front,mul(nv,3)),out.probes);d.left=d.right=p1.blue()&&p2.blue();d.body=Support::absent;d.front_end=d.left;}
   else{

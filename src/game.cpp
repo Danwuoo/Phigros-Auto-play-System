@@ -10,6 +10,9 @@
 #include <fstream>
 #include <set>
 #include <stdexcept>
+#if defined(_WIN32) && (defined(_M_X64) || defined(__x86_64__) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2))
+#include <emmintrin.h>
+#endif
 
 namespace pas {
 const char* name(GameUi v) {
@@ -45,6 +48,69 @@ int classify(const std::uint8_t* p) {
     if (r > 190 && r > g + 45 && b > 75) return 3;
     if (r > 195 && g > 195 && b > 195 && std::max({r,g,b})-std::min({r,g,b}) < 35) return 4;
     return 0;
+}
+#ifdef PAS_GAME_COMPONENT_MASK_ORACLE_CONTROLS
+// Exists only in the independent cold control TU, never in pas_core.
+struct ComponentMaskOracleControls {
+    bool scalar_oracle=false;
+    std::uint64_t dark_blocks=0,scalar_samples=0;
+};
+thread_local ComponentMaskOracleControls component_mask_oracle_controls;
+#endif
+#if defined(_WIN32) && (defined(_M_X64) || defined(__x86_64__) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2))
+constexpr bool component_mask_dark_fast_path_enabled=true;
+bool component_mask_dark_block(const std::uint8_t* source) {
+    const auto threshold=_mm_set1_epi8(-91); // Unsigned byte 165.
+    auto excess=_mm_subs_epu8(_mm_loadu_si128(reinterpret_cast<const __m128i*>(source)),threshold);
+    excess=_mm_or_si128(excess,_mm_subs_epu8(_mm_loadu_si128(reinterpret_cast<const __m128i*>(source+16)),threshold));
+    excess=_mm_or_si128(excess,_mm_subs_epu8(_mm_loadu_si128(reinterpret_cast<const __m128i*>(source+32)),threshold));
+    return _mm_movemask_epi8(_mm_cmpeq_epi8(excess,_mm_setzero_si128()))==0xffff;
+}
+#else
+constexpr bool component_mask_dark_fast_path_enabled=false;
+#endif
+void fill_component_mask(const Frame& f,std::vector<std::uint8_t>& mask,int w,int h) {
+    constexpr int scale=2;
+    for(int y=0;y<h;++y) {
+        const auto* row=f.rgb.data()+static_cast<std::size_t>(y*scale)*f.stride;
+        auto* destination=mask.data()+static_cast<std::size_t>(y)*w;
+        int x=0;
+#ifdef PAS_GAME_COMPONENT_MASK_ORACLE_CONTROLS
+        if(component_mask_oracle_controls.scalar_oracle) {
+            for(;x<w;++x) destination[x]=static_cast<std::uint8_t>(classify(row+x*scale*3));
+            component_mask_oracle_controls.scalar_samples+=w;
+            continue;
+        }
+#endif
+#if defined(_WIN32) && (defined(_M_X64) || defined(__x86_64__) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2))
+        // Eight original scale-2 samples occupy sixteen source pixels. Read
+        // only complete 48-byte spans in this row; odd widths/tails fall back.
+        for(;x*scale+16<=f.width;x+=8) {
+            const auto* source=row+x*scale*3;
+            // All bytes <=165 implies b<=165 and r<=180 at every sample,
+            // so every original classifier branch is false, regardless of g.
+            // Unsampled pixels can only conservatively reject this shortcut.
+            if(component_mask_dark_block(source)) {
+                std::fill_n(destination+x,8,std::uint8_t{0});
+#ifdef PAS_GAME_COMPONENT_MASK_ORACLE_CONTROLS
+                ++component_mask_oracle_controls.dark_blocks;
+#endif
+            } else {
+                for(int i=0;i<8;++i) destination[x+i]=static_cast<std::uint8_t>(classify(source+i*scale*3));
+#ifdef PAS_GAME_COMPONENT_MASK_ORACLE_CONTROLS
+                component_mask_oracle_controls.scalar_samples+=8;
+#endif
+            }
+        }
+#endif
+#ifdef PAS_GAME_COMPONENT_MASK_ORACLE_CONTROLS
+        const int scalar_tail=w-x;
+#endif
+        for(;x<w;++x) destination[x]=static_cast<std::uint8_t>(classify(row+x*scale*3));
+#ifdef PAS_GAME_COMPONENT_MASK_ORACLE_CONTROLS
+        component_mask_oracle_controls.scalar_samples+=scalar_tail;
+#endif
+    }
 }
 // Recover long, currently visible ridges when a white crossing joins them
 // into one broad component. This yields line candidates only; association
@@ -155,9 +221,7 @@ std::vector<Component> components(const Frame& f, bool& capacity,
     const auto pixels=static_cast<std::size_t>(w)*h;
     if(pixels>2'073'600) {capacity=false;return {};}
     mask.resize(pixels);
-    for(int y=0;y<h;++y) for(int x=0;x<w;++x)
-        mask[static_cast<std::size_t>(y)*w+x]=static_cast<std::uint8_t>(classify(
-            f.rgb.data()+static_cast<std::size_t>(y*scale)*f.stride+x*scale*3));
+    fill_component_mask(f,mask,w,h);
     if(queue.capacity()<pixels) queue.reserve(pixels);
     queue.clear();
     std::vector<Component> output;

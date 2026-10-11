@@ -1,5 +1,6 @@
 #include "owner_candidate_step.hpp"
 #include "../../bvi_owner_cooperative/extract.hpp"
+#include "../../bvi_owner_cooperative/cold_verification/observation_equal.hpp"
 #include "relation_policy.hpp"
 #include "pas/candidate_admission.hpp"
 #include <fstream>
@@ -38,6 +39,32 @@ void equivalence(Tests& t){
  std::size_t stops=0;const auto stopped=bvi::owner_cooperative::extract(donor,view,queries,lines,[&](){return ++stops<3;});t.check("abort_during_full_hash",stopped.invalid&&stopped.reason=="owner checkpoint stopped"&&stopped.probes==64*1280&&stops==3);
  bool threw=false;try{bvi::owner_cooperative::extract(donor,view,queries,lines,[]()->bool{throw std::runtime_error("checkpoint fault");});}catch(const std::runtime_error&){threw=true;}t.check("checkpoint_fault_propagates",threw);
 }
+void uniform_equivalence(Tests& t){
+ bvi::Candidate donor;const bvi::Key key{{1,1,1,1},10*ms,10*ms,1,true};
+ const std::array<bvi::Query,4> queries={bvi::Query{{400,500},100,300,0,false},bvi::Query{{500,500},100,8,0,true},bvi::Query{{600,400},80,260,.7,false},bvi::Query{{800,500},70,400,-.6,false}};
+ const std::array<bvi::Line,2> lines={bvi::Line{{640,500},0,1200,7},bvi::Line{{800,400},.7,500,8}};
+ const auto parity=[&](const std::string& id,int width,int height,int padding,std::uint8_t fill,bool mixed){
+  const int stride=width*3+padding;std::vector<std::uint8_t> storage(static_cast<std::size_t>(stride)*height+3,fill);auto rgb=std::span<std::uint8_t>(storage).subspan(3);
+  if(mixed)for(std::size_t i=0;i<rgb.size();++i)if((i/8)%3==1)rgb[i]=static_cast<std::uint8_t>((i*37+i/67)%256);
+  const bvi::View view{rgb,width,height,stride,key};const auto expected=donor.extract(view,queries,lines);std::size_t polls=0;
+  const auto actual=bvi::owner_cooperative::extract(donor,view,queries,lines,[&](){++polls;return true;});
+  t.check(id,bvi::owner_cooperative::cold_verification::observation_equal(expected,actual)&&polls>=static_cast<std::size_t>((height+31)/32)+queries.size());
+ };
+ for(const auto byte:{0,30,255})parity("uniform_full_rgb_donor_"+std::to_string(byte),1280,720,8,static_cast<std::uint8_t>(byte),false);
+ parity("mixed_uniform_and_scalar_blocks_donor",1280,720,8,30,true);
+ for(const auto width:{1,2,5,7,8,9,1279})parity("unaligned_row_tail_donor_"+std::to_string(width),width,33,5,30,true);
+ constexpr int width=1279,stride=width*3+5,height=33;std::vector<std::uint8_t> rgb(stride*height,30);const bvi::View view{rgb,width,height,stride,key};
+ const auto before=bvi::owner_cooperative::extract(donor,view,queries,lines,[](){return true;});
+ for(int y=0;y<height;++y)for(int x=width*3;x<stride;++x)rgb[static_cast<std::size_t>(y)*stride+x]=255;
+ const auto padded=bvi::owner_cooperative::extract(donor,view,queries,lines,[](){return true;});
+ t.check("uniform_padding_never_enters_signature",bvi::owner_cooperative::cold_verification::observation_equal(before,padded));
+ rgb[static_cast<std::size_t>(height-1)*stride+width*3-1]^=1;
+ const auto changed=bvi::owner_cooperative::extract(donor,view,queries,lines,[](){return true;});
+ t.check("uniform_last_rgb_byte_is_read",changed.rgb_signature!=padded.rgb_signature&&bvi::owner_cooperative::cold_verification::observation_equal(changed,donor.extract(view,queries,lines)));
+ std::vector<std::uint8_t> full(3840*720,30);const bvi::View full_view{full,1280,720,3840,key};std::size_t polls=0;
+ const auto stopped=bvi::owner_cooperative::extract(donor,full_view,queries,lines,[&](){return ++polls<3;});const bvi::View prefix{{full.data(),3840*64},1280,64,3840,key};
+ t.check("uniform_abort_preserves_row_signature_and_probes",stopped.invalid&&stopped.reason=="owner checkpoint stopped"&&stopped.probes==64*1280&&polls==3&&stopped.rgb_signature==donor.extract(prefix,{},{}).rgb_signature);
+}
 void pending_up(Tests& t){Pixels pixels;Context c;t.check("real_tap_down_setup",c.start(pixels)&&c.backend.downs==1);c.clock.set(12*ms);std::size_t polls=0;
  const OwnerCheckpoint checkpoint{c.clock,[&](){++polls;c.clock.set(c.clock.now_ns()+ms);return c.step.poll();}};const auto evaluated=c.step.hook.evaluate(pixels.frame,pixels.batch,pixels.scene,c.step.ledger,12*ms,&checkpoint);
  const auto up=std::find_if(c.events.begin(),c.events.end(),[](const auto& e){return !e.release&&e.issued.phase==Phase::up;});
@@ -54,4 +81,4 @@ void uncertainty(Tests& t){Pixels pixels;Context c;t.check("unknown_up_setup",c.
  t.check("unknown_injection_aborts_extraction",!evaluated.valid&&c.step.blocked()&&polls==16&&c.backend.ups==1);const auto downs=c.backend.downs;c.clock.set(60*ms);t.check("unknown_result_no_down_or_up_retry",!c.step.poll()&&c.backend.downs==downs&&c.backend.ups==1);
  Context d;d.backend.failure=ReplayBackend::Failure::unknown_down;t.check("unknown_down_setup",!d.start(pixels)&&d.backend.downs==1);d.clock.set(12*ms);t.check("unknown_down_remains_blocked",!d.step.accept(pixels.frame,pixels.batch,pixels.scene,true)&&d.backend.downs==1);
 }
-int main(int argc,char** argv){try{if(argc!=2||std::filesystem::exists(argv[1]))throw std::runtime_error("fresh output");Tests t;equivalence(t);pending_up(t);expiry(t);uncertainty(t);t.check("live_entry_stays_closed",CandidateLiveAdmission{}.state()==CandidateLiveAdmission::State::unqualified);J report={{"schema","pas.owner-cooperative-checkpoint-tests.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"device_endpoints",0}};std::ofstream out(argv[1]);out<<report.dump(2)<<'\n';if(!out)throw std::runtime_error("write");std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<'\n';return t.failed?1:0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}
+int main(int argc,char** argv){try{if(argc!=2||std::filesystem::exists(argv[1]))throw std::runtime_error("fresh output");Tests t;equivalence(t);uniform_equivalence(t);pending_up(t);expiry(t);uncertainty(t);t.check("live_entry_stays_closed",CandidateLiveAdmission{}.state()==CandidateLiveAdmission::State::unqualified);J report={{"schema","pas.owner-cooperative-checkpoint-tests.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"device_endpoints",0}};std::ofstream out(argv[1]);out<<report.dump(2)<<'\n';if(!out)throw std::runtime_error("write");std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<'\n';return t.failed?1:0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

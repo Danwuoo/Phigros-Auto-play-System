@@ -1,7 +1,8 @@
 param([Parameter(Mandatory)][string]$BaseBinding,
-      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main44')
+      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main45')
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'common.ps1')
+. (Join-Path $PSScriptRoot 'component_delta.ps1')
 $script:maintenancePath=$PSCommandPath
 $Operation='build'
 $baseCommit='aa9de3c13b92e533b1b0e9cb0312cf81e5d2f9de'
@@ -37,8 +38,10 @@ $candidate=ReaderRead $candidatePin
 if($candidate.schema -cne 'pas.narrow-noise-repair-build.v1' -or $candidate.source_commit -cne $head -or $candidate.configuration -cne 'release' -or $candidate.scope -cne 'noise_and_unrun_abba_only' -or $candidate.base_source_commit -cne $baseCommit -or $candidate.maintenance_only_amendment -or $candidate.whole_candidate_qualification -ne $false -or $candidate.live_ready -ne $false -or $candidate.device_operations -ne 0){throw 'same clean source narrow candidate required without qualification'}
 $candidateSource=ReaderRead $candidate.source_manifest
 $candidateCore=ReaderRead $candidate.core_build_plan
-$candidateTargets=@('current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')
-if($candidateSource.schema -cne 'pas.cooperative-source.v1' -or $candidateSource.source_commit -cne $head -or $candidateSource.dirty -ne $false -or $candidateCore.schema -cne 'pas.narrow-noise-repair-core-build-plan.v1' -or $candidateCore.source_commit -cne $head -or $candidateCore.formal_rebuilt -ne $false -or $candidateCore.translation_units -ne 4 -or $candidateCore.producer_wait_controls_count -ne 43 -or @($candidateCore.delta_targets).Count -ne 4 -or @($candidateCore.delta_targets|Sort-Object -Unique).Count -ne 4 -or @(Compare-Object ($candidateTargets|Sort-Object) (@($candidateCore.delta_targets)|Sort-Object)).Count){throw 'same source four-TU narrow candidate metadata required'}
+$cpuDelta=$candidate.component_cpu_delta -eq $true
+$candidateTargets=if($cpuDelta){ComponentDeltaTargets}else{@('current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')}
+$candidateTUs=if($cpuDelta){32}else{4}
+if($candidateSource.schema -cne 'pas.cooperative-source.v1' -or $candidateSource.source_commit -cne $head -or $candidateSource.dirty -ne $false -or $candidateCore.schema -cne 'pas.narrow-noise-repair-core-build-plan.v1' -or $candidateCore.source_commit -cne $head -or $candidateCore.formal_rebuilt -ne $cpuDelta -or $candidateCore.translation_units -ne $candidateTUs -or $candidateCore.producer_wait_controls_count -ne 43 -or @($candidateCore.delta_targets).Count -ne $candidateTargets.Count -or @($candidateCore.delta_targets|Sort-Object -Unique).Count -ne $candidateTargets.Count -or @(Compare-Object ($candidateTargets|Sort-Object) (@($candidateCore.delta_targets)|Sort-Object)).Count){throw 'same source explicit same-source narrow candidate metadata required'}
 # The existing whole-source manifest is the source identity of both builds.
 # Candidate binaries and its five imported libraries are not reader inputs.
 $tracked=@(& git -c core.quotePath=false -C $repo ls-files|Where-Object {$_ -cne 'apps/runtime_x11_p/aux/CMakeLists.txt' -and $_ -cmatch '(\.(cpp|hpp|h|ps1|proto|in)$|(^|/)CMakeLists\.txt$)'})
@@ -71,9 +74,11 @@ while($pending.Count){
  }
 }
 $candidateMetadata=@($candidatePin,$candidate.source_manifest,$candidate.core_build_plan,$candidate.dependency_manifest,$candidate.configure_receipt,$candidate.configure_input_closure)+@($candidate.build_receipts)+@($candidate.build_input_closures)+@($candidate.controls_report,$candidate.controls_receipt,$candidate.controls_input_closure,$candidate.affinity_controls_report,$candidate.affinity_controls_receipt,$candidate.affinity_controls_input_closure,$candidate.wait_controls_report,$candidate.wait_controls_receipt,$candidate.wait_controls_input_closure)
+if($cpuDelta){foreach($row in $candidate.component_controls){$candidateMetadata+=@($row.report,$row.receipt,$row.input_closure)}}
 foreach($entry in $candidateMetadata){CheckEntry $entry}
 $null=ReaderReceipt $candidate.configure_receipt
 foreach($entry in $candidate.build_receipts){$null=ReaderReceipt $entry}
+if($cpuDelta){foreach($row in $candidate.component_controls){$null=ReaderReceipt $row.receipt}}
 $null=ReaderReceipt $candidate.controls_receipt;$null=ReaderReceipt $candidate.affinity_controls_receipt;$null=ReaderReceipt $candidate.wait_controls_receipt
 
 $originalDependencies=ReaderRead $candidate.dependency_manifest
@@ -143,7 +148,7 @@ $controlsStage='test-prelive-narrow-reader-'+$Attempt+'-controls'
 $Operation='tests'
 Native $controlsStage $controlsPin.path @($controlsReport) @($inputs+$files.path+$outputs.path+$configureReceipt.path+$configureClosure.path+$buildReceipt.path+$buildClosure.path) 900
 $report=Get-Content -LiteralPath $controlsReport -Raw|ConvertFrom-Json
-if($report.schema -cne 'pas.qualification-reader-controls.v1' -or $report.failed -ne 0 -or $report.cases_count -ne 46 -or $report.cases.Count -ne 46 -or @($report.cases|Where-Object {$_.pass -ne $true}).Count -or $report.qualification_issued -ne $false -or $report.live_ready -ne $false -or $report.device_operations -ne 0){throw 'all 46 original and narrow preflight reader controls required without qualification'}
+if($report.schema -cne 'pas.qualification-reader-controls.v1' -or $report.failed -ne 0 -or $report.cases_count -ne 71 -or $report.cases.Count -ne 71 -or @($report.cases|Where-Object {$_.pass -ne $true}).Count -or $report.qualification_issued -ne $false -or $report.live_ready -ne $false -or $report.device_operations -ne 0){throw 'all 71 original and narrow preflight reader controls required without qualification'}
 $controlsReceipt=Binding (Join-Path $out ($controlsStage+'/'+$controlsStage+'-verification.json'))
 $controlsClosure=ReaderClosure $controlsStage
 foreach($entry in $outputs){CheckEntry $entry}

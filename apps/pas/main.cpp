@@ -1,5 +1,6 @@
 #include "pas/core.hpp"
 #include "pas/runtime.hpp"
+#include "pas/candidate_receipts.hpp"
 #include "pas/game.hpp"
 #include "pas/game_tracking.hpp"
 #include "pas/game_dataset.hpp"
@@ -365,10 +366,25 @@ int main(int argc, char** argv) {
     buffer_cmd->add_option("--consumer-delay-ms", buffer_consumer_delay_ms);
     buffer_cmd->add_option("--log", buffer_log);
     std::string config_path, run_mode = "observe";
-    std::string score_config,score_capability;
+    std::string score_config,score_capability,score_workspace,score_admission_input,score_admission_sha;
     auto* score_cmd=app.add_subcommand("score-session","Single current-candidate round; no saved diagnostics, images or recording");
     score_cmd->add_option("--config",score_config)->required();
     score_cmd->add_option("--capability",score_capability)->required();
+    score_cmd->add_option("--workspace",score_workspace)->required();
+    score_cmd->add_option("--admission-input",score_admission_input)->required();
+    score_cmd->add_option("--admission-sha256",score_admission_sha)->required();
+    std::string candidate_config,candidate_capability,candidate_workspace,candidate_input,candidate_sha;
+    auto* candidate_preflight_cmd=app.add_subcommand("candidate-preflight","Read-only pinned candidate receipts; no device discovery or admission");
+    candidate_preflight_cmd->add_option("--config",candidate_config)->required();
+    candidate_preflight_cmd->add_option("--capability",candidate_capability)->required();
+    candidate_preflight_cmd->add_option("--workspace",candidate_workspace)->required();
+    candidate_preflight_cmd->add_option("--admission-input",candidate_input)->required();
+    candidate_preflight_cmd->add_option("--admission-sha256",candidate_sha)->required();
+    std::string collection_workspace,collection_config,collection_capability,collection_input,collection_sha,collection_output,collection_package;
+    auto* collect_device_cmd=app.add_subcommand("candidate-collect-device","Collect current pinned device/profile metadata after complete cold validation");
+    auto* collect_rpc_cmd=app.add_subcommand("candidate-collect-capture-rpc","Collect bounded capture/RPC statistics using the existing capture bench windows");
+    auto* collect_physical_cmd=app.add_subcommand("candidate-collect-physical","Collect one current-owner observation or finalize its subsequent independent review");
+    for(auto* command:{collect_device_cmd,collect_rpc_cmd,collect_physical_cmd}){command->add_option("--workspace",collection_workspace)->required();command->add_option("--config",collection_config)->required();command->add_option("--capability",collection_capability)->required();command->add_option("--admission-input",collection_input)->required();command->add_option("--admission-sha256",collection_sha)->required();command->add_option("--output",collection_output)->required();command->add_option("--game-package",collection_package)->required();}
     std::string manual_config,manual_capability;
     bool manual_no_preview=false,manual_pixel_clips=false,manual_full_recording=false,manual_one_round=false;
     double round_watchdog_s=0;
@@ -686,7 +702,13 @@ int main(int argc, char** argv) {
             std::cout << fake_capture_bench(buffer_duration_s, 0, buffer_interval_ms,
                 64, 64, buffer_consumer_delay_ms, false, buffer_log,
                 "buffer_bench_native").dump(2) << '\n';
-        else if (*score_cmd) run_current_candidate_score_only_session(CandidateLiveAdmission{},score_config,score_capability);
+        else if (*collect_device_cmd||*collect_rpc_cmd||*collect_physical_cmd){const CandidateReceiptCollectionRequest request{{collection_workspace,collection_input,collection_config,collection_capability,collection_sha},collection_output,collection_package};if(*collect_device_cmd)collect_candidate_device_receipt(request);else if(*collect_rpc_cmd)collect_candidate_capture_rpc_receipt(request);else collect_candidate_physical_receipt(request);}
+        else if (*candidate_preflight_cmd) {
+            const auto report=inspect_candidate_receipts({candidate_workspace,candidate_input,candidate_config,candidate_capability,candidate_sha});
+            std::cout<<report.dump(2)<<'\n';return report.at("pass").get<bool>()?0:2;
+        }
+        else if (*score_cmd) run_current_candidate_score_only_session(
+            load_candidate_score_admission({score_workspace,score_admission_input,score_config,score_capability,score_admission_sha}),score_config,score_capability);
         else if (*manual_cmd) run_manual_session(manual_config,manual_capability,manual_no_preview,
             static_cast<Nanoseconds>(std::llround(round_watchdog_s*1e9)),manual_pixel_clips,manual_full_recording,manual_one_round);
         else if (*run_cmd) {

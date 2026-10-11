@@ -1,5 +1,7 @@
 # 2026-10-11 噪聲修補與縮小重驗範圍
 
+2026-10-11 最新補充：所有可冷完成的啟動前開發／測試仍需完成；明確fresh formal／action CPU delta、validator及正式binary接線見[本輪契約](CPU_COMPONENT_REPAIR_20261011.md)。原75／production9只歷史前提，不全盤重跑。main44失敗已保存；完成後停在emulator邊界，不開新thread。
+
 使用者原文：「修復完不用全盤重跑，跑噪聲檢查就好，趕快完成」；其後補充
 「但是你還是要完成到實機 ready 前的所有測試與開發」。已通過的三配置75組、
 完整source/build圖3、3063 prefix、fault4、production9不全盤重跑。

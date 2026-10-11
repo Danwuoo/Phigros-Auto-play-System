@@ -1,5 +1,7 @@
 # main 的 emulator 啟動前工作包 — 2026-10-08
 
+2026-10-11 最新續作：使用者要求完成全部啟動前可冷軟體；CPU等值修補新增明確32TU／兩fresh library分支，validator及正式pas.exe接線同步完成。原75／production9不重跑；新noise通過後補未跑ABBA，完成後不開新thread。見[修補契約](../../docs/research/live-readiness-20261007/CPU_COMPONENT_REPAIR_20261011.md)。
+
 # 2026-10-11 最新縮小重驗
 
 main42／`96c8c2a` consumer HIGHEST(2)候選AA12 validity全PASS、producer／publication各12筆零超期，

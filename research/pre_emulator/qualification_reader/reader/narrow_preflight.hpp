@@ -1,6 +1,7 @@
 #pragma once
 #include "cooperative_build.hpp"
 #include "cost_reader.hpp"
+#include "component_delta.hpp"
 #include <functional>
 
 // Existing receipt projection, not a new qualification or device format.
@@ -186,11 +187,18 @@ class Preflight final {
         source_=object(delta_.at("source_manifest"));w::require(source_.at("schema")=="pas.cooperative-source.v1"&&source_.at("source_commit")==execution_&&!source_.at("dirty").get<bool>(),"execution source manifest identity");
         std::map<std::string,J> current;for(const auto& f:source_.at("files")){pin_shape(f);w::require(current.emplace(relative(f),f).second,"unique execution source member");}
         r_.entries(source_.at("files"));
-        for(const auto& [path,old]:base_sources_)if(path.starts_with("src/")||path.starts_with("include/")||path=="CMakeLists.txt"){w::require(current.contains(path)&&same_pin(current.at(path),old),"formal source changed from original main32");r_.bound(current.at(path));}
         const auto plan=object(delta_.at("core_build_plan"));
-        const bool active_tail=plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls","worker_affinity_controls","producer_wait_tests"});
+        const bool component_cpu=delta_.value("component_cpu_delta",false);
+        w::require(plan.at("schema")=="pas.narrow-noise-repair-core-build-plan.v1"&&plan.at("source_commit")==execution_&&plan.at("base_source_commit")==base_commit,"narrow plan execution/base source join");
+        if(component_cpu)component_delta::declaration(delta_,plan,current,base_sources_);
+        else{
+            w::require(!plan.value("component_cpu_delta",false)&&!delta_.value("formal_rebuilt",false),"legacy unchanged-formal branch cannot claim CPU rebuild");
+            for(const auto* field:{"formal_changed_paths","rebuilt_static_inputs","linked_static_inputs","component_controls"})w::require(!delta_.contains(field),"CPU-only fields cannot enter unchanged-formal branch");
+            for(const auto& [path,old]:base_sources_)if(path.starts_with("src/")||path.starts_with("include/")||path=="CMakeLists.txt"){w::require(current.contains(path)&&same_pin(current.at(path),old),"formal source changed from original main32");r_.bound(current.at(path));}
+        }
+        const bool active_tail=component_cpu||plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls","worker_affinity_controls","producer_wait_tests"});
         const bool affinity=active_tail||plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls","worker_affinity_controls"});
-        w::require(plan.at("schema")=="pas.narrow-noise-repair-core-build-plan.v1"&&plan.at("source_commit")==execution_&&plan.at("base_source_commit")==base_commit&&!plan.at("formal_rebuilt").get<bool>()&&(affinity||plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls"}))&&(active_tail?plan.at("translation_units")==4:affinity?plan.at("translation_units")==3:!plan.contains("translation_units")||plan.at("translation_units")==2),"declared narrow harness targets with unchanged formal source");
+        if(!component_cpu)w::require(!plan.at("formal_rebuilt").get<bool>()&&(affinity||plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls"}))&&(active_tail?plan.at("translation_units")==4:affinity?plan.at("translation_units")==3:!plan.contains("translation_units")||plan.at("translation_units")==2),"declared narrow harness targets with unchanged formal source");
         w::require(delta_.at("base_static_inputs").size()==5&&plan.at("base_static_inputs")==delta_.at("base_static_inputs"),"five exact imported static inputs");for(const auto& f:delta_.at("base_static_inputs")){w::require(base_files_.contains(key(f))&&same_pin(f,base_files_.at(key(f))),"original formal/static library binding");r_.bound(f);}
         const auto deps=object(delta_.at("dependency_manifest"));w::require(deps.at("source_commit")==base_commit&&same_pin(delta_.at("dependency_manifest"),base.at("dependency_manifest")),"original dependency manifest provenance");
         if(delta_.contains("selected_dependency_manifest")){const auto selected=object(delta_.at("selected_dependency_manifest"));w::require(selected.at("schema")=="pas.narrow-noise-repair-dependency-selection.v1"&&same_pin(selected.at("original_dependency_manifest"),delta_.at("dependency_manifest")),"actual narrow dependency selection");r_.entries(selected.at("files"));}
@@ -204,7 +212,7 @@ class Preflight final {
             const auto proof=object(delta_.at("amendment_proof"));w::require(proof.at("schema")=="pas.narrow-noise-maintenance-amendment.v1"&&proof.at("source_commit")==execution_&&proof.at("compiled_source_commit")==compiled_&&proof.at("before_verified").get<bool>()&&proof.at("after_verified").get<bool>()&&proof.at("native_operations")==0&&!proof.at("controls_rerun").get<bool>()&&same_pin(proof.at("parent_repair_build"),delta_.at("parent_repair_build"))&&same_pin(proof.at("source_manifest"),delta_.at("source_manifest"))&&same_pin(proof.at("core_build_plan"),delta_.at("core_build_plan")),"maintenance-only preservation proof");
         }else w::require(execution_==compiled_,"unamended execution/compiled identity");
         r_.entries(delta_.at("files"));r_.entries(delta_.at("compiled_outputs"));
-        std::vector<Native> build_processes;for(const auto& pin:delta_.at("build_receipts"))build_processes.push_back(by_verification(pin));by_verification(delta_.at("configure_receipt"));const auto control=by_verification(delta_.at("controls_receipt"));
+        std::vector<Native> build_processes;for(const auto& pin:delta_.at("build_receipts"))build_processes.push_back(by_verification(pin));const auto configure_process=by_verification(delta_.at("configure_receipt"));const auto control=by_verification(delta_.at("controls_receipt"));
         const auto report=object(delta_.at("controls_report"));w::require(report.at("schema")=="pas.consumer-priority-tests.v1"&&report.at("assertions")==36&&report.at("checks").size()==36&&report.at("failed")==0&&report.at("pass").get<bool>()&&report.at("device_endpoints")==0&&report.at("device_operations")==0&&!report.at("live_ready").get<bool>()&&!report.at("cost_qualification").get<bool>(),"preserved original controls36");for(const auto& c:report.at("checks"))w::require(c.at("pass").get<bool>(),"consumer priority control failed");
         w::require(std::find(control.spec.at("argv").begin(),control.spec.at("argv").end(),delta_.at("controls_report").at("path"))!=control.spec.at("argv").end(),"native controls output join");
         std::map<std::string,J> compiled_sources;for(const auto& pin:compiled_manifest.at("files"))w::require(compiled_sources.emplace(relative(pin),pin).second,"unique actual compiled source pins");
@@ -223,10 +231,32 @@ class Preflight final {
             bool wait_binary=false;for(const auto& pin:delta_.at("files"))if(fs::path(pin.at("path").get<std::string>()).filename()=="producer_wait_tests.exe")wait_binary|=same_path_text(process.spec.at("exe").get<std::string>(),pin.at("path").get<std::string>());w::require(wait_binary,"actual producer wait controls image in sealed narrow runtime files");
             for(const auto& c:wait_report.at("checks"))w::require(c.at("pass").get<bool>(),"producer deadline control failed");
         }
+        if(component_cpu){
+            component_delta::libraries(delta_,plan,base_files_);r_.entries(delta_.at("linked_static_inputs"));r_.entries(delta_.at("rebuilt_static_inputs"));
+            const auto find_output=[&](const fs::path& expected)->J{const J* found=nullptr;for(const auto& pin:delta_.at("compiled_outputs"))if(same_path_text(pin.at("path").get<std::string>(),expected)){w::require(!found,"duplicate CPU graph/product output");found=&pin;}w::require(found,"missing sealed CPU graph/product output");return *found;};
+            const auto ninja=find_output(fs::path(delta_.at("build_root").get<std::string>())/"build.ninja"),cache=find_output(fs::path(delta_.at("build_root").get<std::string>())/"CMakeCache.txt");
+            const auto ninja_path=r_.bound(ninja,4*w::MiB);std::ifstream ninja_file(ninja_path,std::ios::binary);std::ostringstream ninja_text;ninja_text<<ninja_file.rdbuf();w::require(bool(ninja_file)&&ninja_text.str().size()==ninja.at("bytes"),"sealed bounded Ninja graph read");
+            const auto graph=component_delta::graph(ninja_text.str(),root_,delta_);component_delta::objects(delta_,graph);
+            const auto require_input=[&](const Native& process,const J& pin){w::require(process.inputs.contains(key(pin))&&same_pin(process.inputs.at(key(pin)),pin),"exact fresh CPU source/plan/library/object native input-closure join");};
+            const auto source_plan_join=[&](const Native& process){require_input(process,compiled_manifest_pin);require_input(process,compiled_core_plan_pin);for(const auto& [path,pin]:compiled_sources){(void)path;require_input(process,pin);}};
+            w::require(build_processes.size()==1&&delta_.at("build_input_closures").size()==1&&same_pin(configure_process.evidence.at("input_closure"),delta_.at("configure_input_closure"))&&same_pin(build_processes[0].evidence.at("input_closure"),delta_.at("build_input_closures")[0]),"exact CPU configure/build native closure projections");
+            source_plan_join(configure_process);source_plan_join(build_processes[0]);require_input(build_processes[0],ninja);require_input(build_processes[0],cache);
+            w::require(delta_.at("component_controls").is_array()&&delta_.at("component_controls").size()==4,"all four CPU semantic control native receipts");std::set<std::string> control_targets;
+            for(const auto& row:delta_.at("component_controls")){
+                w::require(row.is_object()&&row.size()==7,"exact CPU control receipt projection");const auto target=row.at("target").get<std::string>();w::require(control_targets.insert(target).second,"duplicate CPU control role");
+                const auto component_report=object(row.at("report"));component_delta::control_report(row,component_report);r_.bound(row.at("binary"));const auto process=by_verification(row.at("receipt"));
+                w::require(same_path_text(row.at("binary").at("path").get<std::string>(),fs::path(delta_.at("build_root").get<std::string>())/(target+".exe"))&&same_pin(row.at("binary"),find_output(fs::path(row.at("binary").at("path").get<std::string>())))&&
+                    process.spec.at("argv")==J::array({row.at("report").at("path")})&&same_path_text(process.spec.at("exe").get<std::string>(),row.at("binary").at("path").get<std::string>())&&same_pin(process.evidence.at("input_closure"),row.at("input_closure")),"exact CPU control image/report/command/closure join");
+                bool runtime=false;for(const auto& pin:delta_.at("files"))runtime|=same_pin(pin,row.at("binary"));w::require(runtime,"CPU control executable is sealed runtime output");
+                source_plan_join(process);for(const auto& pin:delta_.at("linked_static_inputs"))require_input(process,pin);for(const auto& pin:delta_.at("compiled_outputs"))require_input(process,pin);
+            }
+            for(const auto& row:component_delta::control_declarations())w::require(control_targets.contains(row.at("target").get<std::string>()),"missing required CPU semantic control role");
+            for(const auto& process:std::array<Native,3>{control,by_verification(delta_.at("affinity_controls_receipt")),by_verification(delta_.at("wait_controls_receipt"))}){source_plan_join(process);for(const auto& pin:delta_.at("linked_static_inputs"))require_input(process,pin);}
+        }
         for(const auto& p:delta_.at("old_configuration_proofs"))if(p.contains("archive_proof")){
             const auto proof=object(p.at("archive_proof"));w::require(proof.at("schema")=="pas.recoverable-main32-compiler-archive.v1"&&proof.at("source_commit")==base_commit&&proof.at("all_entry_SHAs_readback_verified").get<bool>()&&proof.at("originals_rechecked").get<bool>()&&same_pin(proof.at("build_binding"),p.at("build"))&&same_pin(proof.at("archive"),p.at("archive")),"preserved compiler ZIP proof");pin_shape(p.at("archive"));const fs::path archive=p.at("archive").at("path").get<std::string>();w::require(fs::is_regular_file(archive)&&fs::file_size(archive)==p.at("archive").at("bytes"),"compiler ZIP preservation existence/length");
         }
-        provenance_={{"base_formal_source_commit",base_commit},{"compiled_harness_source_commit",compiled_},{"execution_source_commit",execution_},{"consumer_priority_requested",consumer_priority_requested_},{"producer_active_tail_ns",producer_active_tail_ns_},{"formal_rebuilt",false},{"component_rebuilt",!delta_.value("maintenance_only_amendment",false)},{"old_controls_prerequisite_only",delta_.value("maintenance_only_amendment",false)},{"parent_repair_build",delta_.value("parent_repair_build",J(nullptr))},{"original_inventory",required("original_inventory")},{"narrow_build",required("narrow_build")}};
+        provenance_={{"base_formal_source_commit",base_commit},{"compiled_harness_source_commit",compiled_},{"execution_source_commit",execution_},{"consumer_priority_requested",consumer_priority_requested_},{"producer_active_tail_ns",producer_active_tail_ns_},{"formal_rebuilt",component_cpu},{"component_cpu_delta",component_cpu},{"fresh_translation_units",component_cpu?32:active_tail?4:affinity?3:2},{"rebuilt_static_targets",component_cpu?plan.at("rebuilt_static_targets"):J::array()},{"formal_changed_paths",component_cpu?delta_.at("formal_changed_paths"):J::array()},{"historical75_and_production9_prerequisite_only",true},{"component_rebuilt",!delta_.value("maintenance_only_amendment",false)},{"old_controls_prerequisite_only",delta_.value("maintenance_only_amendment",false)},{"parent_repair_build",delta_.value("parent_repair_build",J(nullptr))},{"original_inventory",required("original_inventory")},{"narrow_build",required("narrow_build")}};
     }
     CostCampaign campaign(const J& pin,bool abba){
         CostCampaign c{pin,object(pin),{}, {}};const auto& v=c.value;
