@@ -1,3 +1,5 @@
+2026-10-11 冷排程診斷工具main61／`eb6ed0b`三TU／52控制及4個Native8通過；nested Job預檢通過，但Windows預設hybrid-shutdown旗標觸發STARTUP_STOP，原128KiB ETL／STOP保留，producer尚未啟動。新工具明列該旗標，未再次錄製；current Normal3／AA12／noise18／ABBA36仍待完成，cost NOT_READY。詳見[診斷與保存](docs/research/live-readiness-20261007/COLD_SCHEDULER_DIAGNOSTIC_20261011.md)。本輪不開emulator或新thread。
+
 2026-10-11 最新 actual main57／`5dce75d`：獨立三TU／16控制及Tap／Hold／Dense各一次完整raw auditor通過；原數值皆true，Dense兩次render超期照報。這些只屬diagnostic，不能替代current Normal3或授cost／live資格。原main55正式Tap STOP保留。
 
 compiled55／`12ec055`、execution57的獨立AA r03已排除264字元source canonical錯誤：全939 exact copies使用main內短路徑，原946 snapshot保存。首Tap producer／auditor／gate Native均0、full raw integrity通過，但producer／publication超期40／40、schedule lateness最大768.03ms，原數值gate失敗而STOP，後11筆NOT_RUN；noise／ABBA未執行。詳見[實際盤點與完整保存索引](docs/research/live-readiness-20261007/MAIN57_DIAGNOSTIC_AND_AA_STATUS_20261011.md)。

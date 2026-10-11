@@ -16,6 +16,8 @@ main58／eec2167、main59／867707d及main60／fb7aa92的三TU建置及controlle
 
 main60執行的r01（原目錄標籤main58-r01）只有preflight：actual admin=true、session查詢無collision，但in_outer_job=true被原封裝一律拒絕。ETW start／stop、recording及producer Native均未執行，[原STOP及準備收據](MAIN60_SCHEDULER_PREFLIGHT_STOP_20261011.json)不改。Windows允許符合條件的nested Job；修補改為在ETW前實際Assign／readback自身256MiB process及job限制，不調整或繞過host Job。[Microsoft nested Job規則](https://learn.microsoft.com/en-us/windows/win32/procthread/nested-jobs)。controller及watchdog各持自己的Job，但共同祖先Job仍可終止兩者；不宣稱能存活host終止。新必要工具建置／52控制通過後使用全新r02輸出，不覆盖r01。
 
-目前 recording NOT_RUN、cost NOT_READY、live UNQUALIFIED。
+main61／eb6ed0b三TU／52控制及4個Native8均通過，r02 actual nested Job／collision preflight通過。StartTrace實際成功，但Windows加入預設`EVENT_TRACE_STOP_ON_HYBRID_SHUTDOWN`，mode由0x02000001成為0x02400001，原精確比較拒絕。controller退出2，StopTrace0及exact handle absence確認；final-statistics仍false。watchdog未取得owner、deadline後退出2／ttl_overrun=true照報。原128KiB ETL、STOP及準備metadata見[保存索引](MAIN61_SCHEDULER_STARTUP_STOP_20261011.json)。producer／auditor／reader均未啟動，完整量測0；實際recording attempt1，不能再稱recording NOT_RUN。
+
+修補明列官方支援的hybrid shutdown stop policy，requested／readback exact mode固定0x02400001，其餘flags與上限不變，不任意忽略未知旗標。新的必要工具／52控制仍須actual驗證；未執行第二次recording，cost NOT_READY、live UNQUALIFIED。
 
 為把75秒用於實際量測，producer的原 input-closure／capacity／params核對在session前完成，原owned guard／Native8照常執行；停止session後再做原after核對。容量以.NET逐檔enumeration加總，48GiB／minimum-free20GiB／原reserve不變；補計先前main32→base55原短路徑副本`out/s55aa03`，不重hash原大型raw／libs。

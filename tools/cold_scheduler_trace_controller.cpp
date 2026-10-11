@@ -34,7 +34,9 @@ namespace pas::cold_scheduler {
 using Json = nlohmann::json;
 namespace fs = std::filesystem;
 constexpr ULONG enable_flags = 0x10000810u;
-constexpr ULONG log_mode = EVENT_TRACE_SYSTEM_LOGGER_MODE | EVENT_TRACE_FILE_MODE_SEQUENTIAL;
+// Explicit Win8+ hybrid-shutdown behavior keeps normalized mode readback exact.
+constexpr ULONG log_mode = EVENT_TRACE_SYSTEM_LOGGER_MODE | EVENT_TRACE_FILE_MODE_SEQUENTIAL |
+    EVENT_TRACE_STOP_ON_HYBRID_SHUTDOWN;
 constexpr std::uint64_t buffer_cap = 64ull * 1024 * 1024;
 constexpr std::uint64_t file_cap = 128ull * 1024 * 1024;
 constexpr std::size_t json_cap = 65536;

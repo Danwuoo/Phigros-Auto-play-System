@@ -2,7 +2,7 @@ param([Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{40}$')][string]$FrozenHe
       [Parameter(Mandatory)][string]$ToolBinding,
       [Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{64}$')][string]$ExpectedToolBindingSha256,
       [Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{64}$')][string]$ExpectedRunnerSha256,
-      [ValidatePattern('^[a-z0-9-]{1,40}$')][string]$Attempt='main61-r02')
+      [ValidatePattern('^[a-z0-9-]{1,40}$')][string]$Attempt='main62-r03')
 $ErrorActionPreference='Stop'
 $workspace=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 . (Join-Path $workspace 'research/pre_emulator/common.ps1')
@@ -47,7 +47,7 @@ function AssertSource {Require ((& git -C $repo rev-parse HEAD) -ceq $FrozenHead
 AssertSource
 $artifact=Join-Path $repo ('out/prelive-cold-scheduler-'+$Attempt);Fresh $artifact;$null=[IO.Directory]::CreateDirectory($artifact)
 $root=Join-Path $artifact 'tap';$planPath=Join-Path $artifact 'plan.json'
-NewJson $planPath @{schema='pas.cold-scheduler-measurement-plan.v1';execution_source_commit=$FrozenHead;tool_build=$toolPin;component_build=$bindingPin;compiled_component_source_commit=$b.delta_source_commit;base_source_commit=$b.base_source_commit;scene='tap';requested=2560;cadence_ms=20;diagnostic_only=$true;single_attempt=$true;logging_mode='sequential';enable_flags=268437520;trace_duration_limit_s=75;trace_buffer_limit_bytes=67108864;trace_raw_limit_bytes=134217728;qualification_issued=$false;normal3_runs=0;AA12_runs=0;noise18_runs=0;ABBA36_runs=0;device_operations=0;live_ready=$false}
+NewJson $planPath @{schema='pas.cold-scheduler-measurement-plan.v1';execution_source_commit=$FrozenHead;tool_build=$toolPin;component_build=$bindingPin;compiled_component_source_commit=$b.delta_source_commit;base_source_commit=$b.base_source_commit;scene='tap';requested=2560;cadence_ms=20;diagnostic_only=$true;single_attempt=$true;logging_mode='sequential';log_mode=37748737;hybrid_shutdown_policy='stop';enable_flags=268437520;trace_duration_limit_s=75;trace_buffer_limit_bytes=67108864;trace_raw_limit_bytes=134217728;qualification_issued=$false;normal3_runs=0;AA12_runs=0;noise18_runs=0;ABBA36_runs=0;device_operations=0;live_ready=$false}
 $launchPath=Join-Path $artifact 'launch-plan.json'
 NewJson $launchPath @{schema='pas.cold-scheduler-launch-plan.v1';workspace=$repo;artifact_root=$artifact;execution_source_commit=$FrozenHead;launcher=$launcherPin;controller=$controller[0];component_build=$bindingPin;producer=$producer[0];session_name=('PAS-ColdScheduler-'+$Attempt);session_guid=([guid]::NewGuid().ToString());diagnostic_only=$true;live_ready=$false;device_operations=0}
 $launchPin=Binding $launchPath;$guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
@@ -73,7 +73,7 @@ try {
  Require ($ready.request_sha256 -ceq $requestPin.sha256 -and $ready.session_guid -ceq $request.session_guid -and $ready.start_qpc -eq $request.start_qpc -and $ready.deadline_qpc -eq $request.deadline_qpc -and $ready.qpc_frequency -eq $request.qpc_frequency -and $request.qpc_frequency -eq [Diagnostics.Stopwatch]::Frequency -and $request.execution_source_commit -ceq $FrozenHead) 'ready and actual request identity/time join'
  Bool $ready 'ttl_overrun' $false
  Require ($ready.observed_qpc -lt $ready.deadline_qpc -and [Diagnostics.Stopwatch]::GetTimestamp() -lt $ready.deadline_qpc) 'original shared deadline still active before producer'
- Require ($ready.instance.handle -gt 0 -and $ready.instance.clock -eq 1 -and $ready.instance.enable_flags -eq 268437520 -and $ready.instance.maximum_file_mb -eq 128 -and $ready.instance.maximum_buffers*$ready.instance.buffer_kb*1024 -le 67108864) 'actual trace flags and normalized bounds'
+ Require ($ready.instance.handle -gt 0 -and $ready.instance.clock -eq 1 -and $ready.instance.mode -eq 37748737 -and $ready.instance.enable_flags -eq 268437520 -and $ready.instance.maximum_file_mb -eq 128 -and $ready.instance.maximum_buffers*$ready.instance.buffer_kb*1024 -le 67108864) 'actual trace flags and normalized bounds'
  $phase='producer'
  try {& $pwsh -NoProfile -File (Join-Path $repo 'research/main_consolidation/stage.ps1') -Parameters $producerParams;Require ($LASTEXITCODE -eq 0) 'original owned producer wrapper exit';Receipt $producerStage;$producerEvidence=ProcessEvidence $producerStage}
  finally {if(-not(Test-Path -LiteralPath (Join-Path $artifact 'stop.json'))){AtomicJson (Join-Path $artifact 'stop.json') @{schema='pas.cold-scheduler-trace-stop.v1';request_sha256=$ready.request_sha256;session_guid=$ready.session_guid;handle=$ready.instance.handle}}}
