@@ -29,6 +29,10 @@ private:
     friend CandidateCollectionInputs prepare_candidate_collection(const CandidateAdmissionRequest&);
 };
 CandidateCollectionInputs prepare_candidate_collection(const CandidateAdmissionRequest&);
+// File-only join to the input-closure verification output, distinct from the
+// owned native process verification. This shape check creates no permit.
+bool candidate_native_closure_output_valid(const nlohmann::json& root,
+    const nlohmann::json& proof) noexcept;
 class CandidatePhysicalPermit final {
 public:CandidatePhysicalPermit()=default;
 private:

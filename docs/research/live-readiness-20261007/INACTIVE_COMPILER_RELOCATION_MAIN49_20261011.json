@@ -1,0 +1,86 @@
+{
+  "schema": "pas.main49-superseded-cold-component-index.v1",
+  "historical_source_commit": "bffd61f37f7539db701b24926393ff94895652fd",
+  "cpu_component_build": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-evaluation-main49\\build-binding.json",
+    "bytes": 60252,
+    "sha256": "21b1c64c96fe8254d87c33b3b43156583b66660df17ee530204b5672f1110b33"
+  },
+  "original_preservation_record": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main49-superseded-cpu-preservation.json",
+    "bytes": 32258,
+    "sha256": "05ffe3e3d73299390a8cff0c19f269f2a61051b8ce7cf42023861d402c652f3f"
+  },
+  "complete_source_snapshot": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\source-bffd61f-main49-snapshot\\snapshot.json",
+    "bytes": 597037,
+    "sha256": "7ca740ff50c1984b7a2cde4dbd6fcda759836643b96a2718de5d0c285c9aa258"
+  },
+  "closure_review": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main48-collection-handoff-readonly-review.json",
+    "bytes": 6176,
+    "sha256": "b7d3a83b21c408c18ca7b30659764517e702be2aa9c6717f9a053659fb0b7db5"
+  },
+  "archive_result": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main49\\result.json",
+    "bytes": 2384,
+    "sha256": "82953a862307ab992e2904ea19d990cf52078c4a14b60875b91965af2c2ea869"
+  },
+  "full_original_manifest": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main49\\original-file-manifest.json",
+    "sha256": "30ec7c04af94ff147f6b9fa0395a73eda691db14d95bd304daa1a1e026e61e88",
+    "bytes": 31742
+  },
+  "archives": [
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main49",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main49\\flat-prelive-noise-repair-main49.proof.json",
+        "sha256": "e4c5ee77fa809ccdccf0b8501fa8dbf237ade2267431b9a1f4fa1873860c1a85",
+        "bytes": 30406
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main49\\flat-prelive-noise-repair-main49.zip",
+        "sha256": "84477a5b87fc84fe3650c2350036aeb6d5df0c40aef8d38d42cf46a6013302c3",
+        "bytes": 75090192
+      },
+      "original_files": 63,
+      "original_bytes": 513438120
+    }
+  ],
+  "root_count": 1,
+  "file_count": 63,
+  "original_bytes": 513438120,
+  "archive_bytes": 75090192,
+  "retained_bytes_reclaimed": 438277391,
+  "before": {
+    "cap": 51539607552,
+    "minimum_free": 21474836480,
+    "bytes": 40350512517,
+    "free": 224769490944
+  },
+  "after": {
+    "cap": 51539607552,
+    "minimum_free": 21474836480,
+    "bytes": 39912235126,
+    "free": 225199136768
+  },
+  "all_entry_SHAs_readback_verified": true,
+  "originals_rechecked": true,
+  "original_files_removed": true,
+  "later_main49_phases": {
+    "reader": "NOT_RUN",
+    "production": "NOT_RUN",
+    "normal3": "NOT_RUN",
+    "AA12": "NOT_RUN",
+    "noise18": "NOT_RUN",
+    "ABBA36": "NOT_RUN"
+  },
+  "runtime_failure_observed": false,
+  "superseded_reason": "Actual Native8 input closure output target mismatch diagnosed by read-only producer/parser review; source fix required before production/cost.",
+  "restore_required_for_original_paths_and_source": true,
+  "new50_reuses49_compiler_products": false,
+  "qualification_issued": false,
+  "device_operations": 0,
+  "live_ready": false
+}

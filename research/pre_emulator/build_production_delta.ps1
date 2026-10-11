@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main49',[Parameter(Mandatory)][string]$NoiseRepairBinding)
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main50',[Parameter(Mandatory)][string]$NoiseRepairBinding)
 . (Join-Path $PSScriptRoot 'common.ps1')
 $script:maintenancePath=$PSCommandPath
 LoadBuilds 'main32' $NoiseRepairBinding
@@ -217,7 +217,7 @@ foreach($name in @('candidate_admission_controls','candidate_receipt_collector_c
   foreach($check in $value.checks){if($check.pass -isnot [bool] -or -not $check.pass){throw 'every admission control must pass'}}
  }
  if($name -ceq 'candidate_receipt_collector_controls'){
-  if($value.schema -cne 'pas.candidate-receipt-collector-controls.v1' -or $value.assertions -ne 77 -or $value.pass -isnot [bool] -or -not $value.pass -or $value.qualification_issued -isnot [bool] -or $value.qualification_issued -or @($value.checks).Count -ne 77 -or $value.synthetic_fixture_only -isnot [bool] -or -not $value.synthetic_fixture_only -or $value.device_endpoints -ne 0 -or $value.gameplay_files_created -ne 0){throw 'all77 bounded synthetic collector controls without qualification required'}
+  if($value.schema -cne 'pas.candidate-receipt-collector-controls.v1' -or $value.assertions -ne 85 -or $value.pass -isnot [bool] -or -not $value.pass -or $value.qualification_issued -isnot [bool] -or $value.qualification_issued -or @($value.checks).Count -ne 85 -or $value.synthetic_fixture_only -isnot [bool] -or -not $value.synthetic_fixture_only -or $value.device_endpoints -ne 0 -or $value.gameplay_files_created -ne 0){throw 'all85 bounded synthetic collector controls without qualification required'}
   $ids=@();foreach($check in $value.checks){if($check.pass -isnot [bool] -or -not $check.pass -or $check.id -in $ids){throw 'every collector control must pass with a unique id'};$ids+=@($check.id)}
  }
  if($name -ceq 'production_entry_controls' -and ($value.schema -cne 'pas.production-entry-closed-controls.v1' -or $value.assertions -ne 13 -or -not $value.actual_production_function_called)){throw 'actual production closed entry13 required'}

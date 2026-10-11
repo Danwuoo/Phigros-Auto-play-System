@@ -1,6 +1,6 @@
 param([Parameter(Mandatory)][string]$ProductionBuildBinding,
       [Parameter(Mandatory)][string]$NoiseRepairBinding,
-      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main49')
+      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main50')
 . (Join-Path $PSScriptRoot 'common.ps1')
 # Keep the complete existing receipt/helper set in this script's scope. A
 # dot-source only inside LoadBuilds would lose its local helpers on return.
@@ -104,7 +104,7 @@ foreach($target in $expectedControls){
    NoiseRepairRequire ($value.schema -ceq 'pas.candidate-admission-controls.v1' -and $value.assertions -eq 82 -and @($value.checks).Count -eq 82 -and $value.pass -is [bool] -and $value.pass -and $value.synthetic_fixture_only -is [bool] -and $value.synthetic_fixture_only -and $value.gameplay_files_created -eq 0) 'all82 bounded admission controls'
    foreach($check in $value.checks){NoiseRepairRequire ($check.pass -is [bool] -and $check.pass) 'actual admission control PASS'}
   }elseif($target -ceq 'candidate_receipt_collector_controls'){
-   NoiseRepairRequire ($value.schema -ceq 'pas.candidate-receipt-collector-controls.v1' -and $value.pass -is [bool] -and $value.pass -and ($value.assertions -is [int] -or $value.assertions -is [long]) -and $value.assertions -eq 77 -and @($value.checks).Count -eq 77 -and $value.synthetic_fixture_only -is [bool] -and $value.synthetic_fixture_only -and $value.device_endpoints -eq 0 -and $value.gameplay_files_created -eq 0) 'all77 bounded synthetic-only current candidate collector controls'
+   NoiseRepairRequire ($value.schema -ceq 'pas.candidate-receipt-collector-controls.v1' -and $value.pass -is [bool] -and $value.pass -and ($value.assertions -is [int] -or $value.assertions -is [long]) -and $value.assertions -eq 85 -and @($value.checks).Count -eq 85 -and $value.synthetic_fixture_only -is [bool] -and $value.synthetic_fixture_only -and $value.device_endpoints -eq 0 -and $value.gameplay_files_created -eq 0) 'all85 bounded synthetic-only current candidate collector controls'
    $ids=@{};foreach($check in $value.checks){NoiseRepairRequire ($check.id -is [string] -and $check.id -and -not $ids.ContainsKey($check.id) -and $check.pass -is [bool] -and $check.pass) 'unique actual collector control PASS';$ids[$check.id]=$true}
   }else{
    NoiseRepairRequire ($value.schema -ceq 'pas.production-entry-closed-controls.v1' -and $value.assertions -eq 13 -and @($value.checks).Count -eq 13 -and $value.actual_production_function_called -is [bool] -and $value.actual_production_function_called) 'all13 actual closed production entry controls'

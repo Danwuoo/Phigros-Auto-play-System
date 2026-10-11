@@ -4,6 +4,19 @@
 
 ## 現行方向
 
+2026-10-11 最新：main49／`bffd61f` 必要CPU32及七control executions完成，保留原binary／Native／source快照；
+reader／production／normal3／AA／noise／ABBA均未跑。只讀交接核對找到actual factory的
+Native8 closure root.verification_output誤比process verification；正式producer實際指
+input_closure.path。原actual COMPLETE metadata由舊parser拒絕，僅記憶體改此join後接受；
+這是診斷，不冒稱main49 runtime失敗或新qualification。main50用既有TU共享file-only
+helper修正output join，保留其餘source／seal／denominator／before-after檢查；collector
+77＋8＝85必要正反控制，admission82／entry13／score-only4不改。原component及compiler
+逐entry ZIP／原SHA讀回保留，舊路徑重驗須恢復exact bytes與原source。仍須fresh必要
+CPU32／reader2／production52與受影響控制、normal3、AA12／noise18及未跑ABBA36，再做
+完整readonly。最新完成noise仍main44的6／18 adequate、12不足；ABBA NOT_RUN。
+不重跑原75／production9，不開emulator或新thread，完成到裝置邊界後停止。
+
+
 2026-10-11 最新：main48／`3d4c050` CPU32／584 controls、reader2／81 controls及readonly前提核對通過；
 production core／action／emulator／bench通過，但entry的collector連結LNK2019／LNK1120：
 wrapper僅列五個emulator來源，漏`candidate_receipts.cpp`，原graph實際51 TUs。
