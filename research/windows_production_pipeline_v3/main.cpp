@@ -13,6 +13,10 @@
 #undef GetAsyncKeyState
 #include "producer_wait.hpp"
 #include "producer_placement.hpp"
+#include "poll_gap_diagnostic.hpp"
+#if defined(PAS_WAIT_DIAGNOSTIC_COMPONENT) && PAS_WAIT_DIAGNOSTIC_COMPONENT
+#include "wait_diagnostic_component_identity.hpp"
+#endif
 #include "tap_reset_workload.hpp"
 #include "streaming_workload.hpp"
 #include "pas/result_ui_labels.hpp"
@@ -29,10 +33,11 @@ struct Attempt {
  pas::Nanoseconds due{},render_start{},render_end{},callback_return{};
  pas::Nanoseconds previous_callback_return{},wait_enter{},wait_return{};
  pas::current_rails::ProducerWaitTrace wait_trace{};
+ poll_gap::Snapshot poll_gap{};
  pas::current_rails::ProducerThreadCpuSample cpu_before{},cpu_after{};
  bool wait_entered=false,wait_return_available=false;
 };
-static_assert(std::is_trivially_copyable_v<Attempt> && sizeof(Attempt)<=448);
+static_assert(std::is_trivially_copyable_v<Attempt> && sizeof(Attempt)<=488);
 struct State {
  std::string scene;int requested{},cadence{};
  // Functional no-persistence tests may render slower than their scheduled
@@ -80,12 +85,18 @@ J save_wait_diagnostic_file(const fs::path& path,const J& value){
  return {{"path",fs::absolute(path).string()},{"bytes",fs::file_size(path)},{"sha256",pas::sha256_file(path)}};
 }
 J cpu_sample_json(const pas::current_rails::ProducerThreadCpuSample& s){return J::array({s.kernel_100ns,s.user_100ns,s.status,s.error,s.sampled});}
+#if defined(PAS_WAIT_DIAGNOSTIC_COMPONENT) && PAS_WAIT_DIAGNOSTIC_COMPONENT
+J wait_component_identity(){return {{"schema","pas.cold-wait-diagnostic-component-identity.v1"},
+ {"source_commit",pas_wait_diagnostic_source_commit},{"source_dirty",pas_wait_diagnostic_source_dirty},
+ {"base_source_commit",pas_wait_diagnostic_base_source_commit},{"main_sha256",pas_wait_diagnostic_main_sha256},
+ {"poll_gap_header_sha256",pas_wait_diagnostic_header_sha256},{"diagnostic_only",true},{"qualification_issued",false}};}
+#endif
 J save_wait_diagnostics(const fs::path& root,const char* completion){
  require(state.producer_wait_diagnostics&&state.requested>=1000&&state.requested<=10000&&
      state.attempts.size()==std::size_t(state.requested)+64,"fixed producer wait diagnostic slots");
- J segments=J::array();std::size_t entered=0,completed=0,failed=0,cpu_available=0,cpu_unknown=0,kernel_calls=0;
+ J segments=J::array();std::size_t entered=0,completed=0,failed=0,cpu_available=0,cpu_unknown=0,kernel_calls=0,gap_available=0,gap_invalid=0,gap_valid=0;
  for(std::size_t begin=0;begin<state.attempts.size();begin+=wait_diagnostic_segment_rows){
-  const auto end=std::min(state.attempts.size(),begin+wait_diagnostic_segment_rows);J rows=J::array();
+  const auto end=std::min(state.attempts.size(),begin+wait_diagnostic_segment_rows);J rows=J::array(),gap_rows=J::array();
   for(std::size_t i=begin;i<end;++i){const auto& a=state.attempts[i];const auto& t=a.wait_trace;J kernels=J::array();
    require(t.kernel_calls<=pas::current_rails::producer_wait_kernel_cap&&t.spin_poll_count<=pas::current_rails::producer_active_tail_poll_cap,"fixed wait trace counters");
    for(std::size_t k=0;k<t.kernel_calls;++k){const auto& v=t.kernels[k];kernels.push_back(J::array({v.ticks_100ns,v.arm_begin_ns,v.arm_end_ns,v.kernel_begin_ns,v.kernel_end_ns,v.arm_status,v.arm_error,v.wait_result,v.wait_error,v.timestamp_flags,v.api_flags}));}
@@ -94,19 +105,26 @@ J save_wait_diagnostics(const fs::path& root,const char* completion){
     J::array({t.first_qpc_ns,t.last_qpc_ns,t.qpc_reads,t.kernel_calls,t.spin_enter_ns,t.spin_return_ns,t.spin_poll_count,t.spin_pause_calls,
       static_cast<unsigned>(t.phase),static_cast<unsigned>(t.failure_phase),static_cast<unsigned>(t.failure),t.entered,t.completed,t.spin_entered,t.spin_completed}),
     kernels,cpu_sample_json(a.cpu_before),cpu_sample_json(a.cpu_after)});
-   require(row.dump().size()<=wait_diagnostic_row_byte_bound,"fixed numeric wait diagnostic row bound");rows.push_back(std::move(row));
+   const auto& gap=a.poll_gap;
+   require(gap.sample_count<=poll_gap::sample_cap&&gap.interval_count<=poll_gap::interval_cap,"fixed poll gap diagnostic counters");
+   auto gap_row=J::array({i+1,gap.max_gap_ns,gap.gap_begin_ns,gap.gap_end_ns,gap.end_sample_index,gap.sample_count,gap.interval_count,gap.available,gap.invalid});
+   // Preserve all original sixteen row columns and their values. The optional
+   // gap rows are an independent, attempt-keyed extension within the same cap.
+   require(row.dump().size()+gap_row.dump().size()<=wait_diagnostic_row_byte_bound,"fixed numeric wait diagnostic row bound");
+   rows.push_back(std::move(row));gap_rows.push_back(std::move(gap_row));gap_available+=gap.available;gap_invalid+=gap.invalid;gap_valid+=gap.available&&!gap.invalid;
    entered+=t.entered;completed+=t.completed;failed+=t.entered&&!t.completed;kernel_calls+=t.kernel_calls;
    if(a.wait_entered){if(pas::current_rails::producer_thread_cpu_delta_100ns(a.cpu_before,a.cpu_after))++cpu_available;else ++cpu_unknown;}
   }
   const auto number=segments.size();require(number<wait_diagnostic_max_segments,"producer wait diagnostic segment cap");
   const auto path=root/("producer-wait-diagnostic-segment-"+std::to_string(number)+".json");
-  const auto pin=save_wait_diagnostic_file(path,{{"schema","pas.cold-producer-wait-diagnostic-segment.v1"},{"segment",number},{"first_attempt",begin+1},{"last_attempt",end},{"rows",rows}});
+  const auto pin=save_wait_diagnostic_file(path,{{"schema","pas.cold-producer-wait-diagnostic-segment.v1"},{"segment",number},{"first_attempt",begin+1},{"last_attempt",end},{"rows",rows},
+   {"poll_gap_schema","pas.cold-producer-poll-gap-rows.v1"},{"poll_gap_rows",gap_rows}});
   segments.push_back({{"first_attempt",begin+1},{"last_attempt",end},{"rows",end-begin},{"file",pin}});
  }
  J summary={{"slots",state.attempts.size()},{"waits_entered",entered},{"waits_completed",completed},{"waits_failed",failed},
   {"slots_not_entered",state.attempts.size()-entered},{"kernel_calls",kernel_calls},{"cpu_pairs_available",cpu_available},{"cpu_pairs_unknown",cpu_unknown}};
  const auto path=root/"producer-wait-diagnostic.json";
- const auto pin=save_wait_diagnostic_file(path,{{"schema","pas.cold-producer-wait-diagnostic.v1"},{"source_build_commit",::pas_session_build_commit},
+ J diagnostic={{"schema","pas.cold-producer-wait-diagnostic.v1"},{"source_build_commit",::pas_session_build_commit},
   {"source_build_dirty",::pas_session_build_dirty},{"completion",completion},{"scene",state.scene},{"requested",state.requested},{"warmup",256},{"measurement_attempts",state.requested-256},
   {"cadence_ms",state.cadence},{"thread_id",state.producer_wait_thread_id},{"clock_domain",state.producer_wait_qpc_frequency>0?"host_qpc_ns":"provided_clock_ns"},
   {"host_clock_frequency_hz",state.producer_wait_qpc_frequency>0?J(state.producer_wait_qpc_frequency):J(nullptr)},
@@ -127,7 +145,23 @@ J save_wait_diagnostics(const fs::path& root,const char* completion){
   {"wait_policy","full_period_active_qpc"},{"active_tail_ns",0},{"kernel_timeout_ms",nullptr},{"no_kernel_wait",true},
   {"horizon_ns",pas::current_rails::producer_active_wait_horizon_ns},
   {"summary",summary},{"segments",segments},{"diagnostic_only",true},{"instrumentation_overhead_measured",false},
-  {"cost_qualification",false},{"physical_qualification",false},{"live_ready",false},{"device_operations",0}});
+  {"cost_qualification",false},{"physical_qualification",false},{"live_ready",false},{"device_operations",0}};
+ diagnostic["poll_gap_diagnostic"]={{"schema","pas.cold-producer-poll-gap-diagnostic.v1"},
+  {"segment_field","poll_gap_rows"},{"segment_schema","pas.cold-producer-poll-gap-rows.v1"},
+  {"columns",{"attempt","max_gap_ns","gap_begin_ns","gap_end_ns","end_sample_index","sample_count","interval_count","available","invalid"}},
+  {"sample_cap",poll_gap::sample_cap},{"interval_cap",poll_gap::interval_cap},{"snapshot_byte_cap",40},{"attempt_slot_byte_cap",488},{"attempt_slot_bytes",sizeof(Attempt)},
+  {"clock_reads","each wrapped now_ns calls the original Clock once; no extra QPC or OS calls"},
+  {"scope","only original Clock reads inside this producer wait; epoch, outer wait, render and callback timestamps use the original Clock"},
+  {"availability","a positive nonnegative monotonic adjacent interval was observed; valid timing evidence requires available && !invalid; single-sample and equal-only waits have no available positive gap"},
+  {"invalid","sticky original Clock exception, negative or backward timestamp, or diagnostic counter cap; original return or exception is unchanged"},
+  {"tie_rule","first maximum; end_sample_index is one-based"},
+  {"interpretation","elapsed interval between adjacent converted QPC reads; not thread CPU or a scheduler, sleep or clock-cause verdict"},
+  {"summary",{{"observed_positive_gap_slots",gap_available},{"valid_positive_gap_slots",gap_valid},{"partial_positive_gap_slots",gap_available-gap_valid},{"invalid_slots",gap_invalid}}},
+  {"instrumentation_overhead_measured",false},{"diagnostic_only",true},{"qualification_issued",false}};
+#if defined(PAS_WAIT_DIAGNOSTIC_COMPONENT) && PAS_WAIT_DIAGNOSTIC_COMPONENT
+ diagnostic["diagnostic_component_identity"]=wait_component_identity();
+#endif
+ const auto pin=save_wait_diagnostic_file(path,diagnostic);
  return {{"index",pin},{"summary",summary},{"diagnostic_only",true},{"qualification_issued",false}};
 }
 J dist(std::vector<double> values){if(values.empty())return {{"n",0}};std::sort(values.begin(),values.end());auto q=[&](double p){double at=(values.size()-1)*p;auto lo=std::size_t(at),hi=std::min(lo+1,values.size()-1);return values[lo]+(values[hi]-values[lo])*(at-lo);};return {{"n",values.size()},{"p50",q(.5)},{"p95",q(.95)},{"p99",q(.99)},{"max",values.back()},{"jitter_p95_minus_p5",q(.95)-q(.05)}};}
@@ -168,7 +202,8 @@ void GrpcCapture::stream(std::stop_token stop,const std::function<void(Frame&&)>
   if(cold::state.producer_wait_diagnostics){
    a.previous_callback_return=i?cold::state.attempts[std::size_t(i-1)].callback_return:0;
    a.wait_enter=clock_.now_ns();a.wait_entered=true;a.cpu_before=current_rails::sample_producer_thread_cpu();
-   try{wait.wait_until(clock_,a.due,&a.wait_trace);}
+   cold::poll_gap::Clock wait_clock(clock_,a.poll_gap);
+   try{wait.wait_until(wait_clock,a.due,&a.wait_trace);}
    catch(...){
     a.cpu_after=current_rails::sample_producer_thread_cpu();
     try{a.wait_return=clock_.now_ns();a.wait_return_available=true;}catch(...){}
@@ -225,12 +260,16 @@ int main(int argc,char** argv){try{
  try{wait_diagnostic=save_wait_diagnostics(root,run_failure?"joined_exception":"joined_completion");}
  catch(const std::exception& e){if(!run_failure)throw;std::cerr<<"partial producer wait diagnostic save failed: "<<e.what()<<'\n';}
  if(run_failure){
-  if(!wait_diagnostic.is_null())try{save(root/"producer-wait-diagnostic-failure.json",{{"schema","pas.cold-producer-wait-diagnostic-failure.v1"},{"diagnostic",wait_diagnostic},
+  if(!wait_diagnostic.is_null())try{J failure={{"schema","pas.cold-producer-wait-diagnostic-failure.v1"},{"diagnostic",wait_diagnostic},
    {"worker_placement",producer_placement::plan_json(state.producer_placement.placement)},
    {"producer_affinity",producer_placement::affinity_json(state.producer_placement.affinity)},
    {"producer_priority",producer_placement::priority_json(state.producer_placement)},
    {"process_qos",pas::current_rails::cold_process_qos_json(process_qos)},
-   {"qualification_issued",false},{"cost_ready",false},{"live_ready",false},{"device_operations",0}});}
+   {"qualification_issued",false},{"cost_ready",false},{"live_ready",false},{"device_operations",0}};
+#if defined(PAS_WAIT_DIAGNOSTIC_COMPONENT) && PAS_WAIT_DIAGNOSTIC_COMPONENT
+   failure["diagnostic_component_identity"]=wait_component_identity();
+#endif
+   save(root/"producer-wait-diagnostic-failure.json",failure);}
   catch(const std::exception& e){std::cerr<<"partial producer wait failure marker save failed: "<<e.what()<<'\n';}
   std::rethrow_exception(run_failure);
  }
@@ -266,6 +305,10 @@ int main(int argc,char** argv){try{
  report["producer_affinity"]=producer_placement::affinity_json(state.producer_placement.affinity);
  report["producer_priority"]=producer_placement::priority_json(state.producer_placement);
  report["producer_wait_diagnostic"]=wait_diagnostic;
+#if defined(PAS_WAIT_DIAGNOSTIC_COMPONENT) && PAS_WAIT_DIAGNOSTIC_COMPONENT
+ report["diagnostic_component_identity"]=wait_component_identity();
+ report["diagnostic_only"]=true;report["qualification_issued"]=false;
+#endif
  report["keyboard_is_test_double"]=true;report["console_registration_is_test_double"]=true;
  report["controlled_stop_key_polls"]=stop_boundary.key_polls;
  report["controlled_console_stop_deliveries"]=stop_boundary.console_deliveries;

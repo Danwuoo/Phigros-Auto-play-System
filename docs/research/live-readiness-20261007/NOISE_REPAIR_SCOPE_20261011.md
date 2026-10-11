@@ -1,3 +1,7 @@
+2026-10-11 最新 main55／`12ec055`：必要CPU32／原584及wait43／diagnostic20／active12／QoS24、reader2／原81及兩policy各12、production52／七控制通過。Normal Tap full raw11／3,358,832B integrity通過、pool0，但一次168.9509ms active wait造成producer／callback超時7而STOP；後續Hold／Dense／AA／noise／ABBA未跑。原負結果、source、raw、STOP保留；CPU零差不是精確off-CPU證據，原因仍unknown。
+
+下一步為獨立bounded相鄰QPC max-gap診斷，base55 libs與新compiled delta分列，不改shared wait policy、原數值或資格，不重跑原75／production9；詳見[診斷範圍](PRODUCER_POLL_GAP_DIAGNOSTIC_20261011.md)。latest completed noise仍main44的6／18 adequate，ABBA0／36、cost NOT_READY。完成全部可冷工作至emulator邊界停止，本輪不開裝置或新thread；以下main55 proposed為原封存計畫。
+
 2026-10-11 最新 main54／`35073ef`：CPU32／584、原wait43／diagnostic20／active12、reader2／原81／active-policy12、production52／七控制及runtime18來源／36副本通過。normal Tap producer／auditor Native皆0、完整raw10／3,332,367B integrity通過，原數值pool drops4、producer／callback deadline overruns65而STOP；Hold／Dense／AA／noise／ABBA未跑。原946份source、raw、STOP、兩Native8與1944 leaf／24parents／31shards見[main54負結果](MAIN54_PRODUCTION_TAP_NEGATIVE_20261011.json)。原main32 PASS保留，latest completed noise仍main44的6／18 adequate，ABBA0／36。
 
 本輪actual wait診斷：measurement2136 full active spin跨1313.0831ms／28327polls，lateness1293.2918ms，kernel calls0；前callback至wait .0003ms、afterwait至render0、render .3464ms／callback .1231ms。CPU原樣本零差的accounting granularity未知，不能據此認定精確off-CPU、OS／guard根因。actual54 Native UTC前後30秒無Kernel-Power／Power-Troubleshooter含506／507或Kernel-General clock-change1事件；不能由無事件完全排除漏記。
