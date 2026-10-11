@@ -78,10 +78,13 @@ constexpr std::uint64_t kBuffers = 65536;
 constexpr ULONG kBufferBytes = 1024 * 1024;
 constexpr std::size_t kPathChars = 32767;
 constexpr std::size_t kTopIntervals = 32;
+constexpr std::size_t kTopTransitions = 32;
 constexpr std::uint64_t kWindowSeconds = 75;
 constexpr std::size_t kOwnedStorageBudgetBytes = 9 * 1024 * 1024;
 constexpr GUID kThreadGuid{0x3d6fa8d1, 0xfe05, 0x11d0,
                           {0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c}};
+constexpr GUID kSystemTraceControlGuid{0x9e814aad, 0x3204, 0x11d2,
+                                      {0x9a, 0x82, 0x00, 0x60, 0x08, 0xa8, 0x69, 0x39}};
 constexpr GUID kLostGuid{0x6a399ae0, 0x4bc6, 0x4de9,
                         {0x87, 0x0b, 0x36, 0x57, 0xf8, 0x94, 0x7e, 0x7e}};
 
@@ -91,7 +94,7 @@ enum class Issue : unsigned {
     BufferCap, RecordCap, TargetCap, BufferSize, UnsupportedVersion,
     TdhSchema, TdhProperty, InvalidTimestamp, MissingCoverage,
     MissingEventClasses, ProcessTrace, CallbackException, InputChanged,
-    SchemaChanged, InvalidProcessor, CloseTrace, SchemaCatalogCap, Count
+    SchemaChanged, InvalidProcessor, CloseTrace, SchemaCatalogCap, PrefixLayout, TdhScratchCap, Count
 };
 constexpr std::array<const char*, static_cast<std::size_t>(Issue::Count)> kIssues{
     "open_trace_failed", "clock_is_not_raw_qpc", "perf_frequency_mismatch",
@@ -104,7 +107,8 @@ constexpr std::array<const char*, static_cast<std::size_t>(Issue::Count)> kIssue
     "invalid_raw_qpc_timestamp", "scheduler_events_do_not_bracket_window",
     "missing_cswitch_or_readythread_schema", "process_trace_did_not_reach_eof",
     "callback_exception", "etl_identity_changed", "scheduler_schema_changed",
-    "scheduler_processor_index_invalid", "close_trace_failed", "scheduler_schema_catalog_cap"
+    "scheduler_processor_index_invalid", "close_trace_failed", "scheduler_schema_catalog_cap",
+    "observed_cswitch_v5_prefix_contract_mismatch", "tdh_metadata_scratch_size_cap"
 };
 
 struct Options {
@@ -202,6 +206,8 @@ struct Record {
     Kind kind{};
     std::int8_t old_state{};
     std::uint8_t ready_flags{};
+    std::int8_t old_wait_reason{};
+    bool old_wait_reason_available{};
 };
 static_assert(sizeof(Record) <= 24);
 
@@ -211,6 +217,7 @@ struct Schema {
     USHORT bitness{};
     ULONG property_count{};
     ULONG schema_bytes{};
+    bool prefix_decoded{};
 };
 
 struct PropertyDiagnostic {
@@ -277,6 +284,7 @@ struct Context {
     std::uint64_t cswitch_records{};
     std::uint64_t ready_records{};
     std::uint64_t unsupported_version_records{};
+    std::uint64_t prefix5_decoded_records{};
     std::uint64_t lost_records{};
     std::uint64_t input_order_regressions{};
     Tick previous_scheduler_tick{};
@@ -304,7 +312,7 @@ struct Context {
     void abort(Issue issue) noexcept { mark(issue); stop = true; }
     void tdh_error(ULONG error, Issue issue) noexcept {
         if (first_tdh_error == 0) first_tdh_error = error;
-        abort(issue);
+        mark(issue); // Unsupported metadata never cancels the bounded EOF scan.
     }
     void observe_header(const EVENT_TRACE_LOGFILEW& log) noexcept {
         max_events_lost = std::max(max_events_lost, log.LogfileHeader.EventsLost);
@@ -402,6 +410,47 @@ bool supported_version(Context& context, UCHAR version) noexcept {
     return false;
 }
 
+struct SwitchPrefix {
+    ULONG incoming{};
+    ULONG outgoing{};
+    std::int8_t old_state{};
+    std::int8_t old_wait_reason{};
+};
+
+bool switch5_prefix(const EVENT_RECORD& event, SwitchPrefix& result) noexcept {
+    // Only the actual catalog's version 5, 28-byte, classic 64-bit layout is
+    // supported. Microsoft TraceEvent CSwitchTraceData documents a >=24-byte
+    // prefix for Version>2: IDs at 0/4, wait reason at 12, old state at 14.
+    // https://github.com/microsoft/perfview/blob/main/src/TraceEvent/Parsers/KernelTraceEventParser.cs#L4193-L4228
+    // The unmodelled four-byte suffix is neither read nor inferred. No support
+    // for version 3/4, a different v5 length, or future versions is implied.
+    const auto& d = event.EventHeader.EventDescriptor;
+    constexpr USHORT required = EVENT_HEADER_FLAG_CLASSIC_HEADER | EVENT_HEADER_FLAG_64_BIT_HEADER;
+    constexpr USHORT permitted = required | EVENT_HEADER_FLAG_NO_CPUTIME | EVENT_HEADER_FLAG_PROCESSOR_INDEX;
+    if (!IsEqualGUID(event.EventHeader.ProviderId, kThreadGuid) ||
+        d.Id != 0 || d.Version != 5 || d.Channel != 0 || d.Level != 0 || d.Opcode != 36 ||
+        d.Task != 0 || d.Keyword != 0 ||
+        (event.EventHeader.Flags & required) != required ||
+        (event.EventHeader.Flags & ~permitted) != 0 ||
+        event.UserDataLength != 28 || event.UserData == nullptr) return false;
+    static_assert(sizeof(ULONG) == 4 && sizeof(std::int8_t) == 1);
+    const auto* bytes = static_cast<const std::byte*>(event.UserData);
+    SwitchPrefix decoded{};
+    std::memcpy(&decoded.incoming, bytes, 4);
+    std::memcpy(&decoded.outgoing, bytes + 4, 4);
+    std::memcpy(&decoded.old_wait_reason, bytes + 12, 1);
+    std::memcpy(&decoded.old_state, bytes + 14, 1);
+    result = decoded;
+    return true;
+}
+
+bool wbem_thread_identity(const TRACE_EVENT_INFO& info) noexcept {
+    // For classic kernel events, EventHeader.ProviderId names the MOF event
+    // GUID; TDH distinguishes its controlling provider from that event GUID.
+    return info.DecodingSource == DecodingSourceWbem &&
+        IsEqualGUID(info.ProviderGuid, kSystemTraceControlGuid) && IsEqualGUID(info.EventGuid, kThreadGuid);
+}
+
 void catalog_schema(Context& context, EVENT_RECORD& event, Tick tick) {
     constexpr USHORT layout_mask = EVENT_HEADER_FLAG_CLASSIC_HEADER |
         EVENT_HEADER_FLAG_32_BIT_HEADER | EVENT_HEADER_FLAG_64_BIT_HEADER |
@@ -431,14 +480,16 @@ void catalog_schema(Context& context, EVENT_RECORD& event, Tick tick) {
     item.tdh_size_query_status = TdhGetEventInformation(&event, 0, nullptr, nullptr, &bytes);
     item.tdh_bytes = bytes;
     constexpr auto minimum = offsetof(TRACE_EVENT_INFO, EventPropertyInfoArray);
-    if (item.tdh_size_query_status != ERROR_INSUFFICIENT_BUFFER || bytes < minimum || bytes > kSchemaBytes) {
+    if (bytes > kSchemaBytes) { context.abort(Issue::TdhScratchCap); return; }
+    if (item.tdh_size_query_status != ERROR_INSUFFICIENT_BUFFER || bytes < minimum) {
         item.tdh_status = item.tdh_size_query_status;
         return;
     }
     auto* info = reinterpret_cast<TRACE_EVENT_INFO*>(context.schema_buffer.data());
     item.tdh_status = TdhGetEventInformation(&event, 0, nullptr, info, &bytes);
     item.tdh_bytes = bytes;
-    if (item.tdh_status != ERROR_SUCCESS || bytes < minimum || bytes > kSchemaBytes) return;
+    if (bytes > kSchemaBytes) { context.abort(Issue::TdhScratchCap); return; }
+    if (item.tdh_status != ERROR_SUCCESS || bytes < minimum) return;
     item.metadata_available = true;
     item.decoding_source = static_cast<ULONG>(info->DecodingSource);
     item.provider_guid = info->ProviderGuid;
@@ -480,31 +531,33 @@ bool schema(Context& context, EVENT_RECORD& event, Schema& cache,
     if (!supported_version(context, descriptor.Version)) return false;
     if ((event.EventHeader.Flags & EVENT_HEADER_FLAG_CLASSIC_HEADER) == 0 ||
         (event.EventHeader.Flags & (EVENT_HEADER_FLAG_TRACE_MESSAGE | EVENT_HEADER_FLAG_STRING_ONLY)) != 0) {
-        context.abort(Issue::TdhSchema); return false;
+        context.mark(Issue::TdhSchema); return false;
     }
     if (cache.checked) {
         if (std::memcmp(&cache.descriptor, &descriptor, sizeof(descriptor)) != 0 || cache.bitness != bitness) {
-            context.abort(Issue::SchemaChanged); return false;
+            context.mark(Issue::SchemaChanged); return false;
         }
         return true;
     }
     ULONG bytes = 0;
     ULONG error = TdhGetEventInformation(&event, 0, nullptr, nullptr, &bytes);
     constexpr auto minimum = offsetof(TRACE_EVENT_INFO, EventPropertyInfoArray);
-    if (error != ERROR_INSUFFICIENT_BUFFER || bytes < minimum || bytes > kSchemaBytes) {
+    if (bytes > kSchemaBytes) { context.abort(Issue::TdhScratchCap); return false; }
+    if (error != ERROR_INSUFFICIENT_BUFFER || bytes < minimum) {
         context.tdh_error(error, Issue::TdhSchema); return false;
     }
     auto* info = reinterpret_cast<TRACE_EVENT_INFO*>(context.schema_buffer.data());
     error = TdhGetEventInformation(&event, 0, nullptr, info, &bytes);
-    if (error != ERROR_SUCCESS || bytes < minimum || bytes > kSchemaBytes) {
+    if (bytes > kSchemaBytes) { context.abort(Issue::TdhScratchCap); return false; }
+    if (error != ERROR_SUCCESS || bytes < minimum) {
         context.tdh_error(error, Issue::TdhSchema); return false;
     }
-    if (info->DecodingSource != DecodingSourceWbem || !IsEqualGUID(info->ProviderGuid, kThreadGuid) ||
+    if (!wbem_thread_identity(*info) ||
         info->EventDescriptor.Version != descriptor.Version ||
         info->EventDescriptor.Opcode != descriptor.Opcode ||
         info->TopLevelPropertyCount > info->PropertyCount || info->PropertyCount > kCatalogProperties ||
         info->PropertyCount > (bytes - minimum) / sizeof(EVENT_PROPERTY_INFO)) {
-        context.abort(Issue::TdhSchema); return false;
+        context.mark(Issue::TdhSchema); return false;
     }
     for (const auto& required : fields) {
         unsigned matches = 0;
@@ -513,10 +566,10 @@ bool schema(Context& context, EVENT_RECORD& event, Schema& cache,
             if (!property_name(context.schema_buffer.data(), bytes, property.NameOffset, required.name)) continue;
             ++matches;
             if (!scalar_metadata_valid(property, required)) {
-                context.abort(Issue::TdhSchema); return false;
+                context.mark(Issue::TdhSchema); return false;
             }
         }
-        if (matches != 1) { context.abort(Issue::TdhSchema); return false; }
+        if (matches != 1) { context.mark(Issue::TdhSchema); return false; }
     }
     cache = {true, descriptor, bitness, info->PropertyCount, bytes};
     return true;
@@ -566,21 +619,37 @@ void consume(Context& context, EVENT_RECORD& event) {
     ++context.window_scheduler_records;
     if (opcode == 36) {
         ++context.cswitch_records;
-        if (!schema(context, event, context.schemas[0], kSwitchFields)) return;
         ULONG incoming = 0, outgoing = 0;
-        if (!scalar(context, event, L"NewThreadId", incoming) ||
-            !scalar(context, event, L"OldThreadId", outgoing)) return;
+        SwitchPrefix prefix{};
+        const bool version5 = event.EventHeader.EventDescriptor.Version == 5;
+        if (version5) {
+            if (!switch5_prefix(event, prefix)) { context.mark(Issue::PrefixLayout); return; }
+            auto& cache = context.schemas[0];
+            const auto& descriptor = event.EventHeader.EventDescriptor;
+            if (cache.checked && (!cache.prefix_decoded ||
+                std::memcmp(&cache.descriptor, &descriptor, sizeof(descriptor)) != 0 ||
+                cache.bitness != EVENT_HEADER_FLAG_64_BIT_HEADER)) {
+                context.mark(Issue::SchemaChanged); return;
+            }
+            cache = {true, descriptor, EVENT_HEADER_FLAG_64_BIT_HEADER, 0, 0, true};
+            ++context.prefix5_decoded_records;
+            incoming = prefix.incoming; outgoing = prefix.outgoing;
+        } else {
+            if (!schema(context, event, context.schemas[0], kSwitchFields)) return;
+            if (!scalar(context, event, L"NewThreadId", incoming) ||
+                !scalar(context, event, L"OldThreadId", outgoing)) return;
+        }
         if (incoming != context.options.target && outgoing != context.options.target) return;
         const auto cpu = GetEventProcessorIndex(&event);
-        if (cpu >= context.header.NumberOfProcessors) { context.abort(Issue::InvalidProcessor); return; }
+        if (cpu >= context.header.NumberOfProcessors) { context.mark(Issue::InvalidProcessor); return; }
         if (incoming == outgoing) {
             context.push({tick, cpu, Kind::Contradiction, 0, 0}); return;
         }
         if (incoming == context.options.target) context.push({tick, cpu, Kind::In, 0, 0});
         else {
-            std::int8_t state = 0;
-            if (scalar(context, event, L"OldThreadState", state))
-                context.push({tick, cpu, Kind::Out, state, 0});
+            std::int8_t state = prefix.old_state;
+            if (version5 || scalar(context, event, L"OldThreadState", state))
+                context.push({tick, cpu, Kind::Out, state, 0, prefix.old_wait_reason, version5});
         }
     } else {
         ++context.ready_records;
@@ -664,7 +733,13 @@ void read_etl(Context& context, HANDLE input) {
     }
 }
 
-struct Interval { Tick begin{}; Tick end{}; State state{State::Unknown}; };
+struct Interval {
+    Tick begin{};
+    Tick end{};
+    State state{State::Unknown};
+    std::int8_t old_wait_reason{};
+    bool old_wait_reason_available{};
+};
 struct Total { std::uint64_t ticks{}; std::uint64_t intervals{}; };
 struct Analysis {
     std::array<Total, 4> totals{};
@@ -676,11 +751,11 @@ struct Analysis {
     std::uint64_t ready_swapped_or_unknown_flags{};
     std::uint64_t unique_target_timestamps{};
     bool partition_exact{};
-    void add(Tick begin, Tick end, State state) {
+    void add(Tick begin, Tick end, State state, std::int8_t reason = 0, bool reason_available = false) {
         if (end <= begin) return;
         auto& total = totals[static_cast<std::size_t>(state)];
         total.ticks += static_cast<std::uint64_t>(end - begin); ++total.intervals;
-        const Interval value{begin, end, state};
+        const Interval value{begin, end, state, reason, reason_available};
         std::size_t position = 0;
         while (position < top_count && top[position].end - top[position].begin >= end - begin) ++position;
         if (position == kTopIntervals) return;
@@ -757,7 +832,11 @@ Analysis analyze(Context& context) {
             State state = State::Unknown;
             if (previous != nullptr && !previous_ambiguous && !ambiguous)
                 state = pair_state(*previous, current, result);
-            result.add(cursor, current.tick, state);
+            // Extra descriptive metadata never changes pair_state or durations.
+            const bool reason_available = state == State::Waiting && previous != nullptr &&
+                previous->kind == Kind::Out && previous->old_wait_reason_available;
+            result.add(cursor, current.tick, state, reason_available ? previous->old_wait_reason : 0,
+                       reason_available);
             cursor = current.tick; previous = &current; previous_ambiguous = ambiguous; i = end;
         }
         // No target observation outside the requested window is used to guess
@@ -779,6 +858,7 @@ public:
         bytes_.append(value);
     }
     void number(std::uint64_t value) { raw(std::to_string(value)); }
+    void signed_number(std::int64_t value) { raw(std::to_string(value)); }
     void boolean(bool value) { raw(value ? "true" : "false"); }
     void quote(std::string_view value) {
         raw("\"");
@@ -833,7 +913,9 @@ void guid_json(Json& out, const GUID& value) {
 
 void catalog_json(Json& out, const Context& context) {
     out.raw(",\n  \"schema_catalog\": {\"schema\":\"pas.cold-scheduler-trace-schema-catalog.v1\","
-        "\"metadata_only\":true,\"semantic_versions_supported\":[2],\"entries\":[");
+        "\"metadata_only\":true,\"semantic_versions_supported\":[2,5],"
+        "\"cswitch_versions_supported\":[2,5],\"cswitch_v5_exact_payload_bytes\":28,"
+        "\"readythread_versions_supported\":[2],\"entries\":[");
     for (std::size_t i = 0; i < context.catalog_count; ++i) {
         if (i) out.raw(","); const auto& item = context.catalog[i];
         out.raw("{\"descriptor\":"); descriptor_json(out, item.descriptor);
@@ -954,6 +1036,7 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
     number("cswitch_records_in_window", context.cswitch_records);
     number("readythread_records_in_window", context.ready_records);
     number("unsupported_version_records_in_window", context.unsupported_version_records);
+    number("cswitch_v5_prefix_decoded_records_in_window", context.prefix5_decoded_records);
     number("target_records_in_window", context.count);
     number("scheduler_input_order_regressions", context.input_order_regressions);
     out.raw(",\n  \"scheduler_coverage_first_qpc\": ");
@@ -974,6 +1057,10 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
         if (i) out.raw(", "); const auto& schema = context.schemas[i];
         out.raw("{\"opcode\": "); out.number(i == 0 ? 36 : 50);
         out.raw(", \"validated\": "); out.boolean(schema.checked);
+        out.raw(", \"decoder\": ");
+        if (!schema.checked) out.raw("null");
+        else out.quote(schema.prefix_decoded ? "observed_exact_cswitch_v5_28_byte_prefix" : "tdh_named_scalars_v2");
+        out.raw(", \"tdh_metadata_validated\": "); out.boolean(schema.checked && !schema.prefix_decoded);
         out.raw(", \"version\": "); if (schema.checked) out.number(schema.descriptor.Version); else out.raw("null");
         out.raw(", \"tdh_bytes\": "); out.number(schema.schema_bytes);
         out.raw(", \"property_count\": "); out.number(schema.property_count);
@@ -996,6 +1083,7 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
     out.raw(", \"own_job_process_and_job_memory_bytes\": "); out.number(kJobMemoryBytes);
     out.raw(", \"max_window_seconds\": "); out.number(kWindowSeconds);
     out.raw(", \"top_intervals\": "); out.number(kTopIntervals);
+    out.raw(", \"target_transition_sample\": "); out.number(kTopTransitions);
     out.raw(", \"owned_bounded_buffer_accounting_bytes\": "); out.number(kOwnedBufferAccountingBytes);
     out.raw(", \"owned_dynamic_storage_budget_bytes\": "); out.number(kOwnedStorageBudgetBytes);
     out.raw(", \"sdk_internal_memory_measured\": false}");
@@ -1019,9 +1107,33 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
         out.raw("{\"begin_qpc\": "); out.number(static_cast<std::uint64_t>(interval.begin));
         out.raw(", \"end_qpc\": "); out.number(static_cast<std::uint64_t>(interval.end));
         out.raw(", \"ticks\": "); out.number(static_cast<std::uint64_t>(interval.end - interval.begin));
-        out.raw(", \"state\": "); out.quote(kStates[static_cast<std::size_t>(interval.state)]); out.raw("}");
+        out.raw(", \"state\": "); out.quote(kStates[static_cast<std::size_t>(interval.state)]);
+        out.raw(", \"old_thread_wait_reason_available\": "); out.boolean(interval.old_wait_reason_available);
+        out.raw(", \"old_thread_wait_reason\": ");
+        if (interval.old_wait_reason_available) out.signed_number(interval.old_wait_reason); else out.raw("null");
+        out.raw("}");
     }
-    out.raw("]\n}\n");
+    out.raw("],\n  \"target_transition_sample\": [");
+    constexpr std::array<const char*, 4> kinds{"switch_in", "switch_out", "ready", "contradiction"};
+    const auto sampled = std::min(context.count, kTopTransitions);
+    for (std::size_t i = 0; i < sampled; ++i) {
+        if (i) out.raw(", "); const auto& record = context.records[i];
+        out.raw("{\"qpc\":"); out.number(static_cast<std::uint64_t>(record.tick));
+        out.raw(",\"cpu\":"); out.number(record.cpu);
+        out.raw(",\"kind\":"); out.quote(kinds[static_cast<std::size_t>(record.kind)]);
+        out.raw(",\"old_thread_state\":");
+        if (record.kind == Kind::Out) out.signed_number(record.old_state); else out.raw("null");
+        out.raw(",\"ready_flags\":");
+        if (record.kind == Kind::Ready) out.number(record.ready_flags); else out.raw("null");
+        out.raw(",\"old_thread_wait_reason_available\":"); out.boolean(record.old_wait_reason_available);
+        out.raw(",\"old_thread_wait_reason\":");
+        if (record.old_wait_reason_available) out.signed_number(record.old_wait_reason); else out.raw("null");
+        out.raw("}");
+    }
+    out.raw("]");
+    number("target_transitions_omitted_from_sample", context.count - sampled);
+    boolean("target_transition_sample_sorted_by_qpc", context.issues == 0);
+    out.raw(",\n  \"wait_reason_interpretation\": \"Numeric switch-out reason is descriptive metadata; interval reason is retained only for an attributed waiting span. It does not establish the producer stall cause.\"\n}\n");
 }
 
 void write_new(const std::wstring& path, const std::string& bytes) {
@@ -1143,6 +1255,88 @@ int self_test(const std::wstring& output_path) {
         (context.issues & (1ULL << static_cast<unsigned>(Issue::UnsupportedVersion))) != 0,
         "unsupported actual version remains unknown without cancelling EOF");
     if (schema_assertions != 8) fail("schema self-test control denominator mismatch");
+    std::array<const char*, 12> prefix_names{};
+    std::size_t prefix_assertions = 0;
+    const auto prefix_check = [&](bool value, const char* name) {
+        if (!value) throw std::runtime_error(std::string("prefix self-test failed: ") + name);
+        if (prefix_assertions == prefix_names.size()) fail("prefix self-test fixed cap");
+        prefix_names[prefix_assertions++] = name;
+    };
+    std::array<std::byte, 28> payload{};
+    const ULONG incoming_id = 42, outgoing_id = 99;
+    std::memcpy(payload.data(), &incoming_id, 4);
+    std::memcpy(payload.data() + 4, &outgoing_id, 4);
+    payload[12] = std::byte{24}; payload[14] = std::byte{5};
+    EVENT_RECORD exact{};
+    exact.EventHeader.ProviderId = kThreadGuid;
+    exact.EventHeader.Flags = EVENT_HEADER_FLAG_CLASSIC_HEADER | EVENT_HEADER_FLAG_64_BIT_HEADER |
+        EVENT_HEADER_FLAG_NO_CPUTIME | EVENT_HEADER_FLAG_PROCESSOR_INDEX;
+    exact.EventHeader.EventDescriptor.Version = 5;
+    exact.EventHeader.EventDescriptor.Opcode = 36;
+    exact.UserDataLength = 28; exact.UserData = payload.data();
+    SwitchPrefix decoded{};
+    prefix_check(switch5_prefix(exact, decoded) && decoded.incoming == 42 && decoded.outgoing == 99 &&
+        decoded.old_state == 5 && decoded.old_wait_reason == 24, "actual v5 fixed prefix decoded exactly");
+    auto changed = exact; changed.EventHeader.EventDescriptor.Version = 3;
+    bool rejects = !switch5_prefix(changed, decoded);
+    changed.EventHeader.EventDescriptor.Version = 4;
+    prefix_check(rejects && !switch5_prefix(changed, decoded), "unobserved versions three and four rejected");
+    changed.EventHeader.EventDescriptor.Version = 6;
+    context.issues = 0; context.stop = false; context.unsupported_version_records = 0;
+    prefix_check(!switch5_prefix(changed, decoded) && !supported_version(context, 6) && !context.stop &&
+        context.unsupported_version_records == 1 &&
+        (context.issues & (1ULL << static_cast<unsigned>(Issue::UnsupportedVersion))) != 0,
+        "future version stays unknown and permits EOF");
+    rejects = true;
+    for (const USHORT length : {USHORT{24}, USHORT{27}, USHORT{29}}) {
+        changed = exact; changed.UserDataLength = length;
+        rejects = rejects && !switch5_prefix(changed, decoded);
+    }
+    prefix_check(rejects, "other payload lengths rejected without reading suffix");
+    changed = exact; changed.UserData = nullptr;
+    prefix_check(!switch5_prefix(changed, decoded), "null payload rejected before memcpy");
+    changed = exact; changed.EventHeader.ProviderId = kSystemTraceControlGuid;
+    prefix_check(!switch5_prefix(changed, decoded), "prefix event GUID must be Thread");
+    changed = exact; changed.EventHeader.Flags &= ~EVENT_HEADER_FLAG_CLASSIC_HEADER;
+    prefix_check(!switch5_prefix(changed, decoded), "nonclassic prefix rejected");
+    changed = exact; changed.EventHeader.Flags |= EVENT_HEADER_FLAG_32_BIT_HEADER;
+    rejects = !switch5_prefix(changed, decoded);
+    changed.EventHeader.Flags &= ~EVENT_HEADER_FLAG_64_BIT_HEADER;
+    prefix_check(rejects && !switch5_prefix(changed, decoded), "unobserved or contradictory bitness rejected");
+    changed = exact; changed.EventHeader.Flags |= EVENT_HEADER_FLAG_TRACE_MESSAGE;
+    rejects = !switch5_prefix(changed, decoded);
+    changed = exact; changed.EventHeader.Flags |= EVENT_HEADER_FLAG_STRING_ONLY;
+    prefix_check(rejects && !switch5_prefix(changed, decoded), "foreign payload flags rejected");
+    rejects = true;
+    for (unsigned member = 0; member < 6; ++member) {
+        changed = exact; auto& descriptor = changed.EventHeader.EventDescriptor;
+        if (member == 0) descriptor.Id = 1;
+        else if (member == 1) descriptor.Channel = 1;
+        else if (member == 2) descriptor.Level = 1;
+        else if (member == 3) descriptor.Opcode = 50;
+        else if (member == 4) descriptor.Task = 1;
+        else descriptor.Keyword = 1;
+        rejects = rejects && !switch5_prefix(changed, decoded);
+    }
+    prefix_check(rejects, "all remaining descriptor fields must match observed layout");
+    const ULONG largest_id = std::numeric_limits<ULONG>::max();
+    std::memcpy(payload.data(), &largest_id, 4);
+    payload[12] = std::byte{128}; payload[14] = std::byte{255};
+    prefix_check(switch5_prefix(exact, decoded) && decoded.incoming == largest_id &&
+        decoded.old_state == -1 && decoded.old_wait_reason == -128,
+        "unsigned ID and signed byte boundaries preserved");
+    TRACE_EVENT_INFO identity{};
+    identity.DecodingSource = DecodingSourceWbem;
+    identity.ProviderGuid = kSystemTraceControlGuid; identity.EventGuid = kThreadGuid;
+    rejects = wbem_thread_identity(identity);
+    identity.ProviderGuid = kThreadGuid; identity.EventGuid = kSystemTraceControlGuid;
+    property = {}; property.count = 1; property.length = 1;
+    property.nonStructType.InType = TDH_INTYPE_INT8;
+    rejects = rejects && !wbem_thread_identity(identity) && scalar_metadata_valid(property, kReadyFields[1]);
+    property.nonStructType.InType = TDH_INTYPE_UINT8;
+    prefix_check(rejects && !scalar_metadata_valid(property, kReadyFields[1]),
+        "WBEM provider event roles and ReadyThread signed type are exact");
+    if (prefix_assertions != 12) fail("prefix self-test control denominator mismatch");
     Json report;
     report.raw("{\"schema\":\"pas.cold-scheduler-trace-reader-controls.v1\",\"status\":\"PASS\",\"assertions\":");
     report.number(assertions);
@@ -1163,10 +1357,17 @@ int self_test(const std::wstring& output_path) {
     for (std::size_t i = 0; i < schema_names.size(); ++i) {
         if (i) report.raw(","); report.raw("{\"id\":"); report.quote(schema_names[i]); report.raw(",\"pass\":true}");
     }
+    report.raw("]},\"prefix_controls\":{\"schema\":\"pas.cold-scheduler-trace-reader-prefix-controls.v1\","
+        "\"assertions\":"); report.number(prefix_assertions);
+    report.raw(",\"pass\":true,\"failed\":0,\"diagnostic_only\":true,\"qualification_issued\":false,"
+        "\"live_ready\":false,\"device_operations\":0,\"checks\":[");
+    for (std::size_t i = 0; i < prefix_names.size(); ++i) {
+        if (i) report.raw(","); report.raw("{\"id\":"); report.quote(prefix_names[i]); report.raw(",\"pass\":true}");
+    }
     report.raw("]}}\n");
     write_new(output_path, report.bytes());
     std::cout << "reader state controls assertions=" << assertions << " schema assertions=" << schema_assertions
-              << " qualification=false\n";
+              << " prefix assertions=" << prefix_assertions << " qualification=false\n";
     return 0;
 }
 } // namespace

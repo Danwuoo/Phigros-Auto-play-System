@@ -26,4 +26,8 @@ main63／09a70d9僅離線處理同一份raw：原base55 auditor Native0／1.5692
 
 保存索引加註：main60／61的aggregate original-pin total bytes欄位因維護sum方式錯而記0；逐pin bytes／SHA及讀回均正確，原索引不覆寫。由保存值逐scalar重算為main60 1,964,594B／46pins、main61 2,166,137B／79pins；main62已用逐scalar sum，57,705,796B／118pins。這些索引加總不替代原容量逐檔帳本。
 
+2026-10-12 續作 main66／8246156：新 reader 單TU建置及原20＋schema8控制通過，三個Native8均0。原main64 configure的尾斜線／Windows argv負結果另見[原件索引](MAIN64_READER_CONFIGURE_NEGATIVE_20261011.json)；main65因新保存文件抵達clean-source檢查而在Native前停止，所有原位置保留。
+
+同一ETL的actual catalog已確認CSwitch descriptor version5／28 bytes，TDH回ERROR_NOT_FOUND(1168)；ReadyThread version2／8 bytes的TDH schema可用，但其ProviderGuid是SystemTraceControlGuid、EventGuid才是ThreadGuid。原reader混用兩GUID而在ProcessTrace1223停止，EOF=false、loss仍UNKNOWN；[原建置、catalog與STOP索引](MAIN66_SCHEMA_READER_NEGATIVE_20261012.json)保留。新最小修補將 observed CSwitch5／exact28以Microsoft解析器支援的24-byte prefix解讀，保留extra4 bytes未解讀及原actual版本；ReadyThread仍核TDH named scalar與正確GUID角色，不把任意版本假定為2。[Microsoft CSwitch與ReadyThread解析器](https://github.com/microsoft/perfview/blob/main/src/TraceEvent/Parsers/KernelTraceEventParser.cs)、[TDH TRACE_EVENT_INFO](https://learn.microsoft.com/en-us/windows/win32/api/tdh/ns-tdh-trace_event_info)。原20＋schema8分母不變，另列prefix12必要控制，尚待新Native建置及同檔重讀；不新增recording／producer／auditor、noise或ABBA量測，不改原cost、STOP或TID lifetime未知。
+
 為把75秒用於實際量測，producer的原 input-closure／capacity／params核對在session前完成，原owned guard／Native8照常執行；停止session後再做原after核對。容量以.NET逐檔enumeration加總，48GiB／minimum-free20GiB／原reserve不變；補計先前main32→base55原短路徑副本`out/s55aa03`，不重hash原大型raw／libs。
