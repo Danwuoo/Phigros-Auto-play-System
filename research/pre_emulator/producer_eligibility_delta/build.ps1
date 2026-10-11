@@ -199,7 +199,16 @@ $buildProof=DProof $build;AssertInputs
 $outputs=@(Get-ChildItem -LiteralPath $buildRoot -File -Recurse|ForEach-Object {Binding $_.FullName});$objects=@($outputs|Where-Object {$_.path -match '[.]obj$' -and $_.path.Replace('\','/') -cmatch '/CMakeFiles/(current_chain|worker_affinity_controls|production_pipeline_cold|score_only_controls|qualification_reader|qualification_reader_controls|candidate_admission_delta|candidate_admission_controls)[.]dir/'})
 DRequire ($objects.Count -eq 10) 'actual10 fresh objects';foreach($pin in $outputs|Where-Object {$_.path -match '[.]obj$' -and $_ -notin $objects}){DRequire ($pin.path.Replace('\','/') -cmatch '/(?:CompilerIdCXX/CMakeCXXCompilerId[.]obj|CMakeFiles/ShowIncludes/main[.]obj)$') 'only standard CMake probe objects additional'}
 $exes=@{};foreach($target in $exeTargets){$rows=@($outputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq ($target+'.exe')});DRequire ($rows.Count -eq 1) 'one fresh executable for each declared link target';$exes[$target]=$rows[0]}
-$script:seal=@{files=@($exes.Values)+$runtimeCopies};$controlInputs=@($inputs+$outputs.path+$buildProof.Values.path)
+$script:seal=@{files=@($exes.Values)+$runtimeCopies}
+# Compile-only installed archives remain fully frozen in configure/build.
+# Executed controls consume the sealed images, runtime copies, sources,
+# objects and imported project libraries rather than rereading these archives.
+$controlCompileOnlyLargeDependencies=@($dependencySelection.files|Where-Object {$_.bytes -gt 268435456 -and [IO.Path]::GetExtension($_.path) -ieq '.lib'})
+$controlCompileOnlyPaths=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+foreach($pin in $controlCompileOnlyLargeDependencies){$null=$controlCompileOnlyPaths.Add([IO.Path]::GetFullPath($pin.path))}
+$controlPolicyPath=Join-Path $artifact 'control-input-policy.json'
+NewJson $controlPolicyPath @{schema='pas.cold-controls-input-policy.v1';source_commit=$FrozenHead;selected_dependency_manifest=(Binding $selectedDependencyPath);compile_only_large_installed_archives=$controlCompileOnlyLargeDependencies;configure_and_build_keep_all_selected_dependencies=$true;actual_images_runtime_sources_objects_imported_libraries_preserved=$true;controls_counts_unchanged=$true;qualification_issued=$false;device_operations=0} 4194304
+$controlInputs=@($inputs+$outputs.path+$buildProof.Values.path|Where-Object {-not $controlCompileOnlyPaths.Contains([IO.Path]::GetFullPath($_))})+@($controlPolicyPath)
 $affinityReport=Join-Path $artifact 'worker-affinity-controls.json';$test='test-producer-eligibility-'+$Attempt+'-affinity';AssertInputs
 Native $test $exes.worker_affinity_controls.path @($affinityReport) $controlInputs 300
 $affinityProof=DProof $test;$affinity=DRead (Binding $affinityReport);DControls $affinity 'pas.worker-affinity-tests.v1' 65
