@@ -1,0 +1,3500 @@
+{
+  "schema": "pas.main80-normal-pass-aa-hold3-stop.v1",
+  "source_commit": "3ee69edc85acb6b9b968424374a376f351d0e2dd",
+  "recorded_time_utc": "2026-10-11T23:24:20.3752753Z",
+  "build_binding": {
+    "sha256": "7478f48f0cb7386836bfddc0bffbdf83c55bdf7f32727ae95bcb107b8a2bb058",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-evaluation-main80-e1\\build-binding.json",
+    "bytes": 208589
+  },
+  "source_manifest": {
+    "bytes": 241516,
+    "sha256": "209e8e2ac128870af8738e02651b4388acec707acd73128dc6ef37e4ba501478",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-evaluation-main80-e1\\source-manifest.json"
+  },
+  "source_snapshot": {
+    "bytes": 645028,
+    "sha256": "1cf58ab50b9da865e12a4b767437fda5914d63e34a3e1305a09fa34667d78de9",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m80e1\\snapshot.json"
+  },
+  "fresh_compile_occurrences": 14,
+  "fresh_formal_translation_units": 1,
+  "formal_archives_rebuilt": false,
+  "build_and_controls_native_stages": 10,
+  "build_and_controls_pass": true,
+  "motion_regression": {
+    "runtime_contract_prefix": {
+      "bytes": 43305,
+      "sha256": "9ca543a87c823ff0f65ae620ccce6533cf7637c37b29a2131edb4848c953634a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\src\\runtime.cpp"
+    },
+    "runtime_contract_source": {
+      "bytes": 3995,
+      "sha256": "48303c36b0228310c2842e8bdfe0494be11051379aea15dd85f00beaa57d14af",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-evaluation-main80-e1\\runtime_contract.cpp"
+    },
+    "cases": 26,
+    "test_sources": [
+      {
+        "bytes": 210355,
+        "sha256": "468981ba9843aee6f6edecf4abffb2b563ef74a937033e2eb63a16e7bae16eeb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\game_tests.cpp"
+      },
+      {
+        "bytes": 163502,
+        "sha256": "fb765da09a3061bc4279b8575c22180e775eaa41e2aa10bfe9f992a73f93043d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\cold_scenario_tests.cpp"
+      }
+    ],
+    "case_names": [
+      "GameMotion.CurrentGrayOutlineTracksTranslationButRejectsSingleRailAndMissingClosure",
+      "GameMotion.IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSign",
+      "GameMotion.BurstFramesCannotAmplifyLineNoiseOrReplaceCurrentGeometry",
+      "GameMotion.RotatingLineEquationsIgnoreAlongLineCropCenterDrift",
+      "GameMotion.FittedRotationAssociatesAfterGapWithoutInventingAMissingLine",
+      "GameMotion.NonlinearLinePoseRejectsVelocityAndDuplicateLinesRemainAmbiguous",
+      "GameMotion.DistributedTiltedRidgeRejectsWideFillShortBarsAndMissingSupport",
+      "GameMotion.TiltedLineExtentUsesMeasuredFragmentsAndRejectsLargeUnsupportedGaps",
+      "GameMotion.ApproachingAnchorNeedsCurrentRailsAttachedToTheLine",
+      "GameMotion.ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash",
+      "GameMotion.MovingHeldFrontNeedsPairedCurrentTerminationAndCannotInferFromHistory",
+      "GameMotion.MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior",
+      "GameMotion.OccludedFrontCanUseOnlyAVisiblePairedBodyInterior",
+      "GameMotion.ContestedDuplicateDoesNotCreateARecurringLineage",
+      "GameMotion.CloseRealLinesStayDistinctAndExpiryDoesNotBridgeNinetyMilliseconds",
+      "GameMotion.PersistentNearNewLineIsBornAfterBoundedEvidenceButFarNewLineImmediately",
+      "GameMotion.RotatedCurrentHoldRailsCanContinueAnOlderAnchor",
+      "GameMotion.SixteenLinesRemainBoundedAndContextGapStartsNewLineage",
+      "GameMotion.ContestedObservationCannotSeedRecurringDuplicateTracks",
+      "GameMotion.ConvergedLineAmbiguityExpiresWithoutInventingIdentity",
+      "GameMotion.RotatedCurrentHoldRailsRequireBothCurrentlyVisibleSides",
+      "ColdRgbH1.RotatingTranslatingLineKeepsOneSupportedContactUntilVisibleTail",
+      "ColdRgbH1.LongVisibleHoldHeadBodyAndTailUseOneContact",
+      "ColdRgbR1.RotatingHoldAndColocatedTapKeepIndependentContactsOrRejectAtCapacity",
+      "ColdRgbR6.AngleJumpAtIncomingTailNeedsCurrentClosureAndTwoFreshConfirmations",
+      "ColdRgbH1.UnknownTailCannotExtendBodyContactAfterLineLosesCurrentPixels"
+    ],
+    "filter": "GameMotion.*:ColdRgbH1.*:ColdRgbR1.*:ColdRgbR6.*",
+    "binary": {
+      "bytes": 2214400,
+      "sha256": "b9625cf7ec1fee72467e18ff98e5e22d3aa6b345e864ad31cbb8b79b0ebc4024",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main80-e1\\motion_source_regression.exe"
+    },
+    "process": {
+      "command": {
+        "bytes": 1099,
+        "sha256": "d97ca5bd1bbefc889e42511b491cddd4518332d8a50aa4c43ea1d98c35558c87",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\test-producer-eligibility-main80-e1-motion-command.json"
+      },
+      "specification": {
+        "bytes": 10244,
+        "sha256": "762ffed55f61bf5c7e73c1b11859f4fe2d04ff0ddbb7de7714d7667b49cc7490",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-motion-direct-spec.json"
+      },
+      "result": {
+        "bytes": 3630,
+        "sha256": "4f3bb5f9a23d843932a6817cb1add8c544030d978a8110254aff9285145f1e9a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\test-producer-eligibility-main80-e1-motion-result.json"
+      },
+      "verification": {
+        "bytes": 3621,
+        "sha256": "4122990cdc722269c8ab6b17a93c125ff173358536be833a6f758fce2f73b166",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\test-producer-eligibility-main80-e1-motion-verification.json"
+      },
+      "freeze": {
+        "bytes": 17958,
+        "sha256": "19b61fc2103e827d3a15acea7129946a9f4294ab922b5d7b6353baec4cbdcb08",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\freeze.json"
+      },
+      "contract": {
+        "bytes": 682,
+        "sha256": "832488f0440d0278e602267a62e83f78ef518ee3edecec1beea1a18108475ddd",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\contract.json"
+      },
+      "state": {
+        "bytes": 806,
+        "sha256": "c7963a437fc09e862d5f28b804684a5e7f86730255622a2fe4d89e9570363a63",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1147,
+        "sha256": "054090190702cbec3a9e1749eaf2a5c487b42e1d8c163aa2a9d6036deac0de0f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-motion-input-closure-verification.json"
+      }
+    },
+    "target": "motion_source_regression",
+    "report": {
+      "bytes": 12388,
+      "sha256": "59b699d9007e2893944b21d581f27ae49ac4fbec1c4d960f37b9a44e30de1846",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-evaluation-main80-e1\\motion-source-regression.json"
+    }
+  },
+  "motion_regression_cases": 26,
+  "motion_regression_failures": 0,
+  "original_pre_cost_input": {
+    "sha256": "85653f9dd8868b1a603e64e28f40b6fd8b2ae978777f10e183914d2052f3ce46",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-readonly-main80-e1-pre-cost\\input.json",
+    "bytes": 93825
+  },
+  "original_pre_cost_report": {
+    "sha256": "ca2ddb31c83d768a442bfc5fbc1324821c27dae37035d8c25684b3405b9691af",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-readonly-main80-e1-pre-cost\\report.json",
+    "bytes": 3666
+  },
+  "necessary_pre_cost_checks_pass": true,
+  "checks": {
+    "aa": {
+      "pass": false,
+      "state": "NOT_RUN"
+    },
+    "abba": {
+      "pass": false,
+      "state": "NOT_RUN"
+    },
+    "base": {
+      "formal_TUs_each": 22,
+      "groups_each": 25,
+      "pass": true,
+      "scope": "preserved original proofs; removed graphs not revalidated",
+      "source_commit": "aa9de3c13b92e533b1b0e9cb0312cf81e5d2f9de"
+    },
+    "faults": {
+      "pass": true,
+      "raw_revalidation_performed": false,
+      "rows": 4
+    },
+    "final_bytes": {
+      "pass": true
+    },
+    "input": {
+      "pass": true
+    },
+    "narrow_build": {
+      "pass": true
+    },
+    "noise": {
+      "pass": false,
+      "state": "NOT_READY"
+    },
+    "prefix": {
+      "frames": 3063,
+      "pass": true,
+      "raw_revalidation_performed": false
+    },
+    "production": {
+      "pass": true,
+      "raw_revalidation_performed": false,
+      "rows": 9
+    }
+  },
+  "pre_cost_native_exit": 2,
+  "pre_cost_verification_exit": 0,
+  "pre_cost_wrapper_exit": 0,
+  "current_Normal3": {
+    "full_raw_integrity_pass": true,
+    "status": "PASS",
+    "original_numerical_gates_pass": true,
+    "original_status": {
+      "sha256": "dcbe7eb16246120c9373088602d784689e2e318428572bb5be8b0cf54a04c2e5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\status.json",
+      "bytes": 19325
+    },
+    "rows_index": [
+      {
+        "normal_cost_valid": true,
+        "id": "normal-tap",
+        "report": {
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\report.json",
+          "bytes": 15670,
+          "sha256": "336d13b3d0dca0239c70f718bae9545d072dc3e6b5bc80ab5459b52dfd282533"
+        },
+        "auditor_process": {
+          "state": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\state.json",
+            "bytes": 822,
+            "sha256": "6d23219b7d6f7e617286189216dcf8ae6458a4ae480425418715074ccf388423"
+          },
+          "contract": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\contract.json",
+            "bytes": 875,
+            "sha256": "bd3854529f54b09b9108e956f21ac0e7fdcc5a1502f59072d7997c085c4be97b"
+          },
+          "specification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-tap-direct-spec.json",
+            "bytes": 19340,
+            "sha256": "33c9c4aa6f661fa4a55731db649d8ce08760d8c9c83e077727e6a28f3ee6f7f9"
+          },
+          "verification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\audit-production-pre-emulator-main80-n1-normal-tap-verification.json",
+            "bytes": 3821,
+            "sha256": "25cea9b2c2ecfc68e51c941f20015b31dabfb3d484a7e1d8af436c3f6e457451"
+          },
+          "freeze": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\freeze.json",
+            "bytes": 31843,
+            "sha256": "05728d5d8681dbd52e7ae27e3d8a12c479ed6376f3f168747592873ff3aecde0"
+          },
+          "command": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\audit-production-pre-emulator-main80-n1-normal-tap-command.json",
+            "bytes": 1473,
+            "sha256": "442776e511d603f018d224883d8b545b0b7dcee6ff2f1f88dacd49807e6f7c47"
+          },
+          "input_closure": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-tap-input-closure-verification.json",
+            "bytes": 1188,
+            "sha256": "27a44008ed1663b3cdd97a1650ce93739b48496aba440de7bcf2ff4af9ed792b"
+          },
+          "result": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\audit-production-pre-emulator-main80-n1-normal-tap-result.json",
+            "bytes": 3637,
+            "sha256": "1d6e0fa08736c736e44c076883ac76abf615def16980193364f0fb725eeedc15"
+          }
+        },
+        "audit": {
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap-audit.json",
+          "bytes": 2204,
+          "sha256": "1a8467fb2ed12276274103fd5eef547e6eeaa36eddf27cd9595578b46d411cee"
+        },
+        "process": {
+          "state": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\state.json",
+            "bytes": 810,
+            "sha256": "f65721432da268cc84e855d38209bdb0ea723d172c55db40f04fcbc8f7d9b8a4"
+          },
+          "contract": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\contract.json",
+            "bytes": 589,
+            "sha256": "2917092c19fa5e52ff1632e080f4601b716065226389329e53caa248b0a6f0c4"
+          },
+          "specification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-tap-direct-spec.json",
+            "bytes": 18334,
+            "sha256": "ce9dddf7f960153af6334d4caa4c2cc4dd7d22c039c0a2c18269ad950f5a4fe2"
+          },
+          "verification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\production-pre-emulator-main80-n1-normal-tap-verification.json",
+            "bytes": 3671,
+            "sha256": "4f8c3f7f11d8f273eee587306b6b1dc78ebab690d4dde4aa1149222a70db513f"
+          },
+          "freeze": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\freeze.json",
+            "bytes": 31149,
+            "sha256": "371aa5909ca8b4c11640cb482867ad0373d09deedcd5fcebd3fa1d3b3b35335f"
+          },
+          "command": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\production-pre-emulator-main80-n1-normal-tap-command.json",
+            "bytes": 909,
+            "sha256": "41e1777b9fe2f49bde35f340b31d86c1588c64832249a914640bc74c843041a5"
+          },
+          "input_closure": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-tap-input-closure-verification.json",
+            "bytes": 1158,
+            "sha256": "68e62a2d034d4bb1bbc02afefcd7e1c90afc56426237725261d984fba806980a"
+          },
+          "result": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\production-pre-emulator-main80-n1-normal-tap-result.json",
+            "bytes": 3646,
+            "sha256": "bad534cf98bb65ad437beca5339342afe1ba4f7af05ed233373e55da2fcd583d"
+          }
+        }
+      },
+      {
+        "normal_cost_valid": true,
+        "id": "normal-hold",
+        "report": {
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\report.json",
+          "bytes": 15576,
+          "sha256": "32509d0429fb69fd7cc4a351ff8c0cdc65958be4adae6735b612d1141fa69607"
+        },
+        "auditor_process": {
+          "state": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\state.json",
+            "bytes": 824,
+            "sha256": "9b8b1c5cb9f75933acb138c0a5ad9652da9ec9b989a7eba46f42a2642ffd580d"
+          },
+          "contract": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\contract.json",
+            "bytes": 878,
+            "sha256": "6fa32cd215fde87b6251031045bafa90108b379a4187bea157ebba42dde3dbed"
+          },
+          "specification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-hold-direct-spec.json",
+            "bytes": 19459,
+            "sha256": "4c46740145fceac675d8d01d1949f0c18f19e67aac846b47c8cdfa4df166538f"
+          },
+          "verification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\audit-production-pre-emulator-main80-n1-normal-hold-verification.json",
+            "bytes": 3846,
+            "sha256": "2fa1c72c3ccba1146fcf3944b075fcde800a96e117fda9695399138e063a2e70"
+          },
+          "freeze": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\freeze.json",
+            "bytes": 31959,
+            "sha256": "6b4b4593ec64205d6f4e043f9c016d941c9f8d7f151f89e0fab17cd245cf122e"
+          },
+          "command": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\audit-production-pre-emulator-main80-n1-normal-hold-command.json",
+            "bytes": 1479,
+            "sha256": "3533b4a484086ba81dfba0d6b228b9cbed6e0047850f7975caded6d5f60be034"
+          },
+          "input_closure": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-hold-input-closure-verification.json",
+            "bytes": 1193,
+            "sha256": "79bbd8e20b7d477d1fdf5524dc6faf167e82166cab2fccd0b07b480b09c7591d"
+          },
+          "result": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\audit-production-pre-emulator-main80-n1-normal-hold-result.json",
+            "bytes": 3638,
+            "sha256": "cf023d91d6ce972332286f6ac8678a32114c3560d20cd5efd2a108d692e93193"
+          }
+        },
+        "audit": {
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold-audit.json",
+          "bytes": 2230,
+          "sha256": "5c3ab37cc5d0a0c738a02ee314cb632d914f76979440458741350b5d8ab5746f"
+        },
+        "process": {
+          "state": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\state.json",
+            "bytes": 812,
+            "sha256": "60df2493b4dde25a58744daca7d6d0787c65c6a8ff8c151a8f44e9868494878f"
+          },
+          "contract": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\contract.json",
+            "bytes": 592,
+            "sha256": "0d12ddc01394aba253b9804205a2457e33345eca50f6e39b30bb01a2152f49cb"
+          },
+          "specification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-hold-direct-spec.json",
+            "bytes": 18453,
+            "sha256": "2d2f61a1c77ea89e5c007eabf98dd80b20573dffb1a962501cf3600122055976"
+          },
+          "verification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\production-pre-emulator-main80-n1-normal-hold-verification.json",
+            "bytes": 3696,
+            "sha256": "7988c957c073b794c18467db30366fa5693a1c5705b07d0cc1de06e43c845a58"
+          },
+          "freeze": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\freeze.json",
+            "bytes": 31265,
+            "sha256": "d310a50d81c40d97f195ddad2ad984a166ecd21c1271a029af41aa673bb828fc"
+          },
+          "command": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\production-pre-emulator-main80-n1-normal-hold-command.json",
+            "bytes": 915,
+            "sha256": "41131d54d1740ac85a184c13876426d924abf56acaefba55c02a6c659265506b"
+          },
+          "input_closure": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-hold-input-closure-verification.json",
+            "bytes": 1163,
+            "sha256": "3c9387e9a82888dd9a7e30009762d63816407077fdf9d443d8e42b8337ea59d7"
+          },
+          "result": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\production-pre-emulator-main80-n1-normal-hold-result.json",
+            "bytes": 3655,
+            "sha256": "abaedcdd74b2f1b97d30e83e10a86f4b4f23610685dfdbbe26461cca80bc6aa1"
+          }
+        }
+      },
+      {
+        "normal_cost_valid": true,
+        "id": "normal-dense",
+        "report": {
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\report.json",
+          "bytes": 21444,
+          "sha256": "3b67da3dc2ab8c45d4ebfe48b9674fd33f0fff2fc4e40b081743713746c3015b"
+        },
+        "auditor_process": {
+          "state": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\state.json",
+            "bytes": 826,
+            "sha256": "d4e2f236cb637322ed479a2f68afc407ad6c8496f90e7dbfa4c5df5a4bf20a39"
+          },
+          "contract": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\contract.json",
+            "bytes": 881,
+            "sha256": "b81b45dd4839006efef040f6fc5f66048c582b566efa53ae8ab94ad073959dfc"
+          },
+          "specification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-dense-direct-spec.json",
+            "bytes": 19735,
+            "sha256": "c6a1f49f1a7eb12ef424c6be20f0b9019fccaef54d4630f874dcbf9f9eea438b"
+          },
+          "verification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\audit-production-pre-emulator-main80-n1-normal-dense-verification.json",
+            "bytes": 3871,
+            "sha256": "86a0b8b482f4544524aa1d745679df34083b7a2f9ba513bdff9cf9ec048ec5f3"
+          },
+          "freeze": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\freeze.json",
+            "bytes": 32324,
+            "sha256": "9b42269e7133918964ff782045e983db04ded40965e00a462938002996f0f8ec"
+          },
+          "command": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\audit-production-pre-emulator-main80-n1-normal-dense-command.json",
+            "bytes": 1485,
+            "sha256": "3fec377c11d1df96c94d4de76887e5a0119c43c522faec457a2b69ac2689487f"
+          },
+          "input_closure": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-dense-input-closure-verification.json",
+            "bytes": 1198,
+            "sha256": "05ec10f2386dedb15a3a4ef9237b11abf9b9ff4182bd9954cce314eea84d66dc"
+          },
+          "result": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\audit-production-pre-emulator-main80-n1-normal-dense-result.json",
+            "bytes": 3651,
+            "sha256": "a8eadfb8682867eb41bed6849c3ed81f721d00dd4ac2c2449b903808b4512caf"
+          }
+        },
+        "audit": {
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense-audit.json",
+          "bytes": 2159,
+          "sha256": "27f89acf4eedb63a84a30eff6bb76ada09624934a35632dd05504669c9f1cd95"
+        },
+        "process": {
+          "state": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\state.json",
+            "bytes": 814,
+            "sha256": "c4c66eae309ebe3f6fa425390e7cd74383df6a28bce170587ce8c44d5d7636af"
+          },
+          "contract": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\contract.json",
+            "bytes": 595,
+            "sha256": "4f50ed349a6aa7ab593f1e7f70e881b99b59aef2ebd36af4984ca36558e34ff5"
+          },
+          "specification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-dense-direct-spec.json",
+            "bytes": 18572,
+            "sha256": "85c1452a3b757c7b85e3747a3db4325726915b0c2fb07552fd31850d6b9bb00b"
+          },
+          "verification": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\production-pre-emulator-main80-n1-normal-dense-verification.json",
+            "bytes": 3721,
+            "sha256": "c48ad9bc7e85c6d80b110292306ff36d91bf03669a6c6e8a6b7b01b96d54ed82"
+          },
+          "freeze": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\freeze.json",
+            "bytes": 31381,
+            "sha256": "bb9e5bfbec885ec6efea33b65cd3f4d5550c2d65743c728db98965d2341303b0"
+          },
+          "command": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\production-pre-emulator-main80-n1-normal-dense-command.json",
+            "bytes": 921,
+            "sha256": "d1774935e775b9b085f92e1d6f514b104f8eb0824fe7acc505f938ba68329fac"
+          },
+          "input_closure": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-dense-input-closure-verification.json",
+            "bytes": 1168,
+            "sha256": "2612486770fb3653c48263d8bcb5c01cea7d869210e2a9765892f6319db3a230"
+          },
+          "result": {
+            "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\production-pre-emulator-main80-n1-normal-dense-result.json",
+            "bytes": 3656,
+            "sha256": "9b106f556895ea354d945ad80c62075e481fe7a66540412f212a1a4a3c6ee900"
+          }
+        }
+      }
+    ],
+    "rows": 3
+  },
+  "AA12": {
+    "original_status": {
+      "sha256": "1cb1db7e4b76e0ec63d2c20ffe5892403c792c07bcc70d0a8c6d4ca67a556f4e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\status.json",
+      "bytes": 27321
+    },
+    "planned": 12,
+    "wrapper_exit": 1,
+    "statuses": [
+      {
+        "status": "PASS",
+        "verdict": {
+          "bytes": 534,
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-1-gate.json",
+          "sha256": "afd79e2042e99a4d6d0a4e3d032fadcf28b4a0b4161b1a0ba8f6c28ce0772feb"
+        },
+        "run_id": "main80-e1-tap-closed-reset-v1-1"
+      },
+      {
+        "status": "PASS",
+        "verdict": {
+          "bytes": 534,
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-2-gate.json",
+          "sha256": "2658e470dc27175ae43ab5a62f36d97fe47e6342754ab7be25d649e224c0b8d7"
+        },
+        "run_id": "main80-e1-tap-closed-reset-v1-2"
+      },
+      {
+        "status": "PASS",
+        "verdict": {
+          "bytes": 534,
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-3-gate.json",
+          "sha256": "6f75a37ced5a0f82e280ad82cd7b313203b422b80319edfbd0cb610b2991bf60"
+        },
+        "run_id": "main80-e1-tap-closed-reset-v1-3"
+      },
+      {
+        "status": "PASS",
+        "verdict": {
+          "bytes": 534,
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-4-gate.json",
+          "sha256": "80870499e923b86c69300333905285d074f437bde90298651bdb3f27dc535db2"
+        },
+        "run_id": "main80-e1-tap-closed-reset-v1-4"
+      },
+      {
+        "status": "PASS",
+        "verdict": {
+          "bytes": 535,
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-1-gate.json",
+          "sha256": "48994d1a3f48f6c0065f963ecc9fee577153a99d4c4bfcd6750b98bea7442079"
+        },
+        "run_id": "main80-e1-hold-closed-reset-v2-1"
+      },
+      {
+        "status": "PASS",
+        "verdict": {
+          "bytes": 535,
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-2-gate.json",
+          "sha256": "91aa381efc53e7d99484c86b399641f8bc20af8ad018eb5973196d056c1a9651"
+        },
+        "run_id": "main80-e1-hold-closed-reset-v2-2"
+      },
+      {
+        "status": "NOT_READY",
+        "verdict": {
+          "bytes": 581,
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-3-gate.json",
+          "sha256": "c99bbabe9cd5caa31af9a496c9a9a664255a8f3f316083b66b6374b98dced0d9"
+        },
+        "run_id": "main80-e1-hold-closed-reset-v2-3"
+      }
+    ],
+    "status": "STOP",
+    "validity_pass": 6,
+    "remaining": [
+      {
+        "run_id": "main80-e1-hold-closed-reset-v2-4",
+        "status": "NOT_RUN"
+      },
+      {
+        "run_id": "main80-e1-dense-1",
+        "status": "NOT_RUN"
+      },
+      {
+        "run_id": "main80-e1-dense-2",
+        "status": "NOT_RUN"
+      },
+      {
+        "run_id": "main80-e1-dense-3",
+        "status": "NOT_RUN"
+      },
+      {
+        "run_id": "main80-e1-dense-4",
+        "status": "NOT_RUN"
+      }
+    ],
+    "remaining_not_run": 5,
+    "raw_integrity_pass": 7,
+    "produced": 7,
+    "original_reason": "necessary cost gate failed main80-e1-hold-closed-reset-v2-3",
+    "validity_not_ready": 1
+  },
+  "original_negative": {
+    "safe": true,
+    "writer_fault": false,
+    "unknown": 0,
+    "invalid": 0,
+    "producer_deadline_overruns": 0,
+    "failures": [
+      "streamed_workload_and_cadence"
+    ],
+    "writer_drops": 0,
+    "gate": {
+      "bytes": 581,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-3-gate.json",
+      "sha256": "c99bbabe9cd5caa31af9a496c9a9a664255a8f3f316083b66b6374b98dced0d9"
+    },
+    "publication_deadline_overruns": 1,
+    "pool_drops": 0,
+    "requested": 2560,
+    "injection_failed": 0,
+    "published": 2560,
+    "maxima_not_assumed_same_frame": true,
+    "consumed": 2557,
+    "cause": "UNKNOWN; no additional diagnosis performed after user rest instruction",
+    "run_id": "main80-e1-hold-closed-reset-v2-3",
+    "producer_schedule_lateness_ms": {
+      "jitter_p95_minus_p5": 0.0010999999999999998,
+      "max": 19.6558,
+      "n": 2560,
+      "p50": 0.0005,
+      "p95": 0.0013,
+      "p99": 0.025245999999998457
+    },
+    "producer_render_ms": {
+      "jitter_p95_minus_p5": 0.13123499999999982,
+      "max": 1.5906,
+      "n": 2560,
+      "p50": 0.1766,
+      "p95": 0.24852999999999983,
+      "p99": 0.37998399999999966
+    }
+  },
+  "Native8_count": 38,
+  "Native8": [
+    {
+      "command": {
+        "bytes": 756,
+        "sha256": "c1ff4afbff1a349da080f6968f0a0e1de4024dbde8a59b3aad7412eda5202182",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main80-e1\\configure-producer-eligibility-main80-e1-command.json"
+      },
+      "specification": {
+        "bytes": 22027,
+        "sha256": "806691a2f5e4d1b0d9e4a5592010aa5b5868092dca02d7d1ce35916b464b974b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main80-e1-inputs\\spec.json"
+      },
+      "result": {
+        "bytes": 13407,
+        "sha256": "f1b0371bf371f07a33f40162f9461d4248e4e545e29670aeb103f9cd567de3c7",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main80-e1\\configure-producer-eligibility-main80-e1-result.json"
+      },
+      "verification": {
+        "bytes": 3575,
+        "sha256": "b17b215ef70f12d754d6fd66bb734cc2e9b52a471761a9563bc24079a2bfcc3b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main80-e1\\configure-producer-eligibility-main80-e1-verification.json"
+      },
+      "freeze": {
+        "bytes": 38392,
+        "sha256": "65c10fc239a41d4ea6ef35ac93f41cde9d00d99069b7e988b6abcf0fe505cee5",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main80-e1\\freeze.json"
+      },
+      "contract": {
+        "bytes": 513,
+        "sha256": "30f74b1dfc545d0962c9c6089b49ea9a6e1a1f04174501eb438b828aae78f7ff",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main80-e1\\contract.json"
+      },
+      "state": {
+        "bytes": 802,
+        "sha256": "609321577bb0034769f11dfd7612e67d53e5648a75dc0ba446b4a7068ee11c6c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main80-e1\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1137,
+        "sha256": "0ab431fb236fcd64db39edfd1548088bc2f4c53453473fd8a8401670988e9632",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\configure-producer-eligibility-main80-e1-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 732,
+        "sha256": "e76b059d74fce6160af29cb92e83224a354030f1d8d8595f6aee52010f461838",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main80-e1\\build-producer-eligibility-main80-e1-command.json"
+      },
+      "specification": {
+        "bytes": 21763,
+        "sha256": "d9b6e9a8399bbc6b5ca60a9364e98d2f1e3d5b9b6af5b1e4c39d45716409447a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main80-e1-inputs\\spec.json"
+      },
+      "result": {
+        "bytes": 32077,
+        "sha256": "034ebf5f1e7ba5595d11520ac5dab63b2964e319f2d016bc48856b6f188b14bb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main80-e1\\build-producer-eligibility-main80-e1-result.json"
+      },
+      "verification": {
+        "bytes": 3473,
+        "sha256": "74a0d98de832f2eaa167149d0aaf34ad9cf603391392b276da3811c7354dd480",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main80-e1\\build-producer-eligibility-main80-e1-verification.json"
+      },
+      "freeze": {
+        "bytes": 38141,
+        "sha256": "f3c70d847f20380b05acc48b1ba591128993bfdf626b577c798e650eb170f97c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main80-e1\\freeze.json"
+      },
+      "contract": {
+        "bytes": 501,
+        "sha256": "30d2d242122dc221e3fefc6fc104305fd7226a4ef3919b2bba117fdbcdb4e4aa",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main80-e1\\contract.json"
+      },
+      "state": {
+        "bytes": 794,
+        "sha256": "59b7e4e120d1daa4f6977763db96045a8a15bb6b623b4397ff2e0f9d0eb8ac51",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main80-e1\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1117,
+        "sha256": "03039f06820ba9baa64e1dce1cbb7ffeff9691b074f3964f8283ab6d18e09f33",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\build-producer-eligibility-main80-e1-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 933,
+        "sha256": "afacbc9087766214d9b59d1905a28d686fc0bd92573337c6ff276aec8fec32bc",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-affinity\\test-producer-eligibility-main80-e1-affinity-command.json"
+      },
+      "specification": {
+        "bytes": 10278,
+        "sha256": "bd7cbcc23ecb1ca8ba974cd0a6e9669cf460981a206b8897f5978860b85b428b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-affinity-direct-spec.json"
+      },
+      "result": {
+        "bytes": 3630,
+        "sha256": "4606f2765abda5f75b8df837b855bc7ea676ca2354402b4dcfc66dedeef17625",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-affinity\\test-producer-eligibility-main80-e1-affinity-result.json"
+      },
+      "verification": {
+        "bytes": 3668,
+        "sha256": "0fad27d334d247fc1946bb34b6883e0ed5a4973f42c982f5b4e49a577c8023fd",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-affinity\\test-producer-eligibility-main80-e1-affinity-verification.json"
+      },
+      "freeze": {
+        "bytes": 18081,
+        "sha256": "d9218629619ad1302f86be925299910c9bcc07adca2164f3b63857c7f42629d2",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-affinity\\freeze.json"
+      },
+      "contract": {
+        "bytes": 598,
+        "sha256": "611f7f2b5444d2b8ca47054fa3d655aec78130219061c041b94cea8ac8fd8c48",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-affinity\\contract.json"
+      },
+      "state": {
+        "bytes": 810,
+        "sha256": "0d8889918953a689ec3a2ecc28dd33fc03fdba68657e4a7c5c86e966dd0d5375",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-affinity\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1157,
+        "sha256": "8ba656e83cf2404c0909a9fa36ea14a9eadc9688663df916ee1a5ebbdb0d6f36",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-affinity-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 949,
+        "sha256": "fdef7f1c28ec37cb6c7831bd7dd6f8b7a69268f059deea227f09099df4c46c7f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-reader\\test-producer-eligibility-main80-e1-reader-command.json"
+      },
+      "specification": {
+        "bytes": 10162,
+        "sha256": "a5b666fca04037aa7d72bf177307fad40ae5aa706b9a6c6cf131d7dfd7092478",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-reader-direct-spec.json"
+      },
+      "result": {
+        "bytes": 3641,
+        "sha256": "81fa2375c63d332d79b1ea03dfb2b332b89593fe986aa6a82a32da80aeaaa157",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-reader\\test-producer-eligibility-main80-e1-reader-result.json"
+      },
+      "verification": {
+        "bytes": 3617,
+        "sha256": "b248f1cb97e4475216503a824f363d8b60943e9a254c32d40f8cdcedfc4e01c6",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-reader\\test-producer-eligibility-main80-e1-reader-verification.json"
+      },
+      "freeze": {
+        "bytes": 17963,
+        "sha256": "ab6998ece7a24385e3a5093796e7462c7160d375813c5e1ba8f7c29cd4599a65",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-reader\\freeze.json"
+      },
+      "contract": {
+        "bytes": 606,
+        "sha256": "1fd3d56f32921f61c63561a0f3db69f8a6b17d64c961218dd48bf986213460de",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-reader\\contract.json"
+      },
+      "state": {
+        "bytes": 806,
+        "sha256": "fadb94135b13530f00b51cf1c43d2b404b4ab5eb5029067ae80ba0e2e3ae2a29",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-reader\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1147,
+        "sha256": "733a78a0ea735c7be315022cdf8067f677b0a3db5e205a47ee77dc481791a7b1",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-reader-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 963,
+        "sha256": "8df5c1e5b78dd3409a64b5c3c2ae93a2a00b574841c6d160f127923efe8adca7",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-verification\\test-producer-eligibility-main80-e1-verification-command.json"
+      },
+      "specification": {
+        "bytes": 10541,
+        "sha256": "fc3c00933338ec98703772f1c5ab7b9dd2c78a39c56893b2cbdd9c7f87280793",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-verification-direct-spec.json"
+      },
+      "result": {
+        "bytes": 4095,
+        "sha256": "5679f4ea3804d46b6d0b11082af95f0070d042234d99ececb49e0c9bf13d49a4",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-verification\\test-producer-eligibility-main80-e1-verification-result.json"
+      },
+      "verification": {
+        "bytes": 3768,
+        "sha256": "77f92d362686308878fb0c6c9761814e443506ba2ebf3abee0093bc95f2cf52b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-verification\\test-producer-eligibility-main80-e1-verification-verification.json"
+      },
+      "freeze": {
+        "bytes": 18334,
+        "sha256": "2c83cf5423880447c319c6675df810aab58631464572949595857deec7b2ac0c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-verification\\freeze.json"
+      },
+      "contract": {
+        "bytes": 613,
+        "sha256": "19382abbe60ddd990bb08a8fdb2ec495a8468e2dbeba91996053de04f1154bb0",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-verification\\contract.json"
+      },
+      "state": {
+        "bytes": 818,
+        "sha256": "6672ec324421d6d794f8fdc329839847fdef8be792f813292d9716c73c7d81b0",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-verification\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1177,
+        "sha256": "f8ae2a4cc9d5660cf5aaf8d29b00c48068700a9d2ce443c4ac8a9e832957930c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-verification-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 929,
+        "sha256": "a3ad4f5bb99a5011ff325812b2069ac460635d6a4fd159c664a2ca3d2dd99717",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-invalid\\test-producer-eligibility-main80-e1-score-invalid-command.json"
+      },
+      "specification": {
+        "bytes": 10593,
+        "sha256": "db4897a57799885b33a15b364368a09b77a86fc0c775225b1474d98c857f2f13",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-score-invalid-direct-spec.json"
+      },
+      "result": {
+        "bytes": 3621,
+        "sha256": "ee5d51c5199ca46d88336bf3ed3d924aa33f415c62dacccf4ffeef4009b63efd",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-invalid\\test-producer-eligibility-main80-e1-score-invalid-result.json"
+      },
+      "verification": {
+        "bytes": 3794,
+        "sha256": "3c18be955d412eccd3d4933bad49f0b7609997c0db85d04260c1a5aebdd303cb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-invalid\\test-producer-eligibility-main80-e1-score-invalid-verification.json"
+      },
+      "freeze": {
+        "bytes": 18387,
+        "sha256": "e91348ed82d8b8b45d35287a5f0df214f7ed365a7120370649cd4a838b0b6db3",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-invalid\\freeze.json"
+      },
+      "contract": {
+        "bytes": 597,
+        "sha256": "cb6b7055fcce3efbc505c4d2900ff969edb7e27225b1650b52a219c256bf0e49",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-invalid\\contract.json"
+      },
+      "state": {
+        "bytes": 820,
+        "sha256": "18f82e5d385ec5ad0ec10e9abcd034d54899bbb96b9c72d3cd1231b1b3fc9112",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-invalid\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1182,
+        "sha256": "2aa715e7c3b7497e2c4f3339d4fa05f41b3e6c3ee0a1f4c08a89781600db60bc",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-score-invalid-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 905,
+        "sha256": "ef738da0e9d768167a7945bcfc33cb84984ad163be5ba1a94a4ad077689f8d8d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-tap\\test-producer-eligibility-main80-e1-score-tap-command.json"
+      },
+      "specification": {
+        "bytes": 10333,
+        "sha256": "7166cfd5d292eda9524e6a4d3de77727b891c50745456ec5d271aa10fc7e135e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-score-tap-direct-spec.json"
+      },
+      "result": {
+        "bytes": 3635,
+        "sha256": "82e420e88298c2183ef3191bf7ad7391d45298469b3dcf74038eed6b37c2181c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-tap\\test-producer-eligibility-main80-e1-score-tap-result.json"
+      },
+      "verification": {
+        "bytes": 3694,
+        "sha256": "376f1b0155c926336b0d68eda57da322b1377638355cf69513deaa07d6fd0bcf",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-tap\\test-producer-eligibility-main80-e1-score-tap-verification.json"
+      },
+      "freeze": {
+        "bytes": 18139,
+        "sha256": "8c2d29bd6c53243b1570082075a69bb36ca31be4eb006e5cd79cf012705be497",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-tap\\freeze.json"
+      },
+      "contract": {
+        "bytes": 585,
+        "sha256": "06887d2f16c153437b114eeea25da08509545b2d7587a488600c5a5f713b70de",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-tap\\contract.json"
+      },
+      "state": {
+        "bytes": 812,
+        "sha256": "cb7123b820ceedc77ef9df90334c42c4b807ac04f2260f54c6ad9dd1616dfe41",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-tap\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1162,
+        "sha256": "50c4bc80e94802b1f411c8c154ee36f9fb3aa787fe76bcef00caebc079bcc6c0",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-score-tap-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 911,
+        "sha256": "3c7738cc82ba7c570a95d3c693c7d987705f30279593de638712931d680da270",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-hold\\test-producer-eligibility-main80-e1-score-hold-command.json"
+      },
+      "specification": {
+        "bytes": 10398,
+        "sha256": "12355eae2cd56305f295c56b5f9db44e1e9f022f7eeae7ab4807348a44aa7d8c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-score-hold-direct-spec.json"
+      },
+      "result": {
+        "bytes": 3632,
+        "sha256": "281556062ec41f774d5ea934d7e025cd434fcff1cdadf91fb5fdcc2b59875fc6",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-hold\\test-producer-eligibility-main80-e1-score-hold-result.json"
+      },
+      "verification": {
+        "bytes": 3719,
+        "sha256": "dddb8c7eca1d19c09abdb1955811067fbf2ed1d0ce75d41f9c2727256d8a4d34",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-hold\\test-producer-eligibility-main80-e1-score-hold-verification.json"
+      },
+      "freeze": {
+        "bytes": 18201,
+        "sha256": "37adb15c4ba7f11a9c112a70e3b33de17a14a3d925e3e4b332aa64e09432be31",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-hold\\freeze.json"
+      },
+      "contract": {
+        "bytes": 588,
+        "sha256": "6e2db27245aaf1cc39daad84b899d3f66e4b30feb22daf8f321b0f0ba784a627",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-hold\\contract.json"
+      },
+      "state": {
+        "bytes": 814,
+        "sha256": "a9736228c015c657949462754e96a5c7be756488eec7fc7bfa9b903e00ae496b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-hold\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1167,
+        "sha256": "ca08f5cb63e0df67035b7e63912b68f5d4c144b0aff896dee3720085637ed602",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-score-hold-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 917,
+        "sha256": "a8f30e0a2eceed689b45090b4d9b9b5306f489c7ef18bab99e0be7d2bae89805",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-dense\\test-producer-eligibility-main80-e1-score-dense-command.json"
+      },
+      "specification": {
+        "bytes": 10463,
+        "sha256": "7eaabe6503d5e3bafe574a8548931999cf6fb1c9f4173a9004fdd09377887035",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-score-dense-direct-spec.json"
+      },
+      "result": {
+        "bytes": 3637,
+        "sha256": "0f6f2c047552acfd50691b9b47dcd2bcec9ef9c44592fe174e455120c91cf356",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-dense\\test-producer-eligibility-main80-e1-score-dense-result.json"
+      },
+      "verification": {
+        "bytes": 3744,
+        "sha256": "13700b150e57ed9fc3823e40b32fa3665cba5ecdbb5a9d973240eab8a5da356f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-dense\\test-producer-eligibility-main80-e1-score-dense-verification.json"
+      },
+      "freeze": {
+        "bytes": 18263,
+        "sha256": "ce66f12cba5cb1a48b353b78eec64620960d805ee226bbc1758d67b2d2c15eb0",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-dense\\freeze.json"
+      },
+      "contract": {
+        "bytes": 591,
+        "sha256": "85de77add2f1ab36acdc5d8a7412c0345162f6fda78094460f5e81cdf0be2b88",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-dense\\contract.json"
+      },
+      "state": {
+        "bytes": 816,
+        "sha256": "a8aa86f40b5c105be9f6cc8402ec778fbe106873c90506de5d87e21748d62779",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-score-dense\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1172,
+        "sha256": "cd12eb4354702c35021133607614ecaa9f65ebc1fb036e136a5c913f9b914c6b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-score-dense-input-closure-verification.json"
+      }
+    },
+    {
+      "command": {
+        "bytes": 1099,
+        "sha256": "d97ca5bd1bbefc889e42511b491cddd4518332d8a50aa4c43ea1d98c35558c87",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\test-producer-eligibility-main80-e1-motion-command.json"
+      },
+      "specification": {
+        "bytes": 10244,
+        "sha256": "762ffed55f61bf5c7e73c1b11859f4fe2d04ff0ddbb7de7714d7667b49cc7490",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-motion-direct-spec.json"
+      },
+      "result": {
+        "bytes": 3630,
+        "sha256": "4f3bb5f9a23d843932a6817cb1add8c544030d978a8110254aff9285145f1e9a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\test-producer-eligibility-main80-e1-motion-result.json"
+      },
+      "verification": {
+        "bytes": 3621,
+        "sha256": "4122990cdc722269c8ab6b17a93c125ff173358536be833a6f758fce2f73b166",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\test-producer-eligibility-main80-e1-motion-verification.json"
+      },
+      "freeze": {
+        "bytes": 17958,
+        "sha256": "19b61fc2103e827d3a15acea7129946a9f4294ab922b5d7b6353baec4cbdcb08",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\freeze.json"
+      },
+      "contract": {
+        "bytes": 682,
+        "sha256": "832488f0440d0278e602267a62e83f78ef518ee3edecec1beea1a18108475ddd",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\contract.json"
+      },
+      "state": {
+        "bytes": 806,
+        "sha256": "c7963a437fc09e862d5f28b804684a5e7f86730255622a2fe4d89e9570363a63",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main80-e1-motion\\state.json"
+      },
+      "input_closure": {
+        "bytes": 1147,
+        "sha256": "054090190702cbec3a9e1749eaf2a5c487b42e1d8c163aa2a9d6036deac0de0f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main80-e1-motion-input-closure-verification.json"
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "5e4ccf29272bd454c806d45a194939b79001590a6e70bd87020df63662fb7f6c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\readonly-eligibility-main80-e1-pre-cost-input-closure-verification.json",
+        "bytes": 1133
+      },
+      "verification": {
+        "sha256": "345b1a9d2faa7c5a6cc3ede02b2ce559b3c354d2373cef7f9916ee70106cc208",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main80-e1-pre-cost\\readonly-eligibility-main80-e1-pre-cost-verification.json",
+        "bytes": 3543
+      },
+      "specification": {
+        "sha256": "13a56c41e06fcb395afba89fc8afe193ba9b52415378dd8592436bafd2764546",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\readonly-eligibility-main80-e1-pre-cost-direct-spec.json",
+        "bytes": 16338
+      },
+      "contract": {
+        "sha256": "a4e0682ec9fd62f1427d20b7560b81a6604d79e6d8487311dd03ea922abba5f0",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main80-e1-pre-cost\\contract.json",
+        "bytes": 761
+      },
+      "freeze": {
+        "sha256": "5d1351790aea65dff437663b60f32e03f3bc20d7c8a88cd4ebf86b1d6af6cc8a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main80-e1-pre-cost\\freeze.json",
+        "bytes": 27960
+      },
+      "state": {
+        "sha256": "e1d93f8faddce46f09d34f4604c5eb4d49ac88d2c17985dd75814ccf06fdec09",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main80-e1-pre-cost\\state.json",
+        "bytes": 800
+      },
+      "result": {
+        "sha256": "543de614798a14d7d8c026f6a2550842b9c7399c5de09cf7e1f4968376e6c46e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main80-e1-pre-cost\\readonly-eligibility-main80-e1-pre-cost-result.json",
+        "bytes": 3629
+      },
+      "command": {
+        "sha256": "2b7ce85776827aae3b75b29c074babbb0db54f3c7d7c85c4e4d987cdad79595a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main80-e1-pre-cost\\readonly-eligibility-main80-e1-pre-cost-command.json",
+        "bytes": 1255
+      }
+    },
+    {
+      "state": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\state.json",
+        "bytes": 810,
+        "sha256": "f65721432da268cc84e855d38209bdb0ea723d172c55db40f04fcbc8f7d9b8a4"
+      },
+      "contract": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\contract.json",
+        "bytes": 589,
+        "sha256": "2917092c19fa5e52ff1632e080f4601b716065226389329e53caa248b0a6f0c4"
+      },
+      "specification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-tap-direct-spec.json",
+        "bytes": 18334,
+        "sha256": "ce9dddf7f960153af6334d4caa4c2cc4dd7d22c039c0a2c18269ad950f5a4fe2"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\production-pre-emulator-main80-n1-normal-tap-verification.json",
+        "bytes": 3671,
+        "sha256": "4f8c3f7f11d8f273eee587306b6b1dc78ebab690d4dde4aa1149222a70db513f"
+      },
+      "freeze": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\freeze.json",
+        "bytes": 31149,
+        "sha256": "371aa5909ca8b4c11640cb482867ad0373d09deedcd5fcebd3fa1d3b3b35335f"
+      },
+      "command": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\production-pre-emulator-main80-n1-normal-tap-command.json",
+        "bytes": 909,
+        "sha256": "41e1777b9fe2f49bde35f340b31d86c1588c64832249a914640bc74c843041a5"
+      },
+      "input_closure": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-tap-input-closure-verification.json",
+        "bytes": 1158,
+        "sha256": "68e62a2d034d4bb1bbc02afefcd7e1c90afc56426237725261d984fba806980a"
+      },
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-tap\\production-pre-emulator-main80-n1-normal-tap-result.json",
+        "bytes": 3646,
+        "sha256": "bad534cf98bb65ad437beca5339342afe1ba4f7af05ed233373e55da2fcd583d"
+      }
+    },
+    {
+      "state": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\state.json",
+        "bytes": 822,
+        "sha256": "6d23219b7d6f7e617286189216dcf8ae6458a4ae480425418715074ccf388423"
+      },
+      "contract": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\contract.json",
+        "bytes": 875,
+        "sha256": "bd3854529f54b09b9108e956f21ac0e7fdcc5a1502f59072d7997c085c4be97b"
+      },
+      "specification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-tap-direct-spec.json",
+        "bytes": 19340,
+        "sha256": "33c9c4aa6f661fa4a55731db649d8ce08760d8c9c83e077727e6a28f3ee6f7f9"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\audit-production-pre-emulator-main80-n1-normal-tap-verification.json",
+        "bytes": 3821,
+        "sha256": "25cea9b2c2ecfc68e51c941f20015b31dabfb3d484a7e1d8af436c3f6e457451"
+      },
+      "freeze": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\freeze.json",
+        "bytes": 31843,
+        "sha256": "05728d5d8681dbd52e7ae27e3d8a12c479ed6376f3f168747592873ff3aecde0"
+      },
+      "command": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\audit-production-pre-emulator-main80-n1-normal-tap-command.json",
+        "bytes": 1473,
+        "sha256": "442776e511d603f018d224883d8b545b0b7dcee6ff2f1f88dacd49807e6f7c47"
+      },
+      "input_closure": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-tap-input-closure-verification.json",
+        "bytes": 1188,
+        "sha256": "27a44008ed1663b3cdd97a1650ce93739b48496aba440de7bcf2ff4af9ed792b"
+      },
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-tap\\audit-production-pre-emulator-main80-n1-normal-tap-result.json",
+        "bytes": 3637,
+        "sha256": "1d6e0fa08736c736e44c076883ac76abf615def16980193364f0fb725eeedc15"
+      }
+    },
+    {
+      "state": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\state.json",
+        "bytes": 812,
+        "sha256": "60df2493b4dde25a58744daca7d6d0787c65c6a8ff8c151a8f44e9868494878f"
+      },
+      "contract": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\contract.json",
+        "bytes": 592,
+        "sha256": "0d12ddc01394aba253b9804205a2457e33345eca50f6e39b30bb01a2152f49cb"
+      },
+      "specification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-hold-direct-spec.json",
+        "bytes": 18453,
+        "sha256": "2d2f61a1c77ea89e5c007eabf98dd80b20573dffb1a962501cf3600122055976"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\production-pre-emulator-main80-n1-normal-hold-verification.json",
+        "bytes": 3696,
+        "sha256": "7988c957c073b794c18467db30366fa5693a1c5705b07d0cc1de06e43c845a58"
+      },
+      "freeze": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\freeze.json",
+        "bytes": 31265,
+        "sha256": "d310a50d81c40d97f195ddad2ad984a166ecd21c1271a029af41aa673bb828fc"
+      },
+      "command": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\production-pre-emulator-main80-n1-normal-hold-command.json",
+        "bytes": 915,
+        "sha256": "41131d54d1740ac85a184c13876426d924abf56acaefba55c02a6c659265506b"
+      },
+      "input_closure": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-hold-input-closure-verification.json",
+        "bytes": 1163,
+        "sha256": "3c9387e9a82888dd9a7e30009762d63816407077fdf9d443d8e42b8337ea59d7"
+      },
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-hold\\production-pre-emulator-main80-n1-normal-hold-result.json",
+        "bytes": 3655,
+        "sha256": "abaedcdd74b2f1b97d30e83e10a86f4b4f23610685dfdbbe26461cca80bc6aa1"
+      }
+    },
+    {
+      "state": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\state.json",
+        "bytes": 824,
+        "sha256": "9b8b1c5cb9f75933acb138c0a5ad9652da9ec9b989a7eba46f42a2642ffd580d"
+      },
+      "contract": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\contract.json",
+        "bytes": 878,
+        "sha256": "6fa32cd215fde87b6251031045bafa90108b379a4187bea157ebba42dde3dbed"
+      },
+      "specification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-hold-direct-spec.json",
+        "bytes": 19459,
+        "sha256": "4c46740145fceac675d8d01d1949f0c18f19e67aac846b47c8cdfa4df166538f"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\audit-production-pre-emulator-main80-n1-normal-hold-verification.json",
+        "bytes": 3846,
+        "sha256": "2fa1c72c3ccba1146fcf3944b075fcde800a96e117fda9695399138e063a2e70"
+      },
+      "freeze": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\freeze.json",
+        "bytes": 31959,
+        "sha256": "6b4b4593ec64205d6f4e043f9c016d941c9f8d7f151f89e0fab17cd245cf122e"
+      },
+      "command": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\audit-production-pre-emulator-main80-n1-normal-hold-command.json",
+        "bytes": 1479,
+        "sha256": "3533b4a484086ba81dfba0d6b228b9cbed6e0047850f7975caded6d5f60be034"
+      },
+      "input_closure": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-hold-input-closure-verification.json",
+        "bytes": 1193,
+        "sha256": "79bbd8e20b7d477d1fdf5524dc6faf167e82166cab2fccd0b07b480b09c7591d"
+      },
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-hold\\audit-production-pre-emulator-main80-n1-normal-hold-result.json",
+        "bytes": 3638,
+        "sha256": "cf023d91d6ce972332286f6ac8678a32114c3560d20cd5efd2a108d692e93193"
+      }
+    },
+    {
+      "state": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\state.json",
+        "bytes": 814,
+        "sha256": "c4c66eae309ebe3f6fa425390e7cd74383df6a28bce170587ce8c44d5d7636af"
+      },
+      "contract": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\contract.json",
+        "bytes": 595,
+        "sha256": "4f50ed349a6aa7ab593f1e7f70e881b99b59aef2ebd36af4984ca36558e34ff5"
+      },
+      "specification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-dense-direct-spec.json",
+        "bytes": 18572,
+        "sha256": "85c1452a3b757c7b85e3747a3db4325726915b0c2fb07552fd31850d6b9bb00b"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\production-pre-emulator-main80-n1-normal-dense-verification.json",
+        "bytes": 3721,
+        "sha256": "c48ad9bc7e85c6d80b110292306ff36d91bf03669a6c6e8a6b7b01b96d54ed82"
+      },
+      "freeze": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\freeze.json",
+        "bytes": 31381,
+        "sha256": "bb9e5bfbec885ec6efea33b65cd3f4d5550c2d65743c728db98965d2341303b0"
+      },
+      "command": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\production-pre-emulator-main80-n1-normal-dense-command.json",
+        "bytes": 921,
+        "sha256": "d1774935e775b9b085f92e1d6f514b104f8eb0824fe7acc505f938ba68329fac"
+      },
+      "input_closure": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\production-pre-emulator-main80-n1-normal-dense-input-closure-verification.json",
+        "bytes": 1168,
+        "sha256": "2612486770fb3653c48263d8bcb5c01cea7d869210e2a9765892f6319db3a230"
+      },
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\production-pre-emulator-main80-n1-normal-dense\\production-pre-emulator-main80-n1-normal-dense-result.json",
+        "bytes": 3656,
+        "sha256": "9b106f556895ea354d945ad80c62075e481fe7a66540412f212a1a4a3c6ee900"
+      }
+    },
+    {
+      "state": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\state.json",
+        "bytes": 826,
+        "sha256": "d4e2f236cb637322ed479a2f68afc407ad6c8496f90e7dbfa4c5df5a4bf20a39"
+      },
+      "contract": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\contract.json",
+        "bytes": 881,
+        "sha256": "b81b45dd4839006efef040f6fc5f66048c582b566efa53ae8ab94ad073959dfc"
+      },
+      "specification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-dense-direct-spec.json",
+        "bytes": 19735,
+        "sha256": "c6a1f49f1a7eb12ef424c6be20f0b9019fccaef54d4630f874dcbf9f9eea438b"
+      },
+      "verification": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\audit-production-pre-emulator-main80-n1-normal-dense-verification.json",
+        "bytes": 3871,
+        "sha256": "86a0b8b482f4544524aa1d745679df34083b7a2f9ba513bdff9cf9ec048ec5f3"
+      },
+      "freeze": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\freeze.json",
+        "bytes": 32324,
+        "sha256": "9b42269e7133918964ff782045e983db04ded40965e00a462938002996f0f8ec"
+      },
+      "command": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\audit-production-pre-emulator-main80-n1-normal-dense-command.json",
+        "bytes": 1485,
+        "sha256": "3fec377c11d1df96c94d4de76887e5a0119c43c522faec457a2b69ac2689487f"
+      },
+      "input_closure": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-production-pre-emulator-main80-n1-normal-dense-input-closure-verification.json",
+        "bytes": 1198,
+        "sha256": "05ec10f2386dedb15a3a4ef9237b11abf9b9ff4182bd9954cce314eea84d66dc"
+      },
+      "result": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-production-pre-emulator-main80-n1-normal-dense\\audit-production-pre-emulator-main80-n1-normal-dense-result.json",
+        "bytes": 3651,
+        "sha256": "a8eadfb8682867eb41bed6849c3ed81f721d00dd4ac2c2449b903808b4512caf"
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "07d02b85fd604baed01a9ba09a42d619d58a1f75ab0a0dc756b9c1b47b713028",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1-input-closure-verification.json",
+        "bytes": 1203
+      },
+      "verification": {
+        "sha256": "fb606f2b91f6c11270179ef6ad6c9ca56c5b6ddb1d4b2d8d872c35cd5283146b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1-verification.json",
+        "bytes": 3894
+      },
+      "specification": {
+        "sha256": "b0af8ecbd6a39a5eef369862a12e5df393ad19ac77723ae90152910310ed6202",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1-direct-spec.json",
+        "bytes": 19664
+      },
+      "contract": {
+        "sha256": "2dba4b7b1453897b577d176e08772258edaebf5aa88c294adbda27f6a303ac13",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1\\contract.json",
+        "bytes": 774
+      },
+      "freeze": {
+        "sha256": "dffaa1b596c3264768aceb6141dd48fcfaff3593e1d2e36bb3d2499e57144357",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1\\freeze.json",
+        "bytes": 32358
+      },
+      "state": {
+        "sha256": "3496af8244305aed2bbc30adb952d4ca6b0addfbf0a5318666c5fd1afdc8915f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1\\state.json",
+        "bytes": 828
+      },
+      "result": {
+        "sha256": "55df92bfcdc56fdd7bd12018bd0b16d4dd5458090eda49a0d1677458484ac6db",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1-result.json",
+        "bytes": 3624
+      },
+      "command": {
+        "sha256": "71ab271c7308a7d2a6acc177865ccaf6475cb5353c2d39c9bbeb06809e65f4be",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1-command.json",
+        "bytes": 1273
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "1c212a734dc6a23d56fb694beb5141d25ed8c55383c7e7a48624232ded843f30",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1-input-closure-verification.json",
+        "bytes": 1188
+      },
+      "verification": {
+        "sha256": "5064a4195ff0c74364e7dfa690891d64380208a7de0c13ce825d7ad31d43951b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1-verification.json",
+        "bytes": 3819
+      },
+      "specification": {
+        "sha256": "4af8ecc7a1ddfc5a614047b131bf5536af0a66fe91717b1cca55b8252fa0b7d2",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1-direct-spec.json",
+        "bytes": 19237
+      },
+      "contract": {
+        "sha256": "096a7726c30128bf4ecc60ff0b88a28387f8f1b628ccdecd7f92fc5c6c804c1a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1\\contract.json",
+        "bytes": 725
+      },
+      "freeze": {
+        "sha256": "7e98a047545db1638d3231056c773cea6e4045ae03bfeba9e23c3bc9dc86e70c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1\\freeze.json",
+        "bytes": 32012
+      },
+      "state": {
+        "sha256": "78ead1ac45dad1a2784691bd1a3c3e86c4cf0ea32603a96eca03e6b3b70e4fcf",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1\\state.json",
+        "bytes": 822
+      },
+      "result": {
+        "sha256": "ca330b2dffd2bd8a41539437f6897b0be7bc7f8f1c95b18c30f7f77b8d66a0a3",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1-result.json",
+        "bytes": 3606
+      },
+      "command": {
+        "sha256": "f596b47edbbac5164af8dd3073857947864d6698cbf834351599245b0146e2fb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-1-command.json",
+        "bytes": 1185
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "0a82a9153d2d1f9355e789c0b588a68407e2c8f4fdefa91dfcae42e77777885f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1-input-closure-verification.json",
+        "bytes": 1183
+      },
+      "verification": {
+        "sha256": "c24ab5df2c75480f395b94f71886d321fb318a6658519d85f675a030cb262e74",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1-verification.json",
+        "bytes": 3793
+      },
+      "specification": {
+        "sha256": "facaa0f72f6ecc8e284cf87c71776df9e223e21f58665747172d1dcc0fc52e56",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1-direct-spec.json",
+        "bytes": 19142
+      },
+      "contract": {
+        "sha256": "5df332656c4258c6af574bb9908831d069fb902dbf658a0fce9d60be411f20eb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1\\contract.json",
+        "bytes": 740
+      },
+      "freeze": {
+        "sha256": "f74bb1298bb8fbfa9ecf8b32016c07e8e3254622c10f5f7401c383dc43cc0bff",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1\\freeze.json",
+        "bytes": 31896
+      },
+      "state": {
+        "sha256": "c5e49389b31e6a122dcd231e8ad942c3bc5f939c059cd8fc013f17d013e05a0c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1\\state.json",
+        "bytes": 820
+      },
+      "result": {
+        "sha256": "cf68185038334bcf5f45c0283c74eba148edd0de07aed21a6b815a2ae7959ed2",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1-result.json",
+        "bytes": 3621
+      },
+      "command": {
+        "sha256": "1aac711c5e0611b9ffd12c5caed187c543df00c7a431d7116b5d4dee4e8f1e69",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-1-command.json",
+        "bytes": 1213
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "50ae4ebb0f7b5a56f5a51328910957bff196f83f99daea23aae3ea9a6fdb18cd",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2-input-closure-verification.json",
+        "bytes": 1203
+      },
+      "verification": {
+        "sha256": "e4fab75470b23d0b771cebfb7acdd0b9b715b40c0667ee6da8bbc8a34942d4f0",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2-verification.json",
+        "bytes": 3894
+      },
+      "specification": {
+        "sha256": "2febd6eaddae7276c36958d5840c2ccf38263e7baecbf6ac7f82c3a133cd6470",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2-direct-spec.json",
+        "bytes": 19664
+      },
+      "contract": {
+        "sha256": "daaf41b248670390952888808dbe25dce8782f65adba0091b7555003258c2b98",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2\\contract.json",
+        "bytes": 774
+      },
+      "freeze": {
+        "sha256": "07de86a69219fb91debbd988104c49004061cb48028876f099bd91378c071346",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2\\freeze.json",
+        "bytes": 32358
+      },
+      "state": {
+        "sha256": "3cfcdf98c36ae94ecd44e548c28e4898f90dbdb026af51108197146b525e3c7e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2\\state.json",
+        "bytes": 828
+      },
+      "result": {
+        "sha256": "8f07a0e663c59683ac840155a86cea518e2d44ebbf19bf5d124a99d4cc872af1",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2-result.json",
+        "bytes": 3624
+      },
+      "command": {
+        "sha256": "689f9100d68530a34e0c59c0cba121ed598d8e156de2daabeaf848f1f2d3b570",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2-command.json",
+        "bytes": 1273
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "efd55cd8632798f675932dc661f8a3ab56bb676a8818c40f00010bec2c1df1fd",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2-input-closure-verification.json",
+        "bytes": 1188
+      },
+      "verification": {
+        "sha256": "9012e47e3a5c724e608350eb66ba2fb371b7d6cfa5244e64fe275588b80212cd",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2-verification.json",
+        "bytes": 3819
+      },
+      "specification": {
+        "sha256": "d7fe185fea33097a9fb694648ba63215a90be60f73a60e3c8f72ccb54ab0453c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2-direct-spec.json",
+        "bytes": 19237
+      },
+      "contract": {
+        "sha256": "c7b87bb1b3164ca623764e7333f5bfc063120695d642f6fe38167dc7c2f5bc58",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2\\contract.json",
+        "bytes": 725
+      },
+      "freeze": {
+        "sha256": "c685b09429c11fc18824e4639c769f562b7072d54b69c8830f877183b31de044",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2\\freeze.json",
+        "bytes": 32012
+      },
+      "state": {
+        "sha256": "b5913c34d92708bd36e58424d078bab96419c81758d9b5ccd95a397da7396b78",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2\\state.json",
+        "bytes": 822
+      },
+      "result": {
+        "sha256": "7e8a04bd092bbcca682df36514cc25ea005f3bb9755e6b0e4a49ab23b8335008",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2-result.json",
+        "bytes": 3612
+      },
+      "command": {
+        "sha256": "f8916f384d2502316218c62c0dff625ace5dae33dcfe30ce7e835239f4e024ba",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-2-command.json",
+        "bytes": 1185
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "8a04738060a5d315bdc791cd1e06d8672274ebe958e6a7a6d34e3256137764c2",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2-input-closure-verification.json",
+        "bytes": 1183
+      },
+      "verification": {
+        "sha256": "f9541e097159cb76a17cd97100f0de0436027366194e9f0ad29a1748601806b5",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2-verification.json",
+        "bytes": 3793
+      },
+      "specification": {
+        "sha256": "4639da28362f85232c0236ca4edef8343e4d26d65139b03e7b029abfd769aeff",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2-direct-spec.json",
+        "bytes": 19142
+      },
+      "contract": {
+        "sha256": "0e84b734e1f62e959963f3645800161256fb9b57f6f1707751c2033aee047166",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2\\contract.json",
+        "bytes": 740
+      },
+      "freeze": {
+        "sha256": "d20eb611301005cb88b0f469712be88945e7c3a88c26bec256c7aa54497bc087",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2\\freeze.json",
+        "bytes": 31896
+      },
+      "state": {
+        "sha256": "8187e7aaa5e1e56e899b79dc2164c126d9b3a10b7adf50315c91082fee56a27e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2\\state.json",
+        "bytes": 820
+      },
+      "result": {
+        "sha256": "206be9d7d9f62c385dc77a80fd59b7fdeb14cbd5b7a4c9a2f5fe1991e5294c09",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2-result.json",
+        "bytes": 3623
+      },
+      "command": {
+        "sha256": "2389a7642ccf0029584a9df2d695623437be5fa521588c1c958d0e8494632288",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-2-command.json",
+        "bytes": 1213
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "b58d3034fdb9737b8b32466b0697e6c5938af9b7282e3527310d7467b488d5ee",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3-input-closure-verification.json",
+        "bytes": 1203
+      },
+      "verification": {
+        "sha256": "ea194fb2dcc9faecc2b6dc9de7f1b15b58b0dbd929f819e228c8473f3eb7fbab",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3-verification.json",
+        "bytes": 3894
+      },
+      "specification": {
+        "sha256": "ddd8612b5f0e246fdca1031bff2d295e29edd6123f5b894f359a5cc709c9ee78",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3-direct-spec.json",
+        "bytes": 19664
+      },
+      "contract": {
+        "sha256": "ec05987c1add30734506df70536128de2faacc1b15692b00df22bb420bf33792",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3\\contract.json",
+        "bytes": 774
+      },
+      "freeze": {
+        "sha256": "4b8d13295e5ffe0bf8954ec614dff26177bdef9906b970b408c7da2faf80f187",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3\\freeze.json",
+        "bytes": 32358
+      },
+      "state": {
+        "sha256": "1a4ed61cb44fc22af4502f8eb22ff2cc9e711b32d76557dcc861e1828c9b1974",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3\\state.json",
+        "bytes": 828
+      },
+      "result": {
+        "sha256": "b0379b0add7666bd1a87ea5f2cc70e6fb2f9360dc9190236cbf073c609a99c60",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3-result.json",
+        "bytes": 3623
+      },
+      "command": {
+        "sha256": "c48a996645772040c003bbcebfebaaa3d5dd9d8d0df9e0e372ab9d037f0c087d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3-command.json",
+        "bytes": 1273
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "e86a0cba949a5c258391f2165749a4e84ef4372b56b98ce625501c613efb393e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3-input-closure-verification.json",
+        "bytes": 1188
+      },
+      "verification": {
+        "sha256": "039987a5ebd0321db410b516d7e01c206adf9d5b86dd55167254acd8a50a4a69",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3-verification.json",
+        "bytes": 3819
+      },
+      "specification": {
+        "sha256": "5d37445aca33107346ae58eb4153cd48d4fe584d20ce7380661e2e98ce8514c6",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3-direct-spec.json",
+        "bytes": 19237
+      },
+      "contract": {
+        "sha256": "ba2c54c317d45dd30f54217f26a81b29d9097475a5b959b7de2e40133633a344",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3\\contract.json",
+        "bytes": 725
+      },
+      "freeze": {
+        "sha256": "e1e57c77210ba4ae73ab7393004ca8dcd10b5303c087b384868101f765fa501e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3\\freeze.json",
+        "bytes": 32012
+      },
+      "state": {
+        "sha256": "ecb6883c2c3f0d484279e855e6e547f13d0883ee60d0f37e9f5b66a7715a9eea",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3\\state.json",
+        "bytes": 822
+      },
+      "result": {
+        "sha256": "65a727ff1878b2d53427cf5b7da21e84de01d6c4501e648b37693e4963e0ccef",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3-result.json",
+        "bytes": 3615
+      },
+      "command": {
+        "sha256": "cae0fa8d6089a4ad1fa7216db3b4a26eac003a1efe5e0c2a149680157fd3bd03",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-3-command.json",
+        "bytes": 1185
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "4f6e77430db367bbc7cee41766f7e5f177466db7c85c657b3f1fb82a3817b446",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3-input-closure-verification.json",
+        "bytes": 1183
+      },
+      "verification": {
+        "sha256": "eeafe67746f78e1901ba9b71c34f26a62f6f1331f5d2e556d54e6eaa8a4c1a19",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3-verification.json",
+        "bytes": 3793
+      },
+      "specification": {
+        "sha256": "45900cb2eb0abc94f80f241a9387a932d25a76a009346120a7d12f859828336a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3-direct-spec.json",
+        "bytes": 19142
+      },
+      "contract": {
+        "sha256": "78fbbf00e0eff4798bdc2c1de71f454f39e562f97a96fa7e34f9f9cd8d1139e9",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3\\contract.json",
+        "bytes": 740
+      },
+      "freeze": {
+        "sha256": "7c38daea4437175a462ab7627704cdcd4432d5aab9c4bf0416842849567b77fb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3\\freeze.json",
+        "bytes": 31896
+      },
+      "state": {
+        "sha256": "bf21eccdd892ba303f1c896c5e608a532dc768a7a1712598ea27dec78a9eb90f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3\\state.json",
+        "bytes": 820
+      },
+      "result": {
+        "sha256": "090767445cce70e319727d0a3f878a35b7e3a63d6b4b8e19b2eae314ff84d7a7",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3-result.json",
+        "bytes": 3618
+      },
+      "command": {
+        "sha256": "2d5768d8525d263f0f17f25e678ddedff68f4ca157929d297087ca04d712aa20",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-3-command.json",
+        "bytes": 1213
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "1e47a1e621ca8041f0f48ac51bc9b380168ddd0175bfe433239fad126182abf6",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4-input-closure-verification.json",
+        "bytes": 1203
+      },
+      "verification": {
+        "sha256": "a97f23868c8155113af79f5965ba3c76a7709a9839848d65afaffa8081de6e3e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4-verification.json",
+        "bytes": 3894
+      },
+      "specification": {
+        "sha256": "579b9b307566e0aa153102380fe5b3e26662a6941084da10d42abaccd02c7f10",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4-direct-spec.json",
+        "bytes": 19664
+      },
+      "contract": {
+        "sha256": "24ea0cafe8f84698d227827587c4ded97845d1c7ca386e8152a9736650c09298",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4\\contract.json",
+        "bytes": 774
+      },
+      "freeze": {
+        "sha256": "81768ea2fb96c4bc4cf5ecd5aec42ebdc26822c5173bad18104e76c340363d88",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4\\freeze.json",
+        "bytes": 32358
+      },
+      "state": {
+        "sha256": "784fa783e0a550c75c83c76bea03cddef67b3cd7aa87faaac13f73c5668a7b79",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4\\state.json",
+        "bytes": 828
+      },
+      "result": {
+        "sha256": "b3d3d824a2630f87a445b3726ed401c75605f99861565ea18d3142d3f926e922",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4-result.json",
+        "bytes": 3618
+      },
+      "command": {
+        "sha256": "758621302f67fe0d25e462dc2123958e1873240bc2051e6b8a9189cee9da919f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4\\pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4-command.json",
+        "bytes": 1273
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "904fce3b24f4152a1818635106871a5309898b5a05d12c9b56b319fa33a14dfc",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4-input-closure-verification.json",
+        "bytes": 1188
+      },
+      "verification": {
+        "sha256": "aa94dd6ced0b26def1217fbfcf18062d937cc0282cb19089260d12d5a51a3752",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4-verification.json",
+        "bytes": 3819
+      },
+      "specification": {
+        "sha256": "5401d72da16ed8ebe52b29f9d195af1952eee39123811123988e576dd09f1815",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4-direct-spec.json",
+        "bytes": 19237
+      },
+      "contract": {
+        "sha256": "509752652ef5e53f514d6d66b16a674af2a7f9284200fcad254663957f3ae30c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4\\contract.json",
+        "bytes": 725
+      },
+      "freeze": {
+        "sha256": "e9947673dfe2db176dfd8ac33c1896e95efb71655b2ac97af3e5cb8ee7b2235b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4\\freeze.json",
+        "bytes": 32012
+      },
+      "state": {
+        "sha256": "4a523fb7276ee676309a32bc3c235e64f5909693d2f6123e261c3c08e4ac3baf",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4\\state.json",
+        "bytes": 822
+      },
+      "result": {
+        "sha256": "5a8bce4230597968e3449f9067311b481cc291b09f42d8b44f5e836ac3528ff8",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4-result.json",
+        "bytes": 3615
+      },
+      "command": {
+        "sha256": "06a6bae2384a9bd3058ce40c5f5678e98507907dcb357c5bda0c13c0d1c051f5",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4\\audit-pre-emulator-main80-e1-tap-closed-reset-v1-4-command.json",
+        "bytes": 1185
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "82e1666cc44a5a186b12f9c833f098aa2d232768ec68eee779e978fc08c2fb7c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4-input-closure-verification.json",
+        "bytes": 1183
+      },
+      "verification": {
+        "sha256": "46e750fa53aeedc60904a212ea03e0b107deb841deaefc87f028a8a340ca5ead",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4-verification.json",
+        "bytes": 3793
+      },
+      "specification": {
+        "sha256": "6cf897703bce0d94f8f2f3abc547e83e147a2d4bb9c254843d59dafd05e68a2d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4-direct-spec.json",
+        "bytes": 19142
+      },
+      "contract": {
+        "sha256": "303ab4181b97153d261e4f64c1107b7b26b88274bc6a36fee5b70367439fd87d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4\\contract.json",
+        "bytes": 740
+      },
+      "freeze": {
+        "sha256": "9f89ce20349ae820e3c32765faffac7b5bef3b967f02b684b3db3639882ab9ff",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4\\freeze.json",
+        "bytes": 31896
+      },
+      "state": {
+        "sha256": "b35ff59677d3026c294bdd2f4b488c5114e2f89e5da3aa1c0cffdd405e5e1b1d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4\\state.json",
+        "bytes": 820
+      },
+      "result": {
+        "sha256": "ad7739f2667048e35ad1e8dfb2cb118a9e5278577f4eee775c28e7bef35140db",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4-result.json",
+        "bytes": 3624
+      },
+      "command": {
+        "sha256": "7a4ab87da49fb8929772148b0b5d46bbcabf4df6fecb67ab2bf0ce7402929034",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4\\gate-pre-emulator-main80-e1-tap-closed-reset-v1-4-command.json",
+        "bytes": 1213
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "25e15bb5fe3903953d9fbefb52ef1f7e609700be016bc8f8cfc5ebd5a98ef8e9",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1-input-closure-verification.json",
+        "bytes": 1208
+      },
+      "verification": {
+        "sha256": "46c52a247c187cb5cbe22aa1188e9c8b6d700044ad2f8567ac4c60835e8e2c41",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1-verification.json",
+        "bytes": 3919
+      },
+      "specification": {
+        "sha256": "e18f1413c303d0334232193c96a1f6a8e47809ef3c12dfa772e507e1702b7169",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1-direct-spec.json",
+        "bytes": 19784
+      },
+      "contract": {
+        "sha256": "cad2a13fb8aadacc13d8afba537a113568de48fcdb2c1fcc06eabf0502cf00fe",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1\\contract.json",
+        "bytes": 778
+      },
+      "freeze": {
+        "sha256": "9e23b2d240360fb4373cda45c88e110d9acbfc2d6687ae8d81636f88d7cc8f95",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1\\freeze.json",
+        "bytes": 32474
+      },
+      "state": {
+        "sha256": "c29058ff49cc654aa73b64d53dcef018c1bf2ed5440121e18bed031598b6416f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1\\state.json",
+        "bytes": 830
+      },
+      "result": {
+        "sha256": "80e96937fe9aed9fbbca89506c9f6555454e2d76f8f239d96a5533aca45d61fb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1-result.json",
+        "bytes": 3619
+      },
+      "command": {
+        "sha256": "9e0a85364a3724bfa88da79c10bc251042b730ba42c07b775e880905b3fbe9e4",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1-command.json",
+        "bytes": 1281
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "20f02f9000a9f2174a4a0453a484bb38c66341344eca8386be600870ae3862d4",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1-input-closure-verification.json",
+        "bytes": 1193
+      },
+      "verification": {
+        "sha256": "ae43293e5ba3b818a95631f9ee1d3f273204b556ee5b5cb84ff3f4ea4f5f8d60",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1-verification.json",
+        "bytes": 3844
+      },
+      "specification": {
+        "sha256": "94a2ec19592d287a298cecf6013baf4cc204cae39ea7ab3ecc74852ae5e2a19a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1-direct-spec.json",
+        "bytes": 19356
+      },
+      "contract": {
+        "sha256": "8f8448b6557a9781faedeed8d58b14b98e1b9148fb4d8e1f815f4b0a8793bb8e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1\\contract.json",
+        "bytes": 728
+      },
+      "freeze": {
+        "sha256": "834244c1495eb6696d46bb7134c268c231833f15e1ef57307da877931bc3def1",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1\\freeze.json",
+        "bytes": 32128
+      },
+      "state": {
+        "sha256": "abd1dcb9172b3c1d51e05245cbf4dc9d470863a4805a49e79f19ea9603d6bd42",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1\\state.json",
+        "bytes": 824
+      },
+      "result": {
+        "sha256": "3d4c02e30f7a17308a8cf945d46c17efefe4e4f33f572f6e51d37aaab3efda9d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1-result.json",
+        "bytes": 3615
+      },
+      "command": {
+        "sha256": "cdce8861d53d8d87dc0a0893e1dd3ea289536245d0fa355ce96cbb9aabe56416",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-1-command.json",
+        "bytes": 1191
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "f421854599fc7ef347e88da276a2ebfd7fc01b23783286f05f6cec7d7ed633bb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1-input-closure-verification.json",
+        "bytes": 1188
+      },
+      "verification": {
+        "sha256": "ef1538e9733782e7cdb8bda349e76010e06f7b36aa0296257210381cc53e84b8",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1-verification.json",
+        "bytes": 3818
+      },
+      "specification": {
+        "sha256": "6d551bf14cf508b05bd0f19ff8740bfb33cd0be61589849d9d4cb41dc168b00e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1-direct-spec.json",
+        "bytes": 19261
+      },
+      "contract": {
+        "sha256": "3d731c958c7c88ad36b29f4999ad63284a3d9790b9da67eb9168aa6c2d13f400",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1\\contract.json",
+        "bytes": 743
+      },
+      "freeze": {
+        "sha256": "86e61ef5fdf6011ebf29ecf660ff97f9ca751d7044310db9487c5ee4a6eefa3d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1\\freeze.json",
+        "bytes": 32012
+      },
+      "state": {
+        "sha256": "4d8f083f1751061d9266e52a94166b320c4d6d7f07d2ac22ca8334a618df4c56",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1\\state.json",
+        "bytes": 822
+      },
+      "result": {
+        "sha256": "226c40b3bd2a0563c9be56acf6bf41f88a8e8939cc81441459ef6561cb6a1491",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1-result.json",
+        "bytes": 3650
+      },
+      "command": {
+        "sha256": "2c636e68d9ceaefda171696c4da05ac15b35a36e26cde44f34e83fc94120ac7b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-1-command.json",
+        "bytes": 1219
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "18dae99b1d8040eecc53c6c2c59ff1f6e5e0e21e527c0f7afa550bccf73a6911",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2-input-closure-verification.json",
+        "bytes": 1208
+      },
+      "verification": {
+        "sha256": "66ef0cae8f16e026507a494ef3538035bb2ac9cb8dfdecb639f35c26f4dd684c",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2-verification.json",
+        "bytes": 3919
+      },
+      "specification": {
+        "sha256": "fcc0bc30a36663873bd042c8287d7608357357d5f0dbc1b99c3e6593253e717e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2-direct-spec.json",
+        "bytes": 19784
+      },
+      "contract": {
+        "sha256": "43dd80eb521bc489a3a709acd1b4b74e46c24779ddb944480f3b16e7c96420eb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2\\contract.json",
+        "bytes": 778
+      },
+      "freeze": {
+        "sha256": "752689ebc16b5158e30142c570adce65d01c9ad637cd6d66bb06ec620edd211e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2\\freeze.json",
+        "bytes": 32474
+      },
+      "state": {
+        "sha256": "229f2eb4bf4ab9956face3e298e947b308fff9c44453db71636b82b4738918ee",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2\\state.json",
+        "bytes": 830
+      },
+      "result": {
+        "sha256": "6e09b565e880256ada0079a816289e7379c82d621dfef2d1f670c8f59bd63b95",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2-result.json",
+        "bytes": 3618
+      },
+      "command": {
+        "sha256": "1ec3e10bbad5d7d78b2c3dd450f84a0fab0abebd88a5a5c2c87a0447aecee040",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2-command.json",
+        "bytes": 1281
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "2f208392f1f69431cabe3b297370d91bb496ebc05ae56b59c41cc77e865e35d4",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2-input-closure-verification.json",
+        "bytes": 1193
+      },
+      "verification": {
+        "sha256": "28c363204d4828121dbc9a58b60b7241b81d133acdea7ec48f5841d312b89827",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2-verification.json",
+        "bytes": 3844
+      },
+      "specification": {
+        "sha256": "d078e72f89d9cdfeacf78c14e1376376adec72e9ba51816fc12974caf76bda41",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2-direct-spec.json",
+        "bytes": 19356
+      },
+      "contract": {
+        "sha256": "dbe5e1a3f813afcde6d0dc08390430e8f8bb1a05b0225dfbeeb1743e08cc1e49",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2\\contract.json",
+        "bytes": 728
+      },
+      "freeze": {
+        "sha256": "06994241823bf6f3a6b546dcbfbd071a4712c29505b5fef81bcb34e8206072f9",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2\\freeze.json",
+        "bytes": 32128
+      },
+      "state": {
+        "sha256": "d2a641e0642f1bd8c4b1b3f0de178a24503d89fdd081f5a49be0869615f1a88a",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2\\state.json",
+        "bytes": 824
+      },
+      "result": {
+        "sha256": "ea6f2e98b6f6e315231d663bf0f698c20d5629640ee8782a96693236d868c60d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2-result.json",
+        "bytes": 3613
+      },
+      "command": {
+        "sha256": "5ed1cd74714eed55fc3f537b7adce6af327fceb15f1b74d46cdd1f03aed38c53",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-2-command.json",
+        "bytes": 1191
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "2b1e970f6d3e3c9fcefdefd696a4b5c8bc6d1433e5d58df5c6832eb221e002af",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2-input-closure-verification.json",
+        "bytes": 1188
+      },
+      "verification": {
+        "sha256": "0f8c7d6d1aed0985d48c7ba3c93e323f7a6dbc1a8b6a7a1b45fc65ded95bfd61",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2-verification.json",
+        "bytes": 3818
+      },
+      "specification": {
+        "sha256": "b89e353ed7b0b5ba511aee0fa63739515e04230a1f6a23514cb71ea829e69bce",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2-direct-spec.json",
+        "bytes": 19261
+      },
+      "contract": {
+        "sha256": "4b607a857f6d1a7955e845a307276ba234d5eaa2fe8d3e4ea750b5912977884e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2\\contract.json",
+        "bytes": 743
+      },
+      "freeze": {
+        "sha256": "68330673246cbadb9e03617f1736dbe55ce427b7e7fd76b9666d6d7681a7af42",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2\\freeze.json",
+        "bytes": 32012
+      },
+      "state": {
+        "sha256": "25e0998da985ba689173ef1ed0271e4d134cfeaf89a1c7c7b6c26e2612367f53",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2\\state.json",
+        "bytes": 822
+      },
+      "result": {
+        "sha256": "4a6cfd30f412c75e629a8018710c948309469e7c88e629488b8cf8980608cc04",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2-result.json",
+        "bytes": 3626
+      },
+      "command": {
+        "sha256": "f3c1eb5cc28231ef53501e90e2b68dfa9919dadf8df49be328892c02002d47fe",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-2-command.json",
+        "bytes": 1219
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "73a2ee7feccba8d4a2518b50d2b141ccf615cb9a2eb4b170fe67c003de5226ed",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3-input-closure-verification.json",
+        "bytes": 1208
+      },
+      "verification": {
+        "sha256": "f22b80251b898a86336d8f15505081fc254076a750298cc3fb5512689c894415",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3-verification.json",
+        "bytes": 3919
+      },
+      "specification": {
+        "sha256": "36c6380510acc3a5b13fedc45b47655bbcbff99cb4230c44d499e4c08029443d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3-direct-spec.json",
+        "bytes": 19784
+      },
+      "contract": {
+        "sha256": "33ae517d58531104c54b2f017355cbf5a6559d048053d073ea6db9d2153aece5",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3\\contract.json",
+        "bytes": 778
+      },
+      "freeze": {
+        "sha256": "877f89d040243d91825e1e30ad12f932d6b8579e069a41c1707913c7fa033980",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3\\freeze.json",
+        "bytes": 32474
+      },
+      "state": {
+        "sha256": "11611be383da5793193c11d9e1f834da89c4cd70411cf29f3233e57087225b14",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3\\state.json",
+        "bytes": 830
+      },
+      "result": {
+        "sha256": "3879922a72b3f0ba7665001d679faef78f1cfbbb5fb84ed6e8082218081e1807",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3-result.json",
+        "bytes": 3616
+      },
+      "command": {
+        "sha256": "494b4fe8f7be53def0c304b4e96307a2998664e26ed472bd6eaa37b2ea0e2f01",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3\\pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3-command.json",
+        "bytes": 1281
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "41aeb27c003b395dcc535c555540c76512c3648a786827a5353c0998dc9c3870",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3-input-closure-verification.json",
+        "bytes": 1193
+      },
+      "verification": {
+        "sha256": "b41495debf84ece4cee68d78e6a655a4b4038a9b2fa8d7de0ee23fe7f8e7c3db",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3-verification.json",
+        "bytes": 3844
+      },
+      "specification": {
+        "sha256": "4ff07c4beea95389b8ec77acf9f123cbf526fadf682fb018d2c80846d607320e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3-direct-spec.json",
+        "bytes": 19356
+      },
+      "contract": {
+        "sha256": "7d11d316d7e95b980e5daa5a350d2184b29742295e9a990f4aeb9cea66aab12d",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3\\contract.json",
+        "bytes": 728
+      },
+      "freeze": {
+        "sha256": "4336cdb7048bd6bf34c79c41b38703eead25591483ef143347173ca667902593",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3\\freeze.json",
+        "bytes": 32128
+      },
+      "state": {
+        "sha256": "c3d9255bf5b110b6415d68cad614753cc463ae7be01f37cf298ae8f08742ecbe",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3\\state.json",
+        "bytes": 824
+      },
+      "result": {
+        "sha256": "c78287106b845e05615c07b7389b2ed730c3642fe36f00606cc28ee88b2b94e8",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3-result.json",
+        "bytes": 3607
+      },
+      "command": {
+        "sha256": "61feb7d0ed27dacd9dd296e59b23675be79e34a10622d2d486e13e0a69b60c56",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3\\audit-pre-emulator-main80-e1-hold-closed-reset-v2-3-command.json",
+        "bytes": 1191
+      }
+    },
+    {
+      "input_closure": {
+        "sha256": "482a135ddd64232d607da17c79f58ebb0a8ca7d6383f660ee2a1eaa65c38c9c7",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3-input-closure-verification.json",
+        "bytes": 1188
+      },
+      "verification": {
+        "sha256": "7b5c181144e434cadf25cd76f4611f12b0017855af09508fc0b77b559d5850e1",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3-verification.json",
+        "bytes": 3819
+      },
+      "specification": {
+        "sha256": "3266b8aec0d25b4c7ab6bf0e877ef23cb626bb6e5164addeebbb457ffe0c2efd",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3-direct-spec.json",
+        "bytes": 19261
+      },
+      "contract": {
+        "sha256": "69bb43eb66bdc734b553cb605a512b29f4f8f5f0d6b9bd476c223152b4ef9ece",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3\\contract.json",
+        "bytes": 743
+      },
+      "freeze": {
+        "sha256": "59e83fef5f3715ba87c160fe6556b094e43e5dda55cc33001b3aad72665ee685",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3\\freeze.json",
+        "bytes": 32012
+      },
+      "state": {
+        "sha256": "d9534ddf90a332cecb91cc122a81b41edbdad650e57575489b5e8752dd5121c1",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3\\state.json",
+        "bytes": 822
+      },
+      "result": {
+        "sha256": "167de032530af46f211c21118d4823b437fdba8414161d1ac61f250730b7dfe8",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3-result.json",
+        "bytes": 3652
+      },
+      "command": {
+        "sha256": "40b6284565c316ea178508763322468db6783e22c5bc60c7ec2d484813e1aef7",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3\\gate-pre-emulator-main80-e1-hold-closed-reset-v2-3-command.json",
+        "bytes": 1219
+      }
+    }
+  ],
+  "actual_native_facts": [
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 5.940997,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "configure-producer-eligibility-main80-e1",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 85.8075025,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "build-producer-eligibility-main80-e1",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.0734297,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "test-producer-eligibility-main80-e1-affinity",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.1055268,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "test-producer-eligibility-main80-e1-reader",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.0999879,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "test-producer-eligibility-main80-e1-verification",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.1264748,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "test-producer-eligibility-main80-e1-score-invalid",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 20.1956735,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "test-producer-eligibility-main80-e1-score-tap",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 20.195651,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "test-producer-eligibility-main80-e1-score-hold",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 20.1594173,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "test-producer-eligibility-main80-e1-score-dense",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 1.2646238,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "test-producer-eligibility-main80-e1-motion",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 2,
+      "elapsed_s": 36.5292919,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "readonly-eligibility-main80-e1-pre-cost",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 2
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 52.0974172,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "production-pre-emulator-main80-n1-normal-tap",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 1.7483061,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-production-pre-emulator-main80-n1-normal-tap",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 51.9929836,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "production-pre-emulator-main80-n1-normal-hold",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 1.148924,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-production-pre-emulator-main80-n1-normal-hold",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 62.7328295,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "production-pre-emulator-main80-n1-normal-dense",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 18.5749714,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-production-pre-emulator-main80-n1-normal-dense",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 51.8835177,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-1",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.4393061,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-pre-emulator-main80-e1-tap-closed-reset-v1-1",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 12.4660408,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "gate-pre-emulator-main80-e1-tap-closed-reset-v1-1",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 51.8751339,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-2",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.4553619,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-pre-emulator-main80-e1-tap-closed-reset-v1-2",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 12.3573629,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "gate-pre-emulator-main80-e1-tap-closed-reset-v1-2",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 51.8278364,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-3",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.3990804,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-pre-emulator-main80-e1-tap-closed-reset-v1-3",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 12.3162606,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "gate-pre-emulator-main80-e1-tap-closed-reset-v1-3",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 51.9248319,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "pipeline-pre-emulator-main80-e1-tap-closed-reset-v1-4",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.4208419,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-pre-emulator-main80-e1-tap-closed-reset-v1-4",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 11.9180391,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "gate-pre-emulator-main80-e1-tap-closed-reset-v1-4",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 51.9767387,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-1",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.5941351,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-pre-emulator-main80-e1-hold-closed-reset-v2-1",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 11.6416814,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "gate-pre-emulator-main80-e1-hold-closed-reset-v2-1",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 51.8485364,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-2",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.4897003,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-pre-emulator-main80-e1-hold-closed-reset-v2-2",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 11.9175247,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "gate-pre-emulator-main80-e1-hold-closed-reset-v2-2",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 51.993355,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "pipeline-pre-emulator-main80-e1-hold-closed-reset-v2-3",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 0.4313643,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "audit-pre-emulator-main80-e1-hold-closed-reset-v2-3",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    },
+    {
+      "held_all_signaled": true,
+      "native_exit": 0,
+      "elapsed_s": 11.6971696,
+      "identity_trusted": true,
+      "active_final": 0,
+      "stage": "gate-pre-emulator-main80-e1-hold-closed-reset-v2-3",
+      "streams_completed": true,
+      "verification_exit": 0,
+      "runner_exit": 0
+    }
+  ],
+  "original_output_file_count": 160,
+  "original_output_file_pins": [
+    {
+      "sha256": "27f89acf4eedb63a84a30eff6bb76ada09624934a35632dd05504669c9f1cd95",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense-audit.json",
+      "bytes": 2159
+    },
+    {
+      "sha256": "df1a1adb6c38d6e2f647072e602699e6ad499cab0339b1b0b51f3dbfec59d84b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\manifest.json",
+      "bytes": 12555
+    },
+    {
+      "sha256": "3b9a0b530753d51056fef4c141bc67a42dd4654d26463ffe4cf9ebc59766a5e0",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-0.jsonl.gz",
+      "bytes": 585503
+    },
+    {
+      "sha256": "781b76cb220cac35571a1fcdb1d97cff5e6f6198fcc095b7590e02f22074f913",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-1.jsonl.gz",
+      "bytes": 584697
+    },
+    {
+      "sha256": "e8ccc11d3bcad454f425842deb814bfa610b06032003e67c3c1898335fae26ef",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-10.jsonl.gz",
+      "bytes": 584976
+    },
+    {
+      "sha256": "a8b96bbda7efde9b5c9c5220724a7f57ea8ddea831485af903946eddd52a0467",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-11.jsonl.gz",
+      "bytes": 584425
+    },
+    {
+      "sha256": "a9a184dc05809547dfc8077ffede159bf93c807345e72b77c6273d86b5281c9d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-12.jsonl.gz",
+      "bytes": 583820
+    },
+    {
+      "sha256": "f4569d0e81f0983225a9e7d0a9e8050cd4d9c0b538dcd5f4c75f81b0c4e78b39",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-13.jsonl.gz",
+      "bytes": 584625
+    },
+    {
+      "sha256": "557320c5b6f88ecdc65875424f5ed1d1e41d7d63ab789d70ca117f48c5530148",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-14.jsonl.gz",
+      "bytes": 584546
+    },
+    {
+      "sha256": "d0259bf138fcea472efef7819fb8ae97565861188d4077a5f1fb92f54f49b205",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-15.jsonl.gz",
+      "bytes": 584467
+    },
+    {
+      "sha256": "2719c77ef9ab8b6b0f36eda885f06579c6e98fdf669f2db47e367f76da19f734",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-16.jsonl.gz",
+      "bytes": 584915
+    },
+    {
+      "sha256": "c3a61ee8a351e3d162494e204fc0ae26580d7aecb9f202ca44560dfff832f325",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-17.jsonl.gz",
+      "bytes": 584263
+    },
+    {
+      "sha256": "d101b7a7e475ecb041989807d18e55631c37d222aebc323fab39124b76167a2c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-18.jsonl.gz",
+      "bytes": 584006
+    },
+    {
+      "sha256": "bf689c95f3d2777fdc9d11498192b22f107c8e7320af59fd55560a53b40a4185",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-19.jsonl.gz",
+      "bytes": 581088
+    },
+    {
+      "sha256": "00ccd2bdac788252d7ffc3fbc5952ecc4794f1601c15fbd44d33730491158e9d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-2.jsonl.gz",
+      "bytes": 584385
+    },
+    {
+      "sha256": "55dbebff5ea59a41d802512a084a1a6325da2feed64a5c38e0c416a7ff41404a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-20.jsonl.gz",
+      "bytes": 581091
+    },
+    {
+      "sha256": "5cfcbddc0af2fdee580de8c116fb6b500da4a24f2d1321bdc8e28451483b7644",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-21.jsonl.gz",
+      "bytes": 581256
+    },
+    {
+      "sha256": "0d4e5b4feafa8ea625b2b90552299ebd6c7f1d6281116fe03440c91c7795d376",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-22.jsonl.gz",
+      "bytes": 581531
+    },
+    {
+      "sha256": "9187c823721c57d5f23d47e775d6519d64a36bd2c16d600d02b6a7e706ac3060",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-23.jsonl.gz",
+      "bytes": 580909
+    },
+    {
+      "sha256": "e8fb191846b261f65df72ecd58f3784edc3c80735ee9afc55be7f8aff11e14ce",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-24.jsonl.gz",
+      "bytes": 581089
+    },
+    {
+      "sha256": "ca5712db4f6dabcffb1a6338cc14deb236b0bfb2f8c3bc91f916d4c3491d6d9d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-25.jsonl.gz",
+      "bytes": 581130
+    },
+    {
+      "sha256": "afc8fbb63d17210d0fb1a4570e26c935effab57e838d8f26eb9e84cdf1fd795c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-26.jsonl.gz",
+      "bytes": 581169
+    },
+    {
+      "sha256": "76fc132f2c6526e0b98bad602f2220262ee015b33a43f50194f8953f5702a8fb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-27.jsonl.gz",
+      "bytes": 581463
+    },
+    {
+      "sha256": "43b088b1bc37c9f6384fd9cd1278ed42a4a655db9387f653804a5d11bd1698cf",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-28.jsonl.gz",
+      "bytes": 581437
+    },
+    {
+      "sha256": "d06ae3abc84446b9d47908884c4a4fe33f5e70e41a97d3122ad5923ff2bffd86",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-29.jsonl.gz",
+      "bytes": 581149
+    },
+    {
+      "sha256": "34d45d9d9d012a5a969dc75c4a3c90e814d2a29877cde26f9cc52d32308aebf5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-3.jsonl.gz",
+      "bytes": 584396
+    },
+    {
+      "sha256": "6bb605abbfa94e912e349ffa6a3327f3f9ac5b3cbf564fdbeebceaaebedc917a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-30.jsonl.gz",
+      "bytes": 581386
+    },
+    {
+      "sha256": "2fe6f0b7d8778b90956d7b2638ffbae82d5bbe0743f96423bc4d35ca356a74f3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-31.jsonl.gz",
+      "bytes": 581031
+    },
+    {
+      "sha256": "f9275094508dc2816ef0fa8e1871d945bda40f191e8bb8ddb3d54e69e1a90b64",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-32.jsonl.gz",
+      "bytes": 581116
+    },
+    {
+      "sha256": "4e416c98ccf6dcef519dffd3d16db4e6c47c7759c70bc98cc91a6779dfdb2e06",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-33.jsonl.gz",
+      "bytes": 581257
+    },
+    {
+      "sha256": "a1dd03cf7babdd1f9809688b1118d3f5355aaa659980379df8c640047c20725c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-34.jsonl.gz",
+      "bytes": 581247
+    },
+    {
+      "sha256": "4880bc6c6763f23521510de308903b4b298299983482ddf86de9c303a3a8a92d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-35.jsonl.gz",
+      "bytes": 581536
+    },
+    {
+      "sha256": "489ba2935e2737e85ce3740de522f5459476b2f17854253abb2a6d7e31744523",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-36.jsonl.gz",
+      "bytes": 581415
+    },
+    {
+      "sha256": "81cb37d30a1b5fac1f5e2cf66133c279775baf0d949ca9a2babb99b4f62ee3ca",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-37.jsonl.gz",
+      "bytes": 581452
+    },
+    {
+      "sha256": "6e91ef4e3d1d3eec07febf865f2635210f609f01974befd72d7527feeef39236",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-38.jsonl.gz",
+      "bytes": 581406
+    },
+    {
+      "sha256": "ec0679e823df1dfdd8dbedb537d2840448c2f7462d0c3433e5adee3cca7b1164",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-39.jsonl.gz",
+      "bytes": 581326
+    },
+    {
+      "sha256": "253916bf4074001fbe7dc47ad93f67baf68b92df839de681c55a7b291b993bfd",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-4.jsonl.gz",
+      "bytes": 584632
+    },
+    {
+      "sha256": "84da764181893557d05d0bbae564ca3eeb1179085a8baec9421a208b6438db6e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-40.jsonl.gz",
+      "bytes": 581370
+    },
+    {
+      "sha256": "138ce3e7f364c6adb6779dfd5363a0a962c1501e080adba6545f00e045d73ad6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-41.jsonl.gz",
+      "bytes": 581038
+    },
+    {
+      "sha256": "7ba226e57ed3e9dfb3167194d175801c47cd4420a1763192726c19338d3d820e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-42.jsonl.gz",
+      "bytes": 581485
+    },
+    {
+      "sha256": "fd7ae3f8a99df03665bcb6ffa1ba3b7ecc839c643a886037e23fa46eebe16a53",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-43.jsonl.gz",
+      "bytes": 581889
+    },
+    {
+      "sha256": "9d747798fc0eacd16af8cd0a69b8102b136b332d6b169a04e84e15ebf4ebde3b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-44.jsonl.gz",
+      "bytes": 581230
+    },
+    {
+      "sha256": "e3f8d4cb291a867a0e3afe338c4363387c782e8899614477ca0e076d961933ab",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-45.jsonl.gz",
+      "bytes": 344905
+    },
+    {
+      "sha256": "8556df04a69fe7a16627a77d63601a144365eec9ca6b58138b873d43c5bc3c81",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-5.jsonl.gz",
+      "bytes": 585102
+    },
+    {
+      "sha256": "b8cb24289ab5b904a4006744443ed326d5c88363a0ff0b61d1553f66bf3467e5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-6.jsonl.gz",
+      "bytes": 584265
+    },
+    {
+      "sha256": "a57c3ff6d082c02569556bd34305bb0bdbb331511a2c5c08b1a0ac3d73f80f2f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-7.jsonl.gz",
+      "bytes": 584687
+    },
+    {
+      "sha256": "035f23c4b30d874a3b90ca03d90774442212ea7fe0555834fd35c1e80e5f7a6a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-8.jsonl.gz",
+      "bytes": 585042
+    },
+    {
+      "sha256": "a9db0c10138aaebdeaa8ffb940f391d677dca7c54066857aefbe2ac3fc2303b5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\events-9.jsonl.gz",
+      "bytes": 584794
+    },
+    {
+      "sha256": "d058a2b86d971a68f0f4a3fb7f47bebe5de21ce0a2c51f08cab508b3df7605ea",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\manifest.json",
+      "bytes": 12573
+    },
+    {
+      "sha256": "3f132a6e4c9a735658f593d6875b9019222bdb6ec89511ed36a1e86c92de24bc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\result.png",
+      "bytes": 5051
+    },
+    {
+      "sha256": "7225b57d6d79d7b122bce2d146119342c2e00e079f1e718771eda4feb036bcd4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\round-1\\summary.json",
+      "bytes": 8566
+    },
+    {
+      "sha256": "0d5be67abdfea52812aa4d0b4eeaaf875bdb6b339a3a281c13e80f74e3cee50a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\rounds.jsonl",
+      "bytes": 145
+    },
+    {
+      "sha256": "9af40b21e74781b1dd8de07b6d7ef9a0d31881c1e48db1dd772eed4af8146f87",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\standby-0.jsonl",
+      "bytes": 710
+    },
+    {
+      "sha256": "d6b4cc4e69c886f7e3aa7de71754d510cfb48047db7ef8b2f9e2ab4cc311a8dd",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\archive\\manual-session-74783566148400\\summary.json",
+      "bytes": 611
+    },
+    {
+      "sha256": "0103de8debf4d726eb2d71f7c69394df32cfe23549d2ea9398cf98aa4f56e158",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\attempts.json",
+      "bytes": 628591
+    },
+    {
+      "sha256": "d7bf130eef5403efe95d417c7052eeca180ef6f4a1576b28771db4a76c1ecec3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\producer-wait-diagnostic-segment-0.json",
+      "bytes": 768137
+    },
+    {
+      "sha256": "953dd3e2a7d4624a3e25000bf2d630428bb6b0fab0987204217d94c3caaf8858",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\producer-wait-diagnostic-segment-1.json",
+      "bytes": 205989
+    },
+    {
+      "sha256": "ca0f770154f47fce791f46c2a1ba5d65b3a1bb162e7ad006dd64a1edf7c63287",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\producer-wait-diagnostic.json",
+      "bytes": 5139
+    },
+    {
+      "sha256": "4c00941ee93d087586e928c3559ac66a7adf5d8c1016b5868794d63891f68ea1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\profile.json",
+      "bytes": 995
+    },
+    {
+      "sha256": "3b67da3dc2ab8c45d4ebfe48b9674fd33f0fff2fc4e40b081743713746c3015b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-dense\\report.json",
+      "bytes": 21444
+    },
+    {
+      "sha256": "5c3ab37cc5d0a0c738a02ee314cb632d914f76979440458741350b5d8ab5746f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold-audit.json",
+      "bytes": 2230
+    },
+    {
+      "sha256": "68c7d56d61762a476d67963a65a1599e97600fb232e705f52949d92229e82c3b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\manifest.json",
+      "bytes": 12554
+    },
+    {
+      "sha256": "256324831dc20d50632510fecf0a238080dec6e792eac65ef35cb493064e0dc3",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\round-1\\events-0.jsonl.gz",
+      "bytes": 1132765
+    },
+    {
+      "sha256": "e263e842ee21566a2d3c204ce1c9d39281036d2ec32bc1a7c0efdf0e8235baf2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\round-1\\events-1.jsonl.gz",
+      "bytes": 1107677
+    },
+    {
+      "sha256": "112efec643abaed175c308a034ec46e5522c66cc26c6711d8e6d7712a38e55f7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\round-1\\events-2.jsonl.gz",
+      "bytes": 144986
+    },
+    {
+      "sha256": "908b57f06a90b7e14bdd66bba7b8fd99d1229e9db72189be18f41874dc44f542",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\round-1\\manifest.json",
+      "bytes": 12572
+    },
+    {
+      "sha256": "3f132a6e4c9a735658f593d6875b9019222bdb6ec89511ed36a1e86c92de24bc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\round-1\\result.png",
+      "bytes": 5051
+    },
+    {
+      "sha256": "9812ab1491067e24b0cca889a5583396964f3dffbe41e37d3699da66a3f262dc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\round-1\\summary.json",
+      "bytes": 2710
+    },
+    {
+      "sha256": "cca8586092a2eab848ade9e77a130433c8d7d3b49089ae7fe2444973c924e84f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\rounds.jsonl",
+      "bytes": 145
+    },
+    {
+      "sha256": "4a54e6e28e164b56fcad6e34cede4a4cae8433fa38538fb79feb19a2f95537a2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\standby-0.jsonl",
+      "bytes": 5619
+    },
+    {
+      "sha256": "6e1e2f8d715cdeede06fd6ec3d7c801a068330aea659fd3b20345ea503332bfd",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\archive\\manual-session-74670744468900\\summary.json",
+      "bytes": 610
+    },
+    {
+      "sha256": "c82e286360d0e859f75b866efd9e49d084d4aaa8e397432b7d8554987f83191e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\attempts.json",
+      "bytes": 628642
+    },
+    {
+      "sha256": "5eea2d5a2b23bf303d05aee33ae1b870b0b4624814fdc54b1603fbde03326578",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\producer-wait-diagnostic-segment-0.json",
+      "bytes": 768106
+    },
+    {
+      "sha256": "79352d98a2d1870b0b9b1d043e2c4876ddfbe82eb42a45e6e05e6d1b8d990050",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\producer-wait-diagnostic-segment-1.json",
+      "bytes": 206240
+    },
+    {
+      "sha256": "797a8b563742f765a51c94b1199ec01e243067309d85aa90d7e3503cdcdc8fb5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\producer-wait-diagnostic.json",
+      "bytes": 5137
+    },
+    {
+      "sha256": "9a72772faa23dd59b3fb9f5ce80aeddfb7d91ccacb2cdd9a45846cff24dd8340",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\profile.json",
+      "bytes": 994
+    },
+    {
+      "sha256": "32509d0429fb69fd7cc4a351ff8c0cdc65958be4adae6735b612d1141fa69607",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-hold\\report.json",
+      "bytes": 15576
+    },
+    {
+      "sha256": "1a8467fb2ed12276274103fd5eef547e6eeaa36eddf27cd9595578b46d411cee",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap-audit.json",
+      "bytes": 2204
+    },
+    {
+      "sha256": "4dca3863088faab0079d623ae0f7f02b71defe7640b41451c11abdb49c13ccba",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\manifest.json",
+      "bytes": 12553
+    },
+    {
+      "sha256": "45ac860a8a338c77f2c1de01628f459e283ef055bf6107c0f2a84005e2254cbe",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\round-1\\events-0.jsonl.gz",
+      "bytes": 960580
+    },
+    {
+      "sha256": "9710d44141ee6f65717393d9dd58985c1f944bfa2901144c78f08a6fa0a0558b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\round-1\\events-1.jsonl.gz",
+      "bytes": 885208
+    },
+    {
+      "sha256": "afdad87e355870603ae81762140264509b21c7cd6571f42ed8d01cd72066e66a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\round-1\\events-2.jsonl.gz",
+      "bytes": 872582
+    },
+    {
+      "sha256": "30c1a0cbc81074f4cf0219c67e0ce50007cd3ad7ff8b3d8defa80aed1117f0bb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\round-1\\events-3.jsonl.gz",
+      "bytes": 3754
+    },
+    {
+      "sha256": "d18b2442532cbc77cd962a629960a5b0234f59f99eeda5ee5c0696979018517b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\round-1\\manifest.json",
+      "bytes": 12571
+    },
+    {
+      "sha256": "3f132a6e4c9a735658f593d6875b9019222bdb6ec89511ed36a1e86c92de24bc",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\round-1\\result.png",
+      "bytes": 5051
+    },
+    {
+      "sha256": "35dde84fe765b162114804fc4c0c0a689610a7c61833091ad505e136262e0dd7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\round-1\\summary.json",
+      "bytes": 2863
+    },
+    {
+      "sha256": "c4b9fc49376b85a41815590701f4e5a2a297ecdffee88914d7814263318bb4db",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\rounds.jsonl",
+      "bytes": 145
+    },
+    {
+      "sha256": "0fd97d2e538c70ad0e4e5d9bdaa574fb7469adef66cc79c82916d3a1ef7a401a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\standby-0.jsonl",
+      "bytes": 12931
+    },
+    {
+      "sha256": "9039823e22f3a4297f86e4c4cf6b24a0f93ec47415ed5191ec92742f8835eb7a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\archive\\manual-session-74557087352800\\summary.json",
+      "bytes": 608
+    },
+    {
+      "sha256": "ebede1c084094c97a2936b510f5ce1284772376d160690415461acb3517ef95c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\attempts.json",
+      "bytes": 628642
+    },
+    {
+      "sha256": "e6a7b00db0b497dac68421e90aa6421bb7a0fc5274fdab4e710d121b6f20ce62",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\producer-wait-diagnostic-segment-0.json",
+      "bytes": 768565
+    },
+    {
+      "sha256": "e82d3fbc8c035b00c290ee5b7734435e5dfcdb5fa3f3a6415291de4e00a4a1a2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\producer-wait-diagnostic-segment-1.json",
+      "bytes": 206464
+    },
+    {
+      "sha256": "46fd3570d85cfa949818cf6efa519843a39fb27c2f0bb48398759e155cf884e1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\producer-wait-diagnostic.json",
+      "bytes": 5134
+    },
+    {
+      "sha256": "e09ffd6c4e4b108c1ccfcc36a5a54fd9c1d14c660c87479947b7949319754a29",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\profile.json",
+      "bytes": 993
+    },
+    {
+      "sha256": "336d13b3d0dca0239c70f718bae9545d072dc3e6b5bc80ab5459b52dfd282533",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\normal-tap\\report.json",
+      "bytes": 15670
+    },
+    {
+      "sha256": "daa1a4acfff211829d81843a5b7221687729251b9cff1886e46a6edfff67071b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\plan.json",
+      "bytes": 1565
+    },
+    {
+      "sha256": "dcbe7eb16246120c9373088602d784689e2e318428572bb5be8b0cf54a04c2e5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-production-main80-n1\\status.json",
+      "bytes": 19325
+    },
+    {
+      "sha256": "24f144ff844fd7086fa1794eca5999429bc6dcf516eddbb6847da1f0dfafb19b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\campaign.json",
+      "bytes": 7547
+    },
+    {
+      "sha256": "51dc4ac5a1641ffa407c2c89dda8ecc686d9c1470981dd7ec42bd6985457ceb4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-after-main80-e1-hold-closed-reset-v2-1.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "c71aeee74585c7972c195f68514eda369ea6cdf031f89d586d489a4834ea20ea",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-after-main80-e1-hold-closed-reset-v2-2.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "1d2ee1e2e1fcacaf9c1fb32ab5cc11110e53eb3170b021c232bbc3c9f2ef131c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-after-main80-e1-hold-closed-reset-v2-3.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "6b57ee168b21c8b5124fc40369d2b2f5c426fe50531b1b01afedf3d0a52db7a6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-after-main80-e1-tap-closed-reset-v1-1.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "d439c05b1cde5185c8e10150161bc301581c9e0145c519090450a04a07a0ad2c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-after-main80-e1-tap-closed-reset-v1-2.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "ee004c9a79ad5ad4ca8f5903b5c667ce6c04ea4fba7db73f0ff4f3ab3d3c7580",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-after-main80-e1-tap-closed-reset-v1-3.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "a49ca7599fe931b06e92a13d6ab00a3ed5781c07689dc274a740f5ebbe8c0871",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-after-main80-e1-tap-closed-reset-v1-4.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "9c3814cfab22df61216a01bf8eba354f6a20031a33f37888af45bcd13471652c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-before-main80-e1-hold-closed-reset-v2-1.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "4c909cf813c3ec4a9a71197cc922b2756a1eb35192723b9b60c07fc4643d11ab",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-before-main80-e1-hold-closed-reset-v2-2.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "a3304286aaf9fbfafcb369f9f154c598b6433448380245199c987f32089ad4ad",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-before-main80-e1-hold-closed-reset-v2-3.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "836f1c9e9d6f1763165e3fd9daba73cb0d1ba65b85aa64e5ec91f3833e8d8eb5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-before-main80-e1-tap-closed-reset-v1-1.json",
+      "bytes": 182
+    },
+    {
+      "sha256": "a6880b288b3d03ea023ef0016b06e2e9e7198f253cddd699cfb9e8cf47004cc5",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-before-main80-e1-tap-closed-reset-v1-2.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "3e447b4d4e974bf18f47738aecd561e6412333e67c4a09e7b948afa79dcecb4f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-before-main80-e1-tap-closed-reset-v1-3.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "a21400722ddae896f2c814983d4bbee15cac4c8b3c2dc7f9a1ae9e28f8d96844",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\capacity-before-main80-e1-tap-closed-reset-v1-4.json",
+      "bytes": 189
+    },
+    {
+      "sha256": "60742351c54afb020d15ecc7887fe0b697bdcbbbaa8d2ac01c2f2a8c9d5f63c9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\corpus-r2.json",
+      "bytes": 72368
+    },
+    {
+      "sha256": "7d7658758d48b669efbc515071ad799ce9ef995a88653671d5431eabff747f1b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\environment.json",
+      "bytes": 42002
+    },
+    {
+      "sha256": "cfb42360ef2d24c2debf88b3366d4874937f0cfd4d356a8531e6a8cc6c9b5aef",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-1-audit.json",
+      "bytes": 7544
+    },
+    {
+      "sha256": "e616a5db0cdc3d4991d51461609ed7848d0d07a4c01c55b68642dd498c24264d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-1-gate-input.json",
+      "bytes": 3595
+    },
+    {
+      "sha256": "48994d1a3f48f6c0065f963ecc9fee577153a99d4c4bfcd6750b98bea7442079",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-1-gate.json",
+      "bytes": 535
+    },
+    {
+      "sha256": "a2f3a7aef3f83321d4b01cd569139a7b753007ce70d510f264484c245fcb80ff",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-1.json",
+      "bytes": 18821
+    },
+    {
+      "sha256": "0b4521ba5f17201508ed0ad7ef91c6fce07e6ff1b9461fe1444a5f601b70d956",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-1.json.attempts.json",
+      "bytes": 1023362
+    },
+    {
+      "sha256": "dd2e9c1625a173bf249b557b1c1fcc112456e394144c0a732e601a2268d31914",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-1.json.journal.jsonl",
+      "bytes": 13955327
+    },
+    {
+      "sha256": "0562a4384985db2e9ece140382e9342feb4ad30c6010926753e8125cafb70df4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-2-audit.json",
+      "bytes": 7512
+    },
+    {
+      "sha256": "100ab5664d02480321b1ebe7b8c73f1be496250114618841535c14b3cddf5d72",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-2-gate-input.json",
+      "bytes": 3595
+    },
+    {
+      "sha256": "91aa381efc53e7d99484c86b399641f8bc20af8ad018eb5973196d056c1a9651",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-2-gate.json",
+      "bytes": 535
+    },
+    {
+      "sha256": "19a09678ec249e890bb4065bc91168624791e73d3cf1340340e77c6782f96986",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-2.json",
+      "bytes": 18787
+    },
+    {
+      "sha256": "af4c88cf05ff09343112438538db7413fdb090ae6435e1284646d6061bff59b9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-2.json.attempts.json",
+      "bytes": 1023350
+    },
+    {
+      "sha256": "2a1edcdcbd2ed77cefa6a3ded146ab9dee47add87e18edc5acbb46a081633342",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-2.json.journal.jsonl",
+      "bytes": 13960731
+    },
+    {
+      "sha256": "ea050efcbd09de482e3b334eca0197acf62ea472774e0c4e462504542875b52a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-3-audit.json",
+      "bytes": 7433
+    },
+    {
+      "sha256": "9949ab2afd49bf69c05edcc141c9b19308b8af6d53c1876fe7e7796d8db738b8",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-3-gate-input.json",
+      "bytes": 3595
+    },
+    {
+      "sha256": "c99bbabe9cd5caa31af9a496c9a9a664255a8f3f316083b66b6374b98dced0d9",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-3-gate.json",
+      "bytes": 581
+    },
+    {
+      "sha256": "0cf4572f3f0247e8e532d2616a94e04131be0e22dfe227b4fecd1b0f8a2b3b94",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-3.json",
+      "bytes": 18727
+    },
+    {
+      "sha256": "891e4ecd39806662e0bacc5a93f1fd08a786c23e4fdff2a8e1d52e6c18cb465c",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-3.json.attempts.json",
+      "bytes": 1023266
+    },
+    {
+      "sha256": "7290169465fa4d2420c8f77a02d65fd614eb6800b85d84078b9fedaece1f70f4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-hold-closed-reset-v2-3.json.journal.jsonl",
+      "bytes": 13940317
+    },
+    {
+      "sha256": "6af95481da4478d66d26289e0dc73c44599d52fcd40d86d35cf018c6895c345b",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-1-audit.json",
+      "bytes": 7565
+    },
+    {
+      "sha256": "06581283df2cbeb113bc84f5b2e26bfd72ee69cd3a1103d00692a94bb9042cc6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-1-gate-input.json",
+      "bytes": 3580
+    },
+    {
+      "sha256": "afd79e2042e99a4d6d0a4e3d032fadcf28b4a0b4161b1a0ba8f6c28ce0772feb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-1-gate.json",
+      "bytes": 534
+    },
+    {
+      "sha256": "ca2ba916661b72f6494d01979b1ca89e274314fa349b8b114352825ac2ad2b7e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-1.json",
+      "bytes": 18871
+    },
+    {
+      "sha256": "ba544af2a135224f1c46820437f8d19b855bd5cc89a833021dfaca30527dcb59",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-1.json.attempts.json",
+      "bytes": 1023085
+    },
+    {
+      "sha256": "7b3e511488c3a44cdc35114b2ea7acfa38658558e705dce2ea9edd6d45bb029d",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-1.json.journal.jsonl",
+      "bytes": 11979581
+    },
+    {
+      "sha256": "8586a8c9bff8a7a2e2d1805c203c67f5a535ee7b69bbf9d44057a72aec9abdac",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-2-audit.json",
+      "bytes": 7453
+    },
+    {
+      "sha256": "599d121ef5cd86a58b2bb1b1a484fc0543680c7b77b02b6450c63e94a9ebd875",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-2-gate-input.json",
+      "bytes": 3580
+    },
+    {
+      "sha256": "2658e470dc27175ae43ab5a62f36d97fe47e6342754ab7be25d649e224c0b8d7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-2-gate.json",
+      "bytes": 534
+    },
+    {
+      "sha256": "aa5d1a24d236b1eb00b1e698f2b513480644d7419e10a8dc95b94f04c4696c3a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-2.json",
+      "bytes": 18737
+    },
+    {
+      "sha256": "5e9fa3ecb4445ae9c50498bb5b82a887ff2b3ac88fab874f819cfb5adee33c75",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-2.json.attempts.json",
+      "bytes": 1023074
+    },
+    {
+      "sha256": "008f8dad585650d5011c093fdcedf4af44b583c4acb374bfa21779c92c54d762",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-2.json.journal.jsonl",
+      "bytes": 11981046
+    },
+    {
+      "sha256": "27e53fcde533d0b72d13eb1a4f4f639d093caa8d13c26cb417d76dd95ca175d1",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-3-audit.json",
+      "bytes": 7469
+    },
+    {
+      "sha256": "f49f0a90cf12c0b47aeefd4f13809e09d0bb57dae39f9634207684166715de6f",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-3-gate-input.json",
+      "bytes": 3580
+    },
+    {
+      "sha256": "6f75a37ced5a0f82e280ad82cd7b313203b422b80319edfbd0cb610b2991bf60",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-3-gate.json",
+      "bytes": 534
+    },
+    {
+      "sha256": "a3ab65bcef708bf57aab95c7ee947c1a99f11e7e2df3a332dd9ad837e6841b09",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-3.json",
+      "bytes": 18749
+    },
+    {
+      "sha256": "8663cde28a5c0df7406d5478b62bb08caabb472b5f7c8cc63c142e7551b0f109",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-3.json.attempts.json",
+      "bytes": 1023053
+    },
+    {
+      "sha256": "604ba26f6627a9327add9038f61c7419949f1dd6f43d9e0adc6253acde7af725",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-3.json.journal.jsonl",
+      "bytes": 11983117
+    },
+    {
+      "sha256": "efae753536ec6478b81f6609926ee41fe41d1b410e45534fb83608169c65eee6",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-4-audit.json",
+      "bytes": 7532
+    },
+    {
+      "sha256": "557c6242b558342a1c7eefcdb3fbfd1b826a89391b5a075d009a699d04e18cfa",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-4-gate-input.json",
+      "bytes": 3580
+    },
+    {
+      "sha256": "80870499e923b86c69300333905285d074f437bde90298651bdb3f27dc535db2",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-4-gate.json",
+      "bytes": 534
+    },
+    {
+      "sha256": "035f49d1dec2d9094275b56bfd84b8ba5c5f2ce8ffb7a3beff5207d9c7a8b8fe",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-4.json",
+      "bytes": 18818
+    },
+    {
+      "sha256": "5b0386bc7814f611f854215a457ddfb16cfb32edfa7ce8279565257253ff0d9e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-4.json.attempts.json",
+      "bytes": 1023024
+    },
+    {
+      "sha256": "9b892168cfc3ed113c5d342c65d94da3cc2906a89b7daef0c2726cc29d7adfdf",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\main80-e1-tap-closed-reset-v1-4.json.journal.jsonl",
+      "bytes": 11979714
+    },
+    {
+      "sha256": "162a0731b62e1e652ba646723289cdc0efd2f239e4b723a342b213a62d538309",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\source-manifest.json",
+      "bytes": 321252
+    },
+    {
+      "sha256": "1cb1db7e4b76e0ec63d2c20ffe5892403c792c07bcc70d0a8c6d4ca67a556f4e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-aa-main80-e1\\status.json",
+      "bytes": 27321
+    },
+    {
+      "sha256": "85653f9dd8868b1a603e64e28f40b6fd8b2ae978777f10e183914d2052f3ce46",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-readonly-main80-e1-pre-cost\\input.json",
+      "bytes": 93825
+    },
+    {
+      "sha256": "ca2ddb31c83d768a442bfc5fbc1324821c27dae37035d8c25684b3405b9691af",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-readonly-main80-e1-pre-cost\\report.json",
+      "bytes": 3666
+    }
+  ],
+  "noise18": "NOT_RUN; incomplete AA12 validity",
+  "ABBA36": "NOT_RUN",
+  "full_readonly": "NOT_RUN",
+  "collection_preflight": "NOT_RUN",
+  "user_instruction": "完成當前 aa 測試後休息一下",
+  "stopped_after_current_AA": true,
+  "automatic_continuation": false,
+  "active_timed_workloads": 0,
+  "user_boundary": {
+    "sha256": "b1959b045e363df32b9598b0dd5eefaeca88d833059ec543ad20ffaf70d9ad9d",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-abba-main80-e1\\USER_REQUESTED_AA_STOP.json",
+    "bytes": 714
+  },
+  "retired_main79_compiler_source_archive": {
+    "sha256": "d9922c3002da3997d987716623e51b3355bbacda1969f728dc500e03c225eddb",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-source-archives-main80-retired-main79\\result.json",
+    "bytes": 4405
+  },
+  "original_source_outputs_reports_and_STOP_retained": true,
+  "original_75_and_production9_not_rerun": true,
+  "next_work_requires_user_resume": true,
+  "remaining_when_resumed": "Resolve original Hold publication deadline negative without widening gates; complete necessary AA/noise and unrun ABBA36, full readonly and cold collection boundary. Preserve actual source/binary identity; do not resume stopped campaign as if uninterrupted.",
+  "cost_ready": false,
+  "live_ready": false,
+  "qualification_issued": false,
+  "current_device_unknown": true,
+  "device_operations": 0,
+  "new_thread_created": false,
+  "new_etw_recordings": 0,
+  "preservation_recipe": {
+    "sha256": "804113c118e693ec96620cb1333fcac07c90a5a633281e2bf8473ede413ac314",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main80-preserve-aa-stop.ps1",
+    "bytes": 11265
+  }
+}
