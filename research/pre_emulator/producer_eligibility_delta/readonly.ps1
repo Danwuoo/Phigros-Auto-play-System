@@ -17,7 +17,7 @@ function ReaderAddStage([string]$stage){
  if($catalogue.ContainsKey($stage)){return}
  if(Test-Path -LiteralPath (Join-Path $pkg ($stage+'-direct-spec.json'))){$catalogue[$stage]=ProcessEvidence $stage;return}
  $proof=@{specification=(Binding (Join-Path $out ($stage+'-inputs/spec.json')));input_closure=(Binding (Join-Path $pkg ($stage+'-input-closure-verification.json')))}
- foreach($row in @(@('result',$stage+'-result.json'),@('verification',$stage+'-verification.json'),@('freeze','freeze.json'),@('state','state.json'),@('contract','contract.json'),@('command',$stage+'-command.json'))){$proof[$row[0]]=Binding (Join-Path $out ($stage+'/'+$row[1]))}
+ foreach($row in @(@('result',($stage+'-result.json')),@('verification',($stage+'-verification.json')),@('freeze','freeze.json'),@('state','state.json'),@('contract','contract.json'),@('command',($stage+'-command.json')))){$proof[$row[0]]=Binding (Join-Path $out ($stage+'/'+$row[1]))}
  $catalogue[$stage]=$proof
 }
 function ReaderAddReceipt($pin){CheckEntry $pin;$v=Get-Content -LiteralPath $pin.path -Raw|ConvertFrom-Json;ReaderAddStage $v.stage}
