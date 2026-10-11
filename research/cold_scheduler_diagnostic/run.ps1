@@ -63,6 +63,10 @@ try {
  Require (Test-Path -LiteralPath $readyPath) 'trace did not become ready; original failure retained'
  $ready=ReadPin (Binding $readyPath) 65536
  Require ($ready.schema -ceq 'pas.cold-scheduler-trace-ready.v1' -and $ready.tool_source_commit -ceq $FrozenHead -and $ready.session_name -ceq 'PAS-ColdScheduler-main58-r01') 'current trace ready identity';Bool $ready 'successful_start' $true
+ $requestPin=Binding (Join-Path $artifact 'trace-request.json');$request=ReadPin $requestPin 65536
+ Require ($ready.request_sha256 -ceq $requestPin.sha256 -and $ready.session_guid -ceq $request.session_guid -and $ready.start_qpc -eq $request.start_qpc -and $ready.deadline_qpc -eq $request.deadline_qpc -and $ready.qpc_frequency -eq $request.qpc_frequency -and $request.qpc_frequency -eq [Diagnostics.Stopwatch]::Frequency -and $request.execution_source_commit -ceq $FrozenHead) 'ready and actual request identity/time join'
+ Bool $ready 'ttl_overrun' $false
+ Require ($ready.observed_qpc -lt $ready.deadline_qpc -and [Diagnostics.Stopwatch]::GetTimestamp() -lt $ready.deadline_qpc) 'original shared deadline still active before producer'
  Require ($ready.instance.handle -gt 0 -and $ready.instance.clock -eq 1 -and $ready.instance.enable_flags -eq 268437520 -and $ready.instance.maximum_file_mb -eq 128 -and $ready.instance.maximum_buffers*$ready.instance.buffer_kb*1024 -le 67108864) 'actual trace flags and normalized bounds'
  $phase='producer'
  try {Stage $producerStage (Join-Path $repo 'research/windows_process_guard_v3/invoke.ps1') @{Specification=$producerSpec;GateReceipt=$gate};$producerEvidence=ProcessEvidence $producerStage}
@@ -73,7 +77,18 @@ try {
  $controllerReport=ReadPin (Binding (Join-Path $artifact 'controller-report.json')) 65536
  $watchdogReport=ReadPin (Binding (Join-Path $artifact 'watchdog-report.json')) 65536
  foreach($result in @($controllerReport,$watchdogReport)){Bool $result 'cleanup_confirmed' $true;Require ($result.request_sha256 -ceq $ready.request_sha256 -and $result.session_guid -ceq $ready.session_guid) 'same exact stopped session'}
- Require ($controllerReport.instance.events_lost -eq 0 -and $controllerReport.instance.log_buffers_lost -eq 0 -and $controllerReport.instance.realtime_buffers_lost -eq 0) 'trace loss preserved as negative'
+ Require ($controllerReport.schema -ceq 'pas.cold-scheduler-trace-controller-report.v1' -and $watchdogReport.schema -ceq 'pas.cold-scheduler-trace-watchdog-report.v1') 'actual stopped report schemas'
+ foreach($result in @($controllerReport,$watchdogReport)){Require ($result.tool_source_commit -ceq $FrozenHead -and $result.instance.handle -eq $ready.instance.handle -and $result.instance.guid -ceq $ready.instance.guid -and $result.instance.logger_thread_id -eq $ready.instance.logger_thread_id -and $result.instance.file -ceq $ready.instance.file -and $result.deadline_qpc -eq $ready.deadline_qpc -and $result.final_statistics_verified -is [bool]) 'stopped exact instance and typed final statistics'}
+ $finalStats=@(@($controllerReport,$watchdogReport)|Where-Object {$_.final_statistics_verified})
+ Require ($finalStats.Count -ge 1) 'no verified final flush statistics; UNKNOWN'
+ foreach($result in $finalStats){Require ($result.instance.events_lost -eq 0 -and $result.instance.log_buffers_lost -eq 0 -and $result.instance.realtime_buffers_lost -eq 0) 'final trace loss preserved as negative'}
+ Bool $controllerReport 'raw_file_within_cap' $true
+ $launchResultPath=Join-Path $artifact 'elevated-launch-result.json'
+ while(-not(Test-Path -LiteralPath $launchResultPath) -and [Diagnostics.Stopwatch]::GetTimestamp() -lt $waitUntil){[Threading.Thread]::Sleep(25)}
+ $launchResult=ReadPin (Binding $launchResultPath) 65536
+ Require ($launchResult.schema -ceq 'pas.cold-scheduler-elevated-launch-result.v1' -and $launchResult.execution_source_commit -ceq $FrozenHead -and $launchResult.controller_pid -eq $controllerReport.process_id -and $launchResult.watchdog_pid -eq $watchdogReport.process_id -and $launchResult.controller_exit -is [int] -and $launchResult.watchdog_exit -is [int] -and $launchResult.controller_exit -eq 0 -and $launchResult.watchdog_exit -eq 0) 'actual independently exited diagnostic processes'
+ Bool $launchResult 'controller_exited' $true;Bool $launchResult 'watchdog_exited' $true
+ Require ($controllerReport.reason -ceq 'requested_stop') 'original deadline/abnormal stop preserved as negative'
  $reportPin=Binding (Join-Path $root 'report.json');$r=ReadPin $reportPin
  Require ($r.schema -ceq 'pas.windows-production-pipeline-cold.v1' -and $r.source_build_commit -ceq $b.base_source_commit -and $r.diagnostic_component_identity.source_commit -ceq $b.delta_source_commit -and $r.actual_manual_translation_unit_sha256 -ceq $b.base_manual_source.sha256 -and $r.requested -eq 2560 -and $r.cadence_ms -eq 20 -and $r.scene -ceq 'tap' -and $r.device_operations -eq 0) 'unchanged actual component workload and provenance'
  $native=ReadPin $producerEvidence.result;Require ($r.process_qos.process_id -eq $native.facts.pid) 'actual own producer PID'

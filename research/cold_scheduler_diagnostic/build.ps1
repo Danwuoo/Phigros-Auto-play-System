@@ -55,7 +55,7 @@ foreach($relative in $tracked){$pin=Binding (DPath $relative);$sourcePins+=@($pi
 $unitRelatives=@('tools/cold_scheduler_trace_controller.cpp','tests/cold_scheduler_trace_controller_tests.cpp','tools/cold_scheduler_trace_reader.cpp')
 $targets=@('cold_scheduler_trace_controller','cold_scheduler_trace_controller_tests','cold_scheduler_trace_reader')
 foreach($relative in @($unitRelatives)+@('research/cold_scheduler_diagnostic/build.ps1','research/cold_scheduler_diagnostic/CMakeLists.txt','research/cold_scheduler_diagnostic/run.ps1','research/cold_scheduler_diagnostic/elevated-launch.ps1')){DRequire ($sourceByRelative.ContainsKey($relative)) ('current frozen source member '+$relative)}
-$artifact=DPath ('out/prelive-cold-scheduler-evaluation-'+$Attempt);$buildRoot=DPath ('out/prelive-cold-scheduler-tools-'+$Attempt);$shortRoot=DPath 'out/prelive-s58-src';$shortFiles=Join-Path $shortRoot 'files'
+$artifact=DPath ('out/prelive-cold-scheduler-evaluation-'+$Attempt);$buildRoot=DPath ('out/prelive-cold-scheduler-tools-'+$Attempt);$shortRoot=DPath ('out/prelive-scheduler-src-'+$Attempt);$shortFiles=Join-Path $shortRoot 'files'
 foreach($path in @($artifact,$buildRoot,$shortRoot)){Fresh $path}
 $fixedPins=@($componentPin,$negative55Pin,$negativeR03Pin,$cpuPin,$component.base_source_snapshot,$component.source_manifest,$component.base_production_build,$component.controls_report,$environmentPin)+$environmentInputs+$headers+@(Binding $proofRecipe)
 foreach($pin in $fixedPins){CheckEntry $pin}

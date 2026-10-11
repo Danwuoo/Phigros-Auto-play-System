@@ -12,4 +12,6 @@ reader 使用 RAW_TIMESTAMP、ETL PerfFreq及當輪實際 producer TID。compone
 
 此診斷有擾動，不能替代 current Normal3／AA12／noise18／ABBA36／完整 readonly 或授予 admission。Windows API完成時間沒有硬即時保證，程序與 watchdog 的停止請求時間、實際停止收據及任何超時須如實保存。單次未重現不宣稱修好，也不為取得較好結果重試。
 
-目前 controller／reader／新必要控制尚待實際 build；recording NOT_RUN、cost NOT_READY、live UNQUALIFIED。
+main58／eec2167 的三TU建置及controller32／reader20共52控制實際通過，configure／build／兩控制4個Native8均0，原收據保留。交叉審查修正runner的ready→request時間／身分join、STOP final-flush statistics及controller／watchdog actual exit核對；新維護來源另作fresh必要工具建置，原main58結果不改。512MiB約束指兩個C++診斷程序的 committed memory，PowerShell維護launcher不納入此數字；reader512MiB僅在兩程序實際退出後使用。
+
+目前 recording NOT_RUN、cost NOT_READY、live UNQUALIFIED。
