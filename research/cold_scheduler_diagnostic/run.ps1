@@ -75,7 +75,7 @@ try {
  Require ($ready.observed_qpc -lt $ready.deadline_qpc -and [Diagnostics.Stopwatch]::GetTimestamp() -lt $ready.deadline_qpc) 'original shared deadline still active before producer'
  Require ($ready.instance.handle -gt 0 -and $ready.instance.clock -eq 1 -and $ready.instance.mode -eq 37748737 -and $ready.instance.enable_flags -eq 268437520 -and $ready.instance.maximum_file_mb -eq 128 -and $ready.instance.maximum_buffers*$ready.instance.buffer_kb*1024 -le 67108864) 'actual trace flags and normalized bounds'
  $phase='producer'
- try {& $pwsh -NoProfile -File (Join-Path $repo 'research/main_consolidation/stage.ps1') -Parameters $producerParams;Require ($LASTEXITCODE -eq 0) 'original owned producer wrapper exit';Receipt $producerStage;$producerEvidence=ProcessEvidence $producerStage}
+ try {& $pwsh -NoProfile -File (Join-Path $repo 'research/main_consolidation/stage.ps1') -Parameters $producerParams;Require ($LASTEXITCODE -eq 0) 'original owned producer wrapper exit';Receipt $producerStage}
  finally {if(-not(Test-Path -LiteralPath (Join-Path $artifact 'stop.json'))){AtomicJson (Join-Path $artifact 'stop.json') @{schema='pas.cold-scheduler-trace-stop.v1';request_sha256=$ready.request_sha256;session_guid=$ready.session_guid;handle=$ready.instance.handle}}}
  $phase='trace_stop'
  $waitUntil=[Diagnostics.Stopwatch]::GetTimestamp()+10*[Diagnostics.Stopwatch]::Frequency
@@ -96,6 +96,7 @@ try {
  Bool $launchResult 'controller_exited' $true;Bool $launchResult 'watchdog_exited' $true
  Require ($controllerReport.reason -ceq 'requested_stop') 'original deadline/abnormal stop preserved as negative'
  CheckClosure $producerStage 'after';Capacity $producerStage 'after';ClosureReceipt $producerStage $true
+ $producerEvidence=ProcessEvidence $producerStage
  $reportPin=Binding (Join-Path $root 'report.json');$r=ReadPin $reportPin
  Require ($r.schema -ceq 'pas.windows-production-pipeline-cold.v1' -and $r.source_build_commit -ceq $b.base_source_commit -and $r.diagnostic_component_identity.source_commit -ceq $b.delta_source_commit -and $r.actual_manual_translation_unit_sha256 -ceq $b.base_manual_source.sha256 -and $r.requested -eq 2560 -and $r.cadence_ms -eq 20 -and $r.scene -ceq 'tap' -and $r.device_operations -eq 0) 'unchanged actual component workload and provenance'
  $native=ReadPin $producerEvidence.result;Require ($r.process_qos.process_id -eq $native.facts.pid) 'actual own producer PID'
