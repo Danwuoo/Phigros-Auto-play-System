@@ -227,6 +227,9 @@ $outputs=@(Get-ChildItem -LiteralPath $buildRoot -File -Recurse|ForEach-Object {
 DRequire ($objects.Count -eq $freshCount) 'actual declared fresh objects';foreach($pin in $outputs|Where-Object {$_.path -match '[.]obj$' -and $_ -notin $objects}){DRequire ($pin.path.Replace('\','/') -cmatch '/(?:CompilerIdCXX/CMakeCXXCompilerId[.]obj|CMakeFiles/ShowIncludes/main[.]obj)$') 'only standard CMake probe objects additional'}
 $exes=@{};foreach($target in $exeTargets){$rows=@($outputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq ($target+'.exe')});DRequire ($rows.Count -eq 1) 'one fresh executable for each declared link target';$exes[$target]=$rows[0]}
 $script:seal=@{files=@($exes.Values)+$runtimeCopies}
+# Native controls use the original tests reservation after build outputs are
+# sealed. Configure/build retain their original build reservation and gates.
+$Operation='tests'
 # Compile-only installed archives remain fully frozen in configure/build.
 # Executed controls consume the sealed images, runtime copies, sources,
 # objects and imported project libraries rather than rereading these archives.

@@ -1,0 +1,256 @@
+{
+  "schema": "pas.main78-compile-pass-capacity-stop.v1",
+  "source_commit": "43359f80c772acd56aab8af5a12c631d49a46be0",
+  "core_build_plan": {
+    "sha256": "daaafa65bf396942924e1c316231e31d895274b8ba6217c15fbbaca438e5c425",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-evaluation-main78-e1\\core-build-plan.json",
+    "bytes": 110380
+  },
+  "source_manifest": {
+    "bytes": 241516,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-evaluation-main78-e1\\source-manifest.json",
+    "sha256": "92091d39b1b4eb0c1705a4c9046aa08c86436601537e49aae514f08d61b31bf0"
+  },
+  "source_snapshot": {
+    "bytes": 645028,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m78e1\\snapshot.json",
+    "sha256": "d23c8d8715621b42e854d87061c371a7b8c1c3ceaed82ac1fb67e2a69e252b77"
+  },
+  "fresh_compile_occurrences": 14,
+  "compiled_objects": [
+    {
+      "sha256": "cd0f04bb8945cab988b65027f3606c767aa13ff9b3cd1d0489d6633bd32bacda",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\candidate_admission_controls.dir\\e39e63f4d8353aeec19f920dedfb9aa4\\out\\prelive-esrc-m78e1\\files\\tests\\candidate_admission_tests.cpp.obj",
+      "bytes": 11528289
+    },
+    {
+      "sha256": "1987262933c63acbd0746a17bd002737390dd410792fb683383302ae556b5d92",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\candidate_admission_delta.dir\\C_\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m78e1\\files\\src\\candidate_admission.cpp.obj",
+      "bytes": 35887464
+    },
+    {
+      "sha256": "856b2d92c17aeec7a8210e68070622930dc1f9e5d27e286e4fbdedef59e401f4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\current_chain.dir\\C_\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m78e1\\files\\research\\prelive_current\\chain.cpp.obj",
+      "bytes": 20775597
+    },
+    {
+      "sha256": "5c30a507ef3a144dc1babb164a70bc48560d0212f389dbc347d33d886f66ad31",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\game_motion_delta.dir\\C_\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m78e1\\files\\src\\game_motion.cpp.obj",
+      "bytes": 2412950
+    },
+    {
+      "sha256": "bff3aeb166a1d8d9e5bcf12450c80e4b8414ff8dbd07a9191a91432f5c981aed",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\motion_source_regression.dir\\C_\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m78e1\\files\\tests\\cold_scenario_tests.cpp.obj",
+      "bytes": 16643866
+    },
+    {
+      "sha256": "762433493f97319e941d9af7a3ca7056788cf2264e62d17000d0b60a9ba9d189",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\motion_source_regression.dir\\C_\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m78e1\\files\\tests\\game_tests.cpp.obj",
+      "bytes": 30702754
+    },
+    {
+      "sha256": "0f5c17769401b8d3d14eb4427d337afb0319d3a5343cf99fe3cc6123cd87fa58",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\motion_source_regression.dir\\e39e63f4d8353aeec19f920dedfb9aa4\\out\\prelive-producer-eligibility-evaluation-main78-e1\\runtime_contract.cpp.obj",
+      "bytes": 9135631
+    },
+    {
+      "sha256": "47e0ed65d9061835cf69fe8ac6ba6b0cc0b1e34a030b294d9bdc9890cdb6a1b8",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\production_pipeline_cold.dir\\C_\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m78e1\\files\\src\\grpc_transport.cpp.obj",
+      "bytes": 3963289
+    },
+    {
+      "sha256": "bfbfa624f006557f6bba1cd714166c32f058fe8f0079745a64cc70c26e36c32a",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\production_pipeline_cold.dir\\e39e63f4d8353aeec19f920dedfb9aa4\\out\\prelive-esrc-m78e1\\files\\research\\windows_production_pipeline_v3\\main.cpp.obj",
+      "bytes": 28944043
+    },
+    {
+      "sha256": "35c4cf845f197a6cb2be245c71ec49cbfa72b9e3f07864679feed0d87f894b9e",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\qualification_reader.dir\\e39e63f4d8353aeec19f920dedfb9aa4\\out\\prelive-esrc-m78e1\\files\\research\\pre_emulator\\qualification_reader\\main.cpp.obj",
+      "bytes": 32371698
+    },
+    {
+      "sha256": "6282ffebb0da9fd05c20f31655bf57c9402481da08f91a0e60f5fa0f45827b73",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\qualification_reader_controls.dir\\1fa24d6f7502088d25f83ca078c0b43a\\files\\research\\pre_emulator\\qualification_reader\\controls.cpp.obj",
+      "bytes": 35768654
+    },
+    {
+      "sha256": "1688a236b371f9db9f430a0d57d74baba275ed7a02e6572de188ba70967c80c7",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\score_only_controls.dir\\C_\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m78e1\\files\\src\\grpc_transport.cpp.obj",
+      "bytes": 3963277
+    },
+    {
+      "sha256": "b7416642b13af92e245b076f958b0fdbc7b9fa2dc560cd91fb54b30de7a543eb",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\score_only_controls.dir\\e39e63f4d8353aeec19f920dedfb9aa4\\out\\prelive-esrc-m78e1\\files\\research\\pre_emulator\\score_only_controls.cpp.obj",
+      "bytes": 31846820
+    },
+    {
+      "sha256": "a85ac2b3081420433fc571271f49b48fb1f1ce8ec1e48e096eead952c1cd67c4",
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-main78-e1\\CMakeFiles\\worker_affinity_controls.dir\\1fa24d6f7502088d25f83ca078c0b43a\\files\\research\\prelive_current\\tests\\worker_affinity_tests.cpp.obj",
+      "bytes": 8589298
+    }
+  ],
+  "configure_and_build_native_pass": true,
+  "Native8": [
+    {
+      "state": {
+        "sha256": "c8fff4a61c5e2ccf1029c823c56ab43ce03f188d2e6e1191c637a84978cf91db",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main78-e1\\state.json",
+        "bytes": 802
+      },
+      "result": {
+        "sha256": "9805265446ed4929a774dce34ec5d8530b43c241565f50b89492027f0164b7f1",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main78-e1\\configure-producer-eligibility-main78-e1-result.json",
+        "bytes": 16164
+      },
+      "verification": {
+        "sha256": "0029af7a1dab7f57c3e3ddaa9f010f7bc4a90025eb9ebcacd7bc225fe6d588b4",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main78-e1\\configure-producer-eligibility-main78-e1-verification.json",
+        "bytes": 3575
+      },
+      "command": {
+        "sha256": "bad2c98ce7d69003ec6206d445a7c44d0ac365f46b18fa164ae11d28800e5877",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main78-e1\\configure-producer-eligibility-main78-e1-command.json",
+        "bytes": 756
+      },
+      "contract": {
+        "sha256": "040d892295c2114216a813f2ecc8a1cc12188cc5feab827a3f274e047fc65eac",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main78-e1\\contract.json",
+        "bytes": 513
+      },
+      "input_closure": {
+        "sha256": "2aaa1c67a65319638d4d8864a44fb06ece00bb4d992132ccd7df7a18b16f109b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\configure-producer-eligibility-main78-e1-input-closure-verification.json",
+        "bytes": 1137
+      },
+      "freeze": {
+        "sha256": "92562f885e9591a4138530293cd06e7f67d29e6dd376a958962eedb7e175ca9e",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main78-e1\\freeze.json",
+        "bytes": 38392
+      },
+      "specification": {
+        "sha256": "3c38cf619290f9b12d97cc931f2519ffa4e7718673f2191410f9ce97cfc61b47",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\configure-producer-eligibility-main78-e1-params.json",
+        "bytes": 12615
+      }
+    },
+    {
+      "state": {
+        "sha256": "267b5e6e75fecd71c857d28869b58a47b9a646ad52b9c98d74f4924b9b671a8b",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main78-e1\\state.json",
+        "bytes": 794
+      },
+      "result": {
+        "sha256": "f53289901c3470ded325315d4eb77f9cb04ee2f7f4893891af080facc55a017f",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main78-e1\\build-producer-eligibility-main78-e1-result.json",
+        "bytes": 31560
+      },
+      "verification": {
+        "sha256": "06a84c6cb5316f17c7bf6677de0267ad05254c59a82cae8f122cd7c23179f378",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main78-e1\\build-producer-eligibility-main78-e1-verification.json",
+        "bytes": 3473
+      },
+      "command": {
+        "sha256": "32be77350a669b47faf18be4e4fe6e12ebd624d62262ae84dfc7efa886f74bdb",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main78-e1\\build-producer-eligibility-main78-e1-command.json",
+        "bytes": 732
+      },
+      "contract": {
+        "sha256": "f9589b075af0736b69daed9502f053f7a79ada692165916450d632fa5f06c553",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main78-e1\\contract.json",
+        "bytes": 501
+      },
+      "input_closure": {
+        "sha256": "c4fc037f08ae832052670d58de1a7b5a0f979f203aaa99eb0e02a15947819164",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\build-producer-eligibility-main78-e1-input-closure-verification.json",
+        "bytes": 1117
+      },
+      "freeze": {
+        "sha256": "94c71e89b423d6048be09283969f6ea53989f1fe3202cb90d2da434a01e6ad47",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main78-e1\\freeze.json",
+        "bytes": 38141
+      },
+      "specification": {
+        "sha256": "4ce13aa24ab5d496409226a86eafdfe60fb3777435518e90e0a556bfa5720f20",
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\build-producer-eligibility-main78-e1-params.json",
+        "bytes": 10040
+      }
+    }
+  ],
+  "Native8_count": 2,
+  "actual_native_facts": [
+    {
+      "native_exit": 0,
+      "active_final": 0,
+      "streams_completed": true,
+      "identity_trusted": true,
+      "elapsed_s": 6.1473831,
+      "verification_exit": 0,
+      "held_all_signaled": true,
+      "stage": "configure-producer-eligibility-main78-e1",
+      "runner_exit": 0
+    },
+    {
+      "native_exit": 0,
+      "active_final": 0,
+      "streams_completed": true,
+      "identity_trusted": true,
+      "elapsed_s": 86.8232315,
+      "verification_exit": 0,
+      "held_all_signaled": true,
+      "stage": "build-producer-eligibility-main78-e1",
+      "runner_exit": 0
+    }
+  ],
+  "first_control_stage": "test-producer-eligibility-main78-e1-affinity",
+  "first_control_status": "NOT_LAUNCHED_CAPACITY_STOP",
+  "original_capacity_before": {
+    "sha256": "68a164b6be7eebffed301115c9a2d0a259ec6d970603c48c031f53d88ecab744",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main78-e1-affinity-capacity-before.json",
+    "bytes": 50787
+  },
+  "capacity_before_facts": {
+    "cap": 51539607552,
+    "minimum_free": 21474836480,
+    "reserve": 1610612736,
+    "pass": false,
+    "bytes": 50029647183,
+    "free": 214606700544
+  },
+  "original_capacity_after": {
+    "sha256": "b67ee691fc159a68dad192302248847112a8e2af92d155967aa78d65381e8aca",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main78-e1-affinity-capacity-after.json",
+    "bytes": 50776
+  },
+  "original_control_specification": {
+    "sha256": "471a4674c192dcae857990b38d5e3d060052971b65245c185e94775e3741534e",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main78-e1-affinity-direct-spec.json",
+    "bytes": 10278
+  },
+  "original_control_input_closure": {
+    "sha256": "e233672ec5e86b961d265868818224d1ef0d6a6a6c6983ea1b4cc8d9a218d341",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main78-e1-affinity-input-closure-verification.json",
+    "bytes": 614
+  },
+  "build_binding_issued": false,
+  "controls": "NOT_RUN",
+  "motion_regression26": "NOT_RUN",
+  "current_Normal3": "NOT_RUN",
+  "AA12": "NOT_RUN",
+  "noise18": "NOT_RUN",
+  "ABBA36": "NOT_RUN",
+  "original_source_outputs_and_STOP_retained": true,
+  "capacity_cap_unchanged": true,
+  "minimum_free_unchanged": true,
+  "formal_archives_rebuilt": false,
+  "cost_ready": false,
+  "live_ready": false,
+  "current_device_unknown": true,
+  "device_operations": 0,
+  "new_thread_created": false,
+  "new_etw_recordings": 0,
+  "preservation_recipe": {
+    "sha256": "aa6dfa488f7dfa316920e4aa80e574689220bfb14127001358ebcbc7289003c5",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main78-preserve-capacity-stop.ps1",
+    "bytes": 5309
+  }
+}
