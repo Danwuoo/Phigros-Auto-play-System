@@ -1,0 +1,475 @@
+{
+  "schema": "pas.main74-eligibility-build-pass-readonly-crlf-stop.v1",
+  "source_commit": "4ac099b40b98581146cd3f26ef90536b876ec840",
+  "build_binding": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-evaluation-main74-e1\\build-binding.json",
+    "bytes": 191455,
+    "sha256": "afcae904186d8249d849a53c6710eb109d85d81f43776ede57a6ceee789b4f89"
+  },
+  "source_manifest": {
+    "sha256": "c5fae1a5dcc61d686e6ebc467329b7a99cbe469b4e6379e1d721ae6134b91bf8",
+    "bytes": 241515,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-evaluation-main74-e1\\source-manifest.json"
+  },
+  "source_snapshot": {
+    "sha256": "0e0cbd6d7e6e2382aeb8415c486a99ac9bd7a4fa7017d6c4399967d0cd597217",
+    "bytes": 645026,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-esrc-m74e1\\snapshot.json"
+  },
+  "actual_build_and_controls_pass": true,
+  "build_Native8": [
+    {
+      "verification": {
+        "sha256": "a3550a779db0e3010305df13902b3f8afba6cafa28dc68ffecf8535af4a4b1dc",
+        "bytes": 3575,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main74-e1\\configure-producer-eligibility-main74-e1-verification.json"
+      },
+      "specification": {
+        "sha256": "a0207532ca2eec5cc51406a36bc073764af54f5d8a44d7b22c304d0fd0a8036b",
+        "bytes": 21882,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main74-e1-inputs\\spec.json"
+      },
+      "command": {
+        "sha256": "a90a6678f0c752fa1c63da190f2477de62901b60c1976468b1af92d085aa7c75",
+        "bytes": 756,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main74-e1\\configure-producer-eligibility-main74-e1-command.json"
+      },
+      "freeze": {
+        "sha256": "80ce082300ee90970cabc072a11adffb83cc6eaab2270b738e6d3e3835b1e7f6",
+        "bytes": 38155,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main74-e1\\freeze.json"
+      },
+      "result": {
+        "sha256": "a352081a664746a33f6af13d30d2ad9b1964914a965a160784a7ca1ad8f0f28c",
+        "bytes": 13821,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main74-e1\\configure-producer-eligibility-main74-e1-result.json"
+      },
+      "contract": {
+        "sha256": "e11ec5cd9c244d2fd6b1951b1d34a798c38e26c5c642728a66042eab1a2ea108",
+        "bytes": 513,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main74-e1\\contract.json"
+      },
+      "state": {
+        "sha256": "ee4e4e90cf968f56d18fe01b40dce8c9926a3ff4bda3eb49206308001b148ae5",
+        "bytes": 802,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-producer-eligibility-main74-e1\\state.json"
+      },
+      "input_closure": {
+        "sha256": "5e5e8d611616980896b3d012766628ced18e23458d7b6f7c50d8c233fa9c6548",
+        "bytes": 1137,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\configure-producer-eligibility-main74-e1-input-closure-verification.json"
+      }
+    },
+    {
+      "verification": {
+        "sha256": "fc51102327c1bf992ad0f4b758aa88fdf0fd5a8e3b7368ceb1e84531497cf5c0",
+        "bytes": 3473,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main74-e1\\build-producer-eligibility-main74-e1-verification.json"
+      },
+      "specification": {
+        "sha256": "22621908eef785ad57ba076ddacfe820f5e830e1650a2bdf26c143ba0dba810c",
+        "bytes": 21763,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main74-e1-inputs\\spec.json"
+      },
+      "command": {
+        "sha256": "a615f03ecfa340ac7ea9a377be013c8d49c4d4364be88f6eb0aa374fff988749",
+        "bytes": 732,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main74-e1\\build-producer-eligibility-main74-e1-command.json"
+      },
+      "freeze": {
+        "sha256": "e1e33f7cf750730b2dc8d5d6b14dfeb517ca44dd666c0dd3acdb158de33e57b2",
+        "bytes": 38139,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main74-e1\\freeze.json"
+      },
+      "result": {
+        "sha256": "6293c6d29a5bf7895fa558d0f4eff5ca45e5ef07e8e17f80993ff80d51f4f71e",
+        "bytes": 26773,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main74-e1\\build-producer-eligibility-main74-e1-result.json"
+      },
+      "contract": {
+        "sha256": "a795c2f2683aa6f9ed569bf01c4d109e25c4154662a573f3e4adc3e1042f13f2",
+        "bytes": 501,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main74-e1\\contract.json"
+      },
+      "state": {
+        "sha256": "deddafb291a48f3e1f41d29b85fad11bfdb31121b7634d4d617df1cd35ed2421",
+        "bytes": 794,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-producer-eligibility-main74-e1\\state.json"
+      },
+      "input_closure": {
+        "sha256": "f90d99227740bf2e61831d7b4429d3642b40c98d2ec4e18cf526972c63402aa4",
+        "bytes": 1117,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\build-producer-eligibility-main74-e1-input-closure-verification.json"
+      }
+    },
+    {
+      "verification": {
+        "sha256": "2c0cf94aeb6955b60be3ae123aa06ba79e744ffefe2e59663ca6deb0ad1e9746",
+        "bytes": 3668,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-affinity\\test-producer-eligibility-main74-e1-affinity-verification.json"
+      },
+      "specification": {
+        "sha256": "4a13571dbd81d4caf15f1a2d33e77e1a0eb1c8c322ac43390a3f0bb1019b1087",
+        "bytes": 10129,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-affinity-direct-spec.json"
+      },
+      "command": {
+        "sha256": "4df3e100b2777f0f7fe3963eb93b094ad0c4cf113878d0d5fe32597f2f5f0cac",
+        "bytes": 933,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-affinity\\test-producer-eligibility-main74-e1-affinity-command.json"
+      },
+      "freeze": {
+        "sha256": "b368216fa48889d4b7394ef116f1305c469ec4264fa1841b65dd3aa40d54b0f1",
+        "bytes": 17839,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-affinity\\freeze.json"
+      },
+      "result": {
+        "sha256": "2377d9605ad5b137be44552f43b7003acbb7f9477de96a713f25c6c43ac19137",
+        "bytes": 3619,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-affinity\\test-producer-eligibility-main74-e1-affinity-result.json"
+      },
+      "contract": {
+        "sha256": "726e0506416ee037538d1f6fa9e564844203fe07819699f4d83c32bac4faaace",
+        "bytes": 598,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-affinity\\contract.json"
+      },
+      "state": {
+        "sha256": "8e2885d5142a3d03d26d4c1f774e97bd920cd714882c040778727c7907c3c43d",
+        "bytes": 810,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-affinity\\state.json"
+      },
+      "input_closure": {
+        "sha256": "7fdc570a9a4212e23928702449f0a784f212207102156112b0841397ee297684",
+        "bytes": 1157,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-affinity-input-closure-verification.json"
+      }
+    },
+    {
+      "verification": {
+        "sha256": "6d64b282a034a4ff84a15e938684d736ea4272df24bee63f5d2f139bba944816",
+        "bytes": 3617,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-reader\\test-producer-eligibility-main74-e1-reader-verification.json"
+      },
+      "specification": {
+        "sha256": "3d43cc6aef4eaeda935192f2fa13cc2850246317bc47c9ea17298e3c437fb538",
+        "bytes": 10015,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-reader-direct-spec.json"
+      },
+      "command": {
+        "sha256": "2537af4d24497b760e63de8852eb9b752b3de4fde448bc835a6eba04e16eb59e",
+        "bytes": 949,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-reader\\test-producer-eligibility-main74-e1-reader-command.json"
+      },
+      "freeze": {
+        "sha256": "8b7842c18cc8f275da01dcde77293559a7939441977bfc8b7c38d0c06646a3fb",
+        "bytes": 17723,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-reader\\freeze.json"
+      },
+      "result": {
+        "sha256": "344ad6ceb5c263feda7a8960882e41933a218ae83c89257623d6879b896738a5",
+        "bytes": 3641,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-reader\\test-producer-eligibility-main74-e1-reader-result.json"
+      },
+      "contract": {
+        "sha256": "25b63a29a2055f9bcdafbde4020cb2c7510546d476b8b9c82bb40465690c0baa",
+        "bytes": 606,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-reader\\contract.json"
+      },
+      "state": {
+        "sha256": "d54fa388f9d06d2b553122c1ddf66bd3dadf84349a128aecbb4b11dc4ea17844",
+        "bytes": 806,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-reader\\state.json"
+      },
+      "input_closure": {
+        "sha256": "db63992fbaa185354c3680b70aa0eb38a61e6ff825fced9418faef51cb7c971d",
+        "bytes": 1147,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-reader-input-closure-verification.json"
+      }
+    },
+    {
+      "verification": {
+        "sha256": "a88c651f4bf974eb06c32465c8107f11870d021c46dbf17fe1939e27f528056a",
+        "bytes": 3768,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-verification\\test-producer-eligibility-main74-e1-verification-verification.json"
+      },
+      "specification": {
+        "sha256": "1d2f719d9ae16c568d3bff52cac4f24351122e49f92d32605b741e01a598eb91",
+        "bytes": 10388,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-verification-direct-spec.json"
+      },
+      "command": {
+        "sha256": "9c1184136f10c6bf66e2aa9279aefc897f3f8dcc7de1daccdff40dc7e74f0f96",
+        "bytes": 963,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-verification\\test-producer-eligibility-main74-e1-verification-command.json"
+      },
+      "freeze": {
+        "sha256": "bcbcdbabd314ff01794e8bf60b4b8deaa5fae230a13a9eaca9839c0bfc2c1d1d",
+        "bytes": 18088,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-verification\\freeze.json"
+      },
+      "result": {
+        "sha256": "b6660edf8bf5827bc6b741fb720a425d71d62127d29c61618969d734501c675b",
+        "bytes": 3638,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-verification\\test-producer-eligibility-main74-e1-verification-result.json"
+      },
+      "contract": {
+        "sha256": "5603c62a832bcb15361e4bdeb1226aaf9749994b01170441ec60baa8ce8ac32b",
+        "bytes": 613,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-verification\\contract.json"
+      },
+      "state": {
+        "sha256": "e244b891885704627c9ac4869bd68bf995d9b5a9ba73734166a804fd3ce5a347",
+        "bytes": 818,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-verification\\state.json"
+      },
+      "input_closure": {
+        "sha256": "12ea06c7683deae0e656ecd2e2d8ddfa55e5171a14d2b7fe8dbd1215702dcd65",
+        "bytes": 1177,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-verification-input-closure-verification.json"
+      }
+    },
+    {
+      "verification": {
+        "sha256": "1c484920d13a6d1bfb50b5574a61356ef0b4a5ae323b8ebe779210dc16254c2c",
+        "bytes": 3794,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-invalid\\test-producer-eligibility-main74-e1-score-invalid-verification.json"
+      },
+      "specification": {
+        "sha256": "be9fb4b88b5d47ab7420cdcc6b7cb88a9074767218dc4d355f1e68c294093be8",
+        "bytes": 10439,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-score-invalid-direct-spec.json"
+      },
+      "command": {
+        "sha256": "86fc634a3cb70bb9d979d390d5269cf25bdc6d6db71803e83040977a0d385b29",
+        "bytes": 929,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-invalid\\test-producer-eligibility-main74-e1-score-invalid-command.json"
+      },
+      "freeze": {
+        "sha256": "7cec2a19efc86dd5e43c06efded2a11b82a9d2c033aae9d46a8deac6fa1431e5",
+        "bytes": 18140,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-invalid\\freeze.json"
+      },
+      "result": {
+        "sha256": "a63453c95fd479b958ba4944f6f4dc67ecce60b7489cadf34b63136cf26901b5",
+        "bytes": 3623,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-invalid\\test-producer-eligibility-main74-e1-score-invalid-result.json"
+      },
+      "contract": {
+        "sha256": "dac23e4f4a46a6a654bd34a3040b1c70a538add4c70f3e522c08dac8b093ef53",
+        "bytes": 597,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-invalid\\contract.json"
+      },
+      "state": {
+        "sha256": "2f1c0a1cc3091b266d249d8637115d1b9a8bf45e02d790d66422f1b451c790fe",
+        "bytes": 820,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-invalid\\state.json"
+      },
+      "input_closure": {
+        "sha256": "dc2bc69f4e12b8db5562fa851c06de8221870187a98ddd0aa1e9b9221a339e04",
+        "bytes": 1182,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-score-invalid-input-closure-verification.json"
+      }
+    },
+    {
+      "verification": {
+        "sha256": "14bbd5a24615037d12e76244624ab8d46b57a377ae6bc980e45c12f13309bce1",
+        "bytes": 3694,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-tap\\test-producer-eligibility-main74-e1-score-tap-verification.json"
+      },
+      "specification": {
+        "sha256": "ef20aa75fb31ad4608e49641b13c777611a6c064e1864a220ff9b86cd0163f7c",
+        "bytes": 10183,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-score-tap-direct-spec.json"
+      },
+      "command": {
+        "sha256": "8b236e3dc06ed34ef973badb9e81867e850f090334d6723446499848a6923791",
+        "bytes": 905,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-tap\\test-producer-eligibility-main74-e1-score-tap-command.json"
+      },
+      "freeze": {
+        "sha256": "332cdbd3d403aaa732f1fd9e833338c6184a90d69cdeff73959e6bf029572ad4",
+        "bytes": 17896,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-tap\\freeze.json"
+      },
+      "result": {
+        "sha256": "20c034052dc0598ca338ae25938c9da962ee21ca395f7df541bafcc94838f633",
+        "bytes": 3622,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-tap\\test-producer-eligibility-main74-e1-score-tap-result.json"
+      },
+      "contract": {
+        "sha256": "1d7f49aa039880a553053eb10f4b7dd5c110562b5a6f8894ec45cd3df4d169ef",
+        "bytes": 585,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-tap\\contract.json"
+      },
+      "state": {
+        "sha256": "6eb64164132e8d0a35bb9196bcae0c54a2f5f413123d498559b90e1e301c202f",
+        "bytes": 812,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-tap\\state.json"
+      },
+      "input_closure": {
+        "sha256": "a1f017d94950f97b89aecdf8b2a01f5603747c388140b113530a825540d5ef7d",
+        "bytes": 1162,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-score-tap-input-closure-verification.json"
+      }
+    },
+    {
+      "verification": {
+        "sha256": "a3bafbd077a27254b231bd3804ca6b7cc3190952daebf0beca57461e8fa88de2",
+        "bytes": 3719,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-hold\\test-producer-eligibility-main74-e1-score-hold-verification.json"
+      },
+      "specification": {
+        "sha256": "495ec2b66249118a70d580edce0920271c8a5dc9267f3aa19585ed6d80f602db",
+        "bytes": 10247,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-score-hold-direct-spec.json"
+      },
+      "command": {
+        "sha256": "6c15ebce2551a39fbef704cb0de5a4abf8a3ad2a65da0a636f27bc2144937a55",
+        "bytes": 911,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-hold\\test-producer-eligibility-main74-e1-score-hold-command.json"
+      },
+      "freeze": {
+        "sha256": "dc9801d0be5c29b66334fb9878686084a399f9d1ae2b6fe0e969feca799de0dd",
+        "bytes": 17957,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-hold\\freeze.json"
+      },
+      "result": {
+        "sha256": "da168743bf7ff364db0cd798032c4c8dabc1eb7d7c1e65e5f5ad2f541438a896",
+        "bytes": 3635,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-hold\\test-producer-eligibility-main74-e1-score-hold-result.json"
+      },
+      "contract": {
+        "sha256": "2ae0648aa61ee88a256d52d5f24338a6eacbfa51c8708bb2732a491ad5016910",
+        "bytes": 588,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-hold\\contract.json"
+      },
+      "state": {
+        "sha256": "bfba087a867d015e69d5d2f8b49e355666cb6723228a12177fcd2d5d92e79fe8",
+        "bytes": 814,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-hold\\state.json"
+      },
+      "input_closure": {
+        "sha256": "7e3a235c4c192c47b3c0f989f8f309d90dfacbdb9a5fced8d3325a590f38f531",
+        "bytes": 1167,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-score-hold-input-closure-verification.json"
+      }
+    },
+    {
+      "verification": {
+        "sha256": "20b42e1e466e1f1d2330d2a16dff21ff4973e1bae2ef4afd7eb3f6b104df761e",
+        "bytes": 3744,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-dense\\test-producer-eligibility-main74-e1-score-dense-verification.json"
+      },
+      "specification": {
+        "sha256": "db049d337705372179e8d536c9c5006589f6c5694fb70d30d58041403c4dfad0",
+        "bytes": 10311,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-score-dense-direct-spec.json"
+      },
+      "command": {
+        "sha256": "fef249eca9b047e48ba7af25f849d311efbf4d42a751d39c3aac0fb4dbab3bb1",
+        "bytes": 917,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-dense\\test-producer-eligibility-main74-e1-score-dense-command.json"
+      },
+      "freeze": {
+        "sha256": "36a630ce41ed5b7f4e24bd57fb4a043021994fc1f8a2df44829565cdb287fb43",
+        "bytes": 18018,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-dense\\freeze.json"
+      },
+      "result": {
+        "sha256": "838d27fdada2e1d3f0264f775dbb2cfda791af193dba6fd7bc2ecea29a27e919",
+        "bytes": 3635,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-dense\\test-producer-eligibility-main74-e1-score-dense-result.json"
+      },
+      "contract": {
+        "sha256": "4793512b7463d190e189a5d90e8d68f3817afd3e27f645f448cad45f7908db92",
+        "bytes": 591,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-dense\\contract.json"
+      },
+      "state": {
+        "sha256": "91f0d2c6c804c91a6eebf2a35181b08d8e377dcd43a140d75f80b63570170517",
+        "bytes": 816,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\test-producer-eligibility-main74-e1-score-dense\\state.json"
+      },
+      "input_closure": {
+        "sha256": "ca3f24a0a822c4e9e21186b167f0fba9f4a239b5ce7f7b73526b7bed427a4849",
+        "bytes": 1172,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\test-producer-eligibility-main74-e1-score-dense-input-closure-verification.json"
+      }
+    }
+  ],
+  "readonly_Native8": {
+    "specification": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\readonly-eligibility-main74-e1-pre-cost-direct-spec.json",
+      "bytes": 16338,
+      "sha256": "b7676540222a6d639d4ce184ea6c3420b20e926c0632171513431d1f37745734"
+    },
+    "input_closure": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\readonly-eligibility-main74-e1-pre-cost-input-closure-verification.json",
+      "bytes": 1133,
+      "sha256": "c0a0f5726e529bd33e624bb6118fa2dcf62442fc3cac09b2da1cd67838a70526"
+    },
+    "result": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main74-e1-pre-cost\\readonly-eligibility-main74-e1-pre-cost-result.json",
+      "bytes": 3627,
+      "sha256": "4c633ae647d7810205189ff55ec28a06cbad38cd39182c9241c679fe12c01b5d"
+    },
+    "verification": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main74-e1-pre-cost\\readonly-eligibility-main74-e1-pre-cost-verification.json",
+      "bytes": 3543,
+      "sha256": "60d5cf7bd17aca02fe5f2fdb487934675d45342ab1210fcef5a63f8b2b22fddc"
+    },
+    "freeze": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main74-e1-pre-cost\\freeze.json",
+      "bytes": 27959,
+      "sha256": "75d606a218c6cbad438c5f4782c3c18d94dbdd44e85f15520fde37149210709b"
+    },
+    "state": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main74-e1-pre-cost\\state.json",
+      "bytes": 800,
+      "sha256": "7506649972639e817320ae402e5d0b059b800b88d4f8a285026388ca22f1a91f"
+    },
+    "contract": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main74-e1-pre-cost\\contract.json",
+      "bytes": 761,
+      "sha256": "f48a2fc4288c2d1c15e3d6b86aa71c81f772459aee5fd39b867bd50b98ef3ada"
+    },
+    "command": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\readonly-eligibility-main74-e1-pre-cost\\readonly-eligibility-main74-e1-pre-cost-command.json",
+      "bytes": 1255,
+      "sha256": "e8bfb212be0bea264e48879cce49039e35b34a4cedd50073b971abd9b88304ef"
+    }
+  },
+  "readonly_report": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-readonly-main74-e1-pre-cost\\report.json",
+    "bytes": 1962,
+    "sha256": "f30b78f6631b6afdb673b950d512c1f92a74c7b1faa0c31eccc8c2bc31ab94f8"
+  },
+  "readonly_input": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-producer-eligibility-readonly-main74-e1-pre-cost\\input.json",
+    "bytes": 93825,
+    "sha256": "4c5875f1f393dcacc4183e21ed2367a3f9b95610ccd6c3b38ca3a1f711730629"
+  },
+  "readonly_native_exit": 2,
+  "readonly_elapsed_s": 17.8739674,
+  "readonly_active_final": 0,
+  "wrapper_exit": 1,
+  "reason": "narrow_build rejected: unique original archive members",
+  "actual_original_graphs_have_CRLF": true,
+  "actual_archive_rows_without_separator": [
+    "cpu_exact_bvi_v3",
+    "cpu_pas_core",
+    "production_pas_core",
+    "production_pas_proto"
+  ],
+  "repair": "Strip terminal CR after getline for original archive edge, as existing fresh graph parser already does; retain exact members/counts/source/object/link joins",
+  "normal3_runs": 0,
+  "AA12_runs": 0,
+  "noise18_runs": 0,
+  "ABBA36_runs": 0,
+  "new_etw_recordings": 0,
+  "device_operations": 0,
+  "new_thread_created": false,
+  "qualification_issued": false,
+  "cost_status": "NOT_READY",
+  "live_ready": false
+}
