@@ -38,6 +38,86 @@ void active_tail_tests(Tests& t){
  {FakeClock c;c.set(1000);int waits=0,pauses=0;const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,50'000'000,[&](Nanoseconds){++waits;c.set(999);},[&]{++pauses;});},"producer nonmonotonic QPC");t.check("active_tail_backward_QPC_after_kernel_rejected",bad&&waits==1&&pauses==0);}
  {FakeClock c;c.set(1000);int waits=0,pauses=0;const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,1001,[&](Nanoseconds){++waits;},[&]{++pauses;c.set(999);});},"producer nonmonotonic QPC");t.check("active_tail_backward_QPC_after_pause_rejected",bad&&waits==0&&pauses==1);}
 }
+// These checks exercise the optional trace through the same wait/arm helpers,
+// without native calls. They are a separate denominator from the original 43.
+struct TraceClock final:Clock {
+ mutable std::uint32_t reads=0;std::uint32_t fail_read=0;Nanoseconds value=0;
+ Nanoseconds now_ns()const override{if(++reads==fail_read)throw std::runtime_error("fake QPC failure");return value;}
+};
+struct TraceTimerApi {
+ TraceClock& clock;ProducerTimerResult arm_result{1,0},wait_result{0,0};
+ Nanoseconds arm_cost=0,wake=-1;int arms=0,waits=0;Nanoseconds ticks=0;std::uint32_t timeout=0;
+ ProducerTimerResult arm(Nanoseconds n){++arms;ticks=n;clock.value+=arm_cost;return arm_result;}
+ ProducerTimerResult wait(std::uint32_t ms){++waits;timeout=ms;if(wake>=0)clock.value=wake;return wait_result;}
+};
+J diagnostic_trace_tests(){
+ Tests d;const auto rejects=[](auto&& body,const char* reason){try{body();}catch(const std::runtime_error& e){return std::string(e.what())==reason;}catch(...){return false;}return false;};
+ {TraceClock c;TraceTimerApi api{c};producer_kernel_wait_phase(c,180000,api);
+  d.check("null_kernel_trace_has_zero_extra_QPC_and_original_two_API_calls",c.reads==0&&api.arms==1&&api.waits==1&&api.ticks==180000&&api.timeout==250);}
+ {TraceClock c;c.value=1000;TraceTimerApi api{c};api.arm_cost=100;api.wake=1900;ProducerKernelTrace k;ProducerWaitPhase p=ProducerWaitPhase::none;
+  producer_kernel_wait_phase(c,7,api,&k,&p);
+  d.check("kernel_trace_keeps_distinct_arm_wait_boundaries_and_raw_success",c.reads==4&&k.ticks_100ns==7&&k.arm_begin_ns==1000&&k.arm_end_ns==1100&&k.kernel_begin_ns==1100&&k.kernel_end_ns==1900&&k.arm_status==1&&k.wait_result==0&&k.timestamp_flags==15&&k.api_flags==3&&p==ProducerWaitPhase::kernel_wait);}
+ {TraceClock plain,traced;ProducerWaitTrace t;std::array<Nanoseconds,3> plain_order{},trace_order{};int pn=0,tn=0;
+  wait_producer_deadline_with_active_tail(plain,20'000'000,[&](Nanoseconds n){plain_order[std::size_t(pn++)]=n;plain.value+=100*n;},[&]{plain_order[std::size_t(pn++)]=-1;plain.value+=1'000'000;});
+  wait_producer_deadline_with_active_tail(traced,20'000'000,[&](Nanoseconds n){trace_order[std::size_t(tn++)]=n;traced.value+=100*n;},[&]{trace_order[std::size_t(tn++)]=-1;traced.value+=1'000'000;},&t);
+  d.check("trace_and_null_preserve_due_callback_order_and_algorithm_QPC_reads",plain_order==trace_order&&pn==3&&tn==3&&plain.reads==traced.reads&&traced.reads==4&&plain.value==traced.value&&t.completed&&t.kernel_calls==1&&t.spin_poll_count==2);}
+ {TraceClock c;c.value=67'000'000;ProducerWaitTrace t;t.kernel_calls=4;t.spin_poll_count=99;t.kernels[0].arm_status=1;int callbacks=0;
+  wait_producer_deadline_with_active_tail(c,60'000'000,[&](Nanoseconds){++callbacks;},[&]{++callbacks;},&t);
+  d.check("already_late_trace_clears_old_facts_without_reset_or_callbacks",callbacks==0&&c.reads==1&&t.due_ns==60'000'000&&t.first_qpc_ns==67'000'000&&t.last_qpc_ns==67'000'000&&t.completed&&!t.spin_entered&&t.kernel_calls==0&&t.kernels[0].arm_status==std::numeric_limits<std::uint32_t>::max());}
+ {TraceClock c;TraceTimerApi api{c};ProducerWaitTrace t;
+  const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,50'000'000,[&](Nanoseconds n){producer_kernel_wait_phase(c,n,api,&t.kernels[t.kernel_calls-1],&t.phase);},[]{},&t);},"producer repeated early wake");
+  bool all=true;for(const auto& k:t.kernels)all&=k.ticks_100ns==480'000&&k.arm_status==1&&k.wait_result==0&&k.timestamp_flags==15;
+  d.check("early_wake_failure_retains_exactly_four_complete_kernel_samples",bad&&api.arms==4&&api.waits==4&&t.kernel_calls==4&&all&&!t.completed&&!t.spin_entered&&t.failure==ProducerWaitFailure::early_wake_bound);}
+ {TraceClock c;ProducerWaitTrace t;int waits=0;
+  wait_producer_deadline_with_active_tail(c,50'000'000,[&](Nanoseconds){if(++waits==4)c.value=48'000'000;},[&]{c.value=50'000'000;},&t);
+  d.check("fourth_early_wake_can_complete_tail_without_fifth_kernel_sample",t.completed&&t.kernel_calls==4&&t.spin_enter_ns==48'000'000&&t.spin_return_ns==50'000'000&&t.spin_poll_count==1&&t.spin_pause_calls==1&&t.spin_completed);}
+ {TraceClock c;TraceTimerApi api{c};api.arm_result={0,5};ProducerWaitTrace t;
+  const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,20'000'000,[&](Nanoseconds n){producer_kernel_wait_phase(c,n,api,&t.kernels[t.kernel_calls-1],&t.phase);},[]{},&t);},"producer timer arm");
+  const auto& k=t.kernels[0];d.check("arm_false_keeps_GetLastError_and_unreached_kernel_unknown",bad&&api.arms==1&&api.waits==0&&t.kernel_calls==1&&k.arm_status==0&&k.arm_error==5&&k.wait_result==std::numeric_limits<std::uint32_t>::max()&&k.timestamp_flags==3&&k.api_flags==1&&t.failure_phase==ProducerWaitPhase::timer_arm&&!t.completed);}
+ {TraceClock c;TraceTimerApi api{c};api.wait_result={std::numeric_limits<std::uint32_t>::max(),6};ProducerWaitTrace t;
+  const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,20'000'000,[&](Nanoseconds n){producer_kernel_wait_phase(c,n,api,&t.kernels[t.kernel_calls-1],&t.phase);},[]{},&t);},"producer bounded timer wait");
+  const auto& k=t.kernels[0];d.check("WAIT_FAILED_keeps_raw_status_error_and_complete_boundary_flags",bad&&api.arms==1&&api.waits==1&&k.wait_result==std::numeric_limits<std::uint32_t>::max()&&k.wait_error==6&&k.timestamp_flags==15&&k.api_flags==3&&t.failure_phase==ProducerWaitPhase::kernel_wait&&!t.completed);}
+ {TraceClock c;TraceTimerApi api{c};api.wait_result={258,0};ProducerWaitTrace t;
+  const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,20'000'000,[&](Nanoseconds n){producer_kernel_wait_phase(c,n,api,&t.kernels[t.kernel_calls-1],&t.phase);},[]{},&t);},"producer bounded timer wait");
+  d.check("timeout_raw258_is_not_success_or_spin_fallback",bad&&t.kernels[0].wait_result==258&&t.kernels[0].wait_error==0&&!t.spin_entered&&!t.completed);}
+ {TraceClock c;ProducerWaitTrace t;
+  const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,1,[](Nanoseconds){},[]{throw std::runtime_error("pause fault");},&t);},"pause fault");
+  d.check("pause_exception_keeps_attempted_vs_completed_poll_facts",bad&&t.spin_entered&&!t.spin_completed&&t.spin_pause_calls==1&&t.spin_poll_count==0&&t.failure==ProducerWaitFailure::pause_callback&&t.failure_phase==ProducerWaitPhase::spin&&!t.completed);}
+ {TraceClock c;c.value=1000;ProducerWaitTrace t;
+  const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,50'000'000,[&](Nanoseconds){c.value=999;},[]{},&t);},"producer nonmonotonic QPC");
+  d.check("nonmonotonic_raw_QPC_retained_without_making_valid_duration",bad&&t.first_qpc_ns==1000&&t.last_qpc_ns==999&&t.qpc_reads==2&&t.failure==ProducerWaitFailure::nonmonotonic_clock&&!t.completed);}
+ {TraceClock c;c.fail_read=1;ProducerWaitTrace t;
+  const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,0,[](Nanoseconds){},[]{},&t);},"fake QPC failure");
+  TraceClock arm_clock;arm_clock.fail_read=3;TraceTimerApi api{arm_clock};ProducerWaitTrace partial;
+  const bool arm_bad=rejects([&]{wait_producer_deadline_with_active_tail(arm_clock,20'000'000,[&](Nanoseconds n){producer_kernel_wait_phase(arm_clock,n,api,&partial.kernels[partial.kernel_calls-1],&partial.phase);},[]{},&partial);},"fake QPC failure");
+  d.check("QPC_failures_keep_unknown_read_and_partial_actual_arm_facts",bad&&t.entered&&t.qpc_reads==0&&!t.completed&&t.failure==ProducerWaitFailure::clock_read&&t.failure_phase==ProducerWaitPhase::qpc&&arm_bad&&api.arms==1&&api.waits==0&&partial.kernels[0].api_flags==1&&partial.kernels[0].timestamp_flags==1&&partial.kernels[0].arm_status==1&&!partial.completed);}
+ {ProducerThreadCpuSample a{3,4,1,0,true},b{8,11,1,0,true};const auto delta=producer_thread_cpu_delta_100ns(a,b);
+  d.check("CPU_delta_uses_raw_kernel_plus_user_100ns_accounting",delta&&*delta==12);}
+ {ProducerThreadCpuSample a{3,4,1,0,true},failed{0,0,0,5,true};
+  d.check("failed_CPU_sample_is_unknown_and_retains_actual_error",!producer_thread_cpu_delta_100ns(a,failed)&&failed.status==0&&failed.error==5);}
+ {ProducerThreadCpuSample a{3,4,1,0,true},backward{2,100,1,0,true};
+  d.check("backward_CPU_counter_does_not_cancel_against_other_counter",!producer_thread_cpu_delta_100ns(a,backward));}
+ {ProducerThreadCpuSample a{0,0,1,0,true},b{std::numeric_limits<std::uint64_t>::max(),1,1,0,true};
+  d.check("CPU_delta_overflow_remains_unknown",!producer_thread_cpu_delta_100ns(a,b));}
+ {ProducerThreadCpuSample zero{3,4,1,0,true},unknown;
+  const auto known=producer_thread_cpu_delta_100ns(zero,zero);
+  d.check("genuine_zero_CPU_is_available_but_unreached_sample_is_unknown",known&&*known==0&&!producer_thread_cpu_delta_100ns(zero,unknown));}
+ {TraceClock c;c.value=1'234'567;bool exact=true;std::uint32_t kernels=0,polls=0;
+  for(int i=0;i<2560;++i){ProducerWaitTrace t;const auto due=1'234'567+Nanoseconds(i)*20'000'000;
+   wait_producer_deadline_with_active_tail(c,due,[&](Nanoseconds n){c.value+=100*n;},[&]{c.value+=1'000'000;},&t);
+   exact&=t.completed&&t.due_ns==due&&t.last_qpc_ns==due&&t.kernel_calls==(i?1u:0u)&&t.spin_poll_count==(i?2u:0u);kernels+=t.kernel_calls;polls+=t.spin_poll_count;}
+  d.check("all_2560_trace_rows_keep_original_absolute_due_and_full_counts",exact&&kernels==2559&&polls==5118);}
+ {TraceClock c;ProducerWaitTrace first,next;int waits=0;
+  wait_producer_deadline_with_active_tail(c,40'000'000,[&](Nanoseconds){++waits;c.value=67'000'000;},[]{},&first);
+  wait_producer_deadline_with_active_tail(c,60'000'000,[&](Nanoseconds){++waits;},[]{},&next);
+  d.check("27ms_timer_overshoot_is_retained_and_next_due_is_not_reset",waits==1&&first.completed&&first.last_qpc_ns==67'000'000&&first.kernel_calls==1&&!first.spin_entered&&next.completed&&next.due_ns==60'000'000&&next.first_qpc_ns==67'000'000&&next.kernel_calls==0);}
+ {TraceClock c;ProducerWaitTrace t;
+  const bool bad=rejects([&]{wait_producer_deadline_with_active_tail(c,1,[](Nanoseconds){},[]{},&t);},"producer active tail poll bound");
+  d.check("stalled_spin_trace_counters_stop_at_original_hard_cap",bad&&t.spin_poll_count==producer_active_tail_poll_cap&&t.spin_pause_calls==producer_active_tail_poll_cap&&t.qpc_reads==producer_active_tail_poll_cap+1&&!t.completed&&!t.spin_completed&&t.failure==ProducerWaitFailure::spin_bound);}
+ if(d.checks.size()!=20)throw std::runtime_error("fixed wait diagnostic control denominator");
+ return {{"schema","pas.producer-wait-diagnostic-controls.v1"},{"assertions",d.checks.size()},{"checks",d.checks},{"failed",d.failed},{"pass",d.failed==0},
+  {"synthetic_api_controls",true},{"kernel_sample_cap",producer_wait_kernel_cap},{"device_operations",0},{"cost_qualification",false},{"live_ready",false}};
+}
 int main(int argc,char**argv){try{if(argc!=2||std::filesystem::exists(argv[1]))throw std::runtime_error("fresh test output");Tests t;FakeClock c;int calls=0;Nanoseconds ticks=0;
  priority_tests(t);auto wait=[&](Nanoseconds n){++calls;ticks=n;c.set(c.now_ns()+100*n);};
  c.set(1000);wait_producer_deadline(c,1000,wait);t.check("due_now_does_not_wait",calls==0);
@@ -55,5 +135,6 @@ int main(int argc,char**argv){try{if(argc!=2||std::filesystem::exists(argv[1]))t
  {HostClock real;ProducerDeadlineWait timer;const auto due=real.now_ns()+20'000'000;timer.wait_until(real,due);t.check("real_Windows_timer_not_before_QPC_due",real.now_ns()>=due);}
 #endif
  active_tail_tests(t);
- J r={{"schema","pas.producer-deadline-wait-tests.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",t.failed==0},{"device_endpoints",0},{"device_operations",0},{"cost_qualification",false},{"live_ready",false},{"active_tail_ns",producer_active_tail_ns},{"active_tail_poll_cap",producer_active_tail_poll_cap},{"qualification_scope","functional timer/fake-clock contract only; active-tail CPU and actual cadence cost separately gated"}};std::ofstream f(argv[1]);f<<r.dump(2)<<'\n';if(!f)throw std::runtime_error("write");std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<'\n';return t.failed?1:0;
+ const auto diagnostic_controls=diagnostic_trace_tests();const bool pass=t.failed==0&&diagnostic_controls.at("pass").get<bool>();
+ J r={{"schema","pas.producer-deadline-wait-tests.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",pass},{"diagnostic_controls",diagnostic_controls},{"device_endpoints",0},{"device_operations",0},{"cost_qualification",false},{"live_ready",false},{"active_tail_ns",producer_active_tail_ns},{"active_tail_poll_cap",producer_active_tail_poll_cap},{"qualification_scope","functional timer/fake-clock contract only; active-tail CPU and actual cadence cost separately gated"}};std::ofstream f(argv[1]);f<<r.dump(2)<<'\n';if(!f)throw std::runtime_error("write");std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<" diagnostic_assertions="<<diagnostic_controls.at("assertions")<<" diagnostic_failed="<<diagnostic_controls.at("failed")<<'\n';return pass?0:1;
  }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}
