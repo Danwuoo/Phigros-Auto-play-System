@@ -18,6 +18,13 @@ objects。原因為初始空prior receipts／closures／processes的`.path`展�
 main47用逐entry產生path array，空prior明確為零條，保留generic empty path拒絕。
 原945 source snapshot及configure Native8見[main46負結果](MAIN46_BUILD_PRELAUNCH_NEGATIVE_20261011.json)。
 
+main47／`87af239` CPU32三owned build groups及七controls通過，reader2／81 controls
+通過；實際readonly核base／prefix／faults／原production及current narrow source／native
+joins通過，只因AA／noise／ABBA尚缺而NOT_READY。production在第一次Native前載入
+兩組owner control source array時STOP：PS未加括號的字串串接吞入逗號array，六項變成
+一個長字串。main48明列第一項括號及逐source manifest lookup；修後隔離readonly loader
+完成不授新資格。原945 snapshot、CPU／reader／readonly及負結果見[main47記錄](MAIN47_PRODUCTION_LOAD_NEGATIVE_20261011.json)。
+
 main44（source `79f8f37`）AA12 validity 全通過，producer／publication 全部零超期；
 2ms active tail 仍未使 noise 合格（12不足、owner6 adequate），ABBA 未跑。
 實際 readonly reader 核對前置、候選、AA及18條公式，結果仍為 NOT_READY。

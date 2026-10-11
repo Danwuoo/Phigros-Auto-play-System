@@ -1,0 +1,82 @@
+{
+  "schema": "pas.main47-production-load-negative.v1",
+  "source_commit": "87af23964d52964ce3c9d504402a67e34af2fdc8",
+  "source_snapshot": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\source-87af239-main47-snapshot\\snapshot.json",
+    "bytes": 597037,
+    "sha256": "b778c4751f51b4649baec519606256f5cf8d069114d7450ff473599b4f5459d8"
+  },
+  "cpu_build": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-evaluation-main47\\build-binding.json",
+    "bytes": 59675,
+    "sha256": "092a876e82ca4110766567f5f2527105a146356ed5b9f92868eb8c4ff9b935f6"
+  },
+  "cpu_fresh_translation_units": 32,
+  "cpu_owned_build_groups": 3,
+  "cpu_affected_control_groups_passed": 7,
+  "reader_build": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-evaluation-main47\\build-binding.json",
+    "bytes": 32701,
+    "sha256": "66436a17d9fff45ebe7dddedaebadd2b8b2cd2530f8a902c68cfe632d1616fdd"
+  },
+  "reader_fresh_translation_units": 2,
+  "reader_controls_passed": 81,
+  "readonly_pre_cost": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\main47-narrow-reader-output-pre-cost.json",
+    "bytes": 3341,
+    "sha256": "eae496f68d13d4cb0b4c5151e02861b13f89fcb97870453da95516dfd46dbdda"
+  },
+  "readonly_prerequisites_passed": [
+    "base",
+    "faults",
+    "input",
+    "narrow_build",
+    "prefix",
+    "production",
+    "final_bytes"
+  ],
+  "readonly_cost_status": "NOT_READY",
+  "readonly_native_exit": 2,
+  "production_build_status": "PRELAUNCH_STOP",
+  "production_native_launches": 0,
+  "production_native_exit": null,
+  "production_load_error": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main47-production-load-prelaunch-negative.json",
+    "bytes": 891,
+    "sha256": "780f2cd1ff281eabbface2c41986e7bac615a671a1d503c62f409982f1966c41"
+  },
+  "reason": "Unparenthesized string concatenation and comma-separated entries in ComponentDeltaControlSources collapsed each owner source array into one joined string; manifest lookup yielded null and exact Native input matching rejected GetFullPath(empty).",
+  "actual_source_array_counts_before_fix": {
+    "owner_checkpoint_tests": 1,
+    "owner_expiry_tests": 1,
+    "component_mask_tests": 3,
+    "uniform_fnv_tests": 4
+  },
+  "diagnostic_loader_repair": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main47-loader-source-array-diagnostic-result.json",
+    "bytes": 1871,
+    "sha256": "89ac6a67202f6e3e854c23744841060a191298ee7e21d172a12d86f8093874ef"
+  },
+  "diagnostic_function_override_is_not_qualification": true,
+  "production_normal3": "NOT_RUN",
+  "aa12": "NOT_RUN",
+  "noise18": "NOT_RUN",
+  "abba36": "NOT_RUN",
+  "old75_and_production9_rerun": false,
+  "qualification_issued": false,
+  "cost_ready": false,
+  "live_ready": false,
+  "device_operations": 0,
+  "new_thread_created": false,
+  "compiled_products_lossless_relocation": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\research\\live-readiness-20261007\\INACTIVE_COMPILER_RELOCATION_MAIN47_20261011.json",
+    "bytes": 3573,
+    "sha256": "b7331728f992a4afdc1d157fa2a9bda5034341d09fb1f105fdf7bfcdc5cc6c12"
+  },
+  "original_compiler_paths_require_restore": true,
+  "original_pre_relocation_negative": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main47-production-load-negative-original.json",
+    "bytes": 3010,
+    "sha256": "a953b96f0484467ab71e119e93a02aae4a0dff59a8db28dffe99ccc40c2331b7"
+  }
+}

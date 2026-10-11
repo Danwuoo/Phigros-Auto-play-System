@@ -1,0 +1,73 @@
+{
+  "schema": "pas.main47-inactive-compiler-relocation.v1",
+  "result": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main47\\result.json",
+    "bytes": 3235,
+    "sha256": "d8958f1ba654aadbbd6d3d1734a75b18fe0780de3d786213309910489991fefc"
+  },
+  "plan": {
+    "bytes": 30723,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\archive-inactive-compiler-main47-manifest.json",
+    "sha256": "1f09146f0c9dcfd7464f3c80c160755141e012c5613779b14ee7b3a242a3b360"
+  },
+  "file_manifest": {
+    "bytes": 42558,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main47\\original-file-manifest.json",
+    "sha256": "833408d8653be438bd0150282a9ab4a3cbc304398d5cd81a9fbe78325e488f84"
+  },
+  "archives": [
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main47",
+      "proof": {
+        "bytes": 30334,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main47\\flat-prelive-noise-repair-main47.proof.json",
+        "sha256": "e2b469d3346f314bfe7b26d5b20e04ff4289dcd36a4d673d2b85165264ed28ca"
+      },
+      "archive": {
+        "bytes": 75090998,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main47\\flat-prelive-noise-repair-main47.zip",
+        "sha256": "6392a6a99b3b98103b264739820667c53f9b38982b538c07e5453a98f44cb79a"
+      },
+      "original_files": 63,
+      "original_bytes": 513438127
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-main47",
+      "proof": {
+        "bytes": 11036,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main47\\flat-prelive-narrow-reader-main47.proof.json",
+        "sha256": "a7f82f7fc104b825890e0155771d5ed4da6bc2b69e844dbba352c968016e4b76"
+      },
+      "archive": {
+        "bytes": 8182544,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main47\\flat-prelive-narrow-reader-main47.zip",
+        "sha256": "232dc3a8413eee42061a5f133b0b6142d2d14e72b72bce1a1097342d93f922b7"
+      },
+      "original_files": 24,
+      "original_bytes": 54981987
+    }
+  ],
+  "root_count": 2,
+  "original_files": 87,
+  "original_bytes": 568420114,
+  "archive_bytes": 83273542,
+  "compiler_payload_reclaimed_before_proof_metadata": 485146572,
+  "observed_retained_bytes_reclaimed": 485062644,
+  "original_stop_bytes_saved": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main47-production-load-negative-original.json",
+    "bytes": 3010,
+    "sha256": "a953b96f0484467ab71e119e93a02aae4a0dff59a8db28dffe99ccc40c2331b7"
+  },
+  "original_SHA_values_unchanged": true,
+  "all_entry_SHAs_readback_verified": true,
+  "originals_rechecked": true,
+  "all_preservation_proofs_written_before_any_original_removal": true,
+  "original_source_snapshots_reports_and_negative_records_retained": true,
+  "main32_release_and_main48_dependencies_retained": true,
+  "restore_required_for_old_output_paths": true,
+  "empty_directories_retained": true,
+  "maintenance_only": true,
+  "qualification_issued": false,
+  "device_operations": 0,
+  "live_ready": false
+}

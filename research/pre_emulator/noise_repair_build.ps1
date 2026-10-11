@@ -520,7 +520,11 @@ function LoadNoiseRepairBuild([string]$bindingPath){
    $runtime=@($delta.files|Where-Object {[IO.Path]::GetFullPath($_.path) -ceq [IO.Path]::GetFullPath($row.binary.path)})
    NoiseRepairRequire ($runtime.Count -eq 1) 'CPU controls binary in exact sealed runtime'
    NoiseRepairSameBinding $runtime[0] $row.binary 'CPU control runtime/binary'
-   NoiseRepairRequireNativeInputs $row.receipt (@($delta.source_manifest,$delta.core_build_plan)+@($delta.linked_static_inputs)+@(ComponentDeltaControlSources $row.target|ForEach-Object {$currentSources[$_]}))
+   $controlSourcePins=@(foreach($relative in (ComponentDeltaControlSources $row.target)){
+    NoiseRepairRequire ($currentSources.ContainsKey($relative)) ('exact CPU control source missing from current manifest '+$relative)
+    $currentSources[$relative]
+   })
+   NoiseRepairRequireNativeInputs $row.receipt (@($delta.source_manifest,$delta.core_build_plan)+@($delta.linked_static_inputs)+$controlSourcePins)
    $closure=NoiseRepairReadBinding $row.input_closure
    NoiseRepairRequire ($closure.schema -ceq 'pas.current-input-closure-verification.v1' -and $closure.stage -ceq $verification.stage -and $closure.status -ceq 'COMPLETE' -and $closure.pass -eq $true -and $closure.before_verified -eq $true -and $closure.after_verified -eq $true) 'CPU controls stage/input closure before/after complete'
   }

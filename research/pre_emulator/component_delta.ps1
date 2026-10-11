@@ -27,7 +27,7 @@ function ComponentDeltaAssertControl($value,$item) {
 function ComponentDeltaControlSources([string]$target) {
  if($target -ceq 'uniform_fnv_tests'){return @('research/bvi_owner_cooperative/cold_verification/main.cpp','research/bvi_owner_cooperative/cold_verification/observation_equal.hpp','research/bvi_owner_cooperative/extract.cpp','research/bvi_owner_cooperative/extract.hpp')}
  if($target -ceq 'component_mask_tests'){return @('research/prelive_current/tests/component_mask_tests.cpp','src/game.cpp','include/pas/game.hpp')}
- return @('research/prelive_current/tests/'+$target+'.cpp','research/prelive_current/tests/owner_checkpoint_tests.cpp','research/prelive_current/own_bridge.cpp','research/prelive_current/owner_checkpoint.hpp','research/bvi_owner_cooperative/extract.cpp','research/bvi_owner_cooperative/extract.hpp')
+ return @(('research/prelive_current/tests/'+$target+'.cpp'),'research/prelive_current/tests/owner_checkpoint_tests.cpp','research/prelive_current/own_bridge.cpp','research/prelive_current/owner_checkpoint.hpp','research/bvi_owner_cooperative/extract.cpp','research/bvi_owner_cooperative/extract.hpp')
 }
 function ComponentDeltaAssertGraph([string]$buildRoot,[string]$workspace,$expectedSources) {
  $ninja=(Get-Content -LiteralPath (Join-Path $buildRoot 'build.ninja') -Raw).Replace('\','/').Replace('$:',':').Replace('$ ',' ')

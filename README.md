@@ -4,6 +4,8 @@
 
 main46／`7b898c4` configure通過，第一build因空prior清單產生null path而在啟動前停止，尚無新noise／ABBA。main47修正清單產生方式，保留原輸入核對；[main46負結果](docs/research/live-readiness-20261007/MAIN46_BUILD_PRELAUNCH_NEGATIVE_20261011.json)與完整source保留。
 
+main47／`87af239` CPU32／7控制、reader2／81控制及readonly前提核對通過，但production載入遇owner source-array字串串接錯誤，尚未Native啟動。main48修正此來源清單；[main47原結果與STOP](docs/research/live-readiness-20261007/MAIN47_PRODUCTION_LOAD_NEGATIVE_20261011.json)保留，noise最新仍6／18、ABBA未跑。
+
 2026-10-11 main32／`aa9de3c` 三配置75組、完整圖3、prefix3063、fault4及production9
 integrity通過；normal三項原成本數值通過，AA12 validity亦全通過，但observer／
 capture-to-owner噪聲不足，ABBA未跑。原raw／913 source snapshot／37 native完整收據保留。
