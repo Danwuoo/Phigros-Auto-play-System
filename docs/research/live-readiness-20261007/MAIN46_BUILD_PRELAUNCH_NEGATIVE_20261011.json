@@ -1,0 +1,79 @@
+{
+  "schema": "pas.main46-build-prelaunch-negative.v1",
+  "source_commit": "7b898c44e277e0a35e04ecd228982bf068761fff",
+  "source_manifest": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-evaluation-main46\\source-manifest.json",
+    "bytes": 235802,
+    "sha256": "067d6d87f95fe87032e0ceb4339a0f81f25065809ecdd9f539ed88d64432f0f6"
+  },
+  "source_snapshot": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\source-7b898c4-main46-snapshot\\snapshot.json",
+    "bytes": 597037,
+    "sha256": "aeb6cc3dd09679a265c820c53c7efa7784cc96c4981d290e4984bb215b354b6d"
+  },
+  "configure_status": "COMPLETE",
+  "configure_native_exit": 0,
+  "configure_evidence": {
+    "specification": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-prelive-noise-repair-main46-inputs\\spec.json",
+      "bytes": 18711,
+      "sha256": "b2fd986065ce6ed842b50d189cb6cb3045f76d9fa1a9cb55872bd69ad407aaef"
+    },
+    "input_closure": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\configure-prelive-noise-repair-main46-input-closure-verification.json",
+      "bytes": 1122,
+      "sha256": "ac660061123799f7d8681877a5c73fb077a0e776f2a80c3510b6d855bc1dd920"
+    },
+    "verification": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-prelive-noise-repair-main46\\configure-prelive-noise-repair-main46-verification.json",
+      "bytes": 3499,
+      "sha256": "97aaff3ef05d9116842771a62564fcbf69c0c1c605d9cb31105ae3fd5b839c56"
+    },
+    "result": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-prelive-noise-repair-main46\\configure-prelive-noise-repair-main46-result.json",
+      "bytes": 12196,
+      "sha256": "77b64ed3325ee77b6d889033f853e6871a2dd8f47a0d373dc26c96cee13ac725"
+    },
+    "freeze": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-prelive-noise-repair-main46\\freeze.json",
+      "bytes": 33035,
+      "sha256": "b3881b1f33e35146dbc0107b9caf70972ecd3797f43303fb9bbcb2b042bdf519"
+    },
+    "state": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-prelive-noise-repair-main46\\state.json",
+      "bytes": 796,
+      "sha256": "f6eb092bbce37f3a34cfee81fa9cc928c9a52f8582efa57d7891d03e1cafb5af"
+    },
+    "contract": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-prelive-noise-repair-main46\\contract.json",
+      "bytes": 507,
+      "sha256": "61e86ae413249efdbaba67a7a8b3d5fb38323bfbc4bd00c90588695439840663"
+    },
+    "command": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-prelive-noise-repair-main46\\configure-prelive-noise-repair-main46-command.json",
+      "bytes": 744,
+      "sha256": "945d13ae1646737aafa2eec62b42a6fe6ee06d7f1dbc78bb3032fad744c8d2fd"
+    }
+  },
+  "first_build_status": "PRELAUNCH_STOP",
+  "first_build_native_launches": 0,
+  "first_build_native_exit": null,
+  "reason": "InputClosure GetFullPath rejected an empty path: initial empty prior receipt/closure/process arrays were expanded via .path and appended null before the first owned build.",
+  "observed_error": "ForEach-Object: Exception calling GetFullPath with 1 argument(s): The path is empty. (Parameter path)",
+  "error_source": "Actual main46 CPU builder shell output, runner exit 1; no build Native transaction or receipt was created.",
+  "absence_checked_glob": "out/windows-handoff/build-prelive-noise-repair-main46*",
+  "configure_input_closure_before_and_after_verified": true,
+  "fresh_target_objects": 0,
+  "affected_controls": "NOT_RUN",
+  "production_normal3": "NOT_RUN",
+  "aa12": "NOT_RUN",
+  "noise18": "NOT_RUN",
+  "abba36": "NOT_RUN",
+  "original_cap64_unchanged": true,
+  "old75_and_production9_rerun": false,
+  "qualification_issued": false,
+  "cost_ready": false,
+  "live_ready": false,
+  "device_operations": 0,
+  "new_thread_created": false
+}

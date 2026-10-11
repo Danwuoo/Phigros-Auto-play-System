@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main46')
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main47')
 $ErrorActionPreference='Stop'
 # The source and process helpers are shared; LoadBuilds is deliberately unused.
 # main32's Debug/ASan compiler roots are archived, and none is a delta donor.
@@ -194,8 +194,9 @@ for($groupIndex=0;$groupIndex -lt $buildTargetGroups.Count;$groupIndex++){
  $stage='build-prelive-noise-repair-'+$Attempt+'-cpu-group'+($groupIndex+1).ToString('00')
  AssertCurrentSource;AssertBaseUnchanged;$null=CheckCandidateCapacity
  foreach($pin in $priorOutputs){CheckEntry $pin}
- $priorProofs=@($configureProcess.Values.path)+@($buildProcesses|ForEach-Object {$_.Values.path})
- Stage $stage $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $PSScriptRoot 'noise_repair');BuildRoot=$root;StageName=$stage;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration='Release';Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja')+$priorOutputs.path+$priorProofs);Options=@('--target')+@($buildTargetGroups[$groupIndex].targets)}
+ $priorProofs=@($configureProcess.Values|ForEach-Object {$_.path})+@($buildProcesses|ForEach-Object {$_.Values|ForEach-Object {$_.path}})
+ $priorOutputPaths=@($priorOutputs|ForEach-Object {$_.path})
+ Stage $stage $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $PSScriptRoot 'noise_repair');BuildRoot=$root;StageName=$stage;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration='Release';Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja')+$priorOutputPaths+$priorProofs);Options=@('--target')+@($buildTargetGroups[$groupIndex].targets)}
  $buildReceipts+=@(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))
  $buildClosures+=@(ClosurePin $stage);$buildProcesses+=@(BuildProcessEvidence $stage)
  foreach($pin in $priorOutputs){CheckEntry $pin}

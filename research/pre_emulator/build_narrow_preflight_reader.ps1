@@ -1,5 +1,5 @@
 param([Parameter(Mandatory)][string]$BaseBinding,
-      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main46')
+      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main47')
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'common.ps1')
 . (Join-Path $PSScriptRoot 'component_delta.ps1')

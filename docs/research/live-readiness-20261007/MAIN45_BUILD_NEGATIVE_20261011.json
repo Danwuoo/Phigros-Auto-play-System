@@ -334,5 +334,54 @@
   "cost_ready": false,
   "repair": "Three separately owned CPU build groups and six production build groups; fresh overall source/objects/archive/link proof and complete Native8 joins; original held-identity64 bound retained",
   "expected_target_objects": 32,
-  "actual_partial_target_objects": 31
+  "actual_partial_target_objects": 31,
+  "actual_native_evidence_catalogue": {
+    "specification": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-prelive-noise-repair-main45-cpu-components-inputs\\spec.json",
+      "bytes": 19165,
+      "sha256": "1c82db08ed2bcbf3f50a6b52b64bb751084a3f8aef0a8e664254718928bfde1b"
+    },
+    "input_closure": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\build-prelive-noise-repair-main45-cpu-components-input-closure-verification.json",
+      "bytes": 1240,
+      "sha256": "6336a597ac600cedeb5d2866a6fdcd32ff412243b1d54c62f7c8bb84dd7aadbf"
+    },
+    "verification": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-prelive-noise-repair-main45-cpu-components\\build-prelive-noise-repair-main45-cpu-components-verification.json",
+      "bytes": 39757,
+      "sha256": "0076a1fd4cad6262c1cacfc8400b8272071b7e95825e075a1df1869e68bef5ed"
+    },
+    "result": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-prelive-noise-repair-main45-cpu-components\\build-prelive-noise-repair-main45-cpu-components-result.json",
+      "bytes": 39706,
+      "sha256": "09f5dbb7dd7c4fcd05e14dbac01b6cf8ebb9dd3d5c45fb841585c039c9c82152"
+    },
+    "freeze": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-prelive-noise-repair-main45-cpu-components\\freeze.json",
+      "bytes": 33471,
+      "sha256": "2529556cd6010ef211ae2b33cdfe10a1eeb9b8cc1102b2e248cd8e8c5266b84b"
+    },
+    "state": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-prelive-noise-repair-main45-cpu-components\\state.json",
+      "bytes": 630,
+      "sha256": "860ed249f8fdc521b46a88084bf4ae71d8b1e0f6709035dcce5bb56d592082f3"
+    },
+    "contract": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-prelive-noise-repair-main45-cpu-components\\contract.json",
+      "bytes": 525,
+      "sha256": "88b3dc9b52f79179c6964e44b1c8c3cd0d8e44c0536996c72396f5d8fd6942d0"
+    },
+    "command": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-prelive-noise-repair-main45-cpu-components\\build-prelive-noise-repair-main45-cpu-components-command.json",
+      "bytes": 780,
+      "sha256": "542156669948919b32475f733bc06dc361cac46c0cbed0f03d5e621d9633431c"
+    }
+  },
+  "evidence_catalogue_correction": "Earlier native_evidence fields serialized as null. Original fields and STOP are preserved; this added catalogue pins the eight existing actual files. The input closure is STOP, before_verified true, after_verified false, and grants no qualification.",
+  "partial_products_lossless_relocation": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\research\\live-readiness-20261007\\INACTIVE_COMPILER_RELOCATION_MAIN46_20261011.json",
+    "bytes": 11139,
+    "sha256": "2d0b033c57182084a8cc6d1c1a6e7a3c191d7ddbdccd0f57f0e179bc18b5e703"
+  },
+  "original_partial_product_paths_require_restore": true
 }

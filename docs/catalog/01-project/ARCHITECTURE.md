@@ -1,5 +1,12 @@
 # 現行架構與資料契約
 
+2026-10-11 現行冷續作採明列base／delta：保留main32原75組、production9及完整來源收據，
+fresh CPU32與production52 TUs按三／六個owned build批次驗證，不重跑既有PASS全包。
+main44 noise6／18 adequate、ABBA NOT_RUN；main45 guard64 STOP及main46空prior path
+PRELAUNCH STOP均保留。main47修補輸入清單後仍須fresh affected controls、normal3及
+完整noise／ABBA。current admission／device collectors已接線，synthetic或component PASS
+不能授live資格；完成所有可冷工作後停在emulator邊界，本輪不建立新thread。
+
 2026-10-09 診斷 JSON 改用直接建立 object map，避免 initializer-list 複製巢狀值，
 以 `382d845` 原函式的完整 bytes oracle 核對；事件內容、archive bounds 與 cost workload 不變。
 `SessionArchive::Persistence::none` 不建立 writer、目錄或檔案；固定單曲 score-session

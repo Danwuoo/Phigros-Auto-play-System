@@ -12,6 +12,12 @@ active0。完整945 source copies與原STOP見[負結果](MAIN45_BUILD_NEGATIVE_
 每批有真實Native8、來源及before／after closure，後批封存先批已完成object／library。
 不沿用main45部分產品，不將拆批或組件PASS當整體資格。
 
+main46／`7b898c4` configure native0及完整before／after closure通過，第一build在
+InputClosure正規化時拒絕empty path而PRELAUNCH STOP，沒有build Native啟動或target
+objects。原因為初始空prior receipts／closures／processes的`.path`展開產生null；
+main47用逐entry產生path array，空prior明確為零條，保留generic empty path拒絕。
+原945 source snapshot及configure Native8見[main46負結果](MAIN46_BUILD_PRELAUNCH_NEGATIVE_20261011.json)。
+
 main44（source `79f8f37`）AA12 validity 全通過，producer／publication 全部零超期；
 2ms active tail 仍未使 noise 合格（12不足、owner6 adequate），ABBA 未跑。
 實際 readonly reader 核對前置、候選、AA及18條公式，結果仍為 NOT_READY。

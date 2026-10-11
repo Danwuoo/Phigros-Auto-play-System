@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main46',[Parameter(Mandatory)][string]$NoiseRepairBinding)
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main47',[Parameter(Mandatory)][string]$NoiseRepairBinding)
 . (Join-Path $PSScriptRoot 'common.ps1')
 $script:maintenancePath=$PSCommandPath
 LoadBuilds 'main32' $NoiseRepairBinding
@@ -46,7 +46,8 @@ foreach($group in $buildGroups){
  $stage='build-production-delta-'+$Attempt+'-'+$group.id
  AssertProductionSource
  $priorProducts=@(Get-ChildItem -LiteralPath $root -File -Recurse|Where-Object {[IO.Path]::GetExtension($_.FullName) -cin @('.obj','.lib','.exe') -and $_.FullName.Replace('\','/') -cnotmatch '/(?:CompilerIdCXX/|ShowIncludes/)'}|Select-Object -ExpandProperty FullName)
- Stage $stage $adapter @{ReceiptRepo=$repo;SourceRoot=$PSScriptRoot;BuildRoot=$root;StageName=$stage;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration='Release';Inputs=@($stageInputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja')+$buildReceipts.path+$buildClosures.path+$priorProducts);Options=@('--target')+$group.targets}
+ $priorEvidencePaths=@($buildReceipts|ForEach-Object {$_.path})+@($buildClosures|ForEach-Object {$_.path})
+ Stage $stage $adapter @{ReceiptRepo=$repo;SourceRoot=$PSScriptRoot;BuildRoot=$root;StageName=$stage;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration='Release';Inputs=@($stageInputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja')+$priorEvidencePaths+$priorProducts);Options=@('--target')+$group.targets}
  $buildReceipts+=@(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))
  $buildClosures+=@(ProductionClosure $stage)
 }

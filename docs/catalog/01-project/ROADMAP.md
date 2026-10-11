@@ -1,5 +1,12 @@
 # 開發路線圖
 
+2026-10-11 最新順序：依縮小重驗授權保留main32既有75／production9 PASS，完成
+current CPU／production必要fresh build及affected controls，再跑normal3、AA12／noise18
+及尚未跑的ABBA36。main44 AA validity通過但noise6／18 adequate；main45 build STOP，
+main46 configure通過但first build PRELAUNCH STOP，main47修補空prior清單後續作。
+所有可冷開發與核對完成後停在需要emulator的邊界；使用者離開，本輪先不建立新thread。
+後續Chapter Legacy可用IN各一次／只記分數授權保留，不增加全盤重跑或遊玩紀錄。
+
 2026-10-09 新順序：完成診斷 writer／分數無持久化／當前畫面 geometry 冷修補，
 新建三配置及原 production／AA／noise／ABBA gate；到裝置相關階段交接新的 6.1 Sol／xhigh
 local main task。該 task 盤點 Chapter Legacy 全部現行 IN，可用曲各一次，只記分數，

@@ -13,6 +13,10 @@ main44／`79f8f37` AA12 validity通過、noise6／18 adequate、ABBA NOT_RUN，�
 main45／`a15986f` 單一fresh build觸及原held-identity-cap64而STOP，31／32 target objects
 保存、held／streams完成、active0；AA／noise／ABBA皆NOT_RUN。下一候選以三個CPU／
 六個production owned build批次保留原64上限，每批核對actual Native8及來源／closure。
+main46／`7b898c4` configure及其before／after closure通過，但第一build在InputClosure
+處因空prior receipts的`.path`產生null而PRELAUNCH STOP，沒有native build或target objects。
+完整945 source copies及原負結果見[main46記錄](docs/research/live-readiness-20261007/MAIN46_BUILD_PRELAUNCH_NEGATIVE_20261011.json)。
+下一候選main47明列空prior為零條輸入；仍拒絕任何實際空路徑，不放寬原guard或closure。
 下一候選依[CPU等值修補](docs/research/live-readiness-20261007/CPU_COMPONENT_REPAIR_20261011.md)
 fresh core22／bridge2與必要控制，三個未改動Release libs維持原pins；正式入口／收據工具
 亦fresh建置並跑必要normal3，不全盤重跑原75／production9。明列base／delta及既有PASS來源，
