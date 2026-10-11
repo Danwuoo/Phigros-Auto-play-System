@@ -42,8 +42,8 @@ J placement_controls(){
     J cases=J::array();int failed=0;
     const auto check=[&](const char* id,bool pass){cases.push_back({{"id",id},{"pass",pass}});failed+=!pass;};
     {PlacementAffinityDouble a,writer,consumer;PlacementPriorityDouble p;S s;const auto plan=make_worker_placement(a);
-     bool role=false;const auto error=placement_error(a,p,plan,s,[&]{role=a.value.mask==0x40&&a.value.mask!=plan.consumer_mask&&p.value==2;});
-     check("actual_body_uses_existing_producer_role_and_HIGHEST2",error.empty()&&role&&s.verified());
+     bool role=false;const auto error=placement_error(a,p,plan,s,[&]{role=a.value.mask==0x41&&!(a.value.mask&plan.consumer_core_mask)&&p.value==2;});
+     check("actual_body_uses_complete_eligible_mask_and_HIGHEST2_v2",error.empty()&&role&&s.verified());
      check("no_process_consumer_or_writer_mutation",a.process==0x20&&writer.value.mask==0xff&&writer.sets==0&&consumer.value.mask==0xff&&consumer.sets==0);
      check("successful_body_explicitly_restores_both_original_values",a.value.mask==0xff&&p.value==0&&s.affinity.close_attempted&&s.priority_close_attempted&&!s.affinity.fallback_attempted);}
     {PlacementAffinityDouble a;PlacementPriorityDouble p;S s;const auto plan=make_worker_placement(a);a.value.mask=8;p.value=-1;
@@ -103,6 +103,9 @@ J placement_controls(){
         {"producer_active_wait_horizon_ns",pas::current_rails::producer_active_wait_horizon_ns},
         {"producer_active_wait_poll_cap",pas::current_rails::producer_active_wait_poll_cap},{"producer_no_kernel_wait",true},
         {"synthetic_api_controls",true},{"device_operations",0},{"cost_qualification",false},{"live_ready",false}};
+    report["producer_eligibility_policy_id"]=producer_eligibility_policy_id;
+    report["producer_eligibility_policy_version"]=producer_eligibility_policy_version;
+    report["fixture_contract"]="historical 27 denominator; producer singleton fixture replaced by v2 eligible union, exact multibit readback/restore";
     if(failed)throw std::runtime_error("cold producer placement orchestration controls failed: "+report.dump());
     return report;
 }
@@ -136,7 +139,11 @@ int main(int argc,char** argv){try{
         {"base_component_source_commit",pas_session_build_commit},{"base_component_source_dirty",pas_session_build_dirty},
         {"scope","finite no-persistence lifecycle; exact Down/Up/cancel balance; no Hold semantic or cost qualification"}};
     report["instrumented_build"]=instrumented;
+#if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA
+    report["producer_eligibility_delta_identity"]=producer_placement::eligibility_delta_identity();
+#endif
     report["real_time_qualification_issued"]=false;
+    report["qualification_issued"]=false;
     pas::current_rails::ColdProcessQosSnapshot process_qos;
     pas::current_rails::WindowsColdProcessQosApi process_qos_api;
     pas::current_rails::run_cold_process_qos(process_qos_api,process_qos,[&]{

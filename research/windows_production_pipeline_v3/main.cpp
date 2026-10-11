@@ -161,6 +161,9 @@ J save_wait_diagnostics(const fs::path& root,const char* completion){
 #if defined(PAS_WAIT_DIAGNOSTIC_COMPONENT) && PAS_WAIT_DIAGNOSTIC_COMPONENT
  diagnostic["diagnostic_component_identity"]=wait_component_identity();
 #endif
+#if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA
+ diagnostic["producer_eligibility_delta_identity"]=producer_placement::eligibility_delta_identity();
+#endif
  const auto pin=save_wait_diagnostic_file(path,diagnostic);
  return {{"index",pin},{"summary",summary},{"diagnostic_only",true},{"qualification_issued",false}};
 }
@@ -269,6 +272,9 @@ int main(int argc,char** argv){try{
 #if defined(PAS_WAIT_DIAGNOSTIC_COMPONENT) && PAS_WAIT_DIAGNOSTIC_COMPONENT
    failure["diagnostic_component_identity"]=wait_component_identity();
 #endif
+#if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA
+   failure["producer_eligibility_delta_identity"]=producer_placement::eligibility_delta_identity();
+#endif
    save(root/"producer-wait-diagnostic-failure.json",failure);}
   catch(const std::exception& e){std::cerr<<"partial producer wait failure marker save failed: "<<e.what()<<'\n';}
   std::rethrow_exception(run_failure);
@@ -305,6 +311,10 @@ int main(int argc,char** argv){try{
  report["producer_affinity"]=producer_placement::affinity_json(state.producer_placement.affinity);
  report["producer_priority"]=producer_placement::priority_json(state.producer_placement);
  report["producer_wait_diagnostic"]=wait_diagnostic;
+#if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA
+ report["producer_eligibility_delta_identity"]=producer_placement::eligibility_delta_identity();
+ report["qualification_issued"]=false;report["cost_qualification"]=false;
+#endif
 #if defined(PAS_WAIT_DIAGNOSTIC_COMPONENT) && PAS_WAIT_DIAGNOSTIC_COMPONENT
  report["diagnostic_component_identity"]=wait_component_identity();
  report["diagnostic_only"]=true;report["qualification_issued"]=false;

@@ -194,7 +194,7 @@ class Preflight final {
     std::string execution_,compiled_,manual_sha_;
     int consumer_priority_requested_=0;
     std::int64_t producer_active_tail_ns_=0;
-    bool producer_wait_policy_bound_=false,process_qos_policy_bound_=false,process_qos_enabled_=false;
+    bool producer_wait_policy_bound_=false,process_qos_policy_bound_=false,process_qos_enabled_=false,cold_harness_delta_=false;
     J checks_=J::object(),issues_=J::array(),provenance_=J::object();bool rejected_=false,ready_=true,aa_ok_=false,noise_ok_=false;
     CostCampaign aa_,abba_;
     static std::string key(const J& p){pin_shape(p);return fs::path(p.at("path").get<std::string>()).lexically_normal().generic_string();}
@@ -300,8 +300,54 @@ class Preflight final {
         }
         checks_[faults?"faults":"production"]={{"pass",true},{"rows",i},{"raw_revalidation_performed",false}};
     }
+    void build_eligibility(){
+        cold_harness_delta_=true;const auto plan=object(delta_.at("core_build_plan"));
+        component_delta::eligibility_declaration(delta_,plan);
+        component_delta::eligibility_dependencies(r_,delta_);
+        execution_=delta_.at("source_commit").get<std::string>();compiled_=execution_;
+        source_=object(delta_.at("source_manifest"));
+        w::require(source_.at("schema")=="pas.cooperative-source.v1"&&source_.at("source_commit")==execution_&&!source_.at("dirty").get<bool>(),"clean current eligibility source manifest");
+        std::map<std::string,J> current;for(const auto& pin:source_.at("files"))w::require(current.emplace(relative(pin),pin).second,"unique current eligibility source member");
+        r_.entries(source_.at("files"));
+        const auto base=object(delta_.at("base_cpu_build")),production=object(delta_.at("base_production_build"));
+        const auto formal=object(base.at("source_manifest")),snapshot=object(delta_.at("base_source_snapshot"));
+        w::require(base.at("source_commit")=="12ec0550e882e3b06751d67fa67c43dda3e9312b"&&production.at("source_commit")==base.at("source_commit")&&same_pin(production.at("noise_repair_build"),delta_.at("base_cpu_build"))&&same_pin(production.at("source_manifest"),base.at("source_manifest"))&&snapshot.at("source_commit")==base.at("source_commit")&&same_pin(snapshot.at("source_manifest"),base.at("source_manifest")),"immutable base55 CPU/production/source snapshot join");
+        const auto projection=object(delta_.at("base_source_projection"));
+        w::require(projection.at("schema")=="pas.lossless-source-path-projection.v1"&&projection.at("source_commit")==base.at("source_commit")&&same_pin(projection.at("original_snapshot"),delta_.at("base_source_snapshot"))&&same_pin(projection.at("original_source_manifest"),base.at("source_manifest"))&&projection.at("source_path_projection_only").get<bool>(),"original55 short copy projection retains original compiled identity");
+        std::map<std::string,J> projected;for(const auto& row:projection.at("files")){
+            const auto& old=row.at("original_copy");const auto& copy=row.at("copy");pin_shape(old);pin_shape(copy);
+            w::require(old.at("bytes")==copy.at("bytes")&&old.at("sha256")==copy.at("sha256")&&copy.at("path").get<std::string>().size()<=259&&projected.emplace(key(old),copy).second,"unique byte-identical bounded source path projection");
+        }
+        w::require(projected.size()==formal.at("files").size()&&projected.size()==projection.at("file_count"),"complete original55 source projection denominator");
+        std::map<std::string,J> original;for(const auto& row:snapshot.at("files")){
+            const auto& old=row.at("original");const auto& copy=row.at("copy");pin_shape(old);pin_shape(copy);
+            w::require(old.at("bytes")==copy.at("bytes")&&old.at("sha256")==copy.at("sha256")&&original.emplace(relative(old),old).second,"unique lossless original55 source copy");
+            if(const auto found=projected.find(key(copy));found!=projected.end()){r_.bound(found->second);projected.erase(found);}else r_.bound(copy);
+        }
+        w::require(projected.empty(),"every short projection joins an original snapshot copy");
+        for(const auto& old:formal.at("files")){
+            const auto path=relative(old);w::require(original.contains(path)&&same_pin(original.at(path),old),"full original55 source preservation");
+            if((path.starts_with("src/")||path.starts_with("include/")||path.starts_with("apps/"))&&path!="src/candidate_admission.cpp")
+                w::require(current.contains(path)&&current.at(path).at("sha256")==old.at("sha256")&&current.at(path).at("bytes")==old.at("bytes"),"imported formal strategy/manual/app source unchanged from base55");
+        }
+        w::require(current.at("src/manual_session.cpp").at("sha256")==manual_sha_,"preserved main32/base55/current manual identity");
+        for(const auto& row:delta_.at("base_original_build_processes"))native(row.at("Native8"));
+        const auto configure=native(delta_.at("configure_process")),build=native(delta_.at("build_process"));
+        component_delta::eligibility_native(r_,delta_,plan,configure.evidence,true);
+        component_delta::eligibility_native(r_,delta_,plan,build.evidence,false);
+        const auto graph_pin=delta_.at("compile_graph");const auto graph_path=r_.bound(graph_pin);std::ifstream input(graph_path,std::ios::binary);std::ostringstream text;text<<input.rdbuf();
+        const auto graph=component_delta::eligibility_graph(delta_,root_,text.str());component_delta::eligibility_objects(delta_,graph);
+        r_.entries(delta_.at("files"));r_.entries(delta_.at("compiled_outputs"));
+        component_delta::eligibility_controls(r_,delta_);
+        native(delta_.at("affinity_controls_process"));native(delta_.at("reader_controls_process"));native(delta_.at("verification_controls_process"));
+        for(const auto& row:delta_.at("score_control_processes"))native(row.at("Native8"));
+        consumer_priority_requested_=2;producer_active_tail_ns_=0;producer_wait_policy_bound_=true;process_qos_policy_bound_=true;process_qos_enabled_=true;
+        provenance_={{"base_formal_source_commit",base.at("source_commit")},{"historical_qualification_source_commit",base_commit},{"compiled_harness_source_commit",compiled_},{"execution_source_commit",execution_},{"consumer_priority_requested",2},{"producer_active_tail_ns",0},{"formal_rebuilt",false},{"cold_harness_delta",true},{"verification_only_delta",true},{"fresh_translation_units",delta_.at("translation_unit_count")},{"historical75_and_production9_prerequisite_only",true},{"base_cpu_build",delta_.at("base_cpu_build")},{"base_production_build",delta_.at("base_production_build")},{"original_inventory",required("original_inventory")},{"narrow_build",required("narrow_build")}};
+    }
     void build(){
-        delta_=object(required("narrow_build"));w::require(delta_.at("schema")=="pas.narrow-noise-repair-build.v1"&&delta_.at("configuration")=="release"&&delta_.at("scope")=="noise_and_unrun_abba_only"&&!delta_.at("whole_candidate_qualification").get<bool>()&&!delta_.at("live_ready").get<bool>()&&delta_.at("device_operations")==0&&same_pin(delta_.at("original_main32_inventory"),required("original_inventory")),"declared endpoint-free narrow build scope");
+        delta_=object(required("narrow_build"));
+        if(delta_.value("cold_harness_delta",false)){build_eligibility();return;}
+        w::require(delta_.at("schema")=="pas.narrow-noise-repair-build.v1"&&delta_.at("configuration")=="release"&&delta_.at("scope")=="noise_and_unrun_abba_only"&&!delta_.at("whole_candidate_qualification").get<bool>()&&!delta_.at("live_ready").get<bool>()&&delta_.at("device_operations")==0&&same_pin(delta_.at("original_main32_inventory"),required("original_inventory")),"declared endpoint-free narrow build scope");
         execution_=delta_.at("source_commit").get<std::string>();compiled_=delta_.value("compiled_source_commit",execution_);w::require(w::hex(execution_,40)&&w::hex(compiled_,40),"exact execution/compiled commit identities");
         const auto base=object(delta_.at("base_release_build"));w::require(base.at("source_commit")==base_commit,"original Release build identity");for(const auto& row:inventory_.at("cold"))if(row.at("mode")=="release")w::require(same_pin(row.at("build"),delta_.at("base_release_build"))&&same_pin(row.at("evaluation"),delta_.at("base_release_evaluation")),"original Release build/evaluation inventory join");
         source_=object(delta_.at("source_manifest"));w::require(source_.at("schema")=="pas.cooperative-source.v1"&&source_.at("source_commit")==execution_&&!source_.at("dirty").get<bool>(),"execution source manifest identity");
@@ -413,6 +459,7 @@ class Preflight final {
             w::require(e.at("run_id")==plan.at("run_id")&&e.at("scene")==plan.at("scene")&&report.at("mode")==plan.at("mode")&&report.at("scene")==plan.at("scene")&&same_path_text(e.at("path").get<std::string>(),plan.at("report_path").get<std::string>()),"run/report plan join");
             const auto producer=native(e.at("process_evidence"));w::require(same_path_text(producer.spec.at("exe").get<std::string>(),c.bindings.at("candidate_binary").at("path").get<std::string>())&&producer.spec.at("argv")==J::array({"pipeline",plan.at("mode"),plan.at("scene"),"2560",c.pin.at("path"),plan.at("run_id"),e.at("path")}),"actual frozen producer command");
             verify_process_qos(report,process_qos_policy_bound_&&process_qos_enabled_,qos_integer(producer.facts.at("pid")));
+            if(cold_harness_delta_)component_delta::eligibility_identity(report,delta_,source_,true);
             w::require(prov.at("schema")=="pas.current-rails-run-provenance.v1"&&prov.at("campaign_sha256")==c.pin.at("sha256")&&prov.at("campaign_id")==c.value.at("id")&&prov.at("source_commit")==execution_&&prov.at("run_id")==plan.at("run_id")&&prov.at("scene")==plan.at("scene")&&prov.at("mode")==plan.at("mode")&&prov.at("requested")==2560&&same_path_text(prov.at("report_path").get<std::string>(),e.at("path").get<std::string>())&&prov.at("process").at("pid")==producer.facts.at("pid")&&prov.at("process").at("creation_filetime")==producer.facts.at("creation_filetime"),"fresh source/campaign/process identity");
             for(const auto& [role,b]:c.bindings){(void)role;w::require(producer.inputs.contains(key(b))&&same_pin(producer.inputs.at(key(b)),b),"every campaign member in producer closure");}
             const auto source=object(c.bindings.at("source_manifest"));for(const auto& f:source.at("files"))w::require(producer.inputs.contains(key(f))&&same_pin(producer.inputs.at(key(f)),f),"every execution source member in producer closure");

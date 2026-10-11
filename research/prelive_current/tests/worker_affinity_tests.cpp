@@ -1,4 +1,5 @@
 #include "worker_affinity.hpp"
+#include "../../windows_production_pipeline_v3/producer_placement.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -24,10 +25,10 @@ struct Api {
 };
 template<class F> bool rejects(F&& work,Failure reason,Failure rollback=Failure::none){try{work();}catch(const WorkerAffinityError& error){return error.reason()==reason&&error.rollback_reason()==rollback;}catch(...){return false;}return false;}
 void placement_controls(Tests& t){
- {Api api;const auto p=make_worker_placement(api);t.check("highest_class_last_two_cores_each_lowest_lp",p.valid()&&p.efficiency_class==1&&p.consumer_core==2&&p.producer_core==3&&p.consumer_number==4&&p.producer_number==6&&p.consumer_mask==0x10&&p.producer_mask==0x40&&api.topology_reads==1);}
+ {Api api;const auto p=make_worker_placement(api);t.check("highest_class_last_two_role_anchors_complete_eligible_union_v2",p.valid()&&p.efficiency_class==1&&p.consumer_core==2&&p.producer_core==3&&p.consumer_number==4&&p.producer_number==6&&p.consumer_mask==0x10&&p.producer_anchor_mask==0x40&&p.producer_mask==0x41&&api.topology_reads==1);}
  {Api api;api.core_data.cores[0].efficiency_class=255;api.core_data.cores[2].efficiency_class=255;const auto p=make_worker_placement(api);t.check("raw_class_two_cores_keep_lp_zero_no_number_sentinel",p.valid()&&p.efficiency_class==255&&p.consumer_core==0&&p.producer_core==2&&p.consumer_number==0&&p.producer_number==4&&p.consumer_mask==1&&p.producer_mask==0x10);}
- {Api api;for(auto& core:api.core_data.cores)core.efficiency_class=0;const auto p=make_worker_placement(api);t.check("homogeneous_zero_class_last_two_physical_cores",p.valid()&&p.efficiency_class==0&&p.consumer_core==2&&p.producer_core==3&&p.consumer_mask==0x10&&p.producer_mask==0x40);}
- {Api api;std::swap(api.core_data.cores[0],api.core_data.cores[3]);const auto p=make_worker_placement(api);t.check("record_order_does_not_change_last_two_lowest_lp_roles",p.valid()&&p.consumer_mask==0x10&&p.producer_mask==0x40&&p.consumer_core==2&&p.producer_core==0);}
+ {Api api;for(auto& core:api.core_data.cores)core.efficiency_class=0;const auto p=make_worker_placement(api);t.check("homogeneous_zero_class_all_eligible_cores_except_consumer_v2",p.valid()&&p.efficiency_class==0&&p.consumer_core==2&&p.producer_core==3&&p.consumer_mask==0x10&&p.producer_mask==0x45);}
+ {Api api;std::swap(api.core_data.cores[0],api.core_data.cores[3]);const auto p=make_worker_placement(api);t.check("record_order_does_not_change_role_anchors_or_eligible_union_v2",p.valid()&&p.consumer_mask==0x10&&p.producer_mask==0x41&&p.consumer_core==2&&p.producer_core==0);}
  {Api api;api.process=0;t.check("plan_process_query_failure_before_topology",make_worker_placement(api).failure==Failure::process_query&&api.topology_reads==0);}
  {Api api;api.process=0x80;t.check("plan_normal_process_required_no_mutation",make_worker_placement(api).failure==Failure::normal_process_required&&api.sets==0);}
  {Api api;api.groups=0;t.check("plan_group_query_failure",make_worker_placement(api).failure==Failure::group_query&&api.topology_reads==0);}
@@ -52,7 +53,9 @@ void scope_controls(Tests& t){
  static_assert(!std::is_copy_constructible_v<WorkerAffinityScope<Api>>);static_assert(!std::is_move_constructible_v<WorkerAffinityScope<Api>>);
  {Api api;WorkerAffinitySnapshot r;{WorkerAffinityScope scope(api,r,1);t.check("only_current_thread_requested_group_mask_applied",api.value==WorkerGroupAffinity{0,1}&&r.previous==WorkerGroupAffinity{0,0xff}&&r.applied&&!r.verified());scope.close();t.check("explicit_restore_exact_original_group_mask",api.value==WorkerGroupAffinity{0,0xff}&&r.verified());const auto calls=api.sets;scope.close();t.check("explicit_close_idempotent_no_mutation",api.sets==calls);}t.check("successful_close_no_destructor_fallback",!r.fallback_attempted);}
  {Api api;api.value={0,1};WorkerAffinitySnapshot r;{WorkerAffinityScope scope(api,r,1);scope.close();}t.check("already_pinned_same_mask_restored",r.verified()&&api.value==WorkerGroupAffinity{0,1});}
- for(std::uint64_t mask:{0ull,3ull,256ull}){Api api;WorkerAffinitySnapshot r;const auto reason=mask==256?Failure::requested_mask_not_in_process:Failure::requested_mask_invalid;t.check(mask==0?"scope_zero_mask_rejected":mask==3?"scope_multiple_lps_rejected":"scope_mask_outside_process_rejected",rejects([&]{WorkerAffinityScope scope(api,r,mask);},reason)&&api.sets==0);}
+ for(std::uint64_t mask:{0ull,3ull,256ull}){Api api;WorkerAffinitySnapshot r;
+  if(mask==3){WorkerAffinityScope scope(api,r,mask);scope.close();t.check("scope_nonzero_multiple_lps_exact_restore_v2",r.verified()&&r.requested.mask==3&&api.value.mask==0xff);}
+  else{const auto reason=mask==256?Failure::requested_mask_not_in_process:Failure::requested_mask_invalid;t.check(mask==0?"scope_zero_mask_rejected":"scope_mask_outside_process_rejected",rejects([&]{WorkerAffinityScope scope(api,r,mask);},reason)&&api.sets==0);}}
  {Api api;api.groups=2;WorkerAffinitySnapshot r;t.check("scope_rechecks_single_group_before_mutation",rejects([&]{WorkerAffinityScope scope(api,r,1);},Failure::single_active_group_required)&&api.sets==0);}
  {Api api;api.process_mask=0xfe;WorkerAffinitySnapshot r;t.check("scope_rechecks_process_mask_before_mutation",rejects([&]{WorkerAffinityScope scope(api,r,1);},Failure::requested_mask_not_in_process)&&api.sets==0);}
  {Api api;api.fail_read=1;WorkerAffinitySnapshot r;t.check("original_affinity_query_failure_no_mutation",rejects([&]{WorkerAffinityScope scope(api,r,1);},Failure::affinity_query)&&api.sets==0);}
@@ -73,6 +76,28 @@ void scope_controls(Tests& t){
  {Api api;WorkerAffinitySnapshot r;{WorkerAffinityScope scope(api,r,1);api.id=12;}t.check("destructor_wrong_thread_no_other_thread_mutation",api.sets==1&&r.fallback_failure==Failure::wrong_thread&&!r.verified());}
  for(int variant=0;variant<3;++variant){Api api;WorkerAffinitySnapshot r;{WorkerAffinityScope scope(api,r,1);if(variant==0)api.fail_set=2;else if(variant==1)api.fail_read=3;else api.ignore_set=2;}const auto reason=variant==0?Failure::restore_set:variant==1?Failure::restore_readback_query:Failure::restore_readback_mismatch;t.check(variant==0?"destructor_set_failure_retained":variant==1?"destructor_query_failure_retained":"destructor_mismatch_retained",r.fallback_failure==reason&&!r.restored&&!r.verified());}
 }
+Tests eligibility_controls(){
+ Tests t;
+ {Api api;const auto p=make_worker_placement(api);const auto j=cold::producer_placement::plan_json(p);
+  t.check("all_highest_class_available_cores_in_exact_union",p.valid()&&p.producer_mask==0x41&&p.producer_eligible_core_count==2&&j.at("producer_eligible_cores").size()==2&&j.at("topology_available")==true&&j.at("topology_core_records").size()==4&&j.at("schema")=="pas.cold-worker-placement.v2");}
+ {Api api;const auto p=make_worker_placement(api);t.check("consumer_entire_physical_core_and_all_siblings_excluded",p.valid()&&p.consumer_core_mask==0x30&&(p.producer_mask&p.consumer_core_mask)==0);}
+ {Api api;const auto p=make_worker_placement(api);t.check("lower_class_and_nonlowest_sibling_lps_never_eligible",p.valid()&&(p.producer_mask&0x0c)==0&&(p.producer_mask&0xaa)==0);}
+ {Api api;const auto p=make_worker_placement(api);t.check("last_core_lp_remains_identity_anchor_not_singleton_request",p.valid()&&p.producer_core==3&&p.producer_number==6&&p.producer_anchor_mask==0x40&&p.producer_mask!=p.producer_anchor_mask&&(p.producer_mask&p.producer_anchor_mask)==p.producer_anchor_mask);}
+ {Api api;api.process_mask=0xfe;const auto p=make_worker_placement(api);t.check("unavailable_core_lowest_lp_skipped_without_sibling_fallback",p.valid()&&p.producer_mask==0x40&&p.producer_eligible_core_count==1&&(p.producer_mask&2)==0);}
+ {Api api;for(auto& core:api.core_data.cores)core.efficiency_class=0;const auto p=make_worker_placement(api);t.check("homogeneous_class_retains_every_nonconsumer_core",p.valid()&&p.producer_mask==0x45&&p.producer_eligible_core_count==3);}
+ {Api api;api.core_data.cores[0].efficiency_class=255;api.core_data.cores[2].efficiency_class=255;const auto p=make_worker_placement(api);t.check("raw_unsigned_class255_and_lp_zero_are_exact_facts",p.valid()&&p.efficiency_class==255&&p.consumer_number==0&&p.producer_mask==0x10&&p.producer_eligible_core_count==1);}
+ {Api api;api.core_data.count=2;api.core_data.cores[0]={0,255,1};api.core_data.cores[1]={0,255,std::uint64_t{1}<<63};api.process_mask=api.system_mask=1|(std::uint64_t{1}<<63);const auto p=make_worker_placement(api);t.check("lowest_and_highest_group_bit_no_signed_or_shift_sentinel",p.valid()&&p.consumer_number==0&&p.producer_number==63&&p.producer_mask==(std::uint64_t{1}<<63));}
+ {Api api;WorkerAffinitySnapshot s;{WorkerAffinityScope scope(api,s,0x41);const bool applied=api.value.mask==0x41&&s.applied_readback==s.requested;scope.close();t.check("multibit_request_apply_and_restore_are_exact_full_masks",applied&&s.verified()&&s.restored_readback.mask==0xff&&api.value.mask==0xff);}}
+ {Api api;api.value.mask=0x40;api.ignore_set=1;WorkerAffinitySnapshot s;t.check("partial_multibit_apply_rejected_even_when_anchor_present",rejects([&]{WorkerAffinityScope scope(api,s,0x41);},Failure::affinity_readback_mismatch)&&s.rollback_restored&&api.value.mask==0x40&&!s.verified());}
+ {Api api;WorkerAffinitySnapshot s;bool rejected=false;{WorkerAffinityScope scope(api,s,0x41);api.ignore_set=2;rejected=rejects([&]{scope.close();},Failure::restore_readback_mismatch);}t.check("restore_wrong_full_mask_sticky_after_destructor_fallback",rejected&&s.fallback_attempted&&api.value.mask==0xff&&!s.restored&&!s.verified());}
+ {Api consumer;Api writer=consumer;const auto p=make_worker_placement(consumer);WorkerAffinitySnapshot c,s;
+  {WorkerAffinityScope consumer_scope(consumer,c,p.consumer_mask);Api producer=consumer;producer.id=12;
+   {WorkerAffinityScope producer_scope(producer,s,p.producer_mask);producer_scope.close();}
+   consumer_scope.close();}
+  t.check("writer_created_before_affinity_keeps_prior_while_workers_restore",p.valid()&&writer.value.mask==0xff&&writer.sets==0&&c.verified()&&s.verified()&&s.previous.mask==p.consumer_mask&&consumer.value.mask==0xff);}
+ if(t.checks.size()!=12)throw std::runtime_error("fixed independent producer eligibility denominator");
+ return t;
+}
 int main(int argc,char** argv){try{
  if(argc!=2||std::filesystem::exists(argv[1]))throw std::runtime_error("fresh worker affinity output");Tests t;placement_controls(t);scope_controls(t);
 #ifdef _WIN32
@@ -80,7 +105,7 @@ int main(int argc,char** argv){try{
  t.check("actual_windows_bounded_plan_cached_and_normal",plan.valid()&&(&plan==&again)&&api.process_class()==NORMAL_PRIORITY_CLASS);
  if(!plan.valid())throw WorkerAffinityError(plan.failure);
  const auto previous=api.current();const auto priority=GetThreadPriority(GetCurrentThread());std::uint64_t process=0,system=0;const auto masks=api.process_masks(process,system);
- t.check("actual_windows_two_different_cores_and_process_masks",masks&&plan.consumer_core!=plan.producer_core&&std::has_single_bit(plan.consumer_mask)&&std::has_single_bit(plan.producer_mask)&&(plan.consumer_mask&process)==plan.consumer_mask&&(plan.producer_mask&process)==plan.producer_mask);
+ t.check("actual_windows_reserved_core_and_full_eligible_process_mask_v2",masks&&plan.consumer_core!=plan.producer_core&&std::has_single_bit(plan.consumer_mask)&&plan.producer_mask&&(plan.producer_mask&plan.producer_anchor_mask)==plan.producer_anchor_mask&&!(plan.producer_mask&plan.consumer_core_mask)&&(plan.consumer_mask&process)==plan.consumer_mask&&(plan.producer_mask&process)==plan.producer_mask&&plan.producer_eligible_core_count==std::size_t(std::popcount(plan.producer_mask)));
  WorkerAffinitySnapshot consumer,producer;
  {WorkerAffinityScope scope(api,consumer,plan.consumer_mask);t.check("actual_windows_consumer_set_readback",api.current()==std::optional<WorkerGroupAffinity>(consumer.requested)&&!consumer.verified());scope.close();}
  t.check("actual_windows_consumer_original_restored",previous&&api.current()==previous&&consumer.verified()&&!consumer.fallback_attempted);
@@ -89,5 +114,19 @@ int main(int argc,char** argv){try{
 #endif
  J result={{"schema","pas.worker-affinity-tests.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",t.failed==0},
   {"device_endpoints",0},{"device_operations",0},{"cost_qualification",false},{"live_ready",false},{"qualification_scope","cold OS placement and current-thread restore controls; noise, physical and live separate"}};
- std::ofstream out(argv[1],std::ios::binary);out<<result.dump(2)<<'\n';if(!out)throw std::runtime_error("worker affinity output write");std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<'\n';return t.failed?1:0;
+ const auto e=eligibility_controls();
+ result["eligibility_controls"]={{"schema","pas.cold-producer-eligibility-controls.v1"},{"assertions",e.checks.size()},{"checks",e.checks},{"failed",e.failed},{"pass",e.failed==0},
+  {"synthetic_api_controls",true},{"device_operations",0},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false}};
+ result["producer_eligibility_policy_id"]=producer_eligibility_policy_id;
+ result["producer_eligibility_policy_version"]=producer_eligibility_policy_version;
+ result["fixture_contract"]="historical 65 denominator; affected singleton expected masks explicitly updated to v2 eligible union; new eligibility12 separate";
+#ifdef _WIN32
+ result["worker_placement"]=cold::producer_placement::plan_json(plan,true);
+ result["consumer_affinity"]=cold::producer_placement::affinity_json(consumer);
+ result["producer_affinity"]=cold::producer_placement::affinity_json(producer);
+#endif
+#if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA
+ result["producer_eligibility_delta_identity"]=cold::producer_placement::eligibility_delta_identity();
+#endif
+ std::ofstream out(argv[1],std::ios::binary);out<<result.dump(2)<<'\n';if(!out)throw std::runtime_error("worker affinity output write");std::cout<<"assertions="<<t.checks.size()<<" failed="<<t.failed<<" eligibility_assertions="<<e.checks.size()<<" eligibility_failed="<<e.failed<<'\n';return (t.failed||e.failed)?1:0;
 }catch(const WorkerAffinityError& error){std::cerr<<error.what()<<"; rollback="<<worker_affinity_failure_name(error.rollback_reason())<<'\n';return 2;}catch(const std::exception& error){std::cerr<<error.what()<<'\n';return 2;}}

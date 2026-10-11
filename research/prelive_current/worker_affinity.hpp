@@ -6,6 +6,9 @@
 #include <cstring>
 #include <optional>
 #include <stdexcept>
+#if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA
+#include "producer_eligibility_delta_identity.hpp"
+#endif
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -59,22 +62,70 @@ struct WorkerCoreTopology {
  std::uint32_t query_bytes=0,returned_bytes=0,win32_error=0;
  WorkerAffinityFailure failure=WorkerAffinityFailure::topology_incomplete;
 };
+inline constexpr const char* producer_eligibility_policy_id=
+ "highest_raw_efficiency_class_one_lp_per_core_excluding_consumer";
+inline constexpr std::uint32_t producer_eligibility_policy_version=2;
 struct PlacementPlan {
  std::uint16_t group=0,consumer_core=0,producer_core=0;
  std::uint8_t consumer_number=0,producer_number=0,efficiency_class=0;
  std::uint32_t active_groups=0,process_class=0,topology_bytes=0,topology_error=0;
  std::size_t topology_cores=0,topology_logical_processors=0;
  std::uint64_t process_mask=0,system_mask=0,consumer_mask=0,producer_mask=0;
+ std::uint64_t consumer_core_mask=0,producer_anchor_mask=0;
+ std::size_t producer_eligible_core_count=0;
+ // One group is at most 64 LPs. These fixed maps retain the exact bounded OS
+ // topology without copying the 64KiB topology buffer into each snapshot.
+ std::array<std::uint8_t,64> topology_core_by_lp{},topology_class_by_lp{};
+ bool topology_available=false;
  WorkerAffinityFailure failure=WorkerAffinityFailure::none;
- bool valid() const noexcept{return failure==WorkerAffinityFailure::none&&
-  active_groups==1&&process_class==0x20&&std::has_single_bit(consumer_mask)&&
-  std::has_single_bit(producer_mask)&&consumer_mask!=producer_mask&&consumer_core!=producer_core;}
+ std::uint64_t physical_core_mask(std::size_t core) const noexcept {
+  std::uint64_t mask=0;for(unsigned lp=0;lp<64;++lp)
+   if((system_mask&(std::uint64_t{1}<<lp))&&topology_core_by_lp[lp]==core)mask|=std::uint64_t{1}<<lp;
+  return mask;
+ }
+ bool valid() const noexcept {
+  if(failure!=WorkerAffinityFailure::none||!topology_available||active_groups!=1||process_class!=0x20||group!=0||
+     !process_mask||!system_mask||(process_mask&~system_mask)||
+     !topology_cores||topology_cores>WorkerCoreTopology::core_cap||
+     !topology_bytes||topology_bytes>WorkerCoreTopology::byte_cap||
+     topology_logical_processors!=std::size_t(std::popcount(system_mask))||
+     consumer_number>=64||producer_number>=64||consumer_core>=topology_cores||producer_core>=topology_cores||
+     consumer_core==producer_core||consumer_mask!=(std::uint64_t{1}<<consumer_number)||
+     producer_anchor_mask!=(std::uint64_t{1}<<producer_number)||
+     ((consumer_mask|producer_anchor_mask)&~process_mask))return false;
+  unsigned highest=0;for(unsigned lp=0;lp<64;++lp)if(system_mask&(std::uint64_t{1}<<lp)){
+   if(topology_core_by_lp[lp]>=topology_cores)return false;
+   if(topology_class_by_lp[lp]>highest)highest=topology_class_by_lp[lp];
+  }
+  std::uint64_t expected=0;std::size_t eligible=0,highest_count=0;
+  unsigned last=0,previous=0;
+  for(std::size_t core=0;core<topology_cores;++core){
+   const auto mask=physical_core_mask(core);if(!mask)return false;
+   const auto lp=static_cast<unsigned>(std::countr_zero(mask));const auto raw_class=topology_class_by_lp[lp];
+   for(unsigned bit=0;bit<64;++bit)if((mask&(std::uint64_t{1}<<bit))&&topology_class_by_lp[bit]!=raw_class)return false;
+   if(raw_class!=highest)continue;
+   if(highest_count==0||lp>last){previous=last;last=lp;}
+   else if(highest_count==1||lp>previous)previous=lp;
+   ++highest_count;
+   const auto bit=std::uint64_t{1}<<lp;
+   if(core!=consumer_core&&(bit&process_mask)){expected|=bit;++eligible;}
+  }
+  return highest_count>=2&&efficiency_class==highest&&consumer_number==previous&&producer_number==last&&
+   physical_core_mask(consumer_core)==consumer_core_mask&&std::countr_zero(consumer_core_mask)==consumer_number&&
+   topology_core_by_lp[consumer_number]==consumer_core&&topology_core_by_lp[producer_number]==producer_core&&
+   std::countr_zero(physical_core_mask(producer_core))==producer_number&&producer_mask==expected&&
+   producer_mask&&(producer_mask&producer_anchor_mask)==producer_anchor_mask&&
+   !(producer_mask&consumer_core_mask)&&producer_eligible_core_count==eligible;
+ }
 };
 // Policy reads bounded OS facts, never a diagnostic JSON or gameplay history.
 // Choose the last two distinct cores ordered by each core's lowest LP in the
-// highest raw EfficiencyClass; consumer takes the lower, producer the higher.
-// Each core contributes its own lowest LP. No lower-class,
-// sibling-LP or process-mask fallback. Core numbers are OS snapshot ordinals.
+// highest raw EfficiencyClass; consumer takes the lower and the higher remains
+// the producer identity anchor. The producer can run on every available lowest
+// LP of that highest class, excluding the entire consumer physical core. An
+// unavailable lowest LP never selects its sibling or a lower class. The original
+// consumer and anchor must still be in the process mask. Core numbers are OS
+// snapshot ordinals, not persistent hardware identities.
 template<class Api> PlacementPlan make_worker_placement(Api& api) noexcept {
  PlacementPlan plan;const auto reject=[&](WorkerAffinityFailure reason){plan.failure=reason;return plan;};
  plan.process_class=api.process_class();if(!plan.process_class)return reject(WorkerAffinityFailure::process_query);
@@ -94,8 +145,13 @@ template<class Api> PlacementPlan make_worker_placement(Api& api) noexcept {
   all|=core.mask;plan.topology_logical_processors+=std::popcount(core.mask);
   if(plan.topology_logical_processors>WorkerCoreTopology::logical_processor_cap)return reject(WorkerAffinityFailure::topology_lp_bound);
   if(core.efficiency_class>highest)highest=core.efficiency_class;
+  for(unsigned lp=0;lp<64;++lp)if(core.mask&(std::uint64_t{1}<<lp)){
+   plan.topology_core_by_lp[lp]=static_cast<std::uint8_t>(i);
+   plan.topology_class_by_lp[lp]=core.efficiency_class;
+  }
  }
  if(all!=plan.system_mask)return reject(WorkerAffinityFailure::topology_incomplete);
+ plan.topology_available=true;
  std::array<std::size_t,2> selected{topology.count,topology.count};std::array<unsigned,2> numbers{0,0};
  for(std::size_t i=0;i<topology.count;++i){const auto& core=topology.cores[i];if(core.efficiency_class!=highest)continue;
   const auto number=static_cast<unsigned>(std::countr_zero(core.mask));
@@ -106,9 +162,16 @@ template<class Api> PlacementPlan make_worker_placement(Api& api) noexcept {
  plan.efficiency_class=static_cast<std::uint8_t>(highest);
  plan.consumer_core=static_cast<std::uint16_t>(selected[0]);plan.producer_core=static_cast<std::uint16_t>(selected[1]);
  plan.consumer_number=static_cast<std::uint8_t>(numbers[0]);plan.producer_number=static_cast<std::uint8_t>(numbers[1]);
- plan.consumer_mask=std::uint64_t{1}<<numbers[0];plan.producer_mask=std::uint64_t{1}<<numbers[1];
- if((plan.consumer_mask&plan.process_mask)!=plan.consumer_mask||(plan.producer_mask&plan.process_mask)!=plan.producer_mask)
+ plan.consumer_mask=std::uint64_t{1}<<numbers[0];plan.producer_anchor_mask=std::uint64_t{1}<<numbers[1];
+ plan.consumer_core_mask=topology.cores[selected[0]].mask;
+ if((plan.consumer_mask&plan.process_mask)!=plan.consumer_mask||(plan.producer_anchor_mask&plan.process_mask)!=plan.producer_anchor_mask)
   return reject(WorkerAffinityFailure::requested_mask_not_in_process);
+ for(std::size_t i=0;i<topology.count;++i){const auto& core=topology.cores[i];
+  if(i==selected[0]||core.efficiency_class!=highest)continue;
+  const auto bit=std::uint64_t{1}<<std::countr_zero(core.mask);
+  if(!(bit&plan.process_mask))continue;
+  plan.producer_mask|=bit;++plan.producer_eligible_core_count;
+ }
  return plan;
 }
 struct WorkerAffinitySnapshot {
@@ -152,7 +215,7 @@ public:
   if(receipt_.active_groups!=1)reject(WorkerAffinityFailure::single_active_group_required);
   if(!api_.process_masks(receipt_.process_mask,receipt_.system_mask))reject(WorkerAffinityFailure::process_mask_query);
   if(!receipt_.process_mask||!receipt_.system_mask||(receipt_.process_mask&~receipt_.system_mask))reject(WorkerAffinityFailure::process_mask_invalid);
-  if(!std::has_single_bit(mask))reject(WorkerAffinityFailure::requested_mask_invalid);
+  if(!mask)reject(WorkerAffinityFailure::requested_mask_invalid);
   if((mask&receipt_.process_mask)!=mask)reject(WorkerAffinityFailure::requested_mask_not_in_process);
   receipt_.thread_id=api_.thread();if(!receipt_.thread_id)reject(WorkerAffinityFailure::thread_query);
   const auto previous=api_.current();if(!previous)reject(WorkerAffinityFailure::affinity_query);

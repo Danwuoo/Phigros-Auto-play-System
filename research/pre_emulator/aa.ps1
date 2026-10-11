@@ -1,6 +1,7 @@
 param([ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12',[ValidatePattern('^[a-z0-9-]{1,16}$')][string]$Attempt='main12',[string]$NoiseRepairBinding='')
 . (Join-Path $PSScriptRoot 'common.ps1');$script:maintenancePath=$PSCommandPath
-LoadBuilds $BuildAttempt $NoiseRepairBinding
+if($NoiseRepairBinding){. (Join-Path $PSScriptRoot 'noise_repair_build.ps1');LoadNoiseRepairBuild $NoiseRepairBinding}
+else{LoadBuilds $BuildAttempt}
 $prefixPath=Join-Path $repo ('out/prelive-pre-emulator-prefix-'+$Attempt+'/prefix-receipt.json')
 if($NoiseRepairBinding){$prefixPath=$noiseRepairBuild.original_inventory.prefix_receipt.path}
 $prefix=Get-Content -LiteralPath $prefixPath -Raw|ConvertFrom-Json

@@ -1,8 +1,17 @@
 #pragma once
 #include "graph_reader.hpp"
+#include "component_delta.hpp"
 #include <array>
 
 namespace pas::preflight_graph {
+inline void verify_cold_harness_normal_report(const J& report,const J& audit,const J& harness,const J& current_source,const J& formal_source,const J& report_pin,std::string_view scene){
+    w::require(report.at("schema")=="pas.windows-production-pipeline-cold.v1"&&report.at("scene")==scene&&report.at("source_build_commit")==component_delta::eligibility_base_commit&&report.at("source_build_dirty").is_boolean()&&report.at("source_build_dirty")==false&&report.at("actual_manual_translation_unit_sha256")==component_delta::eligibility_manifest_pin(formal_source,"src/manual_session.cpp").at("sha256"),"current Normal3 retains original55 literal manual source");
+    for(const auto* field:{"endpoint_free","public_entry_rejected","production_packet_action_wake_archive_executed"})component_delta::eligibility_bool(report,field,true);
+    component_delta::eligibility_bool(report,"real_capture_rpc_measured",false);component_delta::eligibility_bool(report,"live_ready",false);
+    w::require(component_delta::eligibility_uint(report,"device_operations")==0&&component_delta::eligibility_uint(report,"requested")==2560&&component_delta::eligibility_uint(report,"warmup")==256&&component_delta::eligibility_uint(report,"measurement_attempts")==2304&&component_delta::eligibility_uint(report,"cadence_ms")==20,"original full Normal3 protocol unchanged");
+    w::require(audit.at("schema")=="pas.windows-production-pipeline-audit.v5"&&audit.at("source_commit")==component_delta::eligibility_base_commit&&component_delta::pin_equal(audit.at("report"),report_pin)&&audit.at("normal_cost_failures").is_array()&&audit.at("normal_cost_failures").empty(),"independent complete current raw audit/original numerical gates");component_delta::eligibility_bool(audit,"integrity_verified",true);component_delta::eligibility_bool(audit,"normal_cost_valid",true);
+    component_delta::eligibility_identity(report,harness,current_source,false);
+}
 inline void frozen_raw_tree(const std::set<fs::path>& inputs,const fs::path& root){
     w::require(fs::is_directory(root),"existing cold raw directory");std::size_t files=0;
     for(const auto& e:fs::recursive_directory_iterator(root)){

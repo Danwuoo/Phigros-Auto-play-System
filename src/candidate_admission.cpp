@@ -4,6 +4,9 @@
 #include "pas/analysis.hpp"
 #include "pas/adb.hpp"
 #include "session_build_provenance.hpp"
+#if defined(PAS_COLD_VERIFICATION_DELTA)
+#include "verification_delta_identity.hpp"
+#endif
 #include "research/pre_emulator/qualification_reader/reader/narrow_preflight.hpp"
 #include <atomic>
 #include <cmath>
@@ -46,6 +49,7 @@ J result_base(bool synthetic){return {{"schema","pas.current-candidate-receipt-v
 bool collection_role(std::string_view role){return role!="capture_rpc"&&role!="device"&&role!="physical";}
 J contract(const J& d,const J& current,bool synthetic,bool collection=false){
     J out=result_base(synthetic);bool ok=true;
+    const bool delta=d.is_object()&&d.contains("input")&&d.at("input").is_object()&&(d.at("input").contains("cold_harness_delta")||d.at("input").contains("verification_delta"));
     const auto section=[&](const char* name,const auto& fn){if(collection&&(!collection_role(name)||std::string_view(name)=="current_preflight"))return;try{fn();}catch(const Reject& e){ok=false;out["issues"].push_back({{"section",name},{"code",e.code},{"reason",e.what()}});}catch(const std::exception& e){ok=false;out["issues"].push_back({{"section",name},{"code","MALFORMED_RECEIPT"},{"reason",e.what()}});}};
     section("input",[&]{const auto& i=member(d,"input");schema(i,collection?"pas.current-candidate-collection-input.v1":"pas.current-candidate-admission-input.v1");
         need(text(i,"evidence_kind")== (synthetic?"synthetic":"actual"),"SYNTHETIC_EVIDENCE","fixture evidence cannot issue admission");
@@ -55,6 +59,10 @@ J contract(const J& d,const J& current,bool synthetic,bool collection=false){
         need(member(i,"candidate_binary").at("sha256")==member(current,"candidate_binary_sha256"),"BINARY_MISMATCH","actual executing binary differs");
         need(member(i,"runtime_profile").at("sha256")==member(current,"profile_sha256"),"PROFILE_MISMATCH","requested config differs from bound profile");
         need(member(i,"capability").at("sha256")==member(current,"capability_sha256"),"CAPABILITY_MISMATCH","requested capability differs from bound capability");
+    });
+    section("cold_delta",[&]{if(!delta){need(!current.contains("verification_delta_identity"),"SOURCE_MISMATCH","verification executable requires explicit harness and verification delta");return;}
+        const auto& i=member(d,"input");n::pin_shape(member(i,"cold_harness_delta"));n::pin_shape(member(i,"verification_delta"));const auto& h=member(d,"cold_harness_delta");const auto& v=member(d,"verification_delta");
+        g::component_delta::verification_declaration(v,h,current);need(pin_equal(member(h,"verification_delta"),member(i,"verification_delta"))&&pin_equal(member(v,"candidate_binary"),member(i,"candidate_binary"))&&pin_equal(member(v,"base_production_build"),member(i,"production_build")),"SOURCE_MISMATCH","explicit current verification/harness/base pins");
     });
     section("source",[&]{const auto& i=member(d,"input");const auto& s=member(d,"source_manifest");schema(s,"pas.cooperative-source.v1");
         need(text(s,"source_commit")==text(i,"source_commit"),"SOURCE_MISMATCH","source manifest commit differs");
@@ -74,12 +82,14 @@ J contract(const J& d,const J& current,bool synthetic,bool collection=false){
         bool binary=false;std::set<std::string> libraries;
         const auto& files=member(b,"files");need(files.is_array()&&!files.empty()&&files.size()<=8192,"MALFORMED_RECEIPT","production build file set required");
         for(const auto& p:files){n::pin_shape(p);binary|=pin_equal(p,member(i,"candidate_binary"));libraries.insert(fs::path(text(p,"path")).filename().string());}
+        if(delta){need(!binary,"BINARY_MISMATCH","new verification executable cannot be inserted into frozen base55 files");binary=pin_equal(member(member(d,"verification_delta"),"candidate_binary"),member(i,"candidate_binary"));}
         need(binary&&libraries.contains("pas.exe")&&libraries.contains("pas_core.lib")&&libraries.contains("pas_current_candidate.lib")&&libraries.contains("pas_emulator.lib")&&libraries.contains("pas_proto.lib"),"BINARY_MISMATCH","complete production executable/library closure required");
     });
     section("cost",[&]{const auto& c=member(d,"cold_preflight");schema(c,"pas.readonly-narrow-preflight-check.v1");
         need(text(c,"status")=="COLD_BUNDLE_PASS"&&flag(c,"pass"),"COST_NOT_READY","AA/noise/ABBA bundle is NOT_READY");
         const auto& checks=member(c,"checks");for(const auto* k:{"base","prefix","faults","production","narrow_build","aa","noise","abba"})need(flag(member(checks,k),"pass"),"COST_NOT_READY",k);
-        need(member(member(c,"provenance"),"execution_source_commit")==member(member(d,"input"),"source_commit"),"SOURCE_MISMATCH","cost execution source differs");
+        need(member(member(c,"provenance"),"execution_source_commit")== (delta?member(member(d,"verification_delta"),"source_commit"):member(member(d,"input"),"source_commit")),"SOURCE_MISMATCH","cost execution source differs");
+        if(delta)need(member(member(c,"provenance"),"base_formal_source_commit")==member(member(d,"input"),"source_commit")&&flag(member(c,"provenance"),"cold_harness_delta")&&flag(member(c,"provenance"),"verification_only_delta"),"SOURCE_MISMATCH","separate formal55/compiled harness cost identities");
     });
     const auto identity=[&](const J& receipt){const auto& i=member(d,"input");
         need(text(receipt,"evidence_kind")== (synthetic?"synthetic":"actual"),"HISTORICAL_RECEIPT","actual current receipts required");
@@ -136,9 +146,13 @@ J contract(const J& d,const J& current,bool synthetic,bool collection=false){
 }
 J current_context(const CandidateAdmissionRequest& request){
     wchar_t module[32768]{};const auto size=GetModuleFileNameW(nullptr,module,32768);need(size>0&&size<32768,"BINARY_MISMATCH","current executable path unavailable");
-    return {{"workspace",fs::absolute(request.workspace).string()},{"source_commit",pas_session_build_commit},{"source_dirty",pas_session_build_dirty},{"compiled_source_sha256",J::parse(pas_session_source_hashes)},
+    J context={{"workspace",fs::absolute(request.workspace).string()},{"source_commit",pas_session_build_commit},{"source_dirty",pas_session_build_dirty},{"compiled_source_sha256",J::parse(pas_session_source_hashes)},
         {"candidate_binary_sha256",g::streamed_sha256(module,256*w::MiB)},
         {"profile_sha256",g::streamed_sha256(request.config_path,4*w::MiB)},{"capability_sha256",g::streamed_sha256(request.capability_path,4*w::MiB)}};
+#if defined(PAS_COLD_VERIFICATION_DELTA)
+    context["verification_delta_identity"]={{"schema","pas.cold-candidate-verification-identity.v1"},{"source_commit",pas_cold_verification_delta_source_commit},{"source_dirty",pas_cold_verification_delta_source_dirty},{"base_source_commit",pas_cold_verification_delta_base_source_commit},{"candidate_admission_sha256",pas_cold_verification_delta_candidate_admission_sha256},{"candidate_admission_tests_sha256",pas_cold_verification_delta_candidate_admission_tests_sha256}};
+#endif
+    return context;
 }
 struct Loaded {std::shared_ptr<g::Reader> reader;J documents,context;std::vector<J> files;};
 Loaded load(const CandidateAdmissionRequest& request,bool collection=false){
@@ -158,7 +172,17 @@ Loaded load(const CandidateAdmissionRequest& request,bool collection=false){
     for(const auto* role:roles)if(std::string_view(role)!="candidate_binary"&&(!collection||input.contains(role))){result.documents[role]=reader->object(input.at(role));result.files.push_back(input.at(role));}
     if(collection){candidate_collection_review_mode(input);for(const auto* role:{"physical_owner_observation","physical_review"})if(input.contains(role))result.documents[role]=reader->object(input.at(role));}
     else{const auto& physical=result.documents.at("physical");result.documents["physical_owner_observation"]=reader->object(physical.at("owner_observation"));result.documents["physical_review"]=reader->object(physical.at("independent_review"));}
-    reader->entries(result.documents.at("source_manifest").at("files"));
+    const bool cold_delta=input.contains("cold_harness_delta")||input.contains("verification_delta");
+    J harness,verification,current_source;
+    if(cold_delta){for(const auto* role:{"cold_harness_delta","verification_delta"}){n::pin_shape(member(input,role));result.documents[role]=reader->object(input.at(role));result.files.push_back(input.at(role));}harness=result.documents.at("cold_harness_delta");verification=result.documents.at("verification_delta");g::component_delta::verification_declaration(verification,harness,result.context);
+        need(pin_equal(harness.at("verification_delta"),input.at("verification_delta"))&&pin_equal(verification.at("candidate_binary"),input.at("candidate_binary"))&&pin_equal(harness.at("base_production_build"),input.at("production_build")),"SOURCE_MISMATCH","actual explicit cold/verification/input joins");
+        current_source=reader->object(harness.at("source_manifest"));need(current_source.at("source_commit")==harness.at("source_commit")&&!flag(current_source,"dirty"),"SOURCE_MISMATCH","new verification source clean identity");reader->entries(current_source.at("files"));
+        const auto snapshot=reader->object(harness.at("base_source_snapshot"));need(snapshot.at("source_commit")==input.at("source_commit")&&pin_equal(snapshot.at("source_manifest"),input.at("source_manifest"))&&flag(snapshot,"all_copy_SHAs_verified")&&flag(snapshot,"originals_rechecked"),"SOURCE_MISMATCH","full preserved base55 source snapshot");std::map<std::string,J> copies,projected;const auto projection=reader->object(harness.at("base_source_projection"));need(projection.at("schema")=="pas.lossless-source-path-projection.v1"&&projection.at("source_commit")==input.at("source_commit")&&pin_equal(projection.at("original_snapshot"),harness.at("base_source_snapshot"))&&pin_equal(projection.at("original_source_manifest"),input.at("source_manifest")),"SOURCE_MISMATCH","exact base55 short source projection");for(const auto& row:projection.at("files"))need(projected.emplace(row.at("relative_path").get<std::string>(),row).second,"SOURCE_MISMATCH","unique base55 short source projection");
+        for(const auto& row:snapshot.at("files")){const auto& original=row.at("original");const auto& copy=row.at("copy");n::pin_shape(original);n::pin_shape(copy);need(original.at("bytes")==copy.at("bytes")&&original.at("sha256")==copy.at("sha256")&&copies.emplace(fs::path(text(original,"path")).generic_string(),original).second,"SOURCE_MISMATCH","unique original55 exact lossless copy");const auto relative=fs::path(text(original,"path")).lexically_relative(request.workspace).generic_string();if(projected.contains(relative)){const auto& replacement=projected.at(relative);need(pin_equal(replacement.at("original_copy"),copy)&&replacement.at("copy").at("bytes")==copy.at("bytes")&&replacement.at("copy").at("sha256")==copy.at("sha256"),"SOURCE_MISMATCH","projection preserves exact original55 copy bytes");reader->bound(replacement.at("copy"));}else reader->bound(copy);}
+        need(projected.size()==result.documents.at("source_manifest").at("files").size(),"SOURCE_MISMATCH","complete original55 projected source denominator");
+        for(const auto& p:result.documents.at("source_manifest").at("files")){const auto key=fs::path(text(p,"path")).generic_string();need(copies.contains(key)&&pin_equal(copies.at(key),p),"SOURCE_MISMATCH","every embedded formal55 source preserved");const auto relative=fs::path(key).lexically_relative(request.workspace).generic_string();if((relative.starts_with("src/")||relative.starts_with("include/")||relative.starts_with("apps/")||relative=="CMakeLists.txt")&&relative!="src/candidate_admission.cpp"){const auto current=g::component_delta::eligibility_manifest_pin(current_source,relative);need(current.at("bytes")==p.at("bytes")&&current.at("sha256")==p.at("sha256"),"SOURCE_MISMATCH","formal strategy/manual/ABI unchanged in verification overlay");}}
+        need(pin_equal(g::component_delta::eligibility_manifest_pin(current_source,"src/candidate_admission.cpp"),verification.at("candidate_source"))&&pin_equal(g::component_delta::eligibility_manifest_pin(current_source,"tests/candidate_admission_tests.cpp"),verification.at("tests_source")),"SOURCE_MISMATCH","fresh verification TU/tests exact current hashes");
+    }else{need(!result.context.contains("verification_delta_identity"),"SOURCE_MISMATCH","compiled verification delta requires explicit new evidence");reader->entries(result.documents.at("source_manifest").at("files"));}
     const auto& build=result.documents.at("production_build");reader->entries(build.at("files"));const auto core_plan=reader->object(build.at("core_build_plan"));
     need(core_plan.at("schema")=="pas.fresh-core-build-plan.v1"&&core_plan.at("source_commit")==input.at("source_commit")&&core_plan.at("configuration")=="release"&&core_plan.at("translation_units")==22&&!flag(core_plan,"old_donor_objects_used")&&zero(member(core_plan,"device_operations"))&&!flag(core_plan,"live_ready"),"SOURCE_MISMATCH","existing current fresh22/no-donor production core plan required");
     reader->object(core_plan.at("compiler_snapshot"));
@@ -194,6 +218,12 @@ Loaded load(const CandidateAdmissionRequest& request,bool collection=false){
     const auto find_native=[&](const J& verification)->const J& {const J* found=nullptr;for(const auto& p:catalogue)if(pin_equal(p.at("verification"),verification)){need(found==nullptr,"MALFORMED_RECEIPT","duplicate native verification join");found=&p;}need(found!=nullptr,"MISSING_RECEIPT","native evidence for production build missing");return *found;};
     native(find_native(build.at("configure_receipt")),false);need(build.at("build_receipts").is_array()&&!build.at("build_receipts").empty()&&build.at("build_receipts").size()<=64,"MISSING_RECEIPT","production build native groups required");for(const auto& pin:build.at("build_receipts")){native(find_native(pin),false);for(const auto* binding:{"source_manifest","core_build_plan"}){const auto key=fs::path(text(build.at(binding),"path")).generic_string();need(native_inputs.contains(key)&&pin_equal(native_inputs.at(key),build.at(binding)),"SOURCE_MISMATCH","production native/source manifest/core plan join");}
         for(const auto& source:result.documents.at("source_manifest").at("files")){const auto key=fs::path(text(source,"path")).generic_string();need(native_inputs.contains(key)&&pin_equal(native_inputs.at(key),source),"SOURCE_MISMATCH","actual production compiled source member not frozen in native closure");}}
+    if(cold_delta){const auto plan=reader->object(harness.at("core_build_plan"));g::component_delta::eligibility_declaration(harness,plan);g::component_delta::eligibility_native(*reader,harness,plan,harness.at("configure_process"),true);g::component_delta::eligibility_native(*reader,harness,plan,harness.at("build_process"),false);
+        const auto graph_path=reader->bound(harness.at("compile_graph"));std::ifstream f(graph_path,std::ios::binary);std::ostringstream graph;graph<<f.rdbuf();need(bool(f),"SOURCE_MISMATCH","read actual new cold linker graph");const auto parsed=g::component_delta::eligibility_graph(harness,request.workspace,graph.str());g::component_delta::eligibility_objects(harness,parsed);reader->entries(harness.at("files"));reader->entries(harness.at("compiled_outputs"));g::component_delta::eligibility_controls(*reader,harness);
+        need(verification.at("compile_process")==harness.at("build_process")&&verification.at("link_process")==harness.at("build_process")&&pin_equal(verification.at("verification_controls_report"),harness.at("verification_controls_report"))&&verification.at("verification_controls_process")==harness.at("verification_controls_process"),"SOURCE_MISMATCH","verification compile/link/control actual new Native8 identity");
+        const auto spec=native(harness.at("build_process"),false);(void)spec;const auto factory=verification.at("new_candidate_object");reader->bound(factory);bool object=false;for(const auto& p:harness.at("compiled_outputs"))object|=pin_equal(p,factory);need(object&&fs::path(text(factory,"path")).generic_string().find("/CMakeFiles/candidate_admission_delta.dir/")!=std::string::npos,"SOURCE_MISMATCH","fresh candidate factory object sealed separately from old archive");
+        need(pin_equal(verification.at("base_app_object"),harness.at("base_app_object"))&&verification.at("linked_static_libraries").size()==5,"SOURCE_MISMATCH","explicit original app object and five verification archives");std::set<std::string> roles;for(const auto& row:verification.at("linked_static_libraries")){const auto role=text(row,"role");need(roles.insert(role).second&&row.at("compiled_source_commit")==input.at("source_commit")&&pin_equal(row.at("build_binding"),input.at("production_build")),"SOURCE_MISMATCH","verification archives retain base55 compile identity");const auto imported=(role=="pas_emulator"||role=="pas_bench"?"verification_":"production_")+role;bool found=false;for(const auto& lib:harness.at("imported_static_libraries"))if(lib.at("role")==imported)found|=pin_equal(lib.at("binary"),row.at("binary"));need(found,"SOURCE_MISMATCH","exact verification archive role joins");}need(roles==std::set<std::string>{"pas_core","pas_current_candidate","pas_proto","pas_emulator","pas_bench"},"SOURCE_MISMATCH","exact five verification link roles");
+    }
     // These are only the seven newly affected production controls. Original75
     // and production9 remain the separately verified preserved prerequisites.
     std::set<std::string> controls={"candidate_admission_controls","candidate_receipt_collector_controls","production_entry_controls","score_only_invalid","score_only_tap","score_only_hold","score_only_dense"};
@@ -215,8 +245,9 @@ Loaded load(const CandidateAdmissionRequest& request,bool collection=false){
     for(std::size_t index=0;index<3;++index){const auto& row=status.at("rows")[index];const std::string scene=scenes[index];const auto& planned=production_plan.at("plans")[index];need(planned.at("id")=="normal-"+scene&&planned.at("mode")=="release"&&planned.at("scene")==scene&&planned.at("n")==2560&&planned.at("cadence")==20,"PRODUCTION_NOT_READY","exact original normal3 current production plan");const auto report=reader->object(row.at("report")),audit=reader->object(row.at("audit"));
         need(row.at("id")=="normal-"+scene&&flag(row,"normal_cost_valid")&&report.at("schema")=="pas.windows-production-pipeline-cold.v1"&&report.at("scene")==scene&&report.at("source_build_commit")==input.at("source_commit")&&!flag(report,"source_build_dirty")&&report.at("actual_manual_translation_unit_sha256")==result.context.at("compiled_source_sha256").at("src/manual_session.cpp")&&flag(report,"endpoint_free")&&flag(report,"public_entry_rejected")&&flag(report,"production_packet_action_wake_archive_executed")&&!flag(report,"real_capture_rpc_measured")&&report.at("device_operations")==0&&!flag(report,"live_ready")&&report.at("requested")==2560&&report.at("warmup")==256&&report.at("measurement_attempts")==2304&&report.at("cadence_ms")==20,"PRODUCTION_NOT_READY","current full normal production report/source/protocol join");
         need(audit.at("schema")=="pas.windows-production-pipeline-audit.v5"&&flag(audit,"integrity_verified")&&audit.at("source_commit")==input.at("source_commit")&&pin_equal(audit.at("report"),row.at("report"))&&flag(audit,"normal_cost_valid")&&audit.at("normal_cost_failures").empty(),"PRODUCTION_NOT_READY","independent complete raw v5 audit/original normal gates required");
+        if(cold_delta){g::verify_cold_harness_normal_report(report,audit,harness,current_source,result.documents.at("source_manifest"),row.at("report"),scene);need(status.at("execution_source_commit")==harness.at("source_commit")&&flag(status,"cold_harness_delta")&&pin_equal(status.at("delta_build"),input.at("cold_harness_delta")),"SOURCE_MISMATCH","Normal3 formal55/compiled harness status identity");}
         const auto producer=native(row.at("process"),false);const auto raw_root=fs::path(text(row.at("report"),"path")).parent_path().string();
-        bool producer_built=false;for(const auto& p:build.at("files"))if(fs::path(text(p,"path")).filename()=="production_pipeline_cold.exe")producer_built|=g::same_path_text(producer.at("exe").get<std::string>(),text(p,"path"));
+        bool producer_built=false;for(const auto& p:(cold_delta?harness.at("files"):build.at("files")))if(fs::path(text(p,"path")).filename()=="production_pipeline_cold.exe")producer_built|=g::same_path_text(producer.at("exe").get<std::string>(),text(p,"path"));
         need(producer_built&&producer.at("argv")==J::array({scene,"2560","20",raw_root}),"PRODUCTION_NOT_READY","exact current literal production image/command");
         const J* auditor_proof=nullptr;for(const auto& p:catalogue){const auto spec=reader->object(p.at("specification"));if(std::find(spec.at("argv").begin(),spec.at("argv").end(),row.at("audit").at("path"))!=spec.at("argv").end()){need(auditor_proof==nullptr,"MALFORMED_RECEIPT","duplicate production auditor output");auditor_proof=&p;}}
         need(auditor_proof!=nullptr,"MISSING_RECEIPT","current production full raw auditor native proof missing");const auto auditor=native(*auditor_proof,false);bool auditor_built=false;for(const auto& p:build.at("files"))if(fs::path(text(p,"path")).filename()=="production_pipeline_audit.exe")auditor_built|=g::same_path_text(auditor.at("exe").get<std::string>(),text(p,"path"));
@@ -229,7 +260,7 @@ Loaded load(const CandidateAdmissionRequest& request,bool collection=false){
         const auto& qualification=member(input,"qualification_processes");
         const auto& proof=member(qualification,role);const auto spec=native(proof,std::string_view(role)!="production_cost");
         const auto role_name=std::string_view(role)=="physical_owner"?"physical_owner_observation":role;const auto& report=result.documents.at(role_name);
-        const auto& producer=member(report,"producer_binary");reader->bound(producer,256*w::MiB);bool built=false;for(const auto& pin:build.at("files"))built|=pin_equal(pin,producer);
+        const auto& producer=member(report,"producer_binary");reader->bound(producer,256*w::MiB);bool built=false;if(cold_delta)built=pin_equal(producer,verification.at("candidate_binary"));else for(const auto& pin:build.at("files"))built|=pin_equal(pin,producer);
         need(built&&g::same_path_text(spec.at("exe").get<std::string>(),text(producer,"path")),"BINARY_MISMATCH","qualification producer must be in the current production build closure");
         need(pin_equal(producer,input.at("candidate_binary")),"BINARY_MISMATCH","qualification producer must be this actual production executable");
         const auto report_pin=std::string_view(role)=="physical_owner"?(collection?input.at("physical_owner_observation"):result.documents.at("physical").at("owner_observation")):input.at(role);
@@ -267,6 +298,14 @@ bool candidate_native_closure_output_valid(const nlohmann::json& root,
 CandidateColdReceiptValidation validate_synthetic_candidate_receipts(const J& documents,const J& current){return CandidateColdReceiptValidation(contract(documents,current,true));}
 CandidateCollectionInputs prepare_candidate_collection(const CandidateAdmissionRequest& request){auto loaded=load(request,true);assert_report(contract(loaded.documents,loaded.context,false,true));auto held=std::make_shared<Loaded>(std::move(loaded));return CandidateCollectionInputs(held->documents,held->context,[held,request]{held->reader->finish();const auto now=current_context(request);need(now==held->context,"SOURCE_MISMATCH","collection binary/source/profile changed");});}
 J inspect_candidate_receipts(const CandidateAdmissionRequest& request){try{
+    need(!request.input_path.empty(),"MISSING_INPUT","admission input path missing");need(w::hex(request.input_sha256,64),"MALFORMED_INPUT","externally pinned admission SHA256 required");need(fs::is_regular_file(request.input_path),"MISSING_INPUT","admission input file missing");
+    g::Reader selector(request.workspace);const J input_pin={{"path",fs::absolute(request.input_path).string()},{"bytes",fs::file_size(request.input_path)},{"sha256",request.input_sha256}};
+    J input;try{input=selector.object(input_pin);}catch(const std::exception& e){throw Reject("TAMPERED_OR_MALFORMED_INPUT",e.what());}
+    if(input.value("schema",std::string{})=="pas.current-candidate-collection-input.v1"){
+        auto loaded=load(request,true);auto report=contract(loaded.documents,loaded.context,false,true);selector.finish();loaded.reader->finish();
+        if(report.at("pass").get<bool>()){report["status"]="NOT_READY";report["pass"]=false;report["cold_collection_inputs_valid"]=true;report["issues"]=J::array({J{{"section","current_device_collection"},{"code","CURRENT_DEVICE_COLLECTION_REQUIRED"},{"reason","all cold collection inputs verified; current device collection remains required"}}});}
+        return report;
+    }
     auto loaded=load(request);
     // A successful read-only inspection stops exactly at the current-device
     // boundary. It does not substitute the stored receipt for an actual probe.

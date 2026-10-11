@@ -105,6 +105,32 @@ int main(int argc,char** argv){try{
     request.input_sha256=different_sha;const auto tampered=pas::inspect_candidate_receipts(request);t.check("actual_file_SHA_tamper_rejected",reason(tampered,"TAMPERED_OR_MALFORMED_INPUT"));
     {std::ofstream f(file);f<<"{not-json";}request.input_sha256=pas::sha256_file(file);const auto malformed=pas::inspect_candidate_receipts(request);t.check("actual_file_malformed_JSON_rejected",reason(malformed,"TAMPERED_OR_MALFORMED_INPUT"));
     fs::remove(file);fs::remove(fixture_dir);
+    // Explicit verification overlays are a separate denominator. The original
+    // 82 admission controls and their fixture source remain unchanged.
+    Tests delta_tests;auto [delta_doc,delta_context]=fixture();const std::string formal="12ec0550e882e3b06751d67fa67c43dda3e9312b",execution(40,'c');
+    delta_doc["input"]["source_commit"]=formal;delta_context["source_commit"]=formal;delta_doc["source_manifest"]["source_commit"]=formal;delta_doc["production_build"]["source_commit"]=formal;
+    delta_doc["input"]["candidate_binary"]=pin("delta/pas.exe");delta_doc["input"]["candidate_binary"]["sha256"]=different_sha;delta_context["candidate_binary_sha256"]=different_sha;
+    for(const auto* role:{"production_cost","capture_rpc","device","physical","authorization","physical_owner_observation","physical_review"}){delta_doc[role]["source_commit"]=formal;delta_doc[role]["candidate_binary_sha256"]=different_sha;}
+    auto harness_pin=pin("cold-harness-delta.json"),verification_pin=pin("verification-delta.json");delta_doc["input"]["cold_harness_delta"]=harness_pin;delta_doc["input"]["verification_delta"]=verification_pin;
+    J harness={{"schema","pas.cold-producer-eligibility-delta-build.v1"},{"source_commit",execution},{"base_source_commit",formal},{"cold_harness_delta",true},{"formal_rebuilt",false},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0},{"source_manifest",pin("new-source.json")},{"core_build_plan",pin("delta-plan.json")},{"base_production_build",delta_doc["input"]["production_build"]},{"verification_delta",verification_pin}};
+    J verification={{"schema","pas.cold-candidate-verification-delta.v1"},{"source_commit",execution},{"source_dirty",false},{"base_source_commit",formal},{"formal_rebuilt",false},{"verification_only_delta",true},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0},{"candidate_binary",delta_doc["input"]["candidate_binary"]},{"candidate_source",pin("src/candidate_admission.cpp")},{"tests_source",pin("tests/candidate_admission_tests.cpp")},{"source_manifest",harness["source_manifest"]},{"core_build_plan",harness["core_build_plan"]},{"base_production_build",harness["base_production_build"]}};
+    delta_doc["cold_harness_delta"]=harness;delta_doc["verification_delta"]=verification;delta_context["verification_delta_identity"]={{"schema","pas.cold-candidate-verification-identity.v1"},{"source_commit",execution},{"source_dirty",false},{"base_source_commit",formal},{"candidate_admission_sha256",sha},{"candidate_admission_tests_sha256",sha}};
+    delta_doc["cold_preflight"]["provenance"]={{"execution_source_commit",execution},{"base_formal_source_commit",formal},{"cold_harness_delta",true},{"verification_only_delta",true}};
+    const auto delta_check=[&](const char* id,const auto& mutate,bool expected=false){auto d=delta_doc,c=delta_context;mutate(d,c);const auto report=pas::validate_synthetic_candidate_receipts(d,c).report();delta_tests.check(id,report.at("pass")==expected&&!report.at("qualification_issued").get<bool>()&&!report.at("live_ready").get<bool>());};
+    delta_check("explicit_formal55_new_verification_positive",[](J&,J&){},true);
+    delta_check("missing_harness_pin_reject",[](J& d,J&){d["input"].erase("cold_harness_delta");});
+    delta_check("missing_verification_pin_reject",[](J& d,J&){d["input"].erase("verification_delta");});
+    delta_check("uncompiled_delta_identity_reject",[](J&,J& c){c.erase("verification_delta_identity");});
+    delta_check("wrong_compiled_commit_reject",[](J&,J& c){c["verification_delta_identity"]["source_commit"]=commit;});
+    delta_check("wrong_formal_base_reject",[](J& d,J&){d["verification_delta"]["base_source_commit"]=commit;});
+    delta_check("wrong_factory_source_SHA_reject",[](J&,J& c){c["verification_delta_identity"]["candidate_admission_sha256"]=different_sha;});
+    delta_check("wrong_tests_source_SHA_reject",[](J&,J& c){c["verification_delta_identity"]["candidate_admission_tests_sha256"]=different_sha;});
+    delta_check("dirty_or_fresh_formal_claim_reject",[](J& d,J& c){d["verification_delta"]["formal_rebuilt"]=true;c["verification_delta_identity"]["source_dirty"]=true;});
+    delta_check("frozen_files_cannot_adopt_new_candidate_reject",[](J& d,J&){d["production_build"]["files"].push_back(d["input"]["candidate_binary"]);});
+    delta_check("execution_cost_must_bind_new_delta_reject",[](J& d,J&){d["cold_preflight"]["provenance"]["execution_source_commit"]=formal;});
+    delta_check("numerical_gate_never_replaced_by_delta_reject",[](J& d,J&){d["cold_preflight"]["checks"]["noise"]["pass"]=false;});
+    if(delta_tests.checks.size()!=12)throw std::runtime_error("separate verification12 denominator");
     J report={{"schema","pas.candidate-admission-controls.v1"},{"assertions",t.checks.size()},{"checks",t.checks},{"failed",t.failed},{"pass",t.failed==0},{"synthetic_fixture_only",true},{"qualification_issued",false},{"live_ready",false},{"device_operations",0},{"gameplay_files_created",0}};
-    std::ofstream f(output,std::ios::binary);f<<report.dump(2)<<'\n';if(!f)throw std::runtime_error("report write");std::cout<<"candidate admission controls="<<t.checks.size()<<" failed="<<t.failed<<'\n';return t.failed?1:0;
+    report["verification_delta_controls"]={{"schema","pas.cold-candidate-verification-controls.v1"},{"assertions",delta_tests.checks.size()},{"checks",delta_tests.checks},{"failed",delta_tests.failed},{"pass",delta_tests.failed==0},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0}};report["pass"]=t.failed==0&&delta_tests.failed==0;
+    std::ofstream f(output,std::ios::binary);f<<report.dump(2)<<'\n';if(!f)throw std::runtime_error("report write");std::cout<<"candidate admission controls="<<t.checks.size()<<" failed="<<t.failed<<'\n';return t.failed||delta_tests.failed?1:0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}

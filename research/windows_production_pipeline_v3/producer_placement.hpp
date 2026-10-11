@@ -52,6 +52,7 @@ struct Snapshot {
  Failure failure=Failure::none,cleanup_failure=Failure::none;
  bool verified() const noexcept {
   return failure==Failure::none&&cleanup_failure==Failure::none&&placement.valid()&&affinity.verified()&&
+   affinity.requested.group==placement.group&&affinity.requested.mask==placement.producer_mask&&
    priority_previous_available&&priority_constructor_attempted&&priority_applied_available&&
    priority_close_attempted&&priority_restored_available&&priority_explicit_restored&&
    priority_applied==rails::producer_priority_requested&&priority_restored==priority_previous&&
@@ -153,8 +154,22 @@ inline nlohmann::json affinity_json(const rails::WorkerAffinitySnapshot& s){
   {"rollback_failure",rails::worker_affinity_failure_name(s.rollback_failure)},
   {"fallback_failure",rails::worker_affinity_failure_name(s.fallback_failure)}};
 }
-inline nlohmann::json plan_json(const rails::PlacementPlan& p){
- return {{"schema","pas.cold-worker-placement.v1"},{"valid",p.valid()},
+inline nlohmann::json plan_json(const rails::PlacementPlan& p,bool consumer_affinity_applied=false){
+ auto topology=nlohmann::json::array(),eligible=nlohmann::json::array();
+ // Even a rejected plan cannot make report serialization unbounded.
+ for(std::size_t core=0;p.topology_available&&core<p.topology_cores&&core<64;++core){
+  const auto mask=p.physical_core_mask(core);if(!mask)continue;
+  const auto number=static_cast<unsigned>(std::countr_zero(mask));
+  topology.push_back({{"core",core},{"mask",mask},{"lowest_lp",number},
+   {"efficiency_class",p.topology_class_by_lp[number]}});
+ }
+ for(unsigned number=0;number<64;++number){const auto mask=std::uint64_t{1}<<number;
+  if(!p.topology_available||!(p.producer_mask&mask))continue;
+  const auto core=p.topology_core_by_lp[number];
+  eligible.push_back({{"core",core},{"number",number},{"mask",mask},
+   {"physical_core_mask",p.physical_core_mask(core)}});
+ }
+ return {{"schema","pas.cold-worker-placement.v2"},{"valid",p.valid()},
   {"failure",rails::worker_affinity_failure_name(p.failure)},{"active_groups",p.active_groups},
   {"process_class",p.process_class},{"group",p.group},{"process_mask",p.process_mask},
   {"system_mask",p.system_mask},{"consumer_mask",p.consumer_mask},{"producer_mask",p.producer_mask},
@@ -163,9 +178,27 @@ inline nlohmann::json plan_json(const rails::PlacementPlan& p){
   {"efficiency_class",p.efficiency_class},{"topology_bytes",p.topology_bytes},
   {"topology_error",p.topology_error},{"topology_cores",p.topology_cores},
   {"topology_logical_processors",p.topology_logical_processors},
-  {"policy","producer only; same AA highest raw EfficiencyClass last-two-core plan; producer higher lowest LP; consumer mask reserved, not applied; writer already created"},
-  {"cost_qualification",false},{"device_operations",0}};
+  {"topology_available",p.topology_available},{"topology_core_records",std::move(topology)},
+  {"policy_id",rails::producer_eligibility_policy_id},{"policy_version",rails::producer_eligibility_policy_version},
+  {"consumer_core_mask",p.consumer_core_mask},{"producer_anchor_mask",p.producer_anchor_mask},
+  {"producer_eligible_core_count",p.producer_eligible_core_count},{"producer_eligible_cores",std::move(eligible)},
+  {"consumer_affinity_applied",consumer_affinity_applied},
+  {"producer_anchor_role","identity anchor only; producer_mask is the complete eligible union"},
+  {"writer_affinity_order","cold caller constructs writer before applying worker affinity"},
+  {"policy","single group; highest raw EfficiencyClass; one lowest LP per available physical core; exclude the entire reserved consumer physical core; last-two lowest-LP consumer and producer identity anchor unchanged; no sibling/lower-class fallback; writer created before affinity; exact original affinity restore; same A/B"},
+  {"qualification_issued",false},{"live_ready",false},{"cost_qualification",false},{"device_operations",0}};
 }
+#if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA
+inline nlohmann::json eligibility_delta_identity(){
+ return {{"schema","pas.cold-producer-eligibility-identity.v1"},
+  {"source_commit",::pas_producer_eligibility_delta_source_commit},
+  {"source_dirty",::pas_producer_eligibility_delta_source_dirty},
+  {"base_source_commit",::pas_producer_eligibility_delta_base_source_commit},
+  {"worker_affinity_sha256",::pas_producer_eligibility_delta_worker_affinity_sha256},
+  {"producer_placement_sha256",::pas_producer_eligibility_delta_producer_placement_sha256},
+  {"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0}};
+}
+#endif
 inline nlohmann::json priority_json(const Snapshot& s){
  return {{"schema","pas.cold-producer-priority-snapshot.v1"},{"verified",s.verified()},
   {"requested",rails::producer_priority_requested},{"thread_id",s.priority_thread},

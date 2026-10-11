@@ -1,6 +1,7 @@
 param([ValidatePattern('^main[0-9]{2}$')][string]$BuildAttempt='main12',[ValidatePattern('^[a-z0-9-]{1,16}$')][string]$Attempt='main12',[string]$NoiseRepairBinding='')
 . (Join-Path $PSScriptRoot 'common.ps1');$script:maintenancePath=$PSCommandPath
-LoadBuilds $BuildAttempt $NoiseRepairBinding
+if($NoiseRepairBinding){. (Join-Path $PSScriptRoot 'noise_repair_build.ps1');LoadNoiseRepairBuild $NoiseRepairBinding}
+else{LoadBuilds $BuildAttempt}
 $aaRoot=Join-Path $repo ('out/prelive-pre-emulator-aa-'+$Attempt)
 $aaInput=Join-Path $aaRoot 'aa-input.json';$noisePath=Join-Path $aaRoot 'noise-freeze.json';$aaCampaign=Join-Path $aaRoot 'campaign.json'
 $noise=Get-Content -LiteralPath $noisePath -Raw|ConvertFrom-Json;$aa=Get-Content -LiteralPath $aaInput -Raw|ConvertFrom-Json
