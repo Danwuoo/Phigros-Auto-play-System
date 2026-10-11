@@ -79,6 +79,7 @@ constexpr ULONG kBufferBytes = 1024 * 1024;
 constexpr std::size_t kPathChars = 32767;
 constexpr std::size_t kTopIntervals = 32;
 constexpr std::size_t kTopTransitions = 32;
+constexpr std::size_t kWindowSwitches = 4096;
 constexpr std::uint64_t kWindowSeconds = 75;
 constexpr std::size_t kOwnedStorageBudgetBytes = 9 * 1024 * 1024;
 constexpr GUID kThreadGuid{0x3d6fa8d1, 0xfe05, 0x11d0,
@@ -208,8 +209,24 @@ struct Record {
     std::uint8_t ready_flags{};
     std::int8_t old_wait_reason{};
     bool old_wait_reason_available{};
+    std::int8_t new_priority{};
+    std::int8_t old_priority{};
+    bool priorities_available{};
+    ULONG peer_tid{};
 };
 static_assert(sizeof(Record) <= 24);
+
+struct WindowSwitch {
+    Tick tick{};
+    ULONG cpu{};
+    ULONG incoming{};
+    ULONG outgoing{};
+    std::int8_t new_priority{};
+    std::int8_t old_priority{};
+    std::int8_t old_state{};
+    std::int8_t old_wait_reason{};
+};
+static_assert(sizeof(WindowSwitch) <= 32);
 
 struct Schema {
     bool checked{};
@@ -262,12 +279,21 @@ static_assert(kCatalogSchemas * sizeof(SchemaDiagnostic) <= 256 * 1024);
 // not a measurement of allocator or SDK overhead, bounded by the process Job.
 constexpr auto kOwnedBufferAccountingBytes = kTargetRecords * sizeof(Record) + kSummaryBytes +
     kSchemaBytes + kCatalogSchemas * sizeof(SchemaDiagnostic) +
+    kWindowSwitches * sizeof(WindowSwitch) +
     6 * (kPathChars + 1) * sizeof(wchar_t) + 4 * kPathChars;
 static_assert(kOwnedBufferAccountingBytes <= kOwnedStorageBudgetBytes);
 
 struct Context {
     const Options& options;
     std::unique_ptr<Record[]> records{std::make_unique<Record[]>(kTargetRecords)};
+    std::unique_ptr<WindowSwitch[]> window_switches{std::make_unique<WindowSwitch[]>(kWindowSwitches)};
+    std::size_t window_switch_count{};
+    std::uint64_t window_switch_observed{};
+    std::uint64_t window_switch_unavailable{};
+    std::uint64_t window_switch_invalid_cpu{};
+    std::uint64_t window_switch_regressions{};
+    Tick previous_window_switch_tick{};
+    bool window_switch_cap_exceeded{};
     // Only two documented classes. No unbounded schema cache or event payloads.
     std::array<Schema, 2> schemas{};
     // Catalog only metadata. No event payloads, arbitrary schemas, or state
@@ -330,6 +356,18 @@ struct Context {
     void push(Record record) noexcept {
         if (count == kTargetRecords) { abort(Issue::TargetCap); return; }
         records[count++] = record;
+    }
+    void push_window_switch(WindowSwitch record) noexcept {
+        ++window_switch_observed;
+        if (previous_window_switch_tick != 0 && record.tick < previous_window_switch_tick)
+            ++window_switch_regressions;
+        previous_window_switch_tick = record.tick;
+        if (record.cpu >= header.NumberOfProcessors) { ++window_switch_invalid_cpu; return; }
+        if (window_switch_count == kWindowSwitches) {
+            // This optional diagnostic's cap never changes target partitioning.
+            window_switch_cap_exceeded = true; return;
+        }
+        window_switches[window_switch_count++] = record;
     }
 };
 
@@ -415,12 +453,15 @@ struct SwitchPrefix {
     ULONG outgoing{};
     std::int8_t old_state{};
     std::int8_t old_wait_reason{};
+    std::int8_t new_priority{};
+    std::int8_t old_priority{};
 };
 
 bool switch5_prefix(const EVENT_RECORD& event, SwitchPrefix& result) noexcept {
     // Only the actual catalog's version 5, 28-byte, classic 64-bit layout is
     // supported. Microsoft TraceEvent CSwitchTraceData documents a >=24-byte
-    // prefix for Version>2: IDs at 0/4, wait reason at 12, old state at 14.
+    // prefix for Version>2: IDs at 0/4, priorities at 8/9, wait reason at 12,
+    // old state at 14. MOF documents signed eight-bit priority values.
     // https://github.com/microsoft/perfview/blob/main/src/TraceEvent/Parsers/KernelTraceEventParser.cs#L4193-L4228
     // The unmodelled four-byte suffix is neither read nor inferred. No support
     // for version 3/4, a different v5 length, or future versions is implied.
@@ -438,6 +479,8 @@ bool switch5_prefix(const EVENT_RECORD& event, SwitchPrefix& result) noexcept {
     SwitchPrefix decoded{};
     std::memcpy(&decoded.incoming, bytes, 4);
     std::memcpy(&decoded.outgoing, bytes + 4, 4);
+    std::memcpy(&decoded.new_priority, bytes + 8, 1);
+    std::memcpy(&decoded.old_priority, bytes + 9, 1);
     std::memcpy(&decoded.old_wait_reason, bytes + 12, 1);
     std::memcpy(&decoded.old_state, bytes + 14, 1);
     result = decoded;
@@ -623,7 +666,11 @@ void consume(Context& context, EVENT_RECORD& event) {
         SwitchPrefix prefix{};
         const bool version5 = event.EventHeader.EventDescriptor.Version == 5;
         if (version5) {
-            if (!switch5_prefix(event, prefix)) { context.mark(Issue::PrefixLayout); return; }
+            if (!switch5_prefix(event, prefix)) {
+                ++context.window_switch_unavailable; context.mark(Issue::PrefixLayout); return;
+            }
+            context.push_window_switch({tick, GetEventProcessorIndex(&event), prefix.incoming, prefix.outgoing,
+                prefix.new_priority, prefix.old_priority, prefix.old_state, prefix.old_wait_reason});
             auto& cache = context.schemas[0];
             const auto& descriptor = event.EventHeader.EventDescriptor;
             if (cache.checked && (!cache.prefix_decoded ||
@@ -635,6 +682,7 @@ void consume(Context& context, EVENT_RECORD& event) {
             ++context.prefix5_decoded_records;
             incoming = prefix.incoming; outgoing = prefix.outgoing;
         } else {
+            ++context.window_switch_unavailable;
             if (!schema(context, event, context.schemas[0], kSwitchFields)) return;
             if (!scalar(context, event, L"NewThreadId", incoming) ||
                 !scalar(context, event, L"OldThreadId", outgoing)) return;
@@ -645,11 +693,14 @@ void consume(Context& context, EVENT_RECORD& event) {
         if (incoming == outgoing) {
             context.push({tick, cpu, Kind::Contradiction, 0, 0}); return;
         }
-        if (incoming == context.options.target) context.push({tick, cpu, Kind::In, 0, 0});
+        if (incoming == context.options.target)
+            context.push({tick, cpu, Kind::In, 0, 0, 0, false,
+                prefix.new_priority, prefix.old_priority, version5, outgoing});
         else {
             std::int8_t state = prefix.old_state;
             if (version5 || scalar(context, event, L"OldThreadState", state))
-                context.push({tick, cpu, Kind::Out, state, 0, prefix.old_wait_reason, version5});
+                context.push({tick, cpu, Kind::Out, state, 0, prefix.old_wait_reason, version5,
+                    prefix.new_priority, prefix.old_priority, version5, incoming});
         }
     } else {
         ++context.ready_records;
@@ -850,6 +901,113 @@ Analysis analyze(Context& context) {
     return result;
 }
 
+struct Residence {
+    Tick begin{};
+    Tick end{};
+    ULONG tid{};
+    std::int8_t begin_new_priority{};
+    std::int8_t end_old_priority{};
+    std::int8_t end_old_state{};
+    std::int8_t end_old_wait_reason{};
+};
+
+struct CpuTimeline {
+    ULONG cpu{};
+    Tick target_first_switch{};
+    Tick first_tick{};
+    Tick last_tick{};
+    std::size_t selected_count{};
+    std::size_t top_count{};
+    std::uint64_t selected_order_regressions{};
+    std::uint64_t ambiguous_timestamp_groups{};
+    std::uint64_t contradictions{};
+    std::uint64_t target_switches_on_other_cpus{};
+    std::uint64_t known_ticks{};
+    std::uint64_t residence_intervals{};
+    bool cpu_available{};
+    bool first_cpu_ambiguous{};
+    bool retention_complete{};
+    bool scan_complete{};
+    bool full_window_coverage{};
+    std::array<Residence, kTopIntervals> top{};
+    void add(const WindowSwitch& left, const WindowSwitch& right) {
+        known_ticks += static_cast<std::uint64_t>(right.tick - left.tick);
+        ++residence_intervals;
+        const Residence value{left.tick, right.tick, left.incoming, left.new_priority, right.old_priority,
+            right.old_state, right.old_wait_reason};
+        std::size_t position = 0;
+        while (position < top_count && top[position].end - top[position].begin >= value.end - value.begin)
+            ++position;
+        if (position == top.size()) return;
+        const auto end = std::min(top_count, top.size() - 1);
+        for (auto i = end; i > position; --i) top[i] = top[i - 1];
+        top[position] = value; top_count = std::min(top_count + 1, top.size());
+    }
+};
+
+CpuTimeline cpu_timeline(Context& context) {
+    CpuTimeline result;
+    result.retention_complete = !context.window_switch_cap_exceeded &&
+        context.window_switch_unavailable == 0 && context.window_switch_invalid_cpu == 0;
+    result.scan_complete = context.processed && context.process_status == ERROR_SUCCESS &&
+        !context.stop && context.input_stable && context.issues == 0;
+    // ReadyThread's logging CPU belongs to the readying thread. Choose only
+    // the earliest target switch-in/out CPU; never import an outside event.
+    for (std::size_t i = 0; i < context.count; ++i) {
+        const auto& record = context.records[i];
+        if (record.kind != Kind::In && record.kind != Kind::Out) continue;
+        if (!result.cpu_available || record.tick < result.target_first_switch) {
+            result.cpu_available = true; result.cpu = record.cpu;
+            result.target_first_switch = record.tick; result.first_cpu_ambiguous = false;
+        } else if (record.tick == result.target_first_switch && record.cpu != result.cpu)
+            result.first_cpu_ambiguous = true;
+    }
+    if (!result.cpu_available || result.first_cpu_ambiguous) return result;
+    for (std::size_t i = 0; i < context.count; ++i) {
+        const auto& record = context.records[i];
+        if ((record.kind == Kind::In || record.kind == Kind::Out) && record.cpu != result.cpu)
+            ++result.target_switches_on_other_cpus;
+    }
+    // Filtering reuses the fixed diagnostic storage, separate from target
+    // records. Preserve the all-CPU counters before retaining this one CPU.
+    Tick previous_tick = 0;
+    for (std::size_t i = 0; i < context.window_switch_count; ++i) {
+        const auto record = context.window_switches[i];
+        if (record.cpu != result.cpu) continue;
+        if (previous_tick != 0 && record.tick < previous_tick) ++result.selected_order_regressions;
+        previous_tick = record.tick;
+        context.window_switches[result.selected_count++] = record;
+    }
+    std::sort(context.window_switches.get(), context.window_switches.get() + result.selected_count,
+        [](const WindowSwitch& a, const WindowSwitch& b) { return a.tick < b.tick; });
+    if (result.selected_count == 0) return result;
+    result.first_tick = context.window_switches[0].tick;
+    result.last_tick = context.window_switches[result.selected_count - 1].tick;
+    const WindowSwitch* previous = nullptr;
+    bool previous_ambiguous = false;
+    for (std::size_t i = 0; i < result.selected_count;) {
+        std::size_t end = i + 1;
+        while (end < result.selected_count && context.window_switches[end].tick == context.window_switches[i].tick)
+            ++end;
+        const auto& current = context.window_switches[i];
+        const bool ambiguous = end - i != 1;
+        if (ambiguous) ++result.ambiguous_timestamp_groups;
+        if (previous != nullptr && !previous_ambiguous && !ambiguous) {
+            const bool compatible = previous->incoming == current.outgoing &&
+                previous->incoming != previous->outgoing && current.incoming != current.outgoing &&
+                current.old_state >= 0 && current.old_state <= 7 && current.old_state != 2;
+            if (!compatible) ++result.contradictions;
+            else if (result.retention_complete && result.scan_complete) result.add(*previous, current);
+        }
+        previous = &current; previous_ambiguous = ambiguous; i = end;
+    }
+    const auto duration = static_cast<std::uint64_t>(context.options.end - context.options.begin);
+    if (result.known_ticks > duration) fail("CPU timeline residence partition exceeds window");
+    result.full_window_coverage = result.scan_complete && result.retention_complete &&
+        result.known_ticks == duration && result.ambiguous_timestamp_groups == 0 && result.contradictions == 0;
+    return result;
+}
+
 class Json {
 public:
     Json() { bytes_.reserve(kSummaryBytes); }
@@ -968,8 +1126,87 @@ void catalog_json(Json& out, const Context& context) {
     out.raw("]}");
 }
 
+void cpu_timeline_json(Json& out, const Context& context, const CpuTimeline& timeline) {
+    const auto number = [&out](const char* key, std::uint64_t value) {
+        out.raw(","); out.quote(key); out.raw(":"); out.number(value);
+    };
+    const auto boolean = [&out](const char* key, bool value) {
+        out.raw(","); out.quote(key); out.raw(":"); out.boolean(value);
+    };
+    const bool cpu_available = timeline.cpu_available && !timeline.first_cpu_ambiguous;
+    const auto duration = static_cast<std::uint64_t>(context.options.end - context.options.begin);
+    out.raw(",\n  \"same_cpu_timeline\":{\"schema\":\"pas.cold-scheduler-same-cpu-timeline.v1\",\"status\":");
+    out.quote(!cpu_available || !timeline.scan_complete || !timeline.retention_complete ? "UNKNOWN" :
+        (timeline.full_window_coverage ? "OBSERVED" : "PARTIAL_UNKNOWN"));
+    boolean("diagnostic_only", true); boolean("qualification_issued", false); boolean("live_ready", false);
+    boolean("causal_attribution_available", false); number("device_operations", 0);
+    out.raw(",\"selection\":\"Earliest target switch-in/out CPU inside the requested window; ReadyThread logging CPU does not select target residency.\"");
+    boolean("selected_cpu_available", cpu_available); boolean("first_target_cpu_ambiguous", timeline.first_cpu_ambiguous);
+    out.raw(",\"selected_cpu\":"); if (cpu_available) out.number(timeline.cpu); else out.raw("null");
+    out.raw(",\"first_target_switch_qpc\":");
+    if (timeline.cpu_available) out.number(static_cast<std::uint64_t>(timeline.target_first_switch)); else out.raw("null");
+    number("target_switches_on_other_cpus", timeline.target_switches_on_other_cpus);
+    number("all_cpu_window_v5_records_observed", context.window_switch_observed);
+    number("all_cpu_window_records_retained", context.window_switch_count);
+    number("all_cpu_window_records_omitted", context.window_switch_observed - context.window_switch_count);
+    number("all_cpu_window_unavailable_layout_records", context.window_switch_unavailable);
+    number("all_cpu_window_invalid_processor_records", context.window_switch_invalid_cpu);
+    number("all_cpu_window_record_cap", kWindowSwitches);
+    boolean("all_cpu_window_record_cap_exceeded", context.window_switch_cap_exceeded);
+    number("all_cpu_window_input_order_regressions", context.window_switch_regressions);
+    number("selected_cpu_records_retained", timeline.selected_count);
+    out.raw(",\"selected_cpu_unretained_record_count\":");
+    if (timeline.retention_complete) out.number(0); else out.raw("null");
+    number("selected_cpu_input_order_regressions", timeline.selected_order_regressions);
+    boolean("selected_cpu_qpc_reordered", timeline.selected_order_regressions != 0);
+    number("selected_cpu_ambiguous_timestamp_groups", timeline.ambiguous_timestamp_groups);
+    number("selected_cpu_transition_contradictions", timeline.contradictions);
+    boolean("input_scan_complete", timeline.scan_complete); boolean("record_retention_complete", timeline.retention_complete);
+    boolean("full_window_coverage", timeline.full_window_coverage);
+    boolean("outside_window_backfill_used", false);
+    out.raw(",\"first_selected_cpu_qpc\":");
+    if (timeline.selected_count) out.number(static_cast<std::uint64_t>(timeline.first_tick)); else out.raw("null");
+    out.raw(",\"last_selected_cpu_qpc\":");
+    if (timeline.selected_count) out.number(static_cast<std::uint64_t>(timeline.last_tick)); else out.raw("null");
+    number("window_ticks", duration); number("observed_residence_ticks", timeline.known_ticks);
+    number("unknown_ticks", duration - timeline.known_ticks);
+    number("residence_interval_count", timeline.residence_intervals);
+    number("residence_intervals_omitted_from_longest_sample", timeline.residence_intervals - timeline.top_count);
+    out.raw(",\"interpretation\":\"Adjacent matching switch edges show scheduler residence, not instructions executing or stall cause. Priorities are edge values; intervening priority changes and PID or TID lifetime are unobserved. No residence is attributed if the scan or fixed record retention is incomplete.\"");
+    out.raw(",\"longest_residences\":[");
+    for (std::size_t i = 0; i < timeline.top_count; ++i) {
+        if (i) out.raw(","); const auto& value = timeline.top[i];
+        out.raw("{\"begin_qpc\":"); out.number(static_cast<std::uint64_t>(value.begin));
+        out.raw(",\"end_qpc\":"); out.number(static_cast<std::uint64_t>(value.end));
+        out.raw(",\"ticks\":"); out.number(static_cast<std::uint64_t>(value.end - value.begin));
+        out.raw(",\"tid\":"); out.number(value.tid);
+        out.raw(",\"is_target_tid\":"); out.boolean(value.tid == context.options.target);
+        out.raw(",\"begin_new_priority\":"); out.signed_number(value.begin_new_priority);
+        out.raw(",\"end_old_priority\":"); out.signed_number(value.end_old_priority);
+        out.raw(",\"end_old_thread_state\":"); out.signed_number(value.end_old_state);
+        out.raw(",\"end_old_thread_wait_reason\":"); out.signed_number(value.end_old_wait_reason);
+        out.raw("}");
+    }
+    out.raw("],\"raw_edge_sample\":[");
+    const auto sampled = std::min(timeline.selected_count, kTopTransitions);
+    for (std::size_t i = 0; i < sampled; ++i) {
+        if (i) out.raw(","); const auto& value = context.window_switches[i];
+        out.raw("{\"qpc\":"); out.number(static_cast<std::uint64_t>(value.tick));
+        out.raw(",\"cpu\":"); out.number(value.cpu);
+        out.raw(",\"new_tid\":"); out.number(value.incoming);
+        out.raw(",\"old_tid\":"); out.number(value.outgoing);
+        out.raw(",\"new_priority\":"); out.signed_number(value.new_priority);
+        out.raw(",\"old_priority\":"); out.signed_number(value.old_priority);
+        out.raw(",\"old_thread_state\":"); out.signed_number(value.old_state);
+        out.raw(",\"old_thread_wait_reason\":"); out.signed_number(value.old_wait_reason);
+        out.raw("}");
+    }
+    out.raw("]"); number("raw_edges_omitted_from_retained_sample", timeline.selected_count - sampled);
+    out.raw(",\"raw_edge_sample_selection\":\"First at most 32 retained same-CPU edges sorted by QPC; equal timestamps have no inferred event order.\"}");
+}
+
 void summary(Json& out, const Context& context, const Analysis& analysis,
-             const BY_HANDLE_FILE_INFORMATION& identity) {
+             const BY_HANDLE_FILE_INFORMATION& identity, const CpuTimeline& timeline) {
     const auto number = [&out](const char* key, std::uint64_t value) {
         out.raw(",\n  "); out.quote(key); out.raw(": "); out.number(value);
     };
@@ -1068,6 +1305,7 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
     }
     out.raw("]");
     catalog_json(out, context);
+    cpu_timeline_json(out, context, timeline);
     out.raw(",\n  \"limits\": {\"etl_bytes\": "); out.number(kFileBytes);
     out.raw(", \"all_records\": "); out.number(kAllRecords);
     out.raw(", \"buffers\": "); out.number(kBuffers);
@@ -1079,6 +1317,9 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
     out.raw(", \"catalog_properties_per_schema\": "); out.number(kCatalogProperties);
     out.raw(", \"catalog_property_name_chars_including_null\": "); out.number(kPropertyNameChars);
     out.raw(", \"owned_catalog_storage_bytes\": "); out.number(kCatalogSchemas * sizeof(SchemaDiagnostic));
+    out.raw(", \"window_switch_records\": "); out.number(kWindowSwitches);
+    out.raw(", \"window_switch_record_bytes\": "); out.number(sizeof(WindowSwitch));
+    out.raw(", \"owned_window_switch_storage_bytes\": "); out.number(kWindowSwitches * sizeof(WindowSwitch));
     out.raw(", \"summary_bytes\": "); out.number(kSummaryBytes);
     out.raw(", \"own_job_process_and_job_memory_bytes\": "); out.number(kJobMemoryBytes);
     out.raw(", \"max_window_seconds\": "); out.number(kWindowSeconds);
@@ -1128,6 +1369,13 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
         out.raw(",\"old_thread_wait_reason_available\":"); out.boolean(record.old_wait_reason_available);
         out.raw(",\"old_thread_wait_reason\":");
         if (record.old_wait_reason_available) out.signed_number(record.old_wait_reason); else out.raw("null");
+        out.raw(",\"peer_tid\":");
+        if (record.kind == Kind::In || record.kind == Kind::Out) out.number(record.peer_tid); else out.raw("null");
+        out.raw(",\"priorities_available\":"); out.boolean(record.priorities_available);
+        out.raw(",\"new_priority\":");
+        if (record.priorities_available) out.signed_number(record.new_priority); else out.raw("null");
+        out.raw(",\"old_priority\":");
+        if (record.priorities_available) out.signed_number(record.old_priority); else out.raw("null");
         out.raw("}");
     }
     out.raw("]");
@@ -1267,6 +1515,7 @@ int self_test(const std::wstring& output_path) {
     std::memcpy(payload.data(), &incoming_id, 4);
     std::memcpy(payload.data() + 4, &outgoing_id, 4);
     payload[12] = std::byte{24}; payload[14] = std::byte{5};
+    payload[8] = std::byte{15}; payload[9] = std::byte{14};
     EVENT_RECORD exact{};
     exact.EventHeader.ProviderId = kThreadGuid;
     exact.EventHeader.Flags = EVENT_HEADER_FLAG_CLASSIC_HEADER | EVENT_HEADER_FLAG_64_BIT_HEADER |
@@ -1276,7 +1525,8 @@ int self_test(const std::wstring& output_path) {
     exact.UserDataLength = 28; exact.UserData = payload.data();
     SwitchPrefix decoded{};
     prefix_check(switch5_prefix(exact, decoded) && decoded.incoming == 42 && decoded.outgoing == 99 &&
-        decoded.old_state == 5 && decoded.old_wait_reason == 24, "actual v5 fixed prefix decoded exactly");
+        decoded.old_state == 5 && decoded.old_wait_reason == 24 && decoded.new_priority == 15 &&
+        decoded.old_priority == 14, "actual v5 fixed prefix decoded exactly");
     auto changed = exact; changed.EventHeader.EventDescriptor.Version = 3;
     bool rejects = !switch5_prefix(changed, decoded);
     changed.EventHeader.EventDescriptor.Version = 4;
@@ -1322,8 +1572,10 @@ int self_test(const std::wstring& output_path) {
     const ULONG largest_id = std::numeric_limits<ULONG>::max();
     std::memcpy(payload.data(), &largest_id, 4);
     payload[12] = std::byte{128}; payload[14] = std::byte{255};
+    payload[8] = std::byte{127}; payload[9] = std::byte{128};
     prefix_check(switch5_prefix(exact, decoded) && decoded.incoming == largest_id &&
-        decoded.old_state == -1 && decoded.old_wait_reason == -128,
+        decoded.old_state == -1 && decoded.old_wait_reason == -128 && decoded.new_priority == 127 &&
+        decoded.old_priority == -128,
         "unsigned ID and signed byte boundaries preserved");
     TRACE_EVENT_INFO identity{};
     identity.DecodingSource = DecodingSourceWbem;
@@ -1393,8 +1645,9 @@ int wmain(int argc, wchar_t** argv) {
         context.input_stable = GetFileInformationByHandle(input.get(), &after_identity) && same_file(before, after_identity);
         if (!context.input_stable) context.mark(Issue::InputChanged);
         const auto analysis = analyze(context);
+        const auto timeline = cpu_timeline(context);
         Json output;
-        summary(output, context, analysis, before);
+        summary(output, context, analysis, before, timeline);
         write_new(options.output, output.bytes());
         std::cout << "diagnostic summary bytes=" << output.bytes().size()
                   << " target_records=" << context.count << " qualification=false\n";
