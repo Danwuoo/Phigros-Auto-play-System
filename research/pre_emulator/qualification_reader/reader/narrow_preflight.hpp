@@ -330,7 +330,9 @@ class Preflight final {
             if((path.starts_with("src/")||path.starts_with("include/")||path.starts_with("apps/"))&&path!="src/candidate_admission.cpp")
                 w::require(current.contains(path)&&current.at(path).at("sha256")==old.at("sha256")&&current.at(path).at("bytes")==old.at("bytes"),"imported formal strategy/manual/app source unchanged from base55");
         }
-        w::require(current.at("src/manual_session.cpp").at("sha256")==manual_sha_,"preserved main32/base55/current manual identity");
+        w::require(same_pin(delta_.at("base_manual_source"),original.at("src/manual_session.cpp"))&&
+                   same_pin(current.at("src/manual_session.cpp"),original.at("src/manual_session.cpp")),
+                   "preserved base55/current manual identity; main32 remains its historical source");
         for(const auto& row:delta_.at("base_original_build_processes"))native(row.at("Native8"));
         const auto configure=native(delta_.at("configure_process")),build=native(delta_.at("build_process"));
         component_delta::eligibility_native(r_,delta_,plan,configure.evidence,true);
