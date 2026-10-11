@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main45')
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main46')
 $ErrorActionPreference='Stop'
 # The source and process helpers are shared; LoadBuilds is deliberately unused.
 # main32's Debug/ASan compiler roots are archived, and none is a delta donor.
@@ -50,6 +50,11 @@ function ClosurePin([string]$stage){
  $value=ReadBound $pin
  if($value.schema -cne 'pas.current-input-closure-verification.v1' -or -not $value.pass -or -not $value.before_verified -or -not $value.after_verified -or $value.status -cne 'COMPLETE'){throw 'verified before/after native input closure required'}
  return $pin
+}
+function BuildProcessEvidence([string]$stage){
+ $e=@{}
+ foreach($pair in @(@('specification',(Join-Path $out ($stage+'-inputs/spec.json'))),@('input_closure',(Join-Path $pkg ($stage+'-input-closure-verification.json'))),@('result',(Join-Path $out ($stage+'/'+$stage+'-result.json'))),@('verification',(Join-Path $out ($stage+'/'+$stage+'-verification.json'))),@('freeze',(Join-Path $out ($stage+'/freeze.json'))),@('state',(Join-Path $out ($stage+'/state.json'))),@('contract',(Join-Path $out ($stage+'/contract.json'))),@('command',(Join-Path $out ($stage+'/'+$stage+'-command.json'))))){$e[$pair[0]]=Binding $pair[1]}
+ return $e
 }
 function CheckCandidateCapacity {
  # Retain the existing aggregate candidate ceiling, including the new delta roots.
@@ -164,11 +169,12 @@ NewJson $sourceManifest @{schema='pas.cooperative-source.v1';source_commit=$comm
 $dependencySelection=Join-Path $artifact 'selected-dependency-manifest.json'
 NewJson $dependencySelection @{schema='pas.narrow-noise-repair-dependency-selection.v1';source_commit=$commit;original_dependency_manifest=$baseBuild.dependency_manifest;original_dependency_source_commit=$baseCommit;complete_original_preflight_verified=$dependencyPreflightVerified;complete_original_preflight_files=$dependencies.files.Count;files=$selectedDependencies;selection='Actual nlohmann-json and zlib headers/configuration/import/runtime files only';device_operations=0;live_ready=$false}
 $targets=ComponentDeltaTargets
+$buildTargetGroups=@(@{targets=@('pas_core')},@{targets=@('own_bridge','current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')},@{targets=@('owner_checkpoint_tests','owner_expiry_tests','component_mask_tests','uniform_fnv_tests')})
 $translationUnitSources=ComponentDeltaUnits
 $formalChanged=ComponentDeltaFormalPaths $changedPaths
 $workerPlacementPolicy='single-group highest raw EfficiencyClass; last two distinct physical cores by ascending lowest LP per core; consumer lower, producer higher; exact restore'
 $corePlan=Join-Path $artifact 'narrow-core-build-plan.json'
-NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';component_cpu_delta=$true;formal_rebuilt=$true;formal_changed_paths=$formalChanged;rebuilt_static_targets=@('own_bridge','pas_core');delta_targets=$targets;translation_units=32;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;producer_priority_policy='synthetic producer thread only; HIGHEST(2); consumer HIGHEST(2); NORMAL process class(32); scoped query/set/readback/restore; same A/B policy';consumer_priority_requested=2;producer_active_tail_ns=2000000;producer_wait_controls_count=43;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
+NewJson $corePlan @{schema='pas.narrow-noise-repair-core-build-plan.v1';source_commit=$commit;base_source_commit=$baseCommit;configuration='release';component_cpu_delta=$true;formal_rebuilt=$true;formal_changed_paths=$formalChanged;rebuilt_static_targets=@('own_bridge','pas_core');delta_targets=$targets;build_target_groups=$buildTargetGroups;translation_units=32;translation_unit_sources=$translationUnitSources;base_static_inputs=$staticInputs;worker_placement_policy=$workerPlacementPolicy;producer_priority_policy='synthetic producer thread only; HIGHEST(2); consumer HIGHEST(2); NORMAL process class(32); scoped query/set/readback/restore; same A/B policy';consumer_priority_requested=2;producer_active_tail_ns=2000000;producer_wait_controls_count=43;compiler_snapshot=(Binding $tool);compiler_environment=$environmentPin;original_configuration_proofs=$oldProofs;prerequisite_groups_each=25;whole_candidate_qualification=$false;device_operations=0;live_ready=$false}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1'
 $toolchain='C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake'
 $guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
@@ -179,14 +185,23 @@ AssertCurrentSource;AssertBaseUnchanged;$null=CheckCandidateCapacity
 Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $PSScriptRoot 'noise_repair');BuildRoot=$root;StageName=$configure;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Configure';Configuration='Release';Inputs=$inputs;Options=$options}
 $configureReceipt=Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json'))
 $configureClosure=ClosurePin $configure
+$configureProcess=BuildProcessEvidence $configure
 
 # Exact fresh32 graph; original three libraries are effective immutable inputs.
 $objects=ComponentDeltaAssertGraph $root $repo $translationUnitSources
-$stage='build-prelive-noise-repair-'+$Attempt+'-cpu-components'
-AssertCurrentSource;AssertBaseUnchanged;$null=CheckCandidateCapacity
-Stage $stage $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $PSScriptRoot 'noise_repair');BuildRoot=$root;StageName=$stage;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration='Release';Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja'));Options=@('--target')+$targets}
-$buildReceipts=@(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))
-$buildClosures=@(ClosurePin $stage)
+$buildReceipts=@();$buildClosures=@();$buildProcesses=@();$priorOutputs=@()
+for($groupIndex=0;$groupIndex -lt $buildTargetGroups.Count;$groupIndex++){
+ $stage='build-prelive-noise-repair-'+$Attempt+'-cpu-group'+($groupIndex+1).ToString('00')
+ AssertCurrentSource;AssertBaseUnchanged;$null=CheckCandidateCapacity
+ foreach($pin in $priorOutputs){CheckEntry $pin}
+ $priorProofs=@($configureProcess.Values.path)+@($buildProcesses|ForEach-Object {$_.Values.path})
+ Stage $stage $adapter @{ReceiptRepo=$repo;SourceRoot=(Join-Path $PSScriptRoot 'noise_repair');BuildRoot=$root;StageName=$stage;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration='Release';Inputs=@($inputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja')+$priorOutputs.path+$priorProofs);Options=@('--target')+@($buildTargetGroups[$groupIndex].targets)}
+ $buildReceipts+=@(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))
+ $buildClosures+=@(ClosurePin $stage);$buildProcesses+=@(BuildProcessEvidence $stage)
+ foreach($pin in $priorOutputs){CheckEntry $pin}
+ $priorOutputs=@(Get-ChildItem -LiteralPath $root -File -Recurse|Where-Object {$_.Extension -cin @('.obj','.lib','.exe','.dll')}|ForEach-Object {Binding $_.FullName})
+}
+$inputs+=@($configureProcess.Values.path)+@($buildProcesses|ForEach-Object {$_.Values.path})
 AssertCurrentSource;AssertBaseUnchanged
 $chain=Join-Path $root 'current_chain.exe';$controls=Join-Path $root 'consumer_priority_controls.exe';$affinityControls=Join-Path $root 'worker_affinity_controls.exe';$waitControls=Join-Path $root 'producer_wait_tests.exe';$zDll=Join-Path $root 'z.dll'
 $newRuntime=@(Binding $chain;Binding $controls;Binding $affinityControls;Binding $waitControls;Binding $zDll)+@(ComponentDeltaExecutables|Where-Object {$_ -notin @('current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')}|ForEach-Object {Binding (Join-Path $root ($_+'.exe'))})
@@ -241,5 +256,5 @@ foreach($entry in $compiledOutputs){CheckEntry $entry}
 AssertCurrentSource;AssertBaseUnchanged
 $candidateBytes=CheckCandidateCapacity
 $bindingPath=Join-Path $artifact 'build-binding.json'
-NewJson $bindingPath @{schema='pas.narrow-noise-repair-build.v1';source_commit=$commit;configuration='release';scope=$scope;whole_candidate_qualification=$false;live_ready=$false;device_operations=0;base_source_commit=$baseCommit;base_release_build=$baseBuildPin;base_release_evaluation=$baseEvaluationPin;original_main32_inventory=$inventoryPin;source_manifest=(Binding $sourceManifest);dependency_manifest=$baseBuild.dependency_manifest;selected_dependency_manifest=(Binding $dependencySelection);core_build_plan=(Binding $corePlan);component_cpu_delta=$true;formal_rebuilt=$true;formal_changed_paths=$formalChanged;component_controls=$componentControls;rebuilt_static_inputs=$rebuiltStatic;linked_static_inputs=$linkedStatic;base_static_inputs=$staticInputs;build_root=$root;files=$runtimeFiles;compiled_outputs=$compiledOutputs;configure_receipt=$configureReceipt;configure_input_closure=$configureClosure;build_receipts=$buildReceipts;build_input_closures=$buildClosures;controls_receipt=$controlsReceipt;controls_report=(Binding $controlsReport);controls_input_closure=$controlsClosure;affinity_controls_receipt=$affinityReceipt;affinity_controls_report=(Binding $affinityReport);affinity_controls_input_closure=$affinityClosure;wait_controls_binary=$newRuntime[3];wait_controls_receipt=$waitReceipt;wait_controls_report=(Binding $waitReport);wait_controls_input_closure=$waitClosure;compiler_environment=$environmentPin;compiler_environment_reused=$true;tests_scope_authorization=$scopePin;old_configuration_proofs=$oldProofs;old_core_tests_prerequisite_only=$true;changed_paths=@($changedPaths|Sort-Object -Unique);additional_inputs=@(Binding $scopeDocument;Binding $approval);candidate_bytes=$candidateBytes;candidate_cap=6442450944}
+NewJson $bindingPath @{schema='pas.narrow-noise-repair-build.v1';source_commit=$commit;configuration='release';scope=$scope;whole_candidate_qualification=$false;live_ready=$false;device_operations=0;base_source_commit=$baseCommit;base_release_build=$baseBuildPin;base_release_evaluation=$baseEvaluationPin;original_main32_inventory=$inventoryPin;source_manifest=(Binding $sourceManifest);dependency_manifest=$baseBuild.dependency_manifest;selected_dependency_manifest=(Binding $dependencySelection);core_build_plan=(Binding $corePlan);component_cpu_delta=$true;formal_rebuilt=$true;formal_changed_paths=$formalChanged;component_controls=$componentControls;rebuilt_static_inputs=$rebuiltStatic;linked_static_inputs=$linkedStatic;base_static_inputs=$staticInputs;build_root=$root;files=$runtimeFiles;compiled_outputs=$compiledOutputs;configure_receipt=$configureReceipt;configure_input_closure=$configureClosure;configure_process=$configureProcess;build_target_groups=$buildTargetGroups;build_receipts=$buildReceipts;build_input_closures=$buildClosures;build_processes=$buildProcesses;controls_receipt=$controlsReceipt;controls_report=(Binding $controlsReport);controls_input_closure=$controlsClosure;affinity_controls_receipt=$affinityReceipt;affinity_controls_report=(Binding $affinityReport);affinity_controls_input_closure=$affinityClosure;wait_controls_binary=$newRuntime[3];wait_controls_receipt=$waitReceipt;wait_controls_report=(Binding $waitReport);wait_controls_input_closure=$waitClosure;compiler_environment=$environmentPin;compiler_environment_reused=$true;tests_scope_authorization=$scopePin;old_configuration_proofs=$oldProofs;old_core_tests_prerequisite_only=$true;changed_paths=@($changedPaths|Sort-Object -Unique);additional_inputs=@(Binding $scopeDocument;Binding $approval);candidate_bytes=$candidateBytes;candidate_cap=6442450944}
 Write-Output $bindingPath

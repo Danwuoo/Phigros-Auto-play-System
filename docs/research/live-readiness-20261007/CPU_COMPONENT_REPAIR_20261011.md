@@ -3,6 +3,15 @@
 使用者最新指示仍要求完成所有可冷完成的開發及測試；修補後不重跑原75組及
 production9 PASS，完成後不建立新 thread。本輪不啟動 emulator／device／Computer Use。
 
+main45／`a15986f` fresh32單一build transaction觸及原held-identity-cap64而STOP，
+runner125／native exit未知，31／32 target objects及部分link產品保存；held及streams完成、
+active0。完整945 source copies與原STOP見[負結果](MAIN45_BUILD_NEGATIVE_20261011.json)。
+下一候選將CPU build拆為core／bridge及主harness／其餘controls三個owned transactions；
+正式production拆core／action／emulator／bench／entry／pipeline六個transactions。
+總32／52 TUs、十個CPU targets、原64 held／time／stream caps與所有門檻不變；
+每批有真實Native8、來源及before／after closure，後批封存先批已完成object／library。
+不沿用main45部分產品，不將拆批或組件PASS當整體資格。
+
 main44（source `79f8f37`）AA12 validity 全通過，producer／publication 全部零超期；
 2ms active tail 仍未使 noise 合格（12不足、owner6 adequate），ABBA 未跑。
 實際 readonly reader 核對前置、候選、AA及18條公式，結果仍為 NOT_READY。

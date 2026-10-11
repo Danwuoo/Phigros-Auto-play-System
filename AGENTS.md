@@ -10,6 +10,9 @@
 main32／`aa9de3c` 三配置75組／圖3／prefix3063／fault4／production9通過，AA12 validity
 通過但noise不足、ABBA NOT_RUN；原source／raw／STOP及37個native完整索引保留。
 main44／`79f8f37` AA12 validity通過、noise6／18 adequate、ABBA NOT_RUN，負結果保留。
+main45／`a15986f` 單一fresh build觸及原held-identity-cap64而STOP，31／32 target objects
+保存、held／streams完成、active0；AA／noise／ABBA皆NOT_RUN。下一候選以三個CPU／
+六個production owned build批次保留原64上限，每批核對actual Native8及來源／closure。
 下一候選依[CPU等值修補](docs/research/live-readiness-20261007/CPU_COMPONENT_REPAIR_20261011.md)
 fresh core22／bridge2與必要控制，三個未改動Release libs維持原pins；正式入口／收據工具
 亦fresh建置並跑必要normal3，不全盤重跑原75／production9。明列base／delta及既有PASS來源，

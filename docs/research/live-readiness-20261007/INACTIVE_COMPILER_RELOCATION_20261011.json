@@ -1,0 +1,1104 @@
+{
+  "source_directories_removed": false,
+  "original_negative_binary_and_source_SHAs_unchanged": true,
+  "originals_rechecked": true,
+  "roots": [
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\functional-gui-build-01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-functional-gui-build-01.proof.json",
+        "sha256": "5f85df87be78d2c6b39f2c164fb737c2c22c775361bac9889eda5ab544b3844a",
+        "bytes": 14121
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-functional-gui-build-01.zip",
+        "sha256": "4de5d90c44cb8e7cefd048e35ba3145aadd3ede6b9255ba1c3f3d6c2574a0417",
+        "bytes": 1133977
+      },
+      "original_files": 27,
+      "original_bytes": 7202138
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\functional-gui-build-03",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-functional-gui-build-03.proof.json",
+        "sha256": "6ba6ace3a7163fdacd1cf0438cc1e4ca756a4b88054816210c1c5cc73c74cf20",
+        "bytes": 14121
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-functional-gui-build-03.zip",
+        "sha256": "27ce62572fad6c3bfbdfaf6364149062490b951b438a53fa9b0ddd1bf3ffa039",
+        "bytes": 1133983
+      },
+      "original_files": 27,
+      "original_bytes": 7202138
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-cooperative-cost-tools-release-tools01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-cost-tools-release-tools01.proof.json",
+        "sha256": "767ba4c9d0ad50f018afa42bad724bdcd9c6240e24405e7b55f1673f252e7fb7",
+        "bytes": 19243
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-cost-tools-release-tools01.zip",
+        "sha256": "640b087a0604e48f880e542292e9fab43feb44fbd26465961e32796447087346",
+        "bytes": 9651157
+      },
+      "original_files": 35,
+      "original_bytes": 74307882
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-cooperative-release-coop01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-release-coop01.proof.json",
+        "sha256": "bd310865df24006a3110b7591d0e24a6e9ca4f311d2e6d18f0337c0f14a630b5",
+        "bytes": 20587
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-release-coop01.zip",
+        "sha256": "665d3b3a1e80cd05ec93eec0762ca1e47872421059a329efea28ccb6d2848dda",
+        "bytes": 10688051
+      },
+      "original_files": 38,
+      "original_bytes": 75028568
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-cooperative-release-expneg04",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-release-expneg04.proof.json",
+        "sha256": "ec2217b91c915f715a169afffca9e8ddc189c09918076e673c5b8823974c4cbf",
+        "bytes": 20064
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-release-expneg04.zip",
+        "sha256": "96217206a3e9ea09003965818c03a968115dccf8d9e73b7f7093d142120be7d2",
+        "bytes": 6249389
+      },
+      "original_files": 37,
+      "original_bytes": 42908581
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-cooperative-supp-asan-supp02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-supp-asan-supp02.proof.json",
+        "sha256": "2ecd311fa141db17cb2e50da8be139788d29785d5b5fa434890679d89b6d315f",
+        "bytes": 27912
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-supp-asan-supp02.zip",
+        "sha256": "c4956ab4a64da00c0591bb82ccb6a1355b58be8df97ec454d7167da7321a83bb",
+        "bytes": 11026331
+      },
+      "original_files": 54,
+      "original_bytes": 85051587
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-cooperative-supp-release-supp01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-supp-release-supp01.proof.json",
+        "sha256": "95aa3e74762f0f5a9fa231ea8a024c0cea3c96011a083e851ea7632f2be8a180",
+        "bytes": 14265
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cooperative-supp-release-supp01.zip",
+        "sha256": "215bf8feff676f1efdaa3570083293ae940599db011cfce556943113347809f0",
+        "bytes": 2669477
+      },
+      "original_files": 26,
+      "original_bytes": 17498411
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-cost-comparison-comp02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cost-comparison-comp02.proof.json",
+        "sha256": "2670fcbb777d4d1b7c7ef0624d3078472b87a740af851c50ce75d11ab78c996c",
+        "bytes": 21382
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cost-comparison-comp02.zip",
+        "sha256": "2dcb3f8a7e4e4e7799d5181af039c61b3bf7f445548c06f51a1c35e25de0ae2a",
+        "bytes": 4559216
+      },
+      "original_files": 41,
+      "original_bytes": 32964977
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-cost-comparison-graph01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cost-comparison-graph01.proof.json",
+        "sha256": "351d3e7d77a51879636945994eccff519d430c69c85a9f6b9fbb198beb5cb96b",
+        "bytes": 15276
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cost-comparison-graph01.zip",
+        "sha256": "dcba1734f3a9e8709fcab795c38ad7e1204f8a8a649e5d72767fae83d718655f",
+        "bytes": 2821368
+      },
+      "original_files": 29,
+      "original_bytes": 23120375
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-cost-receipt-reader02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cost-receipt-reader02.proof.json",
+        "sha256": "546e73f359ac625ec60e85372e49cb57aa0fcdcd02f7206973ba6c377e296f56",
+        "bytes": 14286
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-cost-receipt-reader02.zip",
+        "sha256": "87c21831028e16a9012d34050582e3bc403b955ab07cb708a6977dcabf389461",
+        "bytes": 2154768
+      },
+      "original_files": 27,
+      "original_bytes": 16096768
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-prod01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-prod01.proof.json",
+        "sha256": "82d3a32bfc96fcb34945bcd4f103190a6b5d236497bc7440dddfebf129e7de72",
+        "bytes": 42054
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-prod01.zip",
+        "sha256": "606ca5e700122c44842f7acc449e3f89956130ab27db3cbbd91885867577b7c5",
+        "bytes": 11226148
+      },
+      "original_files": 76,
+      "original_bytes": 77981294
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-tap01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap01.proof.json",
+        "sha256": "1fdaf71cf6b83588e1969ca1b37d2be0f177aca1d199198548ee7652bc3255cf",
+        "bytes": 16080
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap01.zip",
+        "sha256": "8feb14075bc8dec0363922dcc25eee1a8d40a478cc806e4fe424dee5bab901a5",
+        "bytes": 127164
+      },
+      "original_files": 30,
+      "original_bytes": 912603
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-tap02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap02.proof.json",
+        "sha256": "5b7e8f0edac7f5793b2016ac4dc295d45aa4ee1bf6f9931b2a60b814c8c21764",
+        "bytes": 13500
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap02.zip",
+        "sha256": "d91562733c1008e238992b4cb8a491783d788995332d9c1339e51658fc4eccdf",
+        "bytes": 121763
+      },
+      "original_files": 25,
+      "original_bytes": 855433
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-tap03",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap03.proof.json",
+        "sha256": "a0dc7d045ac28002404cbd0cc191121b2e16c266922643777f355e9b3cdc4e62",
+        "bytes": 28374
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap03.zip",
+        "sha256": "bdf10def50bd36d4504a130a786893c96b5f9e54db4652af3dd342e754b54063",
+        "bytes": 5083391
+      },
+      "original_files": 52,
+      "original_bytes": 35031238
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-tap04",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap04.proof.json",
+        "sha256": "acead486f0581e1b8b9bf2eb74e21677753336eef3c9f854da0e76262711ac3e",
+        "bytes": 28528
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap04.zip",
+        "sha256": "440e52e403d245dec313b4db5d3ef0a58a6ab1d1d069405bd22e107f2e303aaf",
+        "bytes": 5083094
+      },
+      "original_files": 52,
+      "original_bytes": 35033591
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-tap05",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap05.proof.json",
+        "sha256": "7a3fc58a664bc631450724a0367ed5e85561600c30b40b266ed01dc5ba2433a8",
+        "bytes": 41872
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-tap05.zip",
+        "sha256": "d7c2fd1c82502ed01d046bf242cf983a9f0a19e76efd3a62f248e5a713e0062d",
+        "bytes": 10900274
+      },
+      "original_files": 76,
+      "original_bytes": 74546161
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-wake05",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-wake05.proof.json",
+        "sha256": "6f9c3b9e77a1ff911466a2a15c14a3c65cd4298976755ed5c2e27442e4ca1df8",
+        "bytes": 70473
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-wake05.zip",
+        "sha256": "52884bf9f8f2ca8e8da641be2aea93a262e8e4e79e6127e322e4d12d3f5c8f75",
+        "bytes": 14970144
+      },
+      "original_files": 135,
+      "original_bytes": 104895643
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-wake06",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-wake06.proof.json",
+        "sha256": "61213cc2c9c7fa938605e5017c69fb90f7312a09b6f70d3a1089f5a7a8993bea",
+        "bytes": 37442
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-wake06.zip",
+        "sha256": "b28b16f4583dc9b9c7a172acacbebf8fc3881d5e52e2692ae3fdb417359290c7",
+        "bytes": 10366765
+      },
+      "original_files": 68,
+      "original_bytes": 72230868
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-current-release-win03",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-win03.proof.json",
+        "sha256": "e0fc674b63bfea9e1944cd0025893e1b509566addbe4451e38be1beef22a2b43",
+        "bytes": 29533
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-current-release-win03.zip",
+        "sha256": "527c29e7a3e571f9ebb64a8bcc870f8a7442a675daef79a1a15530fe004f996a",
+        "bytes": 162484
+      },
+      "original_files": 57,
+      "original_bytes": 1362636
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-dense-noise-diagnosis-build-noisediag01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-dense-noise-diagnosis-build-noisediag01.proof.json",
+        "sha256": "5919d156ec0a0385782da593fabf244b7615160a01c34a89ceac135bc1039c82",
+        "bytes": 10323
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-dense-noise-diagnosis-build-noisediag01.zip",
+        "sha256": "055a07cfa85a24b081ba442a312adeef71ded153a4388bc4264390bdf3bea59b",
+        "bytes": 113503
+      },
+      "original_files": 18,
+      "original_bytes": 758782
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-dense-noise-diagnosis-build-noisediag02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-dense-noise-diagnosis-build-noisediag02.proof.json",
+        "sha256": "598a0529ed396d24df93ebbe00996d27e3f5c3dda45a31129fdf82a0a57dacc4",
+        "bytes": 12185
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-dense-noise-diagnosis-build-noisediag02.zip",
+        "sha256": "cf5a9279d096816db760394c0ade37d75b0ed98636c4ec73b3af4f4aabc1bd34",
+        "bytes": 1750253
+      },
+      "original_files": 22,
+      "original_bytes": 12731322
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-dense-phase-release-phase01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-dense-phase-release-phase01.proof.json",
+        "sha256": "d50f8a160d6a339dd73de511c9197afd7825ab8ddd159bf73f5da17be7c2d10e",
+        "bytes": 22924
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-dense-phase-release-phase01.zip",
+        "sha256": "0e328b2e736ec2ef213d35ea8d97c7b0233d54d4a85161c829b27b2081377bfc",
+        "bytes": 11246656
+      },
+      "original_files": 43,
+      "original_bytes": 80295878
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-diagnostic-writer-cost-tools-release-tools04",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-diagnostic-writer-cost-tools-release-tools04.proof.json",
+        "sha256": "7923a827501f969e0d69c327d772b2ac0a8a0924094395f7f7b3f54027a97451",
+        "bytes": 19442
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-diagnostic-writer-cost-tools-release-tools04.zip",
+        "sha256": "1ff7c554e572b1274a078535527cc5fdd4ce5d594aee8fdc38fc39bddae09c4b",
+        "bytes": 9651257
+      },
+      "original_files": 35,
+      "original_bytes": 74307919
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-diagnostic-writer-production-auditor-writeraudit04",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-diagnostic-writer-production-auditor-writeraudit04.proof.json",
+        "sha256": "e4051dba4b12b2a01d6ed7630eb24f0be129ba354a1cce8b43efe54a0e0b24b2",
+        "bytes": 13943
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-diagnostic-writer-production-auditor-writeraudit04.zip",
+        "sha256": "9b57e011d722f697e8cd8c030d6f55a1a434af9b102db401a9cab0de46477823",
+        "bytes": 3505297
+      },
+      "original_files": 25,
+      "original_bytes": 25766237
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-diagnostic-writer-release-writer02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-diagnostic-writer-release-writer02.proof.json",
+        "sha256": "fc50fd0f3d482c405936c771250192dcb906ce8682951d1614375198bc99ea9a",
+        "bytes": 19639
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-diagnostic-writer-release-writer02.zip",
+        "sha256": "99595d2a22ac56b511072dd462613a9aa74ed04e35b374df0c59730d0137c8c9",
+        "bytes": 6358687
+      },
+      "original_files": 35,
+      "original_bytes": 44122937
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-diagnostic-writer-release-writer03",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-diagnostic-writer-release-writer03.proof.json",
+        "sha256": "87eb6323276163ab44052a09d077cd332a6e909e06e5d964853817bc72280596",
+        "bytes": 21857
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-diagnostic-writer-release-writer03.zip",
+        "sha256": "e74a85fa9003123fa03427a49c78a44449d768976c7bacdb3b26d88c6fdbe092",
+        "bytes": 8820122
+      },
+      "original_files": 40,
+      "original_bytes": 60924473
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-expiry-safe-cost-tools-release-tools01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-expiry-safe-cost-tools-release-tools01.proof.json",
+        "sha256": "5d2c7380521d92bec02057e302c771a4276b84b501164102da5d11348400d60e",
+        "bytes": 19285
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-expiry-safe-cost-tools-release-tools01.zip",
+        "sha256": "2cbeaa32844023379251c9612ba5584a0fcd040a8b7939c7e3fdd70b3dd1aa46",
+        "bytes": 9651483
+      },
+      "original_files": 35,
+      "original_bytes": 74308425
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-expiry-safe-production-auditor-expaudit01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-expiry-safe-production-auditor-expaudit01.proof.json",
+        "sha256": "5b9b1c45e176e0d691b510af83b9444a6436459e334616d9b26bea7850011baf",
+        "bytes": 13272
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-expiry-safe-production-auditor-expaudit01.zip",
+        "sha256": "70255f310ce86e3f535d710b3e8a31f75375d74bf81e07bdeefcc0bc22f2c191",
+        "bytes": 3432411
+      },
+      "original_files": 24,
+      "original_bytes": 25590075
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-expiry-safe-production-entry-exppipe01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-expiry-safe-production-entry-exppipe01.proof.json",
+        "sha256": "b23bde7c7937444b46a0b7e09edc8dc9f0a985f0edfc999c137893fc6fd47c6b",
+        "bytes": 14375
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-expiry-safe-production-entry-exppipe01.zip",
+        "sha256": "9f4ce2ad44e4e2454912e2292b4e139728df34d88c27b35b1eccf54b1b9b3cd4",
+        "bytes": 5155630
+      },
+      "original_files": 26,
+      "original_bytes": 31860135
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-journal-asan-journal06",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-asan-journal06.proof.json",
+        "sha256": "e3684b6c6e3b83b791bf7ab3542131d2895eea06a1a0041c8c688b08db6e0680",
+        "bytes": 79552
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-asan-journal06.zip",
+        "sha256": "2c52e5146c7c14384267057fb13d7b8e780512748da5dbb20bdd2fd8ce537442",
+        "bytes": 2112215
+      },
+      "original_files": 141,
+      "original_bytes": 10182708
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-journal-compat-asan-journal07",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-compat-asan-journal07.proof.json",
+        "sha256": "34868497af4c815d9cad9d33d38c23412e009e791f049acb939c530f5f0e0710",
+        "bytes": 26615
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-compat-asan-journal07.zip",
+        "sha256": "9532076ce3aa07e878a4911d571f1ff36db0706618bb3992dcc467d8a4ae732a",
+        "bytes": 9338155
+      },
+      "original_files": 52,
+      "original_bytes": 71482096
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-journal-compat-debug-journal06",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-compat-debug-journal06.proof.json",
+        "sha256": "5c50377f33dae1e4428f87e513d32a64706f7e0dec83f735ab1eb13d3e4bd5ca",
+        "bytes": 19003
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-compat-debug-journal06.zip",
+        "sha256": "ebbaf5813f2af5aeb895be479e07002fa3349892a104afb34b8f982132c7522e",
+        "bytes": 12364765
+      },
+      "original_files": 36,
+      "original_bytes": 106224462
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-journal-compat-release-journal05",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-compat-release-journal05.proof.json",
+        "sha256": "7c737912dd42bc6a89b7cabf6b80c47327de7fd74ccbe147c16287b4f5c9fa9c",
+        "bytes": 16016
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-compat-release-journal05.zip",
+        "sha256": "cddc6d656479799f425bafd054f8a88d64322b463d2346f33d62730fba3bab05",
+        "bytes": 2474279
+      },
+      "original_files": 30,
+      "original_bytes": 15204275
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-journal-cost-tools-release-journal03",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-cost-tools-release-journal03.proof.json",
+        "sha256": "adbc75792ca3ab703c34c201f18d46e2f7689390b301e79236b31bbb8bc5dac3",
+        "bytes": 33838
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-journal-cost-tools-release-journal03.zip",
+        "sha256": "7e8ba4aa39c91c40513236f218b6e19024399818618dbf92c090bbb22ce3a0ff",
+        "bytes": 9662125
+      },
+      "original_files": 60,
+      "original_bytes": 74333186
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-entry-prodaudit01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodaudit01.proof.json",
+        "sha256": "f52bfbc42878733c3d7174aa920b28564006c5f2b42dae285b7be6568cda3824",
+        "bytes": 13532
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodaudit01.zip",
+        "sha256": "2960903cf5c7975a57bbc952ddbcbcc9ea5c7c60820a18b5b2ac99d44dcfe3fe",
+        "bytes": 116656
+      },
+      "original_files": 25,
+      "original_bytes": 769161
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-entry-prodaudit02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodaudit02.proof.json",
+        "sha256": "06234d24960bdb36437d650c2b9650206af87e50540dcf37f3a07018090b5559",
+        "bytes": 14517
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodaudit02.zip",
+        "sha256": "656c436b6623959fd28905e0e0275477689edfbdec5a1c358ec840bf5b00c849",
+        "bytes": 2101726
+      },
+      "original_files": 27,
+      "original_bytes": 15550890
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-entry-prodaudit03",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodaudit03.proof.json",
+        "sha256": "2f6537386eff713d918b66d19e2e66f56df866c4eb6287cb95c2a39cf40b9a22",
+        "bytes": 14517
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodaudit03.zip",
+        "sha256": "763b91005979020c75b0e94268348a1b8a5ff8ee36ec511c77c4579204dc0d47",
+        "bytes": 2110812
+      },
+      "original_files": 27,
+      "original_bytes": 15656649
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-entry-prodaudit04",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodaudit04.proof.json",
+        "sha256": "8ffcfce4a4de9967f958dde83f0195a045479bd177b56ac8372ede0230d22a47",
+        "bytes": 12934
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodaudit04.zip",
+        "sha256": "367aac9928a66f8ee1ee9b0ee28c6fe10681dd10675b0e3d633bbedca70528cb",
+        "bytes": 3432288
+      },
+      "original_files": 24,
+      "original_bytes": 25589552
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-entry-prodentry01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodentry01.proof.json",
+        "sha256": "caf33a84346e9d503cfa6dd3bdbcfa5088b1187f2c6b9ad941a34978ebffd613",
+        "bytes": 17535
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodentry01.zip",
+        "sha256": "eacec36f31536dc901753ac958906bbb7ac58ef11b0d48ba7451e89ec73455b0",
+        "bytes": 10079234
+      },
+      "original_files": 34,
+      "original_bytes": 38258731
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-entry-prodpipe02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodpipe02.proof.json",
+        "sha256": "db83aad711a83464bd9104b497d19210e268c6bff7adf1bf9c055a278a4b3854",
+        "bytes": 13062
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodpipe02.zip",
+        "sha256": "ce1883728735b592805c193e709b8886dc80b2097ce579185940ab456c001db6",
+        "bytes": 123203
+      },
+      "original_files": 24,
+      "original_bytes": 928626
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-entry-prodpipe03",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodpipe03.proof.json",
+        "sha256": "016244e1ea66699b25e3143a35f4efde03853efc13619d5e79edcec4f47d30b3",
+        "bytes": 18282
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodpipe03.zip",
+        "sha256": "16bbfbcdf68430a1637b3d31d440b6172fbe8ebdb7214ba12b2acd779c78fa04",
+        "bytes": 5118481
+      },
+      "original_files": 33,
+      "original_bytes": 31622889
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-entry-prodpipe04",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodpipe04.proof.json",
+        "sha256": "77d0edb0ebd64e8bf8df966dc452b5fa63f9706595ce9f3723898b54a5e02368",
+        "bytes": 14043
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-entry-prodpipe04.zip",
+        "sha256": "bf60f410a9f930e023594224f70fa9303c39ce2bb43f7c0da9ca2ef86c3043fe",
+        "bytes": 5115469
+      },
+      "original_files": 26,
+      "original_bytes": 31612830
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-production-prodclosed01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-prodclosed01.proof.json",
+        "sha256": "797255fa9fd377035c6058b1e0e53c610bacc1f9b87e4df66dedbad4f2b7d7b7",
+        "bytes": 13874
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-production-prodclosed01.zip",
+        "sha256": "0c24f64bf784db47d571189a461740182ce7347bc716fd255a033e48f66362ee",
+        "bytes": 135870
+      },
+      "original_files": 26,
+      "original_bytes": 1163612
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-session-baseline-sessbase01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-session-baseline-sessbase01.proof.json",
+        "sha256": "fc28c77913adab58ad8877f25df206c000f6f67fabf32ab6a9eb839b3390a9cb",
+        "bytes": 19267
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-session-baseline-sessbase01.zip",
+        "sha256": "03e436b6e60c796808bbbaf28e8f3086da36918dda97960049c7508e5cbe798f",
+        "bytes": 4037636
+      },
+      "original_files": 36,
+      "original_bytes": 25156482
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-stop-diagnosis-build-diag02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-stop-diagnosis-build-diag02.proof.json",
+        "sha256": "d862758db9dbf0618eb45e9d78d58ff5f8ea55ac36d86e4b21c0d76e758c1325",
+        "bytes": 11893
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-stop-diagnosis-build-diag02.zip",
+        "sha256": "c2a8b2f2cf289bc007d873b83246e6a98ee664cc781c8cbdd9f204773503789c",
+        "bytes": 1557509
+      },
+      "original_files": 22,
+      "original_bytes": 11389716
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\prelive-tap-tools-release-tap05",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-tap-tools-release-tap05.proof.json",
+        "sha256": "532b2e9f758407d4660400580d58186060fcda2fbc9ba6a33ebfa4cf262d8ad7",
+        "bytes": 33002
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-prelive-tap-tools-release-tap05.zip",
+        "sha256": "1b346d8cbf906e98fae6568fff62bd933202990647799c191546896be3e2ae34",
+        "bytes": 9662188
+      },
+      "original_files": 60,
+      "original_bytes": 74332195
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\windows-qualification-release-01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-01.proof.json",
+        "sha256": "b1c6ace8e318f0fdde24d76e8a60b551c1f2edf54016d74cd1e9a693765895e6",
+        "bytes": 13414
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-01.zip",
+        "sha256": "9f1d470c8910e97fbc92e8b8bd39407e7d1ea259839718c9dd0f03015342d9cc",
+        "bytes": 116437
+      },
+      "original_files": 25,
+      "original_bytes": 768034
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\windows-qualification-release-02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-02.proof.json",
+        "sha256": "6761f092caffaf76b478d09427b865b661630adaee1d7498d6ad6c6298df9e72",
+        "bytes": 14387
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-02.zip",
+        "sha256": "d6f3b5d6b203594f8fee58ad469f90b95350afe4036782e4c28956c7ef7c60fa",
+        "bytes": 1812495
+      },
+      "original_files": 27,
+      "original_bytes": 12764139
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\windows-qualification-release-reader01",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-reader01.proof.json",
+        "sha256": "4412f9f33ffdb3b8f01e52671263e7addbda4f3b1083b580befa9d673b4cab93",
+        "bytes": 18114
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-reader01.zip",
+        "sha256": "617ea8c4bff85a2c8d2b0d58d62debf7fcc55be712de0ff21556e236420006fe",
+        "bytes": 3733520
+      },
+      "original_files": 34,
+      "original_bytes": 26537809
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\windows-qualification-release-reader02",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-reader02.proof.json",
+        "sha256": "f69ec80732053a8ee04f00527a8c1e864d878195e68834c06132e016a58327c5",
+        "bytes": 19686
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-reader02.zip",
+        "sha256": "4a564c42f461da136745d70d66a25112ed3230e313534de813bc5463671c3107",
+        "bytes": 3512530
+      },
+      "original_files": 37,
+      "original_bytes": 26057491
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\worktrees\\PAS-windows-readiness-20261007\\out\\windows-qualification-release-reader03",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-reader03.proof.json",
+        "sha256": "3ea2f35214a7cab6a1478a7d386c452238959e5389dce2f0a653427b47b4ed39",
+        "bytes": 21558
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\retained-windows-qualification-release-reader03.zip",
+        "sha256": "1293e117c28489311a3a3bd1695edd72c9bb5c9c0abfef8d9dcc9ffc09142177",
+        "bytes": 4484963
+      },
+      "original_files": 41,
+      "original_bytes": 31947795
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-main38",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main38.proof.json",
+        "sha256": "91de650c9b695036eb98acfc8a0a23b02f48df8aee88149318ec476a163f0355",
+        "bytes": 11039
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main38.zip",
+        "sha256": "21e2a20b38de3044a82924e8738422769e6fb3e3c57c68634b811ec952c6535a",
+        "bytes": 6115401
+      },
+      "original_files": 24,
+      "original_bytes": 43311750
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-main39",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main39.proof.json",
+        "sha256": "e50175f6814145c73cae2dea029944789a6ec859608d8017b9efc4ea9a91594e",
+        "bytes": 11039
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main39.zip",
+        "sha256": "fb302ea44b4b68ab2989c3198ea24c992ebf1bef65ccc0984f36ae16c8622aa4",
+        "bytes": 6120554
+      },
+      "original_files": 24,
+      "original_bytes": 43355053
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-main40",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main40.proof.json",
+        "sha256": "9d09944e242e85f75641092cc040d5d85bbb090560166e10f836d1d466f846e0",
+        "bytes": 11039
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main40.zip",
+        "sha256": "34b50c611134e4ac6ddfa707621c7a21d54bc92666c6907e6e0bb1ed5fb94ac8",
+        "bytes": 6120551
+      },
+      "original_files": 24,
+      "original_bytes": 43355054
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-main41",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main41.proof.json",
+        "sha256": "7e829694aa792de9df6dc0cfc6abaf7a99453982309e4df21b9f9f0a0bb22108",
+        "bytes": 11039
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main41.zip",
+        "sha256": "9c39bd32b2ed73c2f7f53a21fc8256dadcd0cd947216df1bfca8c0faac7abf6c",
+        "bytes": 6120553
+      },
+      "original_files": 24,
+      "original_bytes": 43355055
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-main42",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main42.proof.json",
+        "sha256": "40d26b4216a342d5dc583933893500ccf04b4c2384788db55832eaf7dbcb6347",
+        "bytes": 11039
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main42.zip",
+        "sha256": "a6ec9cb2f8f50c9eea2211ca6a5fc76ee5ec4eb721bf24009142067bbc398955",
+        "bytes": 6283196
+      },
+      "original_files": 24,
+      "original_bytes": 44534230
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-main44",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main44.proof.json",
+        "sha256": "8fcaaa12e6a3af2d6a818cc75d61cd6521311b6876bd6efe367f3237fe023bbe",
+        "bytes": 11039
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-narrow-reader-main44.zip",
+        "sha256": "22d3216365dcf7b898bd99389fb3ad06da13286cd2ef0e74f5793e83d519f6fb",
+        "bytes": 6380310
+      },
+      "original_files": 24,
+      "original_bytes": 45257516
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main33",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main33.proof.json",
+        "sha256": "0e682e3f60531595b1c7a5f14a3cec225f5ceba5bb87f2aa91d6842ddf1b0595",
+        "bytes": 8685
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main33.zip",
+        "sha256": "e971bdd9049644da5c32c2e537f8c31d510a49af748871a78e59c95824445b1b",
+        "bytes": 167154
+      },
+      "original_files": 19,
+      "original_bytes": 878239
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main34",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main34.proof.json",
+        "sha256": "4db86f68ba3ef51593ce3a4966af32a84b0065a87451c06a2b946caed760eb34",
+        "bytes": 11266
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main34.zip",
+        "sha256": "8ca88dea755463f862f28e1d0d208fdab34499155e82957174bac63d72449947",
+        "bytes": 4043149
+      },
+      "original_files": 25,
+      "original_bytes": 26504070
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main35",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main35.proof.json",
+        "sha256": "774f1ca206dc534d1938b7cdc0cec3b507b890e412e63b2abe3dc313f9895746",
+        "bytes": 11266
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main35.zip",
+        "sha256": "8b8d7f18b01658e5db562a32e1e9aa98fd25cdb6d4f28cb7ee42eb59d69b04ca",
+        "bytes": 4043155
+      },
+      "original_files": 25,
+      "original_bytes": 26504069
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main38",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main38.proof.json",
+        "sha256": "b38f988725742cf9e709d6e9fd90bbab9308b356ebf89271ca8371ce0349dda1",
+        "bytes": 12259
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main38.zip",
+        "sha256": "104752e5770cc69992953573e2b22697694763d113a2bec67259aab5ed1fd460",
+        "bytes": 5049843
+      },
+      "original_files": 27,
+      "original_bytes": 33285171
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main39",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main39.proof.json",
+        "sha256": "eab29e8e679544227c4dc87d9e09635fadd5d81821a0d0dbcb4b8651267781be",
+        "bytes": 13230
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main39.zip",
+        "sha256": "db57ce46341ba23a3881c6b05b9f58bd6bf4bab7d4ae4ad3415dc21cc73c2fc7",
+        "bytes": 5996206
+      },
+      "original_files": 29,
+      "original_bytes": 39607500
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main40",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main40.proof.json",
+        "sha256": "2952111b5b89904f0227abb3ad58579c700ea6d2e44711b93729c99d76e42ebc",
+        "bytes": 13230
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main40.zip",
+        "sha256": "6757d35c3579bcc0cfa6e725304e690c9be2ba213e326913e9aaeafd91bdb63a",
+        "bytes": 5995511
+      },
+      "original_files": 29,
+      "original_bytes": 39607706
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main41",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main41.proof.json",
+        "sha256": "9638c3a07cd2022f3d140752e4fadebe14f830bab00fe8d7d903a08afd47f58f",
+        "bytes": 13230
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main41.zip",
+        "sha256": "d860cbf3e42a4d5e514c7fcd5bc4a60b744f73089f13e0f1c3fcdbce6204c595",
+        "bytes": 5995342
+      },
+      "original_files": 29,
+      "original_bytes": 39607750
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main42",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main42.proof.json",
+        "sha256": "704fae163b666ee2030e24584bc65bd89f4b038b058da26a5bd9d3c7c7f914c2",
+        "bytes": 13230
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main42.zip",
+        "sha256": "603ed8452ec4561a7578d1801a65d451a95adfb4c344f0a73bf4de7de1c5bb0d",
+        "bytes": 6003050
+      },
+      "original_files": 29,
+      "original_bytes": 39713168
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main44",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main44.proof.json",
+        "sha256": "fb2fc67a33f6b13df0dbc36c7dd853c66d09caccd15a22e6e7dab47daaf24806",
+        "bytes": 13230
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-noise-repair-main44.zip",
+        "sha256": "7b9f9383530fe3a6891fc3ec61f73ad3185b0280536053554ad30c264454dbbb",
+        "bytes": 6007978
+      },
+      "original_files": 29,
+      "original_bytes": 39754616
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-consumer-phase-probe-main37",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-consumer-phase-probe-main37.proof.json",
+        "sha256": "3d0fb78b8e72e44fed307955386ffa4f7536b02055c1ac4c73e2b3b016a2a484",
+        "bytes": 11541
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-consumer-phase-probe-main37.zip",
+        "sha256": "b5201f8cf28af63fe6e3e3f048e032b36d4a9de8ed14127ea82bed40c7ce9f46",
+        "bytes": 4962073
+      },
+      "original_files": 25,
+      "original_bytes": 35190129
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-consumer-phase-probe-main43",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-consumer-phase-probe-main43.proof.json",
+        "sha256": "78229e04089581e8fe1bc64adc3ba96dad85a72080e30507fae60fe59a133a15",
+        "bytes": 11541
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-consumer-phase-probe-main43.zip",
+        "sha256": "f742c1fad8a5b2df813321e6e68699d75b89b6193b88a137242fe2ab569df7a9",
+        "bytes": 5057949
+      },
+      "original_files": 25,
+      "original_bytes": 35939701
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-release-main08",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-pre-emulator-release-main08.proof.json",
+        "sha256": "9356bc19d9d1e329cc2a0a2e8026b7165d08a489071ebe6f0c3fa2eca70a59e4",
+        "bytes": 10079
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-pre-emulator-release-main08.zip",
+        "sha256": "e2f7c999a2f34e5a0b83305936bb069e958c0373642f71fb5c1b5fdcf884455c",
+        "bytes": 126167
+      },
+      "original_files": 22,
+      "original_bytes": 973499
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-debug-main08",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-pre-emulator-debug-main08.proof.json",
+        "sha256": "bf0c6f3859dda8b8e46273a2c5fd6c4202f5b24bb863e1dee6f34b770a48dc80",
+        "bytes": 10031
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-pre-emulator-debug-main08.zip",
+        "sha256": "246ee338a5f5cc7d927aa28ebde54d8a7e856c804dd1e26e71edb9377d1f578d",
+        "bytes": 125040
+      },
+      "original_files": 22,
+      "original_bytes": 983289
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-asan-main08",
+      "proof": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-pre-emulator-asan-main08.proof.json",
+        "sha256": "59d2131dd126325d4922e9a6dd2f89509417298059cbc825fe81aeaebd928a3e",
+        "bytes": 22208
+      },
+      "archive": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\flat-prelive-pre-emulator-asan-main08.zip",
+        "sha256": "27327f99d46a1bcb3456b7ef946952683a1d8f130816b2744df657c5c1036d48",
+        "bytes": 2754989
+      },
+      "original_files": 52,
+      "original_bytes": 11579078
+    }
+  ],
+  "file_manifest": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\original-file-manifest.json",
+    "sha256": "8e7113498a5cdc5861eb964235b29a98a464495898e64e97e5abced759c074d2",
+    "bytes": 1366722
+  },
+  "plan": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\archive-inactive-compiler-main45-manifest.json",
+    "sha256": "a8bb3ce1254b4b718d2ebd0810a0355ca371a0c47101a1c6ecb9e9fe3485e5ae",
+    "bytes": 978270
+  },
+  "schema": "pas.inactive-compiler-relocation-index.v1",
+  "result": {
+    "sha256": "6e6bb28d8b73246f222c94d4490dab5f21e6021c54919488f2fb42a619c1f099",
+    "bytes": 67831,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main45\\result.json"
+  },
+  "live_ready": false,
+  "main32_release_preserved": true,
+  "compiler_payload_bytes_removed": 2139242076,
+  "restore_required_for_original_compiler_paths": true,
+  "device_operations": 0,
+  "qualification_issued": false,
+  "create_new_thread": false,
+  "all_entry_SHAs_readback_verified": true,
+  "root_count": 71,
+  "archive_bytes": 356484970,
+  "cost_ready": false,
+  "file_count": 2593,
+  "original_bytes": 2495727046,
+  "observed_retained_bytes_difference": 1552509702,
+  "observed_difference_includes_concurrent_main45_build_and_source_snapshot_outputs": true,
+  "all_source_snapshot_raw_reports_and_corpus_roots_preserved": true
+}

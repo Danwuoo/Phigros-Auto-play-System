@@ -6,11 +6,19 @@
 // historical; these checks bind fresh objects/libraries and cold controls only.
 namespace pas::preflight_graph::component_delta {
 inline J targets(){return J::array({"current_chain","consumer_priority_controls","worker_affinity_controls","producer_wait_tests","pas_core","own_bridge","owner_checkpoint_tests","owner_expiry_tests","component_mask_tests","uniform_fnv_tests"});}
+inline J build_groups(){return J::array({J{{"targets",J::array({"pas_core"})}},J{{"targets",J::array({"own_bridge","current_chain","consumer_priority_controls","worker_affinity_controls","producer_wait_tests"})}},J{{"targets",J::array({"owner_checkpoint_tests","owner_expiry_tests","component_mask_tests","uniform_fnv_tests"})}}});}
 inline J units(){
     J out=J::array();for(const auto* name:{"core","config","analysis","adb","journal","touch_evidence","preview","game","game_clip_replay","game_cold_pipeline","game_cold_corpus","game_motion","game_tracking","game_tracking_methods","game_tracking_analysis","game_tracking_shadow","game_dataset","game_dataset_tools","game_session","session_archive","session_pixel_clips","session_recording"})out.push_back("src/"+std::string(name)+".cpp");
     for(const auto* path:{"research/prelive_current/own_bridge.cpp","research/bvi_owner_cooperative/extract.cpp","research/prelive_current/chain.cpp","research/prelive_current/tests/consumer_priority_tests.cpp","research/prelive_current/tests/worker_affinity_tests.cpp","research/prelive_current/tests/producer_wait_tests.cpp","research/prelive_current/tests/owner_checkpoint_tests.cpp","research/prelive_current/tests/owner_expiry_tests.cpp","research/prelive_current/tests/component_mask_tests.cpp","research/bvi_owner_cooperative/cold_verification/main.cpp"})out.push_back(path);return out;
 }
 inline bool pin_equal(const J& a,const J& b){return a.is_object()&&b.is_object()&&same_path_text(a.at("path").get<std::string>(),b.at("path").get<std::string>())&&a.at("bytes")==b.at("bytes")&&a.at("sha256")==b.at("sha256");}
+inline void build_declaration(const J& delta,const J& plan){
+    w::require(plan.at("build_target_groups")==build_groups()&&delta.at("build_target_groups")==build_groups(),"exact three ordered CPU target groups");
+    for(const auto* field:{"build_receipts","build_input_closures","build_processes"})w::require(delta.at(field).is_array()&&delta.at(field).size()==3,"exact three CPU native build evidence projections");
+    const auto projection=[](const J& process){w::require(process.is_object()&&process.size()==8,"eight CPU native process evidence pins");for(const auto* field:{"specification","input_closure","result","verification","freeze","state","contract","command"})w::require(process.contains(field)&&process.at(field).is_object(),"complete CPU native process evidence projection");};
+    projection(delta.at("configure_process"));w::require(pin_equal(delta.at("configure_process").at("verification"),delta.at("configure_receipt"))&&pin_equal(delta.at("configure_process").at("input_closure"),delta.at("configure_input_closure")),"CPU configure verification/closure projection");
+    std::set<std::string> receipts;for(std::size_t index=0;index<3;++index){const auto& process=delta.at("build_processes")[index];projection(process);const auto& receipt=delta.at("build_receipts")[index];w::require(receipts.insert(fs::path(receipt.at("path").get<std::string>()).generic_string()).second&&pin_equal(process.at("verification"),receipt)&&pin_equal(process.at("input_closure"),delta.at("build_input_closures")[index]),"unique ordered CPU build verification/closure projection");}
+}
 inline bool formal_path(std::string_view path){return path.starts_with("src/")||path.starts_with("include/")||path.starts_with("apps/pas/")||path=="CMakeLists.txt";}
 inline bool allowed_formal_path(std::string_view path){return path=="src/game.cpp"||path=="src/manual_session.cpp"||path=="src/candidate_admission.cpp"||path=="src/candidate_receipts.cpp"||path=="include/pas/candidate_receipts.hpp"||path=="include/pas/candidate_admission.hpp"||path=="apps/pas/main.cpp"||path=="CMakeLists.txt";}
 inline bool allowed_change(std::string_view path){
@@ -28,7 +36,7 @@ inline void declaration(const J& delta,const J& plan,const std::map<std::string,
     w::require(delta.at("component_cpu_delta")==true&&delta.at("component_cpu_delta").is_boolean()&&delta.at("formal_rebuilt")==true&&delta.at("formal_rebuilt").is_boolean()&&
         plan.at("component_cpu_delta")==true&&plan.at("component_cpu_delta").is_boolean()&&plan.at("formal_rebuilt")==true&&plan.at("formal_rebuilt").is_boolean()&&
         !delta.value("maintenance_only_amendment",false)&&plan.at("translation_units").is_number_integer()&&plan.at("translation_units")==32&&plan.at("delta_targets")==targets()&&plan.at("translation_unit_sources")==units()&&
-        plan.at("rebuilt_static_targets")==J::array({"own_bridge","pas_core"}),"exact fresh32/two-library CPU delta declaration");
+        plan.at("rebuilt_static_targets")==J::array({"own_bridge","pas_core"})&&plan.at("build_target_groups")==build_groups()&&delta.at("build_target_groups")==build_groups(),"exact fresh32/two-library/three-stage CPU delta declaration");
     for(const auto& path:units())w::require(current.contains(path.get<std::string>()),"every exact fresh TU must be present in compiled source manifest");
     const auto changed=strings(delta.at("changed_paths"),"unique declared CPU changed paths"),declared=strings(delta.at("formal_changed_paths"),"unique declared formal changes");
     for(const auto& path:changed)w::require(allowed_change(path),"change outside exact CPU/cold maintenance scope");
@@ -65,6 +73,15 @@ inline std::vector<std::string> link_tokens(std::string_view line){
     std::vector<std::string> out;std::string token;bool quoted=false;
     for(const char c:line){if(c=='"')quoted=!quoted;else if((c==' '||c=='\t')&&!quoted){if(!token.empty()){out.push_back(std::move(token));token.clear();}}else token+=c;}
     w::require(!quoted,"balanced quotes in actual linker library arguments");if(!token.empty())out.push_back(std::move(token));return out;
+}
+inline fs::path build_command(const J& spec,std::string text,const fs::path& build,const J& targets,const fs::path& command){
+    w::require(text.size()<=32768&&fs::path(spec.at("exe").get<std::string>()).filename()=="cmd.exe"&&spec.at("argv").is_array()&&spec.at("argv").size()==4&&spec.at("argv")[0]=="/d"&&spec.at("argv")[1]=="/s"&&spec.at("argv")[2]=="/c"&&same_path_text(spec.at("argv")[3].get<std::string>(),command),"existing CPU cmd adapter exact launch command");
+    std::istringstream lines(text);std::string line;std::vector<std::string> actual;std::size_t count=0;
+    while(std::getline(lines,line)){if(!line.empty()&&line.back()=='\r')line.pop_back();if(line.empty()||line.front()!='"')continue;const auto tokens=link_tokens(line);if(tokens.empty()||fs::path(tokens.front()).filename()!="cmake.exe")continue;
+        ++count;actual=tokens;std::string quoted;for(const auto& token:tokens){if(!quoted.empty())quoted+=' ';quoted+='"'+token+'"';}w::require(quoted==line,"literal fully quoted CMake argv without shell suffix");}
+    w::require(count==1&&!actual.empty()&&fs::path(actual.front()).is_absolute(),"one absolute actual CPU CMake launch line");
+    std::vector<std::string> expected={actual.front(),"--build",build.string(),"--parallel","4","--target"};for(const auto& target:targets)expected.push_back(target.get<std::string>());
+    w::require(actual==expected,"exact CPU build root/parallel4/ordered target group argv");return fs::path(actual.front());
 }
 inline Graph graph(std::string text,const fs::path& workspace,const J& delta){
     text=normalize_ninja(std::move(text));w::require(text.size()<=4*w::MiB,"bounded CPU Ninja graph");Graph out;

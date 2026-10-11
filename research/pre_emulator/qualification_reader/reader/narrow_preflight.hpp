@@ -192,8 +192,8 @@ class Preflight final {
         w::require(plan.at("schema")=="pas.narrow-noise-repair-core-build-plan.v1"&&plan.at("source_commit")==execution_&&plan.at("base_source_commit")==base_commit,"narrow plan execution/base source join");
         if(component_cpu)component_delta::declaration(delta_,plan,current,base_sources_);
         else{
-            w::require(!plan.value("component_cpu_delta",false)&&!delta_.value("formal_rebuilt",false),"legacy unchanged-formal branch cannot claim CPU rebuild");
-            for(const auto* field:{"formal_changed_paths","rebuilt_static_inputs","linked_static_inputs","component_controls"})w::require(!delta_.contains(field),"CPU-only fields cannot enter unchanged-formal branch");
+            w::require(!plan.value("component_cpu_delta",false)&&!delta_.value("formal_rebuilt",false)&&!plan.contains("build_target_groups"),"legacy unchanged-formal branch cannot claim CPU rebuild or staged CPU groups");
+            for(const auto* field:{"formal_changed_paths","rebuilt_static_inputs","linked_static_inputs","component_controls","build_target_groups","build_processes","configure_process"})w::require(!delta_.contains(field),"CPU-only fields cannot enter unchanged-formal branch");
             for(const auto& [path,old]:base_sources_)if(path.starts_with("src/")||path.starts_with("include/")||path=="CMakeLists.txt"){w::require(current.contains(path)&&same_pin(current.at(path),old),"formal source changed from original main32");r_.bound(current.at(path));}
         }
         const bool active_tail=component_cpu||plan.at("delta_targets")==J::array({"current_chain","consumer_priority_controls","worker_affinity_controls","producer_wait_tests"});
@@ -239,8 +239,19 @@ class Preflight final {
             const auto graph=component_delta::graph(ninja_text.str(),root_,delta_);component_delta::objects(delta_,graph);
             const auto require_input=[&](const Native& process,const J& pin){w::require(process.inputs.contains(key(pin))&&same_pin(process.inputs.at(key(pin)),pin),"exact fresh CPU source/plan/library/object native input-closure join");};
             const auto source_plan_join=[&](const Native& process){require_input(process,compiled_manifest_pin);require_input(process,compiled_core_plan_pin);for(const auto& [path,pin]:compiled_sources){(void)path;require_input(process,pin);}};
-            w::require(build_processes.size()==1&&delta_.at("build_input_closures").size()==1&&same_pin(configure_process.evidence.at("input_closure"),delta_.at("configure_input_closure"))&&same_pin(build_processes[0].evidence.at("input_closure"),delta_.at("build_input_closures")[0]),"exact CPU configure/build native closure projections");
-            source_plan_join(configure_process);source_plan_join(build_processes[0]);require_input(build_processes[0],ninja);require_input(build_processes[0],cache);
+            component_delta::build_declaration(delta_,plan);
+            const auto build_groups=component_delta::build_groups();
+            const auto evidence_join=[&](const Native& process,const J& projection){for(const auto* field:{"specification","input_closure","result","verification","freeze","state","contract","command"})w::require(same_pin(process.evidence.at(field),projection.at(field)),"exact actual CPU Native8 evidence projection");};
+            evidence_join(configure_process,delta_.at("configure_process"));source_plan_join(configure_process);
+            std::set<std::string> prior_targets;std::vector<J> prior_proofs;for(const auto& pin:delta_.at("configure_process"))prior_proofs.push_back(pin);
+            for(std::size_t index=0;index<3;++index){const auto& process=build_processes[index];evidence_join(process,delta_.at("build_processes")[index]);source_plan_join(process);require_input(process,ninja);require_input(process,cache);
+                const auto stage=process.spec.at("stage").get<std::string>();const fs::path command=root_/"out/windows-handoff"/(stage+"-inputs")/"build.cmd";const auto command_key=command.generic_string();
+                w::require(process.inputs.contains(command_key),"actual CPU build.cmd frozen before launch");const auto command_path=r_.bound(process.inputs.at(command_key),32768);std::ifstream command_file(command_path,std::ios::binary);std::ostringstream command_text;command_text<<command_file.rdbuf();w::require(bool(command_file)&&command_text.str().size()==process.inputs.at(command_key).at("bytes"),"complete bounded CPU build command read");
+                const auto cmake=component_delta::build_command(process.spec,command_text.str(),fs::path(delta_.at("build_root").get<std::string>()),build_groups[index].at("targets"),command);w::require(process.inputs.contains(cmake.generic_string()),"actual CPU CMake image frozen before launch");r_.bound(process.inputs.at(cmake.generic_string()));
+                for(const auto& pin:prior_proofs)require_input(process,pin);
+                for(const auto& pin:delta_.at("compiled_outputs")){const fs::path path=pin.at("path").get<std::string>();const auto name=path.filename().string(),relative=path.lexically_relative(fs::path(delta_.at("build_root").get<std::string>())).generic_string();for(const auto& target:prior_targets)if((path.extension()==".obj"&&relative.starts_with("CMakeFiles/"+target+".dir/"))||name==target+".lib"||name==target+".exe"){require_input(process,pin);break;}}
+                for(const auto& target:build_groups[index].at("targets"))prior_targets.insert(target.get<std::string>());for(const auto& pin:delta_.at("build_processes")[index])prior_proofs.push_back(pin);
+            }
             w::require(delta_.at("component_controls").is_array()&&delta_.at("component_controls").size()==4,"all four CPU semantic control native receipts");std::set<std::string> control_targets;
             for(const auto& row:delta_.at("component_controls")){
                 w::require(row.is_object()&&row.size()==7,"exact CPU control receipt projection");const auto target=row.at("target").get<std::string>();w::require(control_targets.insert(target).second,"duplicate CPU control role");

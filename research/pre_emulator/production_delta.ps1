@@ -1,6 +1,6 @@
 param([Parameter(Mandatory)][string]$ProductionBuildBinding,
       [Parameter(Mandatory)][string]$NoiseRepairBinding,
-      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main45')
+      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main46')
 . (Join-Path $PSScriptRoot 'common.ps1')
 # Keep the complete existing receipt/helper set in this script's scope. A
 # dot-source only inside LoadBuilds would lose its local helpers on return.
@@ -75,8 +75,17 @@ function VerifyProductionReceipt($receipt,$closure,$required){
 $compileInputs=@($production.source_manifest,$production.dependency_manifest,$production.core_build_plan,$noise.compiler_environment)+@($manifest.files)+@($dependencies.files)
 AssertCurrentProduction
 $null=VerifyProductionReceipt $production.configure_receipt $production.configure_input_closure $compileInputs
-NoiseRepairRequire (@($production.build_receipts).Count -gt 0 -and @($production.build_receipts).Count -eq @($production.build_input_closures).Count) 'nonempty complete fresh production build receipts/closures'
-for($index=0;$index -lt @($production.build_receipts).Count;$index++){$null=VerifyProductionReceipt $production.build_receipts[$index] $production.build_input_closures[$index] $compileInputs}
+$expectedBuildGroups=@(@{id='core';targets=@('pas_core')},@{id='action';targets=@('pas_current_candidate')},@{id='emulator';targets=@('pas_emulator')},@{id='bench';targets=@('pas_bench')},@{id='entry';targets=@('pas','candidate_admission_controls','candidate_receipt_collector_controls','production_entry_controls')},@{id='pipeline';targets=@('score_only_controls','production_pipeline_cold','production_pipeline_audit')})
+NoiseRepairRequire (@($production.build_receipts).Count -eq 6 -and @($production.build_input_closures).Count -eq 6 -and @($production.build_target_groups).Count -eq 6 -and @($core.build_target_groups).Count -eq 6) 'exact six complete bounded fresh production build receipts/closures'
+for($index=0;$index -lt 6;$index++){
+ $expected=$expectedBuildGroups[$index]
+ foreach($groups in @($production.build_target_groups,$core.build_target_groups)){
+  NoiseRepairRequire ($groups[$index].id -ceq $expected.id -and @($groups[$index].targets).Count -eq @($expected.targets).Count -and @(Compare-Object (@($groups[$index].targets)|Sort-Object) (@($expected.targets)|Sort-Object)).Count -eq 0) 'exact ordered six production target groups'
+ }
+ $null=VerifyProductionReceipt $production.build_receipts[$index] $production.build_input_closures[$index] $compileInputs
+ $proof=NoiseRepairReadBinding $production.build_receipts[$index]
+ NoiseRepairRequire ($proof.stage -ceq ('build-production-delta-'+$Attempt+'-'+$expected.id)) 'actual ordered bounded production stage join'
+}
 $buildProofs=@($production.configure_receipt,$production.configure_input_closure)+@($production.build_receipts)+@($production.build_input_closures)
 $expectedControls=@('candidate_admission_controls','candidate_receipt_collector_controls','production_entry_controls','score_only_invalid','score_only_tap','score_only_hold','score_only_dense')
 NoiseRepairRequire (@($production.controls).Count -eq $expectedControls.Count -and @(Compare-Object (@($production.controls.target)|Sort-Object) ($expectedControls|Sort-Object)).Count -eq 0) 'exact affected production admission/entry/None controls'

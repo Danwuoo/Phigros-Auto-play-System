@@ -270,5 +270,10 @@
     "sha256": "fecd764515969c519dce4a8689e6a91cbf30bc6eb9abdf9db1547fd5add8c6c4",
     "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-noise-raw-archive44\\proof.json",
     "bytes": 5395
+  },
+  "lossless_compiler_relocation": {
+    "sha256": "90f85a7044c72217704b2221abf066ece160ec005f7e26fa6da53dfe970d0181",
+    "bytes": 67991,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\research\\live-readiness-20261007\\INACTIVE_COMPILER_RELOCATION_20261011.json"
   }
 }

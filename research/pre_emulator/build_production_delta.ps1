@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main45',[Parameter(Mandatory)][string]$NoiseRepairBinding)
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main46',[Parameter(Mandatory)][string]$NoiseRepairBinding)
 . (Join-Path $PSScriptRoot 'common.ps1')
 $script:maintenancePath=$PSCommandPath
 LoadBuilds 'main32' $NoiseRepairBinding
@@ -14,7 +14,8 @@ $manifest=Get-Content -LiteralPath $sourceManifest.path -Raw|ConvertFrom-Json
 $dependencies=Get-Content -LiteralPath $dependencyManifest.path -Raw|ConvertFrom-Json
 foreach($entry in @($manifest.files)+@($dependencies.files)){CheckEntry $entry}
 $corePlan=Join-Path $artifact 'fresh-core-build-plan.json'
-NewJson $corePlan @{schema='pas.fresh-core-build-plan.v1';source_commit=$commit;configuration='release';translation_units=22;old_donor_objects_used=$false;component_cpu_delta=$true;formal_changed_paths=$candidate.formal_changed_paths;compiler_snapshot=(Binding $tool);device_operations=0;live_ready=$false;scope='Fresh production binary and affected controls; no repeat of original75/prod9'}
+$buildGroups=@(@{id='core';targets=@('pas_core')},@{id='action';targets=@('pas_current_candidate')},@{id='emulator';targets=@('pas_emulator')},@{id='bench';targets=@('pas_bench')},@{id='entry';targets=@('pas','candidate_admission_controls','candidate_receipt_collector_controls','production_entry_controls')},@{id='pipeline';targets=@('score_only_controls','production_pipeline_cold','production_pipeline_audit')})
+NewJson $corePlan @{schema='pas.fresh-core-build-plan.v1';source_commit=$commit;configuration='release';translation_units=22;old_donor_objects_used=$false;component_cpu_delta=$true;formal_changed_paths=$candidate.formal_changed_paths;compiler_snapshot=(Binding $tool);build_target_groups=$buildGroups;device_operations=0;live_ready=$false;scope='Fresh production binary and affected controls; six bounded build groups retain original held-identity-cap64; no repeat of original75/prod9'}
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1'
 $toolchain='C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake'
 $guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
@@ -38,12 +39,17 @@ $configureClosure=ProductionClosure $configure
 $ninja=(Get-Content -LiteralPath (Join-Path $root 'build.ninja') -Raw).Replace('\','/')
 $coreRows=@([regex]::Matches($ninja,'(?m)^build (production/CMakeFiles/pas_core[.]dir/[^\r\n:]+[.]obj): CXX_COMPILER'))
 if($coreRows.Count -ne 22 -or $ninja -match 'IMPORTED.*pas_core'){throw 'fresh complete production formal22 graph required'}
-$targets=@('pas','candidate_admission_controls','candidate_receipt_collector_controls','production_entry_controls','score_only_controls','production_pipeline_cold','production_pipeline_audit')
-$stage='build-production-delta-'+$Attempt
-AssertProductionSource
-Stage $stage $adapter @{ReceiptRepo=$repo;SourceRoot=$PSScriptRoot;BuildRoot=$root;StageName=$stage;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration='Release';Inputs=@($stageInputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja'));Options=@('--target')+$targets}
-$buildReceipt=Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json'))
-$buildClosure=ProductionClosure $stage
+# Compiler and link children count towards the same original held-identity cap.
+# Separate owned transactions retain every actual native/source proof.
+$buildReceipts=@();$buildClosures=@()
+foreach($group in $buildGroups){
+ $stage='build-production-delta-'+$Attempt+'-'+$group.id
+ AssertProductionSource
+ $priorProducts=@(Get-ChildItem -LiteralPath $root -File -Recurse|Where-Object {[IO.Path]::GetExtension($_.FullName) -cin @('.obj','.lib','.exe') -and $_.FullName.Replace('\','/') -cnotmatch '/(?:CompilerIdCXX/|ShowIncludes/)'}|Select-Object -ExpandProperty FullName)
+ Stage $stage $adapter @{ReceiptRepo=$repo;SourceRoot=$PSScriptRoot;BuildRoot=$root;StageName=$stage;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Build';Configuration='Release';Inputs=@($stageInputs+(Join-Path $root 'CMakeCache.txt')+(Join-Path $root 'build.ninja')+$buildReceipts.path+$buildClosures.path+$priorProducts);Options=@('--target')+$group.targets}
+ $buildReceipts+=@(Binding (Join-Path $out ($stage+'/'+$stage+'-verification.json')))
+ $buildClosures+=@(ProductionClosure $stage)
+}
 $files=@(Get-ChildItem -LiteralPath $root -File -Recurse|ForEach-Object {Binding $_.FullName})
 $builtObjects=@($files|Where-Object {[IO.Path]::GetExtension($_.path) -ceq '.obj' -and $_.path.Replace('\','/') -notmatch '/(?:CompilerIdCXX/|ShowIncludes/)'} )
 if($builtObjects.Count -ne 52){throw 'exact52 actual fresh production/control TUs required; configured unused suites are not built'}
@@ -65,7 +71,7 @@ foreach($name in @('candidate_admission_controls','candidate_receipt_collector_c
  if($binary.Count -ne 1){throw 'one actual production control executable'}
  $report=Join-Path $artifact ($name+'.json');$test='test-production-delta-'+$Attempt+'-'+$name.Replace('_','-')
  AssertProductionSource
- Native $test $binary[0].path @($report) @($stageInputs+$files.path+$configureReceipt.path+$configureClosure.path+$buildReceipt.path+$buildClosure.path) 900
+ Native $test $binary[0].path @($report) @($stageInputs+$files.path+$configureReceipt.path+$configureClosure.path+$buildReceipts.path+$buildClosures.path) 900
  $value=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
  if($value.failed -ne 0 -or $value.device_operations -ne 0 -or $value.live_ready -ne $false -or $value.qualification_issued -eq $true){throw 'production affected control failure or qualification'}
  if($name -ceq 'candidate_admission_controls' -and ($value.schema -cne 'pas.candidate-admission-controls.v1' -or $value.assertions -ne 82 -or @($value.checks).Count -ne 82 -or $value.pass -ne $true)){throw 'all82 affected candidate receipt/admission controls required'}
@@ -89,7 +95,7 @@ if($score.Count -ne 1){throw 'one actual score-only control executable'}
 foreach($mode in @('invalid','tap','hold','dense')){
  $fixture=Join-Path $artifact ('score-only-'+$mode);$test='test-production-delta-'+$Attempt+'-score-only-'+$mode
  AssertProductionSource
- Native $test $score[0].path @($mode,$fixture) @($stageInputs+$files.path+$configureReceipt.path+$configureClosure.path+$buildReceipt.path+$buildClosure.path) 900
+ Native $test $score[0].path @($mode,$fixture) @($stageInputs+$files.path+$configureReceipt.path+$configureClosure.path+$buildReceipts.path+$buildClosures.path) 900
  $report=Join-Path $fixture 'control-report.json';$value=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
  if($value.schema -cne 'pas.score-only-literal-controls.v1' -or $value.pass -ne $true -or $value.failed -ne 0 -or $value.device_operations -ne 0 -or $value.live_ready -ne $false -or $value.cost_qualification -ne $false -or $value.no_gameplay_files_created -ne $true){throw 'score-only literal lifecycle/None/Stop control failure'}
  if($value.base_component_source_commit -cne $commit -or $value.base_component_source_dirty -ne $false -or $value.actual_manual_translation_unit_sha256 -cne $manualPin[0].sha256 -or $value.whole_candidate_qualification_issued -ne $false -or $value.physical_qualification -ne $false){throw 'score-only current compiled source/manual identity and scope'}
@@ -102,5 +108,5 @@ foreach($mode in @('invalid','tap','hold','dense')){
 }
 AssertProductionSource;foreach($entry in $files){CheckEntry $entry}
 $binding=Join-Path $artifact 'build-binding.json'
-NewJson $binding @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration='release';source_manifest=$sourceManifest;dependency_manifest=$dependencyManifest;core_build_plan=(Binding $corePlan);build_root=$root;files=$files;configure_receipt=$configureReceipt;configure_input_closure=$configureClosure;build_receipts=@($buildReceipt);build_input_closures=@($buildClosure);controls=$controlRows;component_cpu_delta=$true;formal_rebuilt=$true;formal_changed_paths=$candidate.formal_changed_paths;old_configuration_prerequisite_only=$true;noise_repair_build=(Binding ([IO.Path]::GetFullPath($NoiseRepairBinding)));whole_candidate_qualification=$false;qualification_issued=$false;cost_ready=$false;device_operations=0;live_ready=$false}
+NewJson $binding @{schema='pas.cooperative-build.v1';source_commit=$commit;configuration='release';source_manifest=$sourceManifest;dependency_manifest=$dependencyManifest;core_build_plan=(Binding $corePlan);build_root=$root;files=$files;configure_receipt=$configureReceipt;configure_input_closure=$configureClosure;build_receipts=$buildReceipts;build_input_closures=$buildClosures;build_target_groups=$buildGroups;controls=$controlRows;component_cpu_delta=$true;formal_rebuilt=$true;formal_changed_paths=$candidate.formal_changed_paths;old_configuration_prerequisite_only=$true;noise_repair_build=(Binding ([IO.Path]::GetFullPath($NoiseRepairBinding)));whole_candidate_qualification=$false;qualification_issued=$false;cost_ready=$false;device_operations=0;live_ready=$false}
 Write-Output $binding

@@ -125,6 +125,50 @@ function NoiseRepairCheckNativeReceipt($entry){
  NoiseRepairAddInputs @($verification.entries)
  foreach($path in @((Join-Path $stageRoot ($verification.stage+'-result.json')),(Join-Path $stageRoot 'state.json'),(Join-Path $stageRoot 'freeze.json'),(Join-Path $stageRoot 'contract.json'))){NoiseRepairAddInputs @((Binding $path))}
 }
+function NoiseRepairCpuBuildGroups {
+ return @([pscustomobject]@{targets=@('pas_core')},[pscustomobject]@{targets=@('own_bridge','current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests')},[pscustomobject]@{targets=@('owner_checkpoint_tests','owner_expiry_tests','component_mask_tests','uniform_fnv_tests')})
+}
+function NoiseRepairCpuProcessEvidence($process,$receipt,$closure){
+ $names=@('specification','input_closure','result','verification','freeze','state','contract','command')
+ NoiseRepairRequire (@($process.PSObject.Properties.Name).Count -eq 8 -and @(Compare-Object (@($process.PSObject.Properties.Name)|Sort-Object) ($names|Sort-Object)).Count -eq 0) 'exact eight-field CPU native process evidence'
+ NoiseRepairCheckNativeReceipt $receipt
+ $verification=NoiseRepairReadBinding $receipt;$stage=$verification.stage
+ $paths=@{specification=(Join-Path $out ($stage+'-inputs/spec.json'));input_closure=(Join-Path $pkg ($stage+'-input-closure-verification.json'));result=(Join-Path $out ($stage+'/'+$stage+'-result.json'));verification=$receipt.path;freeze=(Join-Path $out ($stage+'/freeze.json'));state=(Join-Path $out ($stage+'/state.json'));contract=(Join-Path $out ($stage+'/contract.json'));command=(Join-Path $out ($stage+'/'+$stage+'-command.json'))}
+ foreach($name in $names){NoiseRepairSameBinding $process.$name (Binding $paths[$name]) ('actual CPU native process '+$name);NoiseRepairAddInputs @($process.$name)}
+ NoiseRepairSameBinding $process.input_closure $closure 'CPU process/declared closure'
+ $value=NoiseRepairReadBinding $closure
+ NoiseRepairRequire ($value.schema -ceq 'pas.current-input-closure-verification.v1' -and $value.stage -ceq $stage -and $value.status -ceq 'COMPLETE' -and $value.pass -eq $true -and $value.before_verified -eq $true -and $value.after_verified -eq $true) 'CPU stage actual COMPLETE before/after closure'
+ NoiseRepairSameBinding $value.verification $receipt 'CPU closure/verification';NoiseRepairSameBinding $value.state $process.state 'CPU closure/state'
+ return $script:noiseRepairSpecs[$stage]
+}
+function NoiseRepairVerifyCpuBuildStages($delta,$plan,$sourcePins){
+ $groups=@(NoiseRepairCpuBuildGroups)
+ NoiseRepairSameValue $plan.build_target_groups $groups 'CPU plan exact ordered build groups'
+ NoiseRepairSameValue $delta.build_target_groups $groups 'CPU binding exact ordered build groups'
+ NoiseRepairRequire (@($delta.build_receipts).Count -eq 3 -and @($delta.build_input_closures).Count -eq 3 -and @($delta.build_processes).Count -eq 3 -and @($delta.build_receipts.path|Sort-Object -Unique).Count -eq 3) 'exact three unique fresh CPU build stages'
+ $null=NoiseRepairCpuProcessEvidence $delta.configure_process $delta.configure_receipt $delta.configure_input_closure
+ NoiseRepairRequireNativeInputs $delta.configure_receipt (@($delta.source_manifest,$delta.core_build_plan)+@($sourcePins))
+ $priorTargets=@();$priorProofs=@($delta.configure_process.PSObject.Properties|ForEach-Object Value)
+ for($index=0;$index -lt 3;$index++){
+  $receipt=$delta.build_receipts[$index];$spec=NoiseRepairCpuProcessEvidence $delta.build_processes[$index] $receipt $delta.build_input_closures[$index]
+  NoiseRepairRequire ([string]::Equals($spec.exe,$env:ComSpec,[StringComparison]::OrdinalIgnoreCase) -and @($spec.argv).Count -eq 4 -and $spec.argv[0] -ceq '/d' -and $spec.argv[1] -ceq '/s' -and $spec.argv[2] -ceq '/c') 'CPU existing cmd adapter native launch'
+  $commandPath=Join-Path $out ($spec.stage+'-inputs/build.cmd')
+  NoiseRepairRequire ([string]::Equals($spec.argv[3],$commandPath,[StringComparison]::OrdinalIgnoreCase)) 'CPU current stage literal build command path'
+  $freeze=NoiseRepairReadBinding $delta.build_processes[$index].freeze
+  $commandPins=@($freeze.files|Where-Object {[string]::Equals($_.path,$commandPath,[StringComparison]::OrdinalIgnoreCase)})
+  NoiseRepairRequire ($commandPins.Count -eq 1) 'CPU build command frozen before launch';NoiseRepairAddInputs $commandPins
+  $lines=@((Get-Content -LiteralPath $commandPath)|Where-Object {$_ -cmatch '^"[^"\r\n]+cmake[.]exe" '})
+  NoiseRepairRequire ($lines.Count -eq 1) 'one actual CPU CMake launch line'
+  $tokens=@([regex]::Matches($lines[0],'"([^"\r\n]*)"')|ForEach-Object {$_.Groups[1].Value})
+  $expected=@('--build',$delta.build_root,'--parallel','4','--target')+@($groups[$index].targets)
+  NoiseRepairRequire ($tokens.Count -eq $expected.Count+1 -and (($tokens|ForEach-Object {'"'+$_+'"'}) -join ' ') -ceq $lines[0] -and (@($tokens[1..($tokens.Count-1)])|ConvertTo-Json -Compress) -ceq (@($expected)|ConvertTo-Json -Compress)) 'exact ordered CPU group CMake argv and unchanged parallel4'
+  $cmakePins=@($freeze.files|Where-Object {[string]::Equals($_.path,$tokens[0],[StringComparison]::OrdinalIgnoreCase)})
+  NoiseRepairRequire ($cmakePins.Count -eq 1) 'actual CPU CMake image frozen';NoiseRepairAddInputs $cmakePins
+  $priorOutputs=@($delta.compiled_outputs|Where-Object {$p=$_.path.Replace('\','/');$name=[IO.Path]::GetFileName($_.path);$object=[IO.Path]::GetExtension($_.path) -ceq '.obj';@($priorTargets|Where-Object {($object -and $p.Contains('/CMakeFiles/'+$_+'.dir/',[StringComparison]::Ordinal)) -or $name -ceq ($_+'.lib') -or $name -ceq ($_+'.exe')}).Count -gt 0})
+  NoiseRepairRequireNativeInputs $receipt (@($delta.source_manifest,$delta.core_build_plan)+@($sourcePins)+@($priorProofs)+@($priorOutputs)+@(Binding (Join-Path $delta.build_root 'build.ninja');Binding (Join-Path $delta.build_root 'CMakeCache.txt')))
+  $priorTargets+=@($groups[$index].targets);$priorProofs+=@($delta.build_processes[$index].PSObject.Properties|ForEach-Object Value)
+ }
+}
 function NoiseRepairAllowedChange([string]$relative,[bool]$allowCpu=$false){
  if($allowCpu -and (ComponentDeltaAllowed $relative)){return $true}
  if($relative -in @('research/prelive_current/producer_wait.hpp','research/prelive_current/tests/producer_wait_tests.cpp')){return $true}
@@ -233,6 +277,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  }
  $cpuDelta=(NoiseRepairProperty $delta 'component_cpu_delta') -and $delta.component_cpu_delta -eq $true
  if(NoiseRepairProperty $delta 'component_cpu_delta'){NoiseRepairRequire ($delta.component_cpu_delta -is [bool] -and $cpuDelta) 'declared CPU branch must be true boolean'}
+ if(-not $cpuDelta){foreach($field in @('build_target_groups','build_processes','configure_process')){NoiseRepairRequire (-not (NoiseRepairProperty $delta $field)) 'CPU stage fields cannot enter legacy unchanged-formal branch'}}
  $changed=@($delta.changed_paths)
  NoiseRepairRequire ($changed.Count -gt 0 -and @($changed|Sort-Object -Unique).Count -eq $changed.Count) 'exact nonduplicate changed_paths required'
  foreach($relative in $changed){NoiseRepairRequire (NoiseRepairAllowedChange $relative $cpuDelta) ('change outside authorized harness/maintenance/docs '+$relative)}
@@ -298,6 +343,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
  }
  foreach($name in @('current_rails.lib','current_front.lib','own_bridge.lib','exact_bvi_v3.lib','pas_core.lib')){NoiseRepairRequire (@($delta.base_static_inputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq $name}).Count -eq 1) ('one unchanged static library '+$name)}
  $corePlan=NoiseRepairReadBinding $delta.core_build_plan
+ if(-not $cpuDelta){NoiseRepairRequire (-not (NoiseRepairProperty $corePlan 'build_target_groups')) 'CPU build group plan cannot enter legacy unchanged-formal branch'}
  NoiseRepairRequire ($corePlan.source_commit -ceq $head -and $corePlan.base_source_commit -ceq $baseCommit -and $corePlan.formal_rebuilt -eq $cpuDelta) 'delta/core provenance'
  $hasAffinity=@($corePlan.delta_targets) -ccontains 'worker_affinity_controls'
  $hasWait=@($corePlan.delta_targets) -ccontains 'producer_wait_tests'
@@ -478,7 +524,7 @@ function LoadNoiseRepairBuild([string]$bindingPath){
    $closure=NoiseRepairReadBinding $row.input_closure
    NoiseRepairRequire ($closure.schema -ceq 'pas.current-input-closure-verification.v1' -and $closure.stage -ceq $verification.stage -and $closure.status -ceq 'COMPLETE' -and $closure.pass -eq $true -and $closure.before_verified -eq $true -and $closure.after_verified -eq $true) 'CPU controls stage/input closure before/after complete'
   }
-  foreach($receipt in $delta.build_receipts){NoiseRepairRequireNativeInputs $receipt (@($delta.source_manifest,$delta.core_build_plan)+@(ComponentDeltaUnits|ForEach-Object {$currentSources[$_]}))}
+  NoiseRepairVerifyCpuBuildStages $delta $corePlan @($currentSources.Values)
  }
  foreach($proof in $oldProofs){
   $evaluation=NoiseRepairReadBinding $proof.evaluation;NoiseRepairAddInputs @($proof.evaluation,$proof.build)
