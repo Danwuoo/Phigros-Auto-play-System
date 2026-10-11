@@ -1,5 +1,7 @@
 # Cold producer 相鄰 QPC 間隔診斷
 
+2026-10-11 main57／`5dce75d` actual 三TU／16控制及三場完整raw auditor通過。Tap／Hold零超期；Dense兩次render超期照報，三場原數值true，但只屬diagnostic，不替代Normal3、不宣告fix或資格。原compiled55獨立AA r03首Tap完整raw通過、producer／publication超期40／40而原gate STOP，noise／ABBA未跑。詳見[實際結果与完整保存索引](MAIN57_DIAGNOSTIC_AND_AA_STATUS_20261011.md)。以下main56 STOP及診斷proposed為原保存記錄。
+
 main56／`78b9186` configure Native0；三TU build Native2，compiler C1083：新 controls target 未加入 pipeline include 目錄而找不到 `poll_gap_diagnostic.hpp`。main與原transport編譯完成，控制／測量皆NOT_RUN；guard identity／held／streams／active0正常。原source snapshot、compiler stdout及負收據保留於 [編譯負結果](MAIN56_DIAGNOSTIC_COMPONENT_COMPILE_STOP_20261011.json)。修補只補該target的include目錄，以新獨立attempt取得實際收據，不覆蓋原件、不重跑75／production9。
 
 main55 source `12ec0550e882e3b06751d67fa67c43dda3e9312b` 的必要 CPU32／原584、wait43／diagnostic20／active12／QoS24、reader2／原81／active-policy12／QoS-policy12、production52／七控制通過。Normal Tap 的 producer／auditor Native 均0，完整 raw11／3,358,832 bytes integrity通過；pool drops0，producer／callback deadline overruns7，成本STOP。Hold／Dense／AA／noise／ABBA未跑。完整原負結果見 [main55記錄](MAIN55_PRODUCTION_TAP_NEGATIVE_20261011.json)，原source、raw、STOP及Native收據保留。
