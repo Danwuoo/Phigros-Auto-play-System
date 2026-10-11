@@ -39,3 +39,10 @@ compiled verifier identity與Native/link proofs，原formal manual SHA仍核對�
 實際cost尚待新Normal3、AA12／noise18、原未跑ABBA36、完整readonly。
 latest completed noise仍main44 6／18 adequate、ABBA0／36；cost NOT_READY、live UNQUALIFIED。
 這個修補是由Ready區間支持的通用候選；成功效果必須由新的完整工作負載結果確認。
+
+main69／`62cc0c8` 的 configure Native0／runner0／5.938s 通過，pre-build graph核對在
+三個無 imported formal library 的控制 target STOP；尚無 compile、controls 或量測。
+原 metadata／source copies／configure Native8 見 [原STOP](MAIN69_ELIGIBILITY_PREBUILD_STOP_20261012.json)。
+PowerShell function boundary 把空 pipeline 轉為 null，原 `@($required).Count` 在 function
+內誤算為1。新 recipe先正規化成真正空 array，五個有 imported roles 的 target仍保持
+exact path／role／unique／complete 檢查；同樣十個 fresh compile occurrences另以新來源建置。
