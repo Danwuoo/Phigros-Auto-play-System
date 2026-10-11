@@ -1,3 +1,7 @@
+2026-10-12 最新 actual main77／`fce23e7`：必要10 fresh cold TUs、9 build/control Native、pre-cost必要核對、current Normal3完整raw及原數值、AA12完整raw與validity全PASS；noise13／18 adequate、5不足，ABBA NOT_RUN。原source／copies／raw／STOP與53個Native8保存於[main77結果](../../research/live-readiness-20261007/MAIN77_NORMAL_AA_PASS_NOISE13_STOP_20261012.json)。CPU v3 partition未解決全部波動，cost NOT_READY／live UNQUALIFIED。
+
+下一必要候選只短路`src/game_motion.cpp`純讀ridge的無用後續gray探查，像素／80與18門檻／布林策略保持；一個fresh formal motion object明列覆蓋原22-member archives，另跑26個既有相關回歸。新分支14 compile occurrences／11targets／9exe，原libs与原PASS來源不冒fresh全包；R2／noise／ABBA及全部原數值不變。見[必要motion delta契約](../../research/live-readiness-20261007/MOTION_PROBE_DELTA_20261012.md)。使用者離開仍完成全部可冷工作至emulator邊界後停止；本輪不開裝置、新thread或追加ETW recording。以下較早最新／proposed為歷史。
+
 2026-10-11 最新 actual main57／`5dce75d`：獨立三TU／16控制及Tap／Hold／Dense各一次完整raw auditor通過；原數值皆true，Dense兩次render超期照報。這些只屬diagnostic，不能替代current Normal3或授cost／live資格。原main55正式Tap STOP保留。
 
 compiled55／`12ec055`、execution57的獨立AA r03已排除264字元source canonical錯誤：全939 exact copies使用main內短路徑，原946 snapshot保存。首Tap producer／auditor／gate Native均0、full raw integrity通過，但producer／publication超期40／40、schedule lateness最大768.03ms，原數值gate失敗而STOP，後11筆NOT_RUN；noise／ABBA未執行。詳見[實際盤點與完整保存索引](../../research/live-readiness-20261007/MAIN57_DIAGNOSTIC_AND_AA_STATUS_20261011.md)。

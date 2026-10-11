@@ -1,3 +1,7 @@
+2026-10-12 最新 actual main77／`fce23e7`：必要10 fresh cold TUs、9 build/control Native、pre-cost必要核對、current Normal3完整raw及原數值、AA12完整raw與validity全PASS；noise13／18 adequate、5不足，ABBA NOT_RUN。原source／copies／raw／STOP與53個Native8保存於[main77結果](../../research/live-readiness-20261007/MAIN77_NORMAL_AA_PASS_NOISE13_STOP_20261012.json)。CPU v3 partition未解決全部波動，cost NOT_READY／live UNQUALIFIED。
+
+下一必要候選只短路`src/game_motion.cpp`純讀ridge的無用後續gray探查，像素／80與18門檻／布林策略保持；一個fresh formal motion object明列覆蓋原22-member archives，另跑26個既有相關回歸。新分支14 compile occurrences／11targets／9exe，原libs与原PASS來源不冒fresh全包；R2／noise／ABBA及全部原數值不變。見[必要motion delta契約](../../research/live-readiness-20261007/MOTION_PROBE_DELTA_20261012.md)。使用者離開仍完成全部可冷工作至emulator邊界後停止；本輪不開裝置、新thread或追加ETW recording。以下較早最新／proposed為歷史。
+
 # 現行架構與資料契約
 
 2026-10-11 最新冷修補：main49／`bffd61f` 必要CPU32及七control executions完成，保留原binary／Native／source快照；

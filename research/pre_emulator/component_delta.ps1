@@ -1,5 +1,81 @@
 # Explicit CPU component repair branch. Original qualification is preserved,
 # never converted into qualification of the rebuilt formal/action components.
+function script:ComponentDeltaMotionTargets {return @('current_chain','production_pipeline_cold','score_only_controls','pas','candidate_admission_controls')}
+function script:ComponentDeltaMotionFilter {return 'GameMotion.*:ColdRgbH1.*:ColdRgbR1.*:ColdRgbR6.*'}
+function script:ComponentDeltaMotionCases {return @(
+ 'GameMotion.CurrentGrayOutlineTracksTranslationButRejectsSingleRailAndMissingClosure',
+ 'GameMotion.IndependentLinesKeepIdentityAcrossReorderingMotionAndTangentSign',
+ 'GameMotion.BurstFramesCannotAmplifyLineNoiseOrReplaceCurrentGeometry',
+ 'GameMotion.RotatingLineEquationsIgnoreAlongLineCropCenterDrift',
+ 'GameMotion.FittedRotationAssociatesAfterGapWithoutInventingAMissingLine',
+ 'GameMotion.NonlinearLinePoseRejectsVelocityAndDuplicateLinesRemainAmbiguous',
+ 'GameMotion.DistributedTiltedRidgeRejectsWideFillShortBarsAndMissingSupport',
+ 'GameMotion.TiltedLineExtentUsesMeasuredFragmentsAndRejectsLargeUnsupportedGaps',
+ 'GameMotion.ApproachingAnchorNeedsCurrentRailsAttachedToTheLine',
+ 'GameMotion.ShortTerminalOutlineKeepsCurrentTailAndRejectsInternalClosingFlash',
+ 'GameMotion.MovingHeldFrontNeedsPairedCurrentTerminationAndCannotInferFromHistory',
+ 'GameMotion.MovingFrontCannotSnapToAnEffectBoxWithoutCurrentBodyInterior',
+ 'GameMotion.OccludedFrontCanUseOnlyAVisiblePairedBodyInterior',
+ 'GameMotion.ContestedDuplicateDoesNotCreateARecurringLineage',
+ 'GameMotion.CloseRealLinesStayDistinctAndExpiryDoesNotBridgeNinetyMilliseconds',
+ 'GameMotion.PersistentNearNewLineIsBornAfterBoundedEvidenceButFarNewLineImmediately',
+ 'GameMotion.RotatedCurrentHoldRailsCanContinueAnOlderAnchor',
+ 'GameMotion.SixteenLinesRemainBoundedAndContextGapStartsNewLineage',
+ 'GameMotion.ContestedObservationCannotSeedRecurringDuplicateTracks',
+ 'GameMotion.ConvergedLineAmbiguityExpiresWithoutInventingIdentity',
+ 'GameMotion.RotatedCurrentHoldRailsRequireBothCurrentlyVisibleSides',
+ 'ColdRgbH1.RotatingTranslatingLineKeepsOneSupportedContactUntilVisibleTail',
+ 'ColdRgbH1.LongVisibleHoldHeadBodyAndTailUseOneContact',
+ 'ColdRgbR1.RotatingHoldAndColocatedTapKeepIndependentContactsOrRejectAtCapacity',
+ 'ColdRgbR6.AngleJumpAtIncomingTailNeedsCurrentClosureAndTwoFreshConfirmations',
+ 'ColdRgbH1.UnknownTailCannotExtendBodyContactAfterLineLosesCurrentPixels')}
+function script:ComponentDeltaMotionSourceText([string]$base,[string]$current) {
+ $old=@'
+bool ridge(const Frame& f,Vec2 p,Vec2 transverse) {
+    const double v=gray(f,p),a=gray(f,{p.x-transverse.x*4,p.y-transverse.y*4}),
+        b=gray(f,{p.x+transverse.x*4,p.y+transverse.y*4});
+    return a>=0&&b>=0&&v>=80&&v-a>=18&&v-b>=18;
+}
+'@
+ $new=@'
+bool ridge(const Frame& f,Vec2 p,Vec2 transverse) {
+    const double v=gray(f,p);
+    if(!(v>=80))return false;
+    const double a=gray(f,{p.x-transverse.x*4,p.y-transverse.y*4});
+    if(!(a>=0&&v-a>=18))return false;
+    const double b=gray(f,{p.x+transverse.x*4,p.y+transverse.y*4});
+    return b>=0&&v-b>=18;
+}
+'@
+ $normalized=$base.Replace("`r`n","`n");$actual=$current.Replace("`r`n","`n")
+ ComponentDeltaColdProducerRequire ([regex]::Matches($normalized,[regex]::Escape($old)).Count -eq 1 -and [regex]::Matches($actual,[regex]::Escape($new)).Count -eq 1) 'one exact old/new ridge literal'
+ ComponentDeltaColdProducerRequire ($current -ceq $actual -and $actual -ceq $normalized.Replace($old,$new) -and $actual.Replace($new,$old) -ceq $normalized) 'sole literal ridge transform and LF current source'
+}
+function script:ComponentDeltaMotionRuntimeText([string]$runtime) {
+ $text=$runtime.Replace("`r`n","`n");$position=$text.IndexOf('json game_preflight(', [StringComparison]::Ordinal)
+ ComponentDeltaColdProducerRequire ($position -ge 0) 'literal original pure-runtime prefix boundary'
+ return $text.Substring(0,$position)+"`n} // namespace pas`n"
+}
+function script:ComponentDeltaMotionGTest($report) {
+ $null=ComponentDeltaColdProducerInteger $report 'tests' 26 26
+ foreach($field in @('failures','errors','disabled')){$null=ComponentDeltaColdProducerInteger $report $field 0 0}
+ $names=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+ foreach($suite in $report.testsuites){foreach($case in $suite.testsuite){
+  ComponentDeltaColdProducerText $case 'status' 'RUN';ComponentDeltaColdProducerText $case 'result' 'COMPLETED'
+  ComponentDeltaColdProducerRequire (-not ($case.PSObject.Properties.Name -ccontains 'failures') -or @($case.failures).Count -eq 0) 'no GTest failure records'
+  ComponentDeltaColdProducerRequire ($suite.name -is [string] -and $case.name -is [string] -and $names.Add($suite.name+'.'+$case.name)) 'unique actual GTest full case name'
+ }}
+ ComponentDeltaColdProducerRequire ($names.Count -eq 26 -and @(Compare-Object (@($names)|Sort-Object) (@(ComponentDeltaMotionCases)|Sort-Object)).Count -eq 0) 'exact original motion/H1/R1/R6 26 cases completed'
+}
+function script:ComponentDeltaMotionLinkObjects([string]$edge,[string]$target,$compileRows,$appObject) {
+ $expected=@($compileRows|Where-Object {$_.Groups[1].Value.StartsWith('CMakeFiles/'+$target+'.dir/')}|ForEach-Object {$_.Groups[1].Value})
+ if($target -cin @('pas','candidate_admission_controls')){$expected+=@($compileRows|Where-Object {$_.Groups[1].Value.StartsWith('CMakeFiles/candidate_admission_delta.dir/')}|ForEach-Object {$_.Groups[1].Value})}
+ if($target -ceq 'pas'){$expected+=@($appObject.path.Replace('\','/'))}
+ if($target -cin @(ComponentDeltaMotionTargets) -or $target -ceq 'motion_source_regression'){$expected+=@($compileRows|Where-Object {$_.Groups[1].Value.StartsWith('CMakeFiles/game_motion_delta.dir/')}|ForEach-Object {$_.Groups[1].Value})}
+ $line=($edge -split '\r?\n')[0].Replace('$:',':').Replace('$ ',' ');$explicit=($line -split '\|')[0]
+ $actual=@([regex]::Matches($explicit,'"([^"\r\n]+[.]obj)"|([^ \t\r\n]+[.]obj)')|ForEach-Object {if($_.Groups[1].Success){$_.Groups[1].Value}else{$_.Groups[2].Value}})
+ ComponentDeltaColdProducerRequire ($actual.Count -eq $expected.Count -and @($actual|Sort-Object -Unique).Count -eq $actual.Count -and @(Compare-Object ($actual|Sort-Object) ($expected|Sort-Object)).Count -eq 0) ('exact effective link objects including shared motion: '+$target)
+}
 if(-not (Get-Variable -Name noiseRepairBuild -Scope Script -ErrorAction SilentlyContinue)){$script:noiseRepairBuild=$null}
 function ComponentDeltaTargets { return @('current_chain','consumer_priority_controls','worker_affinity_controls','producer_wait_tests','pas_core','own_bridge','owner_checkpoint_tests','owner_expiry_tests','component_mask_tests','uniform_fnv_tests') }
 function ComponentDeltaExecutables { return @(ComponentDeltaTargets|Where-Object {$_ -notin @('pas_core','own_bridge')}) }

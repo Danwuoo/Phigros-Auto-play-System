@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(VCPKG_APPLOCAL_DEPS OFF CACHE BOOL "Exact bounded runtime copies" FORCE)
+option(PAS_MOTION_SOURCE_DELTA "Exact one-member motion source overlay" OFF)
 foreach(name PAS_SOURCE_WORKSPACE PAS_BASE_PRODUCTION_ROOT PAS_DELTA_SOURCE_COMMIT
         PAS_LIBRARY_INPUTS_FILE PAS_RUNTIME_INPUTS_FILE PAS_BASE_MANUAL_SHA256
         PAS_WORKER_AFFINITY_SHA256 PAS_PRODUCER_PLACEMENT_SHA256
@@ -124,6 +125,40 @@ foreach(target qualification_reader qualification_reader_controls)
  target_include_directories(${target} PRIVATE "${PAS_SOURCE_WORKSPACE}")
  target_link_libraries(${target} PRIVATE nlohmann_json::nlohmann_json bcrypt)
 endforeach()
+if(PAS_MOTION_SOURCE_DELTA)
+ foreach(name PAS_MOTION_SOURCE_SHA256 PAS_MOTION_RUNTIME_CONTRACT_SOURCE
+              PAS_MOTION_RUNTIME_CONTRACT_SHA256 PAS_TEST_SOURCE_ROOT)
+  if(NOT DEFINED ${name} OR "${${name}}" STREQUAL "")
+   message(FATAL_ERROR "Explicit motion overlay input required: ${name}")
+  endif()
+ endforeach()
+ require_sha("${PAS_SOURCE_WORKSPACE}/src/game_motion.cpp" "${PAS_MOTION_SOURCE_SHA256}")
+ require_sha("${PAS_MOTION_RUNTIME_CONTRACT_SOURCE}" "${PAS_MOTION_RUNTIME_CONTRACT_SHA256}")
+ find_package(GTest CONFIG REQUIRED)
+ add_library(game_motion_delta OBJECT "${PAS_SOURCE_WORKSPACE}/src/game_motion.cpp")
+ target_include_directories(game_motion_delta PRIVATE "${PAS_SOURCE_WORKSPACE}/include")
+ target_link_libraries(game_motion_delta PRIVATE nlohmann_json::nlohmann_json)
+ # The shared object is explicit before archive arguments, so neither old
+ # core archive extracts its game_motion member. Both archives remain sealed.
+ foreach(target current_chain production_pipeline_cold score_only_controls pas candidate_admission_controls)
+  target_sources(${target} PRIVATE $<TARGET_OBJECTS:game_motion_delta>)
+ endforeach()
+ add_executable(motion_source_regression
+  "${PAS_SOURCE_WORKSPACE}/tests/game_tests.cpp"
+  "${PAS_SOURCE_WORKSPACE}/tests/cold_scenario_tests.cpp"
+  "${PAS_MOTION_RUNTIME_CONTRACT_SOURCE}" $<TARGET_OBJECTS:game_motion_delta>)
+ target_include_directories(motion_source_regression PRIVATE
+  "${PAS_SOURCE_WORKSPACE}/include" "${PAS_BASE_PRODUCTION_ROOT}/generated")
+ target_compile_definitions(motion_source_regression PRIVATE PAS_TEST_SOURCE_DIR="${PAS_TEST_SOURCE_ROOT}")
+ target_link_libraries(motion_source_regression PRIVATE production_pas_core
+  GTest::gtest_main nlohmann_json::nlohmann_json ZLIB::ZLIB protobuf::libprotobuf
+  gRPC::grpc++ bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32 psapi)
+ if(MSVC)
+  target_compile_options(game_motion_delta PRIVATE /W4 /permissive- /EHsc)
+  target_compile_options(motion_source_regression PRIVATE /W4 /permissive- /EHsc)
+  target_link_options(motion_source_regression PRIVATE /INCREMENTAL:NO /STACK:8388608)
+ endif()
+endif()
 if(MSVC)
  foreach(target current_chain worker_affinity_controls production_pipeline_cold
                 score_only_controls qualification_reader qualification_reader_controls

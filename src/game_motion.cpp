@@ -16,9 +16,12 @@ double gray(const Frame& f,Vec2 p) {
 }
 // A thin ridge must have contrast on BOTH sides, excluding broad fill/effects.
 bool ridge(const Frame& f,Vec2 p,Vec2 transverse) {
-    const double v=gray(f,p),a=gray(f,{p.x-transverse.x*4,p.y-transverse.y*4}),
-        b=gray(f,{p.x+transverse.x*4,p.y+transverse.y*4});
-    return a>=0&&b>=0&&v>=80&&v-a>=18&&v-b>=18;
+    const double v=gray(f,p);
+    if(!(v>=80))return false;
+    const double a=gray(f,{p.x-transverse.x*4,p.y-transverse.y*4});
+    if(!(a>=0&&v-a>=18))return false;
+    const double b=gray(f,{p.x+transverse.x*4,p.y+transverse.y*4});
+    return b>=0&&v-b>=18;
 }
 // At most 16 observations and 16 live line tracks. Dummy columns represent
 // genuinely unmatched observations, while a forbidden edge tests whether an

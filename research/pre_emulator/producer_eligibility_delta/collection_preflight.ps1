@@ -62,6 +62,11 @@ foreach($name in @('DRequire','DRead','DBool','DInt','DSame','DProof')){
 $catalogue=@{};foreach($row in $delta.base_original_build_processes){$catalogue[$row.Native8.verification.path]=$row.Native8}
 foreach($row in $base.controls){$v=NoiseRepairReadBinding $row.receipt;$proof=DProof $v.stage;$catalogue[$proof.verification.path]=$proof}
 foreach($row in $normal.rows){foreach($proof in @($row.process,$row.auditor_process)){$catalogue[$proof.verification.path]=$proof}}
+if($delta.motion_source_delta){
+ $proof=$delta.motion_source_delta.regression.process
+ if(-not $proof.verification.path){throw 'actual motion regression Native8 required'}
+ $catalogue[$proof.verification.path]=$proof
+}
 $inputPath=Join-Path $artifact 'collection-input.json'
 NewJson $inputPath @{schema='pas.current-candidate-collection-input.v1';evidence_kind='actual';source_commit=$delta.base_source_commit;candidate_binary=$candidate;source_manifest=$base.source_manifest;production_build=$delta.base_production_build;cold_preflight_input=$coldPin;runtime_profile=$profile;capability=$capability;production_cost=(Binding $productionPath);authorization=(Binding $authorizationPath);cold_harness_delta=$deltaPin;verification_delta=$delta.verification_delta;native_processes=@($catalogue.Values);qualification_processes=@{};device_operations=0;qualification_issued=$false;live_ready=$false} 4194304
 $inputPin=Binding $inputPath
