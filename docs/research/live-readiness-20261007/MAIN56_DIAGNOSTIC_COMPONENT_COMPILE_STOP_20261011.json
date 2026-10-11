@@ -1,0 +1,212 @@
+{
+  "device_operations": 0,
+  "cause": "new controls target lacked pipeline include directory",
+  "build_runner_exit": 2,
+  "qualification_issued": false,
+  "build_native_exit": 2,
+  "compiler_error": "C1083 at poll_gap_diagnostic_tests.cpp:1: poll_gap_diagnostic.hpp not found",
+  "schema": "pas.diagnostic-component-compile-stop.v1",
+  "measurement": "NOT_RUN",
+  "configure_native_exit": 0,
+  "active_final": 0,
+  "stages": [
+    {
+      "files": [
+        {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\attempt.lock",
+          "bytes": 0
+        },
+        {
+          "sha256": "3fbb2b803690a3c7c07226b68d00a7bd835c78452ffb1813a980b60812907898",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-checkpoint-0.json",
+          "bytes": 1254
+        },
+        {
+          "sha256": "aa5c898d9efb5dcaae7b32dd9be3fcf6a6ab558d18c8b8f18dbf150bb341a77f",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-checkpoint-1.json",
+          "bytes": 1260
+        },
+        {
+          "sha256": "5fddbc5c013a520f2fabd8f7bf256bdf110c9ebea99199f33b08d8606e7f5745",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-checkpoint-2.json",
+          "bytes": 1247
+        },
+        {
+          "sha256": "fb428f59f40bed6de795fee139e23b9bd5d59c98b0a3ae44c2feca1fa73d9cfb",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-checkpoint-3.json",
+          "bytes": 1802
+        },
+        {
+          "sha256": "8475d1cb6dea0f6e38b112bba6aa5a0c5c6e682ac9f68bef999176f8083358ad",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-checkpoint-4.json",
+          "bytes": 1806
+        },
+        {
+          "sha256": "36170c2c03141618c3de92a2edfd19ed349eeeaf1179dbcda438eb384ed68fe8",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-checkpoint-5.json",
+          "bytes": 2010
+        },
+        {
+          "sha256": "42f8482209eca02023cb875daf169b723014ceca0be7fe1cd10110e18824e197",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-checkpoint-6.json",
+          "bytes": 2215
+        },
+        {
+          "sha256": "f2fc960de4455a0a9a9755197f6504df7ac40585ba5f1ac525454d5eb1d63e6d",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-checkpoint-7.json",
+          "bytes": 18464
+        },
+        {
+          "sha256": "105e85d3368e06added1cee52777cd7f1868d5717f4652928e530cd56131c34e",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-command.json",
+          "bytes": 756
+        },
+        {
+          "sha256": "3239a54f3111ba90d259c4a7cc62e88338ba3682742dc28b112d917b86415141",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-result.json",
+          "bytes": 18448
+        },
+        {
+          "sha256": "edabaa1ee30d5231017f822a30da9eccc1a8e88692b1f942df7b4213927355d4",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap-verification.json",
+          "bytes": 3574
+        },
+        {
+          "sha256": "34b81cbadb4c075349b7dea897e92b7cd3fae846feb7336dcdb4b3bbcd72edde",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap.stderr.log",
+          "bytes": 106
+        },
+        {
+          "sha256": "a98a1ddf5152c4e41524e89e4b37ba2eb0a5e5a727184a49127f396eb3b40c69",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\configure-wait-diagnostic-main56-waitgap.stdout.log",
+          "bytes": 1873
+        },
+        {
+          "sha256": "25d2860b80d8de270bd21c12a92c5382bc12e46a575e963e64ceeec0e09afc2b",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\contract.json",
+          "bytes": 513
+        },
+        {
+          "sha256": "a20327b004be9b80ab94fe683ddc22ec745a6a44978f1bdc911ad0d1ecf9162d",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\freeze.json",
+          "bytes": 37201
+        },
+        {
+          "sha256": "22fcfd105509259d1bcbeb57aedf1fde597cd02f4c14dec9b1a01c86e2f72567",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\configure-wait-diagnostic-main56-waitgap\\state.json",
+          "bytes": 802
+        }
+      ],
+      "stage": "configure-wait-diagnostic-main56-waitgap"
+    },
+    {
+      "files": [
+        {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\attempt.lock",
+          "bytes": 0
+        },
+        {
+          "sha256": "dbaa1862f26f2eb7d2ba48582e84bb440376a2145d2bd1309225444fc8b40b0c",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-checkpoint-0.json",
+          "bytes": 1250
+        },
+        {
+          "sha256": "3be7df080deb9bd0ffdac658c4140113f17eb308ea3600a5c5eeffd6292391ac",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-checkpoint-1.json",
+          "bytes": 1256
+        },
+        {
+          "sha256": "45ce10785d5b15fc4009e394b65971e0c0351157deec9dba8f226c724d5bf970",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-checkpoint-2.json",
+          "bytes": 1242
+        },
+        {
+          "sha256": "4c439a38f140991639d6bb43142370780203c71bf52a32c215e003f5099a2b1b",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-checkpoint-3.json",
+          "bytes": 1796
+        },
+        {
+          "sha256": "5b99e48adc95b984495460d1121798520309fa7501fa539a6f3efd82b56b5359",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-checkpoint-4.json",
+          "bytes": 1800
+        },
+        {
+          "sha256": "1257ea35d9ac951579ada5449eb38df0896afc18dc1e6c20161518f96761bb9f",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-checkpoint-5.json",
+          "bytes": 2008
+        },
+        {
+          "sha256": "81734ea7bad4c1c4c9e57d3fb9897de9f5d7a7b97b6b370d1e2cc4455fd1f817",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-checkpoint-6.json",
+          "bytes": 2215
+        },
+        {
+          "sha256": "ac593be66c9a98b8f4b7b822eea8c829c21180552601fe0a56d5840f6834b4ac",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-checkpoint-7.json",
+          "bytes": 6570
+        },
+        {
+          "sha256": "ad92c0915f4a592817f97e1b5508fe2876ba6c39d5708856a3fc9c20e57a8fd2",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-command.json",
+          "bytes": 732
+        },
+        {
+          "sha256": "599903bad535a10af96d631237114787c25b17df3b7929d04e818d52bf7bff3d",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-result.json",
+          "bytes": 6554
+        },
+        {
+          "sha256": "287a4f788f4b9e1913b0972e16b31e22377910acec40589f8f5c7d2f2978da86",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap-verification.json",
+          "bytes": 6602
+        },
+        {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap.stderr.log",
+          "bytes": 0
+        },
+        {
+          "sha256": "6f772f3072bf7cfb89cea5f24016766a70426e5b18ff761371393719d8485ac1",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\build-wait-diagnostic-main56-waitgap.stdout.log",
+          "bytes": 6073
+        },
+        {
+          "sha256": "03c862ac30d2642b20d223a23009b54a1fc2990ceaff6cdfcd30df2a18d85904",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\contract.json",
+          "bytes": 501
+        },
+        {
+          "sha256": "a0fdf908207c28504a63817fa89c90f332716f0fd210433cf982ca0dc5f354fa",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\freeze.json",
+          "bytes": 36969
+        },
+        {
+          "sha256": "c6d75093d60dc0df9ac39fa1f268590e18630de47894b0d6a307f40ca78aa052",
+          "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\build-wait-diagnostic-main56-waitgap\\state.json",
+          "bytes": 603
+        }
+      ],
+      "stage": "build-wait-diagnostic-main56-waitgap"
+    }
+  ],
+  "cost_ready": false,
+  "source_commit": "78b91869c573b08327486b6b3a2ee8e771901539",
+  "failed_compile_occurrence": "research/windows_production_pipeline_v3/tests/poll_gap_diagnostic_tests.cpp",
+  "controls": "NOT_RUN",
+  "live_ready": false,
+  "source_snapshot": {
+    "sha256": "7882fb721fc05b7dc3e7840a1bc9950564f46b845a1a0ca2db9f3f6ae731a710",
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\source-78b9186-main56-diagnostic-snapshot\\snapshot.json",
+    "bytes": 610819
+  },
+  "streams_completed": true,
+  "held_all_signaled": true,
+  "base_source_commit": "12ec0550e882e3b06751d67fa67c43dda3e9312b",
+  "guard_identity_trusted": true,
+  "completed_compile_occurrences": [
+    "research/windows_production_pipeline_v3/main.cpp",
+    "src/grpc_transport.cpp"
+  ]
+}

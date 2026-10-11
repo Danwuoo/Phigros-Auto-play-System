@@ -1,5 +1,7 @@
 # Cold producer 相鄰 QPC 間隔診斷
 
+main56／`78b9186` configure Native0；三TU build Native2，compiler C1083：新 controls target 未加入 pipeline include 目錄而找不到 `poll_gap_diagnostic.hpp`。main與原transport編譯完成，控制／測量皆NOT_RUN；guard identity／held／streams／active0正常。原source snapshot、compiler stdout及負收據保留於 [編譯負結果](MAIN56_DIAGNOSTIC_COMPONENT_COMPILE_STOP_20261011.json)。修補只補該target的include目錄，以新獨立attempt取得實際收據，不覆蓋原件、不重跑75／production9。
+
 main55 source `12ec0550e882e3b06751d67fa67c43dda3e9312b` 的必要 CPU32／原584、wait43／diagnostic20／active12／QoS24、reader2／原81／active-policy12／QoS-policy12、production52／七控制通過。Normal Tap 的 producer／auditor Native 均0，完整 raw11／3,358,832 bytes integrity通過；pool drops0，producer／callback deadline overruns7，成本STOP。Hold／Dense／AA／noise／ABBA未跑。完整原負結果見 [main55記錄](MAIN55_PRODUCTION_TAP_NEGATIVE_20261011.json)，原source、raw、STOP及Native收據保留。
 
 252 warmup attempt 的 active wait跨168.9509 ms／93059 polls，lateness149.1784 ms。後253–258沿原absolute due追趕，構成另外六次超時；render／callback分別只有 .1733／.0991 ms。1973另有35.5134 ms等待，但未超過原20 ms超時門檻。正常18–22 ms等待的poll p50為301224，正常樣本亦存在thread CPU accounting零差；計數的粒度未知，不能從零差認定精確off-CPU，或把OS、guard、core／frequency當已知原因。

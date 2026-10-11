@@ -71,7 +71,7 @@ target_link_libraries(production_wait_diagnostic_component PRIVATE
  protobuf::libprotobuf gRPC::grpc++ bcrypt windowscodecs ole32 d3d11 dxgi d3dcompiler user32 psapi)
 add_executable(producer_poll_gap_controls "${PIPELINE}/tests/poll_gap_diagnostic_tests.cpp")
 target_include_directories(producer_poll_gap_controls PRIVATE
- "${PAS_WORKSPACE}/include" "${PAS_WORKSPACE}/research/prelive_current" "${CMAKE_BINARY_DIR}")
+ "${PIPELINE}" "${PAS_WORKSPACE}/include" "${PAS_WORKSPACE}/research/prelive_current" "${CMAKE_BINARY_DIR}")
 target_compile_definitions(producer_poll_gap_controls PRIVATE PAS_WAIT_DIAGNOSTIC_COMPONENT=1)
 target_link_libraries(producer_poll_gap_controls PRIVATE nlohmann_json::nlohmann_json)
 if(MSVC)
