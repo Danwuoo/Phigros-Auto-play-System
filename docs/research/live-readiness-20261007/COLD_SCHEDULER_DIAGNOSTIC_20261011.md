@@ -12,7 +12,9 @@ reader 使用 RAW_TIMESTAMP、ETL PerfFreq及當輪實際 producer TID。compone
 
 此診斷有擾動，不能替代 current Normal3／AA12／noise18／ABBA36／完整 readonly 或授予 admission。Windows API完成時間沒有硬即時保證，程序與 watchdog 的停止請求時間、實際停止收據及任何超時須如實保存。單次未重現不宣稱修好，也不為取得較好結果重試。
 
-main58／eec2167 的三TU建置及controller32／reader20共52控制實際通過，configure／build／兩控制4個Native8均0，原收據保留。交叉審查修正runner的ready→request時間／身分join、STOP final-flush statistics及controller／watchdog actual exit核對；新維護來源另作fresh必要工具建置，原main58結果不改。512MiB約束指兩個C++診斷程序的 committed memory，PowerShell維護launcher不納入此數字；reader512MiB僅在兩程序實際退出後使用。
+main58／eec2167、main59／867707d及main60／fb7aa92的三TU建置及controller32／reader20共52控制實際通過，每輪configure／build／兩控制4個Native8均0，原收據保留。交叉審查修正runner的ready→request時間／身分join、STOP final-flush statistics及controller／watchdog actual exit核對。512MiB約束指兩個C++診斷程序的 committed memory，PowerShell維護launcher不納入此數字；reader512MiB僅在兩程序實際退出後使用。
+
+main60執行的r01（原目錄標籤main58-r01）只有preflight：actual admin=true、session查詢無collision，但in_outer_job=true被原封裝一律拒絕。ETW start／stop、recording及producer Native均未執行，[原STOP及準備收據](MAIN60_SCHEDULER_PREFLIGHT_STOP_20261011.json)不改。Windows允許符合條件的nested Job；修補改為在ETW前實際Assign／readback自身256MiB process及job限制，不調整或繞過host Job。[Microsoft nested Job規則](https://learn.microsoft.com/en-us/windows/win32/procthread/nested-jobs)。controller及watchdog各持自己的Job，但共同祖先Job仍可終止兩者；不宣稱能存活host終止。新必要工具建置／52控制通過後使用全新r02輸出，不覆盖r01。
 
 目前 recording NOT_RUN、cost NOT_READY、live UNQUALIFIED。
 

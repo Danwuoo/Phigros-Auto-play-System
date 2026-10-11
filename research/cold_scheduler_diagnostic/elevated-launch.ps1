@@ -25,7 +25,7 @@ try {
   $preflightExit=$LASTEXITCODE
   LRequire ($preflightExit -eq 0) 'read-only session preflight STOP'
   $pre=LRead (Join-Path $root 'preflight.json')
-  LRequire ($pre.query_clear -is [bool] -and $pre.query_clear -and $pre.in_outer_job -is [bool] -and -not $pre.in_outer_job) 'collision and upper Job preflight'
+  LRequire ($pre.query_clear -is [bool] -and $pre.query_clear -and $pre.in_outer_job -is [bool] -and $pre.nested_memory_job_verified -is [bool] -and $pre.nested_memory_job_verified) 'collision and actual bounded Job preflight'
   $phase='watchdog'
   $watch=Start-Process -FilePath $p.controller.path -ArgumentList @('--watchdog',('"'+$requestPath+'"')) -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $root 'watchdog.stdout.log') -RedirectStandardError (Join-Path $root 'watchdog.stderr.log')
   while(-not(Test-Path -LiteralPath (Join-Path $root 'watchdog-ready.json')) -and [Diagnostics.Stopwatch]::GetTimestamp() -lt $deadline -and -not $watch.HasExited){[Threading.Thread]::Sleep(10)}
@@ -34,7 +34,8 @@ try {
   $control=Start-Process -FilePath $p.controller.path -ArgumentList @('--controller',('"'+$requestPath+'"')) -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $root 'controller.stdout.log') -RedirectStandardError (Join-Path $root 'controller.stderr.log')
   while([Diagnostics.Stopwatch]::GetTimestamp() -lt $deadline -and (-not $watch.HasExited -or -not $control.HasExited)){[Threading.Thread]::Sleep(25)}
   # The independently held processes own their jobs and the same fixed deadline;
-  # launcher termination never extends it or terminates both cleanup roles.
+  # Launcher exit does not extend it. A shared ancestor Job can still terminate
+  # both roles; the processes do not bypass or change that host-owned Job.
   if(-not $control.HasExited){$null=$control.WaitForExit(3000)}
   if(-not $watch.HasExited){$null=$watch.WaitForExit(3000)}
   $phase='complete'

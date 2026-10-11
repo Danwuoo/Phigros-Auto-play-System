@@ -1,0 +1,458 @@
+{
+  "schema": "pas.cold-scheduler-preflight-negative-preservation.v1",
+  "status": "PREFLIGHT_ONLY_STOP",
+  "artifact_label": "main58-r01",
+  "artifact_label_is_source_commit": false,
+  "actual_execution_source_commit": "fb7aa92cb871b723691d280596d2ac0fb406ea19",
+  "actual_tool_build_attempt": "main60-etw-tools-r01",
+  "compiled_component_source_commit": "5dce75d12c63ed51de5d996cedcd44e29d729841",
+  "base_source_commit": "12ec0550e882e3b06751d67fa67c43dda3e9312b",
+  "originals_retained_in_place": true,
+  "artifact_originals": {
+    "plan": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\plan.json",
+      "bytes": 1301,
+      "sha256": "bc22ac7e5769e90f0eecd8b1d51c9cd94469434142bd13311b5cd6fed798511f"
+    },
+    "launch-plan": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\launch-plan.json",
+      "bytes": 1604,
+      "sha256": "0ead2e655fbb9c1249d3bda8083798ecb312dece88bd7c18d467b0c2c90dbb00"
+    },
+    "trace-request": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\trace-request.json",
+      "bytes": 1495,
+      "sha256": "231088c17adea935beaabcabb963e4b3fa41b26f728b1edbe2446b58831bab5e"
+    },
+    "preflight": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\preflight.json",
+      "bytes": 1985,
+      "sha256": "dce0a7541f177eb9ae78453d875997011d91f997044915d2206e6127fe7336f3"
+    },
+    "elevated-launch-result": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\elevated-launch-result.json",
+      "bytes": 1056,
+      "sha256": "274adf65b29cd645cefcf2513e7853e1d4e2fb455a75f387772f1aa191e01c09"
+    },
+    "stop-status": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\stop-status.json",
+      "bytes": 1363,
+      "sha256": "45c6ffc64b0e71eaa63979e31c743ead5e7023afa1e4fc205db437eceb07a5d4"
+    }
+  },
+  "prepared_producer_metadata": {
+    "direct-spec": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-direct-spec.json",
+      "bytes": 4077,
+      "sha256": "aeee776a9acd7e8b9328ec15555083a9c13afbe4777fcec631899c5f6cfd3bd8"
+    },
+    "params": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-params.json",
+      "bytes": 435,
+      "sha256": "4f9608eb5cec70cc21954e0596ec3af07338ec2fe617b3a63cb50d195eb1d912"
+    },
+    "input-closure": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-closure.json",
+      "bytes": 5484,
+      "sha256": "50ea0986ba4784a80b28cbfc042257f16827ecfb3d4a08547245bc379aef789f"
+    },
+    "capacity-before": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-capacity-before.json",
+      "bytes": 41050,
+      "sha256": "e6c555f0bf718a887e6da97fca052d49ea0a2defccd0e594e512851ba84e75cf"
+    }
+  },
+  "input_closure_leaves": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-000.json",
+      "bytes": 14868,
+      "sha256": "5322edad81a076bb0882b21e3eadb6e3827d809b77179d3f022f70091553b16b"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-001.json",
+      "bytes": 17064,
+      "sha256": "a9fae0a505f5e47bf9a6691f19aec3ad9a768901dc1020ed73ea28764996ff16"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-002.json",
+      "bytes": 18988,
+      "sha256": "2b75561e3d37c15010e5bdaafd6a73d551959bb2c46c61f3749e235fdc0d5fe3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-003.json",
+      "bytes": 19346,
+      "sha256": "2e0e980ff34981787fbe97d5b8c59a93c4819fa9d25fc05067b58160046457d6"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-004.json",
+      "bytes": 19760,
+      "sha256": "9ad4d2bfbde60d0ab1312ed2a09ee1e5f1aed347e367c658bfebb767b8a4cdae"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-005.json",
+      "bytes": 16158,
+      "sha256": "e65c47f7b7cc1e2e8b77f363e5dfb8d4997a15a8894c1ac46def3c0f38e0aeaa"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-006.json",
+      "bytes": 17666,
+      "sha256": "a135733c8d57c14b90061c24eed85f0655c65e90df31310165b5d0465949fbca"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-007.json",
+      "bytes": 18036,
+      "sha256": "a13fa843ae85a016f868ddcb34947087547ea2d270cbc64e404a2907d1337ba3"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-008.json",
+      "bytes": 16308,
+      "sha256": "da608697c76c608aed59c4c87e2088d145ce7606130f492fa7d5f1a80a35d3ef"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-009.json",
+      "bytes": 15455,
+      "sha256": "c5c09bd0a2bc04117888e232aecc4fe5bc0a7131237b7f44d911dfde9b59fbcf"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-010.json",
+      "bytes": 15722,
+      "sha256": "b466bf1b9dde3469ba993625237a323fecbea0d49a233ae5dc09688c0db83531"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-011.json",
+      "bytes": 15899,
+      "sha256": "9c94d05f7bc5a250f52efe76a868ae78aa1f144d95b669b882935e67e07851ee"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-012.json",
+      "bytes": 16054,
+      "sha256": "d0d9536866e184a4039acca32883bb230375444c6dcdfeae7498e74aa557b9c2"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-013.json",
+      "bytes": 16103,
+      "sha256": "7c598c73dfc931cf82a56eed212fe590ffd07d0931ed562d091c37967f7c93c5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-014.json",
+      "bytes": 15221,
+      "sha256": "2641dd42e7b2cf5b4239fe0c236a2738a6c44ae00d9a85ca00646227e4ca6d74"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-015.json",
+      "bytes": 14856,
+      "sha256": "b777069d58c60eff40e48cf872e83008af700c6ae1550d680be3775d1d4257c8"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-016.json",
+      "bytes": 14340,
+      "sha256": "eae13e41f42abfd4806729565fbec383ae5648b037b901ba34c34592ed8bb47e"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-017.json",
+      "bytes": 14744,
+      "sha256": "63f724a553ea5bd397c11bb65495ef8f967649d4ff5f45d2bc5a3b553f7c82c5"
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-leaf-018.json",
+      "bytes": 6312,
+      "sha256": "2ffb56926beaddbec123c25181cf8cb98995bfd79db5d4dd6f001c0561de9a4c"
+    }
+  ],
+  "input_closure_leaf_count": 19,
+  "input_closure_file_count": 1179,
+  "input_closure_leaf_member_count_recomputed": 1179,
+  "input_closure_member_payloads_rehashed": false,
+  "input_closure_verification_receipt": null,
+  "input_closure_before_after_qualification_issued": false,
+  "scheduler_capacity_before": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\scheduler-main58-r01-capacity-before.json",
+    "bytes": 41036,
+    "sha256": "4ba547375d0d95b5caeda6b791600be8ed0ac1b72cb9ad743527fc89860dac62"
+  },
+  "observed_capacity": {
+    "retained_bytes": 42790071024,
+    "reserve_bytes": 1073741824,
+    "free_bytes": 222390923264,
+    "cap_bytes": 51539607552,
+    "minimum_free_bytes": 21474836480,
+    "pass": true,
+    "producer_prepared_retained_bytes": 42790029539,
+    "producer_prepared_pass": true
+  },
+  "actual_preflight": {
+    "process_id": 22888,
+    "process_exit": 2,
+    "execution_via_Native8": false,
+    "Native8_receipt": null,
+    "admin": true,
+    "in_outer_job": true,
+    "query_clear": false,
+    "all_query_status": 0,
+    "name_query_status": 4201,
+    "collision": false,
+    "system_profile_privilege_present": true,
+    "system_profile_privilege_enabled": false,
+    "privileges_modified": false,
+    "start_operations": 0,
+    "stop_operations": 0,
+    "run_ready": false
+  },
+  "actual_launch": {
+    "phase": "preflight",
+    "preflight_exit": 2,
+    "reason": "scheduler launch: read-only session preflight STOP",
+    "launcher_pid": 28816,
+    "controller_pid": null,
+    "watchdog_pid": null,
+    "recording_attempts": 0,
+    "controller_exit": null,
+    "watchdog_exit": null
+  },
+  "actual_stop": {
+    "phase": "trace_start",
+    "reason": "cold scheduler diagnostic: trace did not become ready; original failure retained",
+    "producer_process": null,
+    "audit_process": null,
+    "reader_process": null,
+    "report": null,
+    "audit": null,
+    "scheduler_summary": null
+  },
+  "prepared_spec_expectations": {
+    "stage": "producer-cold-scheduler-main58-r01",
+    "exe": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-wait-diagnostic-main57-waitgap\\production_wait_diagnostic_component.exe",
+    "argv": [
+      "tap",
+      "2560",
+      "20",
+      "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\tap"
+    ],
+    "total_s": 900,
+    "stream_cap": 4194304,
+    "native_exit": 0,
+    "runner_exit": 0,
+    "values_are_requests_not_observed_results": true
+  },
+  "prerequisites": {
+    "tool_build": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-evaluation-main60-etw-tools-r01\\build-binding.json",
+      "bytes": 35379,
+      "sha256": "3e6d0c1caaa017524f758877eaa96abba0446937aff4d8b1f4a1c6ffa1e9b2db"
+    },
+    "source_manifest": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-evaluation-main60-etw-tools-r01\\source-manifest.json",
+      "bytes": 239244,
+      "sha256": "20c425c0bd1a5353040e7539585af4bbdd355a74efb01aa8820511dc7dc06dda"
+    },
+    "source_snapshot": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-scheduler-src-main60-etw-tools-r01\\snapshot.json",
+      "bytes": 661757,
+      "sha256": "e7e2605af2abfd323466267e81bf21f9ac231ea8823c8b5a99dbfb0d489ae20b"
+    },
+    "core_build_plan": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-evaluation-main60-etw-tools-r01\\core-build-plan.json",
+      "bytes": 17439,
+      "sha256": "ca28a3a0394ec06ab782b01066f517ca977f466f76a0a10830a22422b981f992"
+    },
+    "controller_controls_report": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-evaluation-main60-etw-tools-r01\\controller-controls.json",
+      "bytes": 3110,
+      "sha256": "01248c6b5bb2a7503bbff5cbaaa059cfa96025babfc8093bbda84d2b04c36675"
+    },
+    "reader_controls_report": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-evaluation-main60-etw-tools-r01\\reader-self-test.json",
+      "bytes": 1555,
+      "sha256": "dc890600629268df7a74ed978cbd1b6f5e4ae729fbdad1175edc3727cd084f08"
+    },
+    "original_component57": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-wait-diagnostic-evaluation-main57-waitgap\\build-binding.json",
+      "bytes": 57030,
+      "sha256": "e30ce09fb65661e8e09b85b99ecf1e42b1750161f272adbda61eeaf19873e4b3"
+    },
+    "original_normal55_negative": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main55-normal-r01-negative-original.json",
+      "bytes": 283142,
+      "sha256": "7050fb0c0947deb6f6b455187f1d174dc1937d2c67adcc8b597e4afce23c1deb"
+    },
+    "original_AA_r03_negative": {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main57-base55-aa-r03-cost-negative-original.json",
+      "bytes": 122265,
+      "sha256": "fb3757132f270d4d8d98e9dd35cf59264d7974997d4c0fb6e52237b2e01e71e3"
+    }
+  },
+  "actual_tool_prerequisite": {
+    "translation_unit_count": 3,
+    "native_stage_count": 4,
+    "native8_pin_count": 32,
+    "controller_controls_count": 32,
+    "reader_controls_count": 20,
+    "counts_belong_to_completed_tool_build_not_this_preflight": true
+  },
+  "related_frozen_source_specs": [
+    {
+      "relative_path": "research/cold_scheduler_diagnostic/run.ps1",
+      "original": {
+        "sha256": "f48abef1485720f0f25754776c9058dde8b1793b56f60328a32148fd7c3c93d1",
+        "bytes": 19290,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\research\\cold_scheduler_diagnostic\\run.ps1"
+      },
+      "frozen_copy": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-scheduler-src-main60-etw-tools-r01\\files\\research\\cold_scheduler_diagnostic\\run.ps1",
+        "bytes": 19290,
+        "sha256": "f48abef1485720f0f25754776c9058dde8b1793b56f60328a32148fd7c3c93d1"
+      },
+      "frozen_copy_rechecked": true,
+      "current_mutable_original_rehashed": false
+    },
+    {
+      "relative_path": "research/cold_scheduler_diagnostic/elevated-launch.ps1",
+      "original": {
+        "sha256": "4d85516a772307a56b04ee78879d1e56f1b9a8c311140d15d658807c1b10738a",
+        "bytes": 5965,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\research\\cold_scheduler_diagnostic\\elevated-launch.ps1"
+      },
+      "frozen_copy": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-scheduler-src-main60-etw-tools-r01\\files\\research\\cold_scheduler_diagnostic\\elevated-launch.ps1",
+        "bytes": 5965,
+        "sha256": "4d85516a772307a56b04ee78879d1e56f1b9a8c311140d15d658807c1b10738a"
+      },
+      "frozen_copy_rechecked": true,
+      "current_mutable_original_rehashed": false
+    },
+    {
+      "relative_path": "research/cold_scheduler_diagnostic/build.ps1",
+      "original": {
+        "sha256": "c807368bc224c23a81d0180cb9c592a0f35e5dad8f6bf6a16d0c553027cd55c7",
+        "bytes": 19364,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\research\\cold_scheduler_diagnostic\\build.ps1"
+      },
+      "frozen_copy": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-scheduler-src-main60-etw-tools-r01\\files\\research\\cold_scheduler_diagnostic\\build.ps1",
+        "bytes": 19364,
+        "sha256": "c807368bc224c23a81d0180cb9c592a0f35e5dad8f6bf6a16d0c553027cd55c7"
+      },
+      "frozen_copy_rechecked": true,
+      "current_mutable_original_rehashed": false
+    },
+    {
+      "relative_path": "research/cold_scheduler_diagnostic/CMakeLists.txt",
+      "original": {
+        "sha256": "308e4dd16c1ea9a5cf41dc0350c21b575fa7afc3376887b6836ab233c443e9e1",
+        "bytes": 2561,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\research\\cold_scheduler_diagnostic\\CMakeLists.txt"
+      },
+      "frozen_copy": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-scheduler-src-main60-etw-tools-r01\\files\\research\\cold_scheduler_diagnostic\\CMakeLists.txt",
+        "bytes": 2561,
+        "sha256": "308e4dd16c1ea9a5cf41dc0350c21b575fa7afc3376887b6836ab233c443e9e1"
+      },
+      "frozen_copy_rechecked": true,
+      "current_mutable_original_rehashed": false
+    },
+    {
+      "relative_path": "tools/cold_scheduler_trace_controller.cpp",
+      "original": {
+        "sha256": "6262a97247c0770d2dc3750a9ae5129d8d602f33e69db888dcc30bf038760378",
+        "bytes": 34630,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tools\\cold_scheduler_trace_controller.cpp"
+      },
+      "frozen_copy": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-scheduler-src-main60-etw-tools-r01\\files\\tools\\cold_scheduler_trace_controller.cpp",
+        "bytes": 34630,
+        "sha256": "6262a97247c0770d2dc3750a9ae5129d8d602f33e69db888dcc30bf038760378"
+      },
+      "frozen_copy_rechecked": true,
+      "current_mutable_original_rehashed": false
+    },
+    {
+      "relative_path": "tests/cold_scheduler_trace_controller_tests.cpp",
+      "original": {
+        "sha256": "ba53dbdadb76a0a6a788833b4d5b076785dd5e2a3f41556d2a8ee67470326bfa",
+        "bytes": 8791,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tests\\cold_scheduler_trace_controller_tests.cpp"
+      },
+      "frozen_copy": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-scheduler-src-main60-etw-tools-r01\\files\\tests\\cold_scheduler_trace_controller_tests.cpp",
+        "bytes": 8791,
+        "sha256": "ba53dbdadb76a0a6a788833b4d5b076785dd5e2a3f41556d2a8ee67470326bfa"
+      },
+      "frozen_copy_rechecked": true,
+      "current_mutable_original_rehashed": false
+    },
+    {
+      "relative_path": "tools/cold_scheduler_trace_reader.cpp",
+      "original": {
+        "sha256": "85c6f8c958d9ef25a75ecc445aa63799dc1903b2d4fd4f8e4cc89d3d881e6f56",
+        "bytes": 49286,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\tools\\cold_scheduler_trace_reader.cpp"
+      },
+      "frozen_copy": {
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-scheduler-src-main60-etw-tools-r01\\files\\tools\\cold_scheduler_trace_reader.cpp",
+        "bytes": 49286,
+        "sha256": "85c6f8c958d9ef25a75ecc445aa63799dc1903b2d4fd4f8e4cc89d3d881e6f56"
+      },
+      "frozen_copy_rechecked": true,
+      "current_mutable_original_rehashed": false
+    }
+  ],
+  "source_manifest_file_count": 951,
+  "absence_observations": [
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\windows-handoff\\producer-cold-scheduler-main58-r01",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\scheduler.etl",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\ready.json",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\controller-report.json",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\watchdog-report.json",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-scheduler-main58-r01\\tap",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-20261006\\producer-cold-scheduler-main58-r01-input-closure-verification.json",
+      "exists": false
+    }
+  ],
+  "original_metadata_pin_count": 46,
+  "original_metadata_pin_total_bytes": 0,
+  "all_related_original_metadata_and_frozen_source_copies_rechecked": true,
+  "producer_native_runs": 0,
+  "producer_native_exit": null,
+  "producer_runner_exit": null,
+  "producer_verification_exit": null,
+  "ETW_recording_attempts": 0,
+  "ETW_start_operations": 0,
+  "ETW_stop_operations": 0,
+  "ETL_files": 0,
+  "raw_producer_runs": 0,
+  "auditor_runs": 0,
+  "decoder_runs": 0,
+  "diagnostic_measurement_runs": 0,
+  "normal3_runs": 0,
+  "AA12_runs": 0,
+  "noise18_runs": 0,
+  "ABBA36_runs": 0,
+  "qualification_issued": false,
+  "whole_candidate_qualification": false,
+  "cost_ready": false,
+  "physical_qualification": false,
+  "live_ready": false,
+  "device_operations": 0,
+  "newNative_runs_by_preservation": 0,
+  "large_raw_or_library_hashes_performed": 0,
+  "scope": "Preserve actual main60/fb7aa92 preflight-only STOP under unchanged main58-r01 artifact label. The elevated standalone read-only preflight returned2 with inherited outer Job observed; no trace controller/watchdog, recording or producer Native was launched. Prepared expected exit0 is not an observed Native0. Original Normal55/AA-r03 negatives and component57 remain separate and unchanged."
+}

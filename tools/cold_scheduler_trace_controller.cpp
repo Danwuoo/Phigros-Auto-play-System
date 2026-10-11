@@ -343,13 +343,17 @@ Json rights() {
     return {{"token_elevated",e.TokenIsElevated!=0},{"system_profile_privilege_present",present},{"system_profile_privilege_enabled",enabled},{"privileges_modified",false},{"named_logger_permission_not_inferred",true}};
 }
 void bound_own_job(Handle& job) {
-    require(!in_job(),"outer_job_rejected"); job.value=CreateJobObjectW(nullptr,nullptr); require(job.value!=nullptr,"own_job_create");
+    // Windows 8+ may nest this empty job beneath an existing host job. Actual
+    // Assign/readback decides compatibility; do not infer failure from in_job().
+    // Parent limits and parent-job termination still apply to this process.
+    job.value=CreateJobObjectW(nullptr,nullptr); require(job.value!=nullptr,"own_job_create");
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION limits{};
     limits.BasicLimitInformation.LimitFlags=JOB_OBJECT_LIMIT_PROCESS_MEMORY|JOB_OBJECT_LIMIT_JOB_MEMORY;
     limits.ProcessMemoryLimit=256ull*1024*1024; limits.JobMemoryLimit=256ull*1024*1024;
     require(SetInformationJobObject(job.value,JobObjectExtendedLimitInformation,&limits,sizeof(limits)) && AssignProcessToJobObject(job.value,GetCurrentProcess()),"own_job_limit_or_assign");
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION actual{}; require(QueryInformationJobObject(job.value,JobObjectExtendedLimitInformation,&actual,sizeof(actual),nullptr),"own_job_readback");
     require(actual.BasicLimitInformation.LimitFlags==limits.BasicLimitInformation.LimitFlags && actual.ProcessMemoryLimit==limits.ProcessMemoryLimit && actual.JobMemoryLimit==limits.JobMemoryLimit,"own_job_readback_mismatch");
+    BOOL member=FALSE; require(IsProcessInJob(GetCurrentProcess(),job.value,&member) && member,"own_job_membership_readback");
 }
 Json common_record(const Request& r, const char* schema) {
     return {{"schema",schema},{"request_sha256",r.sha},{"session_name",utf8(r.config.name)},{"session_guid",guid_text(r.config.guid)},
@@ -405,26 +409,35 @@ Json session_record(const Request& r, const Session& s, const char* schema) {
     j["no_realtime_api_completion_guarantee"]=true; j["start_to_owner_publication_crash_window"]=true; return j;
 }
 int preflight(const Request& r) {
-    WindowsApi api; std::vector<Snapshot> active; const auto all_status=api.all(active); bool collision=false;
+    const bool outer_job=in_job(); Handle job; bool memory_job_verified=false; std::string job_failure="none";
+    try { bound_own_job(job); memory_job_verified=true; }
+    catch(const std::exception& e) { job_failure=std::string(e.what()).substr(0,128); }
+    WindowsApi api; std::vector<Snapshot> active;
+    const auto all_status=memory_job_verified?api.all(active):ERROR_INVALID_FUNCTION; bool collision=false;
     for(const auto& s:active) collision|=IsEqualGUID(s.guid,r.config.guid)||_wcsicmp(s.name.c_str(),r.config.name.c_str())==0;
-    Snapshot named{}; const auto name_status=api.by_name(r.config.name,named);
-    auto j=common_record(r,"pas.cold-scheduler-trace-preflight.v1"); j["rights"]=rights(); j["in_outer_job"]=in_job();
+    Snapshot named{}; const auto name_status=memory_job_verified?api.by_name(r.config.name,named):ERROR_INVALID_FUNCTION;
+    auto j=common_record(r,"pas.cold-scheduler-trace-preflight.v1"); j["rights"]=rights(); j["in_outer_job"]=outer_job;
+    j["outer_job"]=outer_job; j["nested_memory_job_verified"]=memory_job_verified; j["own_memory_job_verified"]=memory_job_verified;
+    j["memory_limit_bytes"]=256ull*1024*1024; j["memory_job_failure"]=job_failure;
+    j["outer_job_termination_isolated"]=false; j["session_query_attempted"]=memory_job_verified;
     j["all_query_status"]=all_status; j["name_query_status"]=name_status; j["collision"]=collision||name_status==ERROR_SUCCESS;
     j["start_operations"]=0; j["stop_operations"]=0; j["run_ready"]=false;
-    j["query_clear"]=all_status==ERROR_SUCCESS && name_status==ERROR_WMI_INSTANCE_NOT_FOUND && !collision && !in_job();
+    j["query_clear"]=memory_job_verified && all_status==ERROR_SUCCESS && name_status==ERROR_WMI_INSTANCE_NOT_FOUND && !collision;
     ensure_root(r); create_json(r.root/L"preflight.json",j); return j.at("query_clear").get<bool>()?0:2;
 }
 int controller(const Request& r) {
-    Handle job; bound_own_job(job); ensure_root(r);
+    const bool outer_job=in_job(); Handle job; bound_own_job(job); ensure_root(r);
     require(!fs::exists(r.config.file) && !fs::exists(r.root/L"owner.json") && !fs::exists(r.root/L"controller-report.json") && !fs::exists(r.root/L"stop.json"),"recording_paths_not_fresh");
     auto watcher=parse_json(read_small(r.root/L"watchdog-ready.json")); record_matches(watcher,r,"pas.cold-scheduler-trace-watchdog-ready.v1");
-    flag(watcher,"own_memory_job_verified",true); require(integer(watcher,"memory_limit_bytes")==256ull*1024*1024,"watchdog_memory_bound");
+    flag(watcher,"own_memory_job_verified",true); flag(watcher,"nested_memory_job_verified",true);
+    require(integer(watcher,"memory_limit_bytes")==256ull*1024*1024,"watchdog_memory_bound");
     std::unique_ptr<Handle> watcher_handle(pin_live_process(watcher));
     WindowsApi api; Session s(api,r.config);
     try {
         require(qpc()<r.config.deadline_qpc,"deadline_before_start");
         if(s.begin()) {
             auto owner=session_record(r,s,"pas.cold-scheduler-trace-owner.v1"); owner["controller_memory_limit_bytes"]=256ull*1024*1024;
+            owner["outer_job"]=outer_job; owner["nested_memory_job_verified"]=true; owner["outer_job_termination_isolated"]=false;
             owner["watchdog_process_id"]=integer(watcher,"process_id"); owner["watchdog_creation_filetime"]=integer(watcher,"creation_filetime");
             create_json(r.root/L"owner.json",owner);
             require(qpc()<r.config.deadline_qpc,"startup_deadline");
@@ -444,13 +457,15 @@ int controller(const Request& r) {
         }
     } catch(const std::exception& e) { s.reason=std::string(e.what()).substr(0,128); }
     s.finish(); auto j=session_record(r,s,"pas.cold-scheduler-trace-controller-report.v1"); j["raw_file_within_cap"]=etl_bound(r);
+    j["outer_job"]=outer_job; j["nested_memory_job_verified"]=true; j["outer_job_termination_isolated"]=false;
     create_json(r.root/L"controller-report.json",j);
     return s.cleanup_confirmed && s.final_statistics_verified && loss_free(s.latest) && etl_bound(r) && s.reason=="requested_stop"?0:2;
 }
 int watchdog(const Request& r) {
-    Handle job; bound_own_job(job); ensure_root(r);
+    const bool outer_job=in_job(); Handle job; bound_own_job(job); ensure_root(r);
     require(!fs::exists(r.root/L"watchdog-ready.json") && !fs::exists(r.root/L"owner.json") && !fs::exists(r.root/L"watchdog-report.json") && !fs::exists(r.config.file),"watchdog_paths_not_fresh");
     auto ready=common_record(r,"pas.cold-scheduler-trace-watchdog-ready.v1"); ready["own_memory_job_verified"]=true; ready["memory_limit_bytes"]=256ull*1024*1024;
+    ready["outer_job"]=outer_job; ready["nested_memory_job_verified"]=true; ready["outer_job_termination_isolated"]=false;
     create_json(r.root/L"watchdog-ready.json",ready);
     WindowsApi api; Session s(api,r.config); std::unique_ptr<Handle> owner_process; bool owner_seen=false;
     try {
@@ -473,6 +488,7 @@ int watchdog(const Request& r) {
     } catch(const std::exception& e) { s.reason=std::string(e.what()).substr(0,128); }
     if(owner_seen) s.finish();
     auto j=session_record(r,s,"pas.cold-scheduler-trace-watchdog-report.v1"); j["owner_seen"]=owner_seen; j["memory_limit_bytes"]=256ull*1024*1024;
+    j["outer_job"]=outer_job; j["nested_memory_job_verified"]=true; j["outer_job_termination_isolated"]=false;
     j["no_owner_no_stop"]=!owner_seen; j["run_ready"]=false; create_json(r.root/L"watchdog-report.json",j);
     return owner_seen && s.cleanup_confirmed?0:2;
 }

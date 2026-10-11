@@ -1,7 +1,8 @@
 param([Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{40}$')][string]$FrozenHead,
       [Parameter(Mandatory)][string]$ToolBinding,
       [Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{64}$')][string]$ExpectedToolBindingSha256,
-      [Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{64}$')][string]$ExpectedRunnerSha256)
+      [Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{64}$')][string]$ExpectedRunnerSha256,
+      [ValidatePattern('^[a-z0-9-]{1,40}$')][string]$Attempt='main61-r02')
 $ErrorActionPreference='Stop'
 $workspace=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 . (Join-Path $workspace 'research/pre_emulator/common.ps1')
@@ -44,20 +45,20 @@ foreach($pin in $pins){CheckEntry $pin}
 $script:seal=@{files=@($t.files)+@($b.files)+@($auditor)}
 function AssertSource {Require ((& git -C $repo rev-parse HEAD) -ceq $FrozenHead -and (& git -C $repo branch --show-current) -ceq 'main' -and -not (& git -C $repo status --porcelain)) 'clean new execution identity';foreach($pin in $pins){CheckEntry $pin}}
 AssertSource
-$artifact=Join-Path $repo 'out/prelive-cold-scheduler-main58-r01';Fresh $artifact;$null=[IO.Directory]::CreateDirectory($artifact)
+$artifact=Join-Path $repo ('out/prelive-cold-scheduler-'+$Attempt);Fresh $artifact;$null=[IO.Directory]::CreateDirectory($artifact)
 $root=Join-Path $artifact 'tap';$planPath=Join-Path $artifact 'plan.json'
 NewJson $planPath @{schema='pas.cold-scheduler-measurement-plan.v1';execution_source_commit=$FrozenHead;tool_build=$toolPin;component_build=$bindingPin;compiled_component_source_commit=$b.delta_source_commit;base_source_commit=$b.base_source_commit;scene='tap';requested=2560;cadence_ms=20;diagnostic_only=$true;single_attempt=$true;logging_mode='sequential';enable_flags=268437520;trace_duration_limit_s=75;trace_buffer_limit_bytes=67108864;trace_raw_limit_bytes=134217728;qualification_issued=$false;normal3_runs=0;AA12_runs=0;noise18_runs=0;ABBA36_runs=0;device_operations=0;live_ready=$false}
 $launchPath=Join-Path $artifact 'launch-plan.json'
-NewJson $launchPath @{schema='pas.cold-scheduler-launch-plan.v1';workspace=$repo;artifact_root=$artifact;execution_source_commit=$FrozenHead;launcher=$launcherPin;controller=$controller[0];component_build=$bindingPin;producer=$producer[0];session_name='PAS-ColdScheduler-main58-r01';session_guid=([guid]::NewGuid().ToString());diagnostic_only=$true;live_ready=$false;device_operations=0}
+NewJson $launchPath @{schema='pas.cold-scheduler-launch-plan.v1';workspace=$repo;artifact_root=$artifact;execution_source_commit=$FrozenHead;launcher=$launcherPin;controller=$controller[0];component_build=$bindingPin;producer=$producer[0];session_name=('PAS-ColdScheduler-'+$Attempt);session_guid=([guid]::NewGuid().ToString());diagnostic_only=$true;live_ready=$false;device_operations=0}
 $launchPin=Binding $launchPath;$guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
 $inputs=@($pins.path)+@($planPath,$launchPath)+(GateInputs)+@($guard.guard_source.path,$guard.process_source.path,$guard.cached_identity_controls.path,$guard.identity_wait_controls.path)
-$producerStage='producer-cold-scheduler-main58-r01';$auditorStage='audit-cold-scheduler-main58-r01';$readerStage='read-cold-scheduler-main58-r01'
+$producerStage='producer-cold-scheduler-'+$Attempt;$auditorStage='audit-cold-scheduler-'+$Attempt;$readerStage='read-cold-scheduler-'+$Attempt
 $producerSpec=PrepareNative $producerStage $producer[0].path @('tap','2560','20',$root) $inputs
  $producerParams=Join-Path $pkg ($producerStage+'-params.json')
  Capacity $producerStage 'before'
  NewJson $producerParams @{script=(Join-Path $repo 'research/windows_process_guard_v3/invoke.ps1');arguments=@{Specification=$producerSpec;GateReceipt=$gate}}
  CheckClosure $producerStage 'before'
-Capacity 'scheduler-main58-r01' 'before'
+Capacity ('scheduler-'+$Attempt) 'before'
 $phase='elevation';$launch=$null;$ready=$null;$producerEvidence=$null;$auditEvidence=$null;$readerEvidence=$null;$reportPin=$null;$auditPin=$null;$readerPin=$null;$diagnosticIndex=$null;$selectedGap=$null
 try {
  AssertSource
@@ -67,7 +68,7 @@ try {
  while(-not(Test-Path -LiteralPath $readyPath) -and -not $launch.HasExited -and [Diagnostics.Stopwatch]::GetTimestamp() -lt $awaitDeadline){[Threading.Thread]::Sleep(25)}
  Require (Test-Path -LiteralPath $readyPath) 'trace did not become ready; original failure retained'
  $ready=ReadPin (Binding $readyPath) 65536
- Require ($ready.schema -ceq 'pas.cold-scheduler-trace-ready.v1' -and $ready.tool_source_commit -ceq $FrozenHead -and $ready.session_name -ceq 'PAS-ColdScheduler-main58-r01') 'current trace ready identity';Bool $ready 'successful_start' $true
+ Require ($ready.schema -ceq 'pas.cold-scheduler-trace-ready.v1' -and $ready.tool_source_commit -ceq $FrozenHead -and $ready.session_name -ceq ('PAS-ColdScheduler-'+$Attempt)) 'current trace ready identity';Bool $ready 'successful_start' $true
  $requestPin=Binding (Join-Path $artifact 'trace-request.json');$request=ReadPin $requestPin 65536
  Require ($ready.request_sha256 -ceq $requestPin.sha256 -and $ready.session_guid -ceq $request.session_guid -and $ready.start_qpc -eq $request.start_qpc -and $ready.deadline_qpc -eq $request.deadline_qpc -and $ready.qpc_frequency -eq $request.qpc_frequency -and $request.qpc_frequency -eq [Diagnostics.Stopwatch]::Frequency -and $request.execution_source_commit -ceq $FrozenHead) 'ready and actual request identity/time join'
  Bool $ready 'ttl_overrun' $false
