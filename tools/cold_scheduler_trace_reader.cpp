@@ -21,6 +21,9 @@
 // https://learn.microsoft.com/en-us/windows/win32/api/tdh/ns-tdh-event_property_info
 // https://learn.microsoft.com/en-us/windows/win32/api/tdh/nf-tdh-tdhgetproperty
 // https://learn.microsoft.com/en-us/windows/win32/etw/logging-mode-constants
+// Descriptor.Version is recorded independently of the MOF class-name suffix.
+// Reference for possible later semantic extensions (not assumed by this reader):
+// https://github.com/microsoft/perfview/blob/main/src/TraceEvent/Parsers/KernelTraceEventParser.cs
 
 #ifndef _WIN32
 #error cold_scheduler_trace_reader requires the Windows SDK
@@ -65,6 +68,9 @@ using Tick = std::int64_t;
 constexpr std::size_t kSummaryBytes = 1024 * 1024;
 constexpr std::size_t kTargetRecords = 262144;
 constexpr std::size_t kSchemaBytes = 64 * 1024;
+constexpr std::size_t kCatalogSchemas = 16;
+constexpr std::size_t kCatalogProperties = 64;
+constexpr std::size_t kPropertyNameChars = 96;
 constexpr std::uint64_t kFileBytes = 128ULL * 1024 * 1024;
 constexpr SIZE_T kJobMemoryBytes = 512ULL * 1024 * 1024;
 constexpr std::uint64_t kAllRecords = 32000000;
@@ -73,6 +79,7 @@ constexpr ULONG kBufferBytes = 1024 * 1024;
 constexpr std::size_t kPathChars = 32767;
 constexpr std::size_t kTopIntervals = 32;
 constexpr std::uint64_t kWindowSeconds = 75;
+constexpr std::size_t kOwnedStorageBudgetBytes = 9 * 1024 * 1024;
 constexpr GUID kThreadGuid{0x3d6fa8d1, 0xfe05, 0x11d0,
                           {0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c}};
 constexpr GUID kLostGuid{0x6a399ae0, 0x4bc6, 0x4de9,
@@ -84,7 +91,7 @@ enum class Issue : unsigned {
     BufferCap, RecordCap, TargetCap, BufferSize, UnsupportedVersion,
     TdhSchema, TdhProperty, InvalidTimestamp, MissingCoverage,
     MissingEventClasses, ProcessTrace, CallbackException, InputChanged,
-    SchemaChanged, InvalidProcessor, CloseTrace, Count
+    SchemaChanged, InvalidProcessor, CloseTrace, SchemaCatalogCap, Count
 };
 constexpr std::array<const char*, static_cast<std::size_t>(Issue::Count)> kIssues{
     "open_trace_failed", "clock_is_not_raw_qpc", "perf_frequency_mismatch",
@@ -92,12 +99,12 @@ constexpr std::array<const char*, static_cast<std::size_t>(Issue::Count)> kIssue
     "append_or_multifile_trace_unsupported", "missing_or_invalid_log_header",
     "events_lost", "buffers_lost", "explicit_lost_event_or_buffer_or_file",
     "buffer_count_cap", "record_count_cap", "target_record_cap",
-    "trace_buffer_size_cap", "scheduler_version_not_documented_v2",
+    "trace_buffer_size_cap", "scheduler_descriptor_version_semantics_unsupported",
     "tdh_schema_unavailable_or_invalid", "tdh_scalar_property_invalid",
     "invalid_raw_qpc_timestamp", "scheduler_events_do_not_bracket_window",
     "missing_cswitch_or_readythread_schema", "process_trace_did_not_reach_eof",
     "callback_exception", "etl_identity_changed", "scheduler_schema_changed",
-    "scheduler_processor_index_invalid", "close_trace_failed"
+    "scheduler_processor_index_invalid", "close_trace_failed", "scheduler_schema_catalog_cap"
 };
 
 struct Options {
@@ -206,11 +213,60 @@ struct Schema {
     ULONG schema_bytes{};
 };
 
+struct PropertyDiagnostic {
+    std::array<wchar_t, kPropertyNameChars> name{};
+    ULONG name_offset{};
+    unsigned flags{};
+    USHORT in_type{};
+    USHORT out_type{};
+    USHORT count_or_index{};
+    USHORT length_or_index{};
+    USHORT struct_start{};
+    USHORT struct_members{};
+    bool name_valid{};
+    bool scalar_type_available{};
+};
+
+struct SchemaDiagnostic {
+    EVENT_DESCRIPTOR descriptor{};
+    USHORT layout_flags{};
+    USHORT first_header_flags{};
+    USHORT user_data_min{};
+    USHORT user_data_max{};
+    std::uint64_t records{};
+    Tick first_tick{};
+    Tick last_tick{};
+    ULONG tdh_size_query_status{ERROR_INVALID_FUNCTION};
+    ULONG tdh_status{ERROR_INVALID_FUNCTION};
+    ULONG tdh_bytes{};
+    ULONG property_count{};
+    ULONG top_level_property_count{};
+    ULONG decoding_source{};
+    GUID provider_guid{};
+    GUID event_guid{};
+    EVENT_DESCRIPTOR tdh_descriptor{};
+    bool metadata_available{};
+    bool property_array_valid{};
+    std::array<PropertyDiagnostic, kCatalogProperties> properties{};
+};
+static_assert(kCatalogSchemas * sizeof(SchemaDiagnostic) <= 256 * 1024);
+// The existing 9 MiB budget includes the new catalog. This accounts for bounded
+// owned buffers (including conservative path/UTF-8 temporary storage); it is
+// not a measurement of allocator or SDK overhead, bounded by the process Job.
+constexpr auto kOwnedBufferAccountingBytes = kTargetRecords * sizeof(Record) + kSummaryBytes +
+    kSchemaBytes + kCatalogSchemas * sizeof(SchemaDiagnostic) +
+    6 * (kPathChars + 1) * sizeof(wchar_t) + 4 * kPathChars;
+static_assert(kOwnedBufferAccountingBytes <= kOwnedStorageBudgetBytes);
+
 struct Context {
     const Options& options;
     std::unique_ptr<Record[]> records{std::make_unique<Record[]>(kTargetRecords)};
     // Only two documented classes. No unbounded schema cache or event payloads.
     std::array<Schema, 2> schemas{};
+    // Catalog only metadata. No event payloads, arbitrary schemas, or state
+    // transitions from outside the requested QPC window are retained.
+    std::unique_ptr<SchemaDiagnostic[]> catalog{std::make_unique<SchemaDiagnostic[]>(kCatalogSchemas)};
+    std::size_t catalog_count{};
     alignas(TRACE_EVENT_INFO) std::array<std::byte, kSchemaBytes> schema_buffer{};
     std::size_t count{};
     std::uint64_t issues{};
@@ -220,6 +276,7 @@ struct Context {
     std::uint64_t window_scheduler_records{};
     std::uint64_t cswitch_records{};
     std::uint64_t ready_records{};
+    std::uint64_t unsupported_version_records{};
     std::uint64_t lost_records{};
     std::uint64_t input_order_regressions{};
     Tick previous_scheduler_tick{};
@@ -309,13 +366,118 @@ bool property_name(const std::byte* base, ULONG bytes, ULONG offset,
     return std::equal(expected.begin(), expected.end(), name) && name[expected.size()] == L'\0';
 }
 
+bool copy_property_name(const std::byte* base, ULONG bytes, ULONG offset,
+                        std::array<wchar_t, kPropertyNameChars>& destination) noexcept {
+    if (offset == 0 || offset % alignof(wchar_t) != 0 || offset >= bytes) return false;
+    const auto available = std::min<std::size_t>((bytes - offset) / sizeof(wchar_t), destination.size());
+    const auto* name = reinterpret_cast<const wchar_t*>(base + offset);
+    std::size_t size = 0;
+    while (size < available && name[size] != L'\0') ++size;
+    if (size == 0 || size == available) return false; // Never silently truncate a name.
+    for (std::size_t i = 0; i < size; ++i) {
+        const auto c = static_cast<unsigned>(name[i]);
+        if (c >= 0xd800 && c <= 0xdbff) {
+            if (++i == size || name[i] < 0xdc00 || name[i] > 0xdfff) return false;
+        } else if (c >= 0xdc00 && c <= 0xdfff) return false;
+    }
+    std::copy_n(name, size + 1, destination.begin());
+    return true;
+}
+
+bool scalar_metadata_valid(const EVENT_PROPERTY_INFO& property, const Field& required) noexcept {
+    constexpr unsigned forbidden = PropertyStruct | PropertyParamLength | PropertyParamCount |
+        PropertyParamFixedCount | PropertyHasCustomSchema;
+    return (static_cast<unsigned>(property.Flags) & forbidden) == 0 && property.count == 1 &&
+        property.nonStructType.InType == required.type &&
+        (property.length == 0 || property.length == required.bytes);
+}
+
+bool supported_version(Context& context, UCHAR version) noexcept {
+    if (version == 2) return true;
+    // Unknown semantics must not cancel ProcessTrace: preserve the actual
+    // descriptor/TDH catalog and loss observations through EOF. No transitions
+    // are decoded or attributed from this event.
+    ++context.unsupported_version_records;
+    context.mark(Issue::UnsupportedVersion);
+    return false;
+}
+
+void catalog_schema(Context& context, EVENT_RECORD& event, Tick tick) {
+    constexpr USHORT layout_mask = EVENT_HEADER_FLAG_CLASSIC_HEADER |
+        EVENT_HEADER_FLAG_32_BIT_HEADER | EVENT_HEADER_FLAG_64_BIT_HEADER |
+        EVENT_HEADER_FLAG_TRACE_MESSAGE | EVENT_HEADER_FLAG_STRING_ONLY;
+    const auto flags = static_cast<USHORT>(event.EventHeader.Flags & layout_mask);
+    const auto& descriptor = event.EventHeader.EventDescriptor;
+    for (std::size_t i = 0; i < context.catalog_count; ++i) {
+        auto& item = context.catalog[i];
+        if (std::memcmp(&item.descriptor, &descriptor, sizeof(descriptor)) != 0 || item.layout_flags != flags)
+            continue;
+        ++item.records;
+        item.first_tick = std::min(item.first_tick, tick);
+        item.last_tick = std::max(item.last_tick, tick);
+        item.user_data_min = std::min(item.user_data_min, event.UserDataLength);
+        item.user_data_max = std::max(item.user_data_max, event.UserDataLength);
+        return;
+    }
+    if (context.catalog_count == kCatalogSchemas) { context.abort(Issue::SchemaCatalogCap); return; }
+    auto& item = context.catalog[context.catalog_count++];
+    item.descriptor = descriptor;
+    item.layout_flags = flags;
+    item.first_header_flags = event.EventHeader.Flags;
+    item.records = 1;
+    item.first_tick = item.last_tick = tick;
+    item.user_data_min = item.user_data_max = event.UserDataLength;
+    ULONG bytes = 0;
+    item.tdh_size_query_status = TdhGetEventInformation(&event, 0, nullptr, nullptr, &bytes);
+    item.tdh_bytes = bytes;
+    constexpr auto minimum = offsetof(TRACE_EVENT_INFO, EventPropertyInfoArray);
+    if (item.tdh_size_query_status != ERROR_INSUFFICIENT_BUFFER || bytes < minimum || bytes > kSchemaBytes) {
+        item.tdh_status = item.tdh_size_query_status;
+        return;
+    }
+    auto* info = reinterpret_cast<TRACE_EVENT_INFO*>(context.schema_buffer.data());
+    item.tdh_status = TdhGetEventInformation(&event, 0, nullptr, info, &bytes);
+    item.tdh_bytes = bytes;
+    if (item.tdh_status != ERROR_SUCCESS || bytes < minimum || bytes > kSchemaBytes) return;
+    item.metadata_available = true;
+    item.decoding_source = static_cast<ULONG>(info->DecodingSource);
+    item.provider_guid = info->ProviderGuid;
+    item.event_guid = info->EventGuid;
+    item.tdh_descriptor = info->EventDescriptor;
+    item.property_count = info->PropertyCount;
+    item.top_level_property_count = info->TopLevelPropertyCount;
+    item.property_array_valid = info->TopLevelPropertyCount <= info->PropertyCount &&
+        info->PropertyCount <= kCatalogProperties &&
+        info->PropertyCount <= (bytes - minimum) / sizeof(EVENT_PROPERTY_INFO);
+    if (!item.property_array_valid) return;
+    for (ULONG i = 0; i < info->PropertyCount; ++i) {
+        const auto& property = info->EventPropertyInfoArray[i];
+        auto& observed = item.properties[i];
+        observed.flags = static_cast<unsigned>(property.Flags);
+        observed.name_offset = property.NameOffset;
+        observed.name_valid = copy_property_name(context.schema_buffer.data(), bytes, property.NameOffset, observed.name);
+        observed.count_or_index = property.count;
+        observed.length_or_index = property.length;
+        if ((observed.flags & PropertyStruct) != 0) {
+            observed.struct_start = property.structType.StructStartIndex;
+            observed.struct_members = property.structType.NumOfStructMembers;
+        } else {
+            // InType/OutType occupy these fields for both scalar and custom
+            // schema metadata. Flags remain explicit; neither is decoded here.
+            observed.scalar_type_available = true;
+            observed.in_type = property.nonStructType.InType;
+            observed.out_type = property.nonStructType.OutType;
+        }
+    }
+}
+
 template<std::size_t N>
 bool schema(Context& context, EVENT_RECORD& event, Schema& cache,
             const std::array<Field, N>& fields) {
     const auto& descriptor = event.EventHeader.EventDescriptor;
     const auto bitness = static_cast<USHORT>(event.EventHeader.Flags &
         (EVENT_HEADER_FLAG_32_BIT_HEADER | EVENT_HEADER_FLAG_64_BIT_HEADER));
-    if (descriptor.Version != 2) { context.abort(Issue::UnsupportedVersion); return false; }
+    if (!supported_version(context, descriptor.Version)) return false;
     if ((event.EventHeader.Flags & EVENT_HEADER_FLAG_CLASSIC_HEADER) == 0 ||
         (event.EventHeader.Flags & (EVENT_HEADER_FLAG_TRACE_MESSAGE | EVENT_HEADER_FLAG_STRING_ONLY)) != 0) {
         context.abort(Issue::TdhSchema); return false;
@@ -340,7 +502,7 @@ bool schema(Context& context, EVENT_RECORD& event, Schema& cache,
     if (info->DecodingSource != DecodingSourceWbem || !IsEqualGUID(info->ProviderGuid, kThreadGuid) ||
         info->EventDescriptor.Version != descriptor.Version ||
         info->EventDescriptor.Opcode != descriptor.Opcode ||
-        info->TopLevelPropertyCount > info->PropertyCount || info->PropertyCount > 64 ||
+        info->TopLevelPropertyCount > info->PropertyCount || info->PropertyCount > kCatalogProperties ||
         info->PropertyCount > (bytes - minimum) / sizeof(EVENT_PROPERTY_INFO)) {
         context.abort(Issue::TdhSchema); return false;
     }
@@ -350,11 +512,7 @@ bool schema(Context& context, EVENT_RECORD& event, Schema& cache,
             const auto& property = info->EventPropertyInfoArray[i];
             if (!property_name(context.schema_buffer.data(), bytes, property.NameOffset, required.name)) continue;
             ++matches;
-            constexpr unsigned forbidden = PropertyStruct | PropertyParamLength | PropertyParamCount |
-                PropertyParamFixedCount | PropertyHasCustomSchema;
-            if ((static_cast<unsigned>(property.Flags) & forbidden) != 0 || property.count != 1 ||
-                property.nonStructType.InType != required.type ||
-                (property.length != 0 && property.length != required.bytes)) {
+            if (!scalar_metadata_valid(property, required)) {
                 context.abort(Issue::TdhSchema); return false;
             }
         }
@@ -399,7 +557,10 @@ void consume(Context& context, EVENT_RECORD& event) {
     context.previous_scheduler_tick = tick;
     context.first_scheduler_tick = std::min(context.first_scheduler_tick, tick);
     context.last_scheduler_tick = std::max(context.last_scheduler_tick, tick);
-    // Only global raw coverage extents are observed outside the requested window.
+    catalog_schema(context, event, tick);
+    if (context.stop) return;
+    // Only global raw coverage extents and bounded schema metadata are observed
+    // outside the requested window.
     // No target state is imported/backfilled from events outside [begin,end].
     if (tick < context.options.begin || tick > context.options.end) return;
     ++context.window_scheduler_records;
@@ -648,6 +809,83 @@ private:
     std::string bytes_;
 };
 
+void descriptor_json(Json& out, const EVENT_DESCRIPTOR& value) {
+    out.raw("{\"id\":"); out.number(value.Id);
+    out.raw(",\"version\":"); out.number(value.Version);
+    out.raw(",\"channel\":"); out.number(value.Channel);
+    out.raw(",\"level\":"); out.number(value.Level);
+    out.raw(",\"opcode\":"); out.number(value.Opcode);
+    out.raw(",\"task\":"); out.number(value.Task);
+    out.raw(",\"keyword\":"); out.number(value.Keyword); out.raw("}");
+}
+
+void guid_json(Json& out, const GUID& value) {
+    // Numeric components preserve every GUID bit without an extra COM library.
+    out.raw("{\"data1\":"); out.number(value.Data1);
+    out.raw(",\"data2\":"); out.number(value.Data2);
+    out.raw(",\"data3\":"); out.number(value.Data3);
+    out.raw(",\"data4\":[");
+    for (std::size_t i = 0; i < sizeof(value.Data4); ++i) {
+        if (i) out.raw(","); out.number(value.Data4[i]);
+    }
+    out.raw("]}");
+}
+
+void catalog_json(Json& out, const Context& context) {
+    out.raw(",\n  \"schema_catalog\": {\"schema\":\"pas.cold-scheduler-trace-schema-catalog.v1\","
+        "\"metadata_only\":true,\"semantic_versions_supported\":[2],\"entries\":[");
+    for (std::size_t i = 0; i < context.catalog_count; ++i) {
+        if (i) out.raw(","); const auto& item = context.catalog[i];
+        out.raw("{\"descriptor\":"); descriptor_json(out, item.descriptor);
+        out.raw(",\"layout_flags\":"); out.number(item.layout_flags);
+        out.raw(",\"first_header_flags\":"); out.number(item.first_header_flags);
+        out.raw(",\"records\":"); out.number(item.records);
+        out.raw(",\"first_qpc\":"); out.number(static_cast<std::uint64_t>(item.first_tick));
+        out.raw(",\"last_qpc\":"); out.number(static_cast<std::uint64_t>(item.last_tick));
+        out.raw(",\"user_data_min_bytes\":"); out.number(item.user_data_min);
+        out.raw(",\"user_data_max_bytes\":"); out.number(item.user_data_max);
+        out.raw(",\"tdh_size_query_status\":"); out.number(item.tdh_size_query_status);
+        out.raw(",\"tdh_status\":"); out.number(item.tdh_status);
+        out.raw(",\"tdh_bytes\":"); out.number(item.tdh_bytes);
+        out.raw(",\"metadata_available\":"); out.boolean(item.metadata_available);
+        out.raw(",\"property_array_valid\":"); out.boolean(item.property_array_valid);
+        out.raw(",\"tdh_descriptor\":");
+        if (item.metadata_available) descriptor_json(out, item.tdh_descriptor); else out.raw("null");
+        out.raw(",\"decoding_source\":");
+        if (item.metadata_available) out.number(item.decoding_source); else out.raw("null");
+        out.raw(",\"provider_guid\":");
+        if (item.metadata_available) guid_json(out, item.provider_guid); else out.raw("null");
+        out.raw(",\"event_guid\":");
+        if (item.metadata_available) guid_json(out, item.event_guid); else out.raw("null");
+        out.raw(",\"provider_is_thread_guid\":");
+        out.boolean(item.metadata_available && IsEqualGUID(item.provider_guid, kThreadGuid));
+        out.raw(",\"property_count\":"); out.number(item.property_count);
+        out.raw(",\"top_level_property_count\":"); out.number(item.top_level_property_count);
+        out.raw(",\"properties\":[");
+        if (item.property_array_valid) for (ULONG j = 0; j < item.property_count; ++j) {
+            if (j) out.raw(","); const auto& property = item.properties[j];
+            out.raw("{\"index\":"); out.number(j);
+            out.raw(",\"name\":"); if (property.name_valid) out.wide(property.name.data()); else out.raw("null");
+            out.raw(",\"name_valid\":"); out.boolean(property.name_valid);
+            out.raw(",\"name_offset\":"); out.number(property.name_offset);
+            out.raw(",\"flags\":"); out.number(property.flags);
+            out.raw(",\"in_type\":");
+            if (property.scalar_type_available) out.number(property.in_type); else out.raw("null");
+            out.raw(",\"out_type\":");
+            if (property.scalar_type_available) out.number(property.out_type); else out.raw("null");
+            out.raw(",\"count_or_property_index\":"); out.number(property.count_or_index);
+            out.raw(",\"length_or_property_index\":"); out.number(property.length_or_index);
+            out.raw(",\"struct_start_index\":");
+            if (property.flags & PropertyStruct) out.number(property.struct_start); else out.raw("null");
+            out.raw(",\"struct_members\":");
+            if (property.flags & PropertyStruct) out.number(property.struct_members); else out.raw("null");
+            out.raw("}");
+        }
+        out.raw("]}");
+    }
+    out.raw("]}");
+}
+
 void summary(Json& out, const Context& context, const Analysis& analysis,
              const BY_HANDLE_FILE_INFORMATION& identity) {
     const auto number = [&out](const char* key, std::uint64_t value) {
@@ -698,6 +936,11 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
     number("consumer_events_lost_max", context.max_consumer_events_lost);
     number("explicit_loss_records", context.lost_records);
     boolean("open_trace_succeeded", context.opened); boolean("process_trace_invoked", context.processed);
+    boolean("process_trace_reached_eof", context.processed && context.process_status == ERROR_SUCCESS && !context.stop);
+    // File-level loss observations are separate from the controller's stop/query
+    // evidence, which this offline reader neither receives nor certifies.
+    boolean("file_loss_observations_complete", context.processed && context.process_status == ERROR_SUCCESS && !context.stop);
+    out.raw(",\n  \"controller_final_statistics_verified\": null");
     number("open_trace_error", context.open_error);
     out.raw(",\n  \"process_trace_status\": ");
     if (context.processed) out.number(context.process_status); else out.raw("null");
@@ -710,6 +953,7 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
     number("scheduler_records_in_window", context.window_scheduler_records);
     number("cswitch_records_in_window", context.cswitch_records);
     number("readythread_records_in_window", context.ready_records);
+    number("unsupported_version_records_in_window", context.unsupported_version_records);
     number("target_records_in_window", context.count);
     number("scheduler_input_order_regressions", context.input_order_regressions);
     out.raw(",\n  \"scheduler_coverage_first_qpc\": ");
@@ -735,18 +979,26 @@ void summary(Json& out, const Context& context, const Analysis& analysis,
         out.raw(", \"property_count\": "); out.number(schema.property_count);
         out.raw("}");
     }
-    out.raw("],\n  \"limits\": {\"etl_bytes\": "); out.number(kFileBytes);
+    out.raw("]");
+    catalog_json(out, context);
+    out.raw(",\n  \"limits\": {\"etl_bytes\": "); out.number(kFileBytes);
     out.raw(", \"all_records\": "); out.number(kAllRecords);
     out.raw(", \"buffers\": "); out.number(kBuffers);
     out.raw(", \"trace_buffer_bytes\": "); out.number(kBufferBytes);
     out.raw(", \"target_records\": "); out.number(kTargetRecords);
     out.raw(", \"owned_record_storage_bytes\": "); out.number(kTargetRecords * sizeof(Record));
     out.raw(", \"tdh_scratch_bytes\": "); out.number(kSchemaBytes);
+    out.raw(", \"catalog_schemas\": "); out.number(kCatalogSchemas);
+    out.raw(", \"catalog_properties_per_schema\": "); out.number(kCatalogProperties);
+    out.raw(", \"catalog_property_name_chars_including_null\": "); out.number(kPropertyNameChars);
+    out.raw(", \"owned_catalog_storage_bytes\": "); out.number(kCatalogSchemas * sizeof(SchemaDiagnostic));
     out.raw(", \"summary_bytes\": "); out.number(kSummaryBytes);
     out.raw(", \"own_job_process_and_job_memory_bytes\": "); out.number(kJobMemoryBytes);
     out.raw(", \"max_window_seconds\": "); out.number(kWindowSeconds);
     out.raw(", \"top_intervals\": "); out.number(kTopIntervals);
-    out.raw(", \"owned_dynamic_storage_budget_bytes\": 9437184, \"sdk_internal_memory_measured\": false}");
+    out.raw(", \"owned_bounded_buffer_accounting_bytes\": "); out.number(kOwnedBufferAccountingBytes);
+    out.raw(", \"owned_dynamic_storage_budget_bytes\": "); out.number(kOwnedStorageBudgetBytes);
+    out.raw(", \"sdk_internal_memory_measured\": false}");
     number("ambiguous_timestamp_groups", analysis.ambiguous_timestamp_groups);
     number("transition_contradictions", analysis.contradictions);
     number("unclassified_transition_pairs", analysis.unclassified_pairs);
@@ -853,6 +1105,44 @@ int self_test(const std::wstring& output_path) {
     context.mark(Issue::ClockNotQpc);
     check(durations(analyze(context), 0, 0, 0, 100), "non-QPC trace has no attributed durations");
     if (assertions != 20) fail("self-test control denominator mismatch");
+    std::array<const char*, 8> schema_names{};
+    std::size_t schema_assertions = 0;
+    const auto schema_check = [&](bool value, const char* name) {
+        if (!value) throw std::runtime_error(std::string("schema self-test failed: ") + name);
+        if (schema_assertions == schema_names.size()) fail("schema self-test fixed cap");
+        schema_names[schema_assertions++] = name;
+    };
+    EVENT_PROPERTY_INFO property{};
+    property.count = 1;
+    property.nonStructType.InType = TDH_INTYPE_UINT32;
+    property.length = 4;
+    schema_check(scalar_metadata_valid(property, kSwitchFields[0]), "exact uint32 scalar metadata");
+    property.nonStructType.InType = TDH_INTYPE_INT8;
+    schema_check(!scalar_metadata_valid(property, kSwitchFields[0]), "different input type rejected");
+    property.nonStructType.InType = TDH_INTYPE_UINT32;
+    property.Flags = PropertyParamCount;
+    schema_check(!scalar_metadata_valid(property, kSwitchFields[0]), "dynamic array metadata rejected");
+    property.Flags = PropertyStruct;
+    schema_check(!scalar_metadata_valid(property, kSwitchFields[0]), "struct metadata not scalar");
+    alignas(TRACE_EVENT_INFO) std::array<wchar_t, 32> name_buffer{};
+    constexpr std::wstring_view expected = L"NewThreadId";
+    std::copy(expected.begin(), expected.end(), name_buffer.begin() + 1);
+    const auto* name_bytes = reinterpret_cast<const std::byte*>(name_buffer.data());
+    std::array<wchar_t, kPropertyNameChars> copied{};
+    schema_check(copy_property_name(name_bytes, sizeof(name_buffer), sizeof(wchar_t), copied) &&
+        std::wstring_view(copied.data()) == expected, "bounded terminated metadata name copied exactly");
+    schema_check(!copy_property_name(name_bytes, sizeof(name_buffer), sizeof(name_buffer), copied),
+        "metadata name offset outside buffer rejected");
+    name_buffer.fill(L'x');
+    schema_check(!copy_property_name(name_bytes, sizeof(name_buffer), sizeof(wchar_t), copied),
+        "unterminated metadata name rejected without truncation");
+    context.issues = 0; context.stop = false; context.unsupported_version_records = 0;
+    EVENT_DESCRIPTOR actual_descriptor{}; actual_descriptor.Version = 3; actual_descriptor.Opcode = 36;
+    schema_check(!supported_version(context, actual_descriptor.Version) && !context.stop &&
+        context.unsupported_version_records == 1 && actual_descriptor.Version == 3 &&
+        (context.issues & (1ULL << static_cast<unsigned>(Issue::UnsupportedVersion))) != 0,
+        "unsupported actual version remains unknown without cancelling EOF");
+    if (schema_assertions != 8) fail("schema self-test control denominator mismatch");
     Json report;
     report.raw("{\"schema\":\"pas.cold-scheduler-trace-reader-controls.v1\",\"status\":\"PASS\",\"assertions\":");
     report.number(assertions);
@@ -866,9 +1156,17 @@ int self_test(const std::wstring& output_path) {
     for (std::size_t i = 0; i < names.size(); ++i) {
         if (i) report.raw(","); report.raw("{\"id\":"); report.quote(names[i]); report.raw(",\"pass\":true}");
     }
-    report.raw("]}\n");
+    report.raw("],\"schema_controls\":{\"schema\":\"pas.cold-scheduler-trace-reader-schema-controls.v1\","
+        "\"assertions\":"); report.number(schema_assertions);
+    report.raw(",\"pass\":true,\"failed\":0,\"diagnostic_only\":true,\"qualification_issued\":false,"
+        "\"live_ready\":false,\"device_operations\":0,\"checks\":[");
+    for (std::size_t i = 0; i < schema_names.size(); ++i) {
+        if (i) report.raw(","); report.raw("{\"id\":"); report.quote(schema_names[i]); report.raw(",\"pass\":true}");
+    }
+    report.raw("]}}\n");
     write_new(output_path, report.bytes());
-    std::cout << "reader state controls assertions=" << assertions << " qualification=false\n";
+    std::cout << "reader state controls assertions=" << assertions << " schema assertions=" << schema_assertions
+              << " qualification=false\n";
     return 0;
 }
 } // namespace

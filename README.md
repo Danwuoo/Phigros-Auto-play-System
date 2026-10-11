@@ -1,3 +1,5 @@
+2026-10-11 actual main62／`6e3755d`冷排程r03 producer Native0／52.738s，完整raw離線auditor通過；producer／callback各2超期，lateness最大36.1862ms，cost仍false。原ETL／STOP保留。reader的版本2硬限制尚未辨識actual事件版本，最大36.553ms空窗仍UNKNOWN；新維護只建reader一TU及20＋8控制，再讀同檔，不重跑已PASS auditor或新增producer／recording。詳見[診斷與保存](docs/research/live-readiness-20261007/COLD_SCHEDULER_DIAGNOSTIC_20261011.md)。noise最新仍6／18、ABBA0／36；本輪不開emulator或新thread。
+
 2026-10-11 冷排程診斷工具main61／`eb6ed0b`三TU／52控制及4個Native8通過；nested Job預檢通過，但Windows預設hybrid-shutdown旗標觸發STARTUP_STOP，原128KiB ETL／STOP保留，producer尚未啟動。新工具明列該旗標，未再次錄製；current Normal3／AA12／noise18／ABBA36仍待完成，cost NOT_READY。詳見[診斷與保存](docs/research/live-readiness-20261007/COLD_SCHEDULER_DIAGNOSTIC_20261011.md)。本輪不開emulator或新thread。
 
 2026-10-11 最新 actual main57／`5dce75d`：獨立三TU／16控制及Tap／Hold／Dense各一次完整raw auditor通過；原數值皆true，Dense兩次render超期照報。這些只屬diagnostic，不能替代current Normal3或授cost／live資格。原main55正式Tap STOP保留。

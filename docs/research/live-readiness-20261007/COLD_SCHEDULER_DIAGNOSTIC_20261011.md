@@ -20,4 +20,10 @@ main61／eb6ed0b三TU／52控制及4個Native8均通過，r02 actual nested Job�
 
 修補明列官方支援的hybrid shutdown stop policy，requested／readback exact mode固定0x02400001，其餘flags與上限不變，不任意忽略未知旗標。新的必要工具／52控制仍須actual驗證；未執行第二次recording，cost NOT_READY、live UNQUALIFIED。
 
+main62／6e3755d修正版三TU／52控制及4個Native8均通過。使用者明確另授追加一次後，r03 producer Native0／52.7384801s，ETL51,183,616B及完整raw保留。root在ClosureReceipt產生前取ProcessEvidence而STOP；修補改為STOP後完成原after／ClosureReceipt，再取完整收據。controller requested_stop／StopTrace0／exact handle absent confirmed，但STOP回傳被當成存活session核對，原final_statistics_verified=false／exit2照報；不能用停止前query的zero loss補稱最終統計已驗證。原件見[量測STOP](MAIN62_SCHEDULER_MEASUREMENT_STOP_20261011.json)。
+
+main63／09a70d9僅離線處理同一份raw：原base55 auditor Native0／1.569277s，完整11檔／3,381,642B integrity通過；producer／callback超期2／2、lateness最大36.1862ms，原數值cost=false。reader62 Native2／0.134905s，最大adjacent gap36.553ms（attempt1549／TID27284）在事件版本硬限制處停止，ProcessTrace1223／未EOF／UNKNOWN；原[離線负結果](MAIN63_OFFLINE_READER_NEGATIVE_20261011.json)保留。新維護只編reader一TU，原20state controls與新8schema controls分列；先取得bounded actual descriptor／TDH schema catalog，未知版本保持UNKNOWN並讀至EOF，不預設支援。原audit不重跑、producer／recording新增0，所有資格仍false。
+
+保存索引加註：main60／61的aggregate original-pin total bytes欄位因維護sum方式錯而記0；逐pin bytes／SHA及讀回均正確，原索引不覆寫。由保存值逐scalar重算為main60 1,964,594B／46pins、main61 2,166,137B／79pins；main62已用逐scalar sum，57,705,796B／118pins。這些索引加總不替代原容量逐檔帳本。
+
 為把75秒用於實際量測，producer的原 input-closure／capacity／params核對在session前完成，原owned guard／Native8照常執行；停止session後再做原after核對。容量以.NET逐檔enumeration加總，48GiB／minimum-free20GiB／原reserve不變；補計先前main32→base55原短路徑副本`out/s55aa03`，不重hash原大型raw／libs。
