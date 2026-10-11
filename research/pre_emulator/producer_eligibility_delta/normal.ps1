@@ -17,9 +17,12 @@ if($base.source_commit -cne $formal){throw 'exact base55 formal production requi
 $auditors=@($base.files|Where-Object {[IO.Path]::GetFileName($_.path) -ceq 'production_pipeline_audit.exe'})
 if($auditors.Count -ne 1){throw 'one preserved independent raw auditor required'}
 $auditor=$auditors[0];CheckEntry $auditor
+$auditorDirectory=[IO.Path]::GetDirectoryName($auditor.path)
+$auditorRuntime=@($base.files|Where-Object {$_.path -match '[.]dll$' -and [string]::Equals([IO.Path]::GetDirectoryName($_.path),$auditorDirectory,[StringComparison]::OrdinalIgnoreCase)})
+foreach($pin in $auditorRuntime){CheckEntry $pin}
 $producer=Exe 'production_pipeline_cold'
 $script:seal.files+=@($auditor)
-$inputs=@($inputs+$auditor.path+$own.path|Sort-Object -Unique)
+$inputs=@($inputs+$auditor.path+$auditorRuntime.path+$own.path|Sort-Object -Unique)
 if(@(Get-Process cl,cmake,ninja -ErrorAction SilentlyContinue).Count){throw 'builds must finish before timed cost'}
 $artifact=Join-Path $repo ('out/prelive-pre-emulator-production-'+$Attempt);Fresh $artifact
 $null=[IO.Directory]::CreateDirectory($artifact)
