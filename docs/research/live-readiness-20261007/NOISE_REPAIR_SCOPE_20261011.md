@@ -1,3 +1,5 @@
+2026-10-11 最新 main51／`8257eb0`：CPU32／584、reader2／81、production52／七控制、runtime18來源／36副本通過；必要normal Tap數值通過，Hold完整raw integrity通過但producer deadline overrun1，Dense／AA／noise／ABBA未跑。原四Native皆退出0；負結果與原source／raw／STOP見[main51記錄](MAIN51_PRODUCTION_HOLD_NEGATIVE_20261011.json)。下一main52只在cold synthetic producer重用現有AA producer affinity，補readback／explicit restore正反控制；writer與正式manual runtime不改，原HIGHEST2／2ms tail／2560／20ms／全部數值門檻保留。現有source資格契約須fresh必要CPU32／reader2／production52與七控制，再完成normal3／AA12／noise18／未跑ABBA36／完整readonly。原75／production9不重跑；最新完成noise仍main44的6／18 adequate，ABBA0／36；完成至emulator邊界停止，不開裝置或新thread。
+
 # 2026-10-11 噪聲修補與縮小重驗範圍
 
 2026-10-11 最新補充：所有可冷完成的啟動前開發／測試仍需完成；明確fresh formal／action CPU delta、validator及正式binary接線見[本輪契約](CPU_COMPONENT_REPAIR_20261011.md)。原75／production9只歷史前提，不全盤重跑。main44失敗已保存；完成後停在emulator邊界，不開新thread。

@@ -12,6 +12,7 @@
 #undef SetConsoleCtrlHandler
 #undef GetAsyncKeyState
 #include "producer_wait.hpp"
+#include "producer_placement.hpp"
 #include "tap_reset_workload.hpp"
 #include "streaming_workload.hpp"
 #include "pas/result_ui_labels.hpp"
@@ -33,6 +34,7 @@ struct State {
  bool score_only_result_tail=false;
  std::atomic<bool> cancelled=false;
  std::vector<Attempt> attempts;
+ producer_placement::Snapshot producer_placement;
  // Boundary-only accounting; never fed to perception or action decisions.
  // Explicit Up and cancellation releases stay separate.
  std::uint64_t downs{},moves{},ups{},releases{},released_contacts{},contacts_final{},preflights{},discoveries{},constructors{};
@@ -72,9 +74,13 @@ GrpcCapture::~GrpcCapture()=default;
 void GrpcCapture::cancel(){cold::state.cancelled=true;}
 CaptureStats GrpcCapture::stats()const{std::lock_guard lock(mutex_);return stats_;}
 void GrpcCapture::stream(std::stop_token stop,const std::function<void(Frame&&)>& on_frame){
- current_rails::WindowsProducerPriorityApi priority_api;current_rails::ProducerPriorityScope priority(priority_api);
+ current_rails::WindowsWorkerAffinityApi affinity_api;
+ current_rails::WindowsProducerPriorityApi priority_api;
+ const auto& placement=current_rails::WindowsWorkerAffinityApi::plan();
+ Nanoseconds result_epoch=0;
+ cold::producer_placement::run(affinity_api,priority_api,placement,cold::state.producer_placement,[&]{
  current_rails::ProducerDeadlineWait wait;const auto epoch=clock_.now_ns();
- auto result_epoch=epoch+Nanoseconds(cold::state.requested)*cold::state.cadence*1'000'000;
+ result_epoch=epoch+Nanoseconds(cold::state.requested)*cold::state.cadence*1'000'000;
  std::vector<std::uint8_t> storage(1280*720*3);cold::state.attempts.resize(std::size_t(cold::state.requested)+64);
  for(int i=0;i<cold::state.requested+64&&!stop.stop_requested()&&!cold::state.cancelled;++i){
   if(cold::state.score_only_result_tail&&i==cold::state.requested)
@@ -92,7 +98,7 @@ void GrpcCapture::stream(std::stop_token stop,const std::function<void(Frame&&)>
   {std::lock_guard lock(mutex_);++stats_.valid;stats_.last_notification_ns=f.capture_complete_ns;}
   on_frame(std::move(f));a.callback_return=clock_.now_ns();storage=std::move(f.rgb);
  }
- priority.close();
+ });
  while(!cold::state.cancelled&&!stop.stop_requested()){
   if(clock_.now_ns()>result_epoch+2'000'000'000)throw std::runtime_error("cold finite pipeline did not finish from result pixels");
   std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -139,7 +145,13 @@ int main(int argc,char** argv){try{
  J attempts=J::array();for(std::size_t i=0;i<state.attempts.size();++i){const auto& a=state.attempts[i];attempts.push_back({{"attempt",i+1},{"producer_due_ns",a.due},{"render_start_ns",a.render_start},{"render_end_ns",a.render_end},{"capture_callback_return_ns",a.callback_return},{"produced",a.render_end!=0},{"measurement",i>=256&&i<std::size_t(state.requested)}});}save(root/"attempts.json",attempts);
  PROCESS_MEMORY_COUNTERS memory{};memory.cb=sizeof(memory);require(K32GetProcessMemoryInfo(GetCurrentProcess(),&memory,sizeof(memory))!=0,"OS peak RSS");
  J report={{"schema","pas.windows-production-pipeline-cold.v1"},{"scene",state.scene},{"requested",state.requested},{"warmup",256},{"measurement_attempts",state.requested-256},{"cadence_ms",state.cadence},{"actual_manual_translation_unit_sha256",PAS_COLD_MANUAL_SHA},{"source_build_commit",pas_session_build_commit},{"source_build_dirty",pas_session_build_dirty},{"public_entry_rejected",rejected},{"endpoint_free",true},{"preflight_is_test_double",true},{"capture_is_test_double",true},{"touch_is_test_double",true},{"production_packet_action_wake_archive_executed",true},{"real_capture_rpc_measured",false},{"device_operations",0},{"live_ready",false},{"archive_root",session.string()},{"summary",summary},{"round_summary",round_summary},{"owner_measurement_eligible",capture_to_owner.size()},{"owner_measurement_coverage",double(capture_to_owner.size())/(state.requested-256)},{"capture_to_owner_start_ms",dist(capture_to_owner)},{"packet_wait_ms",dist(packet_wait)},{"hook_ms",dist(hook)},{"owner_ms",dist(owner_ms)},{"measurement_phase_lateness_ms",dist(late)},{"down",state.downs},{"move",state.moves},{"up",state.ups},{"release_calls",state.releases},{"single_touch_owner",state.touch_owner.has_value()},{"full_journal_rows",rows},{"full_journal_bytes",bytes},{"full_journal_decoded_bytes",decoded},{"event_encoding","gzip-jsonl-v1"},{"rss_peak_os",memory.PeakWorkingSetSize},{"scope","literal production Packet/Wake/pool/perception/action/supervisor/SessionArchive; synthetic boundaries and result; no device or physical qualification"}};
- report["producer_priority_policy"]="synthetic capture thread only; NORMAL process class; scoped ABOVE_NORMAL; verified query/set/readback/restore";
+ require(state.producer_placement.verified(),"cold producer placement/priority must explicitly restore after joined capture worker");
+ report["producer_priority_policy"]="synthetic capture thread only; NORMAL process class; scoped HIGHEST2; actual query/set/readback/explicit restore; existing 2ms active tail";
+ report["producer_priority_requested"]=pas::current_rails::producer_priority_requested;
+ report["producer_active_tail_ns"]=pas::current_rails::producer_active_tail_ns;
+ report["worker_placement"]=producer_placement::plan_json(state.producer_placement.placement);
+ report["producer_affinity"]=producer_placement::affinity_json(state.producer_placement.affinity);
+ report["producer_priority"]=producer_placement::priority_json(state.producer_placement);
  report["keyboard_is_test_double"]=true;report["console_registration_is_test_double"]=true;
  report["controlled_stop_key_polls"]=stop_boundary.key_polls;
  report["controlled_console_stop_deliveries"]=stop_boundary.console_deliveries;

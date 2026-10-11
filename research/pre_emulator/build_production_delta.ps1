@@ -265,8 +265,10 @@ foreach($mode in @('invalid','tap','hold','dense')){
  $report=Join-Path $fixture 'control-report.json';$value=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
  if($value.schema -cne 'pas.score-only-literal-controls.v1' -or $value.pass -ne $true -or $value.failed -ne 0 -or $value.device_operations -ne 0 -or $value.live_ready -ne $false -or $value.cost_qualification -ne $false -or $value.no_gameplay_files_created -ne $true){throw 'score-only literal lifecycle/None/Stop control failure'}
  if($value.base_component_source_commit -cne $commit -or $value.base_component_source_dirty -ne $false -or $value.actual_manual_translation_unit_sha256 -cne $manualPin[0].sha256 -or $value.whole_candidate_qualification_issued -ne $false -or $value.physical_qualification -ne $false){throw 'score-only current compiled source/manual identity and scope'}
+ ComponentDeltaValidateColdProducer $value
  if($mode -ceq 'invalid'){
   if($value.invalid_requests_rejected_before_io -ne 8 -or $value.controlled_stop_lifecycle_cases -ne 2 -or $value.result_tail_fake_clock_cases -ne 4){throw 'all affected pre-I/O/Stop/result-tail fake-clock controls'}
+  ComponentDeltaValidateColdProducerControls $value
  }else{
   if($value.scene -cne $mode -or -not $value.literal_production_source_executed -or -not $value.all_downs_terminalized -or $value.contacts_final -ne 0 -or $value.down -ne $value.up+$value.contacts_released_by_cancel -or $value.release_calls -le 0 -or ($mode -cne 'dense' -and $value.down -le 0)){throw 'actual score-only complete contact balance/release/scene coverage'}
  }

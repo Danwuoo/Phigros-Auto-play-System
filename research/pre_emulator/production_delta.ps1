@@ -138,7 +138,8 @@ foreach($target in $expectedControls){
   $mode=$target.Substring('score_only_'.Length)
   NoiseRepairRequire (@($spec.argv).Count -eq 2 -and $spec.argv[0] -ceq $mode -and [IO.Path]::GetFullPath((Join-Path $spec.argv[1] 'control-report.json')) -ceq [IO.Path]::GetFullPath($row.report.path)) 'actual score-only mode/fresh output join'
   NoiseRepairRequire ($value.schema -ceq 'pas.score-only-literal-controls.v1' -and $value.pass -is [bool] -and $value.pass -and $value.cost_qualification -eq $false -and $value.physical_qualification -eq $false -and $value.whole_candidate_qualification_issued -eq $false -and $value.no_gameplay_files_created -eq $true -and $value.base_component_source_commit -ceq $commit -and $value.base_component_source_dirty -eq $false -and $value.actual_manual_translation_unit_sha256 -ceq $manual.sha256) 'actual current score-only None source/lifecycle scope'
-  if($mode -ceq 'invalid'){NoiseRepairRequire ($value.invalid_requests_rejected_before_io -eq 8 -and $value.controlled_stop_lifecycle_cases -eq 2 -and $value.result_tail_fake_clock_cases -eq 4) 'affected score-only invalid/Stop/fake-clock coverage'}
+  ComponentDeltaValidateColdProducer $value
+  if($mode -ceq 'invalid'){NoiseRepairRequire ($value.invalid_requests_rejected_before_io -eq 8 -and $value.controlled_stop_lifecycle_cases -eq 2 -and $value.result_tail_fake_clock_cases -eq 4) 'affected score-only invalid/Stop/fake-clock coverage';ComponentDeltaValidateColdProducerControls $value}
   else{NoiseRepairRequire ($value.scene -ceq $mode -and $value.literal_production_source_executed -eq $true -and $value.all_downs_terminalized -eq $true -and $value.contacts_final -eq 0 -and $value.down -eq $value.up+$value.contacts_released_by_cancel -and $value.release_calls -gt 0 -and ($mode -ceq 'dense' -or $value.down -gt 0)) 'actual score-only scene/contact balance'}
  }
 }
@@ -160,6 +161,7 @@ try{foreach($p in $plans){
  Native $stage (Exe 'production_pipeline_cold') @($p.scene,'2560','20',$root) $inputs 900
  $report=Join-Path $root 'report.json';$reportPin=Binding $report;$r=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
  NoiseRepairRequire ($r.schema -ceq 'pas.windows-production-pipeline-cold.v1' -and $r.scene -ceq $p.scene -and $r.source_build_commit -ceq $commit -and $r.source_build_dirty -eq $false -and $r.actual_manual_translation_unit_sha256 -ceq $manual.sha256 -and $r.endpoint_free -eq $true -and $r.live_ready -eq $false -and $r.device_operations -eq 0 -and $r.production_packet_action_wake_archive_executed -eq $true -and $r.public_entry_rejected -eq $true -and $r.real_capture_rpc_measured -eq $false -and $r.requested -eq 2560 -and $r.warmup -eq 256 -and $r.measurement_attempts -eq 2304 -and $r.cadence_ms -eq 20) 'literal current endpoint-free normal2560/warm256/meas2304/cadence20 report'
+ ComponentDeltaValidateColdProducer $r
  $process=ProcessEvidence $stage
  $audit=Join-Path $artifact ($p.id+'-audit.json');$raw=@(Get-ChildItem -LiteralPath $root -File -Recurse|ForEach-Object FullName)
  AssertCurrentProduction

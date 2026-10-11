@@ -7,7 +7,107 @@ function ComponentDeltaUnits {
  return @($core|ForEach-Object {'src/'+$_+'.cpp'})+@('research/prelive_current/own_bridge.cpp','research/bvi_owner_cooperative/extract.cpp','research/prelive_current/chain.cpp','research/prelive_current/tests/consumer_priority_tests.cpp','research/prelive_current/tests/worker_affinity_tests.cpp','research/prelive_current/tests/producer_wait_tests.cpp','research/prelive_current/tests/owner_checkpoint_tests.cpp','research/prelive_current/tests/owner_expiry_tests.cpp','research/prelive_current/tests/component_mask_tests.cpp','research/bvi_owner_cooperative/cold_verification/main.cpp')
 }
 function ComponentDeltaAllowed([string]$path) {
+ if($path -cin @('research/windows_production_pipeline_v3/main.cpp','research/windows_production_pipeline_v3/producer_placement.hpp','research/pre_emulator/score_only_controls.cpp')){return $true}
  return $path -cin @('src/game.cpp','src/manual_session.cpp','src/candidate_admission.cpp','src/candidate_receipts.cpp','include/pas/candidate_receipts.hpp','include/pas/candidate_admission.hpp','apps/pas/main.cpp','tests/candidate_admission_tests.cpp','tests/candidate_receipt_collector_tests.cpp','tests/score_session_tests.cpp','CMakeLists.txt','research/bvi_owner_cooperative/extract.cpp','research/bvi_owner_cooperative/cold_verification/main.cpp','research/bvi_owner_cooperative/cold_verification/observation_equal.hpp','research/bvi_owner_cooperative/cold_verification/CMakeLists.txt','research/bvi_owner_cooperative/cold_verification/run.ps1','research/prelive_current/tests/owner_checkpoint_tests.cpp','research/prelive_current/tests/component_mask_tests.cpp','research/pre_emulator/component_delta.ps1','research/windows_production_build/CMakeLists.txt') -or $path -cmatch '^research/pre_emulator/qualification_reader/reader/component_delta[.]hpp$'
+}
+function script:ComponentDeltaColdProducerRequire([bool]$ok,[string]$why) {
+ if(-not $ok){throw ('cold producer metadata: '+$why)}
+}
+function script:ComponentDeltaColdProducerField($value,[string]$name) {
+ ComponentDeltaColdProducerRequire ($null -ne $value) ('missing object for '+$name)
+ if($value -is [Collections.IDictionary]){
+  ComponentDeltaColdProducerRequire (@($value.Keys) -ccontains $name) ('missing '+$name)
+  $field=$value[$name]
+ }else{
+  $properties=@($value.PSObject.Properties|Where-Object Name -CEQ $name)
+  ComponentDeltaColdProducerRequire ($properties.Count -eq 1) ('missing '+$name)
+  $field=$properties[0].Value
+ }
+ ComponentDeltaColdProducerRequire ($null -ne $field) ('null '+$name)
+ return ,$field
+}
+function script:ComponentDeltaColdProducerBool($value,[string]$name,[bool]$expected) {
+ $field=ComponentDeltaColdProducerField $value $name
+ ComponentDeltaColdProducerRequire ($field -is [bool] -and $field -eq $expected) ('typed '+$name+' must equal '+$expected)
+}
+function script:ComponentDeltaColdProducerInteger($value,[string]$name,[bigint]$minimum,[bigint]$maximum) {
+ $field=ComponentDeltaColdProducerField $value $name
+ $integer=$field -is [byte] -or $field -is [sbyte] -or $field -is [int16] -or $field -is [uint16] -or $field -is [int32] -or $field -is [uint32] -or $field -is [int64] -or $field -is [uint64] -or $field -is [bigint]
+ ComponentDeltaColdProducerRequire $integer ('typed integer '+$name)
+ ComponentDeltaColdProducerRequire ([bigint]$field -ge $minimum -and [bigint]$field -le $maximum) ('integer '+$name+' outside declared bounds')
+ return $field
+}
+function script:ComponentDeltaColdProducerText($value,[string]$name,[string]$expected) {
+ $field=ComponentDeltaColdProducerField $value $name
+ ComponentDeltaColdProducerRequire ($field -is [string] -and $field -ceq $expected) ('exact '+$name)
+}
+function script:ComponentDeltaColdProducerMask($value,[string]$name) {
+ return [uint64](ComponentDeltaColdProducerInteger $value $name 1 ([bigint]::Parse('18446744073709551615')))
+}
+function script:ComponentDeltaValidateColdProducer($report) {
+ $null=ComponentDeltaColdProducerInteger $report 'producer_priority_requested' 2 2
+ $null=ComponentDeltaColdProducerInteger $report 'producer_active_tail_ns' 2000000 2000000
+ $plan=ComponentDeltaColdProducerField $report 'worker_placement'
+ ComponentDeltaColdProducerText $plan 'schema' 'pas.cold-worker-placement.v1'
+ ComponentDeltaColdProducerBool $plan 'valid' $true;ComponentDeltaColdProducerText $plan 'failure' 'none'
+ foreach($name in @('active_groups','process_class','group','topology_error','device_operations')){
+  $expected=@{active_groups=1;process_class=32;group=0;topology_error=0;device_operations=0}[$name]
+  $null=ComponentDeltaColdProducerInteger $plan $name $expected $expected
+ }
+ ComponentDeltaColdProducerBool $plan 'cost_qualification' $false
+ $null=ComponentDeltaColdProducerInteger $plan 'topology_bytes' 1 65536
+ $cores=ComponentDeltaColdProducerInteger $plan 'topology_cores' 2 256
+ $null=ComponentDeltaColdProducerInteger $plan 'topology_logical_processors' 2 256
+ $null=ComponentDeltaColdProducerInteger $plan 'efficiency_class' 0 255
+ $process=ComponentDeltaColdProducerMask $plan 'process_mask';$system=ComponentDeltaColdProducerMask $plan 'system_mask'
+ $consumer=ComponentDeltaColdProducerMask $plan 'consumer_mask';$producer=ComponentDeltaColdProducerMask $plan 'producer_mask'
+ $consumerCore=ComponentDeltaColdProducerInteger $plan 'consumer_core' 0 ($cores-1);$producerCore=ComponentDeltaColdProducerInteger $plan 'producer_core' 0 ($cores-1)
+ $consumerNumber=ComponentDeltaColdProducerInteger $plan 'consumer_number' 0 63;$producerNumber=ComponentDeltaColdProducerInteger $plan 'producer_number' 0 63
+ ComponentDeltaColdProducerRequire (($process -band $system) -eq $process -and ($consumer -band $process) -eq $consumer -and ($producer -band $process) -eq $producer -and $consumerCore -ne $producerCore -and $consumerNumber -lt $producerNumber -and $consumer -eq ([uint64]1 -shl $consumerNumber) -and $producer -eq ([uint64]1 -shl $producerNumber)) 'two distinct physical-core LP masks in the unchanged process/system mask'
+ $affinity=ComponentDeltaColdProducerField $report 'producer_affinity'
+ foreach($name in @('verified','previous_available','applied_available','restored_available','set_succeeded','applied','close_attempted','restored')){ComponentDeltaColdProducerBool $affinity $name $true}
+ foreach($name in @('rollback_attempted','rollback_restored','rollback_available','fallback_attempted','fallback_available')){ComponentDeltaColdProducerBool $affinity $name $false}
+ foreach($name in @('failure','rollback_failure','fallback_failure')){ComponentDeltaColdProducerText $affinity $name 'none'}
+ $affinityThread=ComponentDeltaColdProducerInteger $affinity 'thread_id' 1 4294967295
+ $null=ComponentDeltaColdProducerInteger $affinity 'active_groups' 1 1;$null=ComponentDeltaColdProducerInteger $affinity 'process_class' 32 32
+ ComponentDeltaColdProducerRequire ((ComponentDeltaColdProducerMask $affinity 'process_mask') -eq $process -and (ComponentDeltaColdProducerMask $affinity 'system_mask') -eq $system) 'affinity process/system mask joins'
+ foreach($name in @('requested_group','applied_group','previous_group','restored_group')){$null=ComponentDeltaColdProducerInteger $affinity $name 0 0}
+ ComponentDeltaColdProducerRequire ((ComponentDeltaColdProducerMask $affinity 'requested_mask') -eq $producer -and (ComponentDeltaColdProducerMask $affinity 'applied_mask') -eq $producer) 'affinity requested/applied producer LP joins'
+ ComponentDeltaColdProducerRequire ((ComponentDeltaColdProducerMask $affinity 'previous_mask') -eq (ComponentDeltaColdProducerMask $affinity 'restored_mask')) 'affinity exact explicit restoration'
+ $priority=ComponentDeltaColdProducerField $report 'producer_priority'
+ ComponentDeltaColdProducerText $priority 'schema' 'pas.cold-producer-priority-snapshot.v1'
+ foreach($name in @('verified','previous_available','constructor_attempted','applied_available','close_attempted','restored_available','explicit_restored','body_entered','body_completed')){ComponentDeltaColdProducerBool $priority $name $true}
+ foreach($name in @('rollback_attempted','rollback_restored')){ComponentDeltaColdProducerBool $priority $name $false}
+ foreach($name in @('failure','cleanup_failure')){ComponentDeltaColdProducerText $priority $name 'none'}
+ $null=ComponentDeltaColdProducerInteger $priority 'requested' 2 2;$null=ComponentDeltaColdProducerInteger $priority 'applied' 2 2
+ $null=ComponentDeltaColdProducerInteger $priority 'process_class_after_close' 32 32
+ $priorityThread=ComponentDeltaColdProducerInteger $priority 'thread_id' 1 4294967295
+ $previous=ComponentDeltaColdProducerInteger $priority 'previous' -2147483648 2147483647;$restored=ComponentDeltaColdProducerInteger $priority 'restored' -2147483648 2147483647
+ ComponentDeltaColdProducerRequire ($priorityThread -eq $affinityThread -and $previous -eq $restored) 'priority same owner thread and exact explicit restoration'
+}
+function script:ComponentDeltaValidateColdProducerControls($report) {
+ $controls=ComponentDeltaColdProducerField $report 'producer_placement_controls'
+ ComponentDeltaColdProducerText $controls 'schema' 'pas.cold-producer-placement-controls.v1'
+ foreach($name in @('checks','passed')){$null=ComponentDeltaColdProducerInteger $controls $name 27 27}
+ foreach($name in @('failed','device_operations')){$null=ComponentDeltaColdProducerInteger $controls $name 0 0}
+ $priority=ComponentDeltaColdProducerInteger $controls 'producer_priority_requested' 2 2;$tail=ComponentDeltaColdProducerInteger $controls 'producer_active_tail_ns' 2000000 2000000
+ ComponentDeltaColdProducerBool $controls 'synthetic_api_controls' $true
+ foreach($name in @('cost_qualification','live_ready')){ComponentDeltaColdProducerBool $controls $name $false}
+ $cases=ComponentDeltaColdProducerField $controls 'cases'
+ ComponentDeltaColdProducerRequire ($cases -is [array] -and $cases.Count -eq 27) 'placement controls exact cases27'
+ $ids=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+ foreach($case in $cases){$id=ComponentDeltaColdProducerField $case 'id';ComponentDeltaColdProducerRequire ($id -is [string] -and $id.Length -gt 0 -and $ids.Add($id)) 'placement controls unique nonempty id';ComponentDeltaColdProducerBool $case 'pass' $true}
+ $null=ComponentDeltaColdProducerInteger $report 'invalid_requests_rejected_before_io' 8 8
+ $null=ComponentDeltaColdProducerInteger $report 'controlled_stop_lifecycle_cases' 2 2
+ $null=ComponentDeltaColdProducerInteger $report 'result_tail_fake_clock_cases' 4 4
+ $stops=ComponentDeltaColdProducerField $report 'controlled_stop_producer_snapshots'
+ ComponentDeltaColdProducerRequire ($stops -is [array] -and $stops.Count -eq 2) 'controlled stop exact snapshots2'
+ $modes=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+ foreach($stop in $stops){
+  $mode=ComponentDeltaColdProducerField $stop 'mode';ComponentDeltaColdProducerRequire ($mode -is [string] -and $mode -cin @('escape','console') -and $modes.Add($mode)) 'one escape and one console producer snapshot'
+  $joined=@{producer_priority_requested=$priority;producer_active_tail_ns=$tail;worker_placement=(ComponentDeltaColdProducerField $stop 'worker_placement');producer_affinity=(ComponentDeltaColdProducerField $stop 'producer_affinity');producer_priority=(ComponentDeltaColdProducerField $stop 'producer_priority')}
+  ComponentDeltaValidateColdProducer $joined
+ }
 }
 function ComponentDeltaFormalPaths($changed) {return @($changed|Where-Object {$_ -cmatch '^(?:src/|include/|apps/pas/)' -or $_ -ceq 'CMakeLists.txt'}|Sort-Object -Unique)}
 function ComponentDeltaControls {
