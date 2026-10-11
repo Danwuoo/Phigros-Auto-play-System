@@ -1,5 +1,15 @@
 # Phigros Auto-play System
 
+2026-10-11 最新冷續作：main48／`3d4c050` CPU32／584 controls、reader2／81 controls及readonly前提核對通過；
+production core／action／emulator／bench通過，但entry的collector連結LNK2019／LNK1120：
+wrapper僅列五個emulator來源，漏`candidate_receipts.cpp`，原graph實際51 TUs。
+原945 source snapshot、完整Native／STOP保留；normal3／AA／noise／ABBA均未跑。
+main49 wrapper直接取root emulator6／bench5清單，configure後先核12個指定targets的
+52個source／object／archive／link成員，再跑原六批建置及既有physical member核對。
+13項graph文字正反例只是維護控制，不授新資格；仍須fresh必要build、controls、normal3及
+AA／noise／未跑ABBA。兩批main48歷史資料與失敗compiler已逐entry ZIP／原SHA讀回保留，
+原位置重驗須恢復exact bytes及原source；不重跑原75／production9、不開emulator或新thread。
+
 2026-10-11 最新續作：main44 AA12通過但noise仍12欄不足；main45 fresh build觸及原held-identity-cap64，31／32 objects與原STOP已保存。下一候選拆為有界owned build批次，保留原64上限及全部來源／closure。CPU等值修補、validator及收據工具已接線，仍須fresh affected controls、新noise及未跑ABBA；完成後停在emulator邊界，不開新thread。見[本輪實作契約](docs/research/live-readiness-20261007/CPU_COMPONENT_REPAIR_20261011.md)。
 
 main46／`7b898c4` configure通過，第一build因空prior清單產生null path而在啟動前停止，尚無新noise／ABBA。main47修正清單產生方式，保留原輸入核對；[main46負結果](docs/research/live-readiness-20261007/MAIN46_BUILD_PRELAUNCH_NEGATIVE_20261011.json)與完整source保留。

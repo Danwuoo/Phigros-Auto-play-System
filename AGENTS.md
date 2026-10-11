@@ -4,6 +4,17 @@
 
 ## 現行方向
 
+2026-10-11 最新：main48／`3d4c050` CPU32／584 controls、reader2／81 controls及readonly前提核對通過；
+production core／action／emulator／bench通過，但entry的collector連結LNK2019／LNK1120：
+wrapper僅列五個emulator來源，漏`candidate_receipts.cpp`，原graph實際51 TUs。
+原945 source snapshot、完整Native／STOP保留；normal3／AA／noise／ABBA均未跑。
+main49 wrapper直接取root emulator6／bench5清單，configure後先核12個指定targets的
+52個source／object／archive／link成員，再跑原六批建置及既有physical member核對。
+13項graph文字正反例只是維護控制，不授新資格；仍須fresh必要build、controls、normal3及
+AA／noise／未跑ABBA。兩批main48歷史資料與失敗compiler已逐entry ZIP／原SHA讀回保留，
+原位置重驗須恢復exact bytes及原source；不重跑原75／production9、不開emulator或新thread。
+
+
 2026-10-11 使用者最新指示：修復後不全盤重跑既有通過測試，但仍完成實機啟動前所有
 必要開發及尚未跑的noise／ABBA。完成至需要emulator的邊界後停止，先不要建立新thread。
 詳見[縮小重驗授權](docs/research/live-readiness-20261007/NOISE_REPAIR_SCOPE_20261011.md)。

@@ -1,4 +1,4 @@
-param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main48',[Parameter(Mandatory)][string]$NoiseRepairBinding)
+param([ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main49',[Parameter(Mandatory)][string]$NoiseRepairBinding)
 . (Join-Path $PSScriptRoot 'common.ps1')
 $script:maintenancePath=$PSCommandPath
 LoadBuilds 'main32' $NoiseRepairBinding
@@ -31,12 +31,148 @@ function ProductionClosure([string]$stage){
  return $pin
 }
 $options=@(('-DCMAKE_TOOLCHAIN_FILE='+$toolchain),('-DVCPKG_INSTALLED_DIR='+(Join-Path $repo 'out/vcpkg_installed')),'-DVCPKG_TARGET_TRIPLET=x64-windows','-DVCPKG_MANIFEST_MODE=OFF','-DCMAKE_CXX_SCAN_FOR_MODULES=OFF','-DCMAKE_HAVE_LIB_PTHREAD:INTERNAL=','-DCMAKE_HAVE_PTHREADS_CREATE:INTERNAL=','-DCMAKE_HAVE_PTHREAD_CREATE:INTERNAL=','-DCMAKE_CXX_FLAGS_RELEASE=/O2 /Ob2 /DNDEBUG','-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL')
+# Validate only the selected source graph before compiling; actual Native builds and physical member checks still follow.
+function Production52Require([bool]$ok,[string]$why){if(-not $ok){throw ('production52 prebuild: '+$why)}}
+function Production52Path([string]$p){return [IO.Path]::GetFullPath($p).Replace([char]92,[char]47).ToLowerInvariant()}
+function Production52Tokens([string]$text){
+ $out=[Collections.Generic.List[string]]::new();$token=''
+ for($i=0;$i -lt $text.Length;$i++){
+  $c=$text[$i]
+  if($c -eq '$'){
+   Production52Require ($i+1 -lt $text.Length) 'trailing Ninja escape'
+   $i++;Production52Require ($text[$i] -cin @('$',' ',':')) 'unsupported Ninja variable/escape in concrete edge'
+   $token+=$text[$i]
+  }elseif([char]::IsWhiteSpace($c)){
+   if($token.Length){$out.Add($token);$token=''}
+  }else{$token+=$c}
+ }
+ if($token.Length){$out.Add($token)}
+ return $out.ToArray()
+}
+function Production52RootSources([string]$RootText,[string]$Target,[int]$Count){
+ $pattern='add_library\('+[regex]::Escape($Target)+'[ \t\r\n]+STATIC[ \t\r\n]+([^)]*)\)'
+ $matches=[regex]::Matches($RootText,$pattern)
+ Production52Require ($matches.Count -eq 1) ('one literal root declaration '+$Target)
+ $files=@($matches[0].Groups[1].Value.Trim() -split '\s+')
+ Production52Require ($files.Count -eq $Count -and @($files|Sort-Object -Unique).Count -eq $Count) ('complete unique root sources '+$Target)
+ foreach($f in $files){Production52Require ($f -cmatch '^[A-Za-z0-9_/-]+[.]cpp$' -and $f -notmatch '(^|/)\.\.?(/|$)') ('literal safe root source '+$f)}
+ return $files
+}
+function Production52Plan([string]$SourceRepo,[string]$BuildRoot){
+ $root=Get-Content -LiteralPath (Join-Path $SourceRepo 'CMakeLists.txt') -Raw
+ $plan=@{}
+ foreach($r in @(@('pas_core',22),@('pas_current_candidate',8),@('pas_emulator',6),@('pas_bench',5))){
+  $plan[$r[0]]=@(Production52RootSources $root $r[0] $r[1]|ForEach-Object {Production52Path (Join-Path $SourceRepo $_)})
+ }
+ $plan.pas_proto=@('emulator_controller.pb.cc','emulator_controller.grpc.pb.cc')|ForEach-Object {Production52Path (Join-Path $BuildRoot ('generated/'+$_))}
+ $exe=@{
+  pas=@('apps/pas/main.cpp');
+  candidate_admission_controls=@('tests/candidate_admission_tests.cpp');
+  candidate_receipt_collector_controls=@('tests/candidate_receipt_collector_tests.cpp');
+  production_entry_controls=@('research/windows_production_entry_controls/main.cpp');
+  score_only_controls=@('research/pre_emulator/score_only_controls.cpp','src/grpc_transport.cpp');
+  production_pipeline_cold=@('research/windows_production_pipeline_v3/main.cpp','src/grpc_transport.cpp');
+  production_pipeline_audit=@('research/windows_production_pipeline_audit_v5/main.cpp')
+ }
+ foreach($target in $exe.Keys){$plan[$target]=@($exe[$target]|ForEach-Object {Production52Path (Join-Path $SourceRepo $_)})}
+ Production52Require ((($plan.Values|ForEach-Object {$_}|Measure-Object).Count) -eq 52) 'exact selected52 source occurrences'
+ return $plan
+}
+function Production52AssertGraph([string]$NinjaText,[string]$SourceRepo,[string]$BuildRoot,$SourcePins){
+ $plan=Production52Plan $SourceRepo $BuildRoot
+ $pins=@{}
+ foreach($pin in $SourcePins){$key=Production52Path $pin.path;Production52Require (-not $pins.ContainsKey($key)) 'unique source manifest pin';$pins[$key]=$pin}
+ $required=@('CMakeLists.txt','research/windows_production_build/CMakeLists.txt','research/pre_emulator/CMakeLists.txt','proto/emulator_controller.proto')
+ foreach($path in $required){Production52Require ($pins.ContainsKey((Production52Path (Join-Path $SourceRepo $path)))) ('bound build source '+$path)}
+ foreach($target in $plan.Keys|Where-Object {$_ -cne 'pas_proto'}){
+  foreach($source in $plan[$target]){Production52Require ($pins.ContainsKey($source)) ('actual source manifest member '+$source)}
+ }
+ # This is a concrete Ninja graph check after configure. Generated .cc files need
+ # not exist yet. No object/library/executable is required or built by this check.
+ $text=$NinjaText.Replace([char]92,[char]47) -replace '\r',''
+ $rows=@{}
+ $outputOwners=@{}
+ foreach($m in [regex]::Matches($text,'(?m)^build ([^\n:]+[.]obj): CXX_COMPILER__([^ ]+)_unscanned_Release ([^\n]+)\n((?:  [^\n]*\n)*)')){
+  $target=$m.Groups[2].Value
+  if(-not $plan.ContainsKey($target)){continue}
+  $output=@(Production52Tokens $m.Groups[1].Value)
+  $sources=@(Production52Tokens (($m.Groups[3].Value -split ' \|\|? ',2)[0]))
+  Production52Require ($output.Count -eq 1 -and $sources.Count -eq 1) ('one compile output/source '+$target)
+  $prefix=if($target -cin @('pas_core','pas_current_candidate','pas_emulator','pas_proto','pas_bench','pas','candidate_admission_controls','candidate_receipt_collector_controls')){'production/'}else{''}
+  Production52Require ($output[0] -cmatch ('^'+[regex]::Escape($prefix+'CMakeFiles/'+$target+'.dir/')+'.+[.]obj$') -and $output[0] -notmatch '(^|/)\.\.?(/|$)') ('contained exact selected object owner '+$target)
+  Production52Require (-not $outputOwners.ContainsKey($output[0])) 'unique selected object'
+  $outputOwners[$output[0]]=$target
+  $absolute=if([IO.Path]::IsPathFullyQualified($sources[0])){$sources[0]}else{Join-Path $BuildRoot $sources[0]}
+  if(-not $rows.ContainsKey($target)){$rows[$target]=[Collections.Generic.List[object]]::new()}
+  $rows[$target].Add(@{output=$output[0];source=(Production52Path $absolute)})
+  $flags=$m.Groups[4].Value
+  Production52Require ($flags -match '(?m)^  FLAGS = .* -std:c\+\+20(?: |$)' -and $flags -match '(?m)^  FLAGS = .* -MD(?: |$)' -and $flags -match '(?m)^  FLAGS = .* /O2(?: |$)' -and $flags -notmatch '(?m)^  FLAGS = .* -MDd(?: |$)') ('formal C++20 Release MD/O2 '+$target)
+ }
+ foreach($target in $plan.Keys){
+  Production52Require ($rows.ContainsKey($target)) ('target has actual compile edges '+$target)
+  $actual=@($rows[$target]|ForEach-Object source|Sort-Object)
+  $expected=@($plan[$target]|Sort-Object)
+  Production52Require ($actual.Count -eq $expected.Count -and @(Compare-Object $actual $expected -CaseSensitive).Count -eq 0 -and @($actual|Sort-Object -Unique).Count -eq $actual.Count) ('exact target/source/object membership '+$target)
+ }
+ Production52Require ($outputOwners.Count -eq 52) 'selected52 actual object edges'
+ $libraries=@('pas_core','pas_current_candidate','pas_emulator','pas_proto','pas_bench')
+ $requiredLinks=@{
+  # CMake repeats core/emulator for the direct and transitive pas/bench links.
+  # These are linker arguments, distinct from forbidden duplicate archive members.
+  pas=@('pas_core','pas_emulator','pas_bench','pas_emulator','pas_proto','pas_current_candidate','pas_core');
+  candidate_admission_controls=@('pas_core','pas_current_candidate','pas_emulator','pas_proto');
+  candidate_receipt_collector_controls=@('pas_core','pas_current_candidate','pas_emulator','pas_proto');
+  production_entry_controls=@('pas_core','pas_current_candidate','pas_emulator','pas_proto');
+  score_only_controls=@('pas_core','pas_current_candidate','pas_proto');
+  production_pipeline_cold=@('pas_core','pas_current_candidate','pas_proto');
+  production_pipeline_audit=@()
+ }
+ foreach($target in $plan.Keys){
+  $library=$target -cin $libraries
+  $output=if($library){'production/'+$target+'.lib'}else{if($target -cin @('pas','candidate_admission_controls','candidate_receipt_collector_controls')){'production/'+$target+'.exe'}else{$target+'.exe'}}
+  $kind=if($library){'CXX_STATIC_LIBRARY_LINKER'}else{'CXX_EXECUTABLE_LINKER'}
+  $matches=[regex]::Matches($text,('(?m)^build '+[regex]::Escape($output)+': '+$kind+'__'+[regex]::Escape($target)+'_Release ([^\n]*)\n((?:  [^\n]*\n)*)'))
+  Production52Require ($matches.Count -eq 1) ('exact archive/executable edge '+$target)
+  $edge=$matches[0]
+  $members=@(Production52Tokens (($edge.Groups[1].Value -split ' \|\|? ',2)[0]))
+  $expected=@($rows[$target]|ForEach-Object output)
+  Production52Require ($members.Count -eq $expected.Count -and @(Compare-Object ($members|Sort-Object) ($expected|Sort-Object) -CaseSensitive).Count -eq 0 -and @($members|Sort-Object -Unique).Count -eq $members.Count) ('archive/executable exact member ownership '+$target)
+  if(-not $library){
+   $lm=[regex]::Match($edge.Groups[2].Value,'(?m)^  LINK_LIBRARIES = ([^\n]*)')
+   Production52Require $lm.Success ('actual executable linker arguments '+$target)
+   $args=@(Production52Tokens $lm.Groups[1].Value)
+   $owned=@($args|Where-Object {$_ -cmatch '^production/pas_[A-Za-z_]+[.]lib$'})
+   $wanted=@($requiredLinks[$target]|ForEach-Object {'production/'+$_+'.lib'})
+   Production52Require ($owned.Count -eq $wanted.Count -and ($wanted.Count -eq 0 -or @(Compare-Object ($owned|Sort-Object) ($wanted|Sort-Object) -CaseSensitive).Count -eq 0)) ('exact actual production static link closure '+$target)
+   if($target -ceq 'production_pipeline_audit'){Production52Require (@($args|Where-Object {$_ -match '(?:^|/)z[.]lib$'}).Count -ge 1) 'auditor actual ZLIB link'}
+  }
+ }
+ $collector=Production52Path (Join-Path $SourceRepo 'src/candidate_receipts.cpp')
+ Production52Require (@($rows.pas_emulator|Where-Object source -CEQ $collector).Count -eq 1) 'collector TU exists exactly once in actual pas_emulator graph'
+ # Source bytes must remain exactly what current source manifest says. Generated
+ # files are bound by the original Proto source/dependency generation contract.
+ $requiredSourceKeys=@($required|ForEach-Object {Production52Path (Join-Path $SourceRepo $_)})+@($plan.Keys|Where-Object {$_ -cne 'pas_proto'}|ForEach-Object {$plan[$_]})
+ foreach($key in $requiredSourceKeys|Sort-Object -Unique){
+  $p=$pins[$key];$f=Get-Item -LiteralPath $p.path
+  Production52Require ($f.Length -eq $p.bytes -and (Get-FileHash -LiteralPath $p.path -Algorithm SHA256).Hash.ToLowerInvariant() -ceq $p.sha256) ('actual source pin bytes/SHA '+$key)
+ }
+ return @{schema='pas.production52-prebuild-graph-review.v1';graph_verified=$true;target_objects=52;targets=12;collector_source=$collector;qualification_issued=$false;live_ready=$false;native_launches=0;device_operations=0}
+}
 $configure='configure-production-delta-'+$Attempt
 AssertProductionSource
 Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=$PSScriptRoot;BuildRoot=$root;StageName=$configure;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentBinding;Operation='Configure';Configuration='Release';Inputs=$stageInputs;Options=$options}
 $configureReceipt=Binding (Join-Path $out ($configure+'/'+$configure+'-verification.json'))
 $configureClosure=ProductionClosure $configure
 $ninja=(Get-Content -LiteralPath (Join-Path $root 'build.ninja') -Raw).Replace('\','/')
+$productionGraph=Production52AssertGraph $ninja $repo $root $manifest.files
+$graphPath=Join-Path $artifact 'prebuild-source-graph.json'
+$productionGraph.source_commit=$commit
+$productionGraph.configure_receipt=$configureReceipt
+$productionGraph.configure_input_closure=$configureClosure
+$productionGraph.source_manifest=$sourceManifest
+$productionGraph.ninja=(Binding (Join-Path $root 'build.ninja'))
+NewJson $graphPath $productionGraph
+$stageInputs+=@($graphPath)
 $coreRows=@([regex]::Matches($ninja,'(?m)^build (production/CMakeFiles/pas_core[.]dir/[^\r\n:]+[.]obj): CXX_COMPILER'))
 if($coreRows.Count -ne 22 -or $ninja -match 'IMPORTED.*pas_core'){throw 'fresh complete production formal22 graph required'}
 # Compiler and link children count towards the same original held-identity cap.

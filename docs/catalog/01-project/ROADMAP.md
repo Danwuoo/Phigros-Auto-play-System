@@ -1,5 +1,15 @@
 # 開發路線圖
 
+2026-10-11 最新冷續作：main48／`3d4c050` CPU32／584 controls、reader2／81 controls及readonly前提核對通過；
+production core／action／emulator／bench通過，但entry的collector連結LNK2019／LNK1120：
+wrapper僅列五個emulator來源，漏`candidate_receipts.cpp`，原graph實際51 TUs。
+原945 source snapshot、完整Native／STOP保留；normal3／AA／noise／ABBA均未跑。
+main49 wrapper直接取root emulator6／bench5清單，configure後先核12個指定targets的
+52個source／object／archive／link成員，再跑原六批建置及既有physical member核對。
+13項graph文字正反例只是維護控制，不授新資格；仍須fresh必要build、controls、normal3及
+AA／noise／未跑ABBA。兩批main48歷史資料與失敗compiler已逐entry ZIP／原SHA讀回保留，
+原位置重驗須恢復exact bytes及原source；不重跑原75／production9、不開emulator或新thread。
+
 2026-10-11 最新順序：依縮小重驗授權保留main32既有75／production9 PASS，完成
 current CPU／production必要fresh build及affected controls，再跑normal3、AA12／noise18
 及尚未跑的ABBA36。main44 AA validity通過但noise6／18 adequate；main45 build STOP，

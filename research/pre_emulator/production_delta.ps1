@@ -1,6 +1,6 @@
 param([Parameter(Mandatory)][string]$ProductionBuildBinding,
       [Parameter(Mandatory)][string]$NoiseRepairBinding,
-      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main48')
+      [ValidatePattern('^main[0-9]{2}$')][string]$Attempt='main49')
 . (Join-Path $PSScriptRoot 'common.ps1')
 # Keep the complete existing receipt/helper set in this script's scope. A
 # dot-source only inside LoadBuilds would lose its local helpers on return.

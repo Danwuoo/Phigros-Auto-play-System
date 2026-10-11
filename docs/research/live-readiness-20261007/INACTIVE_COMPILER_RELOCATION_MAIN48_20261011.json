@@ -1,0 +1,95 @@
+{
+  "schema": "pas.main48-lossless-relocation-index.v1",
+  "historical_source_commit": "3d4c05010727d0165e48e59be69bbd3a29acbdd7",
+  "result": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main48\\result.json",
+    "bytes": 4115,
+    "sha256": "f85cb0943f0b2bf34dc4fcb2215285f3f0d58cbda65fc2e7da3230828fc984a3"
+  },
+  "full_original_manifest": {
+    "sha256": "eeb8356c82c90750d1b895f83259ae18e3c133560ece2cb60f934b4ab7646b3a",
+    "bytes": 86108,
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main48\\original-file-manifest.json"
+  },
+  "roots": [
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-noise-repair-main48",
+      "proof": {
+        "sha256": "ba22106b875faf70c632a634f62a5d07671b77a851cdcb6af30806e6d32cf12e",
+        "bytes": 30406,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main48\\flat-prelive-noise-repair-main48.proof.json"
+      },
+      "archive": {
+        "sha256": "cb502454a4752b005df32e42853dabfcf2a61f087b10f7d8a0998714acd0d548",
+        "bytes": 75089611,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main48\\flat-prelive-noise-repair-main48.zip"
+      },
+      "original_files": 63,
+      "original_bytes": 513438121
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-narrow-reader-main48",
+      "proof": {
+        "sha256": "22292e7672a92e629df5cefcb0ac0778b4467aed7492818fd0d4176df856f382",
+        "bytes": 11108,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main48\\flat-prelive-narrow-reader-main48.proof.json"
+      },
+      "archive": {
+        "sha256": "62c8c48042831693bc5287b50e4060325176a3608c22e0146fc0af725020cdf9",
+        "bytes": 8182536,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main48\\flat-prelive-narrow-reader-main48.zip"
+      },
+      "original_files": 24,
+      "original_bytes": 54981987
+    },
+    {
+      "original_root": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-release-main48",
+      "proof": {
+        "sha256": "36e465a9f1de0f69d1b7cea1e5d41a67648f592eeeab08af0be064c0e1502957",
+        "bytes": 42156,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main48\\flat-prelive-pre-emulator-release-main48.proof.json"
+      },
+      "archive": {
+        "sha256": "eb046643f1dad7c07c928e34d916a400a60dbb2bd59884f15e596eaf1f46c0a0",
+        "bytes": 119232136,
+        "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\retained\\consolidation-20261008\\inactive-compiler-archives-main48\\flat-prelive-pre-emulator-release-main48.zip"
+      },
+      "original_files": 84,
+      "original_bytes": 832350135
+    }
+  ],
+  "root_count": 3,
+  "file_count": 171,
+  "original_bytes": 1400770243,
+  "archive_bytes": 202504283,
+  "retained_bytes_reclaimed": 1198096182,
+  "before": {
+    "cap": 51539607552,
+    "minimum_free": 21474836480,
+    "bytes": 41016574313,
+    "free": 224632180736
+  },
+  "after": {
+    "cap": 51539607552,
+    "minimum_free": 21474836480,
+    "bytes": 39818478131,
+    "free": 225532047360
+  },
+  "all_entry_SHAs_readback_verified": true,
+  "originals_rechecked": true,
+  "original_files_removed": true,
+  "complete_source_snapshot": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-pre-emulator-planning\\source-3d4c050-main48-snapshot\\snapshot.json",
+    "bytes": 597037,
+    "sha256": "1d5104fc5d53ab66cf30f431082359cad15e13f2f3b093d38963a23a333665e0"
+  },
+  "original_stop": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main48-production-entry-negative-original.json",
+    "bytes": 5050,
+    "sha256": "6fd248b7462bd2b75bdde6aca25aaf4ed49f5b667d8597cf818baefdc560d795"
+  },
+  "restore_required_for_original_paths_and_source": true,
+  "qualification_issued": false,
+  "device_operations": 0,
+  "live_ready": false
+}
