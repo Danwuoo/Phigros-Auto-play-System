@@ -340,10 +340,12 @@ class Preflight final {
         r_.entries(delta_.at("files"));r_.entries(delta_.at("compiled_outputs"));
         component_delta::eligibility_controls(r_,delta_);
         const bool motion=component_delta::motion_validate(r_,delta_);
+        const bool dense=component_delta::dense_validate(r_,delta_,motion);
+        component_delta::frame_metadata_validate(r_,delta_);
         // A source exception is granted only after the complete literal,
         // archive/object/link and actual26 regression overlay is verified.
         for(const auto& old:formal.at("files")){const auto path=relative(old);
-            if((path.starts_with("src/")||path.starts_with("include/")||path.starts_with("apps/"))&&path!="src/candidate_admission.cpp"&&!(motion&&path=="src/game_motion.cpp"))
+            if((path.starts_with("src/")||path.starts_with("include/")||path.starts_with("apps/"))&&path!="src/candidate_admission.cpp"&&!(motion&&path=="src/game_motion.cpp")&&!(dense&&path=="src/game.cpp"))
                 w::require(current.contains(path)&&current.at(path).at("sha256")==old.at("sha256")&&current.at(path).at("bytes")==old.at("bytes"),"imported formal strategy/manual/app source unchanged from base55");
         }
         if(motion)native(delta_.at("motion_source_delta").at("regression").at("process"));

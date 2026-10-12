@@ -67,11 +67,12 @@ function script:ComponentDeltaMotionGTest($report) {
  }}
  ComponentDeltaColdProducerRequire ($names.Count -eq 26 -and @(Compare-Object (@($names)|Sort-Object) (@(ComponentDeltaMotionCases)|Sort-Object)).Count -eq 0) 'exact original motion/H1/R1/R6 26 cases completed'
 }
-function script:ComponentDeltaMotionLinkObjects([string]$edge,[string]$target,$compileRows,$appObject) {
+function script:ComponentDeltaMotionLinkObjects([string]$edge,[string]$target,$compileRows,$appObject,[bool]$dense=$false) {
  $expected=@($compileRows|Where-Object {$_.Groups[1].Value.StartsWith('CMakeFiles/'+$target+'.dir/')}|ForEach-Object {$_.Groups[1].Value})
  if($target -cin @('pas','candidate_admission_controls')){$expected+=@($compileRows|Where-Object {$_.Groups[1].Value.StartsWith('CMakeFiles/candidate_admission_delta.dir/')}|ForEach-Object {$_.Groups[1].Value})}
  if($target -ceq 'pas'){$expected+=@($appObject.path.Replace('\','/'))}
  if($target -cin @(ComponentDeltaMotionTargets) -or $target -ceq 'motion_source_regression'){$expected+=@($compileRows|Where-Object {$_.Groups[1].Value.StartsWith('CMakeFiles/game_motion_delta.dir/')}|ForEach-Object {$_.Groups[1].Value})}
+ if($dense -and ($target -cin @(ComponentDeltaDenseTargets))){$expected+=@($compileRows|Where-Object {$_.Groups[1].Value.StartsWith('CMakeFiles/game_delta.dir/')}|ForEach-Object {$_.Groups[1].Value})}
  $line=($edge -split '\r?\n')[0].Replace('$:',':').Replace('$ ',' ');$explicit=($line -split '\|')[0]
  $actual=@([regex]::Matches($explicit,'"([^"\r\n]+[.]obj)"|([^ \t\r\n]+[.]obj)')|ForEach-Object {if($_.Groups[1].Success){$_.Groups[1].Value}else{$_.Groups[2].Value}})
  ComponentDeltaColdProducerRequire ($actual.Count -eq $expected.Count -and @($actual|Sort-Object -Unique).Count -eq $actual.Count -and @(Compare-Object ($actual|Sort-Object) ($expected|Sort-Object)).Count -eq 0) ('exact effective link objects including shared motion: '+$target)

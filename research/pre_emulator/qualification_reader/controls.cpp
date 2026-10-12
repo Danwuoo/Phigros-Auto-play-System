@@ -308,5 +308,134 @@ int main(int argc,char** argv){try{
  cd::verification_declaration(motion_verification,motion_harness,motion_context);auto wrong_verification=motion_verification;wrong_verification["verification_only_delta"]=true;invalid=invalid&&rejects([&]{cd::verification_declaration(wrong_verification,motion_harness,motion_context);});wrong_verification=motion_verification;wrong_verification["motion_source_delta"]["new_object"]["sha256"]=std::string(64,'0');invalid=invalid&&rejects([&]{cd::verification_declaration(wrong_verification,motion_harness,motion_context);});
  delta_check("historical10_current14_literal_object_link_member_actual26_and_verification_join_required",invalid);
  if(delta_cases.size()!=12)throw std::runtime_error("separate cold harness reader12 denominator");report["cold_harness_delta_controls"]={{"schema","pas.cold-harness-delta-reader-controls.v1"},{"assertions",delta_cases.size()},{"checks",delta_cases},{"failed",0},{"pass",true},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0}};
+// Paste this block before the final report write in qualification_reader/controls.cpp.
+// Requires existing namespace cd, J, fs, root, rejects, report, r, save.
+// Synthetic structural fixtures NEVER stand in for actual Frame Native8 evidence.
+{
+ J fm_cases=J::array();std::size_t fm_expectations=0;
+ const auto fm_check=[&](const char* id,bool ok){fm_cases.push_back({{"id",id},{"pass",ok}});if(!ok)throw std::runtime_error(id);};
+ const auto fm_reject=[&](auto&& fn){++fm_expectations;return rejects(std::forward<decltype(fn)>(fn));};
+ const auto fm_pin=[&](const fs::path& p){return J{{"path",fs::absolute(p).string()},{"bytes",std::uint64_t(3)},{"sha256",std::string(64,'a')}};};
+ const std::string fm_commit(40,'a');
+ J fm_frame={{"schema","pas.cold-frame-metadata-delta.v1"},{"policy",cd::frame_policy},{"source_commit",fm_commit},{"source_dirty",false},{"base_source_commit",cd::frame_base_commit},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0},
+ {"base_chain_source",fm_pin(root/"base80/research/prelive_current/chain.cpp")},{"current_chain_source",fm_pin(root/"current/research/prelive_current/chain.cpp")},{"helper_source",fm_pin(root/"current/research/prelive_current/frame_metadata.hpp")},{"tests_source",fm_pin(root/"current/research/prelive_current/tests/frame_metadata_tests.cpp")},
+ {"frame_controls",J{{"target","frame_metadata_controls"},{"schema","pas.cold-frame-metadata-reuse-controls.v1"},{"assertions",8}}}};
+ fm_frame["base_chain_source"]["bytes"]=29747;fm_frame["base_chain_source"]["sha256"]="76e8a662bfdb2947349a32620277da315a2f9cbd6981a74978f1b62cc2ba3f22";
+ J fm_binding={{"source_commit",fm_commit},{"frame_metadata_delta",fm_frame}},fm_plan=fm_binding;
+ const std::string fm_base=std::string(cd::frame_include_old)+"body\n"+cd::frame_begin_old+"\nconst auto due=due_epoch+i*cadence;\n"+cd::frame_loop_old+"\nlatest.publish(pixels,bytes,f);\n";
+ const auto fm_current=cd::frame_expected_chain(fm_base);
+ const J fm_manifest={{"files",J::array({fm_frame.at("current_chain_source"),fm_frame.at("helper_source"),fm_frame.at("tests_source")})}};
+ J fm_report={{"schema","pas.cold-frame-metadata-reuse-controls.v1"},{"assertions",8},{"failed",0},{"pass",true},{"checks",J::array()},{"source_commit",fm_commit},{"source_build_commit",fm_commit},{"source_dirty",false},{"source_build_dirty",false},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0},{"long_gap_root_cause_claim",false},{"performance_measurement",false},{"original_control_denominators_modified",false}};
+ for(const auto& id:cd::frame_case_names())fm_report["checks"].push_back({{"id",id},{"pass",true}});
+ cd::frame_metadata_declaration(fm_binding,fm_plan);cd::frame_manifest_join(fm_frame,fm_manifest);cd::frame_source_equivalence(fm_base,fm_current);cd::frame_helper_equivalence(cd::frame_helper_literal);cd::frame_report(fm_report,fm_binding);
+
+ // 1: both legacy attachments absent is allowed ONLY for old source. A used
+ // helper/getter cannot silently enter the old14 branch with a missing flag.
+ bool fm_ok=true;J fm_legacy={{"source_commit",fm_commit}};
+ cd::frame_metadata_declaration(fm_legacy,fm_legacy);cd::frame_require_declared_source(false,fm_base);
+ fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_legacy,fm_plan);})&&fm_ok;
+ fm_ok=fm_reject([&]{cd::frame_require_declared_source(false,fm_current);})&&fm_ok;
+ fm_ok=fm_reject([&]{cd::frame_require_declared_source(false,fm_base+"producer_metadata.for_attempt(1,0);\n");})&&fm_ok;
+ auto fm_bad=fm_binding;fm_bad["frame_metadata_delta"]=true;fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_bad,fm_plan);})&&fm_ok;
+ fm_bad=fm_binding;fm_bad["frame_metadata_delta"]["policy"]="fixed_metadata_after_epoch.v1";fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_bad,fm_bad);})&&fm_ok;
+ fm_check("explicit_attachment_and_undeclared_source_reject",fm_ok);
+
+ // 2: the immutable old80 copy is independent of formal base55. Mutating its
+ // byte/hash identity or binding a different current commit is rejected.
+ fm_ok=true;
+ for(const auto* key:{"bytes","sha256"}){fm_bad=fm_binding;if(std::string_view(key)=="bytes")fm_bad["frame_metadata_delta"]["base_chain_source"][key]=29748;else fm_bad["frame_metadata_delta"]["base_chain_source"][key]=std::string(64,'0');fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_bad,fm_bad);})&&fm_ok;}
+ fm_bad=fm_binding;fm_bad["frame_metadata_delta"]["base_source_commit"]=std::string(40,'b');fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_bad,fm_bad);})&&fm_ok;
+ fm_bad=fm_binding;fm_bad["frame_metadata_delta"]["source_commit"]=std::string(40,'b');fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_bad,fm_bad);})&&fm_ok;
+ fm_bad=fm_binding;fm_bad["frame_metadata_delta"]["source_dirty"]=true;fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_bad,fm_bad);})&&fm_ok;
+ fm_check("original80_copy_current_identity_and_dirty_reject",fm_ok);
+
+ // 3: every byte outside the exact three literals is retained; clocks,
+ // absolute epoch/cadence and publication calls cannot be smuggled in.
+ fm_ok=true;
+ for(const auto& edited:std::array<std::string,4>{{cd::frame_replace_once(fm_current,"clock.now_ns()","clock.now_ns()+1"),cd::frame_replace_once(fm_current,"due_epoch+i*cadence","clock.now_ns()+i*cadence"),cd::frame_replace_once(fm_current,"latest.publish(pixels,bytes,f)","latest.publish(pixels,bytes+1,f)"),fm_current+"extra_business_edit\n"}})
+  fm_ok=fm_reject([&]{cd::frame_source_equivalence(fm_base,edited);})&&fm_ok;
+ fm_check("clock_epoch_cadence_publication_body_byte_preservation",fm_ok);
+
+ // 4: constructor remains before begin/epoch/thread launch exactly once;
+ // stale per-attempt fresh Frame setup or an additional field write rejects.
+ fm_ok=true;
+ const auto fm_ctor=std::string(" cold::frame_metadata::FixedMetadata producer_metadata;\n");
+ for(const auto& edited:std::array<std::string,4>{{fm_current+fm_ctor,cd::frame_replace_once(fm_current,cd::frame_begin_new,std::string(cd::frame_begin_old)+"\n"+fm_ctor),cd::frame_replace_once(fm_current,cd::frame_loop_new,cd::frame_loop_old),fm_current+"f.published_ns=1;\n"}})
+  fm_ok=fm_reject([&]{cd::frame_source_equivalence(fm_base,edited);})&&fm_ok;
+ fm_ok=fm_reject([&]{cd::frame_source_equivalence(fm_base+cd::frame_loop_old,fm_current);})&&fm_ok;
+ fm_check("one_constructor_before_epoch_exact_getter_and_no_extra_fields",fm_ok);
+
+ // 5: the complete helper body is fixed, rather than accepting a caller's
+ // expectation hash/string or checking only its backend label.
+ fm_ok=true;
+ for(const auto& edited:std::array<std::string,4>{{cd::frame_replace_once(cd::frame_helper_literal,"offline_memory_stub","different_backend"),cd::frame_replace_once(cd::frame_helper_literal,"value_.width=1280","value_.width=1279"),cd::frame_replace_once(cd::frame_helper_literal,"return value_;","value_.published_ns=1;return value_;"),cd::frame_replace_once(cd::frame_helper_literal,"return value_;","(void)clock.now_ns();return value_;")}})
+  fm_ok=fm_reject([&]{cd::frame_helper_equivalence(edited);})&&fm_ok;
+ fm_check("whole_helper_literal_rejects_metadata_or_clock_change",fm_ok);
+
+ // 6: current helper/tests/chain are actual current manifest members. Same
+ // hash with a different path, missing members and stale test hashes reject.
+ fm_ok=true;
+ auto fm_bad_manifest=fm_manifest;fm_bad_manifest["files"].erase(1);fm_ok=fm_reject([&]{cd::frame_manifest_join(fm_frame,fm_bad_manifest);})&&fm_ok;
+ fm_bad_manifest=fm_manifest;fm_bad_manifest["files"][2]["sha256"]=std::string(64,'0');fm_ok=fm_reject([&]{cd::frame_manifest_join(fm_frame,fm_bad_manifest);})&&fm_ok;
+ auto fm_bad_frame=fm_frame;fm_bad_frame["current_chain_source"]["path"]=(root/"shadow/chain.cpp").string();fm_ok=fm_reject([&]{cd::frame_manifest_join(fm_bad_frame,fm_manifest);})&&fm_ok;
+ fm_bad_manifest=fm_manifest;fm_bad_manifest["files"].push_back(fm_manifest["files"][0]);fm_ok=fm_reject([&]{cd::frame_manifest_join(fm_frame,fm_bad_manifest);})&&fm_ok;
+ fm_check("manifest_missing_stale_shadow_and_duplicate_sources_reject",fm_ok);
+
+ // 7: separate Frame8 retains exact case IDs and typed denominators; it
+ // cannot replace any old control count or claim performance/live success.
+ fm_ok=true;fm_bad=fm_binding;fm_bad["frame_metadata_delta"]["frame_controls"]["assertions"]=8.0;fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_bad,fm_bad);})&&fm_ok;
+ fm_bad=fm_binding;fm_bad["frame_metadata_delta"]["frame_controls"]["target"]="old_component_mask_tests";fm_ok=fm_reject([&]{cd::frame_metadata_declaration(fm_bad,fm_bad);})&&fm_ok;
+ for(const auto* key:{"assertions","source_build_commit","source_build_dirty","long_gap_root_cause_claim","checks"}){auto bad_report=fm_report;if(std::string_view(key)=="assertions")bad_report[key]=8.0;else if(std::string_view(key)=="source_build_commit")bad_report[key]=std::string(40,'b');else if(std::string_view(key)=="checks")bad_report[key][1]["id"]=bad_report[key][0]["id"];else bad_report[key]=true;fm_ok=fm_reject([&]{cd::frame_report(bad_report,fm_binding);})&&fm_ok;}
+ auto bad_report=fm_report;bad_report["checks"][0]["pass"]=false;fm_ok=fm_reject([&]{cd::frame_report(bad_report,fm_binding);})&&fm_ok;
+ fm_check("frame8_typed_counts_exact_ids_compiled_source_and_flags",fm_ok);
+
+ // 8: fake PASS metadata never substitutes for real Native8. Graph structural
+ // positives are synthetic only; effective old-core-only linkage is required.
+ fm_ok=true;
+ fm_ok=fm_reject([&]{(void)cd::eligibility_control_native(r,fm_binding,J{{"pass",true}},fm_pin(root/"frame_metadata_controls.exe"),fm_pin(root/"frame-report.json"),J::array({(root/"frame-report.json").string()}));})&&fm_ok;
+ const auto fm_build=root/"frame-build";J fm_graph_binding=fm_binding;fm_graph_binding["build_root"]=fm_build.string();fm_graph_binding["imported_static_libraries"]=J::array({J{{"role","cpu_pas_core"},{"binary",fm_pin(root/"old-core/pas_core.lib")}}});
+ cd::Graph fm_graph;const std::string fm_object="CMakeFiles/frame_metadata_controls.dir/frame_metadata_tests.cpp.obj";fm_graph.objects[fm_object]=cd::frame_tests_relative;fm_graph.links["frame_metadata_controls.exe"]=fm_object+" | dependencies";fm_graph.link_libraries["frame_metadata_controls.exe"]='"'+(root/"old-core/pas_core.lib").generic_string()+"\" kernel32.lib";
+ cd::frame_link_shape(fm_graph_binding,fm_graph);
+ auto fm_bad_graph=fm_graph;fm_bad_graph.link_libraries["frame_metadata_controls.exe"]='"'+(root/"shadow/pas_core.lib").generic_string()+"\" kernel32.lib";fm_ok=fm_reject([&]{cd::frame_link_shape(fm_graph_binding,fm_bad_graph);})&&fm_ok;
+ fm_bad_graph=fm_graph;fm_bad_graph.link_libraries["frame_metadata_controls.exe"]+=" "+fm_graph.link_libraries["frame_metadata_controls.exe"];fm_ok=fm_reject([&]{cd::frame_link_shape(fm_graph_binding,fm_bad_graph);})&&fm_ok;
+ fm_bad_graph=fm_graph;fm_bad_graph.links["frame_metadata_controls.exe"]=fm_object+" CMakeFiles/game_delta.dir/game.cpp.obj | dependencies";fm_ok=fm_reject([&]{cd::frame_link_shape(fm_graph_binding,fm_bad_graph);})&&fm_ok;
+ fm_bad_graph=fm_graph;fm_bad_graph.link_libraries["frame_metadata_controls.exe"]="kernel32.lib";fm_ok=fm_reject([&]{cd::frame_link_shape(fm_graph_binding,fm_bad_graph);})&&fm_ok;
+ // Exercise the ACTUAL absent-attachment entry, not only the string predicate.
+ const auto fm_small_chain=save("fm-undeclared-chain.cpp",fm_current);
+ const J fm_small_pin={{"path",fm_small_chain.string()},{"bytes",fm_current.size()},{"sha256",g::streamed_sha256(fm_small_chain,fm_current.size())},{"relative_path",cd::frame_chain_relative}};
+ const auto fm_small_manifest_text=J{{"files",J::array({fm_small_pin})}}.dump();
+ const auto fm_small_manifest_path=save("fm-undeclared-manifest.json",fm_small_manifest_text);
+ const J fm_small_manifest_pin={{"path",fm_small_manifest_path.string()},{"bytes",fm_small_manifest_text.size()},{"sha256",g::streamed_sha256(fm_small_manifest_path,fm_small_manifest_text.size())}};
+ fm_ok=fm_reject([&]{(void)cd::frame_metadata_validate(r,J{{"source_manifest",fm_small_manifest_pin}});})&&fm_ok;
+ fm_check("actual_native_required_oldcore_effective_link_and_absent_entry",fm_ok);
+
+ if(fm_cases.size()!=8)throw std::runtime_error("separate Frame reader8 denominator");
+ report["frame_metadata_delta_controls"]={{"schema","pas.cold-frame-metadata-reader-controls.v1"},{"assertions",8},{"checks",fm_cases},{"failed",0},{"pass",true},{"synthetic_fixture_only",true},{"expectation_count",fm_expectations},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0}};
+}
+
+{
+ J dcases=J::array();const auto dcheck=[&](const char* id,bool pass){dcases.push_back({{"id",id},{"pass",pass}});if(!pass)throw std::runtime_error(id);};
+ const std::string db=std::string("\xef\xbb\xbf")+"prefix\n"+cd::dense_old_note_anchor+"\nsuffix\n",dn=std::string("\xef\xbb\xbf")+"prefix\n"+cd::dense_new_note_anchor+"\nsuffix\n";
+ cd::dense_source_equivalence(db,dn);
+ dcheck("dense_exact_bom_lf_literal_and_inverse",rejects([&]{cd::dense_source_equivalence(db.substr(3),dn);})&&rejects([&]{cd::dense_source_equivalence(db,dn+"\r\n");}));
+ dcheck("dense_nonwhite_body_byte_change_reject",rejects([&]{cd::dense_source_equivalence(db,dn+"other_pixel_or_strategy_edit");}));
+ dcheck("dense_duplicate_or_missing_anchor_reject",rejects([&]{cd::dense_source_equivalence(db+cd::dense_old_note_anchor,dn);})&&rejects([&]{cd::dense_source_equivalence(db,db);}));
+ const auto dp=[&](const fs::path& p){return J{{"path",p.string()},{"bytes",std::uint64_t(3)},{"sha256",std::string(64,'a')}};};
+ J dm={{"schema","pas.cold-dense-source-delta.v1"},{"source_commit",std::string(40,'c')},{"base_source_commit",cd::eligibility_base_commit},{"source_path","src/game.cpp"},{"literal_transform","white_note_decode_pca_short_circuit.v1"},{"base_source",dp(root/"base-game.cpp")},{"current_source",dp(root/"current-game.cpp")},{"compile_source",dp(root/"copy-game.cpp")},{"consumer_targets",cd::dense_consumers()},{"formal_libraries_rebuilt",false},{"fresh_formal_translation_units",1},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0},{"original_archive_members",J::array()}};
+ const auto dsource=dp(root/"src/game.cpp");J dh={{"source_commit",dm["source_commit"]},{"motion_source_delta",J::object()},{"dense_source_delta",dm},{"imported_static_libraries",J::array()}};
+ for(const auto* role:{"cpu_pas_core","production_pas_core"}){const auto archive=dp(root/(std::string(role)+".lib")),member=dp(root/(std::string(role)+"-game.obj"));dm["original_archive_members"].push_back({{"role",role},{"archive",archive},{"member",member},{"source",dsource}});dh["imported_static_libraries"].push_back({{"role",role},{"binary",archive},{"translation_unit_count",22},{"replaced_archive_sources",J::array({"src/game_motion.cpp","src/game.cpp"})},{"replacement_targets",cd::dense_replacement_map()},{"translation_units",J::array({J{{"relative_source","src/game.cpp"},{"historical_object",member},{"original_source",dsource}}})}});}
+ dm["regression"]={{"target","motion_source_regression"},{"test_sources",J::array({dp(root/"game_tests.cpp"),dp(root/"cold_scenario_tests.cpp")})},{"runtime_contract_source",dp(root/"runtime_contract.cpp")},{"runtime_contract_prefix",dp(root/"runtime.cpp")},{"cases",12},{"case_names",cd::dense_case_names()},{"filter",cd::dense_filter()}};dh["dense_source_delta"]=dm;auto dplan=dh;
+ cd::dense_declaration(dh,dplan);auto bad=dh;bad["dense_source_delta"]["fresh_formal_translation_units"]=1.0;bool ok=rejects([&]{cd::dense_declaration(bad,bad);});bad=dh;bad["dense_source_delta"]["live_ready"]=true;ok=ok&&rejects([&]{cd::dense_declaration(bad,bad);});
+ dcheck("dense_typed_source_denominator_and_scope_reject",ok);
+ cd::dense_archive_join(dm,dh,dsource);bad=dh;bad["imported_static_libraries"][0]["replaced_archive_sources"]=J::array({"src/game_motion.cpp"});ok=rejects([&]{cd::dense_archive_join(dm,bad,dsource);});bad=dh;bad["imported_static_libraries"][1]["replacement_targets"][1]["target"]="game_motion_delta";ok=ok&&rejects([&]{cd::dense_archive_join(dm,bad,dsource);});bad=dh;bad["imported_static_libraries"][0]["replacement_target"]="game_motion_delta";ok=ok&&rejects([&]{cd::dense_archive_join(dm,bad,dsource);});
+ dcheck("dense_two_core_source_maps_no_scalar_ambiguity",ok);
+ J dr={{"tests",12},{"failures",0},{"disabled",0},{"errors",0},{"testsuites",J::array()}};J ds={{"name","GameObserver"},{"tests",12},{"failures",0},{"disabled",0},{"errors",0},{"testsuite",J::array()}};for(const auto& full:cd::dense_case_names()){const auto n=full.get<std::string>();ds["testsuite"].push_back({{"name",n.substr(n.find('.')+1)},{"status","RUN"},{"result","COMPLETED"}});}dr["testsuites"].push_back(ds);cd::dense_regression_report(dr);auto br=dr;br["testsuites"][0]["testsuite"][0]["result"]="SKIPPED";ok=rejects([&]{cd::dense_regression_report(br);});br=dr;br["testsuites"][0]["testsuite"][1]["name"]=br["testsuites"][0]["testsuite"][0]["name"];ok=ok&&rejects([&]{cd::dense_regression_report(br);});
+ dcheck("dense_actual12_case_names_completion_and_uniqueness",ok);
+ bad=dplan;bad["dense_source_delta"]["compile_source"]["sha256"]=std::string(64,'0');ok=rejects([&]{cd::dense_declaration(dh,bad);});bad=dh;bad.erase("dense_source_delta");ok=ok&&rejects([&]{cd::dense_declaration(dh,bad);});bad=dh;bad.erase("motion_source_delta");ok=ok&&rejects([&]{cd::dense_declaration(bad,bad);});
+ dcheck("dense_plan_compile_copy_attachment_motion_dependency",ok);
+ auto bm=dm;bm["original_archive_members"][0]["source"]["sha256"]=std::string(64,'0');ok=rejects([&]{cd::dense_static(bm,dh);});bm=dm;bm["original_archive_members"][1]["role"]="cpu_pas_core";ok=ok&&rejects([&]{cd::dense_static(bm,dh);});br=dr;br["tests"]=26;ok=ok&&rejects([&]{cd::dense_regression_report(br);});
+ dcheck("dense_original_member_source_and_separate12_denominator",ok);
+ if(dcases.size()!=8)throw std::runtime_error("separate Dense reader8 denominator");report["dense_source_delta_controls"]={{"schema","pas.cold-dense-reader-controls.v1"},{"assertions",8},{"checks",dcases},{"failed",0},{"pass",true},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0}};
+}
  std::ofstream f(output,std::ios::binary);f<<report.dump(2)<<'\n';if(!f)throw std::runtime_error("report write");return 0;
  }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 2;}}
