@@ -255,7 +255,7 @@ void output_control(Context& context){
  const auto report=(context.root/"normal").string();pd::Output output(report,rows,"A","tap",1000,20);const auto result=output.save("synthetic_control");
  const auto index=read_json(result.at("index").at("path").get<std::string>());need(index.at("summary").at("slots")==count&&index.at("summary").at("partial")==1,"all requested+64 slots and partial row retained");
  std::size_t emitted=0;for(const auto& segment:index.at("segments")){const auto& pin=segment.at("file");const auto p=fs::path(pin.at("path").get<std::string>());auto value=read_json(p);
-  need(fs::file_size(p)==pin.at("bytes").get<std::uint64_t>()&&pas::evidence::sha256(p,pd::file_bytes)==pin.at("sha256"),"actual output pin exact");
+  need(fs::file_size(p)==pin.at("bytes").get<std::uint64_t>()&&pas::evidence::sha256(p,pd::file_bytes)==pin.at("sha256").get<std::string>(),"actual output pin exact");
   need(value.at("rows").size()<=pd::segment_rows,"segment row bound");for(const auto& row:value.at("rows"))need(row.dump().size()<=pd::row_bytes,"actual combined numeric row bound");emitted+=value.at("rows").size();}
  need(emitted==count&&index.at("file_byte_cap")==4194304,"no empty or truncated segments");
  need(output.save("second_save")==result,"repeated save returns same immutable output");
