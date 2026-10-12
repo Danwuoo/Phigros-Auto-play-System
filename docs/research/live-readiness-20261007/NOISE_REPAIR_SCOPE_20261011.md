@@ -1,3 +1,9 @@
+2026-10-12 最新 AA／ABBA completion：binary 仍為 main80／`3ee69ed`，executor 為文件提交 `558fc88`。依使用者新指示「先把剩下的 aa 和 abba 測試一併跑完，再看看我們要修改甚麼」恢復診斷收集；剩AA5與fresh ABBA36皆完成完整raw audit。全AA12為11 validity PASS、原Hold3 NOT_READY1；noise15／18 adequate。ABBA36 raw PASS仍有時序負結果，原formal comparator因stopped／invalid AA而Native2／runner2／verification0拒絕，cost NOT_READY／live UNQUALIFIED。
+
+描述性ABBA54 cells有2個Dense observer p95超原T；9 batches無paired瓶頸＋capture穩定收益。原AA Hold3同attempt2336為publication超33.9µs；ABBA另有較長排程空窗，根因UNKNOWN。優先判讀冷producer排程／publication與Dense退步，尚未新增runtime修補或重測。完整索引與範圍見[AA／ABBA完成盤點](MAIN80_AA_ABBA_COMPLETION_REVIEW_20261012.md)。
+
+本輪完成量測與盤點，原source／raw／STOP／負結果保持；不調寬原gate、R2、48GiB／minimum-free20GiB，不重跑原75／production9，不開emulator／device／CU、新thread或追加ETW。後續文件HEAD不是binary來源；較早休息及「最新」記錄皆為歷史，本次只明列已授權的AA／ABBA收集與結果判讀。
+
 2026-10-12 最新 actual main80／`3ee69ed`：14 fresh compile occurrences、10 build/control Native、26原motion回歸、pre-cost七個必要section及current Normal3完整raw／原數值全PASS。AA第7筆Hold3單次publication deadline overrun，原validity NOT_READY而STOP：7筆完整raw、6 validity PASS、1 NOT_READY、5 NOT_RUN；noise18／ABBA36／full readonly／collection皆NOT_RUN。原source／raw／負結果／STOP、38個Native8及容量整理索引見[本輪盤點](MAIN80_AA_STOP_AND_REST_20261012.md)。cost NOT_READY／live UNQUALIFIED。
 
 使用者最新指示「完成當前 aa 測試後休息一下」：本輪已結束並整理，停止開發與測試，不自動續跑；後續需使用者恢復。實機ready目標仍保留，本輪不開emulator／device／CU、新thread或追加ETW；不重跑原75／production9、不調寬原gate。較晚文件HEAD不是本輪binary來源。以下較早「最新」／proposed及續作授權為歷史，不能覆蓋本次休息指示。
