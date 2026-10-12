@@ -60,11 +60,25 @@ foreach($name in @('DRequire','DRead','DBool','DInt','DSame','DProof')){
  if($functions.Count -ne 1){throw ('one preserved helper required: '+$name)};. ([scriptblock]::Create($functions[0].Extent.Text))
 }
 $catalogue=@{};foreach($row in $delta.base_original_build_processes){$catalogue[$row.Native8.verification.path]=$row.Native8}
+if($delta.dense_source_delta -or $delta.frame_metadata_delta){
+ if(@($delta.build_processes).Count -ne 2){throw 'exact two current build Native8 required'}
+ foreach($proof in $delta.build_processes){if(-not $proof.verification.path){throw 'actual owned build Native8 required'};$catalogue[$proof.verification.path]=$proof}
+}
 foreach($row in $base.controls){$v=NoiseRepairReadBinding $row.receipt;$proof=DProof $v.stage;$catalogue[$proof.verification.path]=$proof}
 foreach($row in $normal.rows){foreach($proof in @($row.process,$row.auditor_process)){$catalogue[$proof.verification.path]=$proof}}
 if($delta.motion_source_delta){
  $proof=$delta.motion_source_delta.regression.process
  if(-not $proof.verification.path){throw 'actual motion regression Native8 required'}
+ $catalogue[$proof.verification.path]=$proof
+}
+if($delta.dense_source_delta){
+ $proof=$delta.dense_source_delta.regression.process
+ if(-not $proof.verification.path){throw 'actual Dense regression Native8 required'}
+ $catalogue[$proof.verification.path]=$proof
+}
+if($delta.frame_metadata_delta){
+ $proof=$delta.frame_metadata_delta.frame_controls.process
+ if(-not $proof.verification.path){throw 'actual Frame control Native8 required'}
  $catalogue[$proof.verification.path]=$proof
 }
 $inputPath=Join-Path $artifact 'collection-input.json'

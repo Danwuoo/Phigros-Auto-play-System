@@ -332,9 +332,9 @@ class Preflight final {
                    same_pin(current.at("src/manual_session.cpp"),original.at("src/manual_session.cpp")),
                    "preserved base55/current manual identity; main32 remains its historical source");
         for(const auto& row:delta_.at("base_original_build_processes"))native(row.at("Native8"));
-        const auto configure=native(delta_.at("configure_process")),build=native(delta_.at("build_process"));
+        const auto configure=native(delta_.at("configure_process"));
         component_delta::eligibility_native(r_,delta_,plan,configure.evidence,true);
-        component_delta::eligibility_native(r_,delta_,plan,build.evidence,false);
+        for(const auto& proof:component_delta::eligibility_build_processes(delta_)){const auto build=native(proof);component_delta::eligibility_native(r_,delta_,plan,build.evidence,false);}
         const auto graph_pin=delta_.at("compile_graph");const auto graph_path=r_.bound(graph_pin);std::ifstream input(graph_path,std::ios::binary);std::ostringstream text;text<<input.rdbuf();
         const auto graph=component_delta::eligibility_graph(delta_,root_,text.str());component_delta::eligibility_objects(delta_,graph);
         r_.entries(delta_.at("files"));r_.entries(delta_.at("compiled_outputs"));
@@ -349,10 +349,12 @@ class Preflight final {
                 w::require(current.contains(path)&&current.at(path).at("sha256")==old.at("sha256")&&current.at(path).at("bytes")==old.at("bytes"),"imported formal strategy/manual/app source unchanged from base55");
         }
         if(motion)native(delta_.at("motion_source_delta").at("regression").at("process"));
+        if(dense)native(delta_.at("dense_source_delta").at("regression").at("process"));
+        if(component_delta::frame_metadata_delta(delta_))native(delta_.at("frame_metadata_delta").at("frame_controls").at("process"));
         native(delta_.at("affinity_controls_process"));native(delta_.at("reader_controls_process"));native(delta_.at("verification_controls_process"));
         for(const auto& row:delta_.at("score_control_processes"))native(row.at("Native8"));
         consumer_priority_requested_=2;producer_active_tail_ns_=0;producer_wait_policy_bound_=true;process_qos_policy_bound_=true;process_qos_enabled_=true;
-        provenance_={{"base_formal_source_commit",base.at("source_commit")},{"historical_qualification_source_commit",base_commit},{"compiled_harness_source_commit",compiled_},{"execution_source_commit",execution_},{"consumer_priority_requested",2},{"producer_active_tail_ns",0},{"formal_rebuilt",false},{"cold_harness_delta",true},{"verification_only_delta",!motion},{"verification_and_motion_delta",motion},{"fresh_formal_translation_units",motion?1:0},{"formal_libraries_rebuilt",false},{"fresh_translation_units",delta_.at("translation_unit_count")},{"historical75_and_production9_prerequisite_only",true},{"base_cpu_build",delta_.at("base_cpu_build")},{"base_production_build",delta_.at("base_production_build")},{"original_inventory",required("original_inventory")},{"narrow_build",required("narrow_build")}};
+        provenance_={{"base_formal_source_commit",base.at("source_commit")},{"historical_qualification_source_commit",base_commit},{"compiled_harness_source_commit",compiled_},{"execution_source_commit",execution_},{"consumer_priority_requested",2},{"producer_active_tail_ns",0},{"formal_rebuilt",false},{"cold_harness_delta",true},{"verification_only_delta",!motion},{"verification_and_motion_delta",motion},{"fresh_formal_translation_units",(motion?1:0)+(dense?1:0)},{"formal_libraries_rebuilt",false},{"fresh_translation_units",delta_.at("translation_unit_count")},{"historical75_and_production9_prerequisite_only",true},{"base_cpu_build",delta_.at("base_cpu_build")},{"base_production_build",delta_.at("base_production_build")},{"original_inventory",required("original_inventory")},{"narrow_build",required("narrow_build")}};
     }
     void build(){
         delta_=object(required("narrow_build"));

@@ -231,6 +231,9 @@ $planPath=Join-Path $artifact 'core-build-plan.json';$planData=@{schema='pas.col
 if($MotionSourceDelta){$planData.motion_source_delta=$motionStatic;$planData.formal_libraries_rebuilt=$false;$planData.fresh_formal_translation_units=1}
 if($DenseSourceDelta){$planData.dense_source_delta=$denseStatic;$planData.fresh_formal_translation_units=2}
 if($FrameMetadataDelta){$planData.frame_metadata_delta=$frameStatic}
+$splitBuild=[bool]($DenseSourceDelta -or $FrameMetadataDelta)
+$buildGroups=@(@{targets=$targets})
+if($splitBuild){$buildGroups=@(ComponentDeltaPerformanceBuildGroups ([bool]$DenseSourceDelta) ([bool]$FrameMetadataDelta));$planData.build_target_groups=$buildGroups;$planData.expected_native_build_stages=2}
 NewJson $planPath $planData 4194304
 $fixedPins+=@(Binding $selectedDependencyPath;Binding $manifestPath;Binding $snapshotPath;Binding $planPath;Binding $libraryCmake;Binding $runtimeCmake)
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1';$toolchain='C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake';$guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
@@ -258,9 +261,20 @@ $generatedDelta=@(Binding (Join-Path $buildRoot 'producer_eligibility_delta_iden
 if($MotionSourceDelta){$generatedDelta+=@($runtimeContract)}
 $runtimeCopies=@();foreach($pin in $runtimeSources){$copy=Binding (Join-Path $buildRoot ([IO.Path]::GetFileName($pin.path)));DRequire ($copy.bytes -eq $pin.bytes -and $copy.sha256 -ceq $pin.sha256) 'exact runtime18 copy';$runtimeCopies+=@($copy)}
 $inputs+=@($generatedDelta.path)+@($runtimeCopies.path)+(Join-Path $buildRoot 'CMakeCache.txt')+$ninjaPath+@($configureProof.Values.path)
-$build='build-producer-eligibility-'+$Attempt;AssertInputs
-Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=$recipeRoot;BuildRoot=$buildRoot;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentPin.path;Operation='Build';Configuration='Release';Inputs=$inputs;Options=@('--target')+$targets}
-$buildProof=DProof $build;AssertInputs
+$buildProofs=@();$priorProducts=@();$priorOutputRows=[Collections.Generic.List[object]]::new()
+foreach($row in $compileRows){DRequire (-not(Test-Path -LiteralPath (Join-Path $buildRoot $row.Groups[1].Value))) 'all declared fresh objects absent before first build'}
+for($groupIndex=0;$groupIndex -lt $buildGroups.Count;$groupIndex++){
+ $priorOutputRows.Add([object[]]@($priorProducts))
+ $build='build-producer-eligibility-'+$Attempt;if($splitBuild){$build+='-g'+($groupIndex+1)}
+ AssertInputs;foreach($pin in $priorProducts){CheckEntry $pin}
+ $phaseInputs=@($inputs)+@($buildProofs|ForEach-Object {$_.Values.path})+@($priorProducts.path)
+ Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=$recipeRoot;BuildRoot=$buildRoot;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentPin.path;Operation='Build';Configuration='Release';Inputs=$phaseInputs;Options=@('--target')+@($buildGroups[$groupIndex].targets)}
+ $buildProofs+=@(DProof $build);AssertInputs;foreach($pin in $priorProducts){CheckEntry $pin}
+ $phaseProducts=@();foreach($row in $compileRows){$object=$row.Groups[1].Value;$match=[regex]::Match($object,'^CMakeFiles/([^/]+)[.]dir/');DRequire $match.Success 'declared fresh target object';if($match.Groups[1].Value -cin $buildGroups[$groupIndex].targets){$phaseProducts+=@(Binding (Join-Path $buildRoot $object))}}
+ foreach($target in $exeTargets|Where-Object {$_ -cin $buildGroups[$groupIndex].targets}){$phaseProducts+=@(Binding (Join-Path $buildRoot ($target+'.exe')))}
+ $priorProducts+=@($phaseProducts)
+}
+$buildProof=$buildProofs[-1]
 $outputs=@(Get-ChildItem -LiteralPath $buildRoot -File -Recurse|ForEach-Object {Binding $_.FullName});$objects=@($outputs|Where-Object {$_.path -match '[.]obj$' -and $_.path.Replace('\','/') -cmatch '/CMakeFiles/(current_chain|worker_affinity_controls|production_pipeline_cold|score_only_controls|qualification_reader|qualification_reader_controls|candidate_admission_delta|candidate_admission_controls|game_motion_delta|motion_source_regression|game_delta|frame_metadata_controls)[.]dir/'})
 DRequire ($objects.Count -eq $freshCount) 'actual declared fresh objects';foreach($pin in $outputs|Where-Object {$_.path -match '[.]obj$' -and $_ -notin $objects}){DRequire ($pin.path.Replace('\','/') -cmatch '/(?:CompilerIdCXX/CMakeCXXCompilerId[.]obj|CMakeFiles/ShowIncludes/main[.]obj)$') 'only standard CMake probe objects additional'}
 $exes=@{};foreach($target in $exeTargets){$rows=@($outputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq ($target+'.exe')});DRequire ($rows.Count -eq 1) 'one fresh executable for each declared link target';$exes[$target]=$rows[0]}
@@ -276,7 +290,7 @@ $controlCompileOnlyPaths=[Collections.Generic.HashSet[string]]::new([StringCompa
 foreach($pin in $controlCompileOnlyLargeDependencies){$null=$controlCompileOnlyPaths.Add([IO.Path]::GetFullPath($pin.path))}
 $controlPolicyPath=Join-Path $artifact 'control-input-policy.json'
 NewJson $controlPolicyPath @{schema='pas.cold-controls-input-policy.v1';source_commit=$FrozenHead;selected_dependency_manifest=(Binding $selectedDependencyPath);compile_only_large_installed_archives=$controlCompileOnlyLargeDependencies;configure_and_build_keep_all_selected_dependencies=$true;final_full_dependency_recheck_preserved=$true;control_assertions_use_same_compile_only_exclusion=$true;actual_images_runtime_sources_objects_imported_libraries_preserved=$true;controls_counts_unchanged=$true;qualification_issued=$false;device_operations=0} 4194304
-$controlInputs=@($inputs+$outputs.path+$buildProof.Values.path|Where-Object {-not $controlCompileOnlyPaths.Contains([IO.Path]::GetFullPath($_))})+@($controlPolicyPath)
+$controlInputs=@($inputs+$outputs.path+@($buildProofs|ForEach-Object {$_.Values.path})|Where-Object {-not $controlCompileOnlyPaths.Contains([IO.Path]::GetFullPath($_))})+@($controlPolicyPath)
 $affinityReport=Join-Path $artifact 'worker-affinity-controls.json';$test='test-producer-eligibility-'+$Attempt+'-affinity';AssertControlInputs
 Native $test $exes.worker_affinity_controls.path @($affinityReport) $controlInputs 300
 $affinityProof=DProof $test;$affinity=DRead (Binding $affinityReport);DControls $affinity 'pas.worker-affinity-tests.v1' 65
@@ -340,8 +354,9 @@ $verificationDeltaPath=Join-Path $artifact 'verification-delta.json';$verificati
 if($MotionSourceDelta){$verificationData.motion_source_delta=$motionActual;$verificationData.verification_only_delta=$false;$verificationData.verification_and_motion_delta=$true}
 if($DenseSourceDelta){$verificationData.dense_source_delta=$denseActual;$verificationData.verification_and_motion_and_dense_delta=$true}
 if($FrameMetadataDelta){$verificationData.frame_metadata_delta=$frameActual}
+if($splitBuild){$verificationData.build_target_groups=$buildGroups;$verificationData.build_processes=$buildProofs;$verificationData.build_prior_outputs=$priorOutputRows.ToArray()}
 NewJson $verificationDeltaPath $verificationData 4194304
-$nativeProcesses=@($configureProof,$buildProof,$affinityProof,$readerProof,$verificationProof)+@($scoreRows|ForEach-Object {$_.Native8})
+$nativeProcesses=@($configureProof)+@($buildProofs)+@($affinityProof,$readerProof,$verificationProof)+@($scoreRows|ForEach-Object {$_.Native8})
 if($MotionSourceDelta){$nativeProcesses+=@($motionProof)}
 if($DenseSourceDelta){$nativeProcesses+=@($denseProof)}
 if($FrameMetadataDelta){$nativeProcesses+=@($frameProof)}
@@ -350,5 +365,6 @@ if($MotionSourceDelta){$bindingData.motion_source_delta=$motionActual;$bindingDa
 if($DenseSourceDelta){$bindingData.dense_source_delta=$denseActual;$bindingData.fresh_formal_translation_units=2}
 if($FrameMetadataDelta){$bindingData.frame_metadata_delta=$frameActual}
 if($DenseSourceDelta -and $FrameMetadataDelta){$bindingData.scope='16 fresh compile occurrences with explicit motion/game member overlays and fixed metadata controls; original archives/qualification stay historical; necessary current costs remain pending.'}
+if($splitBuild){$bindingData.build_target_groups=$buildGroups;$bindingData.expected_native_build_stages=2;$bindingData.build_processes=$buildProofs;$bindingData.build_receipts=@($buildProofs|ForEach-Object {$_.verification});$bindingData.build_input_closures=@($buildProofs|ForEach-Object {$_.input_closure});$bindingData.build_prior_outputs=$priorOutputRows.ToArray();$bindingData.compile_receipt=$buildProof.verification;$bindingData.input_closure=$buildProof.input_closure}
 NewJson $bindingPath $bindingData 4194304
 @{binding=(Binding $bindingPath);fresh_translation_units=$freshCount;native_stages=$nativeProcesses.Count;measurement_runs=0;new_etw_recordings=0;qualification_issued=$false;device_operations=0;live_ready=$false}|ConvertTo-Json -Depth 4

@@ -440,11 +440,37 @@ int main(int argc,char** argv){try{
  const J dspec={{"exe",(root/"cmd.exe").string()},{"argv",J::array({"/d","/s","/c",dcommand.string()})}};
  const auto dline=[&](const J& targets){std::string text;for(const auto& token:J::array({(root/"cmake.exe").string(),"--build",dbuild.string(),"--parallel","4","--target"})){if(!text.empty())text+=' ';text+='"'+token.get<std::string>()+'"';}for(const auto& target:targets)text+=" \""+target.get<std::string>()+'"';return text+'\n';};
  for(const auto& flags:std::array<std::array<bool,3>,5>{{{false,false,false},{true,false,false},{true,true,false},{true,false,true},{true,true,true}}}){
-  J decl={{"build_root",dbuild.string()}};if(flags[0])decl["motion_source_delta"]=J::object();if(flags[1])decl["dense_source_delta"]=J::object();if(flags[2])decl["frame_metadata_delta"]=J::object();const auto targets=cd::eligibility_targets(flags[0],flags[1],flags[2]);
-  cd::eligibility_build_command(decl,dspec,dline(targets),dcommand);
-  auto wrong=targets;wrong.erase(wrong.size()-1);ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand);});
-  wrong=targets;std::swap(wrong[0],wrong[1]);ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand);});
-  wrong=targets;wrong.push_back("undeclared_target");ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand);});
+  J decl={{"build_root",dbuild.string()}};if(flags[0])decl["motion_source_delta"]=J::object();if(flags[1])decl["dense_source_delta"]=J::object();if(flags[2])decl["frame_metadata_delta"]=J::object();
+  const bool split=flags[1]||flags[2];const auto groups=split?cd::eligibility_build_groups(flags[1],flags[2]):J::array({J{{"targets",cd::eligibility_targets(flags[0],false,false)}}});
+  if(split)decl["build_target_groups"]=groups;
+  for(std::size_t phase=0;phase<groups.size();++phase){const auto targets=groups[phase].at("targets");cd::eligibility_build_command(decl,dspec,dline(targets),dcommand,phase);
+   auto wrong=targets;wrong.erase(wrong.size()-1);ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand,phase);});
+   wrong=targets;std::swap(wrong[0],wrong[1]);ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand,phase);});
+   wrong=targets;wrong.push_back("undeclared_target");ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand,phase);});
+   if(split)ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(targets),dcommand,1-phase);});
+  }
+  ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(groups[0].at("targets")),dcommand,groups.size());});
+  if(!split)continue;
+  ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(cd::eligibility_targets(true,flags[1],flags[2])),dcommand);});
+  auto bad_groups=decl;std::swap(bad_groups["build_target_groups"][0],bad_groups["build_target_groups"][1]);ok=ok&&rejects([&]{cd::eligibility_build_command(bad_groups,dspec,dline(groups[0].at("targets")),dcommand);});
+  J static_plan={{"build_target_groups",groups},{"expected_native_build_stages",2}};decl["expected_native_build_stages"]=2;
+  decl["build_processes"]=J::array({cpu_process("performance-build0"),cpu_process("performance-build1")});decl["build_receipts"]=J::array();decl["build_input_closures"]=J::array();
+  for(const auto& proof:decl["build_processes"]){decl["build_receipts"].push_back(proof.at("verification"));decl["build_input_closures"].push_back(proof.at("input_closure"));}
+  decl["build_process"]=decl["build_processes"][1];decl["compile_receipt"]=decl["build_receipts"][1];decl["input_closure"]=decl["build_input_closures"][1];
+  decl["translation_units"]=cd::eligibility_units(true,flags[1],flags[2]);decl["compiled_outputs"]=J::array();decl["files"]=J::array();J prior=J::array();std::size_t ordinal=0;
+  const auto first=groups[0].at("targets");for(const auto& unit:decl["translation_units"])if(std::any_of(first.begin(),first.end(),[&](const auto& target){return target==unit.at("target");})){const auto pin=fixture_pin(dbuild/("CMakeFiles/"+unit.at("target").get<std::string>()+".dir/"+std::to_string(ordinal++)+".obj"));decl["compiled_outputs"].push_back(pin);prior.push_back(pin);}
+  for(const auto& target:first){const auto name=target.get<std::string>();if(name=="game_motion_delta"||name=="game_delta"||name=="candidate_admission_delta")continue;const auto pin=fixture_pin(dbuild/(name+".exe"));decl["compiled_outputs"].push_back(pin);decl["files"].push_back(pin);prior.push_back(pin);}
+  decl["build_prior_outputs"]=J::array({J::array(),prior});cd::eligibility_build_declaration(decl,static_plan);cd::eligibility_prior_products(decl);
+  auto broken=decl;broken["build_process"]=broken["build_processes"][0];ok=ok&&rejects([&]{cd::eligibility_build_declaration(broken,static_plan);});
+  broken=decl;broken["build_processes"][1]=broken["build_processes"][0];broken["build_receipts"][1]=broken["build_receipts"][0];ok=ok&&rejects([&]{cd::eligibility_build_declaration(broken,static_plan);});
+  broken=decl;broken["build_processes"][0].erase("freeze");ok=ok&&rejects([&]{cd::eligibility_build_declaration(broken,static_plan);});
+  broken=decl;broken["build_input_closures"][0]=broken["build_input_closures"][1];ok=ok&&rejects([&]{cd::eligibility_build_declaration(broken,static_plan);});
+  broken=decl;broken["expected_native_build_stages"]=2.0;ok=ok&&rejects([&]{cd::eligibility_build_declaration(broken,static_plan);});
+  auto future_plan=static_plan;future_plan["build_processes"]=decl["build_processes"];ok=ok&&rejects([&]{cd::eligibility_build_declaration(decl,future_plan);});
+  broken=decl;broken["build_prior_outputs"][1].erase(std::size_t{0});ok=ok&&rejects([&]{cd::eligibility_prior_products(broken);});
+  broken=decl;broken["build_prior_outputs"][1][1]=broken["build_prior_outputs"][1][0];ok=ok&&rejects([&]{cd::eligibility_prior_products(broken);});
+  broken=decl;broken["build_prior_outputs"][1].push_back(fixture_pin(dbuild/".ninja_log"));ok=ok&&rejects([&]{cd::eligibility_prior_products(broken);});
+  broken=decl;broken["build_prior_outputs"][1][0]["sha256"]=std::string(64,'0');ok=ok&&rejects([&]{cd::eligibility_prior_products(broken);});
  }
  dcheck("dense_original_member_source_and_separate12_denominator",ok);
  if(dcases.size()!=8)throw std::runtime_error("separate Dense reader8 denominator");report["dense_source_delta_controls"]={{"schema","pas.cold-dense-reader-controls.v1"},{"assertions",8},{"checks",dcases},{"failed",0},{"pass",true},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0}};

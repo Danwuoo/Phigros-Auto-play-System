@@ -1,4 +1,11 @@
 # Source-only performance deltas. All old numerical gates stay binding.
+function ComponentDeltaPerformanceBuildGroups([bool]$dense,[bool]$frame){
+ ComponentDeltaColdProducerRequire ($dense -or $frame) 'explicit performance build groups'
+ $first=@('game_motion_delta');if($dense){$first+=@('game_delta')}
+ $first+=@('candidate_admission_delta','worker_affinity_controls','qualification_reader','qualification_reader_controls')
+ if($frame){$first+=@('frame_metadata_controls')}
+ return @(@{targets=$first},@{targets=@('current_chain','production_pipeline_cold','score_only_controls','pas','candidate_admission_controls','motion_source_regression')})
+}
 function ComponentDeltaDenseTargets {return @('current_chain','production_pipeline_cold','score_only_controls','pas','candidate_admission_controls','motion_source_regression')}
 function ComponentDeltaDenseCases {return @(
  'GameObserver.MultiplePixelsTracksAndRelativeMovingLinePrediction',
