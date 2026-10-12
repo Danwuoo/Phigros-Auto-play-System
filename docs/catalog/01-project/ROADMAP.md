@@ -1,3 +1,7 @@
+2026-10-12 最新 actual main89／`0486ed3`：必要16 TUs／13 build-control Native及motion26／Dense12／Frame8通過；同候選Normal3、AA12／noise18、ABBA36一次收齊，共51 full raw audits PASS。Normal2 PASS／Hold NOT_READY；AA6 validity PASS／6 NOT_READY，noise11／18 adequate；正式比較器及最後readonly保持NOT_READY。cost NOT_READY／live UNQUALIFIED，尚未到啟動emulator邊界。
+
+Dense18描述性比較項目均在本輪原T內，兩個超T項目在Hold；producer排程與publication毫秒級長窗仍存在，根因UNKNOWN。原負結果／STOP／source／raw及131 Native8保存於[main89完整盤點](../../research/live-readiness-20261007/MAIN89_ALL_COLD_COMPLETION_20261012.md)。本輪沒有追修單次33.9µs、放寬原門檻、全盤重跑原75／production9、開裝置／新thread或追加ETW；後續文件HEAD不是binary來源。以下「最新」皆為歷史。
+
 2026-10-12 最新 AA／ABBA completion：binary 仍為 main80／`3ee69ed`，executor 為文件提交 `558fc88`。依使用者新指示「先把剩下的 aa 和 abba 測試一併跑完，再看看我們要修改甚麼」恢復診斷收集；剩AA5與fresh ABBA36皆完成完整raw audit。全AA12為11 validity PASS、原Hold3 NOT_READY1；noise15／18 adequate。ABBA36 raw PASS仍有時序負結果，原formal comparator因stopped／invalid AA而Native2／runner2／verification0拒絕，cost NOT_READY／live UNQUALIFIED。
 
 描述性ABBA54 cells有2個Dense observer p95超原T；9 batches無paired瓶頸＋capture穩定收益。原AA Hold3同attempt2336為publication超33.9µs；ABBA另有較長排程空窗，根因UNKNOWN。優先判讀冷producer排程／publication與Dense退步，尚未新增runtime修補或重測。完整索引與範圍見[AA／ABBA完成盤點](../../research/live-readiness-20261007/MAIN80_AA_ABBA_COMPLETION_REVIEW_20261012.md)。

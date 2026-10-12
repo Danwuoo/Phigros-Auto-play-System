@@ -1,3 +1,9 @@
+2026-10-12 最新 actual main89／`0486ed3`：metadata cold delta與Dense白色元件提前skip已整合；必要16 TUs／13 build-control Native、motion26／Dense12／Frame8及pre-cost必要sections通過。依使用者「一次測完全部」完成Normal3、AA12／noise18與ABBA36：共51 full raw audits PASS；Normal Tap／Dense數值PASS、Hold NOT_READY；AA6 validity PASS／6 NOT_READY；noise11／18 adequate。原comparator Native2／runner2／verification0拒絕stopped／invalid AA，cost NOT_READY／live UNQUALIFIED。
+
+本輪描述性54 cells有2個Hold超原T、Dense18 cells全在本輪T內；這不是跨版本因果改善或正式比較資格。measurement的AA lateness265.5677ms、ABBA lateness379.6099ms及Dense同attempt publication span95.9341ms仍存在，根因UNKNOWN；33.9µs未單獨追修或加tolerance。full-r2 readonly原必要七sections通過、整體NOT_READY；正式root的NOT_RUN欄與獨立diagnostic completion分列，不冒稱48筆沒跑。完整current131 Native8與source／raw／STOP／容量restore索引見[main89完整盤點](docs/research/live-readiness-20261007/MAIN89_ALL_COLD_COMPLETION_20261012.md)。
+
+本輪一次完整測量與盤點已完成，實機ready目標未達；producer ideal-processor只為未實作／未測的草案。原負結果與STOP保持，不放寬R2／gate／48GiB／minimum-free20GiB，不全盤重跑原75／production9；不開emulator／device／CU、新thread或追加ETW。後續文件HEAD不是binary來源。以下較早最新與休息文字都是歷史，不能覆蓋使用者續作與本輪全部收集授權。
+
 2026-10-12 最新 AA／ABBA completion：binary 仍為 main80／`3ee69ed`，executor 為文件提交 `558fc88`。依使用者新指示「先把剩下的 aa 和 abba 測試一併跑完，再看看我們要修改甚麼」恢復診斷收集；剩AA5與fresh ABBA36皆完成完整raw audit。全AA12為11 validity PASS、原Hold3 NOT_READY1；noise15／18 adequate。ABBA36 raw PASS仍有時序負結果，原formal comparator因stopped／invalid AA而Native2／runner2／verification0拒絕，cost NOT_READY／live UNQUALIFIED。
 
 描述性ABBA54 cells有2個Dense observer p95超原T；9 batches無paired瓶頸＋capture穩定收益。原AA Hold3同attempt2336為publication超33.9µs；ABBA另有較長排程空窗，根因UNKNOWN。優先判讀冷producer排程／publication與Dense退步，尚未新增runtime修補或重測。完整索引與範圍見[AA／ABBA完成盤點](docs/research/live-readiness-20261007/MAIN80_AA_ABBA_COMPLETION_REVIEW_20261012.md)。
