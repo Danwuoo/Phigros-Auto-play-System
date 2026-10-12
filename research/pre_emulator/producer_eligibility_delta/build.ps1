@@ -267,7 +267,7 @@ for($groupIndex=0;$groupIndex -lt $buildGroups.Count;$groupIndex++){
  $priorOutputRows.Add([object[]]@($priorProducts))
  $build='build-producer-eligibility-'+$Attempt;if($splitBuild){$build+='-g'+($groupIndex+1)}
  AssertInputs;foreach($pin in $priorProducts){CheckEntry $pin}
- $phaseInputs=@($inputs)+@($buildProofs|ForEach-Object {$_.Values.path})+@($priorProducts.path)
+ $phaseInputs=@($inputs)+@($buildProofs|ForEach-Object {$_.Values.path})+@($priorProducts|ForEach-Object {$_.path})
  Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=$recipeRoot;BuildRoot=$buildRoot;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentPin.path;Operation='Build';Configuration='Release';Inputs=$phaseInputs;Options=@('--target')+@($buildGroups[$groupIndex].targets)}
  $buildProofs+=@(DProof $build);AssertInputs;foreach($pin in $priorProducts){CheckEntry $pin}
  $phaseProducts=@();foreach($row in $compileRows){$object=$row.Groups[1].Value;$match=[regex]::Match($object,'^CMakeFiles/([^/]+)[.]dir/');DRequire $match.Success 'declared fresh target object';if($match.Groups[1].Value -cin $buildGroups[$groupIndex].targets){$phaseProducts+=@(Binding (Join-Path $buildRoot $object))}}
