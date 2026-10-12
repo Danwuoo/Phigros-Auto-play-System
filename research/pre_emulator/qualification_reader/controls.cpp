@@ -415,9 +415,9 @@ int main(int argc,char** argv){try{
 
 {
  J dcases=J::array();const auto dcheck=[&](const char* id,bool pass){dcases.push_back({{"id",id},{"pass",pass}});if(!pass)throw std::runtime_error(id);};
- const std::string db=std::string("\xef\xbb\xbf")+"prefix\n"+cd::dense_old_note_anchor+"\nsuffix\n",dn=std::string("\xef\xbb\xbf")+"prefix\n"+cd::dense_new_note_anchor+"\nsuffix\n";
+ const std::string db=std::string("prefix\n")+cd::dense_old_note_anchor+"\nsuffix\n",dn=std::string("prefix\n")+cd::dense_new_note_anchor+"\nsuffix\n";
  cd::dense_source_equivalence(db,dn);
- dcheck("dense_exact_bom_lf_literal_and_inverse",rejects([&]{cd::dense_source_equivalence(db.substr(3),dn);})&&rejects([&]{cd::dense_source_equivalence(db,dn+"\r\n");}));
+ dcheck("dense_exact_bom_free_lf_literal_and_inverse",rejects([&]{cd::dense_source_equivalence(std::string("\xef\xbb\xbf")+db,dn);})&&rejects([&]{cd::dense_source_equivalence(db,std::string("\xef\xbb\xbf")+dn);})&&rejects([&]{cd::dense_source_equivalence(db,dn+"\r\n");}));
  dcheck("dense_nonwhite_body_byte_change_reject",rejects([&]{cd::dense_source_equivalence(db,dn+"other_pixel_or_strategy_edit");}));
  dcheck("dense_duplicate_or_missing_anchor_reject",rejects([&]{cd::dense_source_equivalence(db+cd::dense_old_note_anchor,dn);})&&rejects([&]{cd::dense_source_equivalence(db,db);}));
  const auto dp=[&](const fs::path& p){return J{{"path",p.string()},{"bytes",std::uint64_t(3)},{"sha256",std::string(64,'a')}};};

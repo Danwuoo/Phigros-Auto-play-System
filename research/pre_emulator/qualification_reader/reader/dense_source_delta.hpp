@@ -20,9 +20,9 @@ inline constexpr const char* dense_new_note_anchor=R"(    // Finish the current 
         if(c.color==4) continue;
         const double w=c.x1-c.x0+2.0,h=c.y1-c.y0+2.0;)";
 inline void dense_source_equivalence(const std::string& base,const std::string& current){
-    // Preserve the actual old game.cpp's BOM and LF; do not reuse motion_lf(),
-    // which intentionally requires BOM-free game_motion.cpp.
-    w::require(base.size()<=4*w::MiB&&current.size()<=4*w::MiB&&base.starts_with("\xef\xbb\xbf")&&current.starts_with("\xef\xbb\xbf")&&base.find('\r')==std::string::npos&&current.find('\r')==std::string::npos,"exact BOM/LF game source encoding");
+    // The pinned original game.cpp is BOM-free UTF-8 with LF. Preserve its
+    // complete bytes and reject an inserted BOM or line-ending change.
+    w::require(base.size()<=4*w::MiB&&current.size()<=4*w::MiB&&!base.starts_with("\xef\xbb\xbf")&&!current.starts_with("\xef\xbb\xbf")&&base.find('\r')==std::string::npos&&current.find('\r')==std::string::npos,"exact BOM-free/LF game source encoding");
     const std::string old=dense_old_note_anchor,fresh=dense_new_note_anchor;
     auto expected=base;const auto at=expected.find(old);
     w::require(at!=std::string::npos&&expected.find(old,at+old.size())==std::string::npos,"one exact second-pass white anchor");
