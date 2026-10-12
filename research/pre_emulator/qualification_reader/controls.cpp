@@ -434,6 +434,18 @@ int main(int argc,char** argv){try{
  bad=dplan;bad["dense_source_delta"]["compile_source"]["sha256"]=std::string(64,'0');ok=rejects([&]{cd::dense_declaration(dh,bad);});bad=dh;bad.erase("dense_source_delta");ok=ok&&rejects([&]{cd::dense_declaration(dh,bad);});bad=dh;bad.erase("motion_source_delta");ok=ok&&rejects([&]{cd::dense_declaration(bad,bad);});
  dcheck("dense_plan_compile_copy_attachment_motion_dependency",ok);
  auto bm=dm;bm["original_archive_members"][0]["source"]["sha256"]=std::string(64,'0');ok=rejects([&]{cd::dense_static(bm,dh);});bm=dm;bm["original_archive_members"][1]["role"]="cpu_pas_core";ok=ok&&rejects([&]{cd::dense_static(bm,dh);});br=dr;br["tests"]=26;ok=ok&&rejects([&]{cd::dense_regression_report(br);});
+ // The actual native entry must select all declared target branches. Missing,
+ // reordered and undeclared targets reject rather than accepting old argv.
+ const auto dcommand=root/"build.cmd";const auto dbuild=root/"delta-build";
+ const J dspec={{"exe",(root/"cmd.exe").string()},{"argv",J::array({"/d","/s","/c",dcommand.string()})}};
+ const auto dline=[&](const J& targets){std::string text;for(const auto& token:J::array({(root/"cmake.exe").string(),"--build",dbuild.string(),"--parallel","4","--target"})){if(!text.empty())text+=' ';text+='"'+token.get<std::string>()+'"';}for(const auto& target:targets)text+=" \""+target.get<std::string>()+'"';return text+'\n';};
+ for(const auto& flags:std::array<std::array<bool,3>,5>{{{false,false,false},{true,false,false},{true,true,false},{true,false,true},{true,true,true}}}){
+  J decl={{"build_root",dbuild.string()}};if(flags[0])decl["motion_source_delta"]=J::object();if(flags[1])decl["dense_source_delta"]=J::object();if(flags[2])decl["frame_metadata_delta"]=J::object();const auto targets=cd::eligibility_targets(flags[0],flags[1],flags[2]);
+  cd::eligibility_build_command(decl,dspec,dline(targets),dcommand);
+  auto wrong=targets;wrong.erase(wrong.size()-1);ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand);});
+  wrong=targets;std::swap(wrong[0],wrong[1]);ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand);});
+  wrong=targets;wrong.push_back("undeclared_target");ok=ok&&rejects([&]{cd::eligibility_build_command(decl,dspec,dline(wrong),dcommand);});
+ }
  dcheck("dense_original_member_source_and_separate12_denominator",ok);
  if(dcases.size()!=8)throw std::runtime_error("separate Dense reader8 denominator");report["dense_source_delta_controls"]={{"schema","pas.cold-dense-reader-controls.v1"},{"assertions",8},{"checks",dcases},{"failed",0},{"pass",true},{"qualification_issued",false},{"cost_qualification",false},{"live_ready",false},{"device_operations",0}};
 }
