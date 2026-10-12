@@ -102,7 +102,7 @@ try {
  $oldCampaignPin=Binding $oldCampaignPath
  DRequire ($oldCampaignPin.sha256-ceq'24f144ff844fd7086fa1794eca5999429bc6dcf516eddbb6847da1f0dfafb19b') 'immutable historical campaign reference'
  $oldCampaign=DRead $oldCampaignPin
- $profile=@($oldCampaign.bindings|Where-Object role -ceq'profile');$protocol=@($oldCampaign.bindings|Where-Object role -ceq'cost_protocol')
+ $profile=@($oldCampaign.bindings|Where-Object {$_.role -ceq 'profile'});$protocol=@($oldCampaign.bindings|Where-Object {$_.role -ceq 'cost_protocol'})
  DRequire ($profile.Count-eq1 -and $protocol.Count-eq1 -and $protocol[0].sha256-ceq'0000ad66d05649ebc4f60570b58e9a9a4cb58f7e6629279e4d38a945c8d4c060') 'unchanged effective profile and R2'
  if(@(Get-Process cl,cmake,ninja -ErrorAction SilentlyContinue).Count){throw 'heavy builds must finish before diagnostic timing'}
  $environment=Join-Path $artifact 'environment.json'
