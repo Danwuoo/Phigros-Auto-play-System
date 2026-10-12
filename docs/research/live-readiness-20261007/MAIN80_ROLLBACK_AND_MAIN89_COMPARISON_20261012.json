@@ -1,0 +1,852 @@
+{
+  "schema": "pas.main80-main89-result-comparison-and-code-rollback.v1",
+  "selected_active_code_baseline": "3ee69edc85acb6b9b968424374a376f351d0e2dd",
+  "previous_binary_source": "0486ed3127acfa1b237186ba56ba3b60958604c1",
+  "old_catalogue": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\research\\live-readiness-20261007\\MAIN80_AA_ABBA_COMPLETION_REVIEW_20261012.json",
+    "bytes": 2083856,
+    "sha256": "c115c74e77f87303859b568a346a142c44f762f934b3a6f83c8cdb4b86859425"
+  },
+  "old_Normal_AA_STOP_catalogue": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\research\\live-readiness-20261007\\MAIN80_NORMAL_PASS_AA_HOLD3_STOP_20261012.json",
+    "bytes": 193589,
+    "sha256": "776af861c798d0f0335c4531a2526473591a80c5581c34526138eef46b872709"
+  },
+  "old_descriptive_review": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main80-report-only-abba-review.json",
+    "bytes": 57689,
+    "sha256": "adfcf60f6027e9a2bc0d28a938729e9da465d49117eccce8b658e8ea29dea6fd"
+  },
+  "old_reported_risks": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main80-aa-abba-reported-risks.json",
+    "bytes": 1505088,
+    "sha256": "3c4e8df15b50cc77cc54ffcedd547c080e2fd29534b534896069379a1e14cf42"
+  },
+  "old_noise": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-diagnostic-completion-main80-r1\\noise-freeze.json",
+    "bytes": 10326,
+    "sha256": "f43d2741f66616ddcc573fcc6311112e1dec5bca152f74178eb8af175d5ce652"
+  },
+  "new_catalogue": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\docs\\research\\live-readiness-20261007\\MAIN89_ALL_COLD_COMPLETION_20261012.json",
+    "bytes": 538044,
+    "sha256": "79840bf507c9a752f865b5f4f7dc311d42e908c0750c88d5a4bb2bbb0710f3b9"
+  },
+  "new_descriptive_review": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main89-aa-abba-descriptive-review.json",
+    "bytes": 356218,
+    "sha256": "9e5de073a123d17a0541645d384d309f2121ee01a4d7a60de28ddddb0a1d3e17"
+  },
+  "new_noise": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\prelive-cold-completion-main89-perf-e2\\noise-freeze.json",
+    "bytes": 11073,
+    "sha256": "c3a9eb0b9c6fd7839a32cc260e99842aadaa266fbd84aa91149b6c0c0ba29f41"
+  },
+  "rollback_result": {
+    "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\out\\planning\\main89-to-main80-code-rollback-result.json",
+    "bytes": 6263,
+    "sha256": "63d274e31153d732e680df110c15c5453ddf9fb6cfc75abe828a3f56cddbb6be"
+  },
+  "rollback_checks": [
+    {
+      "relative_path": "research/cold_publication_diagnostic/CMakeLists.txt",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/README.md",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/build.ps1",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/chain.instrumented.cpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/controls.cpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/core.instrumented.cpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/poll_gap_diagnostic.hpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/publication_diagnostic.hpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/publication_diagnostic_output.hpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/cold_publication_diagnostic/run.ps1",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/pre_emulator/component_delta.ps1",
+      "bytes": 46346,
+      "sha256": "fe281558e9936568fd94e03da6e2fa20166e0a217b68bd8a2b391aa8294be1e9",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/noise_repair_build.ps1",
+      "bytes": 115965,
+      "sha256": "d6b7a2da0453d849e279f75636b00da1d88e0071358ebdbef5d63902db2fc1de",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/producer_eligibility_delta/CMakeLists.txt",
+      "bytes": 11858,
+      "sha256": "bbff1d119d93298f91dcc5bbdd087ff66ac3851d80ef968999a4772f30f896a2",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/producer_eligibility_delta/build.ps1",
+      "bytes": 59419,
+      "sha256": "caf28d22af4c3f4802213678661d652b5cd7db45702871bfb0f14f9bb21d2b23",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/producer_eligibility_delta/collection_preflight.ps1",
+      "bytes": 9737,
+      "sha256": "ca8cc6a5c898c63e265fdbdcd5fa6f1cb6b32c2453c0dfb838bcf64e28d24696",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/producer_eligibility_delta/readonly.ps1",
+      "bytes": 8160,
+      "sha256": "363d2564c26b0ea012e85266ddfdc743e38ec0d9d7cc10d2ba3d479d7d8b5652",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/qualification_reader/controls.cpp",
+      "bytes": 69668,
+      "sha256": "6c3c636798448d94ca73b1407015d2398ba5a3a720d409399ea669c17382ce05",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/qualification_reader/reader/component_delta.hpp",
+      "bytes": 89051,
+      "sha256": "15c195d6f789b7ca187cb558cdd14eecd968107fe5843eeab34e14603ea3a124",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/qualification_reader/reader/dense_source_delta.hpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/pre_emulator/qualification_reader/reader/frame_metadata_delta.hpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/pre_emulator/qualification_reader/reader/narrow_preflight.hpp",
+      "bytes": 86306,
+      "sha256": "4bec395b2fb72aea1b0327fb0914419baf13a300d5cc64d9ac49604881681fb2",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/pre_emulator/source_performance_deltas.ps1",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/prelive_current/chain.cpp",
+      "bytes": 29747,
+      "sha256": "76e8a662bfdb2947349a32620277da315a2f9cbd6981a74978f1b62cc2ba3f22",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "research/prelive_current/frame_metadata.hpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "research/prelive_current/tests/frame_metadata_tests.cpp",
+      "new_file_removed": true,
+      "history_recovery_available": true
+    },
+    {
+      "relative_path": "src/candidate_admission.cpp",
+      "bytes": 59461,
+      "sha256": "5d3eded0c0e9eacdcab09933d04caf74976cd16cc73a22513fb11efc682fb4f6",
+      "baseline_byte_exact": true
+    },
+    {
+      "relative_path": "src/game.cpp",
+      "bytes": 169949,
+      "sha256": "79181d13a863fb471a270394687afb2a816fb65cd6e1b976464a8e4c65dd9feb",
+      "baseline_byte_exact": true
+    }
+  ],
+  "code_paths_changed": 27,
+  "baseline_existing_files_restored": 12,
+  "experiment_added_tracked_files_removed": 15,
+  "comparison": {
+    "Normal_numeric_PASS": {
+      "main80": 3,
+      "main89": 2,
+      "denominator": 3
+    },
+    "AA_validity_PASS": {
+      "main80": 11,
+      "main89": 6,
+      "denominator": 12
+    },
+    "noise_adequate": {
+      "main80": 15,
+      "main89": 11,
+      "denominator": 18
+    },
+    "AA_ABBA_full_raw_PASS": {
+      "main80": 48,
+      "main89": 48,
+      "denominator": 48
+    },
+    "ABBA_collected": {
+      "main80": 36,
+      "main89": 36,
+      "denominator": 36
+    },
+    "ABBA_descriptive_necessary_risk_runs": {
+      "main80": 11,
+      "main89": 16,
+      "denominator": 36
+    },
+    "ABBA_any_deadline_overrun_runs": {
+      "main80": 15,
+      "main89": 24,
+      "denominator": 36
+    },
+    "ABBA_total_producer_overruns": {
+      "main80": 945,
+      "main89": 1052
+    },
+    "ABBA_total_publication_overruns": {
+      "main80": 949,
+      "main89": 1058
+    },
+    "within_each_version_T_cells": {
+      "main80": 52,
+      "main89": 52,
+      "denominator": 54
+    },
+    "cost_ready": {
+      "main80": false,
+      "main89": false
+    },
+    "live_ready": {
+      "main80": false,
+      "main89": false
+    }
+  },
+  "noise_metric_comparison": [
+    {
+      "scene": "dense",
+      "metric": "capture_to_owner_ms.p95",
+      "main80_original_noise": {
+        "T": 3.0,
+        "adequate": true,
+        "d": 0.9712750000000057,
+        "values": [
+          11.815014999999997,
+          12.786290000000003,
+          11.900289999999996,
+          12.028734999999998
+        ]
+      },
+      "main89_original_noise": {
+        "T": 3.0,
+        "adequate": true,
+        "d": 0.6851850000000042,
+        "values": [
+          12.922679999999996,
+          13.607865,
+          12.920285,
+          12.809024999999995
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "dense",
+      "metric": "capture_to_owner_ms.p99",
+      "main80_original_noise": {
+        "T": 3.9776180000000174,
+        "adequate": true,
+        "d": 1.9888090000000087,
+        "values": [
+          14.082590999999995,
+          16.071400000000004,
+          16.124348999999988,
+          17.573739000000007
+        ]
+      },
+      "main89_original_noise": {
+        "T": 16.468362000000013,
+        "adequate": false,
+        "d": 8.234181000000007,
+        "values": [
+          22.561749000000002,
+          14.327567999999996,
+          14.044276999999996,
+          18.089044999999945
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "dense",
+      "metric": "observer_ms.p95",
+      "main80_original_noise": {
+        "T": 0.5484999999999953,
+        "adequate": true,
+        "d": 0.27424999999999766,
+        "values": [
+          7.5857899999999985,
+          7.739090000000001,
+          7.908474999999997,
+          7.634224999999999
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.9939200000000099,
+        "adequate": true,
+        "d": 0.49696000000000495,
+        "values": [
+          9.164089999999995,
+          9.66105,
+          9.205785,
+          9.052014999999995
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "dense",
+      "metric": "observer_ms.p99",
+      "main80_original_noise": {
+        "T": 3.045387999999967,
+        "adequate": false,
+        "d": 1.5226939999999836,
+        "values": [
+          9.569955999999996,
+          9.553878000000001,
+          11.371054999999986,
+          9.848361000000002
+        ]
+      },
+      "main89_original_noise": {
+        "T": 12.29841999999999,
+        "adequate": false,
+        "d": 6.149209999999995,
+        "values": [
+          16.53715699999999,
+          10.387946999999995,
+          9.830981999999999,
+          10.132702999999996
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "dense",
+      "metric": "owner_ms.p95",
+      "main80_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.0002999999999999999,
+        "values": [
+          0.0069,
+          0.0066,
+          0.0069,
+          0.0069
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.001984999999999991,
+        "values": [
+          0.007284999999999991,
+          0.0053,
+          0.0052,
+          0.0056
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "dense",
+      "metric": "owner_ms.p99",
+      "main80_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.0022779999999999745,
+        "values": [
+          0.0107,
+          0.0085,
+          0.01239699999999998,
+          0.010119000000000005
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.00786399999999976,
+        "values": [
+          0.014363999999999759,
+          0.0065,
+          0.0069,
+          0.0074
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "hold-closed-reset-v2",
+      "metric": "capture_to_owner_ms.p95",
+      "main80_original_noise": {
+        "T": 8.466020000000004,
+        "adequate": false,
+        "d": 4.233010000000002,
+        "values": [
+          5.35787,
+          5.592159999999999,
+          5.9305,
+          10.163510000000002
+        ]
+      },
+      "main89_original_noise": {
+        "T": 3.0,
+        "adequate": true,
+        "d": 1.410599999999988,
+        "values": [
+          11.379979999999986,
+          9.969379999999997,
+          10.191559999999999,
+          10.264345
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "hold-closed-reset-v2",
+      "metric": "capture_to_owner_ms.p99",
+      "main80_original_noise": {
+        "T": 3.0,
+        "adequate": true,
+        "d": 0.8855719999999998,
+        "values": [
+          6.047618999999999,
+          6.437464999999999,
+          10.3971,
+          11.282672
+        ]
+      },
+      "main89_original_noise": {
+        "T": 11.672188000000048,
+        "adequate": false,
+        "d": 5.836094000000024,
+        "values": [
+          20.976120000000005,
+          16.72819799999993,
+          17.03362600000001,
+          11.197531999999985
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "hold-closed-reset-v2",
+      "metric": "observer_ms.p95",
+      "main80_original_noise": {
+        "T": 7.187860000000001,
+        "adequate": false,
+        "d": 3.5939300000000003,
+        "values": [
+          4.251125,
+          4.52228,
+          4.7058,
+          8.29973
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.9899499999999897,
+        "adequate": true,
+        "d": 0.49497499999999484,
+        "values": [
+          7.8362,
+          7.82982,
+          8.009709999999997,
+          8.504684999999991
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "hold-closed-reset-v2",
+      "metric": "observer_ms.p99",
+      "main80_original_noise": {
+        "T": 1.2723520000000015,
+        "adequate": true,
+        "d": 0.6361760000000007,
+        "values": [
+          4.815395999999999,
+          5.237476,
+          8.3628,
+          8.998976
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.5,
+        "adequate": true,
+        "d": 0.12657500000001498,
+        "values": [
+          8.389556,
+          8.461692,
+          9.428090000000003,
+          9.301514999999988
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "hold-closed-reset-v2",
+      "metric": "owner_ms.p95",
+      "main80_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.02169000000000001,
+        "values": [
+          0.0273,
+          0.026284999999999992,
+          0.0285,
+          0.05019000000000001
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.0010000000000000009,
+        "values": [
+          0.0456,
+          0.04586999999999999,
+          0.0467,
+          0.0477
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "hold-closed-reset-v2",
+      "metric": "owner_ms.p99",
+      "main80_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.032694,
+        "values": [
+          0.036896999999999985,
+          0.03509699999999998,
+          0.0388,
+          0.071494
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.004160000000000122,
+        "values": [
+          0.06074400000000005,
+          0.056583999999999926,
+          0.06147400000000016,
+          0.05930499999999988
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "tap-closed-reset-v1",
+      "metric": "capture_to_owner_ms.p95",
+      "main80_original_noise": {
+        "T": 3.0,
+        "adequate": true,
+        "d": 0.4192499999999999,
+        "values": [
+          3.51875,
+          3.2645,
+          3.459545,
+          3.040295
+        ]
+      },
+      "main89_original_noise": {
+        "T": 21.700750000000003,
+        "adequate": false,
+        "d": 10.850375000000001,
+        "values": [
+          20.939149999999998,
+          10.088774999999996,
+          14.040379999999999,
+          5.521639999999995
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "tap-closed-reset-v1",
+      "metric": "capture_to_owner_ms.p99",
+      "main80_original_noise": {
+        "T": 3.0,
+        "adequate": true,
+        "d": 0.22270300000000054,
+        "values": [
+          4.0983749999999946,
+          3.9210419999999964,
+          4.031816,
+          3.8091129999999995
+        ]
+      },
+      "main89_original_noise": {
+        "T": 20.97537200000008,
+        "adequate": false,
+        "d": 10.48768600000004,
+        "values": [
+          27.09523500000001,
+          16.60754899999997,
+          18.819309999999977,
+          13.540011999999944
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "tap-closed-reset-v1",
+      "metric": "observer_ms.p95",
+      "main80_original_noise": {
+        "T": 0.5915799999999996,
+        "adequate": true,
+        "d": 0.2957899999999998,
+        "values": [
+          2.4006699999999994,
+          2.2267249999999996,
+          2.3278799999999995,
+          2.0320899999999997
+        ]
+      },
+      "main89_original_noise": {
+        "T": 17.822349999999968,
+        "adequate": false,
+        "d": 8.911174999999984,
+        "values": [
+          15.30087499999998,
+          6.389699999999996,
+          10.439269999999999,
+          3.1342699999999994
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "tap-closed-reset-v1",
+      "metric": "observer_ms.p99",
+      "main80_original_noise": {
+        "T": 0.6506120000000193,
+        "adequate": true,
+        "d": 0.32530600000000964,
+        "values": [
+          2.8373199999999987,
+          2.611564999999999,
+          2.8626729999999996,
+          2.53736699999999
+        ]
+      },
+      "main89_original_noise": {
+        "T": 21.481975999999985,
+        "adequate": false,
+        "d": 10.740987999999993,
+        "values": [
+          19.489918000000003,
+          11.445763999999937,
+          14.221945999999992,
+          3.480957999999999
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "tap-closed-reset-v1",
+      "metric": "owner_ms.p95",
+      "main80_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.0008999999999999998,
+        "values": [
+          0.0081,
+          0.0073,
+          0.0072,
+          0.0063
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.017784999999999992,
+        "values": [
+          0.03400999999999994,
+          0.019084999999999946,
+          0.02528499999999999,
+          0.0075
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    },
+    {
+      "scene": "tap-closed-reset-v1",
+      "metric": "owner_ms.p99",
+      "main80_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.004806000000000039,
+        "values": [
+          0.04478799999999992,
+          0.04959399999999996,
+          0.03889699999999998,
+          0.0394849999999999
+        ]
+      },
+      "main89_original_noise": {
+        "T": 0.25,
+        "adequate": true,
+        "d": 0.00749699999999999,
+        "values": [
+          0.08115500000000007,
+          0.08249799999999996,
+          0.07569699999999999,
+          0.0682
+        ]
+      },
+      "separate_frozen_AA_T_not_common_threshold": true
+    }
+  ],
+  "main80_descriptive_beyond_own_T": [
+    {
+      "scene": "dense",
+      "batch": 1,
+      "metric": "observer_ms.p95",
+      "values": {
+        "B_quantile_mean_ms": 7.942197500000001,
+        "within_T_diagnostic_only": false,
+        "B_minus_A_ms": 0.9436075000000006,
+        "improved_beyond_T_diagnostic_only": false,
+        "original_noise_adequate": true,
+        "values_ABBA_ms": [
+          7.204409999999999,
+          9.14062,
+          6.743775,
+          6.79277
+        ],
+        "original_frozen_T_ms": 0.5484999999999953,
+        "formal_result": "NOT_READY",
+        "A_quantile_mean_ms": 6.99859
+      }
+    },
+    {
+      "scene": "dense",
+      "batch": 2,
+      "metric": "observer_ms.p95",
+      "values": {
+        "B_quantile_mean_ms": 8.617735,
+        "within_T_diagnostic_only": false,
+        "B_minus_A_ms": 0.6910050000000023,
+        "improved_beyond_T_diagnostic_only": false,
+        "original_noise_adequate": true,
+        "values_ABBA_ms": [
+          8.856159999999996,
+          9.618589999999998,
+          7.61688,
+          6.9973
+        ],
+        "original_frozen_T_ms": 0.5484999999999953,
+        "formal_result": "NOT_READY",
+        "A_quantile_mean_ms": 7.926729999999997
+      }
+    }
+  ],
+  "main89_descriptive_beyond_own_T": [
+    {
+      "scene": "hold-closed-reset-v2",
+      "batch": 1,
+      "metric": "observer_ms.p99",
+      "values_ABBA_ms": [
+        8.269740999999998,
+        8.601020000000002,
+        10.114537000000006,
+        8.786300000000004
+      ],
+      "A_quantile_mean_ms": 8.5280205,
+      "B_quantile_mean_ms": 9.357778500000004,
+      "B_minus_A_ms": 0.8297580000000035,
+      "original_frozen_T_ms": 0.5,
+      "original_noise_adequate": true,
+      "within_T_diagnostic_only": false,
+      "improved_beyond_T_diagnostic_only": false,
+      "formal_result": "NOT_READY"
+    },
+    {
+      "scene": "hold-closed-reset-v2",
+      "batch": 1,
+      "metric": "capture_to_owner_ms.p95",
+      "values_ABBA_ms": [
+        9.06635,
+        9.1757,
+        19.269159999999996,
+        13.1783
+      ],
+      "A_quantile_mean_ms": 11.122325,
+      "B_quantile_mean_ms": 14.22243,
+      "B_minus_A_ms": 3.1001049999999992,
+      "original_frozen_T_ms": 3.0,
+      "original_noise_adequate": true,
+      "within_T_diagnostic_only": false,
+      "improved_beyond_T_diagnostic_only": false,
+      "formal_result": "NOT_READY"
+    }
+  ],
+  "conclusion": "main80 historical Normal/AA/noise outcomes and fewer ABBA risk runs favor returning to it as the development baseline. This does not prove the main89 edits caused the differences or that restored main80 is ready. Both original formal comparisons rejected stopped/invalid AA.",
+  "limitations": [
+    "Separate measurement batches and separately frozen AA-only noise T; not a controlled matched old/new experiment.",
+    "Deadline overrun counts can contain absolute-epoch catch-up after a long gap; not independent-stall counts.",
+    "Dense18 within main89 T does not prove cross-version improvement, and both versions retain actual long-gap failures.",
+    "Code restored byte-exact from Git; old executable/receipts remain historical, no fresh rollback binary or new cost/live qualification.",
+    "Full old/new evidence and Git history preserved, including archived exact-restore payloads."
+  ],
+  "runtime_retention": "Existing main80/main89 binary and source/archive paths are not deleted or relabelled. main89 bindings are retained as historical evidence and are not the active source baseline.",
+  "new_builds": 0,
+  "new_measurements": 0,
+  "raw_payload_reads": 0,
+  "history_reset": false,
+  "device_operations": 0,
+  "new_threads": 0,
+  "new_ETW_recordings": 0,
+  "remote_push": false,
+  "cost_ready": false,
+  "live_ready": false,
+  "qualification_issued": false
+}

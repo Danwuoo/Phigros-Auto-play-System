@@ -1,3 +1,7 @@
+2026-10-12 最新使用決定：接受回復的main80既有版本，放棄實機ready全過前置；原R2與歷史負結果仍照報，不再以cold qualification阻擋下一步說明。新GPT‑6.1 Sol／xhigh local main task與後續emulator／CU一輪IN只記分數授權已明列於[最新交接](../../research/live-readiness-20261007/USE_EXISTING_MAIN80_NEXT_TASK_20261012.md)。以下ready前置與不建新thread限制為歷史。
+
+2026-10-12 現行原碼已依使用者指示回復main80／`3ee69ed` exact bytes，包含runtime與建置／驗證工具；main89 metadata／Dense實驗撤回，所有歷史commit／source／raw／STOP保留。歷史main80 Normal3／3、AA11／12、noise15／18優於main89的2／3、6／12、11／18；兩版皆未取得cost／live資格。回復未重建或重測，現HEAD不能冒原binary來源；見[回復與比較](../../research/live-readiness-20261007/MAIN80_ROLLBACK_AND_MAIN89_COMPARISON_20261012.md)。不開emulator／device／CU、新thread或ETW；以下「最新」為歷史。
+
 2026-10-12 最新 AA／ABBA completion：binary 仍為 main80／`3ee69ed`，executor 為文件提交 `558fc88`。依使用者新指示「先把剩下的 aa 和 abba 測試一併跑完，再看看我們要修改甚麼」恢復診斷收集；剩AA5與fresh ABBA36皆完成完整raw audit。全AA12為11 validity PASS、原Hold3 NOT_READY1；noise15／18 adequate。ABBA36 raw PASS仍有時序負結果，原formal comparator因stopped／invalid AA而Native2／runner2／verification0拒絕，cost NOT_READY／live UNQUALIFIED。
 
 描述性ABBA54 cells有2個Dense observer p95超原T；9 batches無paired瓶頸＋capture穩定收益。原AA Hold3同attempt2336為publication超33.9µs；ABBA另有較長排程空窗，根因UNKNOWN。優先判讀冷producer排程／publication與Dense退步，尚未新增runtime修補或重測。完整索引與範圍見[AA／ABBA完成盤點](../../research/live-readiness-20261007/MAIN80_AA_ABBA_COMPLETION_REVIEW_20261012.md)。

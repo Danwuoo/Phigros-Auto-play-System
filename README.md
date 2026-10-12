@@ -1,3 +1,7 @@
+2026-10-12 使用者接受既有main80並放棄實機ready全過前置，授權commit／push及新的GPT‑6.1 Sol／xhigh local main task先說明下一步。原測試負結果保持，不再繼續cold readiness修補循環。後續Chapter Legacy可用IN各一次、只記分數與一輪後停止授權保持；見[最新交接](docs/research/live-readiness-20261007/USE_EXISTING_MAIN80_NEXT_TASK_20261012.md)。以下ready前置／不建新thread等限制按歷史解讀。
+
+2026-10-12 已依使用者指示回復main80／`3ee69ed`原碼；tracked程式及建置／驗證工具逐Git bytes／SHA核對一致，兩版Git歷史與測量證據保留。歷史Normal／AA／noise結果main80為3／3、11／12、15／18，main89為2／3、6／12、11／18；兩版ABBA36完整raw皆PASS但成本資格皆NOT_READY。見[回復與比較](docs/research/live-readiness-20261007/MAIN80_ROLLBACK_AND_MAIN89_COMPARISON_20261012.md)。本輪不重建／重測，不開emulator／新thread／ETW；回復不是新binary或實機ready資格，後續以main80原碼為基準。以下「最新」皆為歷史。
+
 2026-10-12 最新 actual main89／`0486ed3`：必要16 TUs／13 build-control Native及motion26／Dense12／Frame8通過；同候選Normal3、AA12／noise18、ABBA36一次收齊，共51 full raw audits PASS。Normal2 PASS／Hold NOT_READY；AA6 validity PASS／6 NOT_READY，noise11／18 adequate；正式比較器及最後readonly保持NOT_READY。cost NOT_READY／live UNQUALIFIED，尚未到啟動emulator邊界。
 
 Dense18描述性比較項目均在本輪原T內，兩個超T項目在Hold；producer排程與publication毫秒級長窗仍存在，根因UNKNOWN。原負結果／STOP／source／raw及131 Native8保存於[main89完整盤點](docs/research/live-readiness-20261007/MAIN89_ALL_COLD_COMPLETION_20261012.md)。本輪沒有追修單次33.9µs、放寬原門檻、全盤重跑原75／production9、開裝置／新thread或追加ETW；後續文件HEAD不是binary來源。以下「最新」皆為歷史。

@@ -5,12 +5,11 @@ param([Parameter(Mandatory)][ValidatePattern('^[0-9a-f]{40}$')][string]$FrozenHe
       [string]$BaseSourceProjection='out/planning/main57-base55-aa-r03-short-source-copy-proof.json',
       [ValidatePattern('^[a-z0-9-]{1,12}$')][string]$ShortSourceId='m69e1',
       [ValidatePattern('^[a-z0-9-]{1,32}$')][string]$Attempt='main78-eligibility-r01',
-      [switch]$MotionSourceDelta,[switch]$DenseSourceDelta,[switch]$FrameMetadataDelta)
+      [switch]$MotionSourceDelta)
 $ErrorActionPreference='Stop'
 $taskBuildScript=$PSCommandPath
 . (Join-Path $PSScriptRoot '../common.ps1')
 . (Join-Path $PSScriptRoot '../component_delta.ps1')
-. (Join-Path $PSScriptRoot '../source_performance_deltas.ps1')
 $script:maintenancePath=$taskBuildScript
 $Operation='build'
 $baseCommit='12ec0550e882e3b06751d67fa67c43dda3e9312b'
@@ -21,7 +20,6 @@ $deltaPolicy='highest_raw_efficiency_class_disjoint_balanced_core_lowest_lps'
 $eligibilityControlsCount=12
 $eligibilityReaderControlsCount=12
 $verificationControlsCount=12
-if($DenseSourceDelta -or $FrameMetadataDelta){if(-not $MotionSourceDelta){throw 'performance deltas require preserved motion branch'}}
 function DRequire([bool]$ok,[string]$reason){if(-not $ok){throw ('producer eligibility delta: '+$reason)}}
 function DRead($pin){DRequire ($pin.bytes -le 4194304) 'small metadata cap';CheckEntry $pin;return Get-Content -LiteralPath $pin.path -Raw|ConvertFrom-Json}
 function DBool($value,[string]$key,[bool]$expected){$v=$value.$key;DRequire ($v -is [bool] -and $v -eq $expected) ('typed boolean '+$key)}
@@ -151,10 +149,6 @@ if($MotionSourceDelta){
   $row.replaced_archive_sources=@('src/game_motion.cpp');$row.replacement_target='game_motion_delta'
  }}
 }
-if($DenseSourceDelta){foreach($row in $libraries){if($row.role -cin @('cpu_pas_core','production_pas_core')){
- $row.replaced_archive_sources=@('src/game_motion.cpp','src/game.cpp');$row.Remove('replacement_target')
- $row.replacement_targets=@(@{source='src/game_motion.cpp';target='game_motion_delta'},@{source='src/game.cpp';target='game_delta'})
-}}}
 $baseGraph=DOutput $base 'build.ninja';$baseGraphText=(DReadText $baseGraph).Replace('\','/');$appRows=@([regex]::Matches($baseGraphText,'(?m)^build (production/CMakeFiles/pas[.]dir/[^\r\n:]+[.]obj): CXX_COMPILER[^ \r\n]+[ \t]+([^|\r\n]+)')|Where-Object {$_.Groups[2].Value.Trim().Replace('$:',':').Replace('$ ',' ').EndsWith('/apps/pas/main.cpp',[StringComparison]::OrdinalIgnoreCase)})
 DRequire ($appRows.Count -eq 1) 'one original base55 app object compile edge';$baseAppObject=DOutput $base $appRows[0].Groups[1].Value;CheckEntry $baseAppObject
 $tracked=@(& git -c core.quotePath=false -C $repo ls-files|Where-Object {$_ -cne 'apps/runtime_x11_p/aux/CMakeLists.txt' -and $_ -cmatch '(\.(cpp|hpp|h|ps1|proto|in)$|(^|/)CMakeLists\.txt$)'})
@@ -163,13 +157,6 @@ $sourcePins=@();$sourceByRelative=@{};foreach($relative in $tracked){$pin=Bindin
 # Headers and actual unchanged source members of imported libraries must match
 # their recorded base. Research wait/placement/harness changes are fresh TUs.
 if($MotionSourceDelta){$motionText=DReadText $sourceByRelative['src/game_motion.cpp'];ComponentDeltaMotionSourceText (DReadText $baseProjectionCopies['src/game_motion.cpp']) $motionText;DRequire ($sourceByRelative['src/game_motion.cpp'].bytes -eq [Text.Encoding]::UTF8.GetByteCount($motionText)) 'motion source UTF8 without BOM'}
-if($DenseSourceDelta){ComponentDeltaDenseSourceText $baseProjectionCopies['src/game.cpp'] $sourceByRelative['src/game.cpp']}
-DRequire ((DReadText $sourceByRelative['research/prelive_current/chain.cpp']).Contains('#include "frame_metadata.hpp"') -eq [bool]$FrameMetadataDelta) 'fixed metadata source and explicit branch agree'
-if($FrameMetadataDelta){
- $frameBaseChain=Binding (DPath 'out/prelive-esrc-m80e1/files/research/prelive_current/chain.cpp')
- ComponentDeltaFrameSourceText $frameBaseChain $sourceByRelative['research/prelive_current/chain.cpp']
- $fixedPins+=@($frameBaseChain)
-}
 $importedSources=@{};foreach($row in $libraries){foreach($tuple in $row.translation_units){if(-not $tuple.relative_source.StartsWith('generated/') -and $tuple.relative_source -cnotin $row.replaced_archive_sources -and -not ($MotionSourceDelta -and $tuple.relative_source -ceq 'src/game_motion.cpp' -and $row.role -cin @('cpu_pas_core','production_pas_core'))){$relative=$tuple.relative_source;DRequire ($sourceByRelative.ContainsKey($relative) -and $sourceByRelative[$relative].bytes -eq $tuple.original_source.bytes -and $sourceByRelative[$relative].sha256 -ceq $tuple.original_source.sha256) ('imported effective compiled source changed '+$relative);$importedSources[$relative]=$tuple.original_source}}}
 foreach($relative in $baseMap.Keys|Where-Object {$_ -cmatch '^include/' -or $_ -ceq 'CMakeLists.txt' -or $_ -ceq 'src/manual_session.cpp' -or $_ -ceq 'src/grpc_transport.cpp'}){DRequire ($sourceByRelative.ContainsKey($relative) -and $sourceByRelative[$relative].bytes -eq $baseMap[$relative].bytes -and $sourceByRelative[$relative].sha256 -ceq $baseMap[$relative].sha256) ('unchanged formal ABI/manual/grpc source '+$relative)}
 DRequire ($sourceByRelative['apps/pas/main.cpp'].bytes -eq $baseMap['apps/pas/main.cpp'].bytes -and $sourceByRelative['apps/pas/main.cpp'].sha256 -ceq $baseMap['apps/pas/main.cpp'].sha256) 'original app TU source preserved for explicit imported object'
@@ -198,8 +185,6 @@ if($MotionSourceDelta){
  $targets+=@('game_motion_delta','motion_source_regression')
  $unitSources+=@(@{target='game_motion_delta';path='src/game_motion.cpp'},@{target='motion_source_regression';path='tests/game_tests.cpp'},@{target='motion_source_regression';path='tests/cold_scenario_tests.cpp'})
 }
-if($DenseSourceDelta){$targets+=@('game_delta');$unitSources+=@(@{target='game_delta';path='src/game.cpp'})}
-if($FrameMetadataDelta){$targets+=@('frame_metadata_controls');$unitSources+=@(@{target='frame_metadata_controls';path='research/prelive_current/tests/frame_metadata_tests.cpp'})}
 $units=@($unitSources|ForEach-Object {@{target=$_.target;relative_source=$_.path;original_source=$sourceByRelative[$_.path];source=$copyByRelative[$_.path]}})
 if($MotionSourceDelta){
  foreach($relative in @('tests/game_tests.cpp','tests/cold_scenario_tests.cpp')){DRequire ($sourceByRelative[$relative].bytes -eq $baseMap[$relative].bytes -and $sourceByRelative[$relative].sha256 -ceq $baseMap[$relative].sha256) 'unchanged original motion regression test TU'}
@@ -207,33 +192,14 @@ if($MotionSourceDelta){
  $runtimePrefix=$sourceByRelative['src/runtime.cpp'];DRequire ($runtimePrefix.bytes -eq $baseMap['src/runtime.cpp'].bytes -and $runtimePrefix.sha256 -ceq $baseMap['src/runtime.cpp'].sha256) 'unchanged original pure runtime source'
  $runtimeContractPath=Join-Path $artifact 'runtime_contract.cpp';[IO.File]::WriteAllText($runtimeContractPath,(ComponentDeltaMotionRuntimeText (DReadText $runtimePrefix)),[Text.UTF8Encoding]::new($false));$runtimeContract=Binding $runtimeContractPath
  $fixedPins+=@($runtimeContract)
- $extraUnits=@($units|Where-Object {$_.target -cin @('game_delta','frame_metadata_controls')})
- $units=@($units|Where-Object {$_.target -cnotin @('game_delta','frame_metadata_controls')})+@(@{target='motion_source_regression';relative_source='generated/runtime_contract.cpp';original_source=$runtimeContract;source=$runtimeContract})+$extraUnits
+ $units+=@(@{target='motion_source_regression';relative_source='generated/runtime_contract.cpp';original_source=$runtimeContract;source=$runtimeContract})
  $members=@();foreach($role in @('cpu_pas_core','production_pas_core')){$library=@($libraries|Where-Object role -ceq $role);$member=@($library[0].translation_units|Where-Object relative_source -ceq 'src/game_motion.cpp');DRequire ($member.Count -eq 1) 'one original motion archive member per preserved core';$members+=@(@{role=$role;archive=$library[0].binary;member=$member[0].historical_object;source=$member[0].original_source})}
  $fixedPins+=@($members|ForEach-Object {$_.member})
  $motionStatic=@{schema='pas.cold-motion-source-delta.v1';source_commit=$FrozenHead;base_source_commit=$baseCommit;source_path='src/game_motion.cpp';literal_transform='ridge_guarded_gray_short_circuit.v1';base_source=$baseProjectionCopies['src/game_motion.cpp'];current_source=$sourceByRelative['src/game_motion.cpp'];compile_source=$copyByRelative['src/game_motion.cpp'];original_archive_members=$members;consumer_targets=@(ComponentDeltaMotionTargets);regression=@{target='motion_source_regression';test_sources=@($sourceByRelative['tests/game_tests.cpp'],$sourceByRelative['tests/cold_scenario_tests.cpp']);runtime_contract_source=$runtimeContract;runtime_contract_prefix=$runtimePrefix;cases=26;case_names=@(ComponentDeltaMotionCases);filter=(ComponentDeltaMotionFilter)};formal_libraries_rebuilt=$false;fresh_formal_translation_units=1;qualification_issued=$false;cost_qualification=$false;live_ready=$false;device_operations=0}
 }
-if($DenseSourceDelta){
- $denseMembers=@();foreach($role in @('cpu_pas_core','production_pas_core')){
-  $library=@($libraries|Where-Object role -ceq $role);$member=@($library[0].translation_units|Where-Object relative_source -ceq 'src/game.cpp')
-  DRequire ($member.Count -eq 1) 'one original game member per core';CheckEntry $member[0].historical_object
-  $denseMembers+=@(@{role=$role;archive=$library[0].binary;member=$member[0].historical_object;source=$member[0].original_source})
- }
- $denseStatic=@{schema='pas.cold-dense-source-delta.v1';source_commit=$FrozenHead;base_source_commit=$baseCommit;source_path='src/game.cpp';literal_transform='white_note_decode_pca_short_circuit.v1';base_source=$baseProjectionCopies['src/game.cpp'];current_source=$sourceByRelative['src/game.cpp'];compile_source=$copyByRelative['src/game.cpp'];original_archive_members=$denseMembers;consumer_targets=@(ComponentDeltaDenseTargets);regression=@{target='motion_source_regression';test_sources=@($sourceByRelative['tests/game_tests.cpp'],$sourceByRelative['tests/cold_scenario_tests.cpp']);runtime_contract_source=$runtimeContract;runtime_contract_prefix=$runtimePrefix;cases=12;case_names=@(ComponentDeltaDenseCases);filter=(ComponentDeltaDenseFilter)};formal_libraries_rebuilt=$false;fresh_formal_translation_units=1;qualification_issued=$false;cost_qualification=$false;live_ready=$false;device_operations=0}
- $fixedPins+=@($denseMembers|ForEach-Object {$_.member})+@($denseStatic.base_source)
-}
-if($FrameMetadataDelta){
- $frameStatic=@{schema='pas.cold-frame-metadata-delta.v1';policy='fixed_metadata_before_epoch.v1';source_commit=$FrozenHead;base_source_commit='3ee69edc85acb6b9b968424374a376f351d0e2dd';base_chain_source=$frameBaseChain;current_chain_source=$sourceByRelative['research/prelive_current/chain.cpp'];helper_source=$sourceByRelative['research/prelive_current/frame_metadata.hpp'];tests_source=$sourceByRelative['research/prelive_current/tests/frame_metadata_tests.cpp'];frame_controls=@{target='frame_metadata_controls';schema='pas.cold-frame-metadata-reuse-controls.v1';assertions=8};source_dirty=$false;qualification_issued=$false;cost_qualification=$false;live_ready=$false;device_operations=0}
- $fixedPins+=@($frameBaseChain)
-}
 $freshCount=$units.Count
 $planPath=Join-Path $artifact 'core-build-plan.json';$planData=@{schema='pas.cold-producer-eligibility-delta-plan.v1';source_commit=$FrozenHead;source_dirty=$false;base_source_commit=$baseCommit;original_source_commit=$originalCommit;configuration='release';base_cpu_build=$cpuPin;base_production_build=$basePin;base_source_snapshot=$snapshotPin;base_source_projection=$baseProjectionPin;selected_dependency_manifest=(Binding $selectedDependencyPath);source_manifest=(Binding $manifestPath);source_snapshot=(Binding $snapshotPath);short_source_id=$ShortSourceId;compiler_environment=$environmentPin;targets=$targets;translation_unit_count=$freshCount;translation_units=$units;imported_static_libraries=$libraries;base_generated_inputs=$generated;base_manual_source=$manual;base_app_object=$baseAppObject;verification_only_replacement_source='src/candidate_admission.cpp';producer_eligibility_policy=$deltaPolicy;eligibility_controls_count=$eligibilityControlsCount;eligibility_reader_controls_count=$eligibilityReaderControlsCount;verification_controls_count=$verificationControlsCount;original_affinity_controls_count=65;original_producer_placement_controls_count=27;original_reader_controls_count=81;formal_rebuilt=$false;formal_libraries_preserved=$true;old_objects_reused=$true;base_app_object_reused=$true;cold_harness_delta=$true;new_etw_recordings=0;measurement_runs=0;normal3_runs=0;AA12_runs=0;noise18_runs=0;ABBA36_runs=0;qualification_issued=$false;whole_candidate_qualification=$false;cost_qualification=$false;live_ready=$false;device_operations=0}
 if($MotionSourceDelta){$planData.motion_source_delta=$motionStatic;$planData.formal_libraries_rebuilt=$false;$planData.fresh_formal_translation_units=1}
-if($DenseSourceDelta){$planData.dense_source_delta=$denseStatic;$planData.fresh_formal_translation_units=2}
-if($FrameMetadataDelta){$planData.frame_metadata_delta=$frameStatic}
-$splitBuild=[bool]($DenseSourceDelta -or $FrameMetadataDelta)
-$buildGroups=@(@{targets=$targets})
-if($splitBuild){$buildGroups=@(ComponentDeltaPerformanceBuildGroups ([bool]$DenseSourceDelta) ([bool]$FrameMetadataDelta));$planData.build_target_groups=$buildGroups;$planData.expected_native_build_stages=2}
 NewJson $planPath $planData 4194304
 $fixedPins+=@(Binding $selectedDependencyPath;Binding $manifestPath;Binding $snapshotPath;Binding $planPath;Binding $libraryCmake;Binding $runtimeCmake)
 $adapter=Join-Path $repo 'research/main_consolidation/cmake-stage.ps1';$toolchain='C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake';$guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
@@ -241,19 +207,17 @@ $recipeRoot=[IO.Path]::TrimEndingDirectorySeparator((Join-Path $shortFiles 'rese
 $inputs=@($taskBuildScript,$adapter,(Join-Path $repo 'research/main_consolidation/stage.ps1'),(Join-Path $repo 'research/pre_emulator/common.ps1'),$toolchain)+@($sourcePins.path)+@($sourceCopies.path)+@($fixedPins.path)+(GateInputs)+@($guard.guard_source.path,$guard.process_source.path,$guard.cached_identity_controls.path,$guard.identity_wait_controls.path)
 $options=@(('-DCMAKE_TOOLCHAIN_FILE='+$toolchain),('-DVCPKG_INSTALLED_DIR='+(Join-Path $repo 'out/vcpkg_installed')),'-DVCPKG_TARGET_TRIPLET=x64-windows','-DVCPKG_MANIFEST_MODE=OFF','-DVCPKG_APPLOCAL_DEPS=OFF','-DCMAKE_CXX_SCAN_FOR_MODULES=OFF','-DCMAKE_HAVE_LIB_PTHREAD:INTERNAL=','-DCMAKE_HAVE_PTHREADS_CREATE:INTERNAL=','-DCMAKE_HAVE_PTHREAD_CREATE:INTERNAL=','-DCMAKE_CXX_FLAGS_RELEASE=/O2 /Ob2 /DNDEBUG','-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL',('-DPAS_SOURCE_WORKSPACE='+$shortFiles),('-DPAS_BASE_PRODUCTION_ROOT='+$base.build_root),('-DPAS_DELTA_SOURCE_COMMIT='+$FrozenHead),('-DPAS_LIBRARY_INPUTS_FILE='+$libraryCmake),('-DPAS_RUNTIME_INPUTS_FILE='+$runtimeCmake),('-DPAS_BASE_MANUAL_SHA256='+$manual.sha256),('-DPAS_WORKER_AFFINITY_SHA256='+$sourceByRelative['research/prelive_current/worker_affinity.hpp'].sha256),('-DPAS_PRODUCER_PLACEMENT_SHA256='+$sourceByRelative['research/windows_production_pipeline_v3/producer_placement.hpp'].sha256),('-DPAS_BASE_APP_OBJECT='+$baseAppObject.path),('-DPAS_BASE_APP_OBJECT_SHA256='+$baseAppObject.sha256),('-DPAS_CANDIDATE_ADMISSION_SHA256='+$sourceByRelative['src/candidate_admission.cpp'].sha256),('-DPAS_CANDIDATE_ADMISSION_TESTS_SHA256='+$sourceByRelative['tests/candidate_admission_tests.cpp'].sha256))
 if($MotionSourceDelta){$options+=@('-DPAS_MOTION_SOURCE_DELTA=ON',('-DPAS_MOTION_SOURCE_SHA256='+$motionStatic.current_source.sha256),('-DPAS_MOTION_RUNTIME_CONTRACT_SOURCE='+$runtimeContract.path),('-DPAS_MOTION_RUNTIME_CONTRACT_SHA256='+$runtimeContract.sha256),('-DPAS_TEST_SOURCE_ROOT='+$repo))}
-if($DenseSourceDelta){$options+=@('-DPAS_DENSE_SOURCE_DELTA=ON',('-DPAS_DENSE_SOURCE_SHA256='+$denseStatic.current_source.sha256))}
-if($FrameMetadataDelta){$options+=@('-DPAS_FRAME_METADATA_DELTA=ON',('-DPAS_FRAME_METADATA_HEADER_SHA256='+$frameStatic.helper_source.sha256),('-DPAS_FRAME_METADATA_TESTS_SHA256='+$frameStatic.tests_source.sha256))}
 $configure='configure-producer-eligibility-'+$Attempt;AssertInputs
 Stage $configure $adapter @{ReceiptRepo=$repo;SourceRoot=$recipeRoot;BuildRoot=$buildRoot;StageName=$configure;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentPin.path;Operation='Configure';Configuration='Release';Inputs=$inputs;Options=$options}
 $configureProof=DProof $configure
 $ninjaPath=Join-Path $buildRoot 'build.ninja';$ninja=(Get-Content -LiteralPath $ninjaPath -Raw).Replace('\','/');$compileRows=@([regex]::Matches($ninja,'(?m)^build ([^\r\n:]+[.]obj): CXX_COMPILER[^ \r\n]+[ \t]+([^|\r\n]+)'))
 DRequire ($compileRows.Count -eq $freshCount -and $ninja -notmatch 'applocal[.]ps1' -and $ninja -match '/O2 /Ob2 /DNDEBUG' -and $ninja -match '(?:/|-)MD(?: |\r?\n)' -and $ninja -notmatch 'CXX_STATIC_LIBRARY_LINKER') 'exact declared fresh Release compile occurrences without rebuilt archive/app-local'
 foreach($unit in $units){$rows=@($compileRows|Where-Object {$_.Groups[1].Value.StartsWith('CMakeFiles/'+$unit.target+'.dir/') -and [string]::Equals([IO.Path]::GetFullPath($_.Groups[2].Value.Trim().Replace('$:',':').Replace('$ ',' ')),[IO.Path]::GetFullPath($unit.source.path),[StringComparison]::OrdinalIgnoreCase)});DRequire ($rows.Count -eq 1) 'each exact source compile target'}
-$exeTargets=@($targets|Where-Object {$_ -cnotin @('candidate_admission_delta','game_motion_delta','game_delta')})
+$exeTargets=@($targets|Where-Object {$_ -cnotin @('candidate_admission_delta','game_motion_delta')})
 $selectedInstalled=@{};foreach($pin in $dependencySelection.files){$selectedInstalled[[IO.Path]::GetFullPath($pin.path)]=$pin}
 foreach($field in [regex]::Matches($ninja,'(?m)^  LINK_LIBRARIES = (.*)$')){foreach($token in [regex]::Matches($field.Groups[1].Value.Replace('$:',':').Replace('$ ',' '),'"[^"]*"|\S+')){$path=$token.Value.Trim('"');if([IO.Path]::IsPathRooted($path)){$key=[IO.Path]::GetFullPath($path);if($key.StartsWith($dependencySelection.fixed_installed_root+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){DRequire ($selectedInstalled.ContainsKey($key)) 'configured actual installed linker input belongs to original-pinned selected closure'}}}}
-foreach($target in $exeTargets){$row=@([regex]::Matches($ninja,'(?m)^build '+[regex]::Escape($target)+ '[.]exe: CXX_EXECUTABLE_LINKER[^\r\n]*\r?\n(?<body>(?:[ \t]+[^\r\n]*\r?\n)*)'));DRequire ($row.Count -eq 1) 'one effective executable link row';$link=@([regex]::Matches($row[0].Groups['body'].Value,'(?m)^  LINK_LIBRARIES = (.*)$'));DRequire ($link.Count -eq 1) 'actual LINK_LIBRARIES required';$required=if($target -ceq 'current_chain'){@($libraries|Where-Object role -cmatch '^cpu_')}elseif($target -cin @('production_pipeline_cold','score_only_controls')){@($libraries|Where-Object role -cmatch '^production_')}elseif($target -ceq 'motion_source_regression'){@($libraries|Where-Object role -ceq 'production_pas_core')}elseif($target -ceq 'frame_metadata_controls'){@($libraries|Where-Object role -ceq 'cpu_pas_core')}elseif($target -ceq 'pas'){@($libraries|Where-Object {$_.role -cmatch '^(production_|verification_)'})}elseif($target -ceq 'candidate_admission_controls'){@($libraries|Where-Object {$_.role -cmatch '^production_' -or $_.role -ceq 'verification_pas_emulator'})}else{@()};$linkText=$link[0].Groups[1].Value.Replace('$:',':').Replace('$ ',' ');DLinkRoles $linkText $required $libraries $buildRoot
- if($MotionSourceDelta){ComponentDeltaMotionLinkObjects $row[0].Value $target $compileRows $baseAppObject ([bool]$DenseSourceDelta)}
+foreach($target in $exeTargets){$row=@([regex]::Matches($ninja,'(?m)^build '+[regex]::Escape($target)+ '[.]exe: CXX_EXECUTABLE_LINKER[^\r\n]*\r?\n(?<body>(?:[ \t]+[^\r\n]*\r?\n)*)'));DRequire ($row.Count -eq 1) 'one effective executable link row';$link=@([regex]::Matches($row[0].Groups['body'].Value,'(?m)^  LINK_LIBRARIES = (.*)$'));DRequire ($link.Count -eq 1) 'actual LINK_LIBRARIES required';$required=if($target -ceq 'current_chain'){@($libraries|Where-Object role -cmatch '^cpu_')}elseif($target -cin @('production_pipeline_cold','score_only_controls')){@($libraries|Where-Object role -cmatch '^production_')}elseif($target -ceq 'motion_source_regression'){@($libraries|Where-Object role -ceq 'production_pas_core')}elseif($target -ceq 'pas'){@($libraries|Where-Object {$_.role -cmatch '^(production_|verification_)'})}elseif($target -ceq 'candidate_admission_controls'){@($libraries|Where-Object {$_.role -cmatch '^production_' -or $_.role -ceq 'verification_pas_emulator'})}else{@()};$linkText=$link[0].Groups[1].Value.Replace('$:',':').Replace('$ ',' ');DLinkRoles $linkText $required $libraries $buildRoot
+ if($MotionSourceDelta){ComponentDeltaMotionLinkObjects $row[0].Value $target $compileRows $baseAppObject}
  if($MotionSourceDelta -and ($target -cin @(ComponentDeltaMotionTargets) -or $target -ceq 'motion_source_regression')){$explicit=($row[0].Value -split '\|')[0];DRequire (@([regex]::Matches($explicit,'CMakeFiles/game_motion_delta[.]dir/[^ \r\n]+[.]obj')).Count -eq 1 -and $linkText -notmatch 'game_motion[.]cpp[.]obj') 'one shared motion object explicit before archive arguments'}
  if($target -cin @('pas','candidate_admission_controls')){DRequire ($row[0].Value -match 'CMakeFiles/candidate_admission_delta[.]dir/[^\r\n]+[.]obj') 'new verification object explicitly precedes archive field';if($target -ceq 'pas'){DRequire ($row[0].Value.Contains($baseAppObject.path.Replace('\','/').Replace(':','$:')) -or $row[0].Value.Contains($baseAppObject.path.Replace('\','/'))) 'actual old app object explicit link'};DRequire ($linkText -notmatch 'candidate_admission[.]cpp[.]obj') 'no old candidate object explicitly linked'}
 }
@@ -261,21 +225,10 @@ $generatedDelta=@(Binding (Join-Path $buildRoot 'producer_eligibility_delta_iden
 if($MotionSourceDelta){$generatedDelta+=@($runtimeContract)}
 $runtimeCopies=@();foreach($pin in $runtimeSources){$copy=Binding (Join-Path $buildRoot ([IO.Path]::GetFileName($pin.path)));DRequire ($copy.bytes -eq $pin.bytes -and $copy.sha256 -ceq $pin.sha256) 'exact runtime18 copy';$runtimeCopies+=@($copy)}
 $inputs+=@($generatedDelta.path)+@($runtimeCopies.path)+(Join-Path $buildRoot 'CMakeCache.txt')+$ninjaPath+@($configureProof.Values.path)
-$buildProofs=@();$priorProducts=@();$priorOutputRows=[Collections.Generic.List[object]]::new()
-foreach($row in $compileRows){DRequire (-not(Test-Path -LiteralPath (Join-Path $buildRoot $row.Groups[1].Value))) 'all declared fresh objects absent before first build'}
-for($groupIndex=0;$groupIndex -lt $buildGroups.Count;$groupIndex++){
- $priorOutputRows.Add([object[]]@($priorProducts))
- $build='build-producer-eligibility-'+$Attempt;if($splitBuild){$build+='-g'+($groupIndex+1)}
- AssertInputs;foreach($pin in $priorProducts){CheckEntry $pin}
- $phaseInputs=@($inputs)+@($buildProofs|ForEach-Object {$_.Values.path})+@($priorProducts|ForEach-Object {$_.path})
- Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=$recipeRoot;BuildRoot=$buildRoot;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentPin.path;Operation='Build';Configuration='Release';Inputs=$phaseInputs;Options=@('--target')+@($buildGroups[$groupIndex].targets)}
- $buildProofs+=@(DProof $build);AssertInputs;foreach($pin in $priorProducts){CheckEntry $pin}
- $phaseProducts=@();foreach($row in $compileRows){$object=$row.Groups[1].Value;$match=[regex]::Match($object,'^CMakeFiles/([^/]+)[.]dir/');DRequire $match.Success 'declared fresh target object';if($match.Groups[1].Value -cin $buildGroups[$groupIndex].targets){$phaseProducts+=@(Binding (Join-Path $buildRoot $object))}}
- foreach($target in $exeTargets|Where-Object {$_ -cin $buildGroups[$groupIndex].targets}){$phaseProducts+=@(Binding (Join-Path $buildRoot ($target+'.exe')))}
- $priorProducts+=@($phaseProducts)
-}
-$buildProof=$buildProofs[-1]
-$outputs=@(Get-ChildItem -LiteralPath $buildRoot -File -Recurse|ForEach-Object {Binding $_.FullName});$objects=@($outputs|Where-Object {$_.path -match '[.]obj$' -and $_.path.Replace('\','/') -cmatch '/CMakeFiles/(current_chain|worker_affinity_controls|production_pipeline_cold|score_only_controls|qualification_reader|qualification_reader_controls|candidate_admission_delta|candidate_admission_controls|game_motion_delta|motion_source_regression|game_delta|frame_metadata_controls)[.]dir/'})
+$build='build-producer-eligibility-'+$Attempt;AssertInputs
+Stage $build $adapter @{ReceiptRepo=$repo;SourceRoot=$recipeRoot;BuildRoot=$buildRoot;StageName=$build;ToolSnapshot=$tool;GateReceipt=$gate;EnvironmentBinding=$environmentPin.path;Operation='Build';Configuration='Release';Inputs=$inputs;Options=@('--target')+$targets}
+$buildProof=DProof $build;AssertInputs
+$outputs=@(Get-ChildItem -LiteralPath $buildRoot -File -Recurse|ForEach-Object {Binding $_.FullName});$objects=@($outputs|Where-Object {$_.path -match '[.]obj$' -and $_.path.Replace('\','/') -cmatch '/CMakeFiles/(current_chain|worker_affinity_controls|production_pipeline_cold|score_only_controls|qualification_reader|qualification_reader_controls|candidate_admission_delta|candidate_admission_controls|game_motion_delta|motion_source_regression)[.]dir/'})
 DRequire ($objects.Count -eq $freshCount) 'actual declared fresh objects';foreach($pin in $outputs|Where-Object {$_.path -match '[.]obj$' -and $_ -notin $objects}){DRequire ($pin.path.Replace('\','/') -cmatch '/(?:CompilerIdCXX/CMakeCXXCompilerId[.]obj|CMakeFiles/ShowIncludes/main[.]obj)$') 'only standard CMake probe objects additional'}
 $exes=@{};foreach($target in $exeTargets){$rows=@($outputs|Where-Object {[IO.Path]::GetFileName($_.path) -ceq ($target+'.exe')});DRequire ($rows.Count -eq 1) 'one fresh executable for each declared link target';$exes[$target]=$rows[0]}
 $script:seal=@{files=@($exes.Values)+$runtimeCopies}
@@ -290,7 +243,7 @@ $controlCompileOnlyPaths=[Collections.Generic.HashSet[string]]::new([StringCompa
 foreach($pin in $controlCompileOnlyLargeDependencies){$null=$controlCompileOnlyPaths.Add([IO.Path]::GetFullPath($pin.path))}
 $controlPolicyPath=Join-Path $artifact 'control-input-policy.json'
 NewJson $controlPolicyPath @{schema='pas.cold-controls-input-policy.v1';source_commit=$FrozenHead;selected_dependency_manifest=(Binding $selectedDependencyPath);compile_only_large_installed_archives=$controlCompileOnlyLargeDependencies;configure_and_build_keep_all_selected_dependencies=$true;final_full_dependency_recheck_preserved=$true;control_assertions_use_same_compile_only_exclusion=$true;actual_images_runtime_sources_objects_imported_libraries_preserved=$true;controls_counts_unchanged=$true;qualification_issued=$false;device_operations=0} 4194304
-$controlInputs=@($inputs+$outputs.path+@($buildProofs|ForEach-Object {$_.Values.path})|Where-Object {-not $controlCompileOnlyPaths.Contains([IO.Path]::GetFullPath($_))})+@($controlPolicyPath)
+$controlInputs=@($inputs+$outputs.path+$buildProof.Values.path|Where-Object {-not $controlCompileOnlyPaths.Contains([IO.Path]::GetFullPath($_))})+@($controlPolicyPath)
 $affinityReport=Join-Path $artifact 'worker-affinity-controls.json';$test='test-producer-eligibility-'+$Attempt+'-affinity';AssertControlInputs
 Native $test $exes.worker_affinity_controls.path @($affinityReport) $controlInputs 300
 $affinityProof=DProof $test;$affinity=DRead (Binding $affinityReport);DControls $affinity 'pas.worker-affinity-tests.v1' 65
@@ -315,8 +268,6 @@ $readerIds=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 DControls $reader.active_wait_policy_controls 'pas.active-wait-policy-reader-controls.v1' 12
 DControls $reader.process_qos_policy_controls 'pas.process-qos-policy-reader-controls.v1' 12
 DControls $reader.cold_harness_delta_controls 'pas.cold-harness-delta-reader-controls.v1' $eligibilityReaderControlsCount
-if($DenseSourceDelta){DControls $reader.dense_source_delta_controls 'pas.cold-dense-reader-controls.v1' 8}
-if($FrameMetadataDelta){DControls $reader.frame_metadata_delta_controls 'pas.cold-frame-metadata-reader-controls.v1' 8}
 $verificationReport=Join-Path $artifact 'candidate-verification-controls.json';$test='test-producer-eligibility-'+$Attempt+'-verification';AssertControlInputs
 Native $test $exes.candidate_admission_controls.path @($verificationReport) $controlInputs 300
 $verificationProof=DProof $test;$verificationReportPin=Binding $verificationReport;$verificationControls=DRead $verificationReportPin
@@ -330,41 +281,15 @@ if($MotionSourceDelta){
  $motionActual=@{};foreach($key in $motionStatic.Keys){$motionActual[$key]=$motionStatic[$key]};$motionActual.new_object=$newMotionObjects[0];$motionActual.consumer_images=@(ComponentDeltaMotionTargets|ForEach-Object {$exes[$_]})
  $regression=@{};foreach($key in $motionStatic.regression.Keys){$regression[$key]=$motionStatic.regression[$key]};$regression.binary=$exes.motion_source_regression;$regression.process=$motionProof;$regression.report=Binding $motionReport;$motionActual.regression=$regression
 }
-if($DenseSourceDelta){
- $denseReport=Join-Path $artifact 'dense-source-regression.json';$test='test-producer-eligibility-'+$Attempt+'-dense';AssertControlInputs
- Native $test $exes.motion_source_regression.path @(('--gtest_filter='+(ComponentDeltaDenseFilter)),('--gtest_output=json:'+$denseReport)) $controlInputs 300
- $denseProof=DProof $test;ComponentDeltaDenseGTest (DRead (Binding $denseReport))
- $newGameObjects=@($objects|Where-Object {$_.path.Replace('\','/').Contains('/CMakeFiles/game_delta.dir/')});DRequire ($newGameObjects.Count -eq 1) 'one actual shared game object'
- $denseActual=@{};foreach($key in $denseStatic.Keys){$denseActual[$key]=$denseStatic[$key]};$denseActual.new_object=$newGameObjects[0];$denseActual.consumer_images=@(ComponentDeltaDenseTargets|ForEach-Object {$exes[$_]})
- $denseRegression=@{};foreach($key in $denseStatic.regression.Keys){$denseRegression[$key]=$denseStatic.regression[$key]};$denseRegression.binary=$exes.motion_source_regression;$denseRegression.process=$denseProof;$denseRegression.report=Binding $denseReport;$denseActual.regression=$denseRegression
-}
-if($FrameMetadataDelta){
- $frameReport=Join-Path $artifact 'frame-metadata-controls.json';$test='test-producer-eligibility-'+$Attempt+'-frame';AssertControlInputs
- Native $test $exes.frame_metadata_controls.path @($frameReport) $controlInputs 300
- $frameProof=DProof $test;$frameReportPin=Binding $frameReport;$frameReportValue=DRead $frameReportPin
- DControls $frameReportValue 'pas.cold-frame-metadata-reuse-controls.v1' 8
- DRequire ($frameReportValue.source_build_commit -ceq $FrozenHead) 'actual fixed metadata controls source';DBool $frameReportValue 'source_build_dirty' $false
- $frameActual=@{};foreach($key in $frameStatic.Keys){$frameActual[$key]=$frameStatic[$key]}
- $frameActual.frame_controls=@{target='frame_metadata_controls';schema='pas.cold-frame-metadata-reuse-controls.v1';assertions=8;binary=$exes.frame_metadata_controls;report=$frameReportPin;process=$frameProof}
-}
 AssertInputs;foreach($pin in $outputs){CheckEntry $pin}
 $newCandidateObjects=@($objects|Where-Object {$_.path.Replace('\','/').Contains('/CMakeFiles/candidate_admission_delta.dir/')} );DRequire ($newCandidateObjects.Count -eq 1) 'one actual new verification object'
 $verificationLibraries=@();foreach($name in @('pas_core','pas_current_candidate','pas_proto','pas_emulator','pas_bench')){$role=if($name -cin @('pas_emulator','pas_bench')){'verification_'+$name}else{'production_'+$name};$row=@($libraries|Where-Object role -ceq $role);DRequire ($row.Count -eq 1) 'exact verification link role';$verificationLibraries+=@(@{role=$name;binary=$row[0].binary;compiled_source_commit=$baseCommit;build_binding=$basePin})}
 $verificationDeltaPath=Join-Path $artifact 'verification-delta.json';$verificationData=@{schema='pas.cold-candidate-verification-delta.v1';source_commit=$FrozenHead;source_dirty=$false;base_source_commit=$baseCommit;candidate_binary=$exes.pas;candidate_source=$sourceByRelative['src/candidate_admission.cpp'];tests_source=$sourceByRelative['tests/candidate_admission_tests.cpp'];source_manifest=(Binding $manifestPath);source_snapshot=(Binding $snapshotPath);core_build_plan=(Binding $planPath);base_production_build=$basePin;base_source_snapshot=$snapshotPin;base_source_projection=$baseProjectionPin;selected_dependency_manifest=(Binding $selectedDependencyPath);base_generated_provenance=$generated[0];compile_process=$buildProof;link_process=$buildProof;linked_static_libraries=$verificationLibraries;base_app_object=$baseAppObject;new_candidate_object=$newCandidateObjects[0];verification_controls_report=$verificationReportPin;verification_controls_process=$verificationProof;verification_controls_count=$verificationControlsCount;formal_rebuilt=$false;verification_only_delta=$true;qualification_issued=$false;cost_qualification=$false;live_ready=$false;device_operations=0}
 if($MotionSourceDelta){$verificationData.motion_source_delta=$motionActual;$verificationData.verification_only_delta=$false;$verificationData.verification_and_motion_delta=$true}
-if($DenseSourceDelta){$verificationData.dense_source_delta=$denseActual;$verificationData.verification_and_motion_and_dense_delta=$true}
-if($FrameMetadataDelta){$verificationData.frame_metadata_delta=$frameActual}
-if($splitBuild){$verificationData.build_target_groups=$buildGroups;$verificationData.build_processes=$buildProofs;$verificationData.build_prior_outputs=$priorOutputRows.ToArray()}
 NewJson $verificationDeltaPath $verificationData 4194304
-$nativeProcesses=@($configureProof)+@($buildProofs)+@($affinityProof,$readerProof,$verificationProof)+@($scoreRows|ForEach-Object {$_.Native8})
+$nativeProcesses=@($configureProof,$buildProof,$affinityProof,$readerProof,$verificationProof)+@($scoreRows|ForEach-Object {$_.Native8})
 if($MotionSourceDelta){$nativeProcesses+=@($motionProof)}
-if($DenseSourceDelta){$nativeProcesses+=@($denseProof)}
-if($FrameMetadataDelta){$nativeProcesses+=@($frameProof)}
 $bindingPath=Join-Path $artifact 'build-binding.json';$bindingData=@{schema='pas.cold-producer-eligibility-delta-build.v1';source_commit=$FrozenHead;source_dirty=$false;base_source_commit=$baseCommit;original_source_commit=$originalCommit;configuration='release';base_cpu_build=$cpuPin;base_production_build=$basePin;base_source_snapshot=$snapshotPin;base_source_projection=$baseProjectionPin;selected_dependency_manifest=(Binding $selectedDependencyPath);source_manifest=(Binding $manifestPath);source_snapshot=(Binding $snapshotPath);dependency_manifest=$base.dependency_manifest;compiler_environment=$environmentPin;core_build_plan=(Binding $planPath);compile_graph=(Binding $ninjaPath);build_root=$buildRoot;targets=$targets;translation_unit_count=$freshCount;translation_units=$units;imported_static_libraries=$libraries;base_generated_inputs=$generated;generated_delta_inputs=$generatedDelta;base_manual_source=$manual;base_app_object=$baseAppObject;base_session_provenance_preserved=$true;runtime18_sources=$runtimeSources;runtime18_copies=$runtimeCopies;files=@($exes.Values)+$runtimeCopies;compiled_outputs=$outputs;configure_process=$configureProof;build_process=$buildProof;affinity_controls_process=$affinityProof;affinity_controls_report=(Binding $affinityReport);score_control_processes=$scoreRows;reader_controls_process=$readerProof;reader_controls_report=(Binding $readerReport);verification_controls_process=$verificationProof;verification_controls_report=$verificationReportPin;verification_delta=(Binding $verificationDeltaPath);verification_controls_count=$verificationControlsCount;eligibility_controls_count=$eligibilityControlsCount;eligibility_reader_controls_count=$eligibilityReaderControlsCount;producer_eligibility_policy=$deltaPolicy;original_affinity_controls_count=65;original_producer_placement_controls_count=27;original_reader_controls_count=81;base_original_build_processes=$baseNative;actual_native_stage_count=$nativeProcesses.Count;actual_native8_pin_count=8*$nativeProcesses.Count;formal_rebuilt=$false;formal_libraries_preserved=$true;old_objects_reused=$true;base_app_object_reused=$true;cold_harness_delta=$true;qualification_issued=$false;whole_candidate_qualification=$false;cost_qualification=$false;physical_qualification=$false;live_ready=$false;device_endpoints=0;device_operations=0;measurement_runs=0;normal3_runs=0;AA12_runs=0;noise18_runs=0;ABBA36_runs=0;new_etw_recordings=0;cost_status='NOT_READY';base_STOP_preserved=$true;scope='Only10 fresh cold harness/controls/reader/verification compile occurrences and explicit base55 app-object relink; actual main32/main55 library roles remain imported historical source identities; no fresh22/32/52 or whole qualification claim.'}
 if($MotionSourceDelta){$bindingData.motion_source_delta=$motionActual;$bindingData.formal_libraries_rebuilt=$false;$bindingData.fresh_formal_translation_units=1;$bindingData.scope='14 fresh compile occurrences: 10 cold harness/reader/factory, one exact formal motion object and three regression TUs; original formal archives remain sealed; no whole qualification.'}
-if($DenseSourceDelta){$bindingData.dense_source_delta=$denseActual;$bindingData.fresh_formal_translation_units=2}
-if($FrameMetadataDelta){$bindingData.frame_metadata_delta=$frameActual}
-if($DenseSourceDelta -and $FrameMetadataDelta){$bindingData.scope='16 fresh compile occurrences with explicit motion/game member overlays and fixed metadata controls; original archives/qualification stay historical; necessary current costs remain pending.'}
-if($splitBuild){$bindingData.build_target_groups=$buildGroups;$bindingData.expected_native_build_stages=2;$bindingData.build_processes=$buildProofs;$bindingData.build_receipts=@($buildProofs|ForEach-Object {$_.verification});$bindingData.build_input_closures=@($buildProofs|ForEach-Object {$_.input_closure});$bindingData.build_prior_outputs=$priorOutputRows.ToArray();$bindingData.compile_receipt=$buildProof.verification;$bindingData.input_closure=$buildProof.input_closure}
 NewJson $bindingPath $bindingData 4194304
 @{binding=(Binding $bindingPath);fresh_translation_units=$freshCount;native_stages=$nativeProcesses.Count;measurement_runs=0;new_etw_recordings=0;qualification_issued=$false;device_operations=0;live_ready=$false}|ConvertTo-Json -Depth 4

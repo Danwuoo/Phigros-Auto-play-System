@@ -10,7 +10,6 @@
 #include "tap_reset_workload.hpp"
 #include "owner_wait.hpp"
 #include "producer_wait.hpp"
-#include "frame_metadata.hpp"
 #include "consumer_priority.hpp"
 #include "worker_affinity.hpp"
 #include "../windows_production_pipeline_v3/producer_placement.hpp"
@@ -95,7 +94,6 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
   if(c.source_frame_sequence<samples.size()&&samples[c.source_frame_sequence].capture)evidence_to_injection.push_back((r.injection_start_ns-samples[c.source_frame_sequence].capture)/1e6);
   emit({{"event","own_injection_receipt"},{"intent",c.intent_id},{"source_frame",c.source_frame_sequence},{"contact",c.contact_id},{"x",c.x},{"y",c.y},{"phase",static_cast<int>(c.phase)},{"scheduled",c.scheduled_ns},{"injection_start",r.injection_start_ns},{"injection_return",r.injection_return_ns},{"success",r.success},{"reason",r.reason}});
  };
- cold::frame_metadata::FixedMetadata producer_metadata;
  const auto begin=clock.now_ns();std::uint64_t initial_rss=rss(),peak_rss=initial_rss;std::size_t consumed=0,invalid=0;std::atomic<bool> safe=true;std::string stop;
  // Producer remains independent: normal 20ms; slow/stress 8ms.
  const int cadence=scene=="slow"||n==10000?8:20;
@@ -110,7 +108,7 @@ J pipeline(std::string mode,std::string scene,int n,const std::string& report,co
  const auto due_epoch=clock.now_ns();
  const std::string generator=tap_streaming?std::string(tap_reset_workload::generator):streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB";
  if(!emit({{"event","producer_schedule"},{"epoch_ns",due_epoch},{"cadence_ms",cadence},{"requested",n},{"generator",generator}}))throw std::runtime_error("producer schedule Journal admission");
- std::jthread producer([&]{try{WindowsWorkerAffinityApi affinity_api;WorkerAffinityScope affinity(affinity_api,producer_affinity_snapshot,placement.producer_mask);WindowsProducerPriorityApi priority_api;ProducerPriorityScope priority(priority_api);for(int i=1;i<=n;++i){auto& sample=samples[i];sample.producer_due=due_epoch+Nanoseconds(i-1)*cadence*1'000'000;producer_wait.wait_until(clock,sample.producer_due);sample.render_start=clock.now_ns();if(tap_streaming)tap_reset_workload::render(generated,i);else if(streaming)streaming_workload::render(generated,i);sample.render_end=clock.now_ns();const auto& f=producer_metadata.for_attempt(static_cast<std::uint64_t>(i),sample.render_end);sample.capture=f.capture_complete_ns;const auto* pixels=streaming?generated.data():images[(i-1)%12].data();sample.published_ok=latest.publish(pixels,1280*720*3,f);sample.publication_return=clock.now_ns();++publish_attempts;}priority.close();affinity.close();}catch(...){safe=false;}done=true;});
+ std::jthread producer([&]{try{WindowsWorkerAffinityApi affinity_api;WorkerAffinityScope affinity(affinity_api,producer_affinity_snapshot,placement.producer_mask);WindowsProducerPriorityApi priority_api;ProducerPriorityScope priority(priority_api);for(int i=1;i<=n;++i){auto& sample=samples[i];sample.producer_due=due_epoch+Nanoseconds(i-1)*cadence*1'000'000;producer_wait.wait_until(clock,sample.producer_due);sample.render_start=clock.now_ns();if(tap_streaming)tap_reset_workload::render(generated,i);else if(streaming)streaming_workload::render(generated,i);sample.render_end=clock.now_ns();Frame f;f.sequence=i;f.epoch=f.generation=f.geometry_version=1;f.width=1280;f.height=720;f.stride=3840;f.source_rotation=1;f.capture_backend="offline_memory_stub";f.capture_complete_ns=f.pixels_ready_ns=sample.render_end;sample.capture=f.capture_complete_ns;const auto* pixels=streaming?generated.data():images[(i-1)%12].data();sample.published_ok=latest.publish(pixels,1280*720*3,f);sample.publication_return=clock.now_ns();++publish_attempts;}priority.close();affinity.close();}catch(...){safe=false;}done=true;});
  bool supervisor_stopped=false;std::uint64_t seen=0;while(true){
   // A due Up or evidence expiry must not wait for the next producer frame.
   // The same consumer remains the sole owner; receipts use the same bounded

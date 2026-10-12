@@ -937,7 +937,6 @@ DecisionSnapshot GameObserver::process(const Frame& f) {
     // component order changes when a rotating line is interrupted by a note.
     // A note's local dimensions must not depend on which fragment came first.
     for(const auto& c:all) {
-        if(c.color==4) continue;
         const double w=c.x1-c.x0+2.0,h=c.y1-c.y0+2.0;
         const Vec2 center{c.sx/c.count,c.sy/c.count};
         const double xx=c.xx/c.count-center.x*center.x,

@@ -28,12 +28,7 @@ $faults=Get-Content -LiteralPath $inventory.faults_status.path -Raw|ConvertFrom-
 foreach($row in $faults.rows){ReaderAddReceipt $row.process.verification;ReaderAddStage ('audit-fault-pre-emulator-main32-'+$row.scenario)}
 $production=Get-Content -LiteralPath $inventory.production.original_status.path -Raw|ConvertFrom-Json
 foreach($row in $production.rows){ReaderAddReceipt $row.process.verification;ReaderAddStage ('audit-production-pre-emulator-main32-'+$row.id)}
-$readerBuilds=@($delta.build_process)
-if($delta.dense_source_delta -or $delta.frame_metadata_delta){if(@($delta.build_processes).Count -ne 2){throw 'exact two current build Native8 required'};$readerBuilds=@($delta.build_processes)}
-foreach($proof in @($delta.configure_process)+$readerBuilds+@($delta.affinity_controls_process,$delta.reader_controls_process,$delta.verification_controls_process)+@($delta.score_control_processes|ForEach-Object {$_.Native8})){ReaderAddReceipt $proof.verification}
-if($delta.motion_source_delta){ReaderAddReceipt $delta.motion_source_delta.regression.process.verification}
-if($delta.dense_source_delta){ReaderAddReceipt $delta.dense_source_delta.regression.process.verification}
-if($delta.frame_metadata_delta){ReaderAddReceipt $delta.frame_metadata_delta.frame_controls.process.verification}
+foreach($proof in @($delta.configure_process,$delta.build_process,$delta.affinity_controls_process,$delta.reader_controls_process,$delta.verification_controls_process)+@($delta.score_control_processes|ForEach-Object {$_.Native8})){ReaderAddReceipt $proof.verification}
 $aaRoot=Join-Path $repo ('out/prelive-pre-emulator-aa-'+$Attempt);$abbaRoot=Join-Path $repo ('out/prelive-pre-emulator-abba-'+$Attempt)
 $aa=ReaderPinIf (Join-Path $aaRoot 'aa-input.json');$abba=ReaderPinIf (Join-Path $abbaRoot 'comparison-input.json')
 foreach($pair in @(@($aa,'audit-pre-emulator-'),@($abba,'audit-abba-pre-emulator-'))){if($pair[0]){$input=Get-Content -LiteralPath $pair[0].path -Raw|ConvertFrom-Json;foreach($row in $input.runs){ReaderAddReceipt $row.process_evidence.verification;ReaderAddStage ($pair[1]+$row.run_id)}}}
@@ -67,7 +62,6 @@ $old=Get-Content -LiteralPath $inventory.source_snapshot.path -Raw|ConvertFrom-J
 $short=Get-Content -LiteralPath $delta.base_source_projection.path -Raw|ConvertFrom-Json;foreach($row in $short.files){ReaderStagePath $row.copy.path}
 $current=Get-Content -LiteralPath $delta.source_manifest.path -Raw|ConvertFrom-Json
 foreach($pin in @($current.files)+@($delta.files)+@($delta.compiled_outputs)+@($delta.imported_static_libraries|ForEach-Object {$_.binary})+@($delta.base_generated_inputs)){ReaderStagePath $pin.path}
-if($delta.frame_metadata_delta){ReaderStagePath $delta.frame_metadata_delta.base_chain_source.path}
 while($pending.Count){$value=Get-Content -LiteralPath $pending.Dequeue() -Raw|ConvertFrom-Json;ReaderMetadataPins $value;if($paths.Count -gt 8192){throw 'existing readonly native count bound'}}
 $guard=Get-Content -LiteralPath $gate -Raw|ConvertFrom-Json
 $inputs=@($paths.Keys)+@($recipe,(Join-Path $repo 'research/pre_emulator/common.ps1'))+(GateInputs)+@($guard.guard_source.path,$guard.process_source.path,$guard.cached_identity_controls.path,$guard.identity_wait_controls.path)
