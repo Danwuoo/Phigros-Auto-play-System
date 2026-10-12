@@ -1,0 +1,239 @@
+#define NOMINMAX
+#include <windows.h>
+#include <wincodec.h>
+#include <psapi.h>
+#include <wrl/client.h>
+#include "runtime.hpp"
+#include "campaign_provenance.hpp"
+#include "offline_output.hpp"
+#include "streaming_workload.hpp"
+#include "tap_reset_workload.hpp"
+#include "owner_wait.hpp"
+#include "producer_wait.hpp"
+#include "publication_diagnostic_output.hpp"
+#include "consumer_priority.hpp"
+#include "worker_affinity.hpp"
+#include "../windows_production_pipeline_v3/producer_placement.hpp"
+#include "pas/journal.hpp"
+#include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <fstream>
+#include <iostream>
+#include <thread>
+using namespace pas;using namespace pas::current_rails;using J=nlohmann::json;using Microsoft::WRL::ComPtr;
+namespace {
+void checked(HRESULT c){if(FAILED(c))throw std::runtime_error("WIC decode");}
+J distribution(std::vector<double> v){if(v.empty())return {{"n",0}};std::sort(v.begin(),v.end());auto p=[&](double x){double a=(v.size()-1)*x;auto lo=std::size_t(a),hi=std::min(lo+1,v.size()-1);return v[lo]+(v[hi]-v[lo])*(a-lo);};return {{"n",v.size()},{"p50",p(.5)},{"p95",p(.95)},{"p99",p(.99)},{"max",v.back()},{"jitter_p95_minus_p5",p(.95)-p(.05)}};}
+J affinity_json(const WorkerAffinitySnapshot&s){auto value=[](WorkerGroupAffinity v){return J{{"group",v.group},{"mask",v.mask}};};return {{"schema","pas.cold-worker-affinity.v1"},{"thread_id",s.thread_id},{"active_groups",s.active_groups},{"process_class",s.process_class},{"process_mask",s.process_mask},{"system_mask",s.system_mask},{"previous",value(s.previous)},{"requested",value(s.requested)},{"applied_readback",value(s.applied_readback)},{"restored_readback",value(s.restored_readback)},{"previous_available",s.previous_available},{"applied_available",s.applied_available},{"restored_available",s.restored_available},{"applied",s.applied},{"close_attempted",s.close_attempted},{"restored",s.restored},{"verified",s.verified()},{"failure",worker_affinity_failure_name(s.failure)},{"rollback_failure",worker_affinity_failure_name(s.rollback_failure)},{"fallback_failure",worker_affinity_failure_name(s.fallback_failure)},{"rollback_attempted",s.rollback_attempted},{"fallback_attempted",s.fallback_attempted}};}
+std::uint64_t rss(){PROCESS_MEMORY_COUNTERS p{};p.cb=sizeof(p);if(!K32GetProcessMemoryInfo(GetCurrentProcess(),&p,sizeof(p)))throw std::runtime_error("RSS");return p.WorkingSetSize;}
+std::uint64_t peak_rss_os(){PROCESS_MEMORY_COUNTERS p{};p.cb=sizeof(p);if(!K32GetProcessMemoryInfo(GetCurrentProcess(),&p,sizeof(p)))throw std::runtime_error("peak RSS");return p.PeakWorkingSetSize;}
+J modules(){HMODULE mods[256];DWORD bytes=0;if(!K32EnumProcessModules(GetCurrentProcess(),mods,sizeof(mods),&bytes)||bytes>sizeof(mods))throw std::runtime_error("module bound");J paths=J::array();for(DWORD i=0;i<bytes/sizeof(HMODULE);++i){wchar_t p[32768];if(!GetModuleFileNameW(mods[i],p,32768))throw std::runtime_error("module path");paths.push_back(std::filesystem::path(p).string());}return paths;}
+Frame load(IWICImagingFactory* factory,const J& input){
+ const std::filesystem::path path=input.at("path").get<std::string>();ComPtr<IWICBitmapDecoder> decoder;checked(factory->CreateDecoderFromFilename(path.c_str(),nullptr,GENERIC_READ,WICDecodeMetadataCacheOnDemand,&decoder));ComPtr<IWICBitmapFrameDecode> bitmap;checked(decoder->GetFrame(0,&bitmap));UINT w,h;checked(bitmap->GetSize(&w,&h));if(w!=1280||h!=720)throw std::runtime_error("pixel profile");ComPtr<IWICFormatConverter> converter;checked(factory->CreateFormatConverter(&converter));checked(converter->Initialize(bitmap.Get(),GUID_WICPixelFormat24bppRGB,WICBitmapDitherTypeNone,nullptr,0,WICBitmapPaletteTypeCustom));
+ const auto& i=input.at("index");Frame f;f.epoch=f.generation=f.geometry_version=1;f.sequence=i.at("source_frame");f.capture_complete_ns=i.at("capture_complete_ns");f.pixels_ready_ns=i.at("pixels_ready_ns");f.width=w;f.height=h;f.stride=3840;f.source_rotation=i.at("source_rotation");f.rgb.resize(1280*720*3);checked(converter->CopyPixels(nullptr,3840,static_cast<UINT>(f.rgb.size()),f.rgb.data()));return f;
+}
+J encode(const Evaluation& e){J rows=J::array();for(std::size_t k=0;k<e.count;++k){const auto& s=e.support[k];rows.push_back({{"note",s.note},{"candidate",s.candidate},{"line",s.line},{"front",{s.front.x,s.front.y}},{"hit",{s.hit.x,s.hit.y}},{"terminal",s.terminal},{"body",s.body},{"rows",s.rows},{"effect",s.effect},{"unique",s.unique},{"own_active",s.active},{"samples",s.samples},{"accepted",s.accepted},{"tail",s.tail},{"reason",s.reason}});}return rows;}
+J pixels(const std::string& selection,const std::string& report){
+ std::ifstream in(selection);const auto input=J::parse(in);const auto& frames=input.at("frames");if(frames.empty()||frames.size()>7722)throw std::runtime_error("selection bound");
+ checked(CoInitializeEx(nullptr,COINIT_MULTITHREADED));ComPtr<IWICImagingFactory> factory;checked(CoCreateInstance(CLSID_WICImagingFactory,nullptr,CLSCTX_INPROC_SERVER,IID_PPV_ARGS(&factory)));
+ FakeClock business;HostClock meter;std::unique_ptr<Runtime> rt;LatestFrame latest(1280,720,3,&meter);
+ std::ofstream trace(report+".rows.jsonl"),events(report+".events.jsonl");std::vector<double> times;J runs=J::array();std::uint64_t down=0,move=0,up=0,raw=0,accepted=0,unknown=0,terminal=0,body=0;std::size_t processed=0,bytes=0,event_bytes=0,event_count=0;int window=-1;bool released=true;std::string stop;
+ auto emit=[&](J value){value["window"]=window;const auto row=value.dump();if(row.size()>262144||event_count>=65536||event_bytes+row.size()+1>1073741824)throw std::runtime_error("pixel event bound");events<<row<<'\n';if(!events)throw std::runtime_error("pixel event write");event_bytes+=row.size()+1;++event_count;};
+ auto bind=[&](){rt->event_output=emit;rt->receipt_output=[&](const current_execution::BackendEvent&e){if(e.release){emit({{"event","release_receipt"},{"requested",e.report.requested_ids},{"failed",e.report.failed_ids},{"unknown",e.report.unknown_ids},{"start",e.report.start_ns},{"return",e.report.return_ns}});return;}const auto&c=e.issued;const auto&r=e.receipt;emit({{"event","own_injection_receipt"},{"intent",c.intent_id},{"contact",c.contact_id},{"phase",int(c.phase)},{"x",c.x},{"y",c.y},{"source_frame",c.source_frame_sequence},{"scheduled",c.scheduled_ns},{"injection_start",r.injection_start_ns},{"injection_return",r.injection_return_ns},{"success",r.success},{"reason",r.reason}});};};
+ auto close=[&](){if(!rt)return;released&=rt->finish();down+=rt->backend.downs;move+=rt->backend.moves;up+=rt->backend.ups;raw+=rt->raw;accepted+=rt->accepted;unknown+=rt->unknown;terminal+=rt->terminals;body+=rt->bodies;runs.push_back({{"window",window},{"down",rt->backend.downs},{"move",rt->backend.moves},{"up",rt->backend.ups},{"ledger_size",rt->ledger.size()},{"ledger_valid",rt->ledger.valid()},{"reason",rt->ledger.reason()}});};
+ for(const auto& item:frames){const int next=item.at("window");if(window!=next){close();window=next;rt=std::make_unique<Runtime>(business);bind();emit({{"event","round_reset_no_seed"},{"input_window",window}});}
+  auto f=load(factory.Get(),item);business.set(f.pixels_ready_ns);
+  const auto start=meter.now_ns();if(!latest.publish(f.rgb.data(),f.rgb.size(),f))throw std::runtime_error("unexpected pixel pool drop");auto lease=latest.read_after(f.sequence-1,0);if(!lease||lease->sequence!=f.sequence)throw std::runtime_error("same lease");
+  const bool ok=rt->dispatch(*lease);const auto complete=meter.now_ns();times.push_back((complete-start)/1e6);
+  J row={{"ordinal",item.at("index").at("ordinal")},{"window",window},{"source_frame",f.sequence},{"capture",f.capture_complete_ns},{"pixels_ready",f.pixels_ready_ns},{"complete_ms",times.back()},{"valid",rt->last.valid},{"accepted",rt->last.accepted},{"current_support",encode(rt->last)},{"downs_total",rt->backend.downs},{"moves_total",rt->backend.moves},{"ups_total",rt->backend.ups}};
+  const auto text=row.dump();bytes+=text.size()+1;if(bytes>16*1024*1024)throw std::runtime_error("pixel trace cap");trace<<text<<'\n';++processed;
+  if(!ok){stop=rt->owner.scheduler()&&!rt->owner.scheduler()->fault().empty()?rt->owner.scheduler()->fault():std::string(rt->ledger.reason());break;}
+ }
+ close();latest.close();trace.flush();events.flush();if(!trace||!events)throw std::runtime_error("pixel trace write");
+ return {{"schema","pas.prelive-current-pixels.v1"},{"frames",frames.size()},{"processed",processed},{"windows",runs},{"raw_proposals",raw},{"accepted",accepted},{"unknown",unknown},{"current_terminals",terminal},{"current_bodies",body},{"own_down",down},{"own_move",move},{"own_up",up},{"release_verified",released},{"stop",stop},{"compute_ms",distribution(times)},{"timing_domain","host_QPC; decode excluded; includes latest-frame copy/read+observer+hook+owner+receipt+complete evidence write"},{"business_domain","archived QPC offline FakeClock"},{"trace_bytes",bytes},{"event_bytes",event_bytes},{"event_count",event_count},{"physical_gold",0},{"game_adoption","unknown"},{"device_endpoints",0}};
+}
+void box(std::vector<std::uint8_t>& p,int x0,int y0,int x1,int y1,std::array<std::uint8_t,3> c){for(int y=std::max(0,y0);y<std::min(720,y1);++y)for(int x=std::max(0,x0);x<std::min(1280,x1);++x)std::copy(c.begin(),c.end(),p.begin()+std::size_t(y)*3840+x*3);}
+std::array<std::vector<std::uint8_t>,12> stimulus(std::string_view scene){std::array<std::vector<std::uint8_t>,12> images;for(int k=0;k<12;++k){auto& p=images[k];p.assign(1280*720*3,30);box(p,20,20,26,42,{255,255,255});box(p,34,20,40,42,{255,255,255});for(int d=0;d<6;++d)box(p,1020+d*24,20,1032+d*24,40,{255,255,255});
+ if(scene=="dense"){for(int row=0;row<16;++row){const int y=150+row*31;box(p,40,y-1,1240,y+2,{255,255,255});for(int col=0;col<8;++col){const int x=190+col*130;box(p,x-39,y-12,x+39,y-3,{40,190,255});}}}
+ else {box(p,115,499,1165,502,{255,255,255});const int y=440+k*8;
+  if(scene=="hold"){box(p,350,y-100,451,y+1,{155,233,255});box(p,350,y-100,352,y+1,{255,255,255});box(p,449,y-100,451,y+1,{255,255,255});}
+  else box(p,491,y-4,569,y+5,{40,190,255});}
+ }return images;}
+struct Sample {Nanoseconds capture=0,published=0,recognition=0,complete=0,observer=0,hook=0,owner=0,producer_due=0,render_start=0,render_end=0,publication_return=0;bool published_ok=false,consumed=false,owned=false,writer=false;};
+J pipeline(std::string mode,std::string scene,int n,const std::string& report,const J& provenance=nullptr){
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ if((mode!="A"&&mode!="B")||scene!="dense"||n!=1000)throw std::runtime_error("diagnostic phase scope: A/B dense 1000 only");
+#endif
+ if(n<1000||n>10000||(mode!="A"&&mode!="B")||(scene!="tap"&&scene!=tap_reset_workload::scene&&scene!="hold"&&scene!=streaming_workload::scene&&scene!="dense"&&scene!="slow"&&scene!="writer"&&scene!="rpc"&&scene!="fault"))throw std::runtime_error("pipeline bounds");
+ ColdProcessQosSnapshot process_qos;WindowsColdProcessQosApi process_qos_api;J qos_result;
+ run_cold_process_qos(process_qos_api,process_qos,[&]{
+ const bool tap_streaming=scene==tap_reset_workload::scene;
+ const bool streaming=scene==streaming_workload::scene||tap_streaming;
+ const auto images=streaming?std::array<std::vector<std::uint8_t>,12>{}:stimulus(scene);
+ std::vector<std::uint8_t> generated(streaming?streaming_workload::bytes:0);HostClock clock;
+ std::vector<cold::publication_diag::Attempt> publication_slots(std::size_t(n)+cold::publication_diag::slot_extra);
+ cold::publication_diag::Output publication_output(report,publication_slots,mode,scene,n,scene=="slow"||n==10000?8:20);
+ // Output precedes runtime/writer/producer declaration: on unwind, jthread
+ // joins and writer/runtime destructors finish before partial metadata output.
+ LatestFrame latest(1280,720,3,&clock);Runtime rt(clock);
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ rt.step.diagnostic_profile.enabled=true;
+ const auto processor_topology=diagnostic_phase::processor_topology().json();
+#endif
+ const bool compressed_stress=n==10000;const int writer_capacity=scene=="writer"?2:8192;Journal journal(report+(compressed_stress?".journal.jsonl.gz":".journal.jsonl"),writer_capacity,[&]{if(scene=="writer")std::this_thread::sleep_for(std::chrono::milliseconds(30));},compressed_stress?Journal::Encoding::gzip:Journal::Encoding::plain);
+ std::vector<Sample> samples(n+1);std::atomic<bool> done=false;std::atomic<int> publish_attempts=0;
+ if(scene=="rpc")rt.backend.delay_ms=5;
+ if(scene=="fault")rt.backend.failure=current_execution::ReplayBackend::Failure::unknown_down;
+ std::vector<double> injection,late,evidence_to_injection;std::size_t receipt_count=0,release_calls=0;
+ std::array<std::vector<double>,3> phase_late;std::uint64_t journal_bytes=0,journal_records=0;bool admission_failed=false;
+ auto emit=[&](J record,bool critical=true){auto prepared=Journal::prepare(std::move(record));const auto bytes=prepared.bytes()+128;if(bytes>262144||journal_records>=65536||journal_bytes+bytes>1073741824){admission_failed=true;return false;}journal_bytes+=bytes;++journal_records;const bool ok=journal.push(std::move(prepared),critical);if(!ok&&critical)admission_failed=true;return ok;};
+ if(!provenance.is_null()&&!emit({{"event","current_chain_provenance"},{"provenance",provenance}}))throw std::runtime_error("provenance Journal admission");
+ rt.event_output=[&](J value){emit(std::move(value));};
+ rt.step.snapshot_output=[&](DiagnosticSnapshot value){if(journal_records>=65536){admission_failed=true;return;}++journal_records;if(!journal.push(std::move(value)))admission_failed=true;};
+ rt.receipt_output=[&](const auto& event){
+  if(event.release){++release_calls;emit({{"event","release_receipt"},{"requested",event.report.requested_ids},{"failed",event.report.failed_ids},{"unknown",event.report.unknown_ids},{"start",event.report.start_ns},{"return",event.report.return_ns}});return;}
+  const auto& r=event.receipt;const auto& c=event.issued;
+  if(receipt_count>=20000)throw std::runtime_error("receipt sample capacity");++receipt_count;
+  injection.push_back((r.injection_return_ns-r.injection_start_ns)/1e6);late.push_back((r.injection_start_ns-c.scheduled_ns)/1e6);
+  phase_late.at(int(c.phase)).push_back(late.back());
+  if(c.source_frame_sequence<samples.size()&&samples[c.source_frame_sequence].capture)evidence_to_injection.push_back((r.injection_start_ns-samples[c.source_frame_sequence].capture)/1e6);
+  emit({{"event","own_injection_receipt"},{"intent",c.intent_id},{"source_frame",c.source_frame_sequence},{"contact",c.contact_id},{"x",c.x},{"y",c.y},{"phase",static_cast<int>(c.phase)},{"scheduled",c.scheduled_ns},{"injection_start",r.injection_start_ns},{"injection_return",r.injection_return_ns},{"success",r.success},{"reason",r.reason}});
+ };
+ const auto begin=clock.now_ns();std::uint64_t initial_rss=rss(),peak_rss=initial_rss;std::size_t consumed=0,invalid=0;std::atomic<bool> safe=true;std::string stop;
+ // Producer remains independent: normal 20ms; slow/stress 8ms.
+ const int cadence=scene=="slow"||n==10000?8:20;
+ ActiveProducerDeadlineWait producer_wait;
+ ConsumerPrioritySnapshot consumer_priority_snapshot;
+ WindowsConsumerPriorityApi consumer_priority_api;
+ ConsumerPriorityScope consumer_priority(consumer_priority_api,consumer_priority_snapshot);
+ const auto& placement=WindowsWorkerAffinityApi::plan();if(!placement.valid())throw WorkerAffinityError(placement.failure);
+ WorkerAffinitySnapshot consumer_affinity_snapshot,producer_affinity_snapshot;
+ WindowsWorkerAffinityApi consumer_affinity_api;
+ WorkerAffinityScope consumer_affinity(consumer_affinity_api,consumer_affinity_snapshot,placement.consumer_mask);
+ const auto due_epoch=clock.now_ns();
+ const std::string generator=tap_streaming?std::string(tap_reset_workload::generator):streaming?"closed_reset_v2_streamed_all_offsets":"historical_twelve_precomputed_RGB";
+ if(!emit({{"event","producer_schedule"},{"epoch_ns",due_epoch},{"cadence_ms",cadence},{"requested",n},{"generator",generator}}))throw std::runtime_error("producer schedule Journal admission");
+ std::jthread producer([&]{try{
+  WindowsWorkerAffinityApi affinity_api;WorkerAffinityScope affinity(affinity_api,producer_affinity_snapshot,placement.producer_mask);
+  WindowsProducerPriorityApi priority_api;ProducerPriorityScope priority(priority_api);
+  for(int i=1;i<=n;++i){
+   namespace pd=cold::publication_diag;
+   auto& sample=samples[i];sample.producer_due=due_epoch+Nanoseconds(i-1)*cadence*1'000'000;
+   auto& diagnostic=publication_slots[std::size_t(i-1)];
+   pd::AttemptBinding binding(diagnostic,clock,static_cast<std::uint32_t>(i),sample.producer_due);
+   pd::stamp(pd::Point::wait_enter);
+   cold::poll_gap::Clock wait_clock(clock,diagnostic.gap);
+   producer_wait.wait_until(wait_clock,sample.producer_due,&diagnostic.wait);
+   pd::stamp(pd::Point::wait_return);
+   sample.render_start=clock.now_ns();pd::record(pd::Point::render_start,sample.render_start);
+   if(tap_streaming)tap_reset_workload::render(generated,i);else if(streaming)streaming_workload::render(generated,i);
+   sample.render_end=clock.now_ns();pd::record(pd::Point::render_end,sample.render_end);
+   pd::stamp(pd::Point::frame_construct_enter);
+   {
+    pd::StampOnExit destroyed(pd::Point::frame_destroy_return); // after f's destructor
+    Frame f;
+    pd::StampOnExit destroying(pd::Point::frame_destroy_enter); // before f's destructor
+    pd::stamp(pd::Point::frame_construct_return);
+    f.sequence=i;f.epoch=f.generation=f.geometry_version=1;f.width=1280;f.height=720;f.stride=3840;f.source_rotation=1;
+    pd::stamp(pd::Point::frame_scalars_return);
+    pd::stamp(pd::Point::frame_backend_enter);
+    const auto backend_address=pd::before_string(diagnostic.frame_backend,f.capture_backend);
+    f.capture_backend="offline_memory_stub";
+    pd::after_string(diagnostic.frame_backend,f.capture_backend,backend_address);
+    pd::stamp(pd::Point::frame_backend_return);
+    f.capture_complete_ns=f.pixels_ready_ns=sample.render_end;sample.capture=f.capture_complete_ns;
+    const auto* pixels=streaming?generated.data():images[(i-1)%12].data();
+    pd::stamp(pd::Point::frame_metadata_return);
+    pd::stamp(pd::Point::publish_call_enter);
+    sample.published_ok=latest.publish(pixels,1280*720*3,f);
+    sample.publication_return=clock.now_ns();pd::record(pd::Point::publication_return,sample.publication_return);
+    diagnostic.published_ok=sample.published_ok;++publish_attempts;
+   }
+   binding.complete();
+  }
+  priority.close();affinity.close();
+ }catch(...){safe=false;}done=true;});
+ bool supervisor_stopped=false;std::uint64_t seen=0;while(true){
+  // A due Up or evidence expiry must not wait for the next producer frame.
+  // The same consumer remains the sole owner; receipts use the same bounded
+  // stream/ledger/Journal join as dispatch, with no retry after uncertainty.
+  if(!supervisor_stopped&&!rt.step.poll()){safe=false;stop=rt.step.stop_reason();supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
+  if(!supervisor_stopped&&(admission_failed||journal.faulted())){safe=false;stop="journal_admission_or_writer_fault";supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
+  const auto wait=owner_wait_ns(supervisor_stopped?nullptr:rt.owner.scheduler(),clock.now_ns());
+  auto f=latest.read_after(seen,wait);if(!f){if(done)break;continue;}seen=f->sequence;auto& s=samples[seen];s.consumed=true;s.published=f->published_ns;
+  if(scene=="slow")std::this_thread::sleep_for(std::chrono::milliseconds(12));
+  if(!supervisor_stopped&&!rt.dispatch(*f,mode=="B")){safe=false;stop=rt.step.stop_reason();supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
+  s.recognition=clock.now_ns();s.observer=supervisor_stopped?0:rt.observer_compute;s.hook=supervisor_stopped?0:rt.hook_compute;s.owner=supervisor_stopped?0:rt.owner_compute;s.owned=!supervisor_stopped&&rt.owner_processed;++consumed;invalid+=mode=="B"&&!rt.last.valid;
+  // Diagnostics carry joined frame/intent receipts and stay one-way.
+  s.writer=emit({{"event","complete_current_chain"},{"frame",seen},{"capture",f->capture_complete_ns},{"pixels_ready",f->pixels_ready_ns},{"published",f->published_ns},{"owner_complete",s.recognition},{"downs",rt.backend.downs},{"moves",rt.backend.moves},{"ups",rt.backend.ups}},scene!="writer");
+  if(!supervisor_stopped&&(admission_failed||journal.faulted())){safe=false;stop="journal_admission_or_writer_fault";supervisor_stopped=true;rt.finish();rt.lifecycle.stop(stop,true);}
+  s.complete=clock.now_ns();if(consumed%100==0)peak_rss=std::max(peak_rss,rss());
+ }
+ producer.join();const auto counters=latest.counters();latest.close();const auto release_start=clock.now_ns();const bool released=rt.finish();const auto release_end=clock.now_ns();consumer_affinity.close();consumer_priority.close();journal.close();const auto end=clock.now_ns();
+ const auto publication_diagnostic=publication_output.save("joined_completion_or_producer_failure");
+ std::vector<double> total,recognition,publish,render_times,producer_late,render_owner,render_publication;std::size_t producer_overruns=0,publication_overruns=0;J raw=J::array();std::size_t writer_ok=0,not_consumed=0;
+ for(int i=1;i<=n;++i){const auto& s=samples[i];if(s.render_end){render_times.push_back((s.render_end-s.render_start)/1e6);producer_late.push_back((s.render_start-s.producer_due)/1e6);producer_overruns+=s.render_end>s.producer_due+Nanoseconds(cadence)*1'000'000;if(s.publication_return){render_publication.push_back((s.publication_return-s.render_start)/1e6);publication_overruns+=s.publication_return>s.producer_due+Nanoseconds(cadence)*1'000'000;}if(s.owned)render_owner.push_back((s.recognition-s.render_start)/1e6);}if(s.consumed){total.push_back((s.complete-s.capture)/1e6);recognition.push_back((s.recognition-s.capture)/1e6);publish.push_back((s.published-s.capture)/1e6);writer_ok+=s.writer;}else ++not_consumed;
+  raw.push_back({{"attempt",i},{"producer_due_ns",s.producer_due},{"render_start_ns",s.render_start},{"render_end_ns",s.render_end},{"publication_return_ns",s.publication_return},{"capture",s.capture},{"published_ok",s.published_ok},{"consumed",s.consumed},{"owned",s.owned},{"published",s.published},{"owner_complete",s.recognition},{"journal_enqueue_complete",s.complete},{"observer_ns",s.observer},{"hook_ns",s.hook},{"owner_ns",s.owner},{"writer_ok",s.writer}});}
+ std::ofstream rows(report+".attempts.json");rows<<raw.dump()<<'\n';if(!rows)throw std::runtime_error("attempt write");
+ J result={{"schema","pas.prelive-complete-chain-cost.v1"},{"mode",mode},{"scene",scene},{"attempts",publish_attempts.load()},{"requested",n},{"consumed",consumed},{"owner_seen",consumed},{"owner_seen_fraction",double(consumed)/n},{"published",counters.published},{"pool_drops",counters.pool_drops},{"consumer_skips",counters.consumer_skips},{"unconsumed",not_consumed},{"writer_ok",writer_ok},{"writer_drops",journal.debug_drops()},{"writer_fault",journal.faulted()},{"raw_proposals",rt.raw},{"eligible",rt.accepted},{"unknown",rt.unknown},{"invalid",invalid},{"own_down",rt.backend.downs},{"own_move",rt.backend.moves},{"own_up",rt.backend.ups},{"injection_failed",rt.backend.failed},{"safe",safe.load()},{"stop",stop},{"release_verified",released},{"release_ms",(release_end-release_start)/1e6},{"capture_to_owner_journal_ms",distribution(total)},{"capture_to_owner_ms",distribution(recognition)},{"capture_to_publish_ms",distribution(publish)},{"wall_ms",(end-begin)/1e6},{"rss_initial",initial_rss},{"rss_peak_sampled",peak_rss},{"rss_sampling_frames",100},{"pool_slots",3},{"latest_capacity",1},{"writer_capacity",writer_capacity},{"sample_storage_bound",n+1},{"hook_storage_bytes",Hook::storage_bytes()},{"clock_domain","host_QPC"},{"source_absolute_age",nullptr},{"device_endpoints",0},{"transport","offline FakeTouch receipts; no real capture/RPC cost"},{"physical_opportunities",nullptr},{"runtime_cost_gate","NOT_READY until frozen AA/AB and complete safety review"}};
+ std::size_t owned=0;std::vector<double> owned_total;for(const auto&s:samples)if(s.owned){++owned;owned_total.push_back((s.recognition-s.capture)/1e6);}result["owner_seen"]=owned;result["owner_seen_fraction"]=double(owned)/n;result["capture_to_owner_ms"]=distribution(owned_total);
+ J measurement;std::vector<double> mt,mo,mh,mr;std::size_t mn=0;for(int i=257;i<=n;++i){const auto& s=samples[i];if(!s.owned)continue;++mn;mt.push_back((s.recognition-s.capture)/1e6);mo.push_back(s.owner/1e6);mh.push_back(s.hook/1e6);mr.push_back(s.observer/1e6);}measurement={{"attempts",n-256},{"owner_seen",mn},{"owner_seen_fraction",double(mn)/(n-256)},{"capture_to_owner_ms",distribution(mt)},{"observer_ms",distribution(mr)},{"hook_ms",distribution(mh)},{"owner_ms",distribution(mo)}};
+ result["measurement"]=measurement;result["warmup_attempts"]=256;result["cadence_ms"]=cadence;
+ result["first_owner_failure"]=rt.step.first_failure();result["lifecycle_stop_reason"]=rt.lifecycle.status().reason;
+ result["journal_event_encoding"]=compressed_stress?"gzip-jsonl-v1":"plain-jsonl-v1";
+ result["owner_wait_policy"]="same_consumer_poll_before_wait; min(next_phase_or_expiry,10ms_watchdog); frame_arrival_wakes_early";
+ result["producer_wait_policy"]="full_period_active_qpc";
+ result["producer_wait_scope"]="cold synthetic producer only; full remaining period QPC/YieldProcessor active wait; increased CPU cost measured by original workload; unchanged absolute epoch/cadence, no early render, skipped attempt, due reset or kernel fallback; same A/B";
+ result["producer_active_tail_ns"]=0;
+ result["producer_active_wait_horizon_ns"]=producer_active_wait_horizon_ns;
+ result["producer_active_wait_poll_cap"]=producer_active_wait_poll_cap;
+ result["producer_no_kernel_wait"]=true;
+ result["producer_priority_policy"]="synthetic producer thread only; NORMAL process class; scoped HIGHEST (requested=2); verified query/set/readback/restore; same A/B policy";
+ result["consumer_priority_policy"]="cold consumer thread only; NORMAL process class; scoped HIGHEST (requested=2); explicit verified query/set/readback/restore; same A/B policy; writer unchanged";
+ result["consumer_priority"]={{"thread_id",consumer_priority_snapshot.thread_id},{"process_class",consumer_priority_snapshot.process_class},{"process_class_after_close",consumer_priority_snapshot.process_class_after_close},{"previous",consumer_priority_snapshot.previous},{"requested",consumer_priority_requested},{"applied_readback",consumer_priority_snapshot.applied_readback},{"restored_readback",consumer_priority_snapshot.restored_readback},{"applied",consumer_priority_snapshot.applied},{"restored",consumer_priority_snapshot.restored},{"verified",consumer_priority_snapshot.verified()},{"failure",consumer_priority_failure_name(consumer_priority_snapshot.failure)},{"rollback_failure",consumer_priority_failure_name(consumer_priority_snapshot.rollback_failure)},{"fallback_attempted",consumer_priority_snapshot.fallback_attempted}};
+ result["worker_placement"]=cold::producer_placement::plan_json(placement,true);
+#if defined(PAS_PRODUCER_ELIGIBILITY_DELTA) && PAS_PRODUCER_ELIGIBILITY_DELTA
+ result["producer_eligibility_delta_identity"]=cold::producer_placement::eligibility_delta_identity();
+ result["qualification_issued"]=false;result["cost_qualification"]=false;result["live_ready"]=false;
+#endif
+ result["consumer_affinity"]=affinity_json(consumer_affinity_snapshot);result["producer_affinity"]=affinity_json(producer_affinity_snapshot);
+ result["phase_lateness_ms"]={{"down",distribution(phase_late[0])},{"move",distribution(phase_late[1])},{"up",distribution(phase_late[2])}};result["journal_admitted_bytes"]=journal.admitted_bytes();result["journal_records"]=journal.admitted_records();result["journal_admission_failed"]=admission_failed;result["supervisor_stopped"]=supervisor_stopped;result["final_release"]={{"requested",rt.final_release.requested_ids},{"failed",rt.final_release.failed_ids},{"unknown",rt.final_release.unknown_ids},{"start",rt.final_release.start_ns},{"return",rt.final_release.return_ns}};
+ result["injection_ms"]=distribution(injection);result["all_phase_lateness_ms"]=distribution(late);result["evidence_to_injection_ms"]=distribution(evidence_to_injection);result["receipt_count"]=receipt_count;result["release_calls"]=release_calls;result["provenance"]=provenance;
+ result["producer_epoch_ns"]=due_epoch;result["producer_render_ms"]=distribution(render_times);result["producer_schedule_lateness_ms"]=distribution(producer_late);result["render_start_to_owner_ms"]=distribution(render_owner);result["producer_deadline_overruns"]=producer_overruns;result["render_start_to_publication_return_ms"]=distribution(render_publication);result["publication_deadline_overruns"]=publication_overruns;
+ result["renderer_storage_bytes"]=streaming?streaming_workload::bytes:12*streaming_workload::bytes;result["generator"]=generator;result["render_timing_scope"]="render start/end separately measured; capture_complete is end of synthetic render; render_start_to_owner includes render; no real capture/RPC qualification";
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ result["processor_topology"]=processor_topology;
+#endif
+ result["publication_diagnostic"]=publication_diagnostic;
+ result["diagnostic_only"]=true;result["qualification_issued"]=false;result["cost_qualification"]=false;
+ result["normal_qualification"]=false;result["AA_qualification"]=false;result["noise_qualification"]=false;
+ result["ABBA_qualification"]=false;result["live_ready"]=false;
+ qos_result=std::move(result);
+ });
+ if(!process_qos.verified())throw std::runtime_error("cold process QoS explicit restore required");
+ qos_result["process_qos"]=cold_process_qos_json(process_qos);return qos_result;
+}
+}
+int main(int argc,char**argv){try{if(argc!=8||std::string_view(argv[1])!="pipeline")throw std::runtime_error("diagnostic pipeline A/B scene n freshcampaign runid freshreport only; no qualification");const std::string report=argv[argc-1];reserve_fresh_offline_report(report);J result;
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ if(argc!=6||std::string_view(argv[1])!="pipeline")throw std::runtime_error("standalone diagnostic pipeline only; no campaign qualification");
+#endif
+ if(std::string_view(argv[1])=="pixels"&&argc==4)result=pixels(argv[2],report);else if(std::string_view(argv[1])=="pipeline"&&argc==6)result=pipeline(argv[2],argv[3],std::stoi(argv[4]),report);
+ else if(std::string_view(argv[1])=="pipeline"&&argc==8){
+  FILETIME created{},exited{},kernel{},user{};if(!GetProcessTimes(GetCurrentProcess(),&created,&exited,&kernel,&user))throw std::runtime_error("producer process time");
+  const auto created_ticks=(std::uint64_t(created.dwHighDateTime)<<32)|created.dwLowDateTime;
+  wchar_t executable[32768];const auto length=GetModuleFileNameW(nullptr,executable,32768);if(length==0||length>=32768)throw std::runtime_error("producer module path");
+  HostClock clock;const J process={{"pid",GetCurrentProcessId()},{"creation_filetime",created_ticks},{"run_start_ns",clock.now_ns()}};
+  const auto provenance=pas::cost_provenance::producer(argv[5],argv[6],executable,argv[2],argv[3],std::stoi(argv[4]),report,process);
+  result=pipeline(argv[2],argv[3],std::stoi(argv[4]),report,provenance);
+  if(pas::cost_provenance::producer(argv[5],argv[6],executable,argv[2],argv[3],std::stoi(argv[4]),report,process)!=provenance)throw std::runtime_error("producer freeze changed during run");
+ }else throw std::runtime_error("offline CLI only; no endpoint argument");
+ result["loaded_module_paths"]=modules();result["rss_peak_os"]=peak_rss_os();
+#ifdef PAS_DIAGNOSTIC_PHASE_PROFILE
+ result["diagnostic_phase_profile_enabled"]=true;result["cost_qualification"]=false;
+#endif
+ std::ofstream out(report);out<<result.dump(2)<<'\n';if(!out)return 2;std::cout<<result.at("schema")<<'\n';return result.value("release_verified",false)?0:1;
+ }catch(const ConsumerPriorityError&e){std::cerr<<e.what()<<"; rollback="<<consumer_priority_failure_name(e.rollback_reason())<<'\n';return 2;}
+ catch(const WorkerAffinityError&e){std::cerr<<e.what()<<"; rollback="<<worker_affinity_failure_name(e.rollback_reason())<<'\n';return 2;}
+ catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}
