@@ -1,3 +1,5 @@
+2026-10-13 已依使用者新決定，以完成本輪20首可用IN分數覆蓋的baseline／35ms作為現行approach，並保留最近lazy版供明選研究。現階段交付為原碼、預設與結果可對照的本機審查差異；lazy僅三首、穩定升分未證明，原cost／live負結果不變。見[現行基準與審查說明](../../../research/manual_score_only/review/README.md)。本次不新增遊玩／cold readiness循環，以下較早開發階段為歷史。
+
 2026-10-12 使用者接受既有main80並放棄實機ready全過前置，授權commit／push及新的GPT‑6.1 Sol／xhigh local main task先說明下一步。原測試負結果保持，不再繼續cold readiness修補循環。後續Chapter Legacy可用IN各一次、只記分數與一輪後停止授權保持；見[最新交接](../../research/live-readiness-20261007/USE_EXISTING_MAIN80_NEXT_TASK_20261012.md)。以下ready前置／不建新thread等限制按歷史解讀。
 
 2026-10-12 已依使用者指示回復main80／`3ee69ed`原碼；tracked程式及建置／驗證工具逐Git bytes／SHA核對一致，兩版Git歷史與測量證據保留。歷史Normal／AA／noise結果main80為3／3、11／12、15／18，main89為2／3、6／12、11／18；兩版ABBA36完整raw皆PASS但成本資格皆NOT_READY。見[回復與比較](../../research/live-readiness-20261007/MAIN80_ROLLBACK_AND_MAIN89_COMPARISON_20261012.md)。本輪不重建／重測，不開emulator／新thread／ETW；回復不是新binary或實機ready資格，後續以main80原碼為基準。以下「最新」皆為歷史。

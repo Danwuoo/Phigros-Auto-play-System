@@ -85,7 +85,7 @@ foreach(PAS_BUILD_FILE src/game.cpp src/game_clip_replay.cpp src/game_cold_pipel
     src/journal.cpp include/pas/journal.hpp include/pas/result_ui_labels.hpp include/pas/game_session.hpp include/pas/session_archive.hpp include/pas/session_pixel_clips.hpp src/session_pixel_clips.cpp apps/pas/main.cpp include/pas/session_recording.hpp src/session_recording.cpp include/pas/runtime.hpp
     include/pas/candidate_admission.hpp src/candidate_admission.cpp tests/candidate_admission_tests.cpp include/pas/candidate_packet.hpp
     include/pas/candidate_receipts.hpp src/candidate_receipts.cpp tests/candidate_receipt_collector_tests.cpp include/pas/touch_evidence.hpp include/pas/emulator.hpp include/pas/grpc_transport.hpp
-    include/pas/config.hpp include/pas/adb.hpp
+    include/pas/config.hpp include/pas/adb.hpp include/pas/manual_score_budget.hpp
     research/pre_emulator/qualification_reader/reader/narrow_preflight.hpp
     research/pre_emulator/qualification_reader/reader/component_delta.hpp
     research/pre_emulator/qualification_reader/reader/cooperative_build.hpp

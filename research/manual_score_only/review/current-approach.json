@@ -1,0 +1,118 @@
+{
+  "schema": "pas.manual-score-review.v1",
+  "decision_date": "2026-10-13",
+  "selected_variant": "baseline",
+  "selected_lead_ms": 35,
+  "default_round_limit": 20,
+  "decision": "Use the completed Chapter Legacy 20-song score pass as the current approach; retain lazy as an explicitly selected experiment.",
+  "baseline": {
+    "source": "src/manual_session.cpp",
+    "build_evidence": "research/manual_score_only/review/evidence/baseline-build.json",
+    "local_exe": "out/manual-score-main80-20rounds-20261012-r2/pas.exe",
+    "exe_sha256": "4c048b96f1ec688ce6cf273cedc05c3f004cd70aa0460aad1b777a8cfceabfa2",
+    "validation": "20 unique available IN scores; first five re-run because prior scores were missing; Light read from the existing result screen. This is chapter score coverage, not new formal qualification."
+  },
+  "retained_latest": {
+    "variant": "lazy",
+    "source": "research/manual_score_only/variants/lazy/manual_session.cpp",
+    "build_evidence": "research/manual_score_only/review/evidence/lazy-build.json",
+    "local_exe": "out/manual-score-main80-lazy-20261013/pas.exe",
+    "exe_sha256": "4b7fa196ce88f20258a6b3466b5a7c3d9d2d06ac5a960a0655bffad7476121c1",
+    "validation": "16 diagnostic software checks and three actual IN scores; no complete twenty-song pass; stable score improvement unproven."
+  },
+  "preserved_original": {
+    "local_exe": "out/prelive-producer-eligibility-main80-e1/pas.exe",
+    "exe_sha256": "296387608a2cdb98f50166a1a5a6859a411068c46b5b240a9833c83d20cf3bf4",
+    "source_commit": "3ee69edc85acb6b9b968424374a376f351d0e2dd"
+  },
+  "source_pins": [
+    {
+      "path": "apps/pas/main.cpp",
+      "sha256": "40d4b13ac7a6dbb05f6098082ea311015021d5d12ca11194296b307f54d3f12f"
+    },
+    {
+      "path": "src/manual_session.cpp",
+      "sha256": "05e006ae58546d6f57f220241beee6701320d3a32b55bba31094499b40c20660"
+    },
+    {
+      "path": "include/pas/runtime.hpp",
+      "sha256": "84e35d49197d0a54bfacc93944fd823efdaa4ced85664a8310ad1c4d3051af24"
+    },
+    {
+      "path": "include/pas/manual_score_budget.hpp",
+      "sha256": "cc1b3c96187acc4e39733bd282acda7704a45dbbbcae24e1146f14a2321a2d45"
+    },
+    {
+      "path": "research/manual_score_only/variants/lazy/manual_session.cpp",
+      "sha256": "8e060735493afd999d0b07a589dea751760a37c8fbd5690420b369349d766cb6"
+    },
+    {
+      "path": "include/pas/manual_score_diagnostics.hpp",
+      "sha256": "ca584da242ad34aea694a32a9e3e52009d220769b4ce4ff2fa3fde2e8f1e0f85"
+    }
+  ],
+  "score_evidence": [
+    {
+      "path": "research/manual_score_only/review/evidence/chapter-legacy-in-20261013.json",
+      "original_path": "measurements/game-scores/chapter-legacy-in-20261013.json",
+      "sha256": "3cb97891f0af410e65a1d326806a9cecccbe03f25bfca9fca2dd260a16ee9447",
+      "rows": 20,
+      "role": "baseline Chapter Legacy complete IN score pass"
+    },
+    {
+      "path": "research/manual_score_only/review/evidence/chapter-legacy-aa-20261013.json",
+      "original_path": "measurements/game-scores/chapter-legacy-aa-20261013.json",
+      "sha256": "1c03f06d8eb69ae102337d9608636bdc8b98612a9fc9884ebde74a9f13afef96",
+      "rows": 1,
+      "role": "baseline lead35 repeat"
+    },
+    {
+      "path": "research/manual_score_only/review/evidence/chapter-legacy-lead40-20261013.json",
+      "original_path": "measurements/game-scores/chapter-legacy-lead40-20261013.json",
+      "sha256": "187d3434fc92b64d63f9d4d371f74340fb50978fcda222ce217d5d5eca1554f4",
+      "rows": 3,
+      "role": "baseline lead40 comparison"
+    },
+    {
+      "path": "research/manual_score_only/review/evidence/chapter-legacy-lazy-lead35-20261013.json",
+      "original_path": "measurements/game-scores/chapter-legacy-lazy-lead35-20261013.json",
+      "sha256": "7f70bf0ec7f61b9a5c07b060e4f473e9773a6ae1142bdfc2f1483d5ed3aaa904",
+      "rows": 3,
+      "role": "retained lazy lead35 comparison"
+    }
+  ],
+  "allowed_score_fields": [
+    "song",
+    "in_level",
+    "score",
+    "status"
+  ],
+  "asset_pins": [
+    {
+      "path": "research/manual_score_only/review/evidence/baseline-build.json",
+      "sha256": "d55dce3c116771bf1ad1f181e3fe29f35a9ab131777b4c89c59496939318c7b6"
+    },
+    {
+      "path": "research/manual_score_only/review/evidence/lazy-build.json",
+      "sha256": "bfa3e131d5e8e5c18eaf3794ff5141bb72f15846ed03b066810c08eef1f685e7"
+    },
+    {
+      "path": "research/manual_score_only/review/evidence/lazy-contract.log",
+      "sha256": "4429feba0e7f468a05283de1c94025dfb3fa4a72f16e02a11d1884346b7e048d"
+    }
+  ],
+  "historical_result": {
+    "path": "research/manual_score_only/result-20261013.json",
+    "sha256": "2bcd34dd0453e7b994200239302955cb8f0ea8e4b31c30bc18db5d1352b245bd",
+    "meaning": "Immutable completion record made before the later user selection of baseline; its lazy default describes the prior decision."
+  },
+  "qualification": {
+    "cost": "NOT_READY",
+    "live": "UNQUALIFIED",
+    "historical_negative_results_and_stop": "preserved",
+    "new_qualification_issued": false
+  },
+  "review_scope": "Local source/default/documentation/evidence preparation only; no new game run, cold readiness campaign or rebuilt runtime.",
+  "publication": "Local uncommitted review changes; no push or PR.",
+  "rebuild_requirements": "Windows and locally retained main80 toolchain, libraries, overlay objects, DLLs and capability evidence. Source/evidence review is available independently of those ignored local assets."
+}

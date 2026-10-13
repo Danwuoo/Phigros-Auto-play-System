@@ -20,6 +20,10 @@ private:
 };
 void run_manual_session(const std::string& config_path,const std::string& capability_path,
                         bool no_preview,Nanoseconds round_watchdog=0,bool pixel_clips=false,bool full_recording=false,bool one_round=false);
+// Bounded existing-strategy rounds with no gameplay persistence or cold admission.
+// Live capability, UI, freshness, cancellation and release checks still apply.
+void run_manual_score_only_session(const std::string& config_path,const std::string& capability_path,
+                                   Nanoseconds round_watchdog=600'000'000'000LL,unsigned rounds=1);
 // Explicit current-candidate request never falls back to the donor path. The
 // only current admission is typed UNQUALIFIED and rejects before any I/O.
 void run_current_candidate_manual_session(const CandidateLiveAdmission&,

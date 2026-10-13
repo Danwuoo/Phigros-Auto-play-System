@@ -1,0 +1,99 @@
+{
+  "schema": "pas.manual-score-development-result.v1",
+  "date": "2026-10-13",
+  "status": "COMPLETE_STOPPED",
+  "baseline": "main80 / 3ee69edc85acb6b9b968424374a376f351d0e2dd",
+  "workspace_head": "26002706baa6d25ac6cb14cdc9c703eae5cf4e2d",
+  "source_changes_committed": false,
+  "preserved_original": {
+    "path": "out/prelive-producer-eligibility-main80-e1/pas.exe",
+    "sha256": "296387608a2cdb98f50166a1a5a6859a411068c46b5b240a9833c83d20cf3bf4"
+  },
+  "entry_baseline": {
+    "build": "out/manual-score-main80-20rounds-20261012-r2/build.json",
+    "exe_sha256": "4c048b96f1ec688ce6cf273cedc05c3f004cd70aa0460aad1b777a8cfceabfa2"
+  },
+  "entry_lazy": {
+    "build": "out/manual-score-main80-lazy-20261013/build.json",
+    "exe_sha256": "4b7fa196ce88f20258a6b3466b5a7c3d9d2d06ac5a960a0655bffad7476121c1",
+    "fresh_translation_units": 2,
+    "base_objects_and_libraries": "preserved main80 binding; exact libraries/object SHA checked",
+    "change": "Only score-only mode skips discarded per-frame decision/UI evidence, receipt, plan and notice JSON construction. Gameplay decisions, drains, counters, touch release and original archive implementation remain in use.",
+    "actual_validation": "Three completed IN scores, automatic stop at configured three-round limit; native exit 0. No fresh twenty-song run of this variant."
+  },
+  "score_files": {
+    "main_20": "measurements/game-scores/chapter-legacy-in-20261013.json",
+    "lead35_aa": "measurements/game-scores/chapter-legacy-aa-20261013.json",
+    "baseline_lead40": "measurements/game-scores/chapter-legacy-lead40-20261013.json",
+    "lazy_lead35": "measurements/game-scores/chapter-legacy-lazy-lead35-20261013.json",
+    "allowed_fields": [
+      "song",
+      "in_level",
+      "score",
+      "status"
+    ],
+    "main_unique_songs": 20,
+    "unavailable_in": 0
+  },
+  "parameter_decision": {
+    "default_variant": "lazy",
+    "default_lead_ms": 35,
+    "optional_lead_ms": 40,
+    "default_round_limit": 20,
+    "interpretation": "Lead40 was above the first lead35 score on all three comparison songs, but Winter lead35 A/A was higher than lead40. Lazy lead35 had mixed score changes. These isolated scores do not establish a stable or causal score improvement. Adopt only the removal of unnecessary JSON construction; preserve both executables and all recorded scores."
+  },
+  "software_validation": {
+    "budget": {
+      "checks": 92,
+      "status": "PASS",
+      "source": "research/manual_score_only/budget_tests.cpp",
+      "reuse_basis": "manual_score_budget.hpp SHA unchanged from tested baseline entry"
+    },
+    "entry_invalid_option_cases": {
+      "checks": 5,
+      "status": "PASS",
+      "reuse_basis": "apps/pas/main.cpp SHA unchanged from tested baseline entry"
+    },
+    "lead_deadline_and_release": {
+      "checks": 1,
+      "status": "PASS",
+      "test": "ManualOwner.ConfiguredLeadMovesOnlyFreshHoldDeadlineAndReleases",
+      "exe": "out/manual-score-main80-20rounds-20261012-r2/tuning-validation/lead_test.exe"
+    },
+    "lazy_contract": {
+      "checks": 16,
+      "status": "PASS",
+      "log": "out/manual-score-main80-lazy-20261013/lazy-validation-r2/test.log",
+      "scope": "40,000 software-only discarded events across plain/gzip modes; factory calls and queue remain zero, no directories; closed archive still rejects; enabled diagnostic output byte-equal."
+    },
+    "prior_lazy_validation_setup": {
+      "status": "LINK_FAILED",
+      "path": "out/manual-score-main80-lazy-20261013/lazy-validation",
+      "reason": "Runner selected trailing empty response-file line instead of production libraries; retained failed artifacts and repaired selection to the unique pas_core.lib row. No runtime assertion failed in this attempt."
+    },
+    "scripts": "PowerShell parser checks passed",
+    "source_and_executable": "Five current source pins and deployed executable SHA match build report",
+    "gameplay_persistence": "none; no new manual-session directories in measurements/game-assist; synthetic software fixtures stored only under out"
+  },
+  "limits": {
+    "watchdog_seconds": 600,
+    "between_song_wait_seconds": 1800,
+    "max_wall_seconds_for_20": 18000,
+    "escape_ctrl_c_fault_or_abort": "stop and release; aborted round does not count"
+  },
+  "reminder": {
+    "id": "07-10",
+    "kind": "one-shot heartbeat",
+    "deadline": "2026-10-13T07:10:00+08:00",
+    "status": "ACTIVE",
+    "completed_early_behavior": "confirm stopped results only; do not restart testing, gameplay or development"
+  },
+  "historical_qualification": {
+    "cost": "NOT_READY",
+    "live": "UNQUALIFIED",
+    "cold_readiness_rerun": false,
+    "new_cost_or_live_qualification": false,
+    "negative_results_and_stop_records": "unchanged"
+  },
+  "next_action": "No further work authorized by this completion. Wait for new user instructions."
+}

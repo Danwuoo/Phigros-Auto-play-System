@@ -1,3 +1,7 @@
+2026-10-13 現行 approach：採用完成 Chapter Legacy 20首可用IN分數收集的 **baseline／35ms／score-only**。預設原碼、launcher與建置選擇皆為baseline；最近的lazy診斷省略版保留為明選實驗，只有三首實跑，未證明穩定提升。原碼與已測版本SHA相符，已測binary保持原樣。[審查入口與完整分數證據](research/manual_score_only/review/README.md)列出選擇依據、兩版來源、檢查方式及限制。
+
+本次為本機未提交的審查整理，沒有追加遊玩或cold readiness修補。07:10收尾核對已完成，程式保持停止；原cost NOT_READY／live UNQUALIFIED與歷史負結果保持。以下按日期保留原開發及量測記錄；[原完成紀錄](research/manual_score_only/result-20261013.json)中的lazy預設為這次改選baseline之前的決定。
+
 2026-10-12 使用者接受既有main80並放棄實機ready全過前置，授權commit／push及新的GPT‑6.1 Sol／xhigh local main task先說明下一步。原測試負結果保持，不再繼續cold readiness修補循環。後續Chapter Legacy可用IN各一次、只記分數與一輪後停止授權保持；見[最新交接](docs/research/live-readiness-20261007/USE_EXISTING_MAIN80_NEXT_TASK_20261012.md)。以下ready前置／不建新thread等限制按歷史解讀。
 
 2026-10-12 已依使用者指示回復main80／`3ee69ed`原碼；tracked程式及建置／驗證工具逐Git bytes／SHA核對一致，兩版Git歷史與測量證據保留。歷史Normal／AA／noise結果main80為3／3、11／12、15／18，main89為2／3、6／12、11／18；兩版ABBA36完整raw皆PASS但成本資格皆NOT_READY。見[回復與比較](docs/research/live-readiness-20261007/MAIN80_ROLLBACK_AND_MAIN89_COMPARISON_20261012.md)。本輪不重建／重測，不開emulator／新thread／ETW；回復不是新binary或實機ready資格，後續以main80原碼為基準。以下「最新」皆為歷史。
@@ -242,7 +246,30 @@ Debug／ASan 對應 windows-debug／windows-asan。presets 含本機 VS instance
 
 初次安裝的 gRPC 深路徑可能超過 Windows 限制；本機 C:/pas-bld-9408 與 C:/pas-pkg-9408 為 out/vcpkg_installed/vcpkg 下 blds／pkgs 的短路徑 junction。清理後可重建空 staging 目錄；換機須設定自己的短路徑。已安裝 x64-windows 依賴保留。
 
-## 手動實戰操作參考（本輪不啟動）
+## 手動實戰操作參考
+
+2026-10-12 既有 main80 試跑新增 `manual-session --score-only`：使用原手動策略，
+由使用者選曲及按 Play；`--rounds 1..20` 設定結算首數，無預覽／clips／錄影／journal／summary／結果圖，
+保留當前裝置能力指紋、即時 HUD 門控與停止釋放。此入口不要求 cold admission，
+不改寫原 cost NOT_READY／live UNQUALIFIED。執行檔為 main80 保存元件加兩個入口 TU 的新連結，
+不是原 main80 executable 的相同 bytes。
+本機已還原的 main80 與入口建置分別在 `out/prelive-producer-eligibility-main80-e1`、
+`out/manual-score-main80-20rounds-20261012-r2`；這是預設launcher使用的已測入口。
+`research/manual_score_only/build.ps1` 預設重建baseline到新的 output root，`-Variant lazy` 可重建保留實驗；
+重建產生新artifact，不替換或冒稱原已測binary。腳本依賴本機保存的main80 libraries／objects／toolchain。
+模擬器需用 `-avd phigros -grpc 8554 -grpc-use-token` 啟動；程式待命命令為
+`& ./research/manual_score_only/standby.ps1`，預設連續20首；每首結算後釋放觸控並回到待命，
+由使用者選下一首及按 Play，第20首後停止。單曲 watchdog 仍為10分鐘，曲間待命30分鐘，
+整段 session 上限5小時；曲間待命從每首結束重新計時。Escape／Ctrl+C、故障或中止仍立即停止。
+2026-10-13本輪先前獲授Computer Use續測、補測與有限調參，已完成並於07:10核對停止；
+這次只整理現行approach與審查資料。
+診斷省略版另在 `out/manual-score-main80-lazy-20261013`，只在 score-only 模式跳過會被丟棄的
+每幀／receipt／plan 診斷 JSON 建立，原辨識／planner／scheduler／觸控及原 archive 實作沿用；
+16項軟體檢查通過，包含 none 不呼叫 factory／不產檔、close 後拒絕及啟用診斷時輸出一致。
+`standby.ps1` 預設使用baseline、35ms及20首；`-Variant lazy` 明選診斷省略版。
+一般CMake的manual session亦為baseline；lazy原碼保留於 `research/manual_score_only/variants/lazy`。
+新版是省略無用工作，三首分數不構成穩定提升證明。
+`-LeadMs 35`／`40` 只選既有 lead profile，不改其他門檻。
 
 以下保留main50歷史操作參考，它目前是comparison／donor、沒有live-ready資格。preset建置輸出至`out/release-v145`，不能把殘留binary或此命令當作候選升格／本輪啟動授權。
 

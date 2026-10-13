@@ -9,6 +9,7 @@
 #include "pas/analysis.hpp"
 #include "pas/preview.hpp"
 #include "pas/strategy_version.hpp"
+#include "pas/manual_score_budget.hpp"
 #include "session_build_provenance.hpp"
 #include <algorithm>
 #include <fstream>
@@ -67,11 +68,11 @@ json release_json(const ReleaseReport& r,const std::string& reason) {
 }
 }
 static void run_manual_session_impl(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round,ManualVariant variant,
-    SessionArchive::Persistence persistence=SessionArchive::Persistence::diagnostic_archive,CandidatePhysicalAggregate* physical=nullptr) {
+    SessionArchive::Persistence persistence=SessionArchive::Persistence::diagnostic_archive,CandidatePhysicalAggregate* physical=nullptr,unsigned score_round_limit=1) {
     const bool candidate_mode=variant==ManualVariant::current_candidate;
     const bool score_only=persistence==SessionArchive::Persistence::none;
-    if(score_only&&(!candidate_mode||!no_preview||pixel_clips||full_recording||!one_round||watchdog<=0||watchdog>600'000'000'000LL))
-        throw std::invalid_argument("score-only trial requires current candidate, no preview/recording/clips, one round and watchdog at most 600s");
+    if(score_only&&(!no_preview||pixel_clips||full_recording||one_round!=(score_round_limit==1)||score_round_limit<1||score_round_limit>20||watchdog<=0||watchdog>600'000'000'000LL))
+        throw std::invalid_argument("score-only trial requires no preview/recording/clips, 1..20 rounds and watchdog at most 600s");
     const auto config=load_config(config_path);
     if(config.capture_kind!="emulator-grpc"||config.touch_kind!="emulator-grpc"||
        config.width!=1280||config.height!=720||config.source_rotation!=1||config.grpc_read_chunk_kib!=256||
@@ -86,6 +87,8 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
     if(!preflight.at("fingerprint_matches").get<bool>())throw std::runtime_error("manual-session capability fingerprint mismatch");
     HostClock clock;
     const auto session_start=clock.now_ns();
+    std::optional<ManualScoreBudget> score_budget;
+    if(score_only)score_budget.emplace(session_start,watchdog,score_round_limit);
     wchar_t module[32768]{};const auto size=GetModuleFileNameW(nullptr,module,32768);
     if(!size||size==32768)throw std::runtime_error("runtime executable unavailable");
     const auto root=std::filesystem::path(config.log_dir)/("manual-session-"+std::to_string(clock.now_ns()));
@@ -250,8 +253,15 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
                     {"interval_scope","latest decisions consumed by action owner; includes skipped frames; first 100000 samples"},
                     {"source_absolute_age",nullptr},{"release_requested_ids",release.requested_ids},
                     {"release_failed_ids",release.failed_ids},{"release_unknown_ids",release.unknown_ids}},std::move(image));
+                // Publish the new standby deadline before the supervisor can
+                // observe active_round_start==0 after a long completed song.
+                const bool score_done=score_budget&&score_budget->finish(result,clock.now_ns());
                 completed=active;active=0;active_round_start=0;
-                if(full_recording||one_round) {stopping=true;wake.notify();}
+                if(score_budget) {
+                    std::cout<<"Score-only completed "<<score_budget->completed()<<'/'<<score_budget->limit()
+                             <<(score_done?"; session stopping.\n":"; waiting for your next Play.\n")<<std::flush;
+                    if(score_done){stopping=true;wake.notify();}
+                } else if(full_recording||one_round) {stopping=true;wake.notify();}
             };
             archive.event(0,{{"event","session_state"},{"state","STANDBY"},{"reason","capability_preflight_passed"},{"monotonic_ns",clock.now_ns()}});
             std::cout<<"STANDBY: manually select a chart and press Play. Escape / Ctrl+C stops.\n"<<std::flush;
@@ -390,7 +400,7 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
             if(archive.faulted())throw std::runtime_error(archive.error());
             if(recording&&recording->faulted())throw std::runtime_error(recording->error());
             const auto now=clock.now_ns(),last=last_capture.load();const auto stats=capture.stats();
-            if(score_only&&now-session_start>=900'000'000'000LL)
+            if(score_budget&&score_budget->wall_expired(now))
                 throw std::runtime_error("score-only session wall limit reached");
             const bool expired=last&&now-last>=100'000'000;
             if((expired&&!stale)||stats.relative_stale_drops!=lag||stats.inactive!=inactive) {
@@ -398,7 +408,7 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
             }
             stale=expired;
             const auto active_start=active_round_start.load();
-            if(score_only&&!active_start&&now-session_start>=300'000'000'000LL)
+            if(score_budget&&!active_start&&score_budget->waiting_expired(now))
                 throw std::runtime_error("score-only waiting-for-Play limit reached");
             if(watchdog&&active_start&&now-active_start>=watchdog)
                 throw std::runtime_error("round_watchdog_aborted");
@@ -445,6 +455,10 @@ static void run_manual_session_impl(const std::string& config_path,const std::st
 }
 void run_manual_session(const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round) {
     run_manual_session_impl(config_path,capability_path,no_preview,watchdog,pixel_clips,full_recording,one_round,ManualVariant::legacy);
+}
+void run_manual_score_only_session(const std::string& config_path,const std::string& capability_path,Nanoseconds watchdog,unsigned rounds) {
+    run_manual_session_impl(config_path,capability_path,true,watchdog,false,false,rounds==1,
+                            ManualVariant::legacy,SessionArchive::Persistence::none,nullptr,rounds);
 }
 void run_current_candidate_manual_session(const CandidateLiveAdmission& admission,const std::string& config_path,const std::string& capability_path,bool no_preview,Nanoseconds watchdog,bool pixel_clips,bool full_recording,bool one_round) {
     enter_current_candidate_manual_session(admission,[&]{

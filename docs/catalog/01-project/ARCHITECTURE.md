@@ -1,3 +1,5 @@
+2026-10-13 現行approach為main80基準的baseline／35ms／score-only入口，已完成Chapter Legacy 20首可用IN分數覆蓋。原碼與已測入口source SHA一致；launcher／build及一般CMake預設baseline。lazy診斷省略版另存為明選實驗，保留原source／binary／三首結果，未取得完整20首測試或穩定改善結論。原cost NOT_READY／live UNQUALIFIED保持。見[現行基準與審查說明](../../../research/manual_score_only/review/README.md)；以下架構及冷開發記錄按日期解讀。
+
 2026-10-12 最新使用決定：接受回復的main80既有版本，放棄實機ready全過前置；原R2與歷史負結果仍照報，不再以cold qualification阻擋下一步說明。新GPT‑6.1 Sol／xhigh local main task與後續emulator／CU一輪IN只記分數授權已明列於[最新交接](../../research/live-readiness-20261007/USE_EXISTING_MAIN80_NEXT_TASK_20261012.md)。以下ready前置與不建新thread限制為歷史。
 
 2026-10-12 現行原碼已依使用者指示回復main80／`3ee69ed` exact bytes，包含runtime與建置／驗證工具；main89 metadata／Dense實驗撤回，所有歷史commit／source／raw／STOP保留。歷史main80 Normal3／3、AA11／12、noise15／18優於main89的2／3、6／12、11／18；兩版皆未取得cost／live資格。回復未重建或重測，現HEAD不能冒原binary來源；見[回復與比較](../../research/live-readiness-20261007/MAIN80_ROLLBACK_AND_MAIN89_COMPARISON_20261012.md)。不開emulator／device／CU、新thread或ETW；以下「最新」為歷史。

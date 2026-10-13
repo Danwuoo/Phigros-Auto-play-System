@@ -386,8 +386,9 @@ int main(int argc, char** argv) {
     auto* collect_physical_cmd=app.add_subcommand("candidate-collect-physical","Collect one current-owner observation or finalize its subsequent independent review");
     for(auto* command:{collect_device_cmd,collect_rpc_cmd,collect_physical_cmd}){command->add_option("--workspace",collection_workspace)->required();command->add_option("--config",collection_config)->required();command->add_option("--capability",collection_capability)->required();command->add_option("--admission-input",collection_input)->required();command->add_option("--admission-sha256",collection_sha)->required();command->add_option("--output",collection_output)->required();command->add_option("--game-package",collection_package)->required();}
     std::string manual_config,manual_capability;
-    bool manual_no_preview=false,manual_pixel_clips=false,manual_full_recording=false,manual_one_round=false;
+    bool manual_no_preview=false,manual_pixel_clips=false,manual_full_recording=false,manual_one_round=false,manual_score_only=false;
     double round_watchdog_s=0;
+    unsigned manual_rounds=1;
     auto* manual_cmd=app.add_subcommand("manual-session","Current strategy: standby, manual Play, result, standby; Escape/Ctrl+C stops");
     manual_cmd->add_option("--config",manual_config)->required();
     manual_cmd->add_option("--capability",manual_capability)->required();
@@ -395,6 +396,8 @@ int main(int argc, char** argv) {
     manual_cmd->add_flag("--pixel-clips",manual_pixel_clips,"Bounded full-frame RGB clips for offline line research");
     manual_cmd->add_flag("--full-recording",manual_full_recording,"One manual round; lossless PNG for every received capture frame plus bounded pre-roll; automatic stop after result");
     manual_cmd->add_flag("--one-round",manual_one_round,"Stop and release after one manual round; does not enable full recording");
+    manual_cmd->add_flag("--score-only",manual_score_only,"Existing strategy; no preview, gameplay files or cold admission; watchdog at most 600s");
+    auto* manual_rounds_option=manual_cmd->add_option("--rounds",manual_rounds,"Score-only completed rounds before stopping; returns to standby between rounds")->check(CLI::Range(1,20));
     manual_cmd->add_option("--round-watchdog-s",round_watchdog_s,"Optional abnormal round limit; zero disables; never a result detector")->check(CLI::Range(0.0,3600.0));
     std::string run_capability;
     double run_duration_s = 30;
@@ -709,8 +712,18 @@ int main(int argc, char** argv) {
         }
         else if (*score_cmd) run_current_candidate_score_only_session(
             load_candidate_score_admission({score_workspace,score_admission_input,score_config,score_capability,score_admission_sha}),score_config,score_capability);
-        else if (*manual_cmd) run_manual_session(manual_config,manual_capability,manual_no_preview,
-            static_cast<Nanoseconds>(std::llround(round_watchdog_s*1e9)),manual_pixel_clips,manual_full_recording,manual_one_round);
+        else if (*manual_cmd) {
+            if(manual_score_only) {
+                if(manual_pixel_clips||manual_full_recording||round_watchdog_s>600||(manual_one_round&&manual_rounds!=1))
+                    throw std::invalid_argument("--score-only excludes clips/recording and requires watchdog at most 600s");
+                run_manual_score_only_session(manual_config,manual_capability,
+                    static_cast<Nanoseconds>(std::llround((round_watchdog_s==0?600:round_watchdog_s)*1e9)),manual_rounds);
+            } else {
+                if(manual_rounds_option->count())throw std::invalid_argument("--rounds requires --score-only");
+                run_manual_session(manual_config,manual_capability,manual_no_preview,
+                    static_cast<Nanoseconds>(std::llround(round_watchdog_s*1e9)),manual_pixel_clips,manual_full_recording,manual_one_round);
+            }
+        }
         else if (*run_cmd) {
             if(manual_play&&run_mode!="assist")
                 throw std::invalid_argument("--manual-play requires assist mode");

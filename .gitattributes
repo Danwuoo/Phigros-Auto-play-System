@@ -29,3 +29,12 @@ research/windows_qualification/run-functional-gui-debug-family2.ps1 -text -white
 research/windows_qualification/run-functional-gui.ps1 -text -whitespace
 research/windows_qualification/write-final-index.ps1 -text -whitespace
 research/windows_qualification/write-prerequisites-win04-map.ps1 -text -whitespace
+# Keep tested score-only sources and copied review evidence byte-identical.
+apps/pas/main.cpp text eol=lf
+src/manual_session.cpp text eol=lf
+include/pas/runtime.hpp text eol=lf
+include/pas/manual_score_budget.hpp text eol=lf
+include/pas/manual_score_diagnostics.hpp text eol=lf
+research/manual_score_only/variants/lazy/manual_session.cpp -text -whitespace
+research/manual_score_only/review/evidence/** -text -whitespace
+research/manual_score_only/result-20261013.json -text -whitespace
