@@ -1,7 +1,0 @@
-docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp: In function ‘int main()’:
-docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp:12:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
-   12 |  if(!s.submit(p))throw std::runtime_error("submit");c.set(10*ms);if(s.run_due().size()!=1)throw std::runtime_error("down");
-      |  ^~
-docs/research/zero-miss-20261005/evidence/touch-scheduler/flick_move_probe.cpp:12:53: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
-   12 |  if(!s.submit(p))throw std::runtime_error("submit");c.set(10*ms);if(s.run_due().size()!=1)throw std::runtime_error("down");
-      |                                                     ^

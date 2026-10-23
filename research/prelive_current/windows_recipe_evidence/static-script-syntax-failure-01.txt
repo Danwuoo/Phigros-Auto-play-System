@@ -1,4 +1,0 @@
-Source-only validator edit attempt, 2026-10-06 UTC.
-python3 validate.py --output static-review-04.json exited 1 before any receipt was created.
-SyntaxError: invalid syntax at the newly added quoted build-input-closure-not-verified check.
-No PowerShell, compiler, candidate or Windows binary ran. Quoting was corrected in place; this failure record is retained.

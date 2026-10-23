@@ -1,2 +1,0 @@
-Filesystem       1B-blocks        Used   Available Use% Mounted on
-overlay        33770192896 10397982720 21637447680  33% /workspace/shared

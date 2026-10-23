@@ -1,5 +1,0 @@
-{
-  "method": "Reconstructed the single pre-fix order predicate from the directly inspected source, then required exact SHA equality with the pre-existing source.sha256 manifest. Product header was not changed.",
-  "original_manifest": "research/prelive_current/analysis_evidence/producer-timing/source.sha256",
-  "expected_and_actual_sha256": "041b374d045be3beed055bf578d60451df035c75c4a6c927cc43333be0e1e559"
-}

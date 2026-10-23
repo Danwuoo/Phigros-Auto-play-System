@@ -1,4 +1,0 @@
-CMake Error at CMakeLists.txt:10 (message):
-  PAS_ASAN_SUPPORT_ROOT lacks sanitizer headers
-
-

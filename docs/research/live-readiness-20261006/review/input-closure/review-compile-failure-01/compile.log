@@ -1,4 +1,0 @@
-research/prelive_current/tests/input_closure_review_tests.cpp: In function ‘int main(int, char**)’:
-research/prelive_current/tests/input_closure_review_tests.cpp:87:8: error: inconsistent deduction for ‘auto’: ‘const std::filesystem::__cxx11::path’ and then ‘const nlohmann::json_abi_v3_12_0::basic_json<>’
-   87 |  const auto report_path=fs::canonical(original.at("path").get<std::string>()),report=read(report_path);
-      |        ^~~~

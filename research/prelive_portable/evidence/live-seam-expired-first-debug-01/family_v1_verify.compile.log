@@ -1,7 +1,0 @@
-research/prelive_current/cost_workload_family_verify.cpp: In function ‘int main(int, char**)’:
-research/prelive_current/cost_workload_family_verify.cpp:17:3: warning: this ‘for’ clause does not guard... [-Wmisleading-indentation]
-   17 |   for(bool held:active)contact_safe&=!held;check(id+"_complete_phase_receipts",J(phases)==a.at("phase_counts")&&J(measured)==a.at("measurement_phase_counts"));check(id+"_own_plan_receipt_join",joined);check(id+"_sole_owner_contact_lifetime",contact_safe&&ordered);
-      |   ^~~
-research/prelive_current/cost_workload_family_verify.cpp:17:44: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
-   17 |   for(bool held:active)contact_safe&=!held;check(id+"_complete_phase_receipts",J(phases)==a.at("phase_counts")&&J(measured)==a.at("measurement_phase_counts"));check(id+"_own_plan_receipt_join",joined);check(id+"_sole_owner_contact_lifetime",contact_safe&&ordered);
-      |                                            ^~~~~

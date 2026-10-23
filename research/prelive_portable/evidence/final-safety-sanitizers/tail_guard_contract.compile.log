@@ -1,4 +1,0 @@
-research/prelive_current/tail_guard_tests.cpp: In function ‘int main(int, char**)’:
-research/prelive_current/tail_guard_tests.cpp:8:24: warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
-    8 |  if(i==58||i==59||i>=62&&i<=65){const auto&e=rt->last;const bool one=e.count==1&&e.accepted==1&&e.filtered.targets.size()==1;check("current_active_body_"+std::to_string(i),one&&e.support[0].active&&e.support[0].body&&rt->backend.downs==1&&rt->backend.active_count()==1);if(i<=59){check("unmasked_true_rear_retained_"+std::to_string(i),one&&e.support[0].tail&&e.filtered.targets[0].note.tail.has_value());}else{check("masked_line_rear_stays_unknown_"+std::to_string(i),one&&!e.support[0].tail&&!e.filtered.targets[0].note.tail&&!e.filtered.targets[0].tail_crossing_ns);}frames.push_back({{"frame",i},{"filtered",filtered}});}}
-      |                   ~~~~~^~~~~~~

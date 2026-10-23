@@ -1,6 +1,0 @@
-/workspace/shared/phigros-live-deps-20261006/nlohmann/json.hpp: OK
-patching file single_include/nlohmann/json.hpp
-patching file single_include/nlohmann/json.hpp
-Hunk #5 succeeded at 5917 (offset 4 lines).
-/workspace/shared/phigros-live-deps-20261006-patched/nlohmann/json.hpp: OK
-Prepared only an isolated include root: /workspace/shared/phigros-live-deps-20261006-patched

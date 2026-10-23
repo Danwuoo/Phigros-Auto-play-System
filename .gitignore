@@ -1,10 +1,18 @@
-__pycache__/
-*.py[cod]
+/build*/
+/out/
+/local/
+/recordings/
+/charts/private/
+/calibration/local/
+.idea/
+.vs/
 .venv/
-*.egg-info/
-measurements/
-out/
-
-# Own historical reviewer executables stay local; raw/source evidence remains tracked.
-docs/research/live-readiness-20261006/review/evidence/tail-v3-independent-release-01/bin/owner
-docs/research/live-readiness-20261006/review/evidence/tail-v3-independent-release-01/bin/pixels
+__pycache__/
+.env
+.env.*
+!.env.example
+*.log
+*.obj
+*.pdb
+compile_commands.json
+.DS_Store

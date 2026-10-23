@@ -1,5 +1,0 @@
-https://github.com/pnggroup/libpng.git
-tag=v1.6.48
-commit=ea127968204cc5d10f3fc9250c306b9e8cbd9b80
-headers_only=true
-installed_library=/usr/lib/x86_64-linux-gnu/libpng16.so.16.48.0

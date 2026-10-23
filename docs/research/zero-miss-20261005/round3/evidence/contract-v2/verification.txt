@@ -1,2 +1,0 @@
-final_reports_byte_identical=true
-LSan_enabled=false

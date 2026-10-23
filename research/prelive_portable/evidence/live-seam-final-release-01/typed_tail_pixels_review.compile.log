@@ -1,4 +1,0 @@
-In file included from research/live_readiness_review/tail_only_pixels_review.cpp:6:
-research/live_readiness_review/../prelive_current/tail_current.hpp:19:6: warning: ‘bool pas::current_tail::{anonymous}::same(pas::Vec2, pas::Vec2)’ defined but not used [-Wunused-function]
-   19 | bool same(Vec2 a,Vec2 b){return a.x==b.x&&a.y==b.y;}
-      |      ^~~~

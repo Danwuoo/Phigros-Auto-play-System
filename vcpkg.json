@@ -1,13 +1,16 @@
 {
-  "name": "phigros-auto-play-system",
+  "name": "rhythm-chart-memory",
   "version-string": "0.1.0",
   "builtin-baseline": "93c50752b23e350ca6b9063a167f0a4cf8a3b3eb",
-  "dependencies": [
-    "cli11",
-    {"name": "ffmpeg", "default-features": false, "features": ["avcodec", "swscale"]},
-    "grpc",
-    "gtest",
-    "nlohmann-json",
-    "protobuf"
-  ]
+  "dependencies": [],
+  "features": {
+    "legacy-grpc": {
+      "description": "Retained Windows emulator backend with the existing gRPC overlay",
+      "dependencies": ["grpc", "nlohmann-json", "protobuf"]
+    },
+    "legacy-tests": {
+      "description": "Retained PAS core tests",
+      "dependencies": ["gtest"]
+    }
+  }
 }

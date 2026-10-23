@@ -1,6 +1,0 @@
-{
-  "checks": 36,
-  "pass": true,
-  "schema": "pas.cost-analyzer-tests.v1",
-  "scope": "unit fixtures only; no measured Windows or live qualification"
-}

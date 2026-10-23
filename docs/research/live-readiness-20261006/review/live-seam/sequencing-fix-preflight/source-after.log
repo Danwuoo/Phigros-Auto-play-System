@@ -1,7 +1,0 @@
-research/live_readiness_review/live_seam_runtime_review_v2.cpp: OK
-research/live_readiness_review/live_seam_packet_review.cpp: OK
-research/prelive_current/owner_candidate_step.hpp: OK
-research/prelive_current/runtime.hpp: OK
-src/game.cpp: OK
-research/prelive_current/cost_workload_family_v2.hpp: OK
-out/prelive-live-seam-release.s96p5C/portable_current.a: OK

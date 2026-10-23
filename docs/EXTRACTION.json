@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "2d479e17fa1566c089dce019cbb11eb883ba47fd",
+  "baseline_tree": "6d6e896aa6c3dd2b056a3f7e1b589fc2c8dfc6a0",
+  "branch": "feature/chart-driven-multigame",
+  "retained_git_blobs": {
+    ".gitattributes": "4f51a86180000ca4ba42eba19f5fd6cc8f7a9f0a",
+    "vcpkg-configuration.json": "4c75b5348b5db68ad5f8650668028a341088050e",
+    "include/pas/core.hpp": "30d82ed2039b35f22c7cc44fbf80cdc047d3f885",
+    "src/core.cpp": "0f6c28c3e19e5b61ba06e2fc41a8963b87b95abe",
+    "include/pas/adb.hpp": "c67d43a6ad7c8a013972d90272b920ea73eb0211",
+    "src/adb.cpp": "ef96fa1edefcfe085c6b2549f74c794ffeefa990",
+    "include/pas/emulator.hpp": "2409ca2b7b4347821400c6bba971a463a9a80e7b",
+    "src/emulator.cpp": "1f41a8f2ee17d3967a8cfa915bee5824e7e80153",
+    "include/pas/grpc_transport.hpp": "82341cc5a6a71106bf263efe81431533f07613d1",
+    "src/grpc_transport.cpp": "d483f16e6da45b4e7bf88c6d6c668fec318e3f41",
+    "include/pas/touch_evidence.hpp": "a9165d48ce780f3f37fd4efc16535f16b8569f82",
+    "src/touch_evidence.cpp": "9a00d06fbed28edf8c65077d4a35359063717846",
+    "include/pas/manual_score_budget.hpp": "60aae2b62900e3d27f61a7cb63f526f32000bdc2",
+    "tests/core_tests.cpp": "dc80496c69a8eace2048472dce93013e22bd04f5"
+  },
+  "retained_git_trees": {
+    "proto": "0768d2ee9650a6cbeaf81c86edbc2d1e23b7f79e",
+    "third_party": "f9a661bbc54dfce760c20e38b8f0acf1c1757a2d"
+  },
+  "retained_file_count": 29,
+  "new_or_rewritten_file_count": 13,
+  "history_policy": "normal child commit; old history remains; main ref is not updated",
+  "portable_validation": "28 checks and 3 CTest entries passed on Linux/GCC 14.2.0",
+  "windows_backend_validation": "NOT_RUN",
+  "live_validation": "NOT_RUN",
+  "capability": "offline resolved-contact memory prototype; native import, sync estimator, game adapters and PAS bridge not implemented"
+}

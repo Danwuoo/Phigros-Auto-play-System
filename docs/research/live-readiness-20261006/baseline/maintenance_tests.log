@@ -1,9 +1,0 @@
-test_aux_is_reported_not_erased_from_posix_quarantine (__main__.AuditTests.test_aux_is_reported_not_erased_from_posix_quarantine) ... ok
-test_modified_receipt_rejected_without_editing_original (__main__.AuditTests.test_modified_receipt_rejected_without_editing_original) ... ok
-test_safe_relative_path (__main__.AuditTests.test_safe_relative_path) ... ok
-test_traversal_absolute_noncanonical_and_windows_unsafe (__main__.AuditTests.test_traversal_absolute_noncanonical_and_windows_unsafe) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 1.292s
-
-OK

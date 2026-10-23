@@ -1,7 +1,0 @@
-cmake_minimum_required(VERSION 3.28)
-project(PasOwnerStopDiagnosis LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(nlohmann_json CONFIG REQUIRED)
-add_executable(owner_stop_diagnosis main.cpp)
-target_link_libraries(owner_stop_diagnosis PRIVATE nlohmann_json::nlohmann_json bcrypt)
