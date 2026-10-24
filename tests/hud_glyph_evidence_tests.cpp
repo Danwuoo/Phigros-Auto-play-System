@@ -185,6 +185,107 @@ try {
               "full metadata API silently fell back to features");
     }
     ++groups;{
+        HudGlyphEvidenceProducer shared(view(original),std::string(64,'c'),"shared-IN-candidate",{},
+            HudGlyphPolicy::shared_in_prefix_score_v1);
+        const auto common=shared.observe(view(original),identity);
+        check(shared.policy()==HudGlyphPolicy::shared_in_prefix_score_v1&&common.hud_candidate&&
+              !common.title_required&&common.difficulty_alignment_candidates==1&&common.difficulty_alignment_x==0,
+              "explicit shared-IN policy lost candidate/prefix alignment metadata");
+        auto other_title=original;rectangle(other_title,25,672,160,29,32);
+        rectangle(other_title,240,675,100,20);
+        check(shared.observe(view(other_title),identity).hud_candidate&&!producer.observe(view(other_title),identity).hud_candidate,
+              "shared-IN policy unexpectedly required the source title or changed the default policy");
+        auto missing_level=original;rectangle(missing_level,1225,673,28,26,32);
+        check(shared.observe(view(missing_level),identity).hud_candidate,"shared prefix included a numeric level glyph");
+        for(const int dx:{-8,8}) {
+            auto shifted=original;rectangle(shifted,1140,673,116,26,32);
+            for(const int x:{1156,1180,1204}) {
+                rectangle(shifted,x+dx,677,3,18);rectangle(shifted,x+dx,677,14,3);rectangle(shifted,x+dx,692,14,3);
+            }
+            const auto aligned=shared.observe(view(shifted),identity);
+            check(aligned.hud_candidate&&aligned.difficulty_alignment_x==dx&&aligned.difficulty_alignment_candidates==1,
+                  "bounded shared prefix translation failed");
+        }
+        auto wrong_prefix=original;rectangle(wrong_prefix,1140,673,116,26,32);
+        check(!shared.observe(view(wrong_prefix),identity).hud_candidate,"missing common IN prefix accepted");
+        auto filled_score=original;score_glyphs(filled_score,true);
+        check(!shared.observe(view(filled_score),identity).hud_candidate,"shared-IN accepted filled score rectangles");
+        auto line_score=original;rectangle(line_score,1076,24,180,2);
+        check(!shared.observe(view(line_score),identity).hud_candidate,"shared-IN accepted score boundary line");
+        auto fewer_digits=original;rectangle(fewer_digits,1080,24,23,33,32);
+        check(!shared.observe(view(fewer_digits),identity).hud_candidate,"shared-IN accepted fewer than seven digits");
+        auto solid_prefix=original;rectangle(solid_prefix,1140,673,116,26);
+        check(!shared.observe(view(solid_prefix),identity).hud_candidate,"shared-IN ignored prefix negative space");
+        auto dim=original;for(auto& p:dim)p=static_cast<std::uint8_t>(p/2);
+        check(!shared.observe(view(dim),identity).hud_candidate,"shared-IN brightness-normalized dim overlay");
+        for(const auto state:{ObservedGameState::paused,ObservedGameState::result}) {
+            const auto denied=shared.observe(view(original),identity,state);
+            check(!denied.hud_candidate&&denied.denied_state_match&&denied.reason=="calibrated_denied_state_has_priority",
+                  "shared-IN overrode same-frame paused/result state");
+        }
+        const auto feature=shared.observe_features(view(original));
+        check(feature.hud_candidate&&!feature.metadata_attached&&!feature.live_permitted&&!feature.timing_qualified&&
+              !feature.source_pixel_age_qualified,"shared-IN manufactured frame/timing/input qualification");
+        check(!shared.observe(view(original),HudFrameMetadata{}).valid,"shared-IN bypassed required full-API metadata");
+        auto periodic=original;rectangle(periodic,1140,673,116,26,32);
+        for(int x=1140;x<1240;x+=8)rectangle(periodic,x,677,2,18);
+        HudGlyphEvidenceProducer ambiguous(view(periodic),std::string(64,'d'),"periodic-prefix",{},
+            HudGlyphPolicy::shared_in_prefix_score_v1);
+        const auto rejected=ambiguous.observe(view(periodic),identity);
+        check(!rejected.hud_candidate&&rejected.difficulty_alignment_candidates>1&&
+              rejected.reason=="shared_IN_prefix_alignment_ambiguous","shared-IN accepted multiple plausible prefix translations");
+        bool rejected_reference=false;
+        try {HudGlyphEvidenceProducer bad(view(filled_score),std::string(64,'c'),"bad-score",{},
+                 HudGlyphPolicy::shared_in_prefix_score_v1);}
+        catch(const std::invalid_argument&) {rejected_reference=true;}
+        check(rejected_reference,"shared-IN learned a reference without score glyph structure");
+    }
+    ++groups;{
+        auto longer_title=original;
+        rectangle(longer_title,120,677,3,18);rectangle(longer_title,120,677,18,3);rectangle(longer_title,120,692,18,3);
+        bool rejected=false;
+        try {HudGlyphEvidenceProducer cropped(view(longer_title),std::string(64,'c'),"cropped-title");}
+        catch(const std::invalid_argument&) {rejected=true;}
+        check(rejected,"default title mask silently cropped a longer title at its boundary");
+        const PixelRegion region{25,672,160,29};
+        HudGlyphEvidenceProducer expanded(view(longer_title),std::string(64,'d'),"longer-title",region);
+        const auto configured=expanded.title_region();
+        check(configured.x==25&&configured.y==672&&configured.width==160&&configured.height==29,"configured title region not retained");
+        const auto accepted=expanded.observe(view(longer_title),identity);
+        check(accepted.hud_candidate&&accepted.title_glyph.glyph_present&&accepted.title_glyph.negative_space_present,
+              "clean longer title rejected with explicit bounded reference ROI");
+        check(accepted.fixed_glyphs[0].foreground_pixels==producer.observe(view(original),identity).fixed_glyphs[0].foreground_pixels&&
+              accepted.fixed_glyphs[1].foreground_pixels==producer.observe(view(original),identity).fixed_glyphs[1].foreground_pixels,
+              "title configuration changed pause/difficulty anchors");
+        auto missing_tail=longer_title;rectangle(missing_tail,120,677,18,18,32);
+        check(!expanded.observe(view(missing_tail),identity).hud_candidate,"newly included title tail not required by mask");
+        auto filled_title=longer_title;rectangle(filled_title,region.x,region.y,region.width,region.height);
+        check(!expanded.observe(view(filled_title),identity).hud_candidate,"expanded white title ROI bypassed negative-space guard");
+        for(const auto state:{ObservedGameState::paused,ObservedGameState::result}) {
+            const auto denied=expanded.observe(view(longer_title),identity,state);
+            check(!denied.hud_candidate&&denied.denied_state_match&&denied.reason=="calibrated_denied_state_has_priority",
+                  "expanded title mask overrode same-frame denied state");
+        }
+        auto boundary=longer_title;rectangle(boundary,184,680,1,3);
+        rejected=false;
+        try {HudGlyphEvidenceProducer contaminated(view(boundary),std::string(64,'d'),"expanded-boundary",region);}
+        catch(const std::invalid_argument&) {rejected=true;}
+        check(rejected,"expanded title mask learned a white boundary as glyph evidence");
+    }
+    ++groups;{
+        for(const auto region:{PixelRegion{-1,672,160,29},PixelRegion{25,-1,160,29},PixelRegion{25,672,0,29},
+                PixelRegion{25,672,160,-1},PixelRegion{1200,672,160,29},PixelRegion{25,700,160,29},
+                PixelRegion{0,0,1280,720},PixelRegion{0,0,std::numeric_limits<int>::max(),29},
+                PixelRegion{std::numeric_limits<int>::max(),672,160,29},
+                PixelRegion{25,std::numeric_limits<int>::max(),160,29},
+                PixelRegion{25,672,160,std::numeric_limits<int>::max()}}) {
+            bool rejected=false;
+            try {HudGlyphEvidenceProducer bad(view(original),std::string(64,'c'),"invalid-title-region",region);}
+            catch(const std::invalid_argument&) {rejected=true;}
+            check(rejected,"invalid or unbounded title mask region accepted");
+        }
+    }
+    ++groups;{
         bool rejected=false;try {const auto white=canvas(255);HudGlyphEvidenceProducer bad(view(white),std::string(64,'c'),"bad");}
         catch(const std::invalid_argument&) {rejected=true;}
         check(rejected,"all-white reference accepted without negative space");
@@ -200,6 +301,114 @@ try {
         for(int y=22;y<57;y+=5)for(int x=1078;x<1252;x+=5)rectangle(crowded,x,y,2,2);
         const auto r=producer.observe(view(crowded),identity);
         check(!r.hud_candidate&&!r.score.bounded&&r.score.components==65,"component budget not enforced");
+    }
+    ++groups;{
+        ScreenStateResult state;state.state=ObservedGameState::unknown;state.reason="no_calibrated_state_match";
+        check(hud_candidate_eligible(true,false,true,state),"explicit shared opening candidate unavailable before arm");
+        check(!hud_candidate_eligible(false,false,true,state),"default per-song fallback enabled before arm");
+        check(!hud_candidate_eligible(true,false,false,state),"invalid source admitted to shared glyph path");
+        state.state=ObservedGameState::playing;
+        check(hud_candidate_eligible(true,false,true,state),"shared template playing frame skipped glyph gate");
+        for(const auto denied:{ObservedGameState::paused,ObservedGameState::result}) {
+            state.state=denied;check(!hud_candidate_eligible(true,true,true,state),"shared path overrode denied state");
+            state.state=ObservedGameState::unknown;
+            decltype(state.scores)::value_type score;score.state=denied;score.all_anchors_match=true;state.scores={score};
+            check(!hud_candidate_eligible(true,false,true,state),"ambiguous denied match enabled shared path");
+            state.scores.clear();
+        }
+    }
+    ++groups;{
+        HudGlyphEvidenceProducer cells(view(original),std::string(64,'c'),"shared-IN-cells-v2",{},HudGlyphPolicy::shared_in_cell_score_v2);
+        const auto clean=cells.observe_features(view(original));
+        check(clean.hud_candidate&&clean.score.calibrated_cells&&clean.score.supported_cells==7,"v2 clean seven-cell baseline rejected");
+        auto left=original;rectangle(left,1076,40,20,3);
+        const auto overlap=cells.observe_features(view(left));
+        check(overlap.hud_candidate&&overlap.score.supported_cells==7&&overlap.score.trimmed_left_pixels>0&&
+            overlap.score.original_left_bounds&&overlap.score.retained_left_bounds,"v2 left note connection erased actual first digit");
+        HudGlyphEvidenceProducer old(view(original),std::string(64,'c'),"old-shared",{},HudGlyphPolicy::shared_in_prefix_score_v1);
+        check(!old.observe_features(view(left)).hud_candidate,"old policy unexpectedly changed");
+        auto external=original;rectangle(external,1076,21,180,2);
+        check(cells.observe_features(view(external)).hud_candidate,"v2 off-baseline note fragments erased seven observed digits");
+        for(unsigned which=0;which<8;++which) {
+            auto invalid=original;
+            if(which==0)rectangle(invalid,1076,20,180,40,32);
+            if(which==1){rectangle(invalid,1080,24,23,33,32);rectangle(invalid,1076,40,24,2);}
+            if(which==2)score_glyphs(invalid,true);
+            if(which==3)rectangle(invalid,1076,20,180,40);
+            if(which==4)rectangle(invalid,1084+3*24,24,23,33,32);
+            if(which==5){rectangle(invalid,1076,20,180,40,32);rectangle(invalid,1076,40,180,3);}
+            if(which==6)rectangle(invalid,1140,673,116,26,32);
+            if(which==7)for(auto& value:invalid)value=static_cast<std::uint8_t>(value/2);
+            check(!cells.observe_features(view(invalid)).hud_candidate,"v2 admitted missing/filled/line-only/dim score or absent prefix");
+        }
+        for(const auto state:{ObservedGameState::paused,ObservedGameState::result})
+            check(!cells.observe_features(view(left),state).hud_candidate,"v2 repair overrode denied state");
+        // Actual score font is proportional: right-align separated narrow ones
+        // and broad zero strokes, without borrowing reference pitch.
+        auto proportional=original;rectangle(proportional,1076,20,180,40,32);
+        int right=1245;
+        for(int i=6;i>=0;--i) {
+            const int w=i%2?6:17;const int x=right-w;
+            rectangle(proportional,x,28,w,25);
+            if(w==17)rectangle(proportional,x+3,31,11,19,32);
+            else rectangle(proportional,x,31,2,19,32);
+            right=x-7;
+        }
+        check(cells.observe_features(view(proportional)).hud_candidate,"v2 assumed monospace score advances");
+        auto colored=original;
+        for(int i=0;i<7;++i)for(int y=28;y<53;++y)for(int x=1084+i*24;x<1101+i*24;++x) {
+            const auto at=static_cast<std::size_t>(y*1280+x)*3;colored[at]=245;colored[at+1]=245;colored[at+2]=150;
+        }
+        check(!cells.observe_features(view(colored)).hud_candidate,"v2 bright colored fill supplied fake dark negative space");
+    }
+    ++groups;{
+        auto literal=original;rectangle(literal,1152,673,73,26,32);
+        rectangle(literal,1156,677,2,17);
+        rectangle(literal,1163,677,2,17);rectangle(literal,1175,677,2,17);
+        for(int y=0;y<17;++y)rectangle(literal,1163+y*11/16,677+y,2,1);
+        rectangle(literal,1194,677,2,17);rectangle(literal,1194,692,10,2);
+        for(int y=0;y<13;++y){const int d=y*5/12;rectangle(literal,1206+d,681+y,2,1);rectangle(literal,1215-d,681+y,2,1);}
+        rectangle(literal,1220,691,3,3);
+        HudGlyphEvidenceProducer exact(view(literal),std::string(64,'c'),"exact-v2",{},HudGlyphPolicy::shared_in_cell_score_v2);
+        HudGlyphEvidenceProducer tolerant(view(literal),std::string(64,'c'),"subpixel-v3",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);
+        check(tolerant.observe_features(view(literal)).hud_candidate,"v3 changed exact acceptance");
+        auto phase=literal;rectangle(phase,1152,673,73,26,32);
+        for(int y=673;y<699;++y)for(int x=1152;x<1225;++x) {
+            const auto at=static_cast<std::size_t>(y*1280+x)*3;
+            if(literal[at]<195)continue;
+            if(x==1157)continue; // A genuine one-pixel white core for the I.
+            const int shift=(x>=1194&&x<=1216)?-2:-1;
+            rectangle(phase,x+shift,y,1,1,255);
+        }
+        const auto repaired=tolerant.observe_features(view(phase));
+        check(!exact.observe_features(view(phase)).hud_candidate,"v2 unexpectedly accepted nonuniform pixel phases");
+        check(repaired.hud_candidate&&repaired.fixed_glyphs[1].subpixel_tolerant&&
+            repaired.fixed_glyphs[1].literal_components==5&&repaired.fixed_glyphs[1].foreground_white_fraction>=.98&&
+            repaired.fixed_glyphs[1].foreground_mean_error<=8&&repaired.difficulty_alignment_unique_family&&
+            repaired.difficulty_alignment_lower_x==-2&&repaired.difficulty_alignment_upper_x==-1,
+            "v3 failed bounded one-pixel literal support/alignment family");
+        for(const auto r:{PixelRegion{1155,677,1,17},PixelRegion{1162,677,14,17},PixelRegion{1192,677,10,17},
+                         PixelRegion{1204,681,11,13},PixelRegion{1219,691,3,3}}) {
+            auto missing=phase;rectangle(missing,r.x,r.y,r.width,r.height,32);
+            check(!tolerant.observe_features(view(missing)).hud_candidate,"v3 ignored a missing literal component");
+        }
+        auto checker=phase;
+        for(int y=673;y<699;++y)for(int x=1152;x<1225;++x)if((x+y)%3==0)rectangle(checker,x,y,1,1,32);
+        check(!tolerant.observe_features(view(checker)).hud_candidate,"v3 admitted fragmented checker strokes");
+        auto solid=phase;rectangle(solid,1152,673,73,26);
+        check(!tolerant.observe_features(view(solid)).hud_candidate,"v3 admitted solid prefix");
+        auto line=phase;rectangle(line,1152,673,73,26,32);rectangle(line,1152,684,73,2);
+        check(!tolerant.observe_features(view(line)).hud_candidate,"v3 admitted line-only prefix");
+        for(const auto state:{ObservedGameState::paused,ObservedGameState::result})
+            check(!tolerant.observe_features(view(phase),state).hud_candidate,"v3 support overrode denied state");
+        auto score_missing=phase;rectangle(score_missing,1076,20,180,40,32);
+        check(!tolerant.observe_features(view(score_missing)).hud_candidate,"v3 dropped mandatory seven-score structure");
+        auto pause_missing=phase;rectangle(pause_missing,21,23,28,33,32);
+        check(!tolerant.observe_features(view(pause_missing)).hud_candidate,"v3 dropped mandatory pause glyph");
+        bool rejected=false;
+        try {HudGlyphEvidenceProducer bad(view(original),std::string(64,'c'),"wrong-literal-reference",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);}
+        catch(const std::invalid_argument&){rejected=true;}
+        check(rejected,"v3 reference silently calibrated nonliteral component layout");
     }
     std::cout<<groups<<" groups / "<<checks<<" HUD glyph evidence checks passed; offline feature candidate only.\n";
     return 0;

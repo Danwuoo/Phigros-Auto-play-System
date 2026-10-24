@@ -1,0 +1,1400 @@
+{
+  "schema": "pas.public-session-summary.v1",
+  "date_scope": "2026-10-24",
+  "branch": "feature/chart-driven-multigame",
+  "scope": "Existing archived evidence, no newly launched device/game/input; original flags unchanged. This public summary excludes raw charts/audio/replays/local calibration/tokens.",
+  "build006_binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+  "summary": {
+    "panel_sessions": 21,
+    "panel_rounds": 26,
+    "pre_panel_control_rounds": 6,
+    "build006_rounds": 18,
+    "build006_sequence_complete": 14,
+    "build006_manual_result_confirmed": 8,
+    "build006_complete_but_unconfirmed": 6,
+    "chapter_native_round_attempts_unique_songs": 14,
+    "chapter_input_complete_unique_songs": 12,
+    "chapter_AP_observed_unique_songs": 8,
+    "chapter_not_run": 6,
+    "all_indexed_rounds_final_kernel_zero": true
+  },
+  "chapter_IN": [
+    {
+      "order": 1,
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "display_name": "Glaciaxion",
+      "notes": 729,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 1,
+      "latest_round": "chapter-IN-panel-20261024-222944-158-63248a/round-02",
+      "latest_failure": null,
+      "reviewed_result": {
+        "score": 943759,
+        "perfect": 727,
+        "good": 0,
+        "bad": 0,
+        "miss": 2,
+        "max_combo": 337,
+        "accuracy": "99.73%",
+        "AP_observed": false,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-02/result.png",
+          "bytes": 580859,
+          "sha256": "a2c547c3e4819ca8c26584f72cd9db46c5508745e614caf854e5995bddcb040f"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "non_AP_result_observed"
+    },
+    {
+      "order": 2,
+      "song_id": "EradicationCatastrophe.NceS.0",
+      "display_name": "EradicationCatastrophe",
+      "notes": 593,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 1,
+      "latest_round": "chapter-IN-panel-20261024-222944-158-63248a/round-03",
+      "latest_failure": null,
+      "reviewed_result": {
+        "score": 1000000,
+        "perfect": 593,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 593,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-03/result.png",
+          "bytes": 631052,
+          "sha256": "7d7254143e88da9af694a92f218756cea27af1f003d4700a7ca28672f8757367"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "AP_observed"
+    },
+    {
+      "order": 3,
+      "song_id": "Credits.Frums.0",
+      "display_name": "Credits",
+      "notes": 535,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 1,
+      "latest_round": "chapter-IN-panel-20261024-222944-158-63248a/round-04",
+      "latest_failure": null,
+      "reviewed_result": {
+        "score": 1000000,
+        "perfect": 535,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 535,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-04/result.png",
+          "bytes": 175332,
+          "sha256": "27dcf026eff24e042ae0324870db716fc7c3fa4315272c8266ec2fa0584eb83e"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "AP_observed"
+    },
+    {
+      "order": 4,
+      "song_id": "Dlyrotz.Likey.0",
+      "display_name": "Dlyrotz",
+      "notes": 584,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 1,
+      "latest_round": "chapter-IN-panel-20261024-222944-158-63248a/round-05",
+      "latest_failure": null,
+      "reviewed_result": {
+        "score": 1000000,
+        "perfect": 584,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 584,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-05/result.png",
+          "bytes": 627250,
+          "sha256": "49e23283640e79646bc955b4507ccbf4356a9f87ca37cc59dd3799811349a4ee"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "AP_observed"
+    },
+    {
+      "order": 5,
+      "song_id": "EnginexStartmelodymix.CrossingSound.0",
+      "display_name": "EnginexStartmelodymix",
+      "notes": 433,
+      "attempts_build006": 3,
+      "complete_rounds": 2,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": "chapter-IN-panel-20261024-232852-424-b55024/round-01",
+      "latest_failure": "user_stop",
+      "reviewed_result": null,
+      "status": "input_complete_result_missing"
+    },
+    {
+      "order": 6,
+      "song_id": "光.姜米條.0",
+      "display_name": "光",
+      "notes": 517,
+      "attempts_build006": 1,
+      "complete_rounds": 0,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": "chapter-IN-panel-20261024-225342-058-b359c1/round-01",
+      "latest_failure": "user_stop",
+      "reviewed_result": null,
+      "status": "stopped_before_complete"
+    },
+    {
+      "order": 7,
+      "song_id": "Wintercube.CtymaxfeatNceS.0",
+      "display_name": "Wintercube",
+      "notes": 733,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": "chapter-IN-panel-20261024-231754-197-209c3e/round-01",
+      "latest_failure": "manual_round_ended_without_result_confirmation",
+      "reviewed_result": {
+        "score": 1000000,
+        "perfect": 733,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 733,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-231754-197-209c3e/round-01/last-observed.png",
+          "bytes": 458502,
+          "sha256": "8b4215bb1e8d293694c4523687005c0fac0f041390bbf45cd2810c864cb2721a"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "AP_observed"
+    },
+    {
+      "order": 8,
+      "song_id": "混乱Confusion.OnlyMyBlackScore.0",
+      "display_name": "混乱Confusion",
+      "notes": 978,
+      "attempts_build006": 0,
+      "complete_rounds": 0,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": null,
+      "latest_failure": null,
+      "reviewed_result": null,
+      "status": "not_run"
+    },
+    {
+      "order": 9,
+      "song_id": "Cipher20.TetrajectoryfeatCtymax.0",
+      "display_name": "Cipher20",
+      "notes": 1041,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": "chapter-IN-panel-20261024-224938-792-17be8d/round-01",
+      "latest_failure": "manual_round_ended_without_result_confirmation",
+      "reviewed_result": {
+        "score": 980980,
+        "perfect": 1040,
+        "good": 0,
+        "bad": 0,
+        "miss": 1,
+        "max_combo": 852,
+        "accuracy": "99.90%",
+        "AP_observed": false,
+        "image": {
+          "file": "chapter-IN-panel-20261024-224938-792-17be8d/round-01/last-observed.png",
+          "bytes": 599944,
+          "sha256": "f80ceb76a8f942e5b61a4dc00582a10848b478484aafcc9b6f6bb3053f2edf16"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "non_AP_result_observed"
+    },
+    {
+      "order": 10,
+      "song_id": "FULiAUTOSHOOTER.MYUKKE.0",
+      "display_name": "FULiAUTOSHOOTER",
+      "notes": 843,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": "chapter-IN-panel-20261024-230148-998-497f6e/round-01",
+      "latest_failure": "manual_round_ended_without_result_confirmation",
+      "reviewed_result": {
+        "score": 1000000,
+        "perfect": 843,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 843,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-230148-998-497f6e/round-01/last-observed.png",
+          "bytes": 603301,
+          "sha256": "dff6a62d5495d99119df87323670b45cd1e1920e5afb5cc0c49c383cf8ebdbc3"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "AP_observed"
+    },
+    {
+      "order": 11,
+      "song_id": "HumaN.SOTUI.0",
+      "display_name": "HumaN",
+      "notes": 554,
+      "attempts_build006": 0,
+      "complete_rounds": 0,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": null,
+      "latest_failure": null,
+      "reviewed_result": null,
+      "status": "not_run"
+    },
+    {
+      "order": 12,
+      "song_id": "PRAW.Bluewind.0",
+      "display_name": "PRAW",
+      "notes": 1171,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 1,
+      "latest_round": "chapter-IN-panel-20261024-225819-868-841aab/round-01",
+      "latest_failure": null,
+      "reviewed_result": {
+        "score": 1000000,
+        "perfect": 1171,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 1171,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-225819-868-841aab/round-01/result.png",
+          "bytes": 664459,
+          "sha256": "f52ed9d9d3da7655c7ce218beaf7e656642a7e061941003598725f86e4b8a9b2"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "AP_observed"
+    },
+    {
+      "order": 13,
+      "song_id": "Cereris.SunsetRayNceS.0",
+      "display_name": "Cereris",
+      "notes": 898,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 1,
+      "latest_round": "chapter-IN-panel-20261024-230526-324-bc53e3/round-01",
+      "latest_failure": null,
+      "reviewed_result": {
+        "score": 1000000,
+        "perfect": 898,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 898,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-230526-324-bc53e3/round-01/result.png",
+          "bytes": 501110,
+          "sha256": "067f666dab226e5a8a43971cc6e2df6c652367c267cb0e8f165562c9fb04055c"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "AP_observed"
+    },
+    {
+      "order": 14,
+      "song_id": "PixelRebelz.Normal1zer.0",
+      "display_name": "PixelRebelz",
+      "notes": 941,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 1,
+      "latest_round": "chapter-IN-panel-20261024-230859-108-0a2d23/round-01",
+      "latest_failure": null,
+      "reviewed_result": {
+        "score": 1000000,
+        "perfect": 941,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 941,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-230859-108-0a2d23/round-01/result.png",
+          "bytes": 339620,
+          "sha256": "370c3cb7b7ef77437acedab9e5275c3e4ed67b563f9605f0276080ed93ae349b"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "status": "AP_observed"
+    },
+    {
+      "order": 15,
+      "song_id": "NonMelodicRagezMUGEdit.Normal1zer.0",
+      "display_name": "NonMelodicRagezMUGEdit",
+      "notes": 1235,
+      "attempts_build006": 1,
+      "complete_rounds": 1,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": "chapter-IN-panel-20261024-225510-019-1dc6ea/round-01",
+      "latest_failure": "user_stop",
+      "reviewed_result": null,
+      "status": "input_complete_result_missing"
+    },
+    {
+      "order": 16,
+      "song_id": "SultanRage.MonstDeath.0",
+      "display_name": "SultanRage",
+      "notes": 485,
+      "attempts_build006": 1,
+      "complete_rounds": 0,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": "chapter-IN-panel-20261024-231524-705-4a51ab/round-01",
+      "latest_failure": "compiled_step_lateness_limit_exceeded",
+      "reviewed_result": null,
+      "status": "stopped_before_complete"
+    },
+    {
+      "order": 17,
+      "song_id": "ClassMemories.AntistarfeatCtymax.0",
+      "display_name": "ClassMemories",
+      "notes": 1194,
+      "attempts_build006": 0,
+      "complete_rounds": 0,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": null,
+      "latest_failure": null,
+      "reviewed_result": null,
+      "status": "not_run"
+    },
+    {
+      "order": 18,
+      "song_id": "SURREALISM.Itsuki.0",
+      "display_name": "SURREALISM",
+      "notes": 914,
+      "attempts_build006": 0,
+      "complete_rounds": 0,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": null,
+      "latest_failure": null,
+      "reviewed_result": null,
+      "status": "not_run"
+    },
+    {
+      "order": 19,
+      "song_id": "BonusTime.MegaloPaleWhite.0",
+      "display_name": "BonusTime",
+      "notes": 689,
+      "attempts_build006": 0,
+      "complete_rounds": 0,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": null,
+      "latest_failure": null,
+      "reviewed_result": null,
+      "status": "not_run"
+    },
+    {
+      "order": 20,
+      "song_id": "ENERGYSYNERGYMATRIX.Tanchiky.0",
+      "display_name": "ENERGYSYNERGYMATRIX",
+      "notes": 750,
+      "attempts_build006": 0,
+      "complete_rounds": 0,
+      "manual_result_confirmed_rounds": 0,
+      "latest_round": null,
+      "latest_failure": null,
+      "reviewed_result": null,
+      "status": "not_run"
+    }
+  ],
+  "panel_sessions": [
+    {
+      "session": "chapter-IN-panel-20261024-182004-079-fe1ade",
+      "status": "failed",
+      "failure": "user_stop",
+      "rounds": [
+        "chapter-IN-panel-20261024-182004-079-fe1ade/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-182106-677-1694e4",
+      "status": "failed",
+      "failure": "user_stop",
+      "rounds": [
+        "chapter-IN-panel-20261024-182106-677-1694e4/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-190641-385-bb3ebb",
+      "status": "failed",
+      "failure": "manual_round_ended_without_result_confirmation",
+      "rounds": [
+        "chapter-IN-panel-20261024-190641-385-bb3ebb/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-205450-978-b42027",
+      "status": "failed",
+      "failure": "actual_UI_receipt_expired",
+      "rounds": [
+        "chapter-IN-panel-20261024-205450-978-b42027/round-01",
+        "chapter-IN-panel-20261024-205450-978-b42027/round-02"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-210148-825-bd5b2f",
+      "status": "failed",
+      "failure": "compiled_step_lateness_limit_exceeded",
+      "rounds": [
+        "chapter-IN-panel-20261024-210148-825-bd5b2f/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-210249-128-99dc95",
+      "status": "failed",
+      "failure": "actual_UI_receipt_expired",
+      "rounds": [
+        "chapter-IN-panel-20261024-210249-128-99dc95/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-210546-700-5e911f",
+      "status": "failed",
+      "failure": "actual_UI_receipt_expired",
+      "rounds": [
+        "chapter-IN-panel-20261024-210546-700-5e911f/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-222704-866-f0c178",
+      "status": "failed",
+      "failure": "compiled_step_lateness_limit_exceeded",
+      "rounds": [
+        "chapter-IN-panel-20261024-222704-866-f0c178/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-222944-158-63248a",
+      "status": "failed",
+      "failure": "user_stop",
+      "rounds": [
+        "chapter-IN-panel-20261024-222944-158-63248a/round-01",
+        "chapter-IN-panel-20261024-222944-158-63248a/round-02",
+        "chapter-IN-panel-20261024-222944-158-63248a/round-03",
+        "chapter-IN-panel-20261024-222944-158-63248a/round-04",
+        "chapter-IN-panel-20261024-222944-158-63248a/round-05",
+        "chapter-IN-panel-20261024-222944-158-63248a/round-06"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-224813-304-1f291e",
+      "status": "failed",
+      "failure": "user_stop",
+      "rounds": [
+        "chapter-IN-panel-20261024-224813-304-1f291e/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-224938-792-17be8d",
+      "status": "failed",
+      "failure": "manual_round_ended_without_result_confirmation",
+      "rounds": [
+        "chapter-IN-panel-20261024-224938-792-17be8d/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-225342-058-b359c1",
+      "status": "failed",
+      "failure": "user_stop",
+      "rounds": [
+        "chapter-IN-panel-20261024-225342-058-b359c1/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-225510-019-1dc6ea",
+      "status": "failed",
+      "failure": "user_stop",
+      "rounds": [
+        "chapter-IN-panel-20261024-225510-019-1dc6ea/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-225819-868-841aab",
+      "status": "completed",
+      "failure": null,
+      "rounds": [
+        "chapter-IN-panel-20261024-225819-868-841aab/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-230148-998-497f6e",
+      "status": "failed",
+      "failure": "manual_round_ended_without_result_confirmation",
+      "rounds": [
+        "chapter-IN-panel-20261024-230148-998-497f6e/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-230526-324-bc53e3",
+      "status": "completed",
+      "failure": null,
+      "rounds": [
+        "chapter-IN-panel-20261024-230526-324-bc53e3/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-230859-108-0a2d23",
+      "status": "completed",
+      "failure": null,
+      "rounds": [
+        "chapter-IN-panel-20261024-230859-108-0a2d23/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-231524-705-4a51ab",
+      "status": "failed",
+      "failure": "compiled_step_lateness_limit_exceeded",
+      "rounds": [
+        "chapter-IN-panel-20261024-231524-705-4a51ab/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-231754-197-209c3e",
+      "status": "failed",
+      "failure": "manual_round_ended_without_result_confirmation",
+      "rounds": [
+        "chapter-IN-panel-20261024-231754-197-209c3e/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-232852-424-b55024",
+      "status": "failed",
+      "failure": "user_stop",
+      "rounds": [
+        "chapter-IN-panel-20261024-232852-424-b55024/round-01"
+      ]
+    },
+    {
+      "session": "chapter-IN-panel-20261024-233128-343-465ea3",
+      "status": "waiting_for_operator",
+      "failure": null,
+      "rounds": []
+    }
+  ],
+  "panel_rounds": [
+    {
+      "id": "chapter-IN-panel-20261024-182004-079-fe1ade/round-01",
+      "song_id": "Verruckt.Raimukun.0",
+      "binary_sha256": "8a0de64b3a5c1cd9274ae013c27b5d633c2f3902d1f6742343ae52f361dfdb16",
+      "native_status": "failed_or_stopped",
+      "native_failure": "user_stop",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 0,
+      "up_attempts": 0,
+      "expected_contacts": 1285,
+      "expected_events": 3358,
+      "kernel_final_zero": true,
+      "manifest_sha256": "1f1cd387b42c675987a50ce79ce36ca3267b6082fed4660b45fccec1f1f26ffa",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 0,
+      "receipt_successes": 0
+    },
+    {
+      "id": "chapter-IN-panel-20261024-182106-677-1694e4/round-01",
+      "song_id": "Verruckt.Raimukun.0",
+      "binary_sha256": "8a0de64b3a5c1cd9274ae013c27b5d633c2f3902d1f6742343ae52f361dfdb16",
+      "native_status": "failed_or_stopped",
+      "native_failure": "user_stop",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 0,
+      "up_attempts": 0,
+      "expected_contacts": 1285,
+      "expected_events": 3358,
+      "kernel_final_zero": true,
+      "manifest_sha256": "56ac08bfe02e10bc378a6a8b4b72045f7a91249bf6812a948347e8c93c99f47b",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 0,
+      "receipt_successes": 0
+    },
+    {
+      "id": "chapter-IN-panel-20261024-190641-385-bb3ebb/round-01",
+      "song_id": "Verruckt.Raimukun.0",
+      "binary_sha256": "f95c87dd80dd429160d3e4a5f77006f6e74a3d90e2cf907d248269df38ef40fa",
+      "native_status": "failed_or_stopped",
+      "native_failure": "manual_round_ended_without_result_confirmation",
+      "sequence_complete": true,
+      "manual_result_confirmed": false,
+      "down_attempts": 1285,
+      "up_attempts": 1285,
+      "expected_contacts": 1285,
+      "expected_events": 3358,
+      "kernel_final_zero": true,
+      "manifest_sha256": "40a454b332b65d3c306574ce460a9c7ae4be6792803c53440b59ba5b08465eef",
+      "saved_result_png": false,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 1285,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 1285,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-190641-385-bb3ebb/round-01/last-observed.png",
+          "bytes": 641723,
+          "sha256": "7dd91ef38853abd71dcd7df6a04749ee881521381b4eab7d4a16ccc8fd18541b"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 3358,
+      "receipt_successes": 3358
+    },
+    {
+      "id": "chapter-IN-panel-20261024-205450-978-b42027/round-01",
+      "song_id": "Verruckt.Raimukun.0",
+      "binary_sha256": "56e5f73a6f3ebb66cb042608f4acf81841dcc9d968268e2f68586168d8695f80",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 1285,
+      "up_attempts": 1285,
+      "expected_contacts": 1285,
+      "expected_events": 3358,
+      "kernel_final_zero": true,
+      "manifest_sha256": "f2896272bb7ccf5e4c08392f30b47a035a6d4a6c9762476aea99284418223ab9",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 1285,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 1285,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-205450-978-b42027/round-01/result.png",
+          "bytes": 635689,
+          "sha256": "23cdc4ad3d7dbaa67bd09d15e4865f762cb7d1bfa18839af758e69e07b120a94"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 3358,
+      "receipt_successes": 3358
+    },
+    {
+      "id": "chapter-IN-panel-20261024-205450-978-b42027/round-02",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "binary_sha256": "56e5f73a6f3ebb66cb042608f4acf81841dcc9d968268e2f68586168d8695f80",
+      "native_status": "failed_or_stopped",
+      "native_failure": "actual_UI_receipt_expired",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 360,
+      "up_attempts": 360,
+      "expected_contacts": 729,
+      "expected_events": 6080,
+      "kernel_final_zero": true,
+      "manifest_sha256": "f1605877768d3656826727fb00b06bdd99a8168c0cae28f066b7f82444f89631",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 3195,
+      "receipt_successes": 3195
+    },
+    {
+      "id": "chapter-IN-panel-20261024-210148-825-bd5b2f/round-01",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "binary_sha256": "56e5f73a6f3ebb66cb042608f4acf81841dcc9d968268e2f68586168d8695f80",
+      "native_status": "failed_or_stopped",
+      "native_failure": "compiled_step_lateness_limit_exceeded",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 5,
+      "up_attempts": 4,
+      "expected_contacts": 729,
+      "expected_events": 6080,
+      "kernel_final_zero": true,
+      "manifest_sha256": "bd542ccdc85f9e2205624c20f3eae7a8410e6dd25d2bc07ad808fc136c59707e",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 153,
+      "receipt_successes": 153
+    },
+    {
+      "id": "chapter-IN-panel-20261024-210249-128-99dc95/round-01",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "binary_sha256": "56e5f73a6f3ebb66cb042608f4acf81841dcc9d968268e2f68586168d8695f80",
+      "native_status": "failed_or_stopped",
+      "native_failure": "actual_UI_receipt_expired",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 360,
+      "up_attempts": 360,
+      "expected_contacts": 729,
+      "expected_events": 6080,
+      "kernel_final_zero": true,
+      "manifest_sha256": "bd64a8c4b987d351e63669ac512f73cf383a775fa7ad262213fc67630df8a9b6",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 3195,
+      "receipt_successes": 3195
+    },
+    {
+      "id": "chapter-IN-panel-20261024-210546-700-5e911f/round-01",
+      "song_id": "EradicationCatastrophe.NceS.0",
+      "binary_sha256": "56e5f73a6f3ebb66cb042608f4acf81841dcc9d968268e2f68586168d8695f80",
+      "native_status": "failed_or_stopped",
+      "native_failure": "actual_UI_receipt_expired",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 226,
+      "up_attempts": 225,
+      "expected_contacts": 593,
+      "expected_events": 3455,
+      "kernel_final_zero": true,
+      "manifest_sha256": "c2174789c88c1f0509f78937278919287d434896fb7634477ea69561d989a1ad",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 1340,
+      "receipt_successes": 1340
+    },
+    {
+      "id": "chapter-IN-panel-20261024-222704-866-f0c178/round-01",
+      "song_id": "Verruckt.Raimukun.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "compiled_step_lateness_limit_exceeded",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 756,
+      "up_attempts": 755,
+      "expected_contacts": 1285,
+      "expected_events": 3358,
+      "kernel_final_zero": true,
+      "manifest_sha256": "a1f2d8506600f9d2ca696f6ddea408e3b72b8cc9c251b1fac923535fc01ece72",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 2120,
+      "receipt_successes": 2120
+    },
+    {
+      "id": "chapter-IN-panel-20261024-222944-158-63248a/round-01",
+      "song_id": "Verruckt.Raimukun.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 1285,
+      "up_attempts": 1285,
+      "expected_contacts": 1285,
+      "expected_events": 3358,
+      "kernel_final_zero": true,
+      "manifest_sha256": "c209cefa21e8c0b5647b0a4ebbda790628ee3f78eb8d694cde95864644d2bbaa",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 1285,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 1285,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-01/result.png",
+          "bytes": 635607,
+          "sha256": "2868180781b9757a447216e6829803c28dac2283c9dcbb0de553ee56a12df345"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 3358,
+      "receipt_successes": 3358
+    },
+    {
+      "id": "chapter-IN-panel-20261024-222944-158-63248a/round-02",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 729,
+      "up_attempts": 729,
+      "expected_contacts": 729,
+      "expected_events": 6080,
+      "kernel_final_zero": true,
+      "manifest_sha256": "91f24c5b9266a9d080979da19d913e09c338f3cf2b750e764b99126b05e12103",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 943759,
+        "perfect": 727,
+        "good": 0,
+        "bad": 0,
+        "miss": 2,
+        "max_combo": 337,
+        "accuracy": "99.73%",
+        "AP_observed": false,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-02/result.png",
+          "bytes": 580859,
+          "sha256": "a2c547c3e4819ca8c26584f72cd9db46c5508745e614caf854e5995bddcb040f"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 6080,
+      "receipt_successes": 6080
+    },
+    {
+      "id": "chapter-IN-panel-20261024-222944-158-63248a/round-03",
+      "song_id": "EradicationCatastrophe.NceS.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 593,
+      "up_attempts": 593,
+      "expected_contacts": 593,
+      "expected_events": 3455,
+      "kernel_final_zero": true,
+      "manifest_sha256": "0495435dc0603e9834c15634c889d2776d2bdad899bb9314f4a5c7fab801ab74",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 593,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 593,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-03/result.png",
+          "bytes": 631052,
+          "sha256": "7d7254143e88da9af694a92f218756cea27af1f003d4700a7ca28672f8757367"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 3455,
+      "receipt_successes": 3455
+    },
+    {
+      "id": "chapter-IN-panel-20261024-222944-158-63248a/round-04",
+      "song_id": "Credits.Frums.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 535,
+      "up_attempts": 535,
+      "expected_contacts": 535,
+      "expected_events": 1780,
+      "kernel_final_zero": true,
+      "manifest_sha256": "a1e418538ba030a06bbe1e7b276c4ed1b150b88d008f72eff21632298c0fbc1a",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 535,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 535,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-04/result.png",
+          "bytes": 175332,
+          "sha256": "27dcf026eff24e042ae0324870db716fc7c3fa4315272c8266ec2fa0584eb83e"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 1780,
+      "receipt_successes": 1780
+    },
+    {
+      "id": "chapter-IN-panel-20261024-222944-158-63248a/round-05",
+      "song_id": "Dlyrotz.Likey.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 584,
+      "up_attempts": 584,
+      "expected_contacts": 584,
+      "expected_events": 5361,
+      "kernel_final_zero": true,
+      "manifest_sha256": "14018080f465ff7eaa44273239255b4a53eee1415126b2a72e8761becff9207b",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 584,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 584,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-05/result.png",
+          "bytes": 627250,
+          "sha256": "49e23283640e79646bc955b4507ccbf4356a9f87ca37cc59dd3799811349a4ee"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 5361,
+      "receipt_successes": 5361
+    },
+    {
+      "id": "chapter-IN-panel-20261024-222944-158-63248a/round-06",
+      "song_id": "EnginexStartmelodymix.CrossingSound.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "user_stop",
+      "sequence_complete": true,
+      "manual_result_confirmed": false,
+      "down_attempts": 433,
+      "up_attempts": 433,
+      "expected_contacts": 433,
+      "expected_events": 2183,
+      "kernel_final_zero": true,
+      "manifest_sha256": "208cb926c8fc621f41acc8ae2ca99dcb9602ff93af42f99629f719a82e4ad36a",
+      "saved_result_png": false,
+      "visual_review": {
+        "AP_observed": null,
+        "judgment": "unavailable",
+        "image": {
+          "file": "chapter-IN-panel-20261024-222944-158-63248a/round-06/last-observed.png",
+          "bytes": 621149,
+          "sha256": "4e4d96b0e01c6486930ffa1abf4e45986fc70b027659262507701bef707d5290"
+        },
+        "reason": "Last saved image is song selection, not this round result; selection-page best score is not evidence for this round."
+      },
+      "receipt_rows": 2183,
+      "receipt_successes": 2183
+    },
+    {
+      "id": "chapter-IN-panel-20261024-224813-304-1f291e/round-01",
+      "song_id": "EnginexStartmelodymix.CrossingSound.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "user_stop",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 107,
+      "up_attempts": 107,
+      "expected_contacts": 433,
+      "expected_events": 2183,
+      "kernel_final_zero": true,
+      "manifest_sha256": "3216dcb45ab1f464455d38a9dedef6ef6325244c87146c5d2d041f02eb41192c",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 483,
+      "receipt_successes": 483
+    },
+    {
+      "id": "chapter-IN-panel-20261024-224938-792-17be8d/round-01",
+      "song_id": "Cipher20.TetrajectoryfeatCtymax.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "manual_round_ended_without_result_confirmation",
+      "sequence_complete": true,
+      "manual_result_confirmed": false,
+      "down_attempts": 1041,
+      "up_attempts": 1041,
+      "expected_contacts": 1041,
+      "expected_events": 5248,
+      "kernel_final_zero": true,
+      "manifest_sha256": "05b5d4a35884ad70f2e93f121923c7941a1df13a86e2f3ac8c43dde7673a0446",
+      "saved_result_png": false,
+      "visual_review": {
+        "score": 980980,
+        "perfect": 1040,
+        "good": 0,
+        "bad": 0,
+        "miss": 1,
+        "max_combo": 852,
+        "accuracy": "99.90%",
+        "AP_observed": false,
+        "image": {
+          "file": "chapter-IN-panel-20261024-224938-792-17be8d/round-01/last-observed.png",
+          "bytes": 599944,
+          "sha256": "f80ceb76a8f942e5b61a4dc00582a10848b478484aafcc9b6f6bb3053f2edf16"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 5248,
+      "receipt_successes": 5248
+    },
+    {
+      "id": "chapter-IN-panel-20261024-225342-058-b359c1/round-01",
+      "song_id": "光.姜米條.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "user_stop",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 0,
+      "up_attempts": 0,
+      "expected_contacts": 517,
+      "expected_events": 2589,
+      "kernel_final_zero": true,
+      "manifest_sha256": "eab3a9d29619c734eb4a59510bc2708764fafbb97553412a37ba35c6b5e26090",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 0,
+      "receipt_successes": 0
+    },
+    {
+      "id": "chapter-IN-panel-20261024-225510-019-1dc6ea/round-01",
+      "song_id": "NonMelodicRagezMUGEdit.Normal1zer.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "user_stop",
+      "sequence_complete": true,
+      "manual_result_confirmed": false,
+      "down_attempts": 1235,
+      "up_attempts": 1235,
+      "expected_contacts": 1235,
+      "expected_events": 4099,
+      "kernel_final_zero": true,
+      "manifest_sha256": "5a87f29373b876fd96fcb78eaf2cb21421a6b09ca8ac68f866b4e280fcd4e4c5",
+      "saved_result_png": false,
+      "visual_review": {
+        "AP_observed": null,
+        "judgment": "unavailable",
+        "image": {
+          "file": "chapter-IN-panel-20261024-225510-019-1dc6ea/round-01/last-observed.png",
+          "bytes": 865441,
+          "sha256": "8646809999bcb7016487a3d19e90044541773c9d9ae98d50a97e5d528e820773"
+        },
+        "reason": "Last saved image is song selection, not this round result; selection-page best score is not evidence for this round."
+      },
+      "receipt_rows": 4099,
+      "receipt_successes": 4099
+    },
+    {
+      "id": "chapter-IN-panel-20261024-225819-868-841aab/round-01",
+      "song_id": "PRAW.Bluewind.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 1171,
+      "up_attempts": 1171,
+      "expected_contacts": 1171,
+      "expected_events": 6247,
+      "kernel_final_zero": true,
+      "manifest_sha256": "b3c57e0a215a1f6a715e747376209f3242e18cc894a332a7411cfd9dac266efe",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 1171,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 1171,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-225819-868-841aab/round-01/result.png",
+          "bytes": 664459,
+          "sha256": "f52ed9d9d3da7655c7ce218beaf7e656642a7e061941003598725f86e4b8a9b2"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 6247,
+      "receipt_successes": 6247
+    },
+    {
+      "id": "chapter-IN-panel-20261024-230148-998-497f6e/round-01",
+      "song_id": "FULiAUTOSHOOTER.MYUKKE.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "manual_round_ended_without_result_confirmation",
+      "sequence_complete": true,
+      "manual_result_confirmed": false,
+      "down_attempts": 843,
+      "up_attempts": 843,
+      "expected_contacts": 843,
+      "expected_events": 2455,
+      "kernel_final_zero": true,
+      "manifest_sha256": "f52dfd2c19fe0730d048d9f2b8d9e868ddbd6bcc3259d9b37e29d2fad13fb10a",
+      "saved_result_png": false,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 843,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 843,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-230148-998-497f6e/round-01/last-observed.png",
+          "bytes": 603301,
+          "sha256": "dff6a62d5495d99119df87323670b45cd1e1920e5afb5cc0c49c383cf8ebdbc3"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 2455,
+      "receipt_successes": 2455
+    },
+    {
+      "id": "chapter-IN-panel-20261024-230526-324-bc53e3/round-01",
+      "song_id": "Cereris.SunsetRayNceS.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 898,
+      "up_attempts": 898,
+      "expected_contacts": 898,
+      "expected_events": 4460,
+      "kernel_final_zero": true,
+      "manifest_sha256": "80559396e54b23e9e0dabe516df00e4677c0bb781d11daf9d4481dff1b826121",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 898,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 898,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-230526-324-bc53e3/round-01/result.png",
+          "bytes": 501110,
+          "sha256": "067f666dab226e5a8a43971cc6e2df6c652367c267cb0e8f165562c9fb04055c"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 4460,
+      "receipt_successes": 4460
+    },
+    {
+      "id": "chapter-IN-panel-20261024-230859-108-0a2d23/round-01",
+      "song_id": "PixelRebelz.Normal1zer.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "experimental_whole_song_sent_judgment_unreviewed",
+      "native_failure": null,
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 941,
+      "up_attempts": 941,
+      "expected_contacts": 941,
+      "expected_events": 5087,
+      "kernel_final_zero": true,
+      "manifest_sha256": "3aefc82e38da98bf07228d50fc4cf15c22103b120ae00ab94de95ef458e9084e",
+      "saved_result_png": true,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 941,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 941,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-230859-108-0a2d23/round-01/result.png",
+          "bytes": 339620,
+          "sha256": "370c3cb7b7ef77437acedab9e5275c3e4ed67b563f9605f0276080ed93ae349b"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 5087,
+      "receipt_successes": 5087
+    },
+    {
+      "id": "chapter-IN-panel-20261024-231524-705-4a51ab/round-01",
+      "song_id": "SultanRage.MonstDeath.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "compiled_step_lateness_limit_exceeded",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 247,
+      "up_attempts": 245,
+      "expected_contacts": 485,
+      "expected_events": 2449,
+      "kernel_final_zero": true,
+      "manifest_sha256": "310146a6159c612caf58e143637c07237d4db3cde9654695e1917e73f71ff9a4",
+      "saved_result_png": false,
+      "visual_review": null,
+      "receipt_rows": 1259,
+      "receipt_successes": 1259
+    },
+    {
+      "id": "chapter-IN-panel-20261024-231754-197-209c3e/round-01",
+      "song_id": "Wintercube.CtymaxfeatNceS.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "manual_round_ended_without_result_confirmation",
+      "sequence_complete": true,
+      "manual_result_confirmed": false,
+      "down_attempts": 733,
+      "up_attempts": 733,
+      "expected_contacts": 733,
+      "expected_events": 3302,
+      "kernel_final_zero": true,
+      "manifest_sha256": "b084a6801059454aea0e7c6456214a8261ecba75372c625ac4569a4859c45a5d",
+      "saved_result_png": false,
+      "visual_review": {
+        "score": 1000000,
+        "perfect": 733,
+        "good": 0,
+        "bad": 0,
+        "miss": 0,
+        "max_combo": 733,
+        "accuracy": "100.00%",
+        "AP_observed": true,
+        "image": {
+          "file": "chapter-IN-panel-20261024-231754-197-209c3e/round-01/last-observed.png",
+          "bytes": 458502,
+          "sha256": "8b4215bb1e8d293694c4523687005c0fac0f041390bbf45cd2810c864cb2721a"
+        },
+        "review_method": "Direct visual inspection of archived full PNG; no OCR, RPC-based judgment, or new capture"
+      },
+      "receipt_rows": 3302,
+      "receipt_successes": 3302
+    },
+    {
+      "id": "chapter-IN-panel-20261024-232852-424-b55024/round-01",
+      "song_id": "EnginexStartmelodymix.CrossingSound.0",
+      "binary_sha256": "07ede2edf228fa9805305c4ea3603f2235075f477000165937b42bb2d242edb7",
+      "native_status": "failed_or_stopped",
+      "native_failure": "user_stop",
+      "sequence_complete": true,
+      "manual_result_confirmed": false,
+      "down_attempts": 433,
+      "up_attempts": 433,
+      "expected_contacts": 433,
+      "expected_events": 2183,
+      "kernel_final_zero": true,
+      "manifest_sha256": "52c2efb12045c3380bb009a424fda6f3c21fb91f73fc5fc2f523326a1390aa66",
+      "saved_result_png": false,
+      "visual_review": {
+        "AP_observed": null,
+        "judgment": "unavailable",
+        "image": {
+          "file": "chapter-IN-panel-20261024-232852-424-b55024/round-01/last-observed.png",
+          "bytes": 613073,
+          "sha256": "48a58813d657791771b7f438b29ba5c7d7f8f21e018c4e10ddfb215f5fa787ff"
+        },
+        "reason": "Last saved image is song selection, not this round result; selection-page best score is not evidence for this round."
+      },
+      "receipt_rows": 2183,
+      "receipt_successes": 2183
+    }
+  ],
+  "pre_panel_control_rounds": [
+    {
+      "id": "chapter-legacy-IN-live-20261024-171208-966/round-01",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 288,
+      "up_attempts": 287,
+      "kernel_final_zero": true,
+      "failure": "actual_UI_receipt_expired",
+      "manifest_sha256": "0a961d9746230b0d0ee2ede32c6e665caed6fcd28bf93d57a4bcdfc41bf0641a"
+    },
+    {
+      "id": "glaciaxion-whole-song-live-001",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 0,
+      "up_attempts": 0,
+      "kernel_final_zero": true,
+      "failure": "user_stop",
+      "manifest_sha256": "931afd5a8681dd19df7b7f460ebc673181be404e302a3fb1504f1a381fd8b163"
+    },
+    {
+      "id": "glaciaxion-whole-song-live-002",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 94,
+      "up_attempts": 93,
+      "kernel_final_zero": true,
+      "failure": "actual_UI_receipt_expired",
+      "manifest_sha256": "35d5e3823c5b350b537b9e0455d32f1c4a629f5f68f431274e7019d591234683"
+    },
+    {
+      "id": "glaciaxion-whole-song-live-003",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "sequence_complete": true,
+      "manual_result_confirmed": false,
+      "down_attempts": 729,
+      "up_attempts": 729,
+      "kernel_final_zero": true,
+      "failure": "manual_round_ended_before_whole_song_complete",
+      "manifest_sha256": "39e1a0267585333d720017dceded08c5a610f3ae8f23db34dbff5f1a3def89a6"
+    },
+    {
+      "id": "glaciaxion-whole-song-live-004",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "sequence_complete": false,
+      "manual_result_confirmed": false,
+      "down_attempts": 0,
+      "up_attempts": 0,
+      "kernel_final_zero": true,
+      "failure": "anchor_not_fresh_or_first_contact_not_future",
+      "manifest_sha256": "ae5bda9e1a655a093010bd4dec6eecec867d15d7507e4d8afa76fd0c733d5776"
+    },
+    {
+      "id": "glaciaxion-whole-song-live-005",
+      "song_id": "Glaciaxion.SunsetRay.0",
+      "sequence_complete": true,
+      "manual_result_confirmed": true,
+      "down_attempts": 729,
+      "up_attempts": 729,
+      "kernel_final_zero": true,
+      "failure": null,
+      "manifest_sha256": "24bcfa8d55c3606ffa271140b580e9e8fca13018d8cea1cb396c24c7f28eb13c"
+    }
+  ],
+  "open_issues": [
+    "Completed input does not guarantee native result confirmation; Cipher/FULi/Winter result screenshots remain unconfirmed by native lifecycle.",
+    "Engine x Start!! and Non-Melodic Ragez have completed input but no saved full result screenshot; cannot recover judgment from selection best scores.",
+    "20ms lateness still occurred with build006 on Verruckt and Sultan Rage; no threshold relaxation or jitter qualification.",
+    "Six formal chapter songs remain not run; 光 had zero-input stop; no claim of completed20-song sweep.",
+    "Per-note Flick/Drag misses, source pixel age, independent input latency and audio synchronization remain unqualified."
+  ]
+}

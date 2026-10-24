@@ -41,6 +41,32 @@ struct SpeedLineEvent {
     double value = 0;
     std::optional<double> floor_position; // Absent in some native v3 charts; never invented.
 };
+enum class PhigrosImportPolicy { strict_v3, source_priority_constant_empty_candidate_v1 };
+struct ImportOptions {
+    PhigrosImportPolicy policy = PhigrosImportPolicy::strict_v3;
+    std::size_t max_anomalies = 4096, max_evaluated_pose_events = 500000;
+};
+// Original source-order event declarations, including empty/reversed records.
+// Populated only by the explicit candidate importer. Existing line event arrays
+// then describe its evaluated, disjoint half-open segments; these declarations
+// remain unchanged and keep their original chart SHA + JSON pointers.
+struct NativeLineEventDeclarations {
+    std::vector<MoveLineEvent> move_events;
+    std::vector<NumericLineEvent> rotate_events, opacity_events;
+    std::vector<SpeedLineEvent> speed_events;
+};
+struct ChartImportAnomaly {
+    SourceLocation source;
+    std::string code, reason, event_track;
+    std::size_t line_index = 0, declaration_index = 0;
+    ChartEventTime declared_time;
+    // All declared JSON fields/values, canonical serialization for diagnostics.
+    // Original byte spelling/whitespace is identified by chart.source hash;
+    // typed native_event_declarations retain the original parsed values.
+    std::string original_declaration_json;
+    bool declaration_evaluated = false;
+    std::vector<ChartEventTime> evaluated_segments;
+};
 struct SemanticNote {
     SourceLocation source;
     std::size_t source_index = 0; // Index within its original above/below array.
@@ -58,6 +84,7 @@ struct ChartLine {
     std::vector<MoveLineEvent> move_events;
     std::vector<NumericLineEvent> rotate_events, opacity_events;
     std::vector<SpeedLineEvent> speed_events;
+    std::optional<NativeLineEventDeclarations> native_event_declarations;
 };
 struct SemanticChart {
     ChartSource source;
@@ -65,6 +92,12 @@ struct SemanticChart {
     double offset_seconds = 0;
     std::vector<ChartLine> lines; // Empty charts/lines are valid semantic input.
     std::size_t note_count = 0, event_count = 0;
+    // event_count always counts original declarations, including ignored empty
+    // records. Candidate interpretation is not a game-engine qualification.
+    std::string import_policy_id = "phigros-v3-strict-v1";
+    bool import_interpretation_unqualified = false;
+    std::vector<ChartImportAnomaly> import_anomalies;
+    std::size_t evaluated_pose_event_count = 0;
 };
 struct ChartImportLimits {
     std::size_t max_json_bytes = 32 * 1024 * 1024;
@@ -79,6 +112,7 @@ struct ChartImportLimits {
 // with halfway values away from zero. Neither speed nor floor changes judgment time.
 SongNs phigros_time_ns(double tick, double bpm, double offset_seconds);
 std::string chart_text_sha256(std::string_view text);
+std::string_view phigros_import_policy_id(PhigrosImportPolicy policy);
 SemanticChart parse_phigros(std::string_view json_text, ChartSource source,
-                           const ChartImportLimits& limits = {});
+                           const ChartImportLimits& limits = {}, const ImportOptions& options = {});
 } // namespace rhythm

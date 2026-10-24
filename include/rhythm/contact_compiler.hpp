@@ -24,6 +24,18 @@ struct ContactCompileOptions {
     double interference_radius_pixels = 48;
     OffscreenPolicy offscreen_policy = OffscreenPolicy::reject;
     double max_normal_projection_reference_pixels = 0;
+    // Optional candidate geometry for avoiding a device's system-gesture edges.
+    // Only bounded_normal_intersection_candidate_v1 supports a positive inset.
+    // Positive I uses reference slabs [I,1280-1-I] and [I,720-1-I], including
+    // otherwise onscreen targets, the full continuous path and inward raster
+    // rounding. I=0 preserves the original [0,1280] / [0,720] canvas exactly.
+    // This does not qualify game judgment acceptance or a device safe area.
+    double normal_projection_inset_reference_pixels = 0; // Finite, 0..100.
+    // Opt-in analytic-projected-derivative-v1: interval bounds on the actual
+    // normal-intersection path, including active canvas/inset edges. The
+    // zero-order held error budget and native critical keys remain unchanged.
+    // False preserves archived triangle bounds, sampling and fingerprints.
+    bool tight_projection_speed_bounds = false;
     // Required for candidate policy; a pending calibration identity, NOT proof
     // that an off-line target is accepted by the actual game.
     std::string calibration_id;
@@ -36,7 +48,9 @@ struct CompileDiagnostic {
     std::optional<PosePoint> reference_point;
 };
 // Conservative continuous-segment certificate, not an official hit region.
-// Edge mask: left=1, right=2, top=4, bottom=8, unprojected=16.
+// Edge mask of the selected canvas/inset rectangle: left=1, right=2,
+// top=4, bottom=8, unprojected=16. Positive insets do not certify the
+// corresponding physical device system-gesture region or game acceptance.
 struct NormalProjectionSpan {
     SongNs begin_ns=0,end_ns=0;
     double correction_lower_reference_pixels=0,correction_upper_reference_pixels=0;
@@ -63,6 +77,12 @@ struct CompiledSongEvent {
 };
 struct ContactCompileMetadata {
     std::string compiler_version = "phigros-contact-v2";
+    // Derived automatically from the parsed chart. Non-strict interpretation
+    // and original anomalous source IDs are fingerprinted independently of
+    // immutable source bytes and the full generated contact path.
+    std::string import_policy_id = "phigros-v3-strict-v1";
+    bool import_interpretation_unqualified = false;
+    std::vector<std::string> import_anomaly_source_ids;
     std::string cache_sha256;
     PhigrosGeometry geometry;
     ContactCompileOptions options;

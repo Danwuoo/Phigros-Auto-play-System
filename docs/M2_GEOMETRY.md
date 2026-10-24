@@ -85,3 +85,7 @@ cross-checks under an explicit phase hypothesis. Baseline overlays are retained
 under `m2-video-overlay/`; the phase-adjusted pass is a separate artifact. This
 does not convert the hypothesis into a calibrated audio/video offset, game
 judgment timestamp, or input lead.
+
+## Explicit compatibility import
+
+The strict evaluator rules above remain unchanged. The opt-in import policy `phigros-v3-source-priority-constant-empty-candidate-v1` retains all original declarations separately and supplies disjoint evaluation segments for affected pose tracks. It uses first native source priority for active half-open intervals; constant reversed pose records are empty declarations with provenance. This is an unqualified interpretation, not an official-engine assertion. Unknown/nonconstant reversals and ambiguous mixed instantaneous tracks remain rejected. See [common policies](CHAPTER_LEGACY_COMMON_POLICIES.md).

@@ -1,6 +1,78 @@
 # 本輪驗證：2026-10-23 起，更新至 2026-10-24
 
-## 最新：live011 已確認 Dlyrotz IN13 AP（一次完整實測）
+## 本次封存核對
+
+使用者要求停止修正並commit／push。最新使用者實跑與結果圖已整理為[逐曲／逐回合表](SESSION_RECORDS_2026-10-24.md)及[機器索引](SESSION_RECORDS_2026-10-24.json)：build006共18輪，14輪完整輸入／8輪原生確認結算／6輪完成但未確認；正式章節8首AP與額外Verrückt AP由保存PNG複核。FULi／Winter的AP與Cipher結果補記在衍生表，原生failure不改寫；Engine／Non-Melodic缺完整結果圖，不由選曲頁最佳分補造本輪成績。
+
+封存前重新執行：portable configure/build/CTest **4/4**、Windows非音訊整合CTest **28/28**、Python unittest **145/145**（使用task-local依賴，包含LZ4，無skip）。14個保留PAS source Git blobs核對原EXTRACTION身份。gRPC使用既有patched install，第三方fresh source重建 **NOT RUN**；本次整理新增裝置／ADB／遊戲測試 **NOT RUN**。使用者先前的實際重啟、五指及歌曲紀錄則以既有原件獨立列明。
+
+原有280個本機目錄的metadata索引與1448份原件SHA封存在repo外；原native manifests、圖像、音源、譜面與校正均未覆寫。結算漏記與build006的20ms遲到仍未解決；沒有宣稱20首全測或跨輪時序合格。
+
+## 2026-10-24 連續 UI 逾期與開場自適應候選
+
+三次build005的actual_UI_receipt_expired均有持續有效影格、正常pause/prefix、連續27／29／22張score-only拒絕；Hold接到分數，約500ms後按原guard釋放。另一輪Glaciaxion5接點為獨立20ms遲到，owner間隔約27.6ms；現有日誌不能再歸因CPU／排程／配置。原件與kernelzero保留，見[時序稽核](../../local-assets/phigros-4.0.1/chapter-legacy-repeated-stop-timing-audit-001/README.md)。
+
+新learned-title-redundancy-v1的157個離線檢查、Windows整合28/28 CTest及預設portable configure/build/CTest4/4通過。原v3正例路徑保留；新路徑要求兩份開場clean實際觀測、當下三固定glyph、實際score邊界交疊及部分數字；無時鐘／期限放寬。原生chart/profile/contact/opening bytes不變。48RGB與64MiB journal配置移到READY前，最多2個diagnostic lease與pool5有界；新增stage時戳，不把它當輸入延遲資格。
+
+保存的Eradication兩張pre-arm實際影格相隔90.1282ms，可用於歷史學習回放；Glaciaxion保留的pre-arm影格不足60ms，其他真實像素補測需明示反事實unarmed時序，不能聲稱新實機學習已成功。新版本將保留兩份支持PNG及hash。新binary／重啟工具的實際emulator、五指及完整歌曲測試NOT RUN，等待使用者自行執行重啟流程。
+
+## 2026-10-24 Verrückt AP 與結算標籤辨識
+
+`chapter-IN-panel-20261024-190641-385-bb3ebb/round-01` 的原始結果圖確認1,000,000分、1285Perfect／0Good／0Bad／0Miss、MaxCombo1285、100.00%、Early/Late0。[獨立結果及回執稽核](../../local-assets/phigros-4.0.1/verruckt-result-review-001/result-observed.json)核對全部3358events（1285DOWN／788MOVE／1285UP）、peak3、最後零接觸。此AP僅屬於該build004/chart/profile/boot；原manual_result_confirmed=false及exit2保留，原因為結算模板未通過，180秒round watchdog結束。
+
+修正新增共通caption標籤特徵，僅全曲輸入完成後可供manual-mode辨識結算，不判讀分數／AP。原模板、HUD許可、時鐘與安全條件不變。MSVC新測試與全整合CTest27/27、portable configure/build/CTest4/4通過；新binary的實際遊戲／裝置生命周期測試NOT RUN。這次工作沒有啟動遊戲或送入觸控。
+
+## 最新：Verruckt HUD字形相位與等待狀態
+
+兩個實際回合0 DOWN／UP、無anchor；所有1291／1277 UI observations卡HUD，未執行首音detector/model；user_stop後kernel零。原件與逐影格稽核在verruckt-noinput-ui-audit-001，無改寫。
+
+HUDv3production852ae828...：255case/222unique RGB與獨立Python決策／位移族一致，190v2正例不退步、55嚴格負例全拒絕；首字形4CC與1px支持通過真實IN16，scorev2不變。實際fallback成本中位約0.7ms/p951.75ms，為離線host測量，不是dispatch或capture-clock資格。
+
+整合CTest26/26與portable configure/build/CTest4/4通過。新GUIfebe887...取得階段70/70、回歸72/72、SelfTest32/32；offscreen視窗預覽不顯示、未連裝置。Native新增1s未arm診斷與最多24張100ms前置影格，全部不更新UI觀測／時鐘，新build實際送觸控與整首仍NOT RUN。
+
+
+## 最新：Verruckt與非終端面板
+
+Verruckt IN原件／音源已入檔，1285來源的起訖時間以獨立Fraction核對，完整3358events／peak3與raster範圍通過；精確時間檢查為1285start＋1285end。nativeprepare/check為離線，無裝置探測／輸入；EZ／HD raw另存。
+
+本機library21項保留Legacy20原生順序，新增暖身不混入章節proof。library離線測例7/7；全Python114/114（含LZ4）。GUI純函數／hashworker／offscreen預覽及隱藏程序橋接測試範圍另見[面板說明](SONG_TEST_PANEL.md)，不是21首實機。
+
+## 最新：004首輪中止與HUD v2離線修正
+
+使用者實測Glaciaxion第一輪以actual_UI_receipt_expired停止：288 DOWN／287 UP、287combo，最終kernel零。18張連續有效影格只因Drag連到分數字而拒絕，500.275ms release符合原guard，原始紀錄未改。
+
+HUD shared-in-cell-score-v2保持七個實際字形、baseline／右錨點／暗負空間／對比／間距，有限首字外接修復；不使用固定pitch或重建被遮像素。233筆RGB／204unique，45張本輪playing全通過、116既有正例不退步、39嚴格負例拒絕；pause/result優先與component cap保留。兩張嚴重中間合併仍unknown。
+
+新build003：26/26非音訊整合CTest、4/4portable configure/build/CTest及20首新binary offlinecheck通過。原所有chart／contact／opening身份與14保留PAS blobs不變。新完整實機、重新裝置探測、第三方gRPC重建、Linux及其他18首實際UI均NOT RUN；既有patched gRPC編譯/離線contract涵蓋於整合測試。
+
+
+## 最新：共通匯入／首音模型與20首候選
+
+20/20 IN完成相容匯入、首音模型、完整編譯、profile及封存binary的離線check。共15,817 notes／74,302 events；62份原譜與421份舊產物雜湊不變，31,634個原生起訖以獨立Fraction核對最大差0 ns，所有來源恰好一次。四首異常tracks以明確候選政策求值，原始宣告與來源證據保留；嚴格預設不變。原Dlyrotz584／5669／peak4及fingerprint亦維持完全相同。
+
+- Portable configure／build／CTest **4/4**；Windows/MSVC非音訊整合build／CTest **26/26**；Python **107/107**，含LZ4與11項全測清單測例。gRPC使用既有patched install，第三方source未重建。
+- 完整計畫驗證移到首音擷取前，以不可修改且一次移轉的Prepared值綁新錨點；舊100 ms新鮮度不續期。共通IN HUD每幀仍經glyph／score及否決狀態檢查，含未arm／已判playing的畫面；STOP／release／epoch／容量條件不變。
+- 80組歷史成本回放 **57完成／23按原guard停止**；9首尚無完整成本資格。清單004的20首是可控人工候選，沒有將失敗轉成通過、沒有放寬20 ms lateness，也沒有宣稱共通HUD已逐曲驗證。
+- 新binary及本輪20首實機、重新確認當前boot、音訊同步、Linux新版本、世界計畫裝置：**NOT RUN**。全測準備未啟動遊戲或送輸入；14個保留PAS blobs及main不變。
+
+逐曲來源、雜湊、封存、命令與限制見 [最新測試計畫](CHAPTER_LEGACY_TEST_PLAN.md)及[共通政策](CHAPTER_LEGACY_COMMON_POLICIES.md)。
+
+- v3旋轉head detector及同色別名可見性保守邊界：15組／98 checks通過；20首簡化原生角度像素fixture全數形成唯一候選，85次觀察真實時間均保留。既有Dlyrotz／Glaciaxion實際anchor中心完全不變。這不等於18首實際渲染／Hold body資格。
+- 連續父流程的NOOP檔案logger替身：全部20項native前檢先完成，再依序20輪；第3輪故障時只執行3輪、ledger標stopped，沒有裝置／gRPC／輸入介面。這是script流程驗證，不是遊戲全測。
+
+## 歷史001：Chapter Legacy 入檔與原前檢查
+
+完整來源與逐曲阻擋見 [Chapter Legacy 測試準備](CHAPTER_LEGACY_TEST_PLAN.md)。本機已封存20首、62份原生譜面、20組音源；421份產物、20份 WAV PCM、來源 APK 前後 SHA 及 Dlyrotz／Glaciaxion 的10份基準 bytes 均核對通過。兩份非 IN format1 原件保留，沒有偽稱 v3 匯入通過。
+
+20首 IN 的15,817個原生 notes均列入索引；16首完整編譯，64組完整 FakeTouch 成本回放有49完成、15按 guard停止。四份 IN 嚴格匯入拒絕、首音模型與UI參考缺口皆保留；目前只有Glaciaxion符合本批全部離線條件，**整輪實機全測尚未就緒／NOT RUN**。清單保留20項，一首一輪；任一項 blocked 時，整輪 `-Run` 在連裝置前拒絕，不自動省略。
+
+- 本輪最終 Python unittest：**106/106**，包含11項章節封存及10項測試清單檔案／順序／SHA／路徑／保留阻擋檢查，使用 task-local lz4 環境，沒有略過壓縮測例。
+- Portable CMake configure／Release build／CTest：**4/4**；Windows/MSVC非音訊整合 build／CTest：**26/26**。gRPC為既有 patched install 的編譯／連結與離線 contract，本次沒有重新建置第三方 gRPC source。
+- 實際五指 fixture：Android完整紀錄 peak5、ID0–4正常路徑／釋放、最後kernel零；五指live入口要求證據／原件hash與目前boot／route一致。失效boot、改動原件與缺少五指證據的拒絕案例通過。
+- Glaciaxion live005完整729 DOWN／4,892 MOVE／729 UP，manual result confirmed、failure null、final kernel zero；獨立結算為**722 Perfect／1 Good／3 Bad／3 Miss，932,353分**，不是AP。live003的725 Perfect／0 Good／1 Bad／3 Miss及其結果辨識失敗、live002系統列停止、live001／004無輸入停止均保留。
+- 原PAS extraction blobs再次比對不變，main未修改；新章節入檔／前檢查沒有新增裝置輸入或歌曲啟動。Linux新版本與世界計畫裝置測試：**NOT RUN**。
+
+## 既有：live011 已確認 Dlyrotz IN13 AP（一次完整實測）
 
 依使用者回來後的最新要求，首音視覺觸發後直接依完整 Dlyrotz IN13 譜面輸入；開始／結束仍沿用互動式 manual-mode，音訊保持暫緩。[全曲實驗報告](M7_WHOLE_SONG_EXPERIMENT.md) 分開列出離線驗證、歷史中止與 live011 的實際 AP；一次成功不繼承為其他時鐘或生產資格。
 

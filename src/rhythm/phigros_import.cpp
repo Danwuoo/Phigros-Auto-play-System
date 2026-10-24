@@ -5,11 +5,14 @@
 #include <bit>
 #include <cmath>
 #include <iomanip>
+#include <iterator>
 #include <limits>
+#include <map>
 #include <set>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
+#include <type_traits>
 #include <nlohmann/json.hpp>
 
 namespace rhythm {
@@ -45,10 +48,10 @@ SourceLocation location(const ChartSource& source, std::string path) {
     return {source.chart_sha256 + "#" + path, std::move(path)};
 }
 ChartEventTime event_time(const Json& event, const std::string& path, double bpm,
-                          double offset, const ChartImportLimits& limits) {
+                          double offset, const ChartImportLimits& limits, bool candidate_pose=false) {
     const double start = number(event.at("startTime"), path + "/startTime", limits.max_abs_tick);
     const double end = number(event.at("endTime"), path + "/endTime", limits.max_abs_tick);
-    if (end < start) fail(path, "reversed event interval");
+    if (end < start && !candidate_pose) fail(path, "reversed event interval");
     return {start, end, phigros_time_ns(start, bpm, offset), phigros_time_ns(end, bpm, offset)};
 }
 void validate_limits(const ChartImportLimits& limits) {
@@ -58,12 +61,131 @@ void validate_limits(const ChartImportLimits& limits) {
                          limits.max_abs_offset_seconds, limits.max_abs_note_seconds})
         if (!std::isfinite(value) || value <= 0) throw std::invalid_argument("invalid import numeric limit");
 }
+bool constant_event(const NumericLineEvent& e) {return e.start==e.end;}
+bool constant_event(const MoveLineEvent& e) {return e.start_x==e.end_x&&e.start_y==e.end_y;}
+template<class Event> Event evaluated_slice(const Event& original, ChartEventTime time) {
+    const auto fraction=[&](SongNs at) {
+        return static_cast<double>((static_cast<long double>(at)-original.time.start_ns)/
+            (static_cast<long double>(original.time.end_ns)-original.time.start_ns));
+    };
+    Event result=original;
+    result.time=time;
+    if constexpr(std::is_same_v<Event,MoveLineEvent>) {
+        result.start_x=std::lerp(original.start_x,original.end_x,fraction(time.start_ns));
+        result.end_x=std::lerp(original.start_x,original.end_x,fraction(time.end_ns));
+        result.start_y=std::lerp(original.start_y,original.end_y,fraction(time.start_ns));
+        result.end_y=std::lerp(original.start_y,original.end_y,fraction(time.end_ns));
+    } else {
+        result.start=std::lerp(original.start,original.end,fraction(time.start_ns));
+        result.end=std::lerp(original.start,original.end,fraction(time.end_ns));
+    }
+    return result;
+}
+// Candidate semantics, motivated by local phisap 8ac9a67 judge_line.py's
+// first-source-match scan. Half-open intervals and before/gap/after endpoint
+// hold deliberately remain this adapter's declared conventions. This is not an
+// assertion about the proprietary game engine or a general malformed-data fix.
+// Original declarations are never sorted, swapped or overwritten. A source
+// priority sweep creates a separate disjoint EVALUATION representation.
+template<class Event> void candidate_pose_track(std::vector<Event>& evaluated,const Json& original_json,
+        SemanticChart& chart,std::size_t line_index,const std::string& key,
+        const ChartImportLimits& limits,const ImportOptions& options) {
+    const auto original=evaluated;
+    bool needs_evaluation=false;
+    std::optional<std::size_t> previous;
+    for(std::size_t i=0;i<original.size();++i) {
+        const auto& event=original[i];const auto& t=event.time;
+        if(t.end_tick<t.start_tick) {
+            if(!constant_event(event))fail(event.source.json_pointer,"candidate policy rejects nonconstant reversed pose events");
+            needs_evaluation=true;continue;
+        }
+        if(previous) {
+            const auto& before=original[*previous].time;
+            if(t.start_ns<before.start_ns||t.start_ns<before.end_ns||t.start_tick<before.start_tick||t.start_tick<before.end_tick)
+                needs_evaluation=true;
+        }
+        previous=i;
+    }
+    const auto account=[&](std::size_t count) {
+        const auto bound=std::min(options.max_evaluated_pose_events,limits.max_events);
+        if(count>bound-chart.evaluated_pose_event_count)fail("/judgeLineList","candidate evaluated-pose event limit exceeded");
+        chart.evaluated_pose_event_count+=count;
+    };
+    if(!needs_evaluation) {account(evaluated.size());return;}
+    struct Boundary {double tick=0;std::vector<std::size_t> begin,end;};
+    std::map<SongNs,Boundary> boundaries;
+    const auto boundary=[&](SongNs time,double tick)->Boundary& {
+        const auto [it,added]=boundaries.try_emplace(time,Boundary{tick,{},{}});
+        if(!added&&it->second.tick!=tick)
+            fail(original.front().source.json_pointer,"candidate pose boundaries collide after nanosecond normalization");
+        return it->second;
+    };
+    for(std::size_t i=0;i<original.size();++i) {
+        const auto& e=original[i];
+        if(e.time.end_tick<e.time.start_tick)continue;
+        // Pure zero-time steps retain their existing meaning on ordered tracks.
+        // Mixed with malformed/overlapping declarations, source-first behavior
+        // at that instant is unproved, so the candidate explicitly refuses it.
+        if(e.time.start_ns==e.time.end_ns)
+            fail(e.source.json_pointer,"candidate mixed zero-time/overlapping pose interpretation is unsupported");
+        boundary(e.time.start_ns,e.time.start_tick).begin.push_back(i);
+        boundary(e.time.end_ns,e.time.end_tick).end.push_back(i);
+    }
+    if(boundaries.empty())fail(original.front().source.json_pointer,"candidate pose track contains no evaluable declaration");
+    struct Segment {std::size_t source=0;ChartEventTime time;};
+    std::vector<Segment> segments;
+    std::set<std::size_t> active;
+    const auto event_limit=std::min(options.max_evaluated_pose_events,limits.max_events);
+    for(auto it=boundaries.begin();it!=boundaries.end();++it) {
+        for(const auto i:it->second.end)active.erase(i);
+        for(const auto i:it->second.begin)active.insert(i);
+        const auto next=std::next(it);
+        if(next==boundaries.end()||active.empty())continue;
+        const auto selected=*active.begin(); // Native declaration order, not nearest time.
+        const ChartEventTime time{it->second.tick,next->second.tick,it->first,next->first};
+        if(!segments.empty()&&segments.back().source==selected&&segments.back().time.end_ns==time.start_ns) {
+            segments.back().time.end_ns=time.end_ns;segments.back().time.end_tick=time.end_tick;
+        } else {
+            if(segments.size()>=event_limit)fail(original[selected].source.json_pointer,"candidate pose subdivision limit exceeded");
+            segments.push_back({selected,time});
+        }
+    }
+    account(segments.size());
+    std::vector<std::vector<ChartEventTime>> pieces(original.size());
+    evaluated.clear();evaluated.reserve(segments.size());
+    for(const auto& segment:segments) {
+        evaluated.push_back(evaluated_slice(original[segment.source],segment.time));
+        pieces[segment.source].push_back(segment.time);
+    }
+    for(std::size_t i=0;i<original.size();++i) {
+        if(chart.import_anomalies.size()>=options.max_anomalies)
+            fail(original[i].source.json_pointer,"candidate import anomaly provenance limit exceeded");
+        const bool empty=original[i].time.end_tick<original[i].time.start_tick;
+        ChartImportAnomaly anomaly;
+        anomaly.source=original[i].source;anomaly.line_index=line_index;anomaly.declaration_index=i;anomaly.event_track=key;
+        anomaly.declared_time=original[i].time;anomaly.original_declaration_json=original_json[i].dump();
+        anomaly.code=empty?"empty_reversed_constant_pose_event":"source_priority_pose_track";
+        anomaly.reason=empty?"Constant reversed declaration has no time satisfying start<=t<end; retained without evaluation":
+            "Explicit candidate source-first active half-open interpretation; original declaration retained separately";
+        anomaly.declaration_evaluated=!pieces[i].empty();anomaly.evaluated_segments=std::move(pieces[i]);
+        chart.import_anomalies.push_back(std::move(anomaly));
+    }
+}
 bool hex_sha(const std::string& value) {
     return value.size() == 64 && std::all_of(value.begin(), value.end(), [](char c) {
         return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
     });
 }
 } // namespace
+
+std::string_view phigros_import_policy_id(PhigrosImportPolicy policy) {
+    switch(policy) {
+    case PhigrosImportPolicy::strict_v3:return "phigros-v3-strict-v1";
+    case PhigrosImportPolicy::source_priority_constant_empty_candidate_v1:
+        return "phigros-v3-source-priority-constant-empty-candidate-v1";
+    }
+    throw std::invalid_argument("unknown Phigros import policy");
+}
 
 SongNs phigros_time_ns(double tick, double bpm, double offset_seconds) {
     // Community primary reference, not a Pigeon Games specification:
@@ -130,8 +252,12 @@ std::string chart_text_sha256(std::string_view text) {
     return out.str();
 }
 
-SemanticChart parse_phigros(std::string_view text, ChartSource source, const ChartImportLimits& limits) {
+SemanticChart parse_phigros(std::string_view text, ChartSource source, const ChartImportLimits& limits,const ImportOptions& options) {
     validate_limits(limits);
+    const auto policy_id=phigros_import_policy_id(options.policy);
+    const bool candidate=options.policy==PhigrosImportPolicy::source_priority_constant_empty_candidate_v1;
+    if(options.max_anomalies==0||options.max_anomalies>2000000||options.max_evaluated_pose_events==0||options.max_evaluated_pose_events>2000000)
+        fail("import_options","invalid candidate provenance/evaluation resource limit");
     if (text.size() > limits.max_json_bytes) fail("/", "JSON byte limit exceeded");
     if (source.label.empty() || source.label.size() > 4096) fail("source", "missing/oversized source label");
     const std::string actual_sha = chart_text_sha256(text);
@@ -154,6 +280,7 @@ SemanticChart parse_phigros(std::string_view text, ChartSource source, const Cha
     if (!root["formatVersion"].is_number_integer() || root["formatVersion"] != 3) fail("/formatVersion", "only version 3 is supported");
     SemanticChart chart;
     chart.source = std::move(source);
+    chart.import_policy_id=policy_id;chart.import_interpretation_unqualified=candidate;
     chart.offset_seconds = number(root["offset"], "/offset", limits.max_abs_offset_seconds);
     const auto& lines = array(root["judgeLineList"], "/judgeLineList");
     if (lines.size() > limits.max_lines) fail("/judgeLineList", "line limit exceeded");
@@ -209,18 +336,24 @@ SemanticChart parse_phigros(std::string_view text, ChartSource source, const Cha
                     line.speed_events.push_back(std::move(event));
                 } else if (key == "judgeLineMoveEvents") {
                     object_fields(value, p, {"startTime", "endTime", "start", "end", "start2", "end2"});
-                    line.move_events.push_back({location(chart.source, p), event_time(value, p, line.bpm, chart.offset_seconds, limits),
+                    line.move_events.push_back({location(chart.source, p), event_time(value, p, line.bpm, chart.offset_seconds, limits,candidate),
                         number(value["start"], p + "/start", limits.max_abs_value), number(value["end"], p + "/end", limits.max_abs_value),
                         number(value["start2"], p + "/start2", limits.max_abs_value), number(value["end2"], p + "/end2", limits.max_abs_value)});
                 } else {
                     object_fields(value, p, {"startTime", "endTime", "start", "end"});
-                    NumericLineEvent event{location(chart.source, p), event_time(value, p, line.bpm, chart.offset_seconds, limits),
+                    NumericLineEvent event{location(chart.source, p), event_time(value, p, line.bpm, chart.offset_seconds, limits,candidate),
                         number(value["start"], p + "/start", limits.max_abs_value), number(value["end"], p + "/end", limits.max_abs_value)};
                     (key == "judgeLineRotateEvents" ? line.rotate_events : line.opacity_events).push_back(std::move(event));
                 }
                 ++chart.event_count;
             }
         }
+        if(candidate) {
+            line.native_event_declarations=NativeLineEventDeclarations{line.move_events,line.rotate_events,line.opacity_events,line.speed_events};
+            candidate_pose_track(line.move_events,input["judgeLineMoveEvents"],chart,index,"judgeLineMoveEvents",limits,options);
+            candidate_pose_track(line.rotate_events,input["judgeLineRotateEvents"],chart,index,"judgeLineRotateEvents",limits,options);
+            candidate_pose_track(line.opacity_events,input["judgeLineDisappearEvents"],chart,index,"judgeLineDisappearEvents",limits,options);
+        } else chart.evaluated_pose_event_count+=line.move_events.size()+line.rotate_events.size()+line.opacity_events.size();
         chart.lines.push_back(std::move(line));
     }
     return chart;

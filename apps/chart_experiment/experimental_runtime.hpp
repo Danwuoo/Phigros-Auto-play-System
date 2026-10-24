@@ -33,6 +33,15 @@ struct ExperimentalUiObservation {
 struct ExperimentalRuntimeOptions {
     Ns ui_receipt_max_age_ns=100'000'000;
     Ns max_step_lateness_ns=20'000'000;
+    // Explicit experiment limit. Actual backend capacity must be verified
+    // independently before live use; FakeTouch does not establish it.
+    int contact_capacity=4;
+    // Explicit per-song geometry ceiling; changing it is not judgment
+    // calibration. All dispatched pixels must still lie inside the surface.
+    double max_normal_projection_reference_pixels=250;
+    // Inclusive native song domain for the actual visual anchor. Defaults
+    // preserve the frozen Dlyrotz opening; other charts must opt in explicitly.
+    Ns anchor_domain_begin_ns=10'800'000'000,anchor_domain_end_ns=11'950'000'000;
 };
 enum class ExperimentalRuntimeState { waiting,ready,armed,completed,stopped };
 struct ExperimentalContactSource {
@@ -51,7 +60,9 @@ struct ExperimentalRuntimeStatus {
     std::size_t overdue_tail_revisions_deferred=0;
     Ns plan_end_song_ns=0;
     Ns ui_receipt_max_age_ns=100'000'000,max_step_lateness_ns=20'000'000,anchor_max_age_ns=100'000'000;
-    int peak_contacts=0;
+    double max_normal_projection_reference_pixels=250;
+    Ns anchor_domain_begin_ns=10'800'000'000,anchor_domain_end_ns=11'950'000'000;
+    int peak_contacts=0,contact_capacity=4;
     pas::ReleaseReport release;
 };
 struct ExperimentalRuntimeTick {
@@ -66,8 +77,11 @@ struct ExperimentalRuntimeTick {
 // deadlines remain the immutable arrival-origin + phase + song_ns hypothesis.
 //
 // Whole-song scope: every compiled contact, <=2000 contacts/20000 steps,
-// duration <180s, peak<=4, 1280x720 unrotated compiler surface. Bounded D<=250
-// projection candidates remain explicitly unqualified. No note is filtered.
+// duration <180s, peak<=explicit capacity (default4, at most5), 1280x720
+// unrotated compiler surface. Projection
+// candidates default to D<=250; a per-song explicit ceiling may be at most
+// 10000 reference pixels. This is a source-geometry bound, not an input-surface
+// expansion or qualified hit region. No note is filtered.
 // Admit each contact's DOWN within 100ms, retaining its complete unexecuted
 // trajectory plus the last executed step when compacting on actual UI renewal.
 // No MOVE is omitted behind a temporary prefix boundary: synchronous RPCs may
@@ -105,9 +119,17 @@ class ExperimentalContactRuntime {
 
     static bool text(const std::string& value) {return !value.empty()&&value.size()<=512;}
     static ExperimentalRuntimeOptions checked_options(ExperimentalRuntimeOptions value) {
+        if(value.contact_capacity<1||value.contact_capacity>5)
+            throw std::invalid_argument("explicit experimental contact capacity must be 1..5");
         if(value.ui_receipt_max_age_ns<100*ms||value.ui_receipt_max_age_ns>500*ms||
            value.max_step_lateness_ns<0||value.max_step_lateness_ns>20*ms)
             throw std::invalid_argument("experimental UI age must be 100..500ms and step lateness 0..20ms");
+        if(!std::isfinite(value.max_normal_projection_reference_pixels)||
+           value.max_normal_projection_reference_pixels<0||value.max_normal_projection_reference_pixels>10000)
+            throw std::invalid_argument("explicit experimental normal projection ceiling must be finite 0..10000 reference pixels");
+        if(value.anchor_domain_begin_ns<0||value.anchor_domain_begin_ns>=value.anchor_domain_end_ns||
+           value.anchor_domain_end_ns>=180*second)
+            throw std::invalid_argument("explicit experimental anchor domain must satisfy 0<=begin<end<180s");
         return value;
     }
     static bool terminal(ExperimentalRuntimeState state) {
@@ -136,7 +158,25 @@ class ExperimentalContactRuntime {
                span.speed_bound_input_pixels_per_ns<0)return false;
         return true;
     }
-    void select(const CompiledContactPlan& full) {
+public:
+    // Immutable validation is performed before collecting a fresh visual anchor.
+    // Only this class can create a Prepared value; the move transfers all notes
+    // and validation results without rehashing on the timing-critical arm path.
+    class Prepared {
+        friend class ExperimentalContactRuntime;
+        Memory selected_;std::vector<ExperimentalContactSource> sources_;
+        ExperimentalRuntimeStatus value_;ExperimentalRuntimeOptions options_;
+        explicit Prepared(ExperimentalRuntimeOptions options):options_(options) {}
+    public:
+        Prepared(Prepared&&)=default;
+        Prepared& operator=(Prepared&&)=default;
+        Prepared(const Prepared&)=delete;
+        Prepared& operator=(const Prepared&)=delete;
+    };
+    static Prepared prepare(const CompiledContactPlan& full,ExperimentalRuntimeOptions options={}) {
+        Prepared prepared(checked_options(options));
+        const auto& options_=prepared.options_;
+        auto& selected_=prepared.selected_;auto& sources_=prepared.sources_;auto& value_=prepared.value_;
         const auto& meta=full.metadata;
         if(full.memory.identity.game!=Game::phigros||meta.compiler_version!="phigros-contact-v2"||
            meta.geometry.input_width!=1280||meta.geometry.input_height!=720||
@@ -149,8 +189,9 @@ class ExperimentalContactRuntime {
             policy==OffscreenPolicy::bounded_normal_intersection_candidate_v1;
         if((policy!=OffscreenPolicy::reject&&!candidate)||meta.requires_calibration!=candidate||
            (candidate&&(!std::isfinite(meta.options.max_normal_projection_reference_pixels)||
-             meta.options.max_normal_projection_reference_pixels<0||meta.options.max_normal_projection_reference_pixels>250))||
-           meta.options.max_contacts<1||meta.options.max_contacts>4||
+             meta.options.max_normal_projection_reference_pixels<0||
+             meta.options.max_normal_projection_reference_pixels>options_.max_normal_projection_reference_pixels))||
+           meta.options.max_contacts<1||meta.options.max_contacts>options_.contact_capacity||
            validate(full.memory,meta.options.max_contacts)!=full.peak_contacts)
             throw std::invalid_argument("full plan capacity/calibration metadata mismatch");
         std::map<std::uint64_t,const NoteContactOwnership*> owners;
@@ -189,7 +230,7 @@ class ExperimentalContactRuntime {
             if(!projection_free(owner))++value_.projected_contacts;
         }
         value_.selected_projection_free=value_.projected_contacts==0;
-        value_.peak_contacts=validate(selected_,4);
+        value_.peak_contacts=validate(selected_,options_.contact_capacity);
         std::sort(selected_.contacts.begin(),selected_.contacts.end(),[](const auto& a,const auto& b){
             return std::tuple(a.steps.front().song_ns,a.id)<std::tuple(b.steps.front().song_ns,b.id);
         });
@@ -199,12 +240,14 @@ class ExperimentalContactRuntime {
         }
         value_.selected_contacts=selected_.contacts.size();value_.full_cache_sha256=meta.cache_sha256;
         value_.full_plan_requires_calibration=meta.requires_calibration;
+        return prepared;
     }
+private:
     void validate_anchor() const {
         const auto& a=anchor_;
         if(a.origin_host_ns<0||a.origin_host_ns>safe||a.received_host_ns<0||a.received_host_ns>safe||
            a.explicit_phase_ns< -100*ms||a.explicit_phase_ns>100*ms||
-           a.chosen_song_interval.lower<10*second+800*ms||a.chosen_song_interval.upper>11*second+950*ms||
+           a.chosen_song_interval.lower<options_.anchor_domain_begin_ns||a.chosen_song_interval.upper>options_.anchor_domain_end_ns||
            a.chosen_song_interval.upper<a.chosen_song_interval.lower||
            a.chosen_song_interval.upper-a.chosen_song_interval.lower>80*ms||
            a.origin_host_ns!=a.received_host_ns-(a.chosen_song_interval.lower+
@@ -334,11 +377,18 @@ class ExperimentalContactRuntime {
 public:
     ExperimentalContactRuntime(CompiledContactPlan full,const pas::Clock& clock,pas::TouchBackend& backend,ExperimentalAnchor anchor,
                                ExperimentalRuntimeOptions options={})
-      :clock_(clock),anchor_(std::move(anchor)),options_(checked_options(options)),
-       scheduler_(clock,backend,4,64,static_cast<int>(max_song_steps),2*second,options_.ui_receipt_max_age_ns,options_.max_step_lateness_ns) {
+      :ExperimentalContactRuntime(prepare(full,options),clock,backend,std::move(anchor)) {}
+    ExperimentalContactRuntime(Prepared prepared,const pas::Clock& clock,pas::TouchBackend& backend,ExperimentalAnchor anchor)
+      :clock_(clock),anchor_(std::move(anchor)),options_(prepared.options_),
+       selected_(std::move(prepared.selected_)),sources_(std::move(prepared.sources_)),
+       scheduler_(clock,backend,options_.contact_capacity,64,static_cast<int>(max_song_steps),2*second,options_.ui_receipt_max_age_ns,options_.max_step_lateness_ns),value_(std::move(prepared.value_)) {
+        if(selected_.contacts.empty())throw std::invalid_argument("prepared plan was already moved");
         value_.ui_receipt_max_age_ns=options_.ui_receipt_max_age_ns;value_.max_step_lateness_ns=options_.max_step_lateness_ns;
         value_.anchor_max_age_ns=anchor_age;
-        validate_anchor();select(full);scheduler_.set_dispatch_guard([this]{return dispatch_valid();});
+        value_.contact_capacity=options_.contact_capacity;
+        value_.max_normal_projection_reference_pixels=options_.max_normal_projection_reference_pixels;
+        value_.anchor_domain_begin_ns=options_.anchor_domain_begin_ns;value_.anchor_domain_end_ns=options_.anchor_domain_end_ns;
+        validate_anchor();scheduler_.set_dispatch_guard([this]{return dispatch_valid();});
     }
     ~ExperimentalContactRuntime() {try {if(!terminal(value_.state))stop("runtime_destroyed");}catch(...) {}}
     ExperimentalContactRuntime(const ExperimentalContactRuntime&)=delete;

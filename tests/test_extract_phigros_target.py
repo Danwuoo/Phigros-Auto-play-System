@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from extract_phigros_target import (chart_summary, extract, textasset_bytes,
+from extract_phigros_target import (asset_report, chart_summary, extract, textasset_bytes,
                                     unique, verify_installed_source, write_new)
 
 
@@ -74,6 +74,27 @@ class ExtractionTests(unittest.TestCase):
         self.assertEqual(summary["provisional_note_seconds_before_offset"], dict(first=0.25, last_start=1.0, last_end=1.5))
         chart["formatVersion"] = 4
         with self.assertRaises(ValueError): chart_summary(json.dumps(chart).encode())
+
+    def test_other_track_report_does_not_inherit_dlyrotz_ui_or_note_count(self):
+        line = dict(bpm=140, notesAbove=[dict(type=2, time=128, holdTime=0)],
+                    notesBelow=[], speedEvents=[], judgeLineMoveEvents=[],
+                    judgeLineRotateEvents=[], judgeLineDisappearEvents=[])
+        summary = chart_summary(json.dumps(dict(formatVersion=3, offset=0,
+                                                judgeLineList=[line])).encode())
+        chart_key = "Assets/Tracks/Other.Composer.0/Chart_IN.json"
+        audio_key = "Assets/Tracks/Other.Composer.0/music.wav"
+        report = asset_report(summary, chart_key, audio_key, chart_candidates=1,
+                              audio_candidates=1, catalog_entries=8,
+                              scanned_apk_entries=10, selected_bundles=2)
+        self.assertEqual(report["chart_summary"]["note_count"], 1)
+        self.assertEqual(report["chart_summary"]["note_types"], {"2": 1})
+        self.assertEqual(report["target"], dict(track_id="Other.Composer.0", difficulty="IN",
+                                               chart_catalog_key=chart_key,
+                                               audio_catalog_key=audio_key, displayed_level=None))
+        encoded = json.dumps(report)
+        self.assertNotIn("Dlyrotz", encoded)
+        self.assertNotIn("584", encoded)
+        self.assertNotIn("level 13", encoded)
 
 
 if __name__ == "__main__":

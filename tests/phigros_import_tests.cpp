@@ -1,4 +1,5 @@
 #include "rhythm/chart.hpp"
+#include "rhythm/phigros_pose.hpp"
 #include "rhythm/chart_memory.hpp" // Public semantic IR can coexist with resolved memory.
 #include <cmath>
 #include <functional>
@@ -37,6 +38,18 @@ std::string replace(std::string input, const std::string& before, const std::str
     if (at == std::string::npos) throw std::runtime_error("fixture field missing");
     input.replace(at, before.size(), after);
     return input;
+}
+ImportOptions candidate_options() {
+    ImportOptions options;options.policy=PhigrosImportPolicy::source_priority_constant_empty_candidate_v1;return options;
+}
+SemanticChart candidate(const std::string& text,const ImportOptions& options=candidate_options()) {
+    ChartSource source;source.label="synthetic candidate";return parse_phigros(text,source,{},options);
+}
+std::string pose_fixture() {
+    auto text=chart(line("["+note()+"]"));
+    text=replace(text,"\"judgeLineMoveEvents\":[]","\"judgeLineMoveEvents\":[{\"startTime\":-999999,\"endTime\":1000000000,\"start\":0.5,\"end\":0.5,\"start2\":0.5,\"end2\":0.5}]");
+    text=replace(text,"\"judgeLineRotateEvents\":[]","\"judgeLineRotateEvents\":[{\"startTime\":-999999,\"endTime\":1000000000,\"start\":0,\"end\":0}]");
+    return text;
 }
 } // namespace
 
@@ -162,6 +175,110 @@ int main() {
         {"reversed events rejected without sorting or dropping", [] {
             const auto text = replace(chart(line()), "\"speedEvents\":[]", "\"speedEvents\":[{\"startTime\":2,\"endTime\":1,\"value\":1}]");
             rejects([&] { parse(text); });
+        }},
+        {"candidate empty declarations preserved and source priority is explicit", [] {
+            auto text=pose_fixture();
+            text=replace(text,"\"judgeLineDisappearEvents\":[]",R"("judgeLineDisappearEvents":[
+                {"startTime":-999999,"endTime":128,"start":0,"end":0},
+                {"startTime":128,"endTime":96,"start":0,"end":0},
+                {"startTime":96,"endTime":1000000000,"start":1,"end":1}])");
+            rejects([&]{parse(text);});const auto c=candidate(text);const auto& l=c.lines[0];
+            check(c.source.chart_sha256==chart_text_sha256(text)&&c.note_count==1&&c.event_count==5);
+            check(c.import_policy_id=="phigros-v3-source-priority-constant-empty-candidate-v1"&&c.import_interpretation_unqualified);
+            check(l.native_event_declarations&&l.native_event_declarations->opacity_events.size()==3&&l.opacity_events.size()==2);
+            const auto& original=l.native_event_declarations->opacity_events[1];
+            check(original.time.start_tick==128&&original.time.end_tick==96&&original.start==0&&original.end==0);
+            check(original.source.json_pointer=="/judgeLineList/0/judgeLineDisappearEvents/1"&&original.source.id==c.source.chart_sha256+'#'+original.source.json_pointer);
+            check(c.import_anomalies.size()==3&&c.import_anomalies[1].code=="empty_reversed_constant_pose_event"&&!c.import_anomalies[1].declaration_evaluated);
+            check(c.import_anomalies[1].original_declaration_json.find("\"startTime\":128")!=std::string::npos&&c.import_anomalies[1].evaluated_segments.empty());
+            check(c.import_anomalies[2].evaluated_segments.size()==1&&c.import_anomalies[2].evaluated_segments[0].start_tick==128);
+            PhigrosPoseEvaluator pose(c);
+            check(pose.line_at(0,1'750'000'000).opacity==0&&pose.line_at(0,2'000'000'000).opacity==1);
+        }},
+        {"constant move reversal does not hide a nonconstant winning declaration", [] {
+            auto text=chart(line("["+note()+"]"));
+            text=replace(text,"\"judgeLineMoveEvents\":[]",R"("judgeLineMoveEvents":[
+                {"startTime":-999999,"endTime":32,"start":0.5,"end":0.5,"start2":0.5,"end2":0.5},
+                {"startTime":32,"endTime":64,"start":0.5,"end":0.8,"start2":0.5,"end2":0.5},
+                {"startTime":64,"endTime":32,"start":0.5,"end":0.5,"start2":0.5,"end2":0.5},
+                {"startTime":32,"endTime":128,"start":0.5,"end":0.5,"start2":0.5,"end2":0.5},
+                {"startTime":128,"endTime":1000000000,"start":0.5,"end":0.5,"start2":0.5,"end2":0.5}])");
+            text=replace(text,"\"judgeLineRotateEvents\":[]",R"("judgeLineRotateEvents":[{"startTime":-999999,"endTime":1000000000,"start":0,"end":0}])");
+            text=replace(text,"\"judgeLineDisappearEvents\":[]",R"("judgeLineDisappearEvents":[{"startTime":-999999,"endTime":1000000000,"start":1,"end":1}])");
+            const auto c=candidate(text);const auto& l=c.lines[0];PhigrosPoseEvaluator pose(c);
+            check(l.native_event_declarations->move_events.size()==5&&l.move_events.size()==4);
+            check(std::abs(pose.line_at(0,750'000'000).origin.x-.65)<1e-12);
+            check(pose.line_at(0,1'000'000'000).origin.x==.5&&pose.line_at(0,999'999'999).origin.x>.799999);
+            check(l.native_event_declarations->move_events[3].time.start_tick==32&&l.move_events[2].time.start_tick==64);
+            check(l.move_events[2].source.id==l.native_event_declarations->move_events[3].source.id);
+            check(c.import_anomalies[2].code=="empty_reversed_constant_pose_event");
+        }},
+        {"out of order opacity source priority preserves fade and later uncovered suffix", [] {
+            auto text=pose_fixture();
+            text=replace(text,"\"judgeLineDisappearEvents\":[]",R"("judgeLineDisappearEvents":[
+                {"startTime":-999999,"endTime":32,"start":1,"end":1},
+                {"startTime":32,"endTime":64,"start":1,"end":0},
+                {"startTime":64,"endTime":128,"start":0,"end":0},
+                {"startTime":128,"endTime":32,"start":0,"end":0},
+                {"startTime":32,"endTime":160,"start":1,"end":1},
+                {"startTime":160,"endTime":1000000000,"start":0,"end":0}])");
+            const auto c=candidate(text);PhigrosPoseEvaluator pose(c);
+            check(pose.line_at(0,750'000'000).opacity==.5&&pose.line_at(0,1'500'000'000).opacity==0&&pose.line_at(0,2'250'000'000).opacity==1);
+            check(c.lines[0].native_event_declarations->opacity_events[4].time.start_tick==32);
+            check(c.lines[0].opacity_events[3].time.start_tick==128&&c.import_anomalies[4].evaluated_segments[0].start_tick==128);
+        }},
+        {"duplicate constant overlap is shadowed with declarations retained", [] {
+            auto text=pose_fixture();
+            text=replace(text,R"("judgeLineRotateEvents":[{"startTime":-999999,"endTime":1000000000,"start":0,"end":0}])",R"("judgeLineRotateEvents":[
+                {"startTime":-999999,"endTime":128,"start":0,"end":0},
+                {"startTime":128,"endTime":96,"start":0,"end":0},
+                {"startTime":96,"endTime":128,"start":0,"end":0},
+                {"startTime":128,"endTime":160,"start":90,"end":180},
+                {"startTime":160,"endTime":1000000000,"start":180,"end":180}])");
+            text=replace(text,"\"judgeLineDisappearEvents\":[]",R"("judgeLineDisappearEvents":[{"startTime":-999999,"endTime":1000000000,"start":1,"end":1}])");
+            const auto c=candidate(text);PhigrosPoseEvaluator pose(c);
+            check(c.lines[0].rotate_events.size()==3&&c.lines[0].native_event_declarations->rotate_events.size()==5);
+            check(!c.import_anomalies[2].declaration_evaluated&&c.import_anomalies[2].code=="source_priority_pose_track");
+            check(pose.line_at(0,1'999'999'999).rotation_degrees==0&&pose.line_at(0,2'000'000'000).rotation_degrees==90);
+        }},
+        {"candidate never accepts reversed nonconstant speed or unknown fields", [] {
+            const auto base=pose_fixture();
+            auto reversed=replace(base,"\"judgeLineDisappearEvents\":[]",R"("judgeLineDisappearEvents":[{"startTime":2,"endTime":1,"start":0,"end":1}])");
+            rejects([&]{candidate(reversed);});
+            reversed=replace(base,"\"speedEvents\":[]",R"("speedEvents":[{"startTime":2,"endTime":1,"value":1}])");
+            rejects([&]{candidate(reversed);});
+            reversed=replace(base,R"("startTime":-999999,"endTime":1000000000,"start":0.5,"end":0.5)",R"("startTime":2,"endTime":1,"start":0.5,"end":0.6)");
+            rejects([&]{candidate(reversed);});
+            rejects([&]{candidate(replace(base,"\"formatVersion\":3","\"formatVersion\":1"));});
+            rejects([&]{candidate(replace(base,"\"offset\":0","\"offset\":0,\"unknown\":1"));});
+        }},
+        {"ordinary zero steps gap hold offset and strict metadata unchanged", [] {
+            auto text=chart(line("["+note()+"]"),"0.125");
+            text=replace(text,"\"judgeLineMoveEvents\":[]",R"("judgeLineMoveEvents":[{"startTime":-999999,"endTime":1000000000,"start":0.5,"end":0.5,"start2":0.5,"end2":0.5}])");
+            text=replace(text,"\"judgeLineRotateEvents\":[]",R"("judgeLineRotateEvents":[
+                {"startTime":-999999,"endTime":0,"start":0,"end":0},
+                {"startTime":32,"endTime":32,"start":0,"end":90},
+                {"startTime":64,"endTime":96,"start":90,"end":180}])");
+            text=replace(text,"\"judgeLineDisappearEvents\":[]",R"("judgeLineDisappearEvents":[{"startTime":-999999,"endTime":1000000000,"start":1,"end":1}])");
+            const auto strict=parse(text),c=candidate(text);PhigrosPoseEvaluator a(strict),b(c);
+            check(strict.import_policy_id=="phigros-v3-strict-v1"&&!strict.import_interpretation_unqualified&&strict.import_anomalies.empty());
+            check(!strict.lines[0].native_event_declarations&&c.lines[0].native_event_declarations&&c.import_anomalies.empty());
+            check(c.lines[0].notes[0].start_ns==625'000'000&&c.lines[0].notes[0].source.id==strict.lines[0].notes[0].source.id);
+            for(const SongNs t:{-2'000'000'000LL,125'000'000LL,375'000'000LL,625'000'000LL,875'000'000LL,2'000'000'000LL})
+                check(a.line_at(0,t).rotation_degrees==b.line_at(0,t).rotation_degrees);
+            check(b.line_at(0,375'000'000).rotation_degrees==0&&b.line_at(0,625'000'000).rotation_degrees==90&&b.line_at(0,2'000'000'000).rotation_degrees==180);
+        }},
+        {"ambiguous mixed zero-time malformed tracks and provenance budgets reject", [] {
+            auto text=pose_fixture();
+            text=replace(text,"\"judgeLineDisappearEvents\":[]",R"("judgeLineDisappearEvents":[
+                {"startTime":-999999,"endTime":128,"start":0,"end":0},
+                {"startTime":128,"endTime":96,"start":0,"end":0},
+                {"startTime":96,"endTime":1000000000,"start":1,"end":1}])");
+            auto options=candidate_options();options.max_anomalies=1;rejects([&]{candidate(text,options);});
+            options=candidate_options();options.max_evaluated_pose_events=2;rejects([&]{candidate(text,options);});
+            options=candidate_options();options.policy=static_cast<PhigrosImportPolicy>(99);rejects([&]{candidate(text,options);});
+            text=replace(text,R"({"startTime":128,"endTime":96,"start":0,"end":0})",R"({"startTime":96,"endTime":96,"start":0,"end":1})");
+            rejects([&]{candidate(text);});
         }}
     };
     for (const auto& [name, run] : tests) {

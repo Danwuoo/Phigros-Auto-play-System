@@ -82,15 +82,21 @@ struct ProjectedPoint {
     double correction=0;
     unsigned edge=16;
 };
-ProjectedPoint normal_intersection(PosePoint point,PosePoint normal,double bound,SongNs time) {
+Range projection_slab(double extent,double inset) {
+    // Positive insets reserve the far raster cell too. The zero-inset branch
+    // deliberately retains the archived continuous canvas and fingerprints.
+    return {inset,inset>0 ? extent-1-inset : extent};
+}
+ProjectedPoint normal_intersection(PosePoint point,PosePoint normal,double bound,double inset,SongNs time) {
     double lower=-bound,upper=bound;
     unsigned lower_edge=0,upper_edge=0;
     const auto constrain=[&](double p,double n,double extent,unsigned low,unsigned high) {
+        const auto slab=projection_slab(extent,inset);
         if(n==0) {
-            if(p<0||p>extent)throw Failure("projection_unavailable","Normal line cannot intersect the canvas within the declared bound",time,point);
+            if(p<slab.lo||p>slab.hi)throw Failure("projection_unavailable","Normal line cannot intersect the target rectangle within the declared bound",time,point);
             return;
         }
-        const double first=-p/n,last=(extent-p)/n;
+        const double first=inset>0 ? (slab.lo-p)/n : -p/n,last=(slab.hi-p)/n;
         const double a=n>0 ? first : last,b=n>0 ? last : first;
         const auto a_edge=n>0 ? low : high,b_edge=n>0 ? high : low;
         if(a>lower) {lower=a;lower_edge=a_edge;}
@@ -110,13 +116,14 @@ ProjectedPoint normal_intersection(PosePoint point,PosePoint normal,double bound
     // This coordinate is the selected analytic slab intersection. Assign the
     // exact edge instead of allowing cancellation to put that edge a few ulps
     // outside. The other coordinate is still checked; no free x/y clamp exists.
-    if(result.edge==1)result.point.x=0;
-    if(result.edge==2)result.point.x=phigros_reference_width;
-    if(result.edge==4)result.point.y=0;
-    if(result.edge==8)result.point.y=phigros_reference_height;
+    const auto xs=projection_slab(phigros_reference_width,inset),ys=projection_slab(phigros_reference_height,inset);
+    if(result.edge==1)result.point.x=xs.lo;
+    if(result.edge==2)result.point.x=xs.hi;
+    if(result.edge==4)result.point.y=ys.lo;
+    if(result.edge==8)result.point.y=ys.hi;
     if(!std::isfinite(result.point.x)||!std::isfinite(result.point.y)||
-       result.point.x<0||result.point.x>phigros_reference_width||result.point.y<0||result.point.y>phigros_reference_height)
-        throw Failure("uncertified_normal_projection","Analytic normal intersection could not be represented inside both canvas slabs",time,point);
+       result.point.x<xs.lo||result.point.x>xs.hi||result.point.y<ys.lo||result.point.y>ys.hi)
+        throw Failure("uncertified_normal_projection","Analytic normal intersection could not be represented inside both target slabs",time,point);
     return result;
 }
 Range quotient(Range numerator,Range denominator) {
@@ -140,7 +147,7 @@ PhigrosLinePose advanced(PhigrosLinePose pose,Slope slope,SongNs elapsed) {
     return pose;
 }
 std::optional<ProjectionCertificate> certify_projection(const SemanticNote& note,const PhigrosLinePose& pose,Slope slope,
-        double offset,double offset_slope,SongNs duration,double bound,double input_scale) {
+        double offset,double offset_slope,SongNs duration,double bound,double input_scale,double inset,bool tight_speed) {
     const double elapsed=static_cast<double>(duration);
     const double theta=std::remainder(pose.rotation_degrees,360.0)*pi/180;
     auto cs=trig(theta,theta+slope.radians*elapsed,true),sn=trig(theta,theta+slope.radians*elapsed,false);
@@ -155,20 +162,35 @@ std::optional<ProjectionCertificate> certify_projection(const SemanticNote& note
         plus(product({-along,-along},sn),product(offsets,ny)));
     const double max_offset=std::max(std::abs(offsets.lo),std::abs(offsets.hi));
     const double native_speed=norm(slope.origin)+(std::abs(along)+max_offset)*std::abs(slope.radians)+std::abs(offset_slope);
-    if(x.lo>=0&&x.hi<=phigros_reference_width&&y.lo>=0&&y.hi<=phigros_reference_height)
-        return ProjectionCertificate{{0,0},16,input_scale*native_speed*(1+1e-12)};
+    const auto magnitude=[](Range r){return std::max(std::abs(r.lo),std::abs(r.hi));};
+    double analytic_native_speed=native_speed;
+    if(tight_speed) {
+        // P'=O'+(along*w+side*offset')*N_above-side*offset*w*T.
+        // Component intervals retain affine cancellation; the archived
+        // triangle inequality remains the default.
+        const double normal_coefficient=along*slope.radians+side*offset_slope;
+        const auto tangent_coefficient=product({-side*slope.radians,-side*slope.radians},offsets);
+        const auto vx=plus({slope.origin.x,slope.origin.x},plus(product({-normal_coefficient,-normal_coefficient},sn),product(tangent_coefficient,cs)));
+        const auto vy=plus({slope.origin.y,slope.origin.y},plus(product({-normal_coefficient,-normal_coefficient},cs),product(tangent_coefficient,product({-1,-1},sn))));
+        analytic_native_speed=std::hypot(magnitude(vx),magnitude(vy));
+    }
+    const auto xs=projection_slab(phigros_reference_width,inset),ys=projection_slab(phigros_reference_height,inset);
+    if(x.lo>=xs.lo&&x.hi<=xs.hi&&y.lo>=ys.lo&&y.hi<=ys.hi)
+        return ProjectionCertificate{{0,0},16,input_scale*(tight_speed?analytic_native_speed:native_speed)*(1+1e-12)};
     struct Axis {Range lower{},upper{};double eta=0;unsigned low_edge=0,high_edge=0;bool active=false;};
     std::array<Axis,2> axes{};
     Range lower{-bound,-bound},upper{bound,bound};
     const auto axis=[&](std::size_t index,Range p,Range n,double extent,unsigned low_edge,unsigned high_edge) {
+        const auto slab=projection_slab(extent,inset);
         // If the entire bounded normal tube is inside this slab, the slab can
         // neither block feasibility nor be an active closest-to-zero edge.
         const auto tube=plus(p,product({-bound,bound},n));
-        if(tube.lo>=0&&tube.hi<=extent)return true;
+        if(tube.lo>=slab.lo&&tube.hi<=slab.hi)return true;
         if(n.lo<=0&&n.hi>=0)return false;
         auto& out=axes[index];out.eta=std::min(std::abs(n.lo),std::abs(n.hi));
         if(out.eta<projection_eta_floor)return false;
-        const auto zero_minus=Range{-p.hi,-p.lo},extent_minus=Range{extent-p.hi,extent-p.lo};
+        const auto zero_minus=inset>0 ? Range{slab.lo-p.hi,slab.lo-p.lo} : Range{-p.hi,-p.lo};
+        const auto extent_minus=Range{slab.hi-p.hi,slab.hi-p.lo};
         out.lower=quotient(n.lo>0 ? zero_minus : extent_minus,n);
         out.upper=quotient(n.lo>0 ? extent_minus : zero_minus,n);
         out.low_edge=n.lo>0 ? low_edge : high_edge;out.high_edge=n.lo>0 ? high_edge : low_edge;out.active=true;
@@ -179,13 +201,40 @@ std::optional<ProjectionCertificate> certify_projection(const SemanticNote& note
     if(!axis(0,x,nx,phigros_reference_width,1,2)||!axis(1,y,ny,phigros_reference_height,4,8)||lower.hi>upper.lo)return {};
     ProjectionCertificate certificate;
     certificate.correction={std::max(lower.lo,std::min(0.0,upper.lo)),std::max(lower.hi,std::min(0.0,upper.hi))};
-    double speed=native_speed;
     certificate.edge_mask=certificate.correction.lo<=0&&certificate.correction.hi>=0 ? 16u : 0u;
+    double speed=tight_speed ? (certificate.edge_mask&16 ? analytic_native_speed : 0) : native_speed;
+    const auto analytic_edge_speed=[&](unsigned edge) {
+        // Active horizontal edge Y:
+        // Qx=Ox+along/cos(theta)+(Y-Oy)*tan(theta), Qy=Y.
+        // Active vertical edge X:
+        // Qy=Oy-along/sin(theta)+(X-Ox)*cot(theta), Qx=X.
+        // Offset/stroke velocity cancel under projection. Branch switches
+        // retain the maximum derivative bound of all possible active edges.
+        const bool vertical=edge==1||edge==2;
+        const auto denominator=vertical ? sn : cs;
+        const auto eta=std::min(std::abs(denominator.lo),std::abs(denominator.hi));
+        if(denominator.lo<=0&&denominator.hi>=0)return std::numeric_limits<double>::infinity();
+        if(eta<projection_eta_floor)return std::numeric_limits<double>::infinity();
+        const auto other=vertical ? magnitude(cs) : magnitude(sn);
+        const double origin=vertical ? pose.origin.x*phigros_reference_width : pose.origin.y*phigros_reference_height;
+        const double velocity=vertical ? slope.origin.x : slope.origin.y;
+        const double edge_value=edge==1 ? xs.lo : edge==2 ? xs.hi : edge==4 ? ys.lo : ys.hi;
+        const auto distance=magnitude(range(edge_value-origin,edge_value-origin-velocity*elapsed));
+        const double tangent_motion=vertical ? std::abs(slope.origin.y) : std::abs(slope.origin.x);
+        return tangent_motion+std::abs(velocity)*other/eta+
+            std::abs(slope.radians)*(std::abs(along)*other+distance)/(eta*eta);
+    };
     for(const auto& a:axes) if(a.active) {
         bool possible=false;
-        if(lower.hi>0&&a.lower.hi>=std::max(0.0,lower.lo)) {certificate.edge_mask|=a.low_edge;possible=true;}
-        if(upper.lo<0&&a.upper.lo<=std::min(0.0,upper.hi)) {certificate.edge_mask|=a.high_edge;possible=true;}
-        if(possible) {
+        if(lower.hi>0&&a.lower.hi>=std::max(0.0,lower.lo)) {
+            certificate.edge_mask|=a.low_edge;possible=true;
+            if(tight_speed)speed=std::max(speed,analytic_edge_speed(a.low_edge));
+        }
+        if(upper.lo<0&&a.upper.lo<=std::min(0.0,upper.hi)) {
+            certificate.edge_mask|=a.high_edge;possible=true;
+            if(tight_speed)speed=std::max(speed,analytic_edge_speed(a.high_edge));
+        }
+        if(possible&&!tight_speed) {
             const double correction=std::max(std::abs(certificate.correction.lo),std::abs(certificate.correction.hi));
             const double variation=native_speed+correction*std::abs(slope.radians);
             speed=std::max(speed,variation+variation/a.eta);
@@ -203,10 +252,29 @@ struct Build {
     double input_scale;
     std::size_t visibility_checks=0;
     std::size_t projection_span_count=0;
+    std::optional<std::array<std::uint32_t,4>> inset_raster_bounds; // x-low/high, y-low/high, inclusive.
     Build(const SemanticChart& chart_,PhigrosGeometry geometry,ContactCompileOptions options_)
         :chart(chart_),poses(chart_),mapping(geometry),options(std::move(options_)),input_scale(0) {
         const auto viewport=mapping.content_viewport();
         input_scale=std::max(viewport.width/phigros_reference_width,viewport.height/phigros_reference_height);
+        if(options.normal_projection_inset_reference_pixels>0) {
+            const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
+            const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
+            Range input_x{1,0},input_y{1,0};
+            for(const double x:{xs.lo,xs.hi})for(const double y:{ys.lo,ys.hi}) {
+                const auto mapped=mapping.map_reference_pixels({x,y});
+                if(mapped.status!=GeometryStatus::mapped)
+                    throw Failure("projection_inset_raster_unavailable","Inset target rectangle cannot map into input geometry");
+                input_x.lo=std::min(input_x.lo,mapped.input_normalized.x);input_x.hi=std::max(input_x.hi,mapped.input_normalized.x);
+                input_y.lo=std::min(input_y.lo,mapped.input_normalized.y);input_y.hi=std::max(input_y.hi,mapped.input_normalized.y);
+            }
+            const double xlo=std::ceil(input_x.lo*geometry.input_width),xhi=std::floor(input_x.hi*geometry.input_width);
+            const double ylo=std::ceil(input_y.lo*geometry.input_height),yhi=std::floor(input_y.hi*geometry.input_height);
+            if(xlo>xhi||ylo>yhi||xlo<0||ylo<0||xhi>=geometry.input_width||yhi>=geometry.input_height)
+                throw Failure("projection_inset_raster_unavailable","Inset target rectangle contains no complete input pixel rectangle");
+            inset_raster_bounds=std::array<std::uint32_t,4>{static_cast<std::uint32_t>(xlo),static_cast<std::uint32_t>(xhi),
+                static_cast<std::uint32_t>(ylo),static_cast<std::uint32_t>(yhi)};
+        }
     }
     Point point(const PhigrosLinePose& pose,const SemanticNote& note,double offset,SongNs time) const {
         const auto target=phigros_line_point(pose,note.position_x,note.side,offset);
@@ -337,21 +405,36 @@ struct Build {
     }
     ProjectedPoint projected(const PhigrosLinePose& pose,const SemanticNote& note,double offset,SongNs time) const {
         const auto source=phigros_line_point(pose,note.position_x,note.side,offset);
-        return normal_intersection(source.reference_pixels,source.side_normal,options.max_normal_projection_reference_pixels,time);
+        return normal_intersection(source.reference_pixels,source.side_normal,options.max_normal_projection_reference_pixels,
+            options.normal_projection_inset_reference_pixels,time);
     }
     Point projected_pixel(const PhigrosLinePose& pose,const SemanticNote& note,double offset,SongNs time) const {
         const auto target=projected(pose,note,offset,time);
         const auto mapped=mapping.map_reference_pixels(target.point);
         if(mapped.status!=GeometryStatus::mapped||!mapped.pixel)
             throw Failure("uncertified_normal_projection","Projected normal intersection does not map inside declared input geometry",time,target.point);
-        return {static_cast<double>(mapped.pixel->x)/(mapping.geometry().input_width-1),
-                static_cast<double>(mapped.pixel->y)/(mapping.geometry().input_height-1)};
+        auto pixel=*mapped.pixel;
+        if(inset_raster_bounds) {
+            // Round a boundary inward at the raster stage only. This cannot
+            // repair an invalid analytic point: normal_intersection already
+            // proves the continuous reference rectangle. The changed rounding
+            // remains within the same <sqrt(2) input-pixel error allowance.
+            const auto& bounds=*inset_raster_bounds;
+            pixel.x=std::clamp(pixel.x,bounds[0],bounds[1]);pixel.y=std::clamp(pixel.y,bounds[2],bounds[3]);
+            const auto dx=static_cast<double>(pixel.x)-mapped.input_normalized.x*mapping.geometry().input_width;
+            const auto dy=static_cast<double>(pixel.y)-mapped.input_normalized.y*mapping.geometry().input_height;
+            if(std::hypot(dx,dy)>raster_error+input_scale*1e-6)
+                throw Failure("projection_inset_raster_error","Inward raster rounding exceeds declared projection error reserve",time,target.point);
+        }
+        return {static_cast<double>(pixel.x)/(mapping.geometry().input_width-1),
+                static_cast<double>(pixel.y)/(mapping.geometry().input_height-1)};
     }
     double projected_reserve() const {
         // Rasterization plus a conservative floating-point conditioning reserve
         // at the certified minimum denominator. This is not judgment tolerance.
-        return raster_error+input_scale*(1e-6+64*std::numeric_limits<double>::epsilon()*
-            (phigros_reference_width+phigros_reference_height+options.max_normal_projection_reference_pixels)/projection_eta_floor);
+        auto conditioning_extent=phigros_reference_width+phigros_reference_height+options.max_normal_projection_reference_pixels;
+        if(options.normal_projection_inset_reference_pixels>0)conditioning_extent+=2*options.normal_projection_inset_reference_pixels;
+        return raster_error+input_scale*(1e-6+64*std::numeric_limits<double>::epsilon()*conditioning_extent/projection_eta_floor);
     }
     void projected_segment(Contact& contact,const SemanticNote& note,std::size_t line_index,SongNs a,SongNs b,
             const std::function<double(SongNs)>& offset_at,double offset_slope,NoteContactOwnership& ownership,
@@ -361,7 +444,7 @@ struct Build {
         const auto pose=poses.line_at(line_index,a);
         const auto slope=slope_at(chart.lines[line_index],a);
         const auto certificate=certify_projection(note,pose,slope,offset_at(a),offset_slope,b-a,
-            options.max_normal_projection_reference_pixels,input_scale);
+            options.max_normal_projection_reference_pixels,input_scale,options.normal_projection_inset_reference_pixels,options.tight_projection_speed_bounds);
         if(!certificate) {
             for(auto elapsed:{SongNs{0},(b-a)/2,b-a})
                 (void)projected(advanced(pose,slope,elapsed),note,offset_at(a)+offset_slope*static_cast<double>(elapsed),add(a,elapsed));
@@ -426,6 +509,12 @@ void check_options(const ContactCompileOptions& options) {
         throw Failure("invalid_options", "Compiler capacity, timing, geometry error, or resource limit is invalid");
     if(!std::isfinite(options.max_normal_projection_reference_pixels)||options.max_normal_projection_reference_pixels<0)
         throw Failure("invalid_options", "Normal projection bound must be finite and nonnegative");
+    if(!std::isfinite(options.normal_projection_inset_reference_pixels)||options.normal_projection_inset_reference_pixels<0||
+       options.normal_projection_inset_reference_pixels>100||
+       (options.normal_projection_inset_reference_pixels>0&&options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1))
+        throw Failure("invalid_options", "Normal projection inset must be finite, within 0..100, and positive only for dynamic normal intersections");
+    if(options.tight_projection_speed_bounds&&options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1)
+        throw Failure("invalid_options", "Analytic projected speed bounds require dynamic normal intersections");
     if(options.offscreen_policy!=OffscreenPolicy::reject&&options.offscreen_policy!=OffscreenPolicy::bounded_normal_candidate&&
        options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1)
         throw Failure("invalid_options", "Unknown offscreen policy");
@@ -440,6 +529,11 @@ std::string cache_key(const CompiledContactPlan& plan) {
     const auto text=[&](const std::string& value){stream<<value.size()<<':'<<value<<';';};
     text("pas.compiled-contact-fingerprint.v2");
     text(plan.metadata.compiler_version);text(plan.metadata.strategy);text(plan.metadata.projection_policy_version);
+    if(plan.metadata.import_policy_id!="phigros-v3-strict-v1"||plan.metadata.import_interpretation_unqualified||!plan.metadata.import_anomaly_source_ids.empty()) {
+        text("native-import-interpretation.v1");text(plan.metadata.import_policy_id);
+        stream<<plan.metadata.import_interpretation_unqualified<<','<<plan.metadata.import_anomaly_source_ids.size()<<';';
+        for(const auto& source:plan.metadata.import_anomaly_source_ids)text(source);
+    }
     stream<<plan.metadata.requires_calibration<<','<<static_cast<int>(i.game)<<';';
     text(i.song_id);text(i.difficulty);text(i.revision);text(i.chart_sha256);text(i.audio_sha256);text(i.layout_id);
     stream<<g.input_width<<','<<g.input_height<<','<<static_cast<int>(g.rotation)<<','<<static_cast<int>(g.fit)<<','<<g.viewport.has_value()<<';';
@@ -449,6 +543,10 @@ std::string cache_key(const CompiledContactPlan& plan) {
           <<o.max_diagnostics<<','<<o.interference_window_ns<<','<<o.interference_radius_pixels<<','<<static_cast<int>(o.offscreen_policy)<<','
           <<o.max_normal_projection_reference_pixels<<';';
     text(o.calibration_id);
+    if(o.normal_projection_inset_reference_pixels!=0) {
+        text("normal_projection_inset_reference_pixels.v1");stream<<o.normal_projection_inset_reference_pixels<<';';
+    }
+    if(o.tight_projection_speed_bounds)text("analytic-projected-derivative-v1");
     stream<<plan.ownership.size()<<':';
     for(const auto& owned:plan.ownership) {
         text(owned.source_note_id);text(owned.source_json_pointer);
@@ -491,12 +589,23 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
             throw Failure("identity_mismatch", "Chart source and complete chart/audio/layout identity must match exactly");
         Build build(chart,geometry,options);
         CompiledContactPlan plan; plan.memory.identity=std::move(identity);plan.metadata.geometry=geometry;plan.metadata.options=options;
+        if(chart.import_policy_id.empty()||chart.import_policy_id.size()>256)
+            throw Failure("invalid_import_policy", "Parsed chart import policy identity is required and bounded");
+        plan.metadata.import_policy_id=chart.import_policy_id;
+        plan.metadata.import_interpretation_unqualified=chart.import_interpretation_unqualified;
+        for(const auto& anomaly:chart.import_anomalies) {
+            if(anomaly.source.id!=chart.source.chart_sha256+'#'+anomaly.source.json_pointer)
+                throw Failure("invalid_import_policy", "Native import anomaly must retain exact chart source identity");
+            plan.metadata.import_anomaly_source_ids.push_back(anomaly.source.id);
+        }
         const bool dynamic_projection=options.offscreen_policy==OffscreenPolicy::bounded_normal_intersection_candidate_v1;
         plan.metadata.requires_calibration=options.offscreen_policy!=OffscreenPolicy::reject;
         if(dynamic_projection) {
             plan.metadata.compiler_version="phigros-contact-v2";
             plan.metadata.projection_policy_version="bounded_normal_intersection_candidate_v1";
             plan.metadata.strategy+="; bounded-normal-intersection-candidate";
+            if(options.normal_projection_inset_reference_pixels>0)plan.metadata.strategy+="; reference-safe-inset-v1";
+            if(options.tight_projection_speed_bounds)plan.metadata.strategy+="; analytic-projected-derivative-v1";
         } else if(options.offscreen_policy==OffscreenPolicy::bounded_normal_candidate)
             plan.metadata.projection_policy_version="bounded_fixed_normal_candidate_v1";
         std::set<std::string> source_ids;

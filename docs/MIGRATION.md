@@ -38,3 +38,9 @@
 gRPC overlay 不會被默默移除或改成 stock。`vcpkg.json` 延用來源 baseline，但把依賴分成 optional features。初次抽取未測 Windows；本機接續已重建 core／ADB，並修正 `pas_adb` 遺漏的 JSON dependency（`legacy-core` feature、CMake package discovery 與 PUBLIC target link）。原 PAS source blobs 不變。gRPC fresh build、backend ABI/服務版本與裝置能力仍需驗證。
 
 歷史 cost NOT_READY、live UNQUALIFIED、STOP 與分數只屬於舊工作；新分支不重寫、不繼承為通過，不自動開遊戲。沒有建立合併到 main 的 PR，也沒有改預設分支。
+
+## 2026-10-24 共通匯入與首音候選來源紀錄
+
+新增明確source-priority／constant-empty匯入政策、完整原始宣告／異常映射；嚴格預設不變。接點編譯新增可選解析投影速度上界，政策／來源自動綁入fingerprint；首音共通模型另綁來源與政策。chart_experiment新增不可修改的預驗證計畫移轉、共通IN HUD候選及Windows Unicode路徑處理。保留的14個PAS blobs、proto、third_party及main不變；原AP封存不重標。原譜與私有成果只在repo外，未寫回或提交。具體語義／限制見 [共通政策](CHAPTER_LEGACY_COMMON_POLICIES.md)。
+
+後續新增terminal-only結果caption特徵，以及明確的每輪兩實際開場觀測標題冗餘HUD候選；只改實驗app／新header／測例與launcher，不改保留PAS sources。診斷採用既有immutable frame lease／原有capture與publication時戳，並把有界RGB／日誌配置移至READY前；沒有修改PAS pool實作或重新定義receipt時鐘。所有原始失敗與成功封存分別保留。

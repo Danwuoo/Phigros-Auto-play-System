@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
             throw std::invalid_argument(
                 "touch_probe plan CASE CAPACITY WIDTH HEIGHT\n"
                 "touch_probe run SERIAL AVD FIXTURE_SHA CASE CAPACITY WIDTH HEIGHT NEW_DIR PROFILE --fixture-input|--inspect-only\n"
-                "PROFILE: portrait-r0, landscape-r1, or sensor-portrait-ccw90. WIDTH/HEIGHT are normalized fixture dimensions.\n"
+                "PROFILE: portrait-r0, landscape-r1, sensor-portrait-ccw90, or sensor-portrait-r0-ccw90. WIDTH/HEIGHT are normalized fixture dimensions.\n"
                 "Plan is offline. Run never installs/launches apps; exact fixture must already be foreground.");
         const auto plan = make_plan(argv[run ? 5 : 2], integer(argv[run ? 6 : 3]),
             integer(argv[run ? 7 : 4]), integer(argv[run ? 8 : 5]));
@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
         if (!inspect_only && std::string(argv[11]) != "--fixture-input")
             throw std::invalid_argument("explicit --fixture-input or --inspect-only required");
         const std::string profile = argv[10];
-        if (profile != "portrait-r0" && profile != "landscape-r1" && profile != "sensor-portrait-ccw90")
+        if (profile != "portrait-r0" && profile != "landscape-r1" && profile != "sensor-portrait-ccw90" && profile != "sensor-portrait-r0-ccw90")
             throw std::invalid_argument("unknown geometry profile");
         const std::string serial = argv[2], avd = argv[3], hash = argv[4];
         if (avd.empty() || !rhythm::sha256_text(hash)) throw std::invalid_argument("AVD and fixture SHA required");
@@ -139,8 +139,9 @@ int main(int argc, char** argv) {
         const int touch_height = landscape ? plan.width : plan.height;
         const int touch_rotation = landscape ? 90 : 0;
         if (landscape) options.source_rotation = 1;
-        if (profile == "sensor-portrait-ccw90") {
+        if (profile == "sensor-portrait-ccw90" || profile == "sensor-portrait-r0-ccw90") {
             options.width = plan.height; options.height = plan.width; options.rotate_ccw = true;
+            if (profile == "sensor-portrait-r0-ccw90") options.source_rotation = 0;
         }
         GrpcCapture reader(clock, endpoint, options);
         auto first_frame = reader.snapshot(std::chrono::milliseconds(1000));

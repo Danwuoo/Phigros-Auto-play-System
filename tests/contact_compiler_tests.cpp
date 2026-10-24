@@ -46,6 +46,46 @@ double held_error(const Contact& contact,const PhigrosPoseEvaluator& poses,std::
     const auto wanted=map.map_normalized(poses.note_target(line,note,time).normalized).input_normalized;
     return std::hypot(current.point.x*1279-wanted.x*1280,current.point.y*719-wanted.y*720);
 }
+void inside_inset(const CompiledContactPlan& p) {
+    for(const auto& contact:p.memory.contacts)for(const auto& step:contact.steps) {
+        const auto [x,y]=pixel_point(step.point,1280,720);
+        require(x>=64&&x<=1215&&y>=64&&y<=655,"generated input node entered 64px edge exclusion band");
+    }
+}
+PosePoint projected_oracle(const PhigrosPoseEvaluator& poses,const SemanticNote& note,SongNs time,double offset,double inset) {
+    const auto target=phigros_line_point(poses.line_at(0,time),note.position_x,note.side,offset);
+    const double xlo=inset,xhi=inset>0?1279-inset:1280,ylo=inset,yhi=inset>0?719-inset:720;
+    std::vector<double> candidates{0};
+    if(target.side_normal.x!=0)for(const double edge:{xlo,xhi})candidates.push_back((edge-target.reference_pixels.x)/target.side_normal.x);
+    if(target.side_normal.y!=0)for(const double edge:{ylo,yhi})candidates.push_back((edge-target.reference_pixels.y)/target.side_normal.y);
+    bool found=false;double nearest=0;PosePoint best;
+    for(const auto amount:candidates) {
+        PosePoint point{target.reference_pixels.x+amount*target.side_normal.x,target.reference_pixels.y+amount*target.side_normal.y};
+        if(point.x<xlo-1e-8||point.x>xhi+1e-8||point.y<ylo-1e-8||point.y>yhi+1e-8)continue;
+        if(!found||std::abs(amount)<std::abs(nearest)) {
+            found=true;nearest=amount;best={std::clamp(point.x,xlo,xhi),std::clamp(point.y,ylo,yhi)};
+        }
+    }
+    if(!found)throw std::runtime_error("independent edge-enumeration oracle found no normal intersection");
+    return best;
+}
+double projected_held_error(const CompiledContactPlan& plan_,const SemanticChart& chart_,const ContactCompileOptions& options_,
+        SongNs begin,SongNs end,SongNs increment=337'009) {
+    PhigrosPoseEvaluator poses(chart_);PhigrosGeometryMap map(plan_.metadata.geometry);
+    const auto& note_=chart_.lines[0].notes[0];const auto& contact_=plan_.memory.contacts[0];double worst=0;
+    for(SongNs time=begin;time<end;time+=increment) {
+        const auto it=std::upper_bound(contact_.steps.begin(),contact_.steps.end(),time,[](SongNs t,const Step& s){return t<s.song_ns;});
+        const auto& actual=std::prev(it)->point;
+        const double offset=note_.kind==NoteKind::flick ? options_.flick_distance_reference_pixels*
+            static_cast<double>(time-note_.start_ns)/static_cast<double>(options_.flick_travel_ns) : 0;
+        const auto reference=projected_oracle(poses,note_,time,offset,options_.normal_projection_inset_reference_pixels);
+        const auto expected=map.map_reference_pixels(reference).input_normalized;
+        const auto& g=plan_.metadata.geometry;
+        worst=std::max(worst,std::hypot(actual.x*(g.input_width-1)-expected.x*g.input_width,
+            actual.y*(g.input_height-1)-expected.y*g.input_height));
+    }
+    return worst;
+}
 }
 int main() {
     using namespace rhythm;
@@ -330,6 +370,204 @@ int main() {
             const auto dynamic=compile_phigros_contacts(c,identity(c),geometry(),options);auto certificate=plan(dynamic);
             const auto dynamic_hash=compiled_contact_fingerprint(certificate);certificate.ownership[0].normal_projection_spans[0].speed_bound_input_pixels_per_ns+=1;
             require(compiled_contact_fingerprint(certificate)!=dynamic_hash,"dynamic proof spans fingerprinted");
+        });
+        run("zero inset preserves pinned strict and dynamic fingerprints",[] {
+            auto c=chart();note(c,NoteKind::tap);
+            const auto strict=compile_phigros_contacts(c,identity(c),geometry());
+            require(plan(strict).metadata.cache_sha256=="2a9e0c0b1a909416bd2a440175bb5ccf96a9dae9a2a68aae3a449026df9305b7",
+                "pre-inset strict golden fingerprint changed");
+            ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+            options.max_normal_projection_reference_pixels=250;options.calibration_id="pending-inset-baseline";
+            const auto original=compile_phigros_contacts(c,identity(c),geometry(),options);
+            const auto zero_hash=plan(original).metadata.cache_sha256;
+            require(zero_hash=="e70738a35d657526185a1d10dc696e0b85e3e8c50f2e8d88dfccdc34f1eac62b",
+                "pre-inset dynamic golden fingerprint changed");
+            options.normal_projection_inset_reference_pixels=0;
+            require(plan(compile_phigros_contacts(c,identity(c),geometry(),options)).metadata.cache_sha256==zero_hash,
+                "explicit zero inset changed original candidate");
+            options.normal_projection_inset_reference_pixels=64;
+            const auto inset=compile_phigros_contacts(c,identity(c),geometry(),options);inside_inset(plan(inset));
+            require(plan(inset).memory.contacts[0].steps[0].point.x==plan(original).memory.contacts[0].steps[0].point.x&&
+                plan(inset).memory.contacts[0].steps[0].point.y==plan(original).memory.contacts[0].steps[0].point.y,
+                "interior input point moved merely to change inset identity");
+            require(plan(inset).metadata.cache_sha256!=zero_hash,"inset policy absent from fingerprint when coordinates happen to match");
+            auto changed=plan(inset);changed.metadata.options.normal_projection_inset_reference_pixels=65;
+            require(compiled_contact_fingerprint(changed)!=plan(inset).metadata.cache_sha256,"inset option mutation not fingerprinted");
+        });
+        run("inset projects static top bottom Tap Drag and below contacts inside edges",[] {
+            ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+            options.max_normal_projection_reference_pixels=250;options.calibration_id="pending-inset-static";
+            options.normal_projection_inset_reference_pixels=64;
+            for(const bool top:{true,false})for(const auto kind:{NoteKind::tap,NoteKind::drag})for(const auto side:{NoteSide::above,NoteSide::below}) {
+                auto c=chart();auto& move=c.lines[0].move_events[0];move.start_y=move.end_y=top?1:0;
+                note(c,kind,second,second,0,side);
+                const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);const auto& p=plan(result);inside_inset(p);
+                const auto expected=top?64:655;
+                for(const auto& step:p.memory.contacts[0].steps)require(pixel_point(step.point,1280,720).second==expected,
+                    "static projection did not use declared inset edge");
+                const auto magnitude=top?64.:65.;
+                require(std::abs(std::abs(p.ownership[0].normal_projection_reference_pixels)-magnitude)<1e-9,
+                    "inset correction did not retain actual side-normal distance");
+                require(p.metadata.requires_calibration&&diagnostic(result,"unverified_normal_projection"),
+                    "inset candidate lost unverified projection warning");
+            }
+        });
+        run("continuous Hold follows inset clipping with full pointer lifetime and error bound",[] {
+            auto c=chart();auto prototype=c.lines[0].move_events[0];c.lines[0].move_events.clear();
+            for(unsigned i=0;i<3;++i) {
+                auto move=prototype;move.time.start_ns=i*second;move.time.end_ns=(i+1)*second;
+                const double raw_y[]{.5,1.3,-.3,.5};move.start_y=raw_y[i];move.end_y=raw_y[i+1];
+                c.lines[0].move_events.push_back(move);
+            }
+            note(c,NoteKind::hold,0,3*second);
+            ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+            options.max_normal_projection_reference_pixels=350;options.calibration_id="pending-inset-continuous";
+            options.normal_projection_inset_reference_pixels=64;
+            const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);const auto& p=plan(result);inside_inset(p);
+            require(p.memory.contacts.size()==1&&p.memory.contacts[0].steps.front().song_ns==0&&
+                p.memory.contacts[0].steps.back().song_ns==3*second,"inset Hold lifetime/source pointer shortened");
+            const auto& owner=p.ownership[0];
+            require(owner.projection_min_reference_pixels<-279&&owner.projection_max_reference_pixels>280,
+                "continuous inset certificate omitted top/bottom excursion correction");
+            PhigrosPoseEvaluator poses(c);const auto& contact=p.memory.contacts[0];double worst=0;
+            for(SongNs t=0;t<3*second;t+=1'000'003) {
+                const auto it=std::upper_bound(contact.steps.begin(),contact.steps.end(),t,[](SongNs at,const Step& step){return at<step.song_ns;});
+                const auto actual=pixel_point(std::prev(it)->point,1280,720);
+                const auto native=poses.note_target(0,c.lines[0].notes[0],t).reference_pixels;
+                const auto expected_y=std::clamp(native.y,64.,655.);
+                worst=std::max(worst,std::hypot(actual.first-native.x,actual.second-expected_y));
+            }
+            require(worst<=options.max_path_error_pixels+1e-8,"continuous inset Hold zero-order error exceeded declared bound");
+            require(diagnostic(result,"unverified_normal_projection"),"continuous inset remains a game calibration candidate");
+        });
+        run("Flick stroke and final dwell stay inside top bottom inset",[] {
+            ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+            options.max_normal_projection_reference_pixels=250;options.calibration_id="pending-inset-flick";
+            options.normal_projection_inset_reference_pixels=64;options.flick_lead_ns=30'000'000;
+            options.flick_travel_ns=60'000'000;options.flick_distance_reference_pixels=60;options.flick_release_ns=24'000'000;
+            for(const double native_y:{70.,649.}) {
+                auto c=chart();c.lines[0].move_events[0].start_y=c.lines[0].move_events[0].end_y=1-native_y/720;
+                note(c,NoteKind::flick);
+                const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);const auto& p=plan(result);inside_inset(p);
+                const auto& steps=p.memory.contacts[0].steps;
+                require(steps.front().song_ns==second-30'000'000&&steps.back().song_ns==second+54'000'000,
+                    "inset changed native Flick lead/travel/release timing");
+                require(std::any_of(steps.begin(),steps.end(),[](const auto& step){return step.song_ns==second&&step.phase==Phase::move;}),
+                    "inset Flick lost native judgment keytime");
+                const auto first=pixel_point(steps.front().point,1280,720),last=pixel_point(steps[steps.size()-2].point,1280,720);
+                require(std::hypot(first.first-last.first,first.second-last.second)>=30,"inset erased useful Flick displacement");
+                require(steps.back().point.x==steps[steps.size()-2].point.x&&steps.back().point.y==steps[steps.size()-2].point.y,
+                    "Flick dwell UP moved after final inset stroke position");
+            }
+            auto c=chart();c.lines[0].move_events[0].start_y=c.lines[0].move_events[0].end_y=1;
+            note(c,NoteKind::flick);
+            require(diagnostic(compile_phigros_contacts(c,identity(c),geometry(),options),"invisible_flick"),
+                "completely clipped Flick falsely retained observable displacement");
+        });
+        run("inset unreachable tangent continuous strip and invalid options reject whole chart",[] {
+            ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+            options.max_normal_projection_reference_pixels=250;options.calibration_id="pending-inset-negative";
+            options.normal_projection_inset_reference_pixels=64;
+            auto c=chart();c.lines[0].move_events[0].start_x=c.lines[0].move_events[0].end_x=.02;note(c,NoteKind::tap);
+            const auto tangent=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(!tangent.plan&&diagnostic(tangent,"projection_unavailable"),"normal projection changed along-line x to reach inset");
+            c=chart();c.lines[0].move_events[0].start_y=c.lines[0].move_events[0].end_y=1;note(c,NoteKind::tap);
+            auto short_bound=options;short_bound.max_normal_projection_reference_pixels=63;
+            const auto distance=compile_phigros_contacts(c,identity(c),geometry(),short_bound);
+            require(!distance.plan&&diagnostic(distance,"projection_unavailable"),"inset exceeded explicit normal correction bound");
+            c=chart();c.lines[0].move_events[0].start_y=c.lines[0].move_events[0].end_y=1-30./720;
+            c.lines[0].rotate_events[0].time.end_ns=2*second;c.lines[0].rotate_events[0].end=180;
+            note(c,NoteKind::hold,0,2*second);
+            require(!compile_phigros_contacts(c,identity(c),geometry(),options).plan,
+                "valid endpoint intersections concealed impossible intermediate inset strip");
+            c=chart();note(c,NoteKind::tap);
+            for(const double invalid:{-1.,100.000001,std::numeric_limits<double>::infinity(),std::numeric_limits<double>::quiet_NaN()}) {
+                auto bad=options;bad.normal_projection_inset_reference_pixels=invalid;
+                const auto rejected=compile_phigros_contacts(c,identity(c),geometry(),bad);
+                require(!rejected.plan&&diagnostic(rejected,"invalid_options"),"invalid/unbounded inset option accepted");
+            }
+            for(const auto unsupported:{OffscreenPolicy::reject,OffscreenPolicy::bounded_normal_candidate}) {
+                auto bad=options;bad.offscreen_policy=unsupported;
+                const auto rejected=compile_phigros_contacts(c,identity(c),geometry(),bad);
+                require(!rejected.plan&&diagnostic(rejected,"invalid_options"),"inset silently ignored by unsupported projection policy");
+            }
+        });
+        run("analytic edge speed removes clipped normal motion and retains held path proof",[] {
+            auto c=chart();auto& move=c.lines[0].move_events[0];move.time.end_ns=second;
+            move.start_x=.3;move.end_x=.7;move.start_y=1.2;move.end_y=1.8;note(c,NoteKind::hold,0,second);
+            ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+            options.max_normal_projection_reference_pixels=7000;options.normal_projection_inset_reference_pixels=64;options.calibration_id="analytic-edge-test";
+            const auto legacy=compile_phigros_contacts(c,identity(c),geometry(),options);
+            options.tight_projection_speed_bounds=true;const auto tight=compile_phigros_contacts(c,identity(c),geometry(),options);
+            const auto& p=plan(tight);inside_inset(p);
+            require(p.total_steps*3<plan(legacy).total_steps*2,"active-edge analytic bound failed to reduce over-sampling");
+            require(projected_held_error(p,c,options,0,second)<=options.max_path_error_pixels+1e-7,"clipped path escaped original4px zero-order bound");
+            require(p.memory.contacts[0].steps.front().song_ns==0&&p.memory.contacts[0].steps.back().song_ns==second,
+                "analytic clipping changed complete Hold lifetime");
+            require(p.metadata.cache_sha256!=plan(legacy).metadata.cache_sha256&&p.metadata.strategy.find("analytic-projected-derivative-v1")!=std::string::npos,
+                "explicit analytic sampling policy absent from identity");
+            c.lines[0].move_events[0].start_x=c.lines[0].move_events[0].end_x=.5;
+            const auto flat=compile_phigros_contacts(c,identity(c),geometry(),options);const auto& flat_plan=plan(flat);
+            require(flat_plan.total_steps==2,"constant clipped path retained invented interior moves");
+            require(std::all_of(flat_plan.ownership[0].normal_projection_spans.begin(),flat_plan.ownership[0].normal_projection_spans.end(),
+                [](const auto& span){return span.speed_bound_input_pixels_per_ns==0;}),"normal-only clipped motion retained nonzero tangent speed");
+        });
+        run("analytic velocity preserves affine Flick cancellation judgment and endpoint keys",[] {
+            auto c=chart();const auto prototype=c.lines[0].move_events[0];c.lines[0].move_events.clear();
+            auto before=prototype;before.time.end_ns=second-30'000'000;before.start_y=before.end_y=1-330./720;
+            auto stroke=prototype;stroke.time.start_ns=before.time.end_ns;stroke.time.end_ns=second+30'000'000;
+            stroke.start_y=before.end_y;stroke.end_y=1-384./720;
+            auto after=prototype;after.time.start_ns=stroke.time.end_ns;after.start_y=after.end_y=stroke.end_y;
+            c.lines[0].move_events={before,stroke,after};note(c,NoteKind::flick);
+            ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+            options.max_normal_projection_reference_pixels=7000;options.normal_projection_inset_reference_pixels=64;options.calibration_id="analytic-flick-test";
+            options.flick_lead_ns=30'000'000;options.flick_travel_ns=60'000'000;options.flick_distance_reference_pixels=60;options.flick_release_ns=24'000'000;
+            const auto legacy=compile_phigros_contacts(c,identity(c),geometry(),options);
+            options.tight_projection_speed_bounds=true;const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);const auto& p=plan(result);
+            require(p.total_steps<plan(legacy).total_steps,"affine motion cancellation did not tighten sampled Flick path");
+            const auto& steps=p.memory.contacts[0].steps;
+            for(const auto t:{second-30'000'000,second,second+30'000'000,second+54'000'000})
+                require(std::any_of(steps.begin(),steps.end(),[&](const auto& s){return s.song_ns==t;}),"analytic Flick dropped critical lead/judgment/end/dwell key");
+            require(projected_held_error(p,c,options,second-30'000'000,second+30'000'000)<=options.max_path_error_pixels+1e-7,
+                "cancelled affine Flick violated unchanged zero-order error");
+        });
+        run("analytic rotating vertical horizontal and switching edges retain continuous error bound",[] {
+            ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+            options.max_normal_projection_reference_pixels=250;options.normal_projection_inset_reference_pixels=64;
+            options.calibration_id="analytic-rotating-test";options.tight_projection_speed_bounds=true;
+            for(unsigned which=0;which<3;++which)for(const auto side:{NoteSide::above,NoteSide::below}) {
+                auto c=chart();auto& move=c.lines[0].move_events[0];move.time.end_ns=second;
+                auto& rotate=c.lines[0].rotate_events[0];rotate.time.end_ns=second;
+                if(which==0){move.start_y=move.end_y=1+20./720;rotate.start=-20;rotate.end=20;}
+                if(which==1){move.start_x=move.end_x=-20./1280;rotate.start=70;rotate.end=110;}
+                if(which==2){move.start_x=-30./1280;move.end_x=-10./1280;move.start_y=1+10./720;move.end_y=1+30./720;rotate.start=rotate.end=45;}
+                note(c,NoteKind::hold,0,second,which==2?0:1,side);
+                auto g=geometry();if(which==1){g.input_width=900;g.input_height=1600;g.rotation=InputRotation::clockwise_90;g.fit=ViewportFit::stretch;g.viewport=PixelViewport{100,50,1400,800};}
+                const auto result=compile_phigros_contacts(c,identity(c),g,options);const auto& p=plan(result);
+                require(projected_held_error(p,c,options,0,second)<=options.max_path_error_pixels+1e-7,"rotating/corner analytic projected path escaped error certificate");
+                require(p.memory.contacts[0].steps.back().song_ns==second,"rotating analytic path clipped lifetime");
+            }
+            auto c=chart();c.lines[0].move_events[0].start_y=c.lines[0].move_events[0].end_y=1+1e-7/720;
+            c.lines[0].rotate_events[0].start=c.lines[0].rotate_events[0].end=89.9999999;note(c,NoteKind::hold,0,second);
+            require(!compile_phigros_contacts(c,identity(c),geometry(),options).plan,"analytic option weakened near-tangent rejection");
+            options.offscreen_policy=OffscreenPolicy::reject;c=chart();note(c,NoteKind::tap);
+            require(diagnostic(compile_phigros_contacts(c,identity(c),geometry(),options),"invalid_options"),"analytic policy silently ignored by strict projection mode");
+        });
+        run("native import interpretation provenance is automatic and conditionally fingerprinted",[] {
+            auto c=chart();note(c,NoteKind::tap);const auto strict=compile_phigros_contacts(c,identity(c),geometry());
+            const auto strict_hash=plan(strict).metadata.cache_sha256;
+            require(strict_hash=="2a9e0c0b1a909416bd2a440175bb5ccf96a9dae9a2a68aae3a449026df9305b7","strict import default changed archived golden");
+            c.import_policy_id="phigros-v3-source-priority-constant-empty-candidate-v1";c.import_interpretation_unqualified=true;
+            ChartImportAnomaly anomaly;anomaly.source.json_pointer="/judgeLineList/0/judgeLineDisappearEvents/0";
+            anomaly.source.id=c.source.chart_sha256+'#'+anomaly.source.json_pointer;c.import_anomalies.push_back(anomaly);
+            const auto result=compile_phigros_contacts(c,identity(c),geometry());const auto& p=plan(result);
+            require(p.metadata.import_policy_id==c.import_policy_id&&p.metadata.import_interpretation_unqualified&&
+                p.metadata.import_anomaly_source_ids==std::vector<std::string>{anomaly.source.id},"compiler dropped native interpretation provenance");
+            require(p.metadata.cache_sha256!=strict_hash,"different import interpretation reused strict fingerprint");
+            auto changed=p;changed.metadata.import_anomaly_source_ids.push_back(anomaly.source.id);
+            require(compiled_contact_fingerprint(changed)!=p.metadata.cache_sha256,"native anomalous source interpretation not fingerprinted");
+            c.import_anomalies[0].source.id="forged";
+            require(diagnostic(compile_phigros_contacts(c,identity(c),geometry()),"invalid_import_policy"),"invented native anomaly ownership accepted");
         });
         run("invalid identity source time dimensions NaN and bounded budgets",[] {
             auto c=chart();note(c,NoteKind::tap);auto id=identity(c);id.revision="wrong";

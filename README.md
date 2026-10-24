@@ -1,5 +1,9 @@
 # Rhythm Chart Memory — Phigros / 世界計畫研究分支
 
+**2026-10-24 封存結果**：build006已有18輪實測，14輪完整輸入／8輪原生確認結算；正式Legacy20首中8首有保存結算AP，另有Verrückt暖身AP。結算漏記、20ms遲到、缺錄與剩餘未測6首均保留為待處理，未宣稱全測完成。依使用者要求先封存程式與文件；原始素材／證據留本機。見[逐曲結果與全部回合](docs/SESSION_RECORDS_2026-10-24.md)。
+
+**視窗面板與曲庫**：新增Verruckt IN作額外暖身，與原Legacy20首分列；用滑鼠啟動本首／整批、查看READY、停止及開啟紀錄，選曲與Play仍由使用者操作。準備完不自動開始。[使用方式](docs/SONG_TEST_PANEL.md)。
+
 **方向：譜面／操作記憶驅動，音訊同步，視覺只做定位、校正與異常停止。**
 
 這是 `feature/chart-driven-multigame` 的精簡起點，不是已完成的雙遊戲自動遊玩器。來源為 `main` 的 `2d479e17fa1566c089dce019cbb11eb883ba47fd`；原純視覺程式、實驗、分數與歷史仍保留在 main，沒有覆寫或合併。
@@ -9,6 +13,12 @@
 本輪成功設定與失敗歷史已依 [實作計畫](docs/CHART_DRIVEN_IMPLEMENTATION_PLAN.md)及[驗證紀錄](docs/VALIDATION.md)封存。下一步可在固定身份下驗跨輪重現率；M0–M7 各項未取得的時間／音訊／生產資格仍保留原狀，不由單次 AP 一併宣告完成。
 
 換模型或接續工作請先讀 [模型交接與 AP 重跑設定](docs/MODEL_HANDOFF.md)。本機可用 `tools/run-dlyrotz-ap.ps1 -CheckOnly` 核對成功封存，確認後再以人工開始的一輪模式執行。
+
+**歷史測試入口005（後續已由panel004／build006取代）**：使用者實跑004首輪Glaciaxion時，Drag遮到分數造成500ms HUD誤拒絕，已釋放並確認kernel零。新增有版本的七字形baseline辨識，45張本輪playing修復、39嚴格負例拒絕；新build003／sweep005完成20首離線check，尚未自行重跑。[修正與啟動方式](docs/CHAPTER_LEGACY_TEST_PLAN.md)。
+
+**Chapter Legacy 20首IN候選已備妥**：20/20通過相容匯入、共通首音模型、完整接點編譯與封存執行檔離線檢查；15,817個原生音符及62份原譜bytes不變。現行panel004／清單008已進行部分實測；歷史RPC壓力測試57/80完成、23次guard停止仍列明，當前完成與未測範圍見結果索引。詳見[入檔、共通政策與全測清單](docs/CHAPTER_LEGACY_TEST_PLAN.md)。
+
+**跨曲目接續：Glaciaxion IN12** 的五指 live005 完整送出729音符／6,350動作，結算為722 Perfect／1 Good／3 Bad／3 Miss，尚未AP。已加入原生首音候選、64px邊緣內縮與明確五指證據，詳見[每曲適配與保留失敗](docs/ADAPTIVE_SONG_TESTS.md)。Dlyrotz成功封存保持原身份。
 
 **M0 已完成**：從既有 AVD 的 Phigros 4.0.1 分包取得 Dlyrotz IN 原生 v3 譜面（24 lines／584 notes）及匹配音源；重跑抽取的 10 份輸出 SHA 完全一致。來源鏈、工具與本機素材位置見 [M0 資產報告](docs/M0_ASSETS.md)。
 
