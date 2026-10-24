@@ -1,0 +1,57 @@
+{
+  "schema": "rhythm.legacy-asset-references.v1",
+  "audit_date": "2026-10-23",
+  "baseline_commit": "2d479e17fa1566c089dce019cbb11eb883ba47fd",
+  "initial_extraction_commit": "3be959e",
+  "local_originals_status": "User confirmed the old local files were deleted; rebuild recordings from the existing AVD. Historical Git references remain available.",
+  "restored_documents": [
+    {"path": "docs/catalog/06-engineering/FULL_ROUND_RECORDING_20261001.md", "git_blob": "efc6e55028feeb4f5b44f634758f1a4a95fd0cbc"},
+    {"path": "docs/catalog/02-game-results/DLYROTZ_FRAME_ANALYSIS_C36H_20261001.md", "git_blob": "6efd8bdf773d33925b6a0be3e9dca6454a94963f"},
+    {"path": "docs/catalog/07-data-learning/VISION_DATASET_20260927.md", "git_blob": "f94283a9a652a360f8a93f0d5effa5116371fc09"},
+    {"path": "docs/research/zero-miss-20261006/windows/evidence/external-originals.json", "git_blob": "f5930f01fd764ef52d397d0e7038c4e739ce5d52"}
+  ],
+  "recordings": [{
+    "game": "phigros",
+    "song_as_recorded": "Dlyrotz",
+    "difficulty_as_recorded": "IN13",
+    "session_relative_path": "measurements/game-assist/2026-09-30-m0-manual-continue/full-recording36g-01/sessions/manual-session-22885039263800",
+    "selected_clips_relative_path": "measurements/game-assist/2026-09-30-m0-manual-continue/full-recording36g-01/review/selected-clips-v1",
+    "historically_reported": {
+      "png_count": 7722,
+      "width": 1280,
+      "height": 720,
+      "duration_seconds": 131.8293931,
+      "png_and_index_bytes": 2385518593,
+      "preview_mp4_bytes": 89960755,
+      "selected_clip_count": 12,
+      "selected_frame_references": 3843,
+      "selected_unique_png_count": 3722,
+      "journal_rows": 21184,
+      "replay_process_calls": 7715,
+      "recording_zero_to_round_start_seconds": 0.9602991,
+      "miss_count": 77
+    },
+    "expected_files": [
+      {"relative_to_session": "manifest.json", "bytes": 10289, "sha256": "7508b2572f045b8bbf52afd45789a717bac03af715ca25eb0b5b8a7294d62eb5"},
+      {"relative_to_session": "full-recording/index.jsonl", "bytes": 6020024, "sha256": "0bd8ec74b6bc19d1f8080c064453a052095e328e31d2759f12d6d04d78500f8d"}
+    ],
+    "user_reasons_sha256": "a01ebaf9e989ab09537882f8bf41dae1e6d48bba315be0857c3c6ad00fa73ee9",
+    "current_raw_bytes_verified": false,
+    "audio_capture_implemented_by_legacy_recorder": false,
+    "ground_truth": "Historical visual observations and imperfect actions; not an exact native chart or per-note judgment gold."
+  }],
+  "other_dataset": {
+    "manifest_relative_path": "measurements/vision-dataset-20260927/manifest.json",
+    "historically_reported_runs": 3,
+    "historically_reported_clips": 54,
+    "historically_reported_roi": 408,
+    "current_raw_bytes_verified": false
+  },
+  "legacy_source_references": [
+    "include/pas/session_recording.hpp", "src/session_recording.cpp", "tests/session_recording_tests.cpp",
+    "apps/recording_check/main.cpp", "apps/recording_check/select.cpp", "apps/frame_review/",
+    "apps/miss_review/main.cpp", "src/session_archive.cpp", "src/session_pixel_clips.cpp"
+  ],
+  "availability_policy": "Documentary references are not raw-asset availability. Verify supplied originals and per-frame hashes before importing.",
+  "avd_policy": "Local AVD state lives outside Git; inspect without launching via tools/inspect-local-assets.ps1."
+}

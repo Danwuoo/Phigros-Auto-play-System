@@ -1,0 +1,399 @@
+{
+  "existing_inputs": [
+    {
+      "bytes": 326978,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi\\normalized-execution.json",
+      "sha256": "96d536c5b5e9e01e359da2ead01596428b46f4265f28ba295ee9d9b4297650c5"
+    },
+    {
+      "bytes": 16105,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi\\oracle.json",
+      "sha256": "90f8680c4362d07a718ac2bb7142b37396871b7ffd81523a06ddd8a685ec5425"
+    },
+    {
+      "bytes": 419699,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\typed-r1.json",
+      "sha256": "ce69f19d5c488e780c7d1cb7785601d3e3f80750b134440c636dda20f19ff8c3"
+    },
+    {
+      "bytes": 469436,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\r1-cases.json",
+      "sha256": "8da656609b424eda46633145728dd485d12bfb25e83f1850235a527891e28f46"
+    },
+    {
+      "bytes": 224663,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r1\\expected-coverage.json",
+      "sha256": "4985ec8aac5d89f0863125daa6be483b26c1b200b00f5bbcb23fc691cc517f2a"
+    },
+    {
+      "bytes": 130219,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\runtime-x11-p\\capability-reference.json",
+      "sha256": "73dc5c94f1418a1e75bf4488871d27c849e0d6105adc79ec03c167ff672dbcd3"
+    },
+    {
+      "bytes": 10289,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\full-recording36g-01\\sessions\\manual-session-22885039263800\\manifest.json",
+      "sha256": "7508b2572f045b8bbf52afd45789a717bac03af715ca25eb0b5b8a7294d62eb5"
+    }
+  ],
+  "original_stop_states": [
+    {
+      "bytes": 265,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T09\\state.json",
+      "sha256": "4887957d312e28b327efb4df2be92f9bc12f82164e11be9541f55fa3cb7479b6"
+    },
+    {
+      "bytes": 254,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T10\\state.json",
+      "sha256": "ea899cd34e3d24efbcaaa4672bb4390737d99074cc6650066d9c78fad5e487be"
+    },
+    {
+      "bytes": 255,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T11\\state.json",
+      "sha256": "8fb6765729c6f0fc982fd7424e61873e305db120247363f96f3afa1be13bc624"
+    },
+    {
+      "bytes": 751,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T12\\state.json",
+      "sha256": "0554a45e55cf8995c68edbcc5dff5e904b3c7fcce32c254f0049c812831b06d3"
+    },
+    {
+      "bytes": 558,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T13\\state.json",
+      "sha256": "8f71d166052bfb68a51db705d48eb3fd957aaaed98b9e72d8ee7ef85d9747d2d"
+    },
+    {
+      "bytes": 562,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T14\\state.json",
+      "sha256": "541ccde9e5bfe4581a9dbcde873a6b96d9d84a6b7816bc494a454341454f4f25"
+    },
+    {
+      "bytes": 553,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T15\\state.json",
+      "sha256": "c5d30f45225199f5081760180e4f2e1357cfaef7eadcb6bb9f920a034b36fe01"
+    },
+    {
+      "bytes": 553,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T16\\state.json",
+      "sha256": "779dc8693a92ab03035dd07409c77a1ea05f70bd52cfdc50972faeaf0dab3223"
+    },
+    {
+      "bytes": 252,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T19\\state.json",
+      "sha256": "e83d4109634a622b1fddd8329c9f0df8e881decf3a2639fe0eeaf4b57178a8f9"
+    },
+    {
+      "bytes": 253,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T20\\state.json",
+      "sha256": "565c6db2fb51fdb9cd123f7025dc176335c2405718f70fdf2903e0cb735d8307"
+    },
+    {
+      "bytes": 256,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T21\\state.json",
+      "sha256": "666d954a5fee0502f0295cafa0ebae4d932318b3d1ddce93f37b076d2577927e"
+    },
+    {
+      "bytes": 281,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T22\\state.json",
+      "sha256": "0944f85b35b91b97c513262fe68a7fb6861c77efadcdbedb5e0107387e15dc61"
+    },
+    {
+      "bytes": 575,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T23\\state.json",
+      "sha256": "28fabed0c81c530e4678320174c4ec022e3722434143e5e1feb42aaa843c8dee"
+    },
+    {
+      "bytes": 873,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T24\\state.json",
+      "sha256": "9e90175022567d722363622dff2604f42aab0c983f173dd9dce3b30967488b1d"
+    },
+    {
+      "bytes": 553,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T25\\state.json",
+      "sha256": "e69135b12a2f1ecc25801ee2e8df8cccbd94dc65d2087e640d50974b05ac5391"
+    },
+    {
+      "bytes": 558,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\scratch-transaction-round-1\\T26\\state.json",
+      "sha256": "fd162161cbe390e14356a3423322a3d5698d8fdfbba433191a8c3e612e565154"
+    },
+    {
+      "bytes": 339,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-build\\state.json",
+      "sha256": "0fdd90fd9f2a4fd2b1216fceb956f25f0f97f4cb0dd2a756baffac2a37cf3ffc"
+    },
+    {
+      "bytes": 596,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2e\\state.json",
+      "sha256": "613a9560a2a739a90af1bedde56d7c9b6811af04677601c4543a1f666b763bf4"
+    },
+    {
+      "bytes": 448,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2e\\STOP-readback.json",
+      "sha256": "caaeefce8ae483c35f010a4864f2417f8dd843f98f766e4f44bbb38365fd7a30"
+    },
+    {
+      "bytes": 263,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T09\\state.json",
+      "sha256": "1640594041b7e8a9cb604b0613ece64f247d697001657bad179fdd36b71c5d3e"
+    },
+    {
+      "bytes": 252,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T10\\state.json",
+      "sha256": "7859fd5e5ef0cffbfc7637f673662944b54bae930a2e9dfbb319487d95fa7690"
+    },
+    {
+      "bytes": 253,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T11\\state.json",
+      "sha256": "dca5b195f557d8bbf66db6d2eb4a65cf4608f6a5a40ea9a6ee4c16c1bb4821dd"
+    },
+    {
+      "bytes": 761,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T12\\state.json",
+      "sha256": "e5494ff63eb79dc53741a9e8b5a08733569b3886b3f9e755d463a1ef2536366f"
+    },
+    {
+      "bytes": 562,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T13\\state.json",
+      "sha256": "38c576709dc68598c39f9cd62e49e673e29f786320d9fbf887ee7ee1d8180962"
+    },
+    {
+      "bytes": 566,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T14\\state.json",
+      "sha256": "1104a6e7c22e663cd8ec8c0b9280c9824297cfb21b9f4878ce904d3b92785dc8"
+    },
+    {
+      "bytes": 557,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T15\\state.json",
+      "sha256": "b225d1c7bfac7a4634f220b920fbad673e229cdba167e458b43000eafd773b1c"
+    },
+    {
+      "bytes": 557,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T16\\state.json",
+      "sha256": "7cfc57a2cd723a6df7683b24cb36892b9a53dc5dce953d67e9acda5ee5109e9e"
+    },
+    {
+      "bytes": 250,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T19\\state.json",
+      "sha256": "7c1e3b8df31cb44c24c256eb2e75e27f333d80d0e1ae546497333a8c2836d93d"
+    },
+    {
+      "bytes": 251,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T20\\state.json",
+      "sha256": "dafe9c67d12c3b30020ecde496f965b01a2214e51e3313efb00668eb0aa4c5d9"
+    },
+    {
+      "bytes": 254,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T21\\state.json",
+      "sha256": "0ef2d6a1c55049c0125f7cf81445af7ea9ca610c68b8445c863347d84103b9fc"
+    },
+    {
+      "bytes": 279,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T22\\state.json",
+      "sha256": "6f4d92c2fb58f7e79e5063ae485ef6395f4373952029705aa660d9abd56e8e59"
+    },
+    {
+      "bytes": 579,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T23\\state.json",
+      "sha256": "6716d47696f182c61da57f090074cc1afeaa57e8a0c1368bec55b7d0316a35ac"
+    },
+    {
+      "bytes": 883,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T24\\state.json",
+      "sha256": "bc1d831fcc24495667685bd0e6301dd0cac0dbe054c0dfbc5d8a9f2fd2f7cec4"
+    },
+    {
+      "bytes": 557,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T25\\state.json",
+      "sha256": "5b9e6d10b706bee5b581ca76071e0aacdc0bafc2b04595ad4d8caaab53b1ab80"
+    },
+    {
+      "bytes": 562,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\scratch-transaction-round-1\\T26\\state.json",
+      "sha256": "a465b9197f32ad28a3f27fede1121abd20a00fe0432bfa8ef8b84d91c658371d"
+    },
+    {
+      "bytes": 1217,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\state.json",
+      "sha256": "9089d70d45978a13c83fe62d34b82fa39db08a861403aea2808160998be1f363"
+    },
+    {
+      "bytes": 562,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-control\\STOP-readback.json",
+      "sha256": "ad71406ce9d458df2bb3bc544f96553be0af5fbfd6099b867a9ac1dc5732258c"
+    },
+    {
+      "bytes": 263,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T09\\state.json",
+      "sha256": "2f5cf295e880dd5ac40f90ab5aaa78252f8d1fca4f5d58cdd678621e98269655"
+    },
+    {
+      "bytes": 301,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T10\\state.json",
+      "sha256": "a8d84b5b14a8b322f8b2e82213e9a252b5157de2ca036a06df740660b959e862"
+    },
+    {
+      "bytes": 253,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T11\\state.json",
+      "sha256": "7899d66914ca48e0e00f5b0edeb1db415f2091260b7ae5fe9b892061d208e27a"
+    },
+    {
+      "bytes": 783,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T12\\state.json",
+      "sha256": "ad6d394a8cc313cfe5ac68244866c7ffb3818ebd2aec8d2c6a90c1016e6a0f3c"
+    },
+    {
+      "bytes": 561,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T13\\state.json",
+      "sha256": "58122bafdf87a8c3c89eb8fd3c3a3dcf2c87b3533baf0c71ebfbeba6dd79ddaf"
+    },
+    {
+      "bytes": 565,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T14\\state.json",
+      "sha256": "e8e7c547b6488490907c2dc9bbd776638ef18f84efa8d92e4d39fdbb96cd984d"
+    },
+    {
+      "bytes": 556,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T15\\state.json",
+      "sha256": "a67f3033b8d4702f9e61e827f4a08fca28465de66a8d8be683603568727d27bd"
+    },
+    {
+      "bytes": 556,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T16\\state.json",
+      "sha256": "d3dfa8f53383e01498e5d8cc5331d02af0b88f25a29da50cf7b09a1f8504d5ac"
+    },
+    {
+      "bytes": 250,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T19\\state.json",
+      "sha256": "c0537d8e0b6a52bcb920ade93177d64e68bf3068b4962051f1fdd785a5aa0a72"
+    },
+    {
+      "bytes": 251,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T20\\state.json",
+      "sha256": "2f68b229ac55e387dbbec35322c3e86ab224c6288ebea5b52deb547c4e7e37df"
+    },
+    {
+      "bytes": 254,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T21\\state.json",
+      "sha256": "52ffbc6f676a034ce69ef96b939688d6c841997045a1853c55fbcee0a01df475"
+    },
+    {
+      "bytes": 279,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T22\\state.json",
+      "sha256": "a4d208a9e99dbe4d199233c26b7b63ed56f451203ea385383c3f8b7b52a44f92"
+    },
+    {
+      "bytes": 578,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T23\\state.json",
+      "sha256": "1c6fdd65c4477008fe459863dce68ec6348dee708b10d6673370b1651efc7d32"
+    },
+    {
+      "bytes": 881,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T24\\state.json",
+      "sha256": "8389c02b3f52a466c3fac5a851eba971ccf6615b13277774aa8203375b429136"
+    },
+    {
+      "bytes": 556,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T25\\state.json",
+      "sha256": "765bc36ac725e7adcd02ce7c5348bd77ed293e47657d0b4ed9485a368f707ef5"
+    },
+    {
+      "bytes": 561,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-1\\T26\\state.json",
+      "sha256": "bc66fadbcb8bf7b7057dab9ab181e4893f9cd25feb1f7c620fd83914035f38f2"
+    },
+    {
+      "bytes": 263,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T09\\state.json",
+      "sha256": "79d8a022e286cbcb6c1bf2de5ea7f218bf91bdf936c17cee0fe39e50d33a26b8"
+    },
+    {
+      "bytes": 252,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T10\\state.json",
+      "sha256": "96ea6997817290c10ed724f48254cd1a85e11dca2845ed99c5c2277355606396"
+    },
+    {
+      "bytes": 253,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T11\\state.json",
+      "sha256": "4924e69980c613b175904360022e32e3fdbe88397e0c7f0247e1234695c479f5"
+    },
+    {
+      "bytes": 759,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T12\\state.json",
+      "sha256": "887389b205af1807b0c82a4d13b9eba7f7160a64f75d614c587d6d4def5dcc51"
+    },
+    {
+      "bytes": 561,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T13\\state.json",
+      "sha256": "accf3a82d3500dd2edda71d709b22445c63b228e5e6137f9e321e06c085fe791"
+    },
+    {
+      "bytes": 565,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T14\\state.json",
+      "sha256": "e0f4858ee6362c6a77e36eb9f8a2ae6f8dc4826ba837d1194acf3c4ac7db2cf8"
+    },
+    {
+      "bytes": 556,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T15\\state.json",
+      "sha256": "8a76dd98e0fc1975aadbb4516a1e38b00dd1ddb0028a72b12fe0377aa8a889dd"
+    },
+    {
+      "bytes": 556,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T16\\state.json",
+      "sha256": "0a3c61dbeb08eee28a3854c4bde9f9fbf7f44a26abd8a41125f382e9e8c9fac8"
+    },
+    {
+      "bytes": 250,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T19\\state.json",
+      "sha256": "59979c5656f080701689ee567c770b02c5f6286041dd531ae3e528a4388b14ee"
+    },
+    {
+      "bytes": 251,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T20\\state.json",
+      "sha256": "c8542cb4ca72994c2b300f912a2d0250a24f2bb53e2a2a20f24409b759fd379e"
+    },
+    {
+      "bytes": 254,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T21\\state.json",
+      "sha256": "b336b36c811434708e00c98433fb431a5f93bf5c4b3949fd6fdd4538e367598e"
+    },
+    {
+      "bytes": 279,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T22\\state.json",
+      "sha256": "5bb485d444087dbfa2565e8244818bab0b91afb928b325be4677c3ef16ec3497"
+    },
+    {
+      "bytes": 578,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T23\\state.json",
+      "sha256": "911bf07fdafa9cda2daf916a5cc66d6658fc92d2448f1b3021b5ad598dbca593"
+    },
+    {
+      "bytes": 881,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T24\\state.json",
+      "sha256": "77402f5e5b741b4d18e2494139e1d18d1ccf00184171bb2c47c944748b06992c"
+    },
+    {
+      "bytes": 556,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T25\\state.json",
+      "sha256": "f499352dac50fa3a046a94774a7875ea9be95320114326a33f85718c8327f729"
+    },
+    {
+      "bytes": 561,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\scratch-transaction-round-2\\T26\\state.json",
+      "sha256": "5bc4fc3bfd101e66f0a7ed518a2b8f1f4749eca8f22999e39252a3a4fa5813e9"
+    },
+    {
+      "bytes": 926,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f-resume\\state.json",
+      "sha256": "7267897f685c5f781b7a126b4c06d41ea7080cd2bf375dd1ac962088fcfd4a14"
+    },
+    {
+      "bytes": 376,
+      "path": "C:\\Users\\wurre\\Desktop\\Phigros-Auto-play-System\\measurements\\game-assist\\2026-09-30-m0-manual-continue\\hold-ownership-x10d-o-bvi-r2f\\state.json",
+      "sha256": "35fa5fe81fdc2d0e775bcd68c5da3376f9a58d296ff0b5a4ae6dc7e7d7da7513"
+    }
+  ],
+  "schema": "pas.windows-original-reference.v1",
+  "originals_modified_by_this_task": false,
+  "historical_capability_not_current_device": true
+}

@@ -2,6 +2,7 @@
 /out/
 /local/
 /recordings/
+/measurements/
 /charts/private/
 /calibration/local/
 .idea/

@@ -1,0 +1,2 @@
+# Preserve the restored external-originals snapshot, including its CRLF bytes.
+external-originals.json -text -whitespace

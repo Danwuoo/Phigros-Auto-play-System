@@ -4,13 +4,17 @@
   "builtin-baseline": "93c50752b23e350ca6b9063a167f0a4cf8a3b3eb",
   "dependencies": [],
   "features": {
+    "legacy-core": {
+      "description": "Retained Windows PAS core and ADB helper",
+      "dependencies": ["nlohmann-json"]
+    },
     "legacy-grpc": {
       "description": "Retained Windows emulator backend with the existing gRPC overlay",
       "dependencies": ["grpc", "nlohmann-json", "protobuf"]
     },
     "legacy-tests": {
       "description": "Retained PAS core tests",
-      "dependencies": ["gtest"]
+      "dependencies": ["gtest", "nlohmann-json"]
     }
   }
 }

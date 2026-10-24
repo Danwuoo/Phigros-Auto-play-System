@@ -1,0 +1,51 @@
+cmake_minimum_required(VERSION 3.28)
+# Packaging derivative of PackageFixture.cmake from main 2d479e17fa1566c089dce019cbb11eb883ba47fd.
+# The original script and v2 artifact identity are retained separately.
+foreach(required IN ITEMS PAS_SO PAS_SDK PAS_JAVA_HOME PAS_OUTPUT)
+  if(NOT DEFINED ${required})
+    message(FATAL_ERROR "${required} is required")
+  endif()
+endforeach()
+if(EXISTS "${PAS_OUTPUT}")
+  message(FATAL_ERROR "Evidence package output must be a new directory")
+endif()
+set(tools "${PAS_SDK}/build-tools/36.0.0")
+set(jar "${PAS_SDK}/platforms/android-37.0/android.jar")
+set(manifest "${CMAKE_CURRENT_LIST_DIR}/../fixtures/android/evidence/AndroidManifest.xml")
+set(library "libpas_touch_fixture_evidence_v3.so")
+set(stage "${PAS_OUTPUT}/stage")
+file(MAKE_DIRECTORY "${stage}/lib/x86_64")
+file(COPY_FILE "${PAS_SO}" "${stage}/lib/x86_64/${library}")
+function(run_tool)
+  execute_process(COMMAND ${ARGV} RESULT_VARIABLE code OUTPUT_VARIABLE out ERROR_VARIABLE err)
+  if(NOT code EQUAL 0)
+    message(FATAL_ERROR "Evidence package tool failed (${code}): ${ARGV}\n${out}\n${err}")
+  endif()
+endfunction()
+set(unaligned "${PAS_OUTPUT}/touch-evidence-unaligned.apk")
+set(aligned "${PAS_OUTPUT}/touch-evidence-aligned.apk")
+set(final "${PAS_OUTPUT}/pas-touch-evidence-v3.apk")
+run_tool("${tools}/aapt2.exe" link -I "${jar}" --manifest "${manifest}" -o "${unaligned}")
+execute_process(COMMAND "${tools}/aapt.exe" add "${unaligned}" "lib/x86_64/${library}"
+                WORKING_DIRECTORY "${stage}" RESULT_VARIABLE code OUTPUT_VARIABLE out ERROR_VARIABLE err)
+if(NOT code EQUAL 0)
+  message(FATAL_ERROR "Evidence aapt add failed (${code}): ${out} ${err}")
+endif()
+run_tool("${tools}/zipalign.exe" -f 4 "${unaligned}" "${aligned}")
+set(keystore "${PAS_OUTPUT}/debug.keystore")
+run_tool("${PAS_JAVA_HOME}/bin/keytool.exe" -genkeypair -noprompt
+         -keystore "${keystore}" -storepass android -keypass android -alias fixture
+         -dname "CN=PAS Native Evidence Fixture" -keyalg RSA -keysize 2048 -validity 3650)
+# This environment affects only child packaging tools, never the user's global environment.
+set(ENV{JAVA_HOME} "${PAS_JAVA_HOME}")
+set(ENV{PAS_FIXTURE_DEBUG_PASSWORD} "android")
+run_tool("${tools}/apksigner.bat" sign --ks "${keystore}" --ks-key-alias fixture
+         --ks-pass env:PAS_FIXTURE_DEBUG_PASSWORD --key-pass env:PAS_FIXTURE_DEBUG_PASSWORD
+         --out "${final}" "${aligned}")
+run_tool("${tools}/apksigner.bat" verify --verbose "${final}")
+file(SHA256 "${final}" apk_sha)
+file(SHA256 "${PAS_SO}" so_sha)
+file(SHA256 "${manifest}" manifest_sha)
+file(WRITE "${PAS_OUTPUT}/touch-evidence-artifact.json"
+     "{\n  \"fixture\": \"native-touch-evidence-v3\",\n  \"package\": \"org.pas.touchfixture.evidence.cpp\",\n  \"apk_sha256\": \"${apk_sha}\",\n  \"so_sha256\": \"${so_sha}\",\n  \"manifest_sha256\": \"${manifest_sha}\",\n  \"ndk\": \"30.0.16248370\",\n  \"abi\": \"x86_64\",\n  \"min_api\": 29,\n  \"target_api\": 36,\n  \"signature_verified\": true,\n  \"installed_or_launched\": false\n}\n")
+message(STATUS "Packaged ${final} SHA256 ${apk_sha}; no device operation performed")

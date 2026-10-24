@@ -16,6 +16,8 @@
 - `grpc_transport.cpp` 明確依賴自訂 Windows read patch，不能換 stock gRPC 後仍報相同能力。[R3]
 - 已保留的 20 首資料只有曲名、等級、分數與簡註，沒有逐幀、audio 或 touch trace，不能從這些分數還原譜面記憶。[R2]
 
+上述 score-only 限制只適用於那批 20 首。基準歷史另有 Dlyrotz 全輪 7,722 張原始 PNG、QPC／source-frame 索引、12 段使用者選片及日誌，還有較早的 ROI dataset。這些可作離線記憶候選、幾何與視覺時間錨點的起點；原始像素目前仍需找回並核對，不能把歷史文件當成已取得資產。詳見 [資產接續](ASSET_RECOVERY.md)；先前 extraction 並未盤點這條資料路徑。
+
 ## 2. 三種記憶來源，優先順序不同
 
 | 來源 | 用途 | 邊界 |
@@ -25,6 +27,8 @@
 | 即時視覺 | 確認 playing/paused/result、畫面映射、局部時間錨點、異常停止 | 不是每個 note 都必須即時重建的主控制器；失鎖不盲目續播 |
 
 先用明確可驗證的一首譜面建立閉迴路。不要先做全曲庫下載，也不要把 YOLO/VLM、強化學習或 process-memory hook 當作必要起點。沒有原生譜面時，離線多幀標註比追求當幀完全辨識更值得先驗證。
+
+使用者已確認舊本機原件刪除，因此本機接續改為重錄 Dlyrotz 影音基準。保留錄影 pre-roll、host QPC、round-start 與 song-time 的不同時間原點；原播放器 0 秒不是歌曲 0 秒。舊操作含失誤，不能直接重播為理想譜面。歷史理由仍有研究價值，但不可假稱已對回新影格；新錄製、來源時間索引與音訊品質檢查見 [RECORDING.md](RECORDING.md)。
 
 ## 3. 分層架構
 
@@ -40,13 +44,15 @@ PAS ContactPlan bridge → bounded ContactScheduler → TouchBackend
 音訊對齊 / 視覺錨點 → SyncLease / supervisor / emergency release
 ```
 
-本分支只實作 **resolved-contact memory 與時間／租約契約的離線原型**。它不是完整語義 Chart IR，也沒有 parser、audio capture、estimator、game adapter 或 PAS bridge。game enum 與合成範例不能被稱為實際雙遊戲支援。
+初次 extraction 只實作 **resolved-contact memory 與時間／租約契約的離線原型**。本機接續另有 opt-in AVD 盤點、gRPC 觀測短錄、scrcpy 影音錄製及離線解碼／PTS 索引工具；它們尚未連入新的即時 runtime。完整語義 Chart IR、譜面 importer、同步 estimator、game adapter 與 PAS bridge 仍未實作。game enum 與合成範例不能被稱為實際雙遊戲支援。
 
 長期記憶保存 chart/audio/layout identity；即時層保存 song position、clock rate、uncertainty、epoch、geometry version、觀測時間、有效期限與暫停狀態。cache 必須在區服／譜面／音源／layout 不一致時失效。
 
 ## 4. 音訊同步先做簡單可量測的方法
 
 現有系統以 Windows emulator 為主，第一個音源方案是 WASAPI loopback；可行時使用 process-loopback 限縮 emulator process tree，避免桌面其他音效污染。Microsoft 提供 endpoint loopback 與 process-loopback sample；後者有 Windows build 條件，須先核對本機版本。[R4][R5]
+
+本機接續的離線基準優先使用 scrcpy 裝置端影音 PTS 與 FLAC 音軌，避免混入其他桌面音訊。gRPC 音訊也已測通，但其 timestamp 不具 sample-position 契約；WASAPI QPC／device-position loopback 可作後續即時同步的另一條來源。三者都仍須量測歌曲判定相位，不能由有錄音推論已完成同步。
 
 同一段原始混音／同一 cover 的音訊，先做降採樣特徵與 normalized cross-correlation 的粗對齊，再在預測位置附近做短窗相關與小幅 phase/rate 更新。cross-correlation 可求 lag，但不是直接等於遊戲判定時間。[R6]
 
@@ -99,7 +105,7 @@ chart offset 只在 importer 正規化一次。audio buffer 的時間戳應來�
 | --- | --- | --- |
 | 0 核心分離 | 精選原碼 exact blobs、無 research 的離線 default build、來源清單 | 已完成；Windows optional build 未測 |
 | 1 譜面正規化 | 每遊戲一個合法 fixture；時間、offset、座標、未知類型拒絕與 golden events | 待做；只有合成 resolved-memory |
-| 2 同步 shadow | 實際 audio capture、start offset / drift / silence / pause / 錯音源測試；不輸入 | 待做 |
+| 2 同步 shadow | 實際 audio capture、start offset / drift / silence / pause / 錯音源測試；不輸入 | 觀測擷取與離線解碼已做；自動對齊與 shadow estimator 待做 |
 | 3 接點編譯 | adapter、rolling planner、PAS bridge、tap/hold/slide/drag/flick、容量與停止測試 | 待做 |
 | 4 有界實機驗證 | 使用者確認測試環境後，每遊戲先一首；保存允許的結果與 end-to-end timing | 未啟動 |
 

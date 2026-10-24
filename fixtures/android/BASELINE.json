@@ -1,0 +1,37 @@
+{
+  "source_commit": "2d479e17fa1566c089dce019cbb11eb883ba47fd",
+  "source_ref": "origin/main",
+  "restoration": "exact Git blob bytes before opt-in timestamp derivative",
+  "files": [
+    {
+      "path": "fixtures/android/CMakeLists.txt",
+      "sha256": "7983d4ba57439aec2c0d7d6266bc763ff329efe45cf8d9ef29b40ddddd2da850",
+      "bytes": 838,
+      "git_blob": "c63487457842049b7eea270a33d3767a197bea49"
+    },
+    {
+      "path": "fixtures/android/common/main.cpp",
+      "sha256": "3052f7ee7c74e86cbeaa6d6c0e39fb9d3c40ae1ba71c237b5116650fffb1474f",
+      "bytes": 13068,
+      "git_blob": "98fc1cfc22039aa7e07d7c73b1d9277f78fecc18"
+    },
+    {
+      "path": "fixtures/android/touch/AndroidManifest.xml",
+      "sha256": "4f6a77a47d15ace81116a47d3d5caaaaff6c6ec42173262be87aacfb9a7c04b0",
+      "bytes": 960,
+      "git_blob": "8980094571f14ad9ff294226ac556e4130c4b833"
+    },
+    {
+      "path": "fixtures/android/capture/AndroidManifest.xml",
+      "sha256": "4319fb3616d77245bb132551c02ad6ba0a06a60ba6e795731755a3107c231325",
+      "bytes": 966,
+      "git_blob": "ab4e9921b24c935d851c37f5114a127858c92001"
+    },
+    {
+      "path": "cmake/PackageFixture.cmake",
+      "sha256": "d072a52468c13c698e1689f78dc1ddb2e421e045acf26ad65f70b42ee2436130",
+      "bytes": 2496,
+      "git_blob": "fe30e8cf1ee7836f1248bd509a62c394ee3c8309"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+# Optional offline asset tools. Default CMake does not install/import these.
+UnityPy==1.25.4
+fmod_toolkit==0.1.3
+pyfmodex==0.7.2
+lz4==4.4.5

@@ -21,16 +21,20 @@
 
 共 14 個獨立保留檔案，加上 proto 的 1 檔及 third_party 的 14 檔：29 個原樣保留檔案。新建／重寫 13 個檔案；預期 tree 合計 42 個檔案。
 
+以上為初次抽取 commit `3be959e` 的清單，不是後續 checkout 的固定檔案數。2026-10-23 的本機接續補回三份錄製／逐幀分析／dataset 原文件及 `external-originals.json`，其基準 blob 身份另列於 [LEGACY_ASSETS.json](LEGACY_ASSETS.json)。保留的 PAS sources 不變。
+
 ## 不帶入這個分支的現行 tree
 
 `.idea/`、舊 `research/`、大型 `docs/research/`、開發歷史、舊 fixtures、舊 tools/scripts、舊 configs、一般 benchmark 與實驗 tests、舊 apps/launchers、vision-first game/motion/tracking/runtime/manual_session、native/scrcpy capture 替代路徑，均留在來源 commit/main。
 
 這不是判定那些資料沒有價值，而是避免重建依賴再拉回整個 research graph。完整基準與分數可從 [原 README](https://github.com/Danwuoo/Phigros-Auto-play-System/blob/2d479e17fa1566c089dce019cbb11eb883ba47fd/README.md) 追溯。
 
+抽取時遺漏了對其他完整畫面紀錄的接續說明；20 首 score-only 不能代表全部歷史。錄製文件與核對索引現已精選補回，舊錄製／回放程式仍可按基準 commit 取用，沒有加入 default build。大型原始 PNG、影片、journal、已編譯 binary 及本機 AVD 不會因 Git clone 而恢復；`measurements/` 亦維持忽略，避免把找回的本機資產混入版本控制。見 [ASSET_RECOVERY.md](ASSET_RECOVERY.md)。
+
 ## 建置與資格
 
 新的 default build 只建置跨平台、無第三方依賴的 memory prototype。Windows PAS core、gRPC 與舊 GTest 明確 opt-in；新的 CMake 不參照移除的 research、舊 provenance generated header 或既存 main80 objects。
 
-gRPC overlay 不會被默默移除或改成 stock。`vcpkg.json` 延用來源 baseline，但把依賴分成 optional features。Windows fresh build、backend ABI/服務版本與裝置能力仍需驗證。
+gRPC overlay 不會被默默移除或改成 stock。`vcpkg.json` 延用來源 baseline，但把依賴分成 optional features。初次抽取未測 Windows；本機接續已重建 core／ADB，並修正 `pas_adb` 遺漏的 JSON dependency（`legacy-core` feature、CMake package discovery 與 PUBLIC target link）。原 PAS source blobs 不變。gRPC fresh build、backend ABI/服務版本與裝置能力仍需驗證。
 
 歷史 cost NOT_READY、live UNQUALIFIED、STOP 與分數只屬於舊工作；新分支不重寫、不繼承為通過，不自動開遊戲。沒有建立合併到 main 的 PR，也沒有改預設分支。
