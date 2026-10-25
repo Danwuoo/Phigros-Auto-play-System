@@ -1,5 +1,7 @@
 # Rhythm Chart Memory — Phigros / 世界計畫研究分支
 
+**2026-10-25 Flick路徑候選**：新增明確啟用的固定判定錨點直線policy。Glaciaxion IN原譜離線核對51個Flick折返28→0次、端點位移71.25–72.25 px，判定座標／DOWN／滑動末端／UP時機及678個非Flick接點不變。新004封存native29/29、portable4/4、21首離線前檢通過；只預選Glaciaxion直線72px，人工選曲／READY／Play、不存圖片。新實機判定仍待測，未宣稱改善或AP。[修改、封存與入口](docs/FLICK_STRAIGHT_PATH_2026-10-25.md)。
+
 **2026-10-25 本機接續**：新 Windows native／patched gRPC 建置與29/29 CTest完成；結算v2通過100張既有影格離線回放。其後完成Glaciaxion IN的72→60→72 px三輪：使用者回報725/3/1/0、726/0/0/3、725/0/0/4（Perfect／Good／Bad／Miss），三輪原生確認結算、最後kernel zero、各0張圖片。尚無穩定改善或新AP，不改共用預設或時機。新003 binary／profile／設定與舊build006／AP原件分開。[三輪比較](docs/FLICK_BAB_2026-10-25.md)／[本機紀錄](docs/LOCAL_NATIVE_FLICK_2026-10-25.md)／[結算與保存政策](docs/RESULT_RECOGNITION_AND_STORAGE.md)。
 
 **2026-10-25 全曲 IN／AT 曲庫與 Flick 微調**：固定公開來源 4.0.1.2 的 327 首、389 份譜面（333 IN／56 AT，含 6 變體）與 327 份配對音源已下載並逐檔核對；原件由 Git LFS 管理。新增 Windows 全曲搜尋／篩選／來源核對介面、原生匯入報告（356 通過／5 格式未支援／28 拒絕），以及真正接入 adaptive runtime 的 Flick 幅度／時機參數與單變量比較工具。曲庫入檔與離線匯入不等於新曲已能實跑；本機版本、AT HUD 與其餘限制另列。[曲庫與取得方式](docs/SONG_CATALOG.md) · [使用端](docs/SONG_CATALOG_CLIENT.md) · [Flick 微調](docs/FLICK_TUNING.md) · [本輪驗證](docs/VALIDATION_CATALOG_2026-10-25.md) · [本機 6.1 sol xhigh 交接 prompt](docs/HANDOFF_LOCAL_6_1_SOL_XHIGH.md)。

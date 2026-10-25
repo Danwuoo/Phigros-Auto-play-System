@@ -1,5 +1,9 @@
 # 本輪驗證：2026-10-23 起，更新至 2026-10-25
 
+## 2026-10-25 固定判定錨點直線Flick候選
+
+新004封存native29/29 CTest、Flick policy199 checks、portable configure/build/CTest4/4、Python232項（231通過／1個Windows symlink權限skip），面板SelfTest52 checks。21首native offline preflight與324個GUI pins通過。Glaciaxion IN原譜51個Flick離線折返28→0，端點位移71.253–72.250px；判定時刻座標、DOWN／滑動末端／UP時間、opening及678個非Flick接點均保持一致。原dynamic政策fingerprint重現，新policy與profile／plan獨立綁定。新004遊戲實測NOT RUN，不從離線命令座標宣稱Miss或AP改善。初次Python WinError32清理錯誤及後續成功重跑均保留，詳見[完整路徑／封存紀錄](FLICK_STRAIGHT_PATH_2026-10-25.md)。
+
 ## 2026-10-25 Glaciaxion IN三輪實測
 
 003 binary完成72→60→72 px三輪，使用者文字回報Perfect／Good／Bad／Miss為725/3/1/0、726/0/0/3、725/0/0/4。三輪均729 DOWN／729 UP、全部主機RPC成功、native確認結算、failure null與最後kernel zero；實際圖片0張。三輪均使用terminal-only結算v2 fallback，實際候選分別5／3／4個receipt、跨越71.436／69.730／64.454 ms。原manifest的unreviewed／AP false不變；沒有穩定改善、winner或新AP，時機／共用預設未調整。Cipher／FULi／Winter新版本實機重測仍NOT RUN。完整條件、時序與私有原件SHA見[三輪報告](FLICK_BAB_2026-10-25.md)。以下暫停狀態屬於較早準備階段。
