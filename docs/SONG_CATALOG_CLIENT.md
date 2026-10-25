@@ -202,7 +202,7 @@ pwsh -NoProfile -STA -File tools/song-library-panel.ps1 `
   -PreviewDirectory outputs/song-catalog-preview-001
 ```
 
-它會在背景載入曲庫，最多等待 40 秒，再將同一組正式 WinForms 控制項放入無邊框的離屏子視窗畫布，輸出：
+它會在背景載入曲庫，最多等待 40 秒，再將同一組正式 WinForms 控制項放入普通 Panel 畫布。離屏的 Form 保留原生控制項繪製所需的可見祖先，PNG 直接擷取 Panel，輸出：
 
 - `catalog-wide.png`：要求 1440×900 client 畫布。
 - `catalog-compact.png`：要求 1080×720 client 畫布。
@@ -220,8 +220,20 @@ pwsh -NoProfile -STA -File tools/song-library-panel.ps1 `
 | 真實總庫背景讀取 | 327 首／389 譜面，IN333／AT56 相符 |
 | 真實原生匯入報告綁定與篩選 | 356／5／28 相符 |
 | 一組真實譜面及音源 SHA256 核對 | 通過 |
-| Windows WinForms 實際畫面繪製與版面 QA | 待 Windows workflow 驗證 |
+| Windows WinForms 實際畫面繪製與版面 QA | 1440×900、1080×720 皆通過；兩張圖人工檢視，全部 13 個主要控制項邊界在可見範圍 |
 | Windows 人工點擊、高 DPI、既有面板串接的完整操作 | 尚未實測 |
 | 新曲目或 AT 的實機演奏與成績 | 尚未實測 |
 
 本指南的驗證結果對應新曲庫前端及此次固定來源資料。原有 AP、失敗回合、結算漏記與時序待修項仍按原始身份保存，不會因為曲庫更新而改寫。
+
+### 本輪實際畫面
+
+以下圖片由 [Windows run 40167707422](https://github.com/Danwuoo/Phigros-Auto-play-System/actions/runs/40167707422) 在 `c918b8aa4cb5d9d8185f180ace9f29e4e7aab28f` 產生。該 run 的 12 項使用端測試、14 checks SelfTest、portable 4／4 及 importer／Flick 13／13 CTest 全部通過。
+
+CI 為了驗證未下載原件時的操作狀態，checkout 只取回 LFS pointers，所以畫面顯示「待取回 LFS 原件」。這不代表遠端缺少物件；遠端 716 個物件的驗證見 [本輪驗證紀錄](VALIDATION_CATALOG_2026-10-25.md)。
+
+![1440×900 曲庫畫面](images/catalogue-client/catalog-wide.png)
+
+![1080×720 曲庫畫面](images/catalogue-client/catalog-compact.png)
+
+各圖 SHA256、實際尺寸及控制項邊界保存於 [preview-manifest.json](images/catalogue-client/preview-manifest.json)。

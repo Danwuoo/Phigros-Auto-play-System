@@ -44,11 +44,11 @@ pwsh -NoProfile -File tools/start-song-library.ps1 -SelfTest
 pwsh -NoProfile -STA -File tools/start-song-library.ps1
 ```
 
-若只要先看索引，可先不 hydrate LFS；介面會標示原件待下載。不要在部分下載狀態執行 verify 後把缺項 library 提交到遠端。若 LFS 發布尚未完成，先讀本輪 validation／Actions 結果找明確阻礙，再完成同 branch 的 LFS object upload 與 pointer push；不可只 commit pointer 宣稱入庫成功。
+若只要先看索引，可先不 hydrate LFS；介面會標示原件待下載。不要在部分下載狀態執行 verify 後把缺項 library 提交到遠端。LFS 發布已完成於資產 commit `9ad6700678cc8ddbb259a5611a9be74cd9f6c5a2`；716 份遠端 pointer 的 OID／長度均核對相符，716 個 LFS 物件可讀，另有 4 份完整下載 SHA256 回驗。詳見本輪 validation 與 `manifests/remote-lfs-verification.json`，不需要重抓或重推同一份來源。
 
-新使用端是 `tools/song-library-panel.ps1`，快捷入口是 `tools/start-song-library.ps1`。支援搜尋、IN／AT／變體／狀態篩選、來源與完整性、匯入報告、開啟原譜音源與連接舊本機面板。搜尋與 hash 使用背景 runspace，啟動不接觸裝置。
+新使用端是 `tools/song-library-panel.ps1`，快捷入口是 `tools/start-song-library.ps1`。支援搜尋、IN／AT／變體／狀態篩選、來源與完整性、匯入報告、開啟原譜音源與連接舊本機面板。曲庫載入與 hash 核對使用背景 runspace，搜尋採 160 ms debounce；啟動不接觸裝置。
 
-先核對實際舊 `launch-config.json` 再以 `-LegacyConfiguration <path>` 接入。此動作是開啟原 Legacy 面板，不會把正在瀏覽的公共來源譜面直接送到 native runner。
+先核對實際舊 `launch-config.json`，再以 `-LegacyConfiguration <path>` 連結；使用者按「開啟既有實測面板」後才會啟動原 Legacy 面板，不會把正在瀏覽的公共來源譜面直接送到 native runner。
 
 ## 3. 快速建置
 
@@ -78,7 +78,7 @@ pwsh -NoProfile -File tools/build-local.ps1 `
 
 `-CMakePath`／`-CTestPath` 可指定不在 PATH 的完整路徑，`-BuildDirectory` 可指到新的短路徑，`-Generator` 可明確指定已安裝的 Visual Studio 或 Ninja。上述 `C:\實際路徑` 必須換成已確認存在的目錄。Native mode 開啟 chart importer、visual candidates、supervisor、calibration trial、PAS core／gRPC／tests／bridge／session runner；音訊線保持暫緩。
 
-只有需要 importer 時可用 `-Mode Importer -DependencyPrefix <nlohmann_json 或既有完整 prefix>`，不用 gRPC。不要把雲端 13 項 portable integration 的成功視為 Windows 原生全部測試通過；本機完成後記錄實際 CTest 名稱、數量與結果。
+只有需要 importer 時可用 `-Mode Importer -DependencyPrefix <nlohmann_json 或既有完整 prefix>`，不用 gRPC。本輪 Windows MSVC portable 4／4、importer／Flick 13／13、12 項使用端測試及 14 checks SelfTest 均通過；1440×900／1080×720 實際 WinForms 圖片也完成版面檢視。完整 Python 為 223／223、0 skips。這些結果不涵蓋 Windows native 主程式與 patched gRPC 全套；本機完成後記錄實際 CTest 名稱、數量與結果。
 
 ## 4. 新 binary 的封存與面板串接
 

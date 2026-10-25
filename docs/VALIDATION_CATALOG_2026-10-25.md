@@ -46,13 +46,15 @@
 | --- | --- | --- |
 | 預設 portable CTest | **4／4 通過** | 無 native backend／裝置 |
 | importer＋geometry／contacts＋visual＋supervisor CTest | **13／13 通過** | 含新 `flick_policy_contracts` |
-| 完整 Python unittest | **222／222 通過，0 skips** | 當輪全 suite，包含 PowerShell 與 LZ4 可用路徑 |
+| Windows MSVC portable CTest | **4／4 通過** | Visual Studio 18 2026／MSVC 19.51.36260.0 |
+| Windows MSVC importer／Flick 整合 CTest | **13／13 通過** | SHA 釘住 nlohmann_json 3.12.0；含原 Windows fingerprint goldens 與新 Flick policy |
+| 完整 Python unittest | **223／223 通過，0 skips** | 最終全 suite，包含 PowerShell、LZ4、相對路徑與六欄資料回歸 |
 | Flick 原生 policy 檢查 | **61 checks 通過** | default、型別／範圍、compiler、fingerprint、首 DOWN／opening |
 | 新 Flick Python 工具 | **21 tests 通過** | receipt 診斷與單參數 trials；包含在全 suite |
 | 曲庫下載與索引 | **28 tests 通過** | 固定來源、續傳、錯誤原件、身份與路徑；包含在全 suite |
 | 原生稽核工具 | **17 tests 通過** | timeout、hash 變動、輸出界線、v1 等；包含在全 suite |
 | 曲庫 PowerShell 內建 SelfTest | **14 checks 通過** | headless 資料與狀態 |
-| 曲庫 Python→PowerShell | **11 tests 通過** | 真正 PowerShell 資料層與 runspace 相對路徑；包含在全 suite |
+| 曲庫 Python→PowerShell | **12 tests 通過** | 真正 PowerShell 資料層、runspace 相對路徑與精確六欄；包含在全 suite |
 | build-local Portable helper | **實際執行成功，4／4 CTest** | 不只驗證印出的命令 |
 | 新 PowerShell 入口 | parser／AST 通過 | 完整 GUI 實際版面另列 |
 
@@ -67,13 +69,41 @@
 
 使用新 GUI 同一背景資料路徑讀取真實 327 首／389 譜面、套用相符的 356／5／28 native 報告，並對一組真實原譜／音源完成 SHA256 核對。失配／過期報告會拒絕套用，LFS pointer 不當成可開啟的原件。
 
-Windows WinForms 兩種尺寸的 render 與 portable build 交由本輪 Actions 的 Windows job；初始程式碼提交時標記為 **PENDING**，遠端完成後在本頁補記實際 run／commit。人工點擊、實際螢幕 DPI／多螢幕與 native 遊戲流程另需本機核對。
+Windows WinForms 兩種尺寸的 render 與 portable build 交由本輪 Actions 的 Windows job。首次 Windows job 的 10 項測試通過，1 項 fixture 路徑比較因 `RUNNER~1` 與 `runneradmin` 指向同一個目錄而誤拒絕；production resolver 正常。提交 `21307ae7f4d93b29d61ce052949a37154d770d07` 改以 `os.path.samefile` 比較既存檔案身份，仍核對尚未建立的 preview 尾段與 root，並新增獨立 Windows workflow，重驗不再重抓全庫。
+
+Windows run `40166716343` 的 11 項使用端測試、14 checks SelfTest 與 MSVC portable 4／4 CTest 通過，並產生兩張圖。但人工看圖發現 PowerShell 陣列加法優先序造成列表欄位位移，頂層 Form 又受 runner 桌面大小壓縮，導致詳情與按鈕裁切，這版未通過視覺 QA。
+
+修正提交 `f32e9887e4142cfb58c804d510a2328179fb372c` 明確產生六格資料、加入逐格回歸、約束 TableLayout／FlowLayout 可用寬度並按實際寬度調整 splitter。預覽使用同一組正式控制項的非頂層畫布，記錄要求／實際尺寸與主要控制項邊界，超出範圍即失敗。
+
+Windows run `40167315208` 的 12 項使用端測試、14 checks SelfTest、MSVC portable 4／4 及 importer／Flick 13／13 CTest 全數通過。列表欄位與所有操作區域的邊界也已正確；預覽尺寸檢查另抓到 child Form 仍被系統最大視窗尺寸限制，故該 run 整體維持失敗，預覽畫布需再修正。人工點擊、實際螢幕 DPI／多螢幕與 native 遊戲流程另需本機核對。
+
+最終提交 `c918b8aa4cb5d9d8185f180ace9f29e4e7aab28f` 改以普通 Panel 擷取同一組正式控制項，離屏 Form 保留原生 ComboBox 文字繪製所需的可見祖先。後續 [Windows run 40167707422／job 121092036624](https://github.com/Danwuoo/Phigros-Auto-play-System/actions/runs/40167707422/job/121092036624) **整體成功**：12 項使用端測試、14 checks SelfTest、portable 4／4、importer／Flick 13／13 及兩尺寸預覽全部通過。
+
+下載 artifact `12588014853`，ZIP SHA256 為 `533e04b0f5d268467d7d896df4cc6838f60a2b60db61cd37ebef428d96d84acc`。兩張 PNG 均已人工檢視：要求與實際尺寸一致、每張 13 個主要控制項邊界全部在可見範圍，難度／變體／狀態選單文字正常，六欄資料與音符數正確，詳情可捲動、五個動作及底部兩個面板按鈕完整顯示。
+
+| 圖片／證據 | SHA256 |
+| --- | --- |
+| [1440×900 曲庫](images/catalogue-client/catalog-wide.png) | `1d49510196893b70eb904be1bb6347fcca13d89468d85a5937e271f2d95aa301` |
+| [1080×720 曲庫](images/catalogue-client/catalog-compact.png) | `dc0009595558c959e1515fbff0263d0225480aa70101247d2b3cccf3e67e1b28` |
+| [preview-manifest.json](images/catalogue-client/preview-manifest.json) | `28eed8ec99c29e57ce2f74e588034d25847ed150ea23f19d07210829c0bb116d` |
+
+CI checkout 刻意不 hydrate LFS，所以圖中顯示「待取回 LFS 原件」；遠端原件已另行驗證。這些是實際 Windows 控制項的離線畫面，不代表已執行原生遊戲流程。最終變動僅涉及預覽容器，完整 Python 223 項在此前版本通過，隨後另重跑本地 12 項使用端測試及上述 Windows 全部檢查。
 
 ## Git LFS 與分支發布狀態
 
-初始程式碼提交會帶入已完成的 native report，接著由 `catalog-lfs.yml` 重建相同來源曲庫、核對 report 綁定的 library／source lock SHA，再上傳 716 個原譜／音源 LFS 物件，最後正常推送資產 commit。Windows job 釘住 archive job 實際發布的 commit SHA，不追蹤浮動分支。
+程式碼提交帶入已完成的 native report，接著由 `catalog-lfs.yml` 重建相同來源曲庫、核對 report 綁定的 library／source lock SHA，再上傳 716 個原譜／音源 LFS 物件，最後正常推送資產 commit。Windows job 釘住 archive job 實際發布的 commit SHA，不追蹤浮動分支。
 
-**初始程式碼提交時：PENDING 遠端 LFS 傳輸與下載回驗。** 只完成本地完整下載不算遠端入庫成功；後續需記錄 Actions run、資產 commit、LFS 物件存在與代表性下載 SHA。
+**LFS 已發布並完成遠端回驗。** 資產 commit：[`9ad6700678cc8ddbb259a5611a9be74cd9f6c5a2`](https://github.com/Danwuoo/Phigros-Auto-play-System/commit/9ad6700678cc8ddbb259a5611a9be74cd9f6c5a2)。成功的 archive job：[run 40166307374／job 121087962656](https://github.com/Danwuoo/Phigros-Auto-play-System/actions/runs/40166307374/job/121087962656)。該 run 後續 Windows fixture 比較失敗另行修正，不能把整個 run 說成全部通過。
+
+- 真實 `git lfs fsck`、`git lfs push origin HEAD` 與 branch push 均成功。
+- 重新 fetch 資產 commit，716 份 remote Git pointers 的 OID／size 全部與本地已核對原件相符，0 mismatch；remote `library.json` 與本地逐 bytes 相同。
+- 使用匿名 LFS download batch 對 716 個物件逐一實際 Range GET，全部可讀且長度相符，0 errors；沒有借用 credential store 或存取 token。
+- 額外完整下載 FULi IN、Credits AT、Random `.1` IN、EnginexStartmelodymix OGG，4／4 大小與 SHA256 相符，共 4,503,523 bytes。這四個是完整 hash 回驗；其餘 712 個是可讀／長度回驗，不冒充整庫再次完整下載。
+- 完整逐物件證據見 [remote-lfs-verification.json](../assets/phigros/4.0.1.2/manifests/remote-lfs-verification.json)，SHA256 `4fe5cfe80703e5deb2900c38ae7e4c91de2a332bc99a2f806c3643a6df87b301`。其輸入的本地核對報告另存 `manifests/source-verification-local.json`；Actions 產生的 `verification.json` 保留其自身時間與記錄。
+
+首次程式碼提交為 `af428081bf4c6c61bf18a5579fc52c836424b630`。Actions run `40166096046` 已完成 719 份下載／重驗與 native report SHA 綁定，但 `git lfs push origin HEAD` 因 SHA checkout 沒有任何本地 branch，回傳 `Error getting local refs`。此時尚未上傳 LFS／推送資產 ref，沒有留下懸空 pointers。
+
+修正提交 `5895de79a70ffd239cef8d756e778d884236520b` 在固定 SHA checkout 後建立僅供 runner 使用的本地 `catalogue-lfs-transfer` branch，仍保留原本遠端 SHA lease、物件先上傳與非 force push。以獨立本地 fixture 實際重現 detached 狀態 exit 2，建立本地 branch 後相同 LFS dry-run exit 0；修正後由新 workflow run 重做發布。
 
 ## 明確未驗證／未完成
 

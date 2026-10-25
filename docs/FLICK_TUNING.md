@@ -191,7 +191,8 @@ python .\tools\analyze_flick_misses.py `
 ## 7. 本次驗證範圍
 
 - Linux focused native test：[flick_policy_tests.cpp](../tests/flick_policy_tests.cpp) **61 checks 通過**，涵蓋 profile／CLI 參數契約、範圍／型別拒絕、compiler 實際採用參數、fingerprint、非 Flick Tap 不變與 first DOWN／opening 身分。
+- 同一份 Flick policy test 已在 Windows MSVC 19.51 的 importer／geometry／visual／supervisor 整合建置中通過，該組 **13／13 CTest**。這是 Windows 上的離線契約驗證，完整 patched gRPC 主程式另列於下。
 - Python focused tests：[診斷測試](../tests/test_flick_analysis.py) 與 [候選測試](../tests/test_flick_trials.py) 合計 **21 tests 通過**，涵蓋時間／座標配對、遲到壓縮、RPC failure、缺／重複 receipts、pointer 碰撞與正常重用、投影短軌跡、HUD hash、人工窗口綁定、唯讀輸出及單變量命令。
-- 本次 Windows 原生 `chart_experiment.exe` 建置／執行、PowerShell 腳本實際執行、gRPC、裝置與遊戲 A/B：**NOT RUN**。
+- 本次 Windows 原生 `chart_experiment.exe` 主程式建置／執行、產出的 `prepare-commands.ps1` 搭配私人原件呼叫 native preparation、patched gRPC、裝置與遊戲 A/B：**NOT RUN**。曲庫介面與 build helper 的 PowerShell 執行結果另見[本輪驗證](VALIDATION_CATALOG_2026-10-25.md)。
 
 本次交付讓幅度與時機可以明確設定、重新編譯並逐回合對照。是否改善特定曲目的 Flick Miss，仍需上述本機受控回合與完整結算證據確認。

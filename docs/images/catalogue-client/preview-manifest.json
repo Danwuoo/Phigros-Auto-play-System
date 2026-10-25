@@ -1,0 +1,262 @@
+{
+  "schema": "pas.catalog-panel-preview.v1",
+  "status": "rendered",
+  "library": "D:\\a\\Phigros-Auto-play-System\\Phigros-Auto-play-System\\assets\\phigros\\4.0.1.2\\library.json",
+  "song_count": 327,
+  "chart_count": 389,
+  "IN": 333,
+  "AT": 56,
+  "device_access": false,
+  "native_processes_started": 0,
+  "gameplay_qualified": false,
+  "winforms_windows_created": 1,
+  "preview_top_level": false,
+  "preview_host_kind": "Panel",
+  "artifacts": [
+    {
+      "file": "catalog-wide.png",
+      "width": 1440,
+      "height": 900,
+      "requested_client": {
+        "width": 1440,
+        "height": 900
+      },
+      "actual_client": {
+        "width": 1440,
+        "height": 900
+      },
+      "size_matches_request": true,
+      "layout_contained": true,
+      "control_bounds": [
+        {
+          "control": "filters",
+          "x": 24,
+          "y": 176,
+          "width": 1392,
+          "height": 46,
+          "contained": true
+        },
+        {
+          "control": "grid",
+          "x": 27,
+          "y": 269,
+          "width": 820,
+          "height": 530,
+          "contained": true
+        },
+        {
+          "control": "details",
+          "x": 873,
+          "y": 271,
+          "width": 540,
+          "height": 420,
+          "contained": true
+        },
+        {
+          "control": "actions",
+          "x": 873,
+          "y": 697,
+          "width": 540,
+          "height": 102,
+          "contained": true
+        },
+        {
+          "control": "open_chart",
+          "x": 873,
+          "y": 707,
+          "width": 133,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "open_audio",
+          "x": 1014,
+          "y": 707,
+          "width": 133,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "folder",
+          "x": 1155,
+          "y": 707,
+          "width": 92,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "source",
+          "x": 1255,
+          "y": 707,
+          "width": 92,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "copy",
+          "x": 873,
+          "y": 753,
+          "width": 92,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "footer",
+          "x": 24,
+          "y": 816,
+          "width": 1392,
+          "height": 46,
+          "contained": true
+        },
+        {
+          "control": "link_legacy",
+          "x": 24,
+          "y": 816,
+          "width": 157,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "launch_legacy",
+          "x": 189,
+          "y": 816,
+          "width": 147,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "status",
+          "x": 24,
+          "y": 866,
+          "width": 1392,
+          "height": 22,
+          "contained": true
+        }
+      ],
+      "sha256": "1d49510196893b70eb904be1bb6347fcca13d89468d85a5937e271f2d95aa301"
+    },
+    {
+      "file": "catalog-compact.png",
+      "width": 1080,
+      "height": 720,
+      "requested_client": {
+        "width": 1080,
+        "height": 720
+      },
+      "actual_client": {
+        "width": 1080,
+        "height": 720
+      },
+      "size_matches_request": true,
+      "layout_contained": true,
+      "control_bounds": [
+        {
+          "control": "filters",
+          "x": 24,
+          "y": 176,
+          "width": 1032,
+          "height": 46,
+          "contained": true
+        },
+        {
+          "control": "grid",
+          "x": 27,
+          "y": 269,
+          "width": 607,
+          "height": 350,
+          "contained": true
+        },
+        {
+          "control": "details",
+          "x": 660,
+          "y": 271,
+          "width": 393,
+          "height": 240,
+          "contained": true
+        },
+        {
+          "control": "actions",
+          "x": 660,
+          "y": 517,
+          "width": 393,
+          "height": 102,
+          "contained": true
+        },
+        {
+          "control": "open_chart",
+          "x": 660,
+          "y": 527,
+          "width": 133,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "open_audio",
+          "x": 801,
+          "y": 527,
+          "width": 133,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "folder",
+          "x": 942,
+          "y": 527,
+          "width": 92,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "source",
+          "x": 660,
+          "y": 573,
+          "width": 92,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "copy",
+          "x": 760,
+          "y": 573,
+          "width": 92,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "footer",
+          "x": 24,
+          "y": 636,
+          "width": 1032,
+          "height": 46,
+          "contained": true
+        },
+        {
+          "control": "link_legacy",
+          "x": 24,
+          "y": 636,
+          "width": 157,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "launch_legacy",
+          "x": 189,
+          "y": 636,
+          "width": 147,
+          "height": 39,
+          "contained": true
+        },
+        {
+          "control": "status",
+          "x": 24,
+          "y": 686,
+          "width": 1032,
+          "height": 22,
+          "contained": true
+        }
+      ],
+      "sha256": "dc0009595558c959e1515fbff0263d0225480aa70101247d2b3cccf3e67e1b28"
+    }
+  ],
+  "scope": "Offline production WinForms controls on a Panel canvas with an offscreen Form host; no live game or touch behavior tested."
+}

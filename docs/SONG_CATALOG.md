@@ -28,7 +28,7 @@
 | chart | `5d40bfdf05bee53f5107a6ea5620ca0e953de815` |
 | music | `5142ba2673ccbeb23173886f3bd851e9c881e6ec` |
 
-來源版本標記為 **4.0.1.2**。目前已封存原生實測環境是 **4.0.1／157**；兩者不能只憑歌名相同就當作同一譜面／同一版本。完整鎖定設定見 [song-catalog-sources.json](../configs/song-catalog-sources.json)。上游公開可讀與本次資料來源記錄不另構成授權聲明。
+來源版本標記為 **4.0.1.2**。目前已封存原生實測環境是 **4.0.1／157**；兩者不能只憑歌名相同就當作同一譜面／同一版本。完整鎖定設定見 [song-catalog-sources.json](../configs/song-catalog-sources.json)。
 
 本輪使用者已明確要求將抓取內容用 Git LFS 推到此工作分支，因此公開來源 IN／AT 與配對音訊採上述入庫方式。這項範圍不包含私人 APK、校正、AVD、原始實測影片或既有本機證據。
 
@@ -88,6 +88,8 @@ assets/phigros/4.0.1.2/
   manifests/source-tree-info.json、source-tree-chart.json、source-tree-music.json
   manifests/verification.json
   manifests/native-import-report.json
+  manifests/remote-lfs-verification.json
+  manifests/source-verification-local.json
   library.json
 ```
 
@@ -134,6 +136,8 @@ python tools/inspect_catalog_native.py `
 
 流程會驗證固定來源、建立 LFS pointer commit、執行 `git lfs fsck` 和 `git lfs push origin HEAD`，核對分支尚未移動，最後才推送 branch ref。分支若在傳輸中前進，流程保留已上傳物件並拒絕覆蓋分支，交由後續正常整合。`main` 不在任何寫入目標中。
 
-傳輸報告與 Windows 曲庫預覽各有 Actions artifact。發布成功仍須另核對實際 LFS 物件可下載，不能只看 pointer 檔案存在。
+資產已發布為 [`9ad6700`](https://github.com/Danwuoo/Phigros-Auto-play-System/commit/9ad6700678cc8ddbb259a5611a9be74cd9f6c5a2)。發布後另核對 716 份遠端 Git pointers、716 個 LFS 物件的實際可讀性／長度，並完整下載 IN、AT、Random 變體與音源各一個樣本，4 份 SHA256 全部相符。逐項證據保存在 `manifests/remote-lfs-verification.json`。
+
+傳輸報告與 Windows 曲庫預覽各有 Actions artifact；獨立 `windows-client.yml` 讓使用端驗證不必重新下載與發布全庫。
 
 本輪測試與尚待本機驗證的項目見 [驗證紀錄](VALIDATION_CATALOG_2026-10-25.md)；接續建置見 [本機 6.1 sol xhigh 交接](HANDOFF_LOCAL_6_1_SOL_XHIGH.md)。
