@@ -193,6 +193,21 @@ class SongLibraryPanelTests(unittest.TestCase):
         self.write_library()
         self.assert_read_rejected()
 
+    def test_grid_cells_keep_variant_notes_and_state_in_exact_six_columns(self):
+        self.data["charts"][0]["variant"] = "4"
+        self.data["charts"][0]["notes"] = 1285
+        self.write_library()
+        value = self.invoke(
+            "$m=Read-SongCatalog $CatalogPath; "
+            "$cells=Get-CatalogGridCells $m.Rows[0]; "
+            "@{count=$cells.Count; cells=$cells; state=$m.Rows[0].StateText}|ConvertTo-Json"
+        )
+        self.assertEqual(value["count"], 6)
+        self.assertEqual(
+            value["cells"], ["光與星", "O'Brien", "IN", ".4", 1285, value["state"]]
+        )
+        self.assertEqual(value["state"], "已入庫・待本機核對")
+
     def test_wrong_counts_and_non_chart_paths_rejected(self):
         original = copy.deepcopy(self.data)
         self.data["counts"]["chart_count"] = 5

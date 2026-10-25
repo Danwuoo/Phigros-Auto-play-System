@@ -34,6 +34,7 @@ jobs:
           lfs: false
           persist-credentials: false
       - name: Run headless client contract tests
+        id: client_contracts
         shell: pwsh
         run: |
           $env:PAS_TEST_PWSH = (Get-Command pwsh).Source
@@ -43,7 +44,29 @@ jobs:
       - name: Build and test the portable contracts on Windows
         shell: pwsh
         run: ./tools/build-local.ps1 -Mode Portable
+      - name: Build the importer and Flick contracts with the pinned JSON header
+        shell: pwsh
+        run: |
+          $prefix = Join-Path $env:RUNNER_TEMP 'pas-nlohmann-json-3.12.0'
+          $include = Join-Path $prefix 'include/nlohmann'
+          $config = Join-Path $prefix 'lib/cmake/nlohmann_json'
+          New-Item -ItemType Directory -Force -Path $include,$config | Out-Null
+          $header = Join-Path $include 'json.hpp'
+          Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/nlohmann/json/v3.12.0/single_include/nlohmann/json.hpp' -OutFile $header
+          if ((Get-FileHash -LiteralPath $header -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63') {
+            throw 'Pinned nlohmann_json header hash mismatch.'
+          }
+          @'
+          if(NOT TARGET nlohmann_json::nlohmann_json)
+            add_library(nlohmann_json::nlohmann_json INTERFACE IMPORTED)
+            get_filename_component(_pas_json_prefix "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
+            set_target_properties(nlohmann_json::nlohmann_json PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_pas_json_prefix}/include")
+          endif()
+          set(nlohmann_json_VERSION 3.12.0)
+          '@ | Set-Content -LiteralPath (Join-Path $config 'nlohmann_jsonConfig.cmake') -Encoding utf8
+          ./tools/build-local.ps1 -Mode Importer -DependencyPrefix $prefix
       - name: Render the real catalogue in WinForms at two sizes
+        if: always() && steps.client_contracts.outcome == 'success'
         shell: pwsh
         run: |
           pwsh -NoProfile -STA -File tools/song-library-panel.ps1 -Library assets/phigros/4.0.1.2/library.json -PreviewDirectory "$env:RUNNER_TEMP/catalogue-client-preview"

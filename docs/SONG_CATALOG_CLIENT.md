@@ -202,19 +202,19 @@ pwsh -NoProfile -STA -File tools/song-library-panel.ps1 `
   -PreviewDirectory outputs/song-catalog-preview-001
 ```
 
-它會在背景載入曲庫，最多等待 40 秒，再建立離屏 WinForms 視窗並輸出：
+它會在背景載入曲庫，最多等待 40 秒，再將同一組正式 WinForms 控制項放入無邊框的離屏子視窗畫布，輸出：
 
-- `catalog-wide.png`：1440×900 client 尺寸。
-- `catalog-compact.png`：1080×720 client 尺寸。
-- `preview-manifest.json`：實際圖片尺寸、SHA256、資料數量與驗證範圍。
+- `catalog-wide.png`：要求 1440×900 client 畫布。
+- `catalog-compact.png`：要求 1080×720 client 畫布。
+- `preview-manifest.json`：每張圖的要求尺寸、實際 client／圖片尺寸、控制項邊界、SHA256、資料數量與驗證範圍。
 
-PNG 會包含視窗邊框等繪製區域，所以實際圖片尺寸以 manifest 為準。預覽不能同時指定 `-LegacyConfiguration`，不啟動 native、模擬器或觸控。
+此畫布不受 CI 桌面工作區大小限制，PNG 不含作業系統視窗邊框。manifest 的 `size_matches_request` 與 `layout_contained` 分別核對尺寸及列表、詳情、完整按鈕和底部區域是否在可見範圍；任一不符會使預覽命令失敗，圖片仍會留下供檢查。人工版面 QA 仍須直接檢視兩張圖片。預覽不能同時指定 `-LegacyConfiguration`，不啟動 native、模擬器或觸控。
 
 ## 7. 已完成與待驗證範圍
 
 | 項目 | 此輪狀態 |
 | --- | --- |
-| Python → PowerShell 契約測試 | 11/11 通過 |
+| Python → PowerShell 契約測試 | 12/12 通過，包含六欄值與音符／變體位置回歸測試 |
 | 前端內建 headless 自測 | 14 checks 通過 |
 | PowerShell 語法／AST | 通過 |
 | 真實總庫背景讀取 | 327 首／389 譜面，IN333／AT56 相符 |

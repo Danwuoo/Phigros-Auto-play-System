@@ -240,6 +240,18 @@ function Select-CatalogRows($Rows, [string]$Query = '', [string]$Difficulty = ''
         if ($matches) { $row }
     }
 }
+function Get-CatalogGridCells($Row) {
+    # Fixed positions avoid PowerShell array/addition precedence changing the
+    # params object[] passed to DataGridView.Rows.Add.
+    $cells = [object[]]::new(6)
+    $cells[0] = [string]$Row.Title
+    $cells[1] = [string]$Row.Composer
+    $cells[2] = [string]$Row.Difficulty
+    $cells[3] = '.' + [string]$Row.Variant
+    $cells[4] = $Row.Notes
+    $cells[5] = [string]$Row.StateText
+    return ,$cells
+}
 function Format-CatalogDetails($Row) {
     if (-not $Row) { return '選取一份譜面，即可查看原始檔案、來源與尚待完成的本機準備。' }
     $lines = [Collections.Generic.List[string]]::new()
@@ -373,6 +385,7 @@ Add-Type -AssemblyName System.Drawing
 
 $script:CatalogUi = @{
     Model = $null; Job = $null; Visible = @(); Updating = $false; Closing = $false
+    LayingOut = $false; SplitRatio = 0.60
     Legacy = $null; PendingLegacy = $LegacyConfiguration; LegacyPath = $LegacyConfiguration
     Script = $PSCommandPath; Library = $Library
 }
@@ -392,10 +405,12 @@ $form.Font = [Drawing.Font]::new('Microsoft JhengHei UI', 10)
 $form.BackColor = $background
 $form.ForeColor = $ink
 $form.KeyPreview = $true
-$form.AutoScroll = $true
+$form.AutoScroll = $false
 $layout = [Windows.Forms.TableLayoutPanel]::new()
 $layout.Dock = 'Fill'; $layout.Padding = [Windows.Forms.Padding]::new(24, 20, 24, 12)
 $layout.ColumnCount = 1; $layout.RowCount = 6
+$layout.AutoSize = $false; $layout.GrowStyle = 'FixedSize'
+[void]$layout.ColumnStyles.Add([Windows.Forms.ColumnStyle]::new([Windows.Forms.SizeType]::Percent, 100))
 foreach ($mode in @('AutoSize', 'AutoSize', 'AutoSize', 'Percent', 'AutoSize', 'AutoSize')) {
     $style = [Windows.Forms.RowStyle]::new()
     $style.SizeType = [Windows.Forms.SizeType]::$mode
@@ -405,6 +420,7 @@ foreach ($mode in @('AutoSize', 'AutoSize', 'AutoSize', 'Percent', 'AutoSize', '
 $form.Controls.Add($layout)
 $header = [Windows.Forms.TableLayoutPanel]::new()
 $header.Dock = 'Fill'; $header.AutoSize = $true; $header.ColumnCount = 1; $header.RowCount = 2
+[void]$header.ColumnStyles.Add([Windows.Forms.ColumnStyle]::new([Windows.Forms.SizeType]::Percent, 100))
 $heading = [Windows.Forms.Label]::new()
 $heading.Text = '譜面曲庫'; $heading.AutoSize = $true
 $heading.Font = [Drawing.Font]::new('Microsoft JhengHei UI', 24, [Drawing.FontStyle]::Bold)
@@ -472,6 +488,8 @@ $split.SplitterDistance = 720; $split.Panel1MinSize = 410; $split.Panel2MinSize 
 $split.SplitterWidth = 12; $split.Margin = [Windows.Forms.Padding]::new(0)
 $left = [Windows.Forms.TableLayoutPanel]::new()
 $left.Dock = 'Fill'; $left.RowCount = 2; $left.ColumnCount = 1
+$left.AutoSize = $false
+[void]$left.ColumnStyles.Add([Windows.Forms.ColumnStyle]::new([Windows.Forms.SizeType]::Percent, 100))
 [void]$left.RowStyles.Add([Windows.Forms.RowStyle]::new([Windows.Forms.SizeType]::AutoSize))
 [void]$left.RowStyles.Add([Windows.Forms.RowStyle]::new([Windows.Forms.SizeType]::Percent, 100))
 $resultsLabel = [Windows.Forms.Label]::new()
@@ -488,6 +506,7 @@ $grid.AutoSizeColumnsMode = 'Fill'; $grid.BorderStyle = 'None'; $grid.Background
 $grid.EnableHeadersVisualStyles = $false; $grid.ColumnHeadersHeight = 42; $grid.RowTemplate.Height = 40
 $grid.ColumnHeadersDefaultCellStyle.BackColor = [Drawing.Color]::FromArgb(231, 238, 244)
 $grid.ColumnHeadersDefaultCellStyle.ForeColor = $ink
+$grid.ColumnHeadersDefaultCellStyle.WrapMode = [Windows.Forms.DataGridViewTriState]::False
 $grid.ColumnHeadersDefaultCellStyle.Font = [Drawing.Font]::new('Microsoft JhengHei UI', 10, [Drawing.FontStyle]::Bold)
 $grid.DefaultCellStyle.SelectionBackColor = [Drawing.Color]::FromArgb(220, 240, 242)
 $grid.DefaultCellStyle.SelectionForeColor = $ink; $grid.GridColor = [Drawing.Color]::FromArgb(235, 240, 244)
@@ -496,12 +515,15 @@ $grid.CellBorderStyle = 'SingleHorizontal'; $grid.AccessibleName = 'IN／AT 譜�
 foreach ($spec in @(@('Song', '曲目', 30), @('Composer', '作者', 21), @('Difficulty', '難度', 8), @('Variant', '變體', 8), @('Notes', '音符', 9), @('State', '準備狀態', 24))) {
     $column = [Windows.Forms.DataGridViewTextBoxColumn]::new()
     $column.Name = $spec[0]; $column.HeaderText = $spec[1]; $column.FillWeight = [float]$spec[2]
-    $column.SortMode = 'Automatic'; $column.MinimumWidth = if ($spec[0] -in @('Difficulty', 'Variant', 'Notes')) { 48 } else { 90 }
+    $column.SortMode = 'Automatic'
+    $column.MinimumWidth = switch ($spec[0]) { 'Difficulty' { 56 }; 'Variant' { 56 }; 'Notes' { 60 }; 'State' { 128 }; default { 100 } }
     [void]$grid.Columns.Add($column)
 }
 $left.Controls.Add($grid, 0, 1); $split.Panel1.Controls.Add($left)
 $right = [Windows.Forms.TableLayoutPanel]::new()
 $right.Dock = 'Fill'; $right.RowCount = 3; $right.ColumnCount = 1
+$right.AutoSize = $false
+[void]$right.ColumnStyles.Add([Windows.Forms.ColumnStyle]::new([Windows.Forms.SizeType]::Percent, 100))
 $right.Padding = [Windows.Forms.Padding]::new(8, 0, 0, 0)
 [void]$right.RowStyles.Add([Windows.Forms.RowStyle]::new([Windows.Forms.SizeType]::AutoSize))
 [void]$right.RowStyles.Add([Windows.Forms.RowStyle]::new([Windows.Forms.SizeType]::Percent, 100))
@@ -514,6 +536,7 @@ $details = [Windows.Forms.RichTextBox]::new()
 $details.Dock = 'Fill'; $details.ReadOnly = $true; $details.BackColor = [Drawing.Color]::White
 $details.BorderStyle = 'None'; $details.DetectUrls = $false; $details.WordWrap = $true
 $details.ScrollBars = 'Vertical'; $details.AccessibleName = '選取譜面的來源、雜湊與準備說明'
+$details.MinimumSize = [Drawing.Size]::new(0, 80)
 $details.Text = Format-CatalogDetails $null
 $actions = [Windows.Forms.FlowLayoutPanel]::new()
 $actions.AutoSize = $true; $actions.Dock = 'Fill'; $actions.WrapContents = $true
@@ -548,6 +571,30 @@ $tooltip.SetToolTip($openButton, '先在背景核對 SHA256 及 LFS 原件，再
 $tooltip.SetToolTip($launchLegacyButton, '開啟獨立面板；此曲庫選取項目不會直接送入實測。原面板仍核對版本、設定與釋放條件。')
 $tooltip.SetToolTip($variantFilter, '保留來源的原生變體識別；不同變體不會互相覆蓋。')
 
+function Update-CatalogLayout {
+    if ($script:CatalogUi.LayingOut) { return }
+    $script:CatalogUi.LayingOut = $true
+    try {
+        $available = [Math]::Max(1, $layout.ClientSize.Width - $layout.Padding.Horizontal)
+        foreach ($flow in @($summary, $filters, $footer)) {
+            $maximum = [Drawing.Size]::new($available, 0)
+            if ($flow.MaximumSize -ne $maximum) { $flow.MaximumSize = $maximum }
+        }
+        foreach ($label in @($subheading, $status, $legacyLabel)) {
+            $maximum = [Drawing.Size]::new([Math]::Max(1, $available - $label.Margin.Horizontal), 0)
+            if ($label.MaximumSize -ne $maximum) { $label.MaximumSize = $maximum }
+        }
+        $panelWidth = [Math]::Max(1, $right.ClientSize.Width - $right.Padding.Horizontal - $actions.Margin.Horizontal)
+        $maximum = [Drawing.Size]::new($panelWidth, 0)
+        if ($actions.MaximumSize -ne $maximum) { $actions.MaximumSize = $maximum }
+        $splitWidth = $split.ClientSize.Width - $split.SplitterWidth
+        if ($splitWidth -ge $split.Panel1MinSize + $split.Panel2MinSize) {
+            $desired = [int][Math]::Round($splitWidth * $script:CatalogUi.SplitRatio)
+            $desired = [Math]::Max($split.Panel1MinSize, [Math]::Min($desired, $splitWidth - $split.Panel2MinSize))
+            if ($split.SplitterDistance -ne $desired) { $split.SplitterDistance = $desired }
+        }
+    } finally { $script:CatalogUi.LayingOut = $false }
+}
 function Set-CatalogUiStatus([string]$Text, [bool]$Failed = $false) {
     $status.Text = $Text
     $status.ForeColor = if ($Failed) { [Drawing.Color]::FromArgb(165, 50, 48) } else { $muted }
@@ -579,7 +626,8 @@ function Update-CatalogFilter {
     try {
         $grid.Rows.Clear(); $restore = -1
         foreach ($row in $visible) {
-            $i = $grid.Rows.Add([object[]]@($row.Title, $row.Composer, $row.Difficulty, '.' + $row.Variant, $row.Notes, $row.StateText))
+            $cells = Get-CatalogGridCells $row
+            $i = $grid.Rows.Add([object[]]$cells)
             $grid.Rows[$i].Tag = $row
             $grid.Rows[$i].Cells['Song'].ToolTipText = $row.TrackId
             $grid.Rows[$i].Cells['State'].ToolTipText = $row.Blockers -join [Environment]::NewLine
@@ -673,6 +721,13 @@ $linkLegacyButton.Add_Click({
     } finally { $dialog.Dispose() }
 })
 $launchLegacyButton.Add_Click({ if ($script:CatalogUi.Legacy) { Start-CatalogJob 'legacy' @($script:CatalogUi.Legacy.Configuration) 'launch' } })
+$form.Add_SizeChanged({ Update-CatalogLayout })
+$split.Add_SizeChanged({ Update-CatalogLayout })
+$split.Add_SplitterMoved({
+    if (-not $script:CatalogUi.LayingOut -and $split.ClientSize.Width -gt $split.SplitterWidth) {
+        $script:CatalogUi.SplitRatio = $split.SplitterDistance / ($split.ClientSize.Width - $split.SplitterWidth)
+    }
+})
 $form.Add_KeyDown({
     param($sender, $eventArgs)
     if ($eventArgs.Control -and $eventArgs.KeyCode -eq [Windows.Forms.Keys]::F) { $search.Focus() | Out-Null; $search.SelectAll(); $eventArgs.SuppressKeyPress = $true }
@@ -734,7 +789,11 @@ $poll.Add_Tick({
         }
     }
 })
-$form.Add_Shown({ $poll.Start(); Start-CatalogJob 'load' @($script:CatalogUi.Library); $search.Focus() | Out-Null })
+$form.Add_Shown({
+    Update-CatalogLayout; $poll.Start()
+    if (-not $script:CatalogUi.Model -and -not $script:CatalogUi.Job) { Start-CatalogJob 'load' @($script:CatalogUi.Library) }
+    $search.Focus() | Out-Null
+})
 $form.Add_FormClosing({
     param($sender, $eventArgs)
     if ($script:CatalogUi.Job) {
@@ -745,10 +804,20 @@ $form.Add_FormClosing({
 function Save-CatalogPreview([string]$Directory) {
     $output = Resolve-CatalogInputPath $Directory
     if (Test-Path -LiteralPath $output) { throw '預覽輸出必須是新的目錄。' }
+    # A top-level Form is clamped to the runner's desktop work area. Host the
+    # very same production controls as a child Form, without a desktop frame.
+    $previewHost = [Windows.Forms.Panel]::new()
+    $previewHost.AutoSize = $false
+    $previewHost.ClientSize = [Drawing.Size]::new(1440, 900)
     $form.ShowInTaskbar = $false
-    $form.StartPosition = 'Manual'
-    $form.Location = [Drawing.Point]::new(-32000, -32000)
+    $form.TopLevel = $false
+    $form.FormBorderStyle = 'None'
+    $form.Dock = 'Fill'
+    $previewHost.Controls.Add($form)
+    $previewHost.CreateControl()
     $form.Show()
+    $poll.Start()
+    if (-not $script:CatalogUi.Model -and -not $script:CatalogUi.Job) { Start-CatalogJob 'load' @($script:CatalogUi.Library) }
     $deadline = [DateTime]::UtcNow.AddSeconds(40)
     while (-not $script:CatalogUi.Model -or $script:CatalogUi.Job) {
         [Windows.Forms.Application]::DoEvents()
@@ -758,19 +827,46 @@ function Save-CatalogPreview([string]$Directory) {
     }
     [void][IO.Directory]::CreateDirectory($output)
     $artifacts = [Collections.Generic.List[object]]::new()
-    foreach ($size in @(@('catalog-wide.png', 1440, 900, 850), @('catalog-compact.png', 1080, 720, 620))) {
-        $form.ClientSize = [Drawing.Size]::new([int]$size[1], [int]$size[2])
-        $split.SplitterDistance = [int]$size[3]
-        $form.PerformLayout()
-        [Windows.Forms.Application]::DoEvents()
+    foreach ($size in @(@('catalog-wide.png', 1440, 900), @('catalog-compact.png', 1080, 720))) {
+        $requested = [Drawing.Size]::new([int]$size[1], [int]$size[2])
+        $previewHost.ClientSize = $requested
+        $previewHost.PerformLayout()
+        # A bounded layout pass lets auto-height flows wrap at their new width.
+        for ($pass = 0; $pass -lt 3; $pass++) {
+            Update-CatalogLayout
+            $form.PerformLayout(); $layout.PerformLayout(); $right.PerformLayout()
+            [Windows.Forms.Application]::DoEvents()
+        }
         Set-CatalogUiStatus '離線畫面檢查 · 未啟動模擬器、原生實測或任何觸控。'
-        $bitmap = [Drawing.Bitmap]::new($form.Width, $form.Height)
+        $bounds = [Collections.Generic.List[object]]::new()
+        foreach ($entry in @(
+            @('filters', $filters), @('grid', $grid), @('details', $details),
+            @('actions', $actions), @('open_chart', $openButton), @('open_audio', $audioButton),
+            @('folder', $folderButton), @('source', $sourceButton), @('copy', $copyButton),
+            @('footer', $footer), @('link_legacy', $linkLegacyButton),
+            @('launch_legacy', $launchLegacyButton), @('status', $status)
+        )) {
+            $control = $entry[1]
+            $origin = $form.PointToClient($control.PointToScreen([Drawing.Point]::Empty))
+            $rectangle = [Drawing.Rectangle]::new($origin, $control.Size)
+            $contained = $form.ClientRectangle.Contains($rectangle) -and $control.Parent.ClientRectangle.Contains($control.Bounds)
+            $bounds.Add([pscustomobject]@{
+                control = [string]$entry[0]; x = $origin.X; y = $origin.Y
+                width = $control.Width; height = $control.Height; contained = $contained
+            })
+        }
+        $bitmap = [Drawing.Bitmap]::new($form.ClientSize.Width, $form.ClientSize.Height)
         try {
-            $form.DrawToBitmap($bitmap, [Drawing.Rectangle]::new(0, 0, $form.Width, $form.Height))
+            $form.DrawToBitmap($bitmap, [Drawing.Rectangle]::new(0, 0, $bitmap.Width, $bitmap.Height))
             $path = Join-Path $output ([string]$size[0])
             $bitmap.Save($path, [Drawing.Imaging.ImageFormat]::Png)
             $artifacts.Add([pscustomobject]@{
                 file = [string]$size[0]; width = $bitmap.Width; height = $bitmap.Height
+                requested_client = @{ width = $requested.Width; height = $requested.Height }
+                actual_client = @{ width = $form.ClientSize.Width; height = $form.ClientSize.Height }
+                size_matches_request = $form.ClientSize -eq $requested
+                layout_contained = @($bounds | Where-Object { -not $_.contained }).Count -eq 0
+                control_bounds = $bounds.ToArray()
                 sha256 = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
             })
         } finally { $bitmap.Dispose() }
@@ -781,12 +877,16 @@ function Save-CatalogPreview([string]$Directory) {
         song_count = $script:CatalogUi.Model.SongCount; chart_count = $script:CatalogUi.Model.ChartCount
         IN = $script:CatalogUi.Model.IN; AT = $script:CatalogUi.Model.AT
         device_access = $false; native_processes_started = 0; gameplay_qualified = $false
-        winforms_windows_created = 1; artifacts = $artifacts.ToArray()
-        scope = 'Offline WinForms DrawToBitmap at two window sizes; no live game or touch behavior tested.'
+        winforms_windows_created = 1; preview_top_level = $false; artifacts = $artifacts.ToArray()
+        scope = 'Offline production WinForms controls in a borderless child canvas at two sizes; no live game or touch behavior tested.'
     }
-    $report | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $output 'preview-manifest.json') -Encoding utf8
-    $report | ConvertTo-Json -Depth 5
+    $report | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath (Join-Path $output 'preview-manifest.json') -Encoding utf8
+    $report | ConvertTo-Json -Depth 7
     $form.Close()
+    $previewHost.Dispose()
+    if (@($artifacts | Where-Object { -not $_.size_matches_request -or -not $_.layout_contained }).Count) {
+        throw '預覽尺寸或控制項邊界不符，請核對 preview-manifest.json 與圖片。'
+    }
 }
 try {
     if ($PreviewDirectory) { Save-CatalogPreview $PreviewDirectory }
