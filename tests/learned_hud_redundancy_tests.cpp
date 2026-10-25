@@ -78,6 +78,82 @@ int main(){try{
             "v4 learned reference without actual pause core");
     }
     ++groups;{
+        auto at_reference=image;
+        for(int y=673;y<699;++y)for(int x=1144;x<1225;++x) {
+            const auto at=static_cast<std::size_t>(y*1280+x)*3;
+            if(at_reference[at]>195)at_reference[at]=at_reference[at+1]=at_reference[at+2]=255;
+        }
+        HudGlyphEvidenceProducer v4(view(at_reference),std::string(64,'a'),"AT-prefix-mismatch-v4",{},HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4);
+        auto at_image=at_reference;rectangle(at_image,1157,677,1,17,32);
+        const auto at_clean=v4.observe_features(view(at_image));
+        check(at_clean.hud_candidate&&at_clean.fixed_glyphs[1].subpixel_tolerant,"AT raster-phase teacher control invalid");
+        auto mismatch=at_image;rectangle(mismatch,1146,681,3,3);
+        const auto primary=v4.observe_features(view(mismatch));
+        check(!primary.hud_candidate&&primary.reason=="fixed_glyph_or_negative_space_missing"&&
+            !primary.fixed_glyphs[1].glyph_present&&primary.fixed_glyphs[1].foreground_white_fraction==1&&
+            primary.fixed_glyphs[1].negative_space_present&&primary.fixed_glyphs[1].literal_components==6&&
+            primary.score.glyph_structure_candidate,"AT primary prefix mismatch control invalid");
+        LearnedHudRedundancy h;train(h,at_image,at_clean);
+        const auto& admitted=h.observe(view(mismatch),primary,raw(),frame(3,1200),true);
+        check(admitted.current_candidate&&admitted.auxiliary.valid&&admitted.auxiliary.hud_candidate&&
+            admitted.auxiliary.fixed_glyphs[0].glyph_present&&admitted.auxiliary.fixed_glyphs[1].glyph_present&&
+            admitted.auxiliary.title_glyph.glyph_present&&admitted.auxiliary.score.glyph_structure_candidate&&
+            admitted.reason=="current_learned_full_HUD_after_primary_prefix_mismatch",
+            "AT prefix mismatch did not independently verify current full learned HUD");
+        const std::vector<std::function<void(Image&)>> missing_current={
+            [](auto& a){rectangle(a,25,672,512,29,32);},
+            [](auto& a){rectangle(a,1227,673,26,26,32);},
+            [](auto& a){rectangle(a,21,23,28,33,32);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);},
+            [](auto& a){rectangle(a,1084+3*24,24,23,33,32);},
+            [](auto& a){rectangle(a,1144,673,109,26,32);},
+            [](auto& a){rectangle(a,1144,673,109,26);},
+            [](auto& a){for(auto& value:a)value=static_cast<std::uint8_t>(value/2);}
+        };
+        for(const auto& mutate:missing_current) {
+            auto pixels=mismatch;mutate(pixels);LearnedHudRedundancy missing;train(missing,at_image,at_clean);
+            const auto& denied=missing.observe(view(pixels),primary,raw(),frame(3,1200),true);
+            check(!denied.current_candidate&&denied.auxiliary.valid&&
+                denied.reason=="current_auxiliary_full_HUD_missing_after_primary_prefix_mismatch",
+                "forged primary mismatch overrode missing CURRENT title/difficulty/pause/score pixels or hid auxiliary diagnostics");
+        }
+        const std::vector<std::function<void(HudGlyphEvidence&)>> invalid_primary={
+            [](auto& p){p.valid=false;},[](auto& p){p.denied_state_match=true;},[](auto& p){p.title_required=true;},
+            [](auto& p){p.fixed_glyphs[0].glyph_present=false;},[](auto& p){p.fixed_glyphs[1].subpixel_tolerant=false;},
+            [](auto& p){p.fixed_glyphs[1].foreground_white_fraction=.97;},[](auto& p){p.fixed_glyphs[1].foreground_mean_error=8.1;},
+            [](auto& p){p.fixed_glyphs[1].negative_space_bright_fraction=.36;},[](auto& p){p.fixed_glyphs[1].local_contrast=39;},
+            [](auto& p){p.fixed_glyphs[1].negative_space_present=false;},[](auto& p){p.fixed_glyphs[1].foreground_pixels=0;},
+            [](auto& p){p.fixed_glyphs[1].unexpected_white_fraction=std::numeric_limits<double>::quiet_NaN();},
+            [](auto& p){p.score.supported_cells=6;},[](auto& p){p.score.boundary_components=1;},
+            [](auto& p){p.score.glyph_structure_candidate=false;}
+        };
+        for(const auto& mutate:invalid_primary) {
+            auto invalid=primary;mutate(invalid);LearnedHudRedundancy guarded;train(guarded,at_image,at_clean);
+            check(!guarded.observe(view(mismatch),invalid,raw(),frame(3,1200),true).current_candidate,
+                "AT prefix mismatch ignored strict primary core/negative/score guards");
+        }
+        LearnedHudRedundancy unready;
+        check(!unready.observe(view(mismatch),primary,raw(),frame(1,1000),true).current_candidate,"AT prefix mismatch admitted unready model");
+        LearnedHudRedundancy unarmed;train(unarmed,at_image,at_clean);
+        check(!unarmed.observe(view(mismatch),primary,raw(),frame(3,1200),false).current_candidate,"AT prefix mismatch admitted unarmed model");
+        for(const auto state:{ObservedGameState::paused,ObservedGameState::result}) {
+            LearnedHudRedundancy denied;train(denied,at_image,at_clean);auto screen=raw();screen.state=state;
+            check(!denied.observe(view(mismatch),primary,screen,frame(3,1200),true).current_candidate,"AT prefix mismatch overrode denied current state");
+            screen=raw();screen.scores.push_back({state,"same-frame-denied",0,true});
+            check(!denied.observe(view(mismatch),primary,screen,frame(4,1300),true).current_candidate,"AT prefix mismatch overrode denied anchor match");
+        }
+        LearnedHudRedundancy changed;train(changed,at_image,at_clean);auto other_context=frame(3,1200);++other_context.epoch;
+        check(!changed.observe(view(mismatch),primary,raw(),other_context,true).current_candidate&&!changed.status().ready,
+            "AT prefix mismatch reused a model from another context");
+        LearnedHudRedundancy in_model;train(in_model,image,clean);
+        check(!in_model.observe(view(mismatch),primary,raw(),frame(3,1200),true).current_candidate,
+            "AT prefix mismatch borrowed an IN learned difficulty template");
+        auto in_primary=primary;in_primary.policy=HudGlyphPolicy::shared_in_subpixel_prefix_score_v3;
+        LearnedHudRedundancy in_only;train(in_only,image,clean);
+        check(!in_only.observe(view(mismatch),in_primary,raw(),frame(3,1200),true).current_candidate,
+            "AT prefix mismatch fallback changed v3 acceptance");
+    }
+    ++groups;{
         check(clean.valid&&clean.hud_candidate&&clean.score.supported_cells==7,"synthetic clean v3 control invalid");
         check(occlusion.valid&&!occlusion.hud_candidate&&occlusion.reason=="score_digit_structure_missing"&&
             occlusion.score.boundary_components>0&&occlusion.score.glyphs.size()>=4,"score-only occlusion control invalid");

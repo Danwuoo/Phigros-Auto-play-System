@@ -795,6 +795,9 @@ int run(int argc,char** argv) {
                     if(redundant.current_candidate&&!sequence_complete){feature_playing=true;++redundancy_frames;}
                     redundancy_diagnostic={{"policy",redundancy_policy},{"ready",redundant.ready},
                         {"current_candidate",redundant.current_candidate},{"reason",redundant.reason},
+                        {"auxiliary_valid",redundant.auxiliary.valid},{"auxiliary_HUD_candidate",redundant.auxiliary.hud_candidate},
+                        {"auxiliary_score_candidate",redundant.auxiliary.score.glyph_structure_candidate},
+                        {"auxiliary_score_boundary_components",redundant.auxiliary.score.boundary_components},
                         {"reference_sequence",redundant.reference_frame.sequence},{"support_sequence",redundant.support_frame.sequence},
                         {"construction_attempts",redundant.construction_attempts},{"support_frames",redundant.support_frames},
                         {"title",hud_glyph_json(redundant.auxiliary.title_glyph)},

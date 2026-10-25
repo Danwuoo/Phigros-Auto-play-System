@@ -44,6 +44,7 @@ class LearnedHudRedundancy {
     std::uint64_t expected_epoch_=0,last_sequence_=0;
     std::int64_t last_received_=-1,last_processed_=-1,last_attempt_=-1;
     std::unique_ptr<HudGlyphEvidenceProducer> producer_;
+    std::optional<HudGlyphPolicy> learned_primary_policy_;
     std::vector<std::uint8_t> reference_,support_;
     static bool image_valid(const RgbImageView& v) {
         return v.width==1280&&v.height==720&&v.stride==3840&&v.pixels.size()==rgb_bytes;
@@ -59,13 +60,14 @@ class LearnedHudRedundancy {
         return a.source_id==b.source_id&&a.epoch==b.epoch&&a.generation==b.generation&&
             a.geometry_version==b.geometry_version&&a.rotation==b.rotation;
     }
-    static bool glyph_pass(const HudGlyphMetrics& m) {
-        return m.glyph_present&&m.negative_space_present&&m.foreground_pixels>=8&&m.negative_space_pixels>=16&&
+    static bool glyph_core_pass(const HudGlyphMetrics& m) {
+        return m.negative_space_present&&m.foreground_pixels>=8&&m.negative_space_pixels>=16&&
             std::isfinite(m.foreground_mean_error)&&m.foreground_mean_error<=8&&
             std::isfinite(m.foreground_white_fraction)&&m.foreground_white_fraction>=.98&&
             std::isfinite(m.negative_space_bright_fraction)&&m.negative_space_bright_fraction<=.35&&
             std::isfinite(m.local_contrast)&&m.local_contrast>=40;
     }
+    static bool glyph_pass(const HudGlyphMetrics& m) {return m.glyph_present&&glyph_core_pass(m);}
     static std::size_t plausible(const HudScoreMetrics& s) {
         if(s.glyphs.size()>64)return 0;
         return static_cast<std::size_t>(std::count_if(s.glyphs.begin(),s.glyphs.end(),[](const auto& g){
@@ -96,6 +98,16 @@ class LearnedHudRedundancy {
         return prefix_pass(p)&&!p.hud_candidate&&p.reason=="score_digit_structure_missing"&&
             p.score.bounded&&p.score.calibrated_cells&&!p.score.glyph_structure_candidate&&
             p.score.boundary_components>0&&plausible(p.score)>=4;
+    }
+    static bool at_primary_prefix_mismatch(const HudGlyphEvidence& p) {
+        const auto& g=p.fixed_glyphs[1];
+        return p.policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4&&p.valid&&!p.denied_state_match&&
+            !p.title_required&&!p.hud_candidate&&p.reason=="fixed_glyph_or_negative_space_missing"&&
+            glyph_pass(p.fixed_glyphs[0])&&!g.glyph_present&&glyph_core_pass(g)&&g.subpixel_tolerant&&
+            std::isfinite(g.unexpected_white_fraction)&&g.unexpected_white_fraction>=0&&g.unexpected_white_fraction<=1&&
+            std::isfinite(g.observed_ink_ratio)&&g.observed_ink_ratio>=.65&&
+            p.score.bounded&&p.score.calibrated_cells&&p.score.glyph_structure_candidate&&p.score.placement_consistent&&
+            p.score.boundary_components==0&&p.score.supported_cells==7&&p.score.glyphs.size()==7&&plausible(p.score)==7;
     }
     static bool white(const std::uint8_t* p) {return p[0]>195&&p[1]>195&&p[2]>195&&std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<35;}
     static int gray(const std::uint8_t* p) {return static_cast<int>((77u*p[0]+150u*p[1]+29u*p[2]+128u)>>8);}
@@ -136,7 +148,7 @@ class LearnedHudRedundancy {
     }
     void clear_model() {
         const auto attempts=value_.construction_attempts;value_=LearnedHudEvidence{};value_.construction_attempts=attempts;
-        producer_.reset();std::vector<std::uint8_t>().swap(reference_);std::vector<std::uint8_t>().swap(support_);
+        producer_.reset();learned_primary_policy_.reset();std::vector<std::uint8_t>().swap(reference_);std::vector<std::uint8_t>().swap(support_);
     }
     static std::string hash(const std::vector<std::uint8_t>& raw) {return chart_text_sha256({reinterpret_cast<const char*>(raw.data()),raw.size()});}
 public:
@@ -171,6 +183,16 @@ public:
         if(value_.ready){
             if(teacher(primary)){value_.reason="primary_admitted";return value_;}
             if(!armed){value_.reason="learned_reference_ready_unarmed";return value_;}
+            // AT-only alternate route after a primary prefix shape mismatch.
+            // No primary threshold is widened: independently require CURRENT
+            // full learned AT difficulty, title, pause and seven clean digits.
+            if(learned_primary_policy_==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4&&at_primary_prefix_mismatch(primary)) {
+                value_.auxiliary=producer_->observe_features(image,raw.state);
+                value_.current_candidate=clean_auxiliary_score(value_.auxiliary);
+                value_.reason=value_.current_candidate?"current_learned_full_HUD_after_primary_prefix_mismatch":
+                    "current_auxiliary_full_HUD_missing_after_primary_prefix_mismatch";
+                return value_;
+            }
             if(!occlusion(primary)){value_.reason="not_score_only_boundary_occlusion";return value_;}
             value_.plausible_score_components=plausible(primary.score);value_.score_boundary_components=primary.score.boundary_components;
             value_.auxiliary=producer_->observe_features(image,raw.state);
@@ -205,6 +227,7 @@ public:
                     std::optional<PixelRegion>{PixelRegion{1144,673,109,26}} : std::nullopt,
                 primary.policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4 ?
                     HudPauseMaskPolicy::eroded_strong_white_core_v2 : HudPauseMaskPolicy::reference_white_v1);
+            learned_primary_policy_=primary.policy;
             value_.auxiliary=producer_->observe_features(reference,raw.state);
             if(!clean_auxiliary_score(value_.auxiliary)){clear_model();value_.reason="reference_full_anchors_or_clean_score_unsupported";return value_;}
             value_.reference_frame=meta;value_.support_frames=1;value_.reason="waiting_for_distinct_60ms_support";
