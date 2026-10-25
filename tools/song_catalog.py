@@ -368,8 +368,8 @@ def build_library(root, lock, observations=None):
                 analysis = "structural_only" if summary["format_version"] == 3 else "unsupported_format"
                 if analysis == "unsupported_format":
                     blocks.append(blocker("unsupported_format", f"原件已封存；目前原生 importer 尚未支援格式 v{summary['format_version']}。"))
-                if summary["note_count"] > 2000:
-                    blocks.append(blocker("note_budget", "音符數超過目前實驗入口的 2,000 notes 上限。"))
+                if summary["note_count"] * 2 > 16000:
+                    blocks.append(blocker("step_budget", "完整閉合接點至少需要每音符兩個事件，超過目前16,000事件預算；不刪減音符。"))
                 if summary.get("last_note_seconds") is not None and summary["last_note_seconds"] >= 180:
                     blocks.append(blocker("duration_budget", "最後音符時間達 180 秒；需另外核對接點計畫的時長限制。"))
             except (ValueError, TypeError, KeyError, OverflowError, RecursionError) as error:

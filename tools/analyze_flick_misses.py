@@ -17,8 +17,8 @@ import re
 
 
 NS = 1_000_000_000
-MAX_CONTACTS = 2000
 MAX_STEPS = 20000
+MAX_CONTACTS = MAX_STEPS // 2
 MAX_PAIRS = 1000000
 PHASE_ORDER = {2: 0, 1: 1, 0: 2}  # Native release, move, down tie order.
 SOURCE_POINTER = re.compile(r"^/judgeLineList/(\d+)/notes(Above|Below)/(\d+)$")

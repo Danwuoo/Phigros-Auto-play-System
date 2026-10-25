@@ -76,7 +76,8 @@ struct ExperimentalRuntimeTick {
 // plan evidence explicitly meaning UI receipt permission ONLY. All song
 // deadlines remain the immutable arrival-origin + phase + song_ns hypothesis.
 //
-// Whole-song scope: every compiled contact, <=2000 contacts/20000 steps,
+// Whole-song scope: every compiled contact, <=20000 steps; closed contacts
+// derive their finite count bound from that step budget, not a 2000-note cap.
 // duration <180s, peak<=explicit capacity (default4, at most5), 1280x720
 // unrotated compiler surface. Projection
 // candidates default to D<=250; a per-song explicit ceiling may be at most
@@ -97,7 +98,7 @@ struct ExperimentalRuntimeTick {
 class ExperimentalContactRuntime {
     static constexpr Ns ms=1'000'000,second=1'000'000'000;
     static constexpr Ns end_song=180*second,anchor_age=100*ms,lookahead=100*ms;
-    static constexpr std::size_t max_song_contacts=2000,max_song_steps=20000;
+    static constexpr std::size_t max_song_steps=20000,max_song_contacts=max_song_steps/2;
     static constexpr Ns safe=std::numeric_limits<Ns>::max()/4;
     struct Pending {std::size_t index=0;pas::ContactPlan plan;};
     const pas::Clock& clock_;

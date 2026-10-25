@@ -46,6 +46,15 @@ int main(){try{
     HudGlyphEvidenceProducer producer(view(image),std::string(64,'a'),"synthetic-IN-v3",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);
     const auto clean=producer.observe_features(view(image)),occlusion=producer.observe_features(view(blocked));
     ++groups;{
+        HudGlyphEvidenceProducer wide(view(image),std::string(64,'a'),"synthetic-v4",{},HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4);
+        const auto primary=wide.observe_features(view(image));
+        check(primary.hud_candidate&&primary.reason=="experimental_shared_difficulty_subpixel_HUD_candidate_only","v4 reference policy reason missing");
+        LearnedHudRedundancy h;train(h,image,primary);
+        auto forged=primary;forged.reason="experimental_shared_IN_subpixel_HUD_candidate_only";
+        LearnedHudRedundancy wrong;
+        check(wrong.observe(view(image),forged,raw(),frame(1,1000),false).support_frames==0,"v4 inherited IN teacher reason");
+    }
+    ++groups;{
         check(clean.valid&&clean.hud_candidate&&clean.score.supported_cells==7,"synthetic clean v3 control invalid");
         check(occlusion.valid&&!occlusion.hud_candidate&&occlusion.reason=="score_digit_structure_missing"&&
             occlusion.score.boundary_components>0&&occlusion.score.glyphs.size()>=4,"score-only occlusion control invalid");

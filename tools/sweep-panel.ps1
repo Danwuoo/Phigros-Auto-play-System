@@ -4,6 +4,7 @@ param(
     [string]$Configuration,
     [switch]$SelfTest,
     [string]$RenderPreview,
+    [string]$PreviewLibrary,
     [ValidateSet('default','waiting_for_manual_play','waiting_for_valid_HUD','waiting_for_first_note','playing','input_complete_result_unconfirmed','result_confirmed')][string]$PreviewStage='default',
     [switch]$LoadCoreOnly
 )
@@ -126,6 +127,7 @@ function Add-PanelNestedPins($Map,$Value,[string]$Base,[int]$Depth=0) {
 }
 function Get-PanelContext([string]$Path,[string]$ScriptPath=$PSCommandPath) {
     $config=Read-PanelJson $Path
+    if($config.schema -ceq 'pas.manual-song-panel-launch.v2'){return Get-CatalogPanelContext $Path $ScriptPath}
     if ($config.schema -ne 'pas.manual-song-panel-launch.v1' -or $config.manual_selection -isnot [bool] -or $config.manual_selection -ne $true -or
         $config.manual_start -isnot [bool] -or $config.manual_start -ne $true) { throw '設定必須保留人工選曲與人工 Play。' }
     $pins=[Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
@@ -403,6 +405,7 @@ function Get-PanelNativeStageUpdate([string]$Line,[string]$Phase,[bool]$StopRequ
     return $null
 }
 
+. (Join-Path $PSScriptRoot 'catalog-panel-core.ps1')
 if ($LoadCoreOnly) {return}
 if ($SelfTest) {
     $checks=0;$temporary=Join-Path ([IO.Path]::GetTempPath()) ('PAS 面板離線測試 '+[Guid]::NewGuid().ToString('N'))
@@ -517,7 +520,13 @@ Add-Type -AssemblyName System.Drawing
 [Windows.Forms.Application]::EnableVisualStyles()
 $script:Panel=@{Context=$null;Queue=@();Index=0;CheckIndex=0;Phase='idle';Hash=$null;HashPurpose='queue';Process=$null;Purpose='';Session='';Round='';StopRequested=$false;CloseRequested=$false;Ledger=$null;ReadySeen=$false;Started=$null;AcquisitionKey='';SuppressStdoutJson=$false;ErrorTail='';PendingFailure='';LogDirty=$false;LogLines=[Collections.Generic.Queue[string]]::new()}
 try {
+    if($PreviewLibrary -and (-not $RenderPreview -or $Configuration)){throw 'PreviewLibrary只供無執行設定的離線畫面檢查。'}
     if ($Configuration) {$script:Panel.Context=Get-PanelContext ([IO.Path]::GetFullPath($Configuration)) $PSCommandPath}
+    elseif($RenderPreview -and $PreviewLibrary){
+        $previewPlan=Read-PanelJson ([IO.Path]::GetFullPath($PreviewLibrary))
+        if($previewPlan.schema -cne 'pas.catalog-test-plan.v1'){throw '無效預覽清單。'}
+        $script:Panel.Context=[pscustomobject]@{FullCatalog=$true;Jobs=@($previewPlan.jobs);Catalog=[pscustomobject]@{counts=[pscustomobject]@{song_count=$previewPlan.counts.songs}}}
+    }
     elseif (-not $RenderPreview) {throw '請使用已封存的 launch-config.json 開啟介面。'}
 }catch{
     if($RenderPreview){throw}
@@ -534,6 +543,12 @@ $form.Controls.Add($layout)
 $header=[Windows.Forms.Panel]::new();$header.Dock='Fill';$layout.Controls.Add($header,0,0)
 $title=[Windows.Forms.Label]::new();$title.Text='譜面測試台';$title.Font=[Drawing.Font]::new('Microsoft JhengHei UI',23,[Drawing.FontStyle]::Bold);$title.AutoSize=$true;$title.Location=[Drawing.Point]::new(0,0);$title.ForeColor=[Drawing.Color]::FromArgb(25,39,56);$header.Controls.Add($title)
 $subtitle=[Windows.Forms.Label]::new();$subtitle.Text='Verruckt 暖身 → Chapter Legacy 20 首 IN　｜　由你選曲、由你按 Play';$subtitle.AutoSize=$true;$subtitle.Location=[Drawing.Point]::new(2,47);$subtitle.ForeColor=[Drawing.Color]::FromArgb(92,106,122);$header.Controls.Add($subtitle)
+if($script:Panel.Context.FullCatalog){
+    $title.Text='全曲測試台'
+    $readyCount=@($script:Panel.Context.Jobs|Where-Object ready_for_manual_preflight).Count
+    $subtitle.Text="$($script:Panel.Context.Catalog.counts.song_count) 首歌曲 · $($script:Panel.Context.Jobs.Count) 份 IN／AT · $readyCount 份可前檢　｜　由你選曲與 Play · 每輪不存圖片"
+    $form.Text='Phigros 全曲測試台'
+}
 $statusPanel=[Windows.Forms.Panel]::new();$statusPanel.Dock='Fill';$statusPanel.BackColor=[Drawing.Color]::White;$statusPanel.Padding=[Windows.Forms.Padding]::new(16,10,16,10);$layout.Controls.Add($statusPanel,0,1)
 $status=[Windows.Forms.Label]::new();$status.AutoSize=$false;$status.Dock='Top';$status.Height=29;$status.Font=[Drawing.Font]::new('Microsoft JhengHei UI',13,[Drawing.FontStyle]::Bold);$status.Text='選擇要測的歌曲';$statusPanel.Controls.Add($status)
 $progress=[Windows.Forms.ProgressBar]::new();$progress.Dock='Bottom';$progress.Height=8;$progress.Maximum=1000;$statusPanel.Controls.Add($progress)
@@ -543,8 +558,15 @@ $grid=[Windows.Forms.DataGridView]::new();$grid.Dock='Fill';$grid.BackgroundColo
 $grid.ColumnHeadersDefaultCellStyle.BackColor=[Drawing.Color]::FromArgb(232,237,243);$grid.ColumnHeadersDefaultCellStyle.SelectionBackColor=$grid.ColumnHeadersDefaultCellStyle.BackColor;$grid.ColumnHeadersDefaultCellStyle.ForeColor=[Drawing.Color]::FromArgb(53,69,86)
 $grid.DefaultCellStyle.SelectionBackColor=[Drawing.Color]::FromArgb(225,241,248);$grid.DefaultCellStyle.SelectionForeColor=[Drawing.Color]::FromArgb(20,65,88)
 $column=[Windows.Forms.DataGridViewCheckBoxColumn]::new();$column.Name='Selected';$column.HeaderText='測試';$column.FillWeight=13;$grid.Columns.Add($column)|Out-Null
-foreach($spec in @(@('Song','曲目',53),@('Group','分類',27),@('Result','狀態',31))){$c=[Windows.Forms.DataGridViewTextBoxColumn]::new();$c.Name=$spec[0];$c.HeaderText=$spec[1];$c.FillWeight=$spec[2];$c.ReadOnly=$true;$grid.Columns.Add($c)|Out-Null}
+foreach($spec in @(@('Song','曲目',54),@('Difficulty','難度',14),@('Group','分類',23),@('Result','狀態',40))){$c=[Windows.Forms.DataGridViewTextBoxColumn]::new();$c.Name=$spec[0];$c.HeaderText=$spec[1];$c.FillWeight=$spec[2];$c.ReadOnly=$true;$grid.Columns.Add($c)|Out-Null}
 $split.Panel1.Controls.Add($grid)
+$filters=[Windows.Forms.FlowLayoutPanel]::new();$filters.Dock='Top';$filters.Height=38;$filters.WrapContents=$false
+$search=[Windows.Forms.TextBox]::new();$search.Width=180;$search.PlaceholderText='搜尋曲名／ID';$filters.Controls.Add($search)
+$difficultyFilter=[Windows.Forms.ComboBox]::new();$difficultyFilter.DropDownStyle='DropDownList';$difficultyFilter.Width=72;$difficultyFilter.Items.AddRange([object[]]@('全部','IN','AT'));$difficultyFilter.SelectedIndex=0;$filters.Controls.Add($difficultyFilter)
+$readyFilter=[Windows.Forms.ComboBox]::new();$readyFilter.DropDownStyle='DropDownList';$readyFilter.Width=88;$readyFilter.Items.AddRange([object[]]@('全部狀態','可前檢','跳過'));$readyFilter.SelectedIndex=0;$filters.Controls.Add($readyFilter)
+$selectVisible=[Windows.Forms.Button]::new();$selectVisible.Text='全選可測';$selectVisible.Width=90;$selectVisible.Height=28;$filters.Controls.Add($selectVisible)
+$clearSelected=[Windows.Forms.Button]::new();$clearSelected.Text='清除';$clearSelected.Width=60;$clearSelected.Height=28;$filters.Controls.Add($clearSelected)
+$split.Panel1.Controls.Add($filters)
 $right=[Windows.Forms.TableLayoutPanel]::new();$right.Dock='Fill';$right.ColumnCount=1;$right.RowCount=4;$right.Padding=[Windows.Forms.Padding]::new(18,0,0,0)
 foreach($spec in @(@('Absolute',68),@('Absolute',170),@('Absolute',28),@('Percent',100))){$r=[Windows.Forms.RowStyle]::new();$r.SizeType=$spec[0];$r.Height=$spec[1];$right.RowStyles.Add($r)|Out-Null};$split.Panel2.Controls.Add($right)
 $songTitle=[Windows.Forms.Label]::new();$songTitle.Dock='Fill';$songTitle.Font=[Drawing.Font]::new('Microsoft JhengHei UI',17,[Drawing.FontStyle]::Bold);$songTitle.Text='Verruckt';$songTitle.ForeColor=[Drawing.Color]::FromArgb(25,39,56);$right.Controls.Add($songTitle,0,0)
@@ -561,7 +583,14 @@ $stopButton=New-PanelButton '停止' 90
 $logsButton=New-PanelButton '開啟紀錄' 110
 
 $jobs=if($script:Panel.Context){$script:Panel.Context.Jobs}else{@([pscustomobject]@{display_name='Verruckt';role='warmup';track_id='Verruckt';default_selected=$true;ready_for_manual_preflight=$true;blockers=@()})+@(1..20|ForEach-Object{[pscustomobject]@{display_name=@('Glaciaxion','Eradication Catastrophe','Credits','Dlyrotz')[(($_-1)%4)];role='chapter';track_id="preview-$_";default_selected=$true;ready_for_manual_preflight=$true;blockers=@()}})}
-foreach($job in $jobs){$index=$grid.Rows.Add([bool]$job.default_selected,$job.display_name, $(if($job.role -eq 'warmup'){'額外暖身'}else{'Chapter Legacy'}),'待測');$grid.Rows[$index].Tag=$job}
+foreach($job in $jobs){
+    $group=if($job.role -eq 'warmup'){'額外暖身'}elseif($job.role -eq 'catalog'){'變體 '+$job.variant}else{'Chapter Legacy'}
+    $rowStatus=if($job.ready_for_manual_preflight){'待測'}else{'跳過：'+(Get-PanelBlockerText $job)}
+    $difficulty=if($job.difficulty){$job.difficulty}else{'IN'}
+    $index=$grid.Rows.Add([object[]]@([bool]$job.default_selected,$job.display_name,$difficulty,$group,$rowStatus));$grid.Rows[$index].Tag=$job
+    $grid.Rows[$index].Cells['Result'].ToolTipText=$rowStatus
+    if(-not $job.ready_for_manual_preflight){$grid.Rows[$index].Cells['Selected'].ReadOnly=$true;$grid.Rows[$index].DefaultCellStyle.ForeColor=[Drawing.Color]::DimGray}
+}
 
 function Add-PanelLog([string]$Text){if($Text.Length -gt 1200){$Text=$Text.Substring(0,1200)+' [詳細請開啟紀錄]'};$line=(Get-Date -Format HH:mm:ss)+'  '+$Text;$script:Panel.LogLines.Enqueue($line);while($script:Panel.LogLines.Count -gt 200){$null=$script:Panel.LogLines.Dequeue()};$script:Panel.LogDirty=$true}
 function Update-PanelLogView {if($script:Panel.LogDirty){$log.Text=($script:Panel.LogLines.ToArray()-join "`r`n");$log.SelectionStart=$log.TextLength;$log.ScrollToCaret();$script:Panel.LogDirty=$false}}
@@ -577,7 +606,12 @@ function Update-PanelButtons {
     $startButton.Enabled=$idle;$onlyButton.Enabled=$idle;$launchButton.Enabled=$waiting -and -not $script:Panel.StopRequested
     $nextButton.Enabled=$script:Panel.Phase -eq 'result';$stopButton.Enabled=-not $idle -and -not $script:Panel.StopRequested
     $logsButton.Enabled=[bool]$script:Panel.Session;$grid.ReadOnly=-not $idle
-    $current=Get-PanelCurrentJob;if($current){$songTitle.Text=$current.display_name+"`r`nIN"
+    foreach($control in @($search,$difficultyFilter,$readyFilter,$selectVisible,$clearSelected)){$control.Enabled=$idle}
+    $current=Get-PanelCurrentJob;$onlyButton.Enabled=$idle -and $null -ne $current -and $current.ready_for_manual_preflight
+    if($current){$songTitle.Text=$current.display_name+"`r`n"+$(if($current.difficulty){$current.difficulty}else{'IN'})
+        $onlyButton.Enabled=$idle -and $current.ready_for_manual_preflight
+        if($idle -and -not $current.ready_for_manual_preflight){$instructions.Text='本譜面暫時跳過：'+"`r`n"+(Get-PanelBlockerText $current)+"`r`n`r`n其餘可前檢曲目仍可正常選取。"}
+        else{$instructions.Text="1　在遊戲選好本首指定難度。`r`n`r`n2　按「已選曲，啟動本首」。`r`n`r`n3　看到 READY 後自行按 Play。`r`n`r`nREADY 前不送觸控；每輪保留紀錄，不存圖片。"}
         if(-not $idle -and $grid.CurrentRow.Tag.library_id -ne $current.library_id){foreach($row in $grid.Rows){if($row.Tag.library_id -eq $current.library_id){$grid.CurrentCell=$row.Cells['Song'];break}}}
     }
 }
@@ -618,6 +652,7 @@ function Begin-PanelQueue([bool]$OnlyCurrent) {
     if($script:Panel.Hash -or $script:Panel.Process -or $script:Panel.Phase -notin @('idle','complete','failed','stopped')){throw '目前佇列尚未結束。'}
     $grid.EndEdit()|Out-Null
     $selected=if($OnlyCurrent){@($grid.CurrentRow.Tag)}else{@($grid.Rows|Where-Object{$_.Cells['Selected'].Value -eq $true}|ForEach-Object{$_.Tag})}
+    if($script:Panel.Context.FullCatalog){$selected=@($selected|Where-Object {$_.ready_for_manual_preflight -and -not @($_.blockers).Count})}
     if(-not $selected.Count){throw '請先勾選至少一首曲目。'}
     foreach($job in $selected){if($job.ready_for_manual_preflight -ne $true -or @($job.blockers).Count){throw "此曲仍有準備阻擋：$($job.display_name)"}}
     $script:Panel.Context=Get-PanelContext $script:Panel.Context.ConfigPath $PSCommandPath
@@ -658,6 +693,21 @@ $stopButton.Add_Click({Invoke-PanelAction {Request-PanelQueueStop}})
 $logsButton.Add_Click({if($script:Panel.Session){$explorer=[Diagnostics.ProcessStartInfo]::new('explorer.exe');$explorer.UseShellExecute=$true;$explorer.ArgumentList.Add($script:Panel.Session);[Diagnostics.Process]::Start($explorer)|Out-Null}})
 $grid.Add_CurrentCellDirtyStateChanged({if($grid.IsCurrentCellDirty){$grid.CommitEdit([Windows.Forms.DataGridViewDataErrorContexts]::Commit)|Out-Null}})
 $grid.Add_SelectionChanged({Update-PanelButtons})
+function Update-PanelCatalogFilter {
+    if($script:Panel.Phase -notin @('idle','complete','failed','stopped')){return}
+    $difficulty=if($difficultyFilter.SelectedIndex -gt 0){[string]$difficultyFilter.SelectedItem}else{''}
+    $matches=@{};foreach($job in @(Select-PanelCatalogJobs $jobs $search.Text $difficulty ($readyFilter.SelectedIndex -eq 1))){$matches[$job.library_id]=$true}
+    $grid.CurrentCell=$null
+    foreach($row in $grid.Rows){$row.Visible=$matches.ContainsKey($row.Tag.library_id) -and ($readyFilter.SelectedIndex -ne 2 -or -not $row.Tag.ready_for_manual_preflight)}
+    foreach($row in $grid.Rows){if($row.Visible){$grid.CurrentCell=$row.Cells['Song'];break}}
+    Update-PanelButtons
+}
+$search.Add_TextChanged({Update-PanelCatalogFilter})
+$difficultyFilter.Add_SelectedIndexChanged({Update-PanelCatalogFilter})
+$readyFilter.Add_SelectedIndexChanged({Update-PanelCatalogFilter})
+$selectVisible.Add_Click({foreach($row in $grid.Rows){if($row.Visible -and $row.Tag.ready_for_manual_preflight){$row.Cells['Selected'].Value=$true}}})
+$clearSelected.Add_Click({foreach($row in $grid.Rows){$row.Cells['Selected'].Value=$false}})
+$split.Panel1.Add_SizeChanged({$search.Width=[Math]::Max(100,[Math]::Min(180,$split.Panel1.ClientSize.Width-350))})
 $form.Add_FormClosing({param($sender,$eventArgs)
     if($script:Panel.Hash -or $script:Panel.Process){$eventArgs.Cancel=$true;$script:Panel.CloseRequested=$true;Invoke-PanelAction {Request-PanelQueueStop}}
 })
@@ -670,9 +720,11 @@ $timer.Add_Tick({Invoke-PanelAction {
             elseif(-not $operation.Success){Stop-PanelQueue $operation.Error -Failed}
             elseif($script:Panel.HashPurpose -eq 'round'){Start-PanelNative (Get-PanelCurrentJob)}
             else {
-                $session=Join-Path $script:Panel.Context.Configuration.output_parent ('chapter-IN-panel-'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,6))
+                $sessionPrefix=if($script:Panel.Context.FullCatalog){'catalog-manual-panel-'}else{'chapter-IN-panel-'}
+                $session=Join-Path $script:Panel.Context.Configuration.output_parent ($sessionPrefix+(Get-Date -Format 'yyyyMMdd-HHmmss-fff')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,6))
                 if(Test-Path -LiteralPath $session){throw '新的紀錄目錄發生衝突。'};New-Item -ItemType Directory -Path $session|Out-Null;$script:Panel.Session=$session
-                $script:Panel.Ledger=[ordered]@{schema='pas.manual-IN-panel-ledger.v1';status='offline_preflight';configuration=$script:Panel.Context.ConfigPath;configuration_sha256=(Get-FileHash -LiteralPath $script:Panel.Context.ConfigPath).Hash.ToLowerInvariant();library=$script:Panel.Context.Configuration.library;plan=$script:Panel.Context.Configuration.plan;selected_ids=@($script:Panel.Queue|ForEach-Object library_id);started_utc=[DateTime]::UtcNow.ToString('o');automatic_play=$false;automatic_retry=$false;failure=$null;stopped_utc=$null;preflights=@();rounds=@()};Save-PanelLedger
+                $ledgerSchema=if($script:Panel.Context.FullCatalog){'pas.manual-catalog-panel-ledger.v1'}else{'pas.manual-IN-panel-ledger.v1'}
+                $script:Panel.Ledger=[ordered]@{schema=$ledgerSchema;status='offline_preflight';configuration=$script:Panel.Context.ConfigPath;configuration_sha256=(Get-FileHash -LiteralPath $script:Panel.Context.ConfigPath).Hash.ToLowerInvariant();library=$script:Panel.Context.Configuration.library;plan=$script:Panel.Context.Configuration.plan;selected_ids=@($script:Panel.Queue|ForEach-Object library_id);started_utc=[DateTime]::UtcNow.ToString('o');automatic_play=$false;automatic_retry=$false;failure=$null;stopped_utc=$null;preflights=@();rounds=@()};Save-PanelLedger
                 Start-PanelNative $script:Panel.Queue[0] -CheckOnly
             }
         }
@@ -723,7 +775,7 @@ $timer.Add_Tick({Invoke-PanelAction {
                     Add-PanelLog ('離線檢查通過：'+$job.display_name)
                     $script:Panel.CheckIndex++
                     if($script:Panel.CheckIndex -lt $script:Panel.Queue.Count){Start-PanelNative $script:Panel.Queue[$script:Panel.CheckIndex] -CheckOnly}
-                    else{$script:Panel.Phase='waiting';$script:Panel.Ledger.status='waiting_for_operator';Save-PanelLedger;Set-PanelStatus '離線檢查完成，請先選好本首 IN' '選曲後按「已選曲，啟動本首」；看到 READY 再按遊戲 Play。'}
+                    else{$script:Panel.Phase='waiting';$script:Panel.Ledger.status='waiting_for_operator';Save-PanelLedger;Set-PanelStatus ('離線檢查完成，請選好本首 '+(Get-PanelCurrentJob).difficulty) '選曲後按「已選曲，啟動本首」；看到 READY 再按遊戲 Play。'}
                 }
             }else{
                 $result=Get-PanelRoundResult $script:Panel.Round $exitCode $script:Panel.ErrorTail (Get-PanelCurrentJob) $script:Panel.Context;$entry=$script:Panel.Ledger.rounds[-1]
@@ -754,7 +806,7 @@ $timer.Add_Tick({Invoke-PanelAction {
 Update-PanelButtons
 if($RenderPreview){
     $preview=[IO.Path]::GetFullPath($RenderPreview);if(Test-Path -LiteralPath $preview){throw '預覽輸出已存在。'}
-    Set-PanelStatus '畫面預覽｜未執行任何測試' '21 首曲目 · 手動選曲 → 原生 READY → 手動 Play'
+    Set-PanelStatus '畫面預覽｜未執行任何測試' "$($jobs.Count) 份譜面 · 手動選曲 → 原生 READY → 手動 Play"
     Add-PanelLog '離線畫面預覽。沒有裝置連線、原生程序或輸入。'
     if($PreviewStage -ne 'default'){
         if($PreviewStage -in @('input_complete_result_unconfirmed','result_confirmed')){

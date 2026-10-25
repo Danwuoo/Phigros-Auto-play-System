@@ -1,5 +1,6 @@
 #include "experimental_runtime.hpp"
 #include "flick_policy.hpp"
+#include "catalog_source.hpp"
 #include "../chart_calibrate/trial_io.hpp"
 #include "../chart_calibrate/opening_detector.hpp"
 #include "first_note_trigger.hpp"
@@ -242,6 +243,7 @@ struct SongProfile {
     std::string import_policy="phigros-v3-strict-v1";
     bool tight_projection_speed_bounds=false;
     FlickParameters flick;
+    std::string installed_source_manifest;
     std::size_t notes=584,steps=dlyrotz_expected_steps;
     int peak=4,capacity=4,projection_pixels=250,input_inset_pixels=0;
     Ns first_down=12*second,drag_duration_ns=32*ms;
@@ -299,17 +301,25 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
     song.tight_projection_speed_bounds=value.value("tight_projection_speed_bounds",false);
     song.flick=flick_parameters_from_profile(value);
     (void)song_import_options(song);
-    if(song.hud_policy!="calibrated-title-v1"&&song.hud_policy!="shared-in-prefix-score-v1"&&song.hud_policy!="shared-in-cell-score-v2"&&song.hud_policy!="shared-in-subpixel-prefix-score-v3")
+    if(!valid_adaptive_hud_policy(song.hud_policy))
         throw std::invalid_argument("unsupported explicit adaptive HUD policy");
-    if(song.hud_policy!="calibrated-title-v1"&&song.difficulty!="IN")
-        throw std::invalid_argument("shared HUD policy requires operator-selected IN chart");
+    if(!hud_policy_matches_difficulty(song.hud_policy,song.difficulty))
+        throw std::invalid_argument("HUD policy does not match selected difficulty");
+    song.installed_source_manifest=value.value("installed_source_manifest",std::string());
+    if(!song.installed_source_manifest.empty()) {
+        const auto raw=read_utf8_file(song.installed_source_manifest,1024*1024);const auto source=Json::parse(raw);
+        if(chart_text_sha256(raw)!=value.at("source_manifest_sha256").get<std::string>()||source.at("track_id")!=song.song||
+           source.at("difficulty")!=song.difficulty||source.at("chart").at("sha256")!=song.chart_sha||
+           installed_catalog_audio_identity(source)!=song.audio_sha)
+            throw std::invalid_argument("installed catalog source/profile identity differs");
+    }
     for(const auto* hash:{&song.chart_sha,&song.audio_sha,&song.plan_sha,&song.opening_sha})
         if(!sha256_text(*hash))throw std::invalid_argument("invalid song profile hash");
     for(const auto* name:{&song.song,&song.difficulty,&song.calibration_id})
         if(name->empty()||name->size()>256||name->find_first_of("\r\n\0",0,3)!=std::string::npos)
             throw std::invalid_argument("invalid song profile label");
     if(song.revision!="4.0.1/157")throw std::invalid_argument("song revision unsupported");
-    song.notes=static_cast<std::size_t>(kernel_integer(value.at("expected_contacts"),1,2000));
+    song.notes=static_cast<std::size_t>(kernel_integer(value.at("expected_contacts"),1,16000/2));
     song.steps=static_cast<std::size_t>(kernel_integer(value.at("expected_steps"),1,16000));
     song.capacity=static_cast<int>(kernel_integer(value.value("contact_capacity",Json(4)),1,5));
     song.peak=static_cast<int>(kernel_integer(value.at("expected_peak"),1,song.capacity));
@@ -337,7 +347,7 @@ int prepare_adaptive(int argc,char** argv) {
         }
         if(option=="--hud-policy") {
             song.hud_policy=argv[index+1];
-            if(song.hud_policy!="calibrated-title-v1"&&song.hud_policy!="shared-in-prefix-score-v1"&&song.hud_policy!="shared-in-cell-score-v2"&&song.hud_policy!="shared-in-subpixel-prefix-score-v3")
+            if(!valid_adaptive_hud_policy(song.hud_policy))
                 throw std::invalid_argument("unsupported explicit adaptive HUD policy");
             continue;
         }
@@ -355,13 +365,14 @@ int prepare_adaptive(int argc,char** argv) {
     }
     validate_flick_parameters(song.flick);
     song.chart_sha=source.at("chart").at("sha256");
-    song.audio_sha=source.at("decoded_audio").at("sha256");
+    const bool installed_catalog=source.value("schema",std::string())=="pas.installed-catalog-song-source.v1";
+    song.audio_sha=installed_catalog ? installed_catalog_audio_identity(source) : source.at("decoded_audio").at("sha256").get<std::string>();
     song.song=source.at("track_id");song.difficulty=source.at("difficulty");
-    if(song.hud_policy!="calibrated-title-v1"&&song.difficulty!="IN")
-        throw std::invalid_argument("shared HUD policy requires operator-selected IN chart");
+    if(!hud_policy_matches_difficulty(song.hud_policy,song.difficulty))
+        throw std::invalid_argument("HUD policy does not match selected difficulty");
     song.calibration_id=song.song+'-'+song.difficulty+'-'+"D"+std::to_string(song.projection_pixels)+"-unqualified-whole-song-experiment";
     const auto audio_path=utf8_path(argv[3]).parent_path()/"music.wav";
-    if(chart_text_sha256(read_utf8_file(audio_path,64*1024*1024))!=song.audio_sha)
+    if(!installed_catalog&&chart_text_sha256(read_utf8_file(audio_path,64*1024*1024))!=song.audio_sha)
         throw std::invalid_argument("source WAV hash mismatch");
     const auto chart=parse_phigros(read_utf8_file(argv[2],32*1024*1024),
         {argv[2],song.chart_sha,song.song,song.difficulty,song.revision},{},song_import_options(song));
@@ -387,7 +398,7 @@ int prepare_adaptive(int argc,char** argv) {
     if(!std::filesystem::create_directory(output))throw std::runtime_error("output creation failed");
     if(compiled.plan) {
         const auto& plan=*compiled.plan;
-        const bool bounded=plan.memory.contacts.size()==chart.note_count&&chart.note_count<=2000&&plan.total_steps<=16000&&
+        const bool bounded=plan.memory.contacts.size()==chart.note_count&&plan.total_steps<=16000&&
             plan.peak_contacts<=song.capacity&&!plan.events.empty()&&plan.events.front().phase==Phase::down&&
             plan.events.front().song_ns==description.first_down_ns&&plan.events.back().song_ns<180*second;
         report["within_live_experiment_bounds"]=bounded;
@@ -405,6 +416,11 @@ int prepare_adaptive(int argc,char** argv) {
                 {"opening_model_sha256",description.model_sha256},{"source_manifest_sha256",chart_text_sha256(source_bytes)},
                 {"gameplay_qualified",false},{"scope","per-song offline candidate; actual opening/HUD and full gameplay remain to be observed"}};
             profile.update(flick_parameters_json(song.flick));
+            if(installed_catalog) {
+                const auto path=std::filesystem::absolute(utf8_path(argv[3])).u8string();
+                profile["installed_source_manifest"]=std::string(path.begin(),path.end());
+                profile["audio_identity_format"]="native-fsb5";
+            }
             write_json(output/"song-profile.json",profile);
         }
     }
@@ -496,10 +512,14 @@ int run(int argc,char** argv) {
     const auto screen_calibration=load_screen_state_calibration(utf8_path(argv[5]));
     const auto state_dataset=Json::parse(read_utf8_file(argv[5],1024*1024));
     const bool shared_hud=adaptive&&song.hud_policy!="calibrated-title-v1";
-    const auto shared_policy=song.hud_policy=="shared-in-subpixel-prefix-score-v3"?HudGlyphPolicy::shared_in_subpixel_prefix_score_v3:
+    const auto shared_policy=song.hud_policy=="shared-difficulty-subpixel-prefix-score-v4"?HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4:
+        song.hud_policy=="shared-in-subpixel-prefix-score-v3"?HudGlyphPolicy::shared_in_subpixel_prefix_score_v3:
         song.hud_policy=="shared-in-cell-score-v2"?HudGlyphPolicy::shared_in_cell_score_v2:HudGlyphPolicy::shared_in_prefix_score_v1;
-    const auto expected_hud_policy=song.hud_policy=="shared-in-subpixel-prefix-score-v3"?"shared_in_subpixel_prefix_score_v3":
+    const auto expected_hud_policy=song.hud_policy=="shared-difficulty-subpixel-prefix-score-v4"?"shared_difficulty_subpixel_prefix_score_v4":
+        song.hud_policy=="shared-in-subpixel-prefix-score-v3"?"shared_in_subpixel_prefix_score_v3":
         song.hud_policy=="shared-in-cell-score-v2"?"shared_in_cell_score_v2":"shared_in_prefix_score_v1";
+    if(song.hud_policy=="shared-difficulty-subpixel-prefix-score-v4"&&state_dataset.value("hud_difficulty",std::string())!=song.difficulty)
+        throw std::invalid_argument("actual HUD calibration difficulty differs from selected chart");
     if(state_dataset.value("experimental_shared_IN_HUD",false)!=shared_hud||
        (shared_hud&&state_dataset.value("hud_glyph_policy",std::string())!=expected_hud_policy))
         throw std::invalid_argument("HUD dataset/profile policy binding differs");
@@ -515,7 +535,7 @@ int run(int argc,char** argv) {
     const auto redundancy_policy=state_dataset.value("experimental_playing_redundancy_policy",std::string());
     std::unique_ptr<LearnedHudRedundancy> hud_redundancy;
     if(!redundancy_policy.empty()) {
-        if(!shared_hud||song.hud_policy!="shared-in-subpixel-prefix-score-v3"||redundancy_policy!="learned-title-redundancy-v1")
+    if(!shared_hud||(song.hud_policy!="shared-in-subpixel-prefix-score-v3"&&song.hud_policy!="shared-difficulty-subpixel-prefix-score-v4")||redundancy_policy!="learned-title-redundancy-v1")
             throw std::invalid_argument("playing redundancy policy differs");
         hud_redundancy=std::make_unique<LearnedHudRedundancy>();
     }

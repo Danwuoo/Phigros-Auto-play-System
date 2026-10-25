@@ -294,7 +294,7 @@ function Test-CatalogAsset([string]$Path, [string]$ExpectedSha256, [long]$MaxByt
 function Get-CatalogLegacyLaunch([string]$Configuration) {
     $path = Resolve-CatalogInputPath $Configuration
     $config = Read-CatalogJson $path 1048576
-    if ($config.schema -cne 'pas.manual-song-panel-launch.v1' -or
+    if ($config.schema -cnotin @('pas.manual-song-panel-launch.v1','pas.manual-song-panel-launch.v2') -or
         $config.manual_selection -isnot [bool] -or -not $config.manual_selection -or
         $config.manual_start -isnot [bool] -or -not $config.manual_start) { throw '請選擇既有人工選曲／Play 面板的 launch-config.json。' }
     $gui = Get-CatalogValue $config 'gui_script'

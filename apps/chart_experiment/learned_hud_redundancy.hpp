@@ -74,7 +74,7 @@ class LearnedHudRedundancy {
         }));
     }
     static bool prefix_pass(const HudGlyphEvidence& p) {
-        if(p.policy!=HudGlyphPolicy::shared_in_subpixel_prefix_score_v3||!p.valid||p.denied_state_match||p.title_required||
+        if((p.policy!=HudGlyphPolicy::shared_in_subpixel_prefix_score_v3&&p.policy!=HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4)||!p.valid||p.denied_state_match||p.title_required||
            !glyph_pass(p.fixed_glyphs[0])||!glyph_pass(p.fixed_glyphs[1])||!p.difficulty_alignment_unique_family||
            p.difficulty_alignment_candidates<1||p.difficulty_alignment_candidates>3||
            p.difficulty_alignment_lower_x< -8||p.difficulty_alignment_upper_x>8||
@@ -86,7 +86,9 @@ class LearnedHudRedundancy {
             g.unexpected_white_fraction<=.10&&std::isfinite(g.observed_ink_ratio)&&g.observed_ink_ratio>=.65);
     }
     static bool teacher(const HudGlyphEvidence& p) {
-        return prefix_pass(p)&&p.hud_candidate&&p.reason=="experimental_shared_IN_subpixel_HUD_candidate_only"&&
+        const auto expected=p.policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4 ?
+            "experimental_shared_difficulty_subpixel_HUD_candidate_only" : "experimental_shared_IN_subpixel_HUD_candidate_only";
+        return prefix_pass(p)&&p.hud_candidate&&p.reason==expected&&
             p.score.bounded&&p.score.calibrated_cells&&p.score.glyph_structure_candidate&&p.score.placement_consistent&&
             p.score.supported_cells==7&&p.score.glyphs.size()==7&&plausible(p.score)==7;
     }
@@ -198,7 +200,9 @@ public:
             reference_.assign(image.pixels.begin(),image.pixels.end());value_.reference_sha256=hash(reference_);
             const RgbImageView reference{1280,720,3840,reference_};
             producer_=std::make_unique<HudGlyphEvidenceProducer>(reference,value_.reference_sha256,
-                value_.policy_id+'/'+value_.reference_sha256,value_.title_region,HudGlyphPolicy::calibrated_title_v1);
+                value_.policy_id+'/'+value_.reference_sha256,value_.title_region,HudGlyphPolicy::calibrated_title_v1,
+                primary.policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4 ?
+                    std::optional<PixelRegion>{PixelRegion{1144,673,109,26}} : std::nullopt);
             value_.auxiliary=producer_->observe_features(reference,raw.state);
             if(!clean_auxiliary_score(value_.auxiliary)){clear_model();value_.reason="reference_full_anchors_or_clean_score_unsupported";return value_;}
             value_.reference_frame=meta;value_.support_frames=1;value_.reason="waiting_for_distinct_60ms_support";

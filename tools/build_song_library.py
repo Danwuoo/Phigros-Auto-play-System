@@ -28,7 +28,7 @@ def checked_job(raw):
     for key, field in (("notes", "expected_contacts"), ("events", "expected_steps"), ("peak", "expected_peak")):
         if job.get(key) != profile.get(field):
             raise ValueError("Library count differs from pinned profile: " + key)
-    if (not 1 <= job["notes"] <= 2000 or not 1 <= job["events"] <= 16000
+    if (not 1 <= job["events"] <= 16000 or not 1 <= job["notes"] <= job["events"] // 2
             or not 1 <= job["peak"] <= 5):
         raise ValueError("Library entry exceeds native experiment resource bounds")
     if job.get("source_manifest"):

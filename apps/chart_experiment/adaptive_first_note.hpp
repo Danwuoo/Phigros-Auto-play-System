@@ -187,7 +187,9 @@ inline calibration::OpeningDetection detect_adaptive_opening_centers(
 // silently dropping a visible alias. Rendering is still an unqualified model.
 class AdaptiveFirstNoteTrigger {
     static constexpr Ns ms=1'000'000,second=1'000'000'000,safe=(Ns{1}<<53)-1;
-    static constexpr std::size_t max_notes=2000,max_pieces=2048,max_equations=300000,max_candidates=1024,max_work=2'000'000;
+    // A closed contact needs at least two of the runtime's 20000 steps.
+    // Keep independent equation/work budgets; never discard aliases to fit.
+    static constexpr std::size_t max_notes=20000/2,max_pieces=2048,max_equations=300000,max_candidates=1024,max_work=2'000'000;
     struct Range {long double lo=0,hi=0;};
     struct Axis {Range base,slope;};
     struct Equation {Axis x,y;bool positive=false;std::string speed_pointer;double line_speed=0;};
@@ -348,10 +350,10 @@ public:
     AdaptiveFirstNoteTrigger(const SemanticChart& chart,Ns phase_ns,Ns first_down_ns=-1):phase_(phase_ns) {
         require(phase_ns>=-100*ms&&phase_ns<=100*ms,"first-note phase must be +/-100ms");
         require(chart.format_version==3&&std::isfinite(chart.offset_seconds)&&sha256_text(chart.source.chart_sha256)&&
-                !chart.lines.empty()&&chart.lines.size()<=64&&chart.note_count>0&&chart.note_count<=2000,"adaptive opening chart scope unsupported");
+                !chart.lines.empty()&&chart.lines.size()<=64&&chart.note_count>0&&chart.note_count<=max_notes,"adaptive opening chart scope unsupported");
         const SemanticNote* first=nullptr;std::size_t first_line=0,actual_notes=0;
         for(std::size_t l=0;l<chart.lines.size();++l)for(const auto& n:chart.lines[l].notes) {
-            require(++actual_notes<=2000,"adaptive opening actual note budget");
+            require(++actual_notes<=max_notes,"adaptive opening actual note budget derived from closed-contact steps");
             if(!first||n.start_ns<first->start_ns){first=&n;first_line=l;}
         }
         require(actual_notes==chart.note_count,"adaptive opening native note count mismatch");

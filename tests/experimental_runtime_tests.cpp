@@ -129,6 +129,14 @@ int main(int argc,char** argv) {
     try {
         if(argc>1)throw std::invalid_argument("offline synthetic tests take no arguments");
         (void)argv;
+        group("whole-song over2000 notes retains every closed contact within step budget",[]{
+            std::vector<Contact> contacts;
+            for(unsigned n=0;n<2001;++n)contacts.push_back(contact(n+1,12*S+static_cast<Ns>(n)*50*ms,12*S+static_cast<Ns>(n)*50*ms+16*ms));
+            const auto full=compiled(std::move(contacts));pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
+            ExperimentalContactRuntime run(full,clock,touch,anchor());const auto status=run.status();
+            check(status.selected_contacts==2001&&status.selected_steps==4002,"runtime rejected/truncated more than2000 notes");
+            check(touch.receipts().empty(),"prepare/construct emitted input");
+        });
         group("whole-song integrity keeps every projected contact and calibration flag",[]{
             pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
             auto full=compiled({contact(40),contact(5,31*S,31*S+16*ms)},true);
@@ -155,8 +163,8 @@ int main(int argc,char** argv) {
             rejects([&]{ExperimentalContactRuntime r(compiled({}),clock,touch,anchor());},"empty song accepted");
             rejects([&]{ExperimentalContactRuntime r(compiled({contact(1,12*S,13*S,19999)}),clock,touch,anchor());},"20001 steps accepted");
             rejects([&]{ExperimentalContactRuntime r(compiled({contact(1),contact(2),contact(3),contact(4),contact(5)}),clock,touch,anchor());},"peak5 accepted");
-            std::vector<Contact> many;for(unsigned i=1;i<=2001;++i)many.push_back(contact(i,12*S+i*ms,12*S+i*ms+ms/2));
-            rejects([&]{ExperimentalContactRuntime r(compiled(many),clock,touch,anchor());},"2001 contacts accepted");
+            std::vector<Contact> many;for(unsigned i=1;i<=10001;++i)many.push_back(contact(i,12*S+i*ms,12*S+i*ms+ms/2));
+            rejects([&]{ExperimentalContactRuntime r(compiled(many),clock,touch,anchor());},"closed contacts exceeded20000-step resource budget");
         });
         group("fifth pointer requires explicit capacity and dispatches all five ownerships",[]{
             pas::FakeClock clock;pas::FakeTouchBackend touch(clock);

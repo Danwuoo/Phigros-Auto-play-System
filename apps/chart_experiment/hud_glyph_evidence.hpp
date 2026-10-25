@@ -28,7 +28,7 @@ inline bool hud_candidate_eligible(bool shared_in,bool armed,bool source_valid,c
         !hud_calibration_matches(result,ObservedGameState::paused)&&!hud_calibration_matches(result,ObservedGameState::result);
 }
 enum class HudTimestampKind { unknown, video_pts, host_arrival };
-enum class HudGlyphPolicy { calibrated_title_v1, shared_in_prefix_score_v1, shared_in_cell_score_v2, shared_in_subpixel_prefix_score_v3 };
+enum class HudGlyphPolicy { calibrated_title_v1, shared_in_prefix_score_v1, shared_in_cell_score_v2, shared_in_subpixel_prefix_score_v3, shared_difficulty_subpixel_prefix_score_v4 };
 struct HudFrameMetadata {
     std::uint64_t sequence=0,epoch=0,generation=0,geometry_version=0;
     std::string source_id,source_sha256,frame_id,frame_sha256,evidence_id,clock_id;
@@ -88,8 +88,10 @@ class HudGlyphEvidenceProducer {
     PixelRegion score_band_{};
     int score_top_=0,score_bottom_=0,score_right_=0,score_height_=0,score_ink_width_=0;
     bool shared() const noexcept {return policy_!=HudGlyphPolicy::calibrated_title_v1;}
-    bool cell_score() const noexcept {return policy_==HudGlyphPolicy::shared_in_cell_score_v2||policy_==HudGlyphPolicy::shared_in_subpixel_prefix_score_v3;}
-    static constexpr std::size_t prefix_pixels=73*26;
+    bool subpixel() const noexcept {return policy_==HudGlyphPolicy::shared_in_subpixel_prefix_score_v3||policy_==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4;}
+    bool cell_score() const noexcept {return policy_==HudGlyphPolicy::shared_in_cell_score_v2||subpixel();}
+    static constexpr int prefix_stride=81;
+    static constexpr std::size_t prefix_pixels=prefix_stride*26;
     using PrefixMask=std::array<std::uint8_t,prefix_pixels>;
     PrefixMask literal_prefix_mask_{};
     std::vector<PixelRegion> literal_prefix_boxes_;
@@ -97,6 +99,11 @@ class HudGlyphEvidenceProducer {
     // Actual 4.0.1 IN Lv.12/13 references place the decimal point at x1220..1222
     // and the first level digit at x1227. This ends before either level digit.
     static constexpr PixelRegion shared_in_prefix_region{1152,673,73,26};
+    // Actual Credits AT reference: A begins at1147, before the IN crop. Both
+    // end at1225, after the decimal point and before the variable level digits.
+    PixelRegion prefix_region() const noexcept {
+        return policy_==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4 ? PixelRegion{1144,673,81,26} : shared_in_prefix_region;
+    }
     static constexpr int shared_in_max_alignment=8;
     static constexpr std::int64_t max_title_pixels=16384;
     static constexpr PixelRegion score_region{1076,20,180,40};
@@ -172,21 +179,21 @@ class HudGlyphEvidenceProducer {
         m.negative_space_present=m.negative_space_bright_fraction<=.35&&m.local_contrast>=40;
         return m;
     }
-    static std::vector<PixelRegion> prefix_boxes(PrefixMask mask) {
+    static std::vector<PixelRegion> prefix_boxes(PrefixMask mask,int width) {
         std::vector<PixelRegion> boxes;
         std::array<int,prefix_pixels> queue{};
-        for(int y=0;y<26;++y)for(int x=0;x<73;++x) {
-            const auto at=static_cast<std::size_t>(y*73+x);if(!mask[at])continue;
+        for(int y=0;y<26;++y)for(int x=0;x<width;++x) {
+            const auto at=static_cast<std::size_t>(y*prefix_stride+x);if(!mask[at])continue;
             mask[at]=0;queue[0]=static_cast<int>(at);std::size_t used=1;
             int x0=x,x1=x,y0=y,y1=y;
             for(std::size_t i=0;i<used;++i) {
-                const auto q=queue[i];const int qx=q%73,qy=q/73;
+                const auto q=queue[i];const int qx=q%prefix_stride,qy=q/prefix_stride;
                 x0=std::min(x0,qx);x1=std::max(x1,qx);y0=std::min(y0,qy);y1=std::max(y1,qy);
                 // Four-neighbor literal strokes: an eight-neighbor checker
                 // can mimic antialiasing while containing no connected letter.
                 for(const auto [dx,dy]:std::array<std::array<int,2>,4>{{{-1,0},{1,0},{0,-1},{0,1}}}) {
-                    const int nx=qx+dx,ny=qy+dy;if(nx<0||nx>=73||ny<0||ny>=26)continue;
-                    const auto next=static_cast<std::size_t>(ny*73+nx);
+                    const int nx=qx+dx,ny=qy+dy;if(nx<0||nx>=width||ny<0||ny>=26)continue;
+                    const auto next=static_cast<std::size_t>(ny*prefix_stride+nx);
                     if(mask[next]){mask[next]=0;queue[used++]=static_cast<int>(next);}
                 }
             }
@@ -195,19 +202,21 @@ class HudGlyphEvidenceProducer {
         std::sort(boxes.begin(),boxes.end(),[](auto a,auto b){return a.x<b.x;});return boxes;
     }
     void calibrate_literal_prefix() {
+        const auto region=prefix_region();
         for(const auto& sample:masks_[1].foreground)
-            literal_prefix_mask_[static_cast<std::size_t>((sample.y-shared_in_prefix_region.y)*73+sample.x-shared_in_prefix_region.x)]=1;
-        literal_prefix_boxes_=prefix_boxes(literal_prefix_mask_);
+            literal_prefix_mask_[static_cast<std::size_t>((sample.y-region.y)*prefix_stride+sample.x-region.x)]=1;
+        literal_prefix_boxes_=prefix_boxes(literal_prefix_mask_,region.width);
         if(literal_prefix_boxes_.size()!=5)throw std::invalid_argument("subpixel shared IN reference requires five separated literal prefix strokes");
     }
     HudGlyphMetrics measure_literal_prefix(const RgbImageView& image,int shift_x) const {
         auto m=measure(image,masks_[1],shift_x);m.subpixel_tolerant=true;
+        const auto region=prefix_region();
         PrefixMask actual{};std::size_t ink=0,unexpected=0,covered=0;
-        for(int y=0;y<26;++y)for(int x=0;x<73;++x) {
-            if(!white(pixel(image,shared_in_prefix_region.x+x+shift_x,shared_in_prefix_region.y+y)))continue;
-            actual[static_cast<std::size_t>(y*73+x)]=1;++ink;bool expected=false;
+        for(int y=0;y<26;++y)for(int x=0;x<region.width;++x) {
+            if(!white(pixel(image,region.x+x+shift_x,region.y+y)))continue;
+            actual[static_cast<std::size_t>(y*prefix_stride+x)]=1;++ink;bool expected=false;
             for(int dy=-1;dy<=1&&!expected;++dy)for(int dx=-1;dx<=1;++dx) {
-                const int nx=x+dx,ny=y+dy;if(nx>=0&&nx<73&&ny>=0&&ny<26&&literal_prefix_mask_[static_cast<std::size_t>(ny*73+nx)]){expected=true;break;}
+                const int nx=x+dx,ny=y+dy;if(nx>=0&&nx<region.width&&ny>=0&&ny<26&&literal_prefix_mask_[static_cast<std::size_t>(ny*prefix_stride+nx)]){expected=true;break;}
             }
             if(!expected)++unexpected;
         }
@@ -229,7 +238,7 @@ class HudGlyphEvidenceProducer {
         m.local_contrast=m.foreground_mean-m.negative_space_mean;
         m.unexpected_white_fraction=ink?static_cast<double>(unexpected)/static_cast<double>(ink):1;
         m.observed_ink_ratio=static_cast<double>(ink)/count;
-        const auto boxes=prefix_boxes(actual);m.literal_components=boxes.size();
+        const auto boxes=prefix_boxes(actual,region.width);m.literal_components=boxes.size();
         bool geometry=boxes.size()==literal_prefix_boxes_.size();
         if(geometry)for(std::size_t i=0;i<boxes.size();++i) {
             const auto a=boxes[i],b=literal_prefix_boxes_[i];
@@ -380,20 +389,23 @@ public:
     // been checked. The owner still binds manual selection and real receipts.
     HudGlyphEvidenceProducer(const RgbImageView& reference,std::string reference_sha256,std::string calibration_id,
                              PixelRegion title_region=PixelRegion{25,672,105,29},
-                             HudGlyphPolicy policy=HudGlyphPolicy::calibrated_title_v1)
+                             HudGlyphPolicy policy=HudGlyphPolicy::calibrated_title_v1,
+                             std::optional<PixelRegion> calibrated_difficulty_region={})
         :reference_sha256_(std::move(reference_sha256)),calibration_id_(std::move(calibration_id)),title_region_(title_region),policy_(policy) {
         if(!image_valid(reference)||!sha(reference_sha256_)||!text(calibration_id_)||
            (policy_!=HudGlyphPolicy::calibrated_title_v1&&policy_!=HudGlyphPolicy::shared_in_prefix_score_v1&&
-            policy_!=HudGlyphPolicy::shared_in_cell_score_v2&&policy_!=HudGlyphPolicy::shared_in_subpixel_prefix_score_v3)||
+            policy_!=HudGlyphPolicy::shared_in_cell_score_v2&&policy_!=HudGlyphPolicy::shared_in_subpixel_prefix_score_v3&&policy_!=HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4)||
            (policy_==HudGlyphPolicy::calibrated_title_v1&&!title_region_valid(title_region_)))
             throw std::invalid_argument("invalid HUD diagnostic reference");
         masks_[0]=make_mask(reference,fixed_regions[0]);
-        masks_[1]=make_mask(reference,shared()?shared_in_prefix_region:fixed_regions[1]);
+        if(calibrated_difficulty_region&&policy_!=HudGlyphPolicy::calibrated_title_v1)
+            throw std::invalid_argument("difficulty override is only for actual calibrated title redundancy");
+        masks_[1]=make_mask(reference,shared()?prefix_region():calibrated_difficulty_region.value_or(fixed_regions[1]));
         if(policy_==HudGlyphPolicy::calibrated_title_v1)masks_[2]=make_mask(reference,title_region_);
         else if(cell_score())calibrate_score_cells(reference);
         else if(!score(reference).glyph_structure_candidate)
             throw std::invalid_argument("shared IN reference requires seven score glyphs");
-        if(policy_==HudGlyphPolicy::shared_in_subpixel_prefix_score_v3)calibrate_literal_prefix();
+        if(subpixel())calibrate_literal_prefix();
     }
     PixelRegion title_region() const noexcept {return title_region_;}
     HudGlyphPolicy policy() const noexcept {return policy_;}
@@ -426,7 +438,7 @@ public:
         }
         bool unique_alignment=out.title_required||out.difficulty_alignment_candidates==1;
         out.difficulty_alignment_lower_x=out.difficulty_alignment_upper_x=out.difficulty_alignment_x;
-        if(policy_==HudGlyphPolicy::shared_in_subpixel_prefix_score_v3&&out.difficulty_alignment_candidates==0) {
+        if(subpixel()&&out.difficulty_alignment_candidates==0) {
             // Preserve the exact v2 acceptance path. Subpixel fallback retains
             // all valid offsets, admitting only one contiguous <=2px family.
             int lower=0,upper=0;
@@ -458,6 +470,7 @@ public:
             !pair?"fixed_glyph_or_negative_space_missing":!title?"title_glyph_or_negative_space_missing":
             !unique_alignment?"shared_IN_prefix_alignment_ambiguous":!score_allowed?"score_digit_structure_missing":
             out.title_required?"experimental_HUD_feature_candidate_only":
+            policy_==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4?"experimental_shared_difficulty_subpixel_HUD_candidate_only":
             policy_==HudGlyphPolicy::shared_in_subpixel_prefix_score_v3?"experimental_shared_IN_subpixel_HUD_candidate_only":
             policy_==HudGlyphPolicy::shared_in_cell_score_v2?"experimental_shared_IN_cell_HUD_candidate_only":"experimental_shared_IN_HUD_candidate_only";
         return out;

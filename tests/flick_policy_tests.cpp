@@ -1,5 +1,6 @@
 #include "../apps/chart_experiment/flick_policy.hpp"
 #include "../apps/chart_experiment/adaptive_first_note.hpp"
+#include "../apps/chart_experiment/catalog_source.hpp"
 #include <algorithm>
 #include <iostream>
 #include <limits>
@@ -164,6 +165,26 @@ int main() {
         const auto altered=compile(c,lead);AdaptiveFirstNoteTrigger altered_opening(c,-80*ms,altered.events.front().song_ns);
         check(altered_opening.description().model_sha256!=archived.description().model_sha256,"changed lead retained stale opening identity");
         straight_contracts();
+        check(hud_policy_matches_difficulty("shared-difficulty-subpixel-prefix-score-v4","AT"),"explicit AT HUD policy rejected");
+        check(!hud_policy_matches_difficulty("shared-in-subpixel-prefix-score-v3","AT"),"AT inherited IN HUD qualification");
+        Json source={{"schema","pas.installed-catalog-song-source.v1"},{"package","com.PigeonGames.Phigros"},
+            {"version_name","4.0.1"},{"version_code",157},{"exact_chart_bytes_verified",true},{"track_id","synthetic.0"},{"difficulty","AT"},
+            {"chart",{{"sha256",std::string(64,'a')},{"source",{{"catalog_key","Assets/Tracks/synthetic.0/Chart_AT.json"}}}}},
+            {"audio_identity",{{"format","native-fsb5"},{"sha256",std::string(64,'b')},{"catalog_key","Assets/Tracks/synthetic.0/music.wav"}}},
+            {"packages",Json::array({{{"sha256",std::string(64,'c')}}})}};
+        check(installed_catalog_audio_identity(source)==std::string(64,'b'),"native audio identity became a fake decoded WAV");
+        auto other=source;other["difficulty"]="IN";
+        rejects([&]{(void)installed_catalog_audio_identity(other);},"different chart difficulty address accepted");
+        other=source;other["audio_identity"]["catalog_key"]="Assets/Tracks/other/music.wav";
+        rejects([&]{(void)installed_catalog_audio_identity(other);},"cross-song audio address accepted");
+        other=source;other["audio_identity"]["sha256"]="bad";
+        rejects([&]{(void)installed_catalog_audio_identity(other);},"invalid native audio hash accepted");
+        auto large=chart();
+        for(unsigned n=0;n<2001;++n)note(large,NoteKind::tap,second+static_cast<Ns>(n)*50*ms);
+        const auto full=compile(large,defaults);
+        check(full.memory.contacts.size()==2001&&full.total_steps==4002,"more than 2000 notes were truncated or rejected");
+        AdaptiveFirstNoteTrigger large_opening(large,-80*ms,full.events.front().song_ns);
+        check(large_opening.description().first_down_ns==second,"more than 2000 notes rejected by opening budget");
         std::cout<<"PASS Flick parameter/profile/compiler/opening contracts: "<<checks<<" checks\n";
         return 0;
     } catch(const std::exception& error){std::cerr<<error.what()<<'\n';return 1;}
