@@ -804,17 +804,22 @@ $form.Add_FormClosing({
 function Save-CatalogPreview([string]$Directory) {
     $output = Resolve-CatalogInputPath $Directory
     if (Test-Path -LiteralPath $output) { throw '預覽輸出必須是新的目錄。' }
-    # A top-level Form is clamped to the runner's desktop work area. Host the
-    # very same production controls as a child Form, without a desktop frame.
+    # Form.SetBoundsCore can clamp even a child Form to desktop tracking sizes.
+    # Render the unchanged production control tree on a plain Panel canvas.
+    # A shown offscreen Form keeps native ComboBox/text rendering initialized.
     $previewHost = [Windows.Forms.Panel]::new()
     $previewHost.AutoSize = $false
+    $previewHost.Dock = 'None'
+    $previewHost.Location = [Drawing.Point]::Empty
+    $previewHost.Font = $form.Font
+    $previewHost.ForeColor = $form.ForeColor
+    $previewHost.BackColor = $form.BackColor
     $previewHost.ClientSize = [Drawing.Size]::new(1440, 900)
+    $previewHost.Controls.Add($layout)
+    $form.Controls.Add($previewHost)
     $form.ShowInTaskbar = $false
-    $form.TopLevel = $false
-    $form.FormBorderStyle = 'None'
-    $form.Dock = 'Fill'
-    $previewHost.Controls.Add($form)
-    $previewHost.CreateControl()
+    $form.StartPosition = 'Manual'
+    $form.Location = [Drawing.Point]::new(-32000, -32000)
     $form.Show()
     $poll.Start()
     if (-not $script:CatalogUi.Model -and -not $script:CatalogUi.Job) { Start-CatalogJob 'load' @($script:CatalogUi.Library) }
@@ -847,24 +852,24 @@ function Save-CatalogPreview([string]$Directory) {
             @('launch_legacy', $launchLegacyButton), @('status', $status)
         )) {
             $control = $entry[1]
-            $origin = $form.PointToClient($control.PointToScreen([Drawing.Point]::Empty))
+            $origin = $previewHost.PointToClient($control.PointToScreen([Drawing.Point]::Empty))
             $rectangle = [Drawing.Rectangle]::new($origin, $control.Size)
-            $contained = $form.ClientRectangle.Contains($rectangle) -and $control.Parent.ClientRectangle.Contains($control.Bounds)
+            $contained = $previewHost.ClientRectangle.Contains($rectangle) -and $control.Parent.ClientRectangle.Contains($control.Bounds)
             $bounds.Add([pscustomobject]@{
                 control = [string]$entry[0]; x = $origin.X; y = $origin.Y
                 width = $control.Width; height = $control.Height; contained = $contained
             })
         }
-        $bitmap = [Drawing.Bitmap]::new($form.ClientSize.Width, $form.ClientSize.Height)
+        $bitmap = [Drawing.Bitmap]::new($previewHost.ClientSize.Width, $previewHost.ClientSize.Height)
         try {
-            $form.DrawToBitmap($bitmap, [Drawing.Rectangle]::new(0, 0, $bitmap.Width, $bitmap.Height))
+            $previewHost.DrawToBitmap($bitmap, [Drawing.Rectangle]::new(0, 0, $bitmap.Width, $bitmap.Height))
             $path = Join-Path $output ([string]$size[0])
             $bitmap.Save($path, [Drawing.Imaging.ImageFormat]::Png)
             $artifacts.Add([pscustomobject]@{
                 file = [string]$size[0]; width = $bitmap.Width; height = $bitmap.Height
                 requested_client = @{ width = $requested.Width; height = $requested.Height }
-                actual_client = @{ width = $form.ClientSize.Width; height = $form.ClientSize.Height }
-                size_matches_request = $form.ClientSize -eq $requested
+                actual_client = @{ width = $previewHost.ClientSize.Width; height = $previewHost.ClientSize.Height }
+                size_matches_request = $previewHost.ClientSize -eq $requested
                 layout_contained = @($bounds | Where-Object { -not $_.contained }).Count -eq 0
                 control_bounds = $bounds.ToArray()
                 sha256 = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -877,8 +882,8 @@ function Save-CatalogPreview([string]$Directory) {
         song_count = $script:CatalogUi.Model.SongCount; chart_count = $script:CatalogUi.Model.ChartCount
         IN = $script:CatalogUi.Model.IN; AT = $script:CatalogUi.Model.AT
         device_access = $false; native_processes_started = 0; gameplay_qualified = $false
-        winforms_windows_created = 1; preview_top_level = $false; artifacts = $artifacts.ToArray()
-        scope = 'Offline production WinForms controls in a borderless child canvas at two sizes; no live game or touch behavior tested.'
+        winforms_windows_created = 1; preview_top_level = $false; preview_host_kind = 'Panel'; artifacts = $artifacts.ToArray()
+        scope = 'Offline production WinForms controls on a Panel canvas with an offscreen Form host; no live game or touch behavior tested.'
     }
     $report | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath (Join-Path $output 'preview-manifest.json') -Encoding utf8
     $report | ConvertTo-Json -Depth 7
