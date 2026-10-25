@@ -39,7 +39,11 @@ jobs:
           lfs: false
           persist-credentials: true
       - name: Install Git LFS hooks for this checkout
-        run: git lfs install --local
+        run: |
+          git lfs install --local
+          # A SHA checkout is detached and contains no local heads. Git LFS
+          # enumerates local refs even for an explicit HEAD push.
+          git switch -c catalogue-lfs-transfer
       - name: Test the catalogue downloader without network fixtures
         run: python3 -m unittest discover -s tests -p 'test_song_catalog.py' -v
       - name: Download the fixed public snapshot and verify source bytes
