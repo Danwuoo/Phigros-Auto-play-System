@@ -1,4 +1,8 @@
-# 本輪驗證：2026-10-23 起，更新至 2026-10-24
+# 本輪驗證：2026-10-23 起，更新至 2026-10-25
+
+## 2026-10-25 Glaciaxion IN三輪實測
+
+003 binary完成72→60→72 px三輪，使用者文字回報Perfect／Good／Bad／Miss為725/3/1/0、726/0/0/3、725/0/0/4。三輪均729 DOWN／729 UP、全部主機RPC成功、native確認結算、failure null與最後kernel zero；實際圖片0張。三輪均使用terminal-only結算v2 fallback，實際候選分別5／3／4個receipt、跨越71.436／69.730／64.454 ms。原manifest的unreviewed／AP false不變；沒有穩定改善、winner或新AP，時機／共用預設未調整。Cipher／FULi／Winter新版本實機重測仍NOT RUN。完整條件、時序與私有原件SHA見[三輪報告](FLICK_BAB_2026-10-25.md)。以下暫停狀態屬於較早準備階段。
 
 ## 2026-10-25 本機 native、結算與保存政策
 

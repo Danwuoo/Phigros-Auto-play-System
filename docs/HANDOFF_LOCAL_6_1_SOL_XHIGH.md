@@ -1,8 +1,8 @@
 # 本機 6.1 sol xhigh 交接 prompt
 
-2026-10-25 本機接續已完成新 Windows native 29/29 CTest、21 份 baseline 重建、23 次離線前檢與新 boot 五指 fixture；歌曲比較依使用者要求暫緩。新 binary／設定與本機證據見 [本機接續紀錄](LOCAL_NATIVE_FLICK_2026-10-25.md)，勿將下列歷史待辦或 NOT RUN 當作最新狀態。
+2026-10-25 本機接續已完成新 Windows native 29/29 CTest、21 份 baseline 重建、23 次離線前檢與新 boot 五指 fixture。其後使用者恢復實測，Glaciaxion IN的72→60→72 px三輪已完成；文字判定為725/3/1/0、726/0/0/3、725/0/0/4，無穩定改善或新AP，不改時機／共用預設。見[三輪比較](FLICK_BAB_2026-10-25.md)及[本機接續紀錄](LOCAL_NATIVE_FLICK_2026-10-25.md)，勿將下列歷史待辦或 NOT RUN 當作最新狀態。
 
-使用者追加的結算 v2 與一般回合不存圖片已建成新 003 封存；新設定使用 003，002 及 build006／AP 原件保留。v2 完成 100/100 原圖回放、29/29 native、4/4 portable，實機歌曲仍暫停。詳見 [結算與保存政策](RESULT_RECOGNITION_AND_STORAGE.md)。
+使用者追加的結算 v2 與一般回合不存圖片已建成新 003 封存；新設定使用 003，002 及 build006／AP 原件保留。v2 完成 100/100 原圖回放、29/29 native、4/4 portable，並在上述三輪實際由terminal-only fallback確認結算；各0張圖片、最後kernel zero。沒有分數／判定OCR或逐note遊戲證據，使用者自行操作電腦，勿接手選曲或Play。詳見 [結算與保存政策](RESULT_RECOGNITION_AND_STORAGE.md)。
 
 以下區塊可直接貼給本機模型。先讀本文件及連結的驗證紀錄，再沿用現有工作目錄；不要重新設計已完成的曲庫或重抓同一份來源。
 

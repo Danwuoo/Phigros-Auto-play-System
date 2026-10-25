@@ -34,6 +34,10 @@ Cipher、FULi、Winter 的舊原始日誌顯示五個結算 caption 均有充分
 
 metadata-only HUD 使用獨立 schema `pas.experimental-hud-timeline-metadata.v1`，沒有 pixel filename／SHA／offset。Flick 分析器仍可提供真實 receipt-time 鄰近索引，明示 `hud_pixels_not_retained_by_policy`，不假稱已核對像素或遊戲逐 note 判定。面板顯示「依設定未保存圖片」，不把刻意不存圖誤報為圖片遺失。
 
-舊私人譜面、音源、APK、校正、AP 圖片與每輪原始封存均保留，沒有為節省空間刪除原件。新遊戲實測依使用者要求暫停。
+舊私人譜面、音源、APK、校正、AP 圖片與每輪原始封存均保留，沒有為節省空間刪除原件。初次完成此變更時，遊戲實測依使用者要求暫停。
+
+## 其後恢復的三輪實機確認
+
+Glaciaxion IN的72→60→72 px三輪均在原template未匹配、來源有效的情況下由terminal-only v2 fallback確認結算；候選分別5／3／4個不同實際receipt，跨越71.436／69.730／64.454 ms，最後kernel zero。三輪實際圖片均0張，HUD pixels bytes均0；數值判定由使用者文字回報，沒有OCR或新AP。這是Glaciaxion的三輪確認，Cipher／FULi／Winter仍只有既有像素回放，未補稱新實機成功。三輪raw文字記錄共133.65 MiB，記錄仍占容量。詳見[完整比較](FLICK_BAB_2026-10-25.md)。
 
 本機建置與封存見 [接續紀錄](LOCAL_NATIVE_FLICK_2026-10-25.md)。
