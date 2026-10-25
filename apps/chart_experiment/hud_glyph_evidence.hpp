@@ -29,6 +29,7 @@ inline bool hud_candidate_eligible(bool shared_in,bool armed,bool source_valid,c
 }
 enum class HudTimestampKind { unknown, video_pts, host_arrival };
 enum class HudGlyphPolicy { calibrated_title_v1, shared_in_prefix_score_v1, shared_in_cell_score_v2, shared_in_subpixel_prefix_score_v3, shared_difficulty_subpixel_prefix_score_v4 };
+enum class HudPauseMaskPolicy { reference_white_v1, strong_white_core_v1 };
 struct HudFrameMetadata {
     std::uint64_t sequence=0,epoch=0,generation=0,geometry_version=0;
     std::string source_id,source_sha256,frame_id,frame_sha256,evidence_id,clock_id;
@@ -135,7 +136,7 @@ class HudGlyphEvidenceProducer {
             text(f.frame_id)&&sha(f.frame_sha256)&&text(f.evidence_id)&&text(f.clock_id)&&f.timestamp_ns>=0&&
             (f.timestamp_kind==HudTimestampKind::video_pts||f.timestamp_kind==HudTimestampKind::host_arrival);
     }
-    static Mask make_mask(const RgbImageView& reference,PixelRegion r) {
+    static Mask make_mask(const RgbImageView& reference,PixelRegion r,bool strong_white_core=false) {
         Mask mask;
         for(int y=r.y;y<r.y+r.height;++y)for(int x=r.x;x<r.x+r.width;++x) {
             const auto* p=pixel(reference,x,y);
@@ -144,7 +145,14 @@ class HudGlyphEvidenceProducer {
             // required; this catches the observed boundary-crossing failure.
             if((x==r.x||y==r.y||x+1==r.x+r.width||y+1==r.y+r.height)&&white(p))
                 throw std::invalid_argument("reference glyph ROI touches white boundary");
-            if(white(p))mask.foreground.push_back({x,y,static_cast<std::uint8_t>(gray(p))});
+            // v4's actual AT pause reference contains a 202-gray antialiased
+            // bottom edge. Its later raster phase is not reliably white. Bind
+            // the existing strict foreground checks to the strong reference
+            // core instead; retain the same boundary/negative-space guards.
+            if(white(p)) {
+                if(!strong_white_core||std::min({p[0],p[1],p[2]})>=224)
+                    mask.foreground.push_back({x,y,static_cast<std::uint8_t>(gray(p))});
+            }
             else if(gray(p)<128) {
                 // A fixed two-pixel exclusion avoids antialiased glyph edges;
                 // the remaining dark reference locations are negative space.
@@ -390,14 +398,20 @@ public:
     HudGlyphEvidenceProducer(const RgbImageView& reference,std::string reference_sha256,std::string calibration_id,
                              PixelRegion title_region=PixelRegion{25,672,105,29},
                              HudGlyphPolicy policy=HudGlyphPolicy::calibrated_title_v1,
-                             std::optional<PixelRegion> calibrated_difficulty_region={})
+                             std::optional<PixelRegion> calibrated_difficulty_region={},
+                             HudPauseMaskPolicy pause_mask_policy=HudPauseMaskPolicy::reference_white_v1)
         :reference_sha256_(std::move(reference_sha256)),calibration_id_(std::move(calibration_id)),title_region_(title_region),policy_(policy) {
         if(!image_valid(reference)||!sha(reference_sha256_)||!text(calibration_id_)||
            (policy_!=HudGlyphPolicy::calibrated_title_v1&&policy_!=HudGlyphPolicy::shared_in_prefix_score_v1&&
             policy_!=HudGlyphPolicy::shared_in_cell_score_v2&&policy_!=HudGlyphPolicy::shared_in_subpixel_prefix_score_v3&&policy_!=HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4)||
            (policy_==HudGlyphPolicy::calibrated_title_v1&&!title_region_valid(title_region_)))
             throw std::invalid_argument("invalid HUD diagnostic reference");
-        masks_[0]=make_mask(reference,fixed_regions[0]);
+        if((pause_mask_policy!=HudPauseMaskPolicy::reference_white_v1&&pause_mask_policy!=HudPauseMaskPolicy::strong_white_core_v1)||
+           (pause_mask_policy==HudPauseMaskPolicy::strong_white_core_v1&&policy_!=HudGlyphPolicy::calibrated_title_v1&&
+            policy_!=HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4))
+            throw std::invalid_argument("strong pause core is only for v4 or its calibrated title redundancy");
+        masks_[0]=make_mask(reference,fixed_regions[0],policy_==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4||
+            pause_mask_policy==HudPauseMaskPolicy::strong_white_core_v1);
         if(calibrated_difficulty_region&&policy_!=HudGlyphPolicy::calibrated_title_v1)
             throw std::invalid_argument("difficulty override is only for actual calibrated title redundancy");
         masks_[1]=make_mask(reference,shared()?prefix_region():calibrated_difficulty_region.value_or(fixed_regions[1]));

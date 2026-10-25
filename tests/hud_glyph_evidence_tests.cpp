@@ -409,6 +409,40 @@ try {
         try {HudGlyphEvidenceProducer bad(view(original),std::string(64,'c'),"wrong-literal-reference",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);}
         catch(const std::invalid_argument&){rejected=true;}
         check(rejected,"v3 reference silently calibrated nonliteral component layout");
+        ++groups;{
+            // Reproduce the observed AT failure: only the antialiased bottom
+            // row moves below the white threshold, while the pause core,
+            // negative space, difficulty and all seven score glyphs remain.
+            auto soft=literal;rectangle(soft,24,51,5,1,202);rectangle(soft,38,51,5,1,202);
+            auto pause_phase=soft;rectangle(pause_phase,24,51,5,1,152);rectangle(pause_phase,38,51,5,1,152);
+            HudGlyphEvidenceProducer v4(view(soft),std::string(64,'c'),"AT-pause-core-v4",{},HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4);
+            HudGlyphEvidenceProducer v3(view(soft),std::string(64,'c'),"IN-pause-reference-v3",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);
+            const auto accepted=v4.observe_features(view(pause_phase)),legacy=v3.observe_features(view(pause_phase));
+            check(v4.observe_features(view(soft)).hud_candidate&&accepted.hud_candidate,"v4 rejected pause core with changed antialiased edge");
+            check(accepted.fixed_glyphs[0].foreground_pixels==240&&accepted.fixed_glyphs[0].foreground_white_fraction==1&&
+                accepted.fixed_glyphs[0].foreground_mean_error==0,"v4 changed strict core checks or retained soft reference edge");
+            check(v3.observe_features(view(soft)).hud_candidate&&!legacy.hud_candidate&&legacy.fixed_glyphs[0].foreground_pixels==250&&
+                legacy.fixed_glyphs[0].foreground_white_fraction==.96,"v3 pause reference identity changed");
+            for(unsigned which=0;which<4;++which) {
+                auto invalid=pause_phase;
+                if(which==0)rectangle(invalid,24,27,5,1,32); // >2% genuinely missing core.
+                if(which==1)rectangle(invalid,21,23,28,33,32);
+                if(which==2)rectangle(invalid,21,23,28,33);
+                if(which==3)for(auto& value:invalid)value=static_cast<std::uint8_t>(value/2);
+                check(!v4.observe_features(view(invalid)).hud_candidate,"v4 pause core admitted missing/dim core or filled negative space");
+            }
+            for(const auto state:{ObservedGameState::paused,ObservedGameState::result})
+                check(!v4.observe_features(view(pause_phase),state).hud_candidate,"v4 pause core overrode denied state");
+            auto faint=soft;rectangle(faint,24,27,5,25,202);rectangle(faint,38,27,5,25,202);
+            rejected=false;
+            try {HudGlyphEvidenceProducer bad(view(faint),std::string(64,'c'),"no-strong-pause",{},HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4);}
+            catch(const std::invalid_argument&){rejected=true;}
+            check(rejected,"v4 calibrated a pause without strong foreground support");
+            rejected=false;
+            try {HudGlyphEvidenceProducer bad(view(soft),std::string(64,'c'),"v3-forced-core",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3,{},HudPauseMaskPolicy::strong_white_core_v1);}
+            catch(const std::invalid_argument&){rejected=true;}
+            check(rejected,"v3 accepted a silent pause mask override");
+        }
     }
     std::cout<<groups<<" groups / "<<checks<<" HUD glyph evidence checks passed; offline feature candidate only.\n";
     return 0;

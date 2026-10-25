@@ -55,6 +55,28 @@ int main(){try{
         check(wrong.observe(view(image),forged,raw(),frame(1,1000),false).support_frames==0,"v4 inherited IN teacher reason");
     }
     ++groups;{
+        auto soft=image;rectangle(soft,24,51,5,1,202);rectangle(soft,38,51,5,1,202);
+        auto phase=soft;rectangle(phase,24,51,5,1,152);rectangle(phase,38,51,5,1,152);
+        HudGlyphEvidenceProducer v4(view(soft),std::string(64,'a'),"AT-pause-core-v4",{},HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4);
+        const auto first=v4.observe_features(view(soft)),second=v4.observe_features(view(phase));
+        check(first.hud_candidate&&second.hud_candidate,"v4 pause core teacher controls invalid");
+        LearnedHudRedundancy h;
+        check(!h.observe(view(soft),first,raw(),frame(1,1000),false).ready,"v4 core learned from a single frame");
+        check(!h.observe(view(phase),second,raw(),frame(2,1059),false).ready,"v4 core shortened the 60ms support gap");
+        const auto& support=h.observe(view(phase),second,raw(),frame(3,1060),false);
+        check(support.ready&&support.support_frames==2&&support.auxiliary.hud_candidate&&
+            support.auxiliary.fixed_glyphs[0].foreground_pixels==240,"v4 auxiliary teacher retained unstable pause edge");
+        auto crossing=occluded(phase);const auto p=v4.observe_features(view(crossing));
+        check(!p.hud_candidate&&p.reason=="score_digit_structure_missing","v4 pause core occlusion control invalid");
+        check(h.observe(view(crossing),p,raw(),frame(4,1200),true).current_candidate,"v4 auxiliary current pause core rejected edge phase");
+        auto missing=crossing;rectangle(missing,24,27,5,1,32);
+        check(!h.observe(view(missing),p,raw(),frame(5,1300),true).current_candidate,"v4 auxiliary admitted real core loss with forged primary metrics");
+        auto no_pause=phase;rectangle(no_pause,21,23,28,33,32);
+        LearnedHudRedundancy invalid;
+        check(invalid.observe(view(no_pause),v4.observe_features(view(no_pause)),raw(),frame(1,1000),false).support_frames==0,
+            "v4 learned reference without actual pause core");
+    }
+    ++groups;{
         check(clean.valid&&clean.hud_candidate&&clean.score.supported_cells==7,"synthetic clean v3 control invalid");
         check(occlusion.valid&&!occlusion.hud_candidate&&occlusion.reason=="score_digit_structure_missing"&&
             occlusion.score.boundary_components>0&&occlusion.score.glyphs.size()>=4,"score-only occlusion control invalid");
