@@ -1,5 +1,7 @@
 # 本機 6.1 sol xhigh 交接 prompt
 
+**最新已實測入口**：Credits AT無點擊修復已封存為 `catalog-native-at-core-003`（程式40660a0），不是下列舊005。新binary6輪中5輪完整／結算／kernelzero：Credits AT638／0／0／0 AP、重跑637／1／0／0 Early1；Credits IN與Eradication IN各一次AP；Glaciaxion直線72px728／1／0／0。Dlyrotz0DOWN／generic opening別名拒絕，最終面板暫停此項，389份仍全保留（262可前檢、127跳過）。全部8輪含早期失敗都留紀錄、圖片0張，native29/29、portable4/4。原時機不變，不能宣稱全庫穩定或穩定AP。指標 `local-assets/current-full-library-session.txt` 現指本輪 `panel-final`，桌面兩入口已更新；詳細SHA、全部回合與待修見[最新修復／實測紀錄](CREDITS_AT_HUD_FIX_2026-10-25.md)。使用者僅明示授權本次computer-use驗證；已返回Credits AT選曲與人工面板，沒有native owner，不自動下一輪。下列「勿接手」及NOT RUN屬較早交接情境，不能覆蓋本輪明示授權或新實測範圍。
+
 **最新完整曲庫接續**：新005封存／v2操作面板已列出327首389份IN／AT，263份完成最終離線前檢（IN241／AT22，含Credits AT），其餘126份按使用者要求保留原因並跳過。384份已與授權APK原譜bytes核對，5份不同版本不強制映射；AT使用實際Credits AT Lv.15參考與獨立v4 policy。已解除獨立2000 notes拒絕，但事件／時間／容量預算保留。每輪不存圖，人工選曲／READY／Play；新005遊戲判定NOT RUN。程式a50229d，binary／設定／本機路徑與全部驗證見[完整面板紀錄](FULL_LIBRARY_PANEL_2026-10-25.md)。勿將下列舊入口與NOT RUN範圍視為最新整體狀態；重啟後仍須重新取得真實boot／五指證據。
 
 **最新接續**：使用者其後要求改善Flick折返且時機不變。已另建004封存與Glaciaxion直線72px profile，離線51個Flick折返28→0、全部判定錨點與關鍵時機不變，678個非Flick接點不變；新native29/29、portable4/4、21首offline前檢與324個GUI pins通過。新實機仍待使用者人工選曲／READY／Play；一般回合不存圖片、保留每輪紀錄，不自動重試。見[新路徑與本機入口](FLICK_STRAIGHT_PATH_2026-10-25.md)。舊003與三輪紀錄保留，不繼承AP。

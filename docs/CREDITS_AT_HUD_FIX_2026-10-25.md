@@ -25,3 +25,30 @@
 ## 本機原件
 
 本輪根目錄：repo外 `local-assets/phigros-4.0.1/credits-hud-core-local-20261025-190156/`。早期候選、失敗、RAM統計、各封存與後續回合分開，舊005、build006、AP、私人譜面／音源及四APK不覆寫。327首／389譜公共曲庫與LFS原件未重抓或改寫。最終版本與逐輪驗證見後續本輪索引。
+
+## 最終封存與全部回合
+
+程式提交 `40660a0667dbe3bc0c79751d311cdd9a1e8d8916`；最終獨立封存 `catalog-native-at-core-003/`，196份固定產物，binary SHA256 `18284d1df201ce1386d88602198abefa71723e6df3b128e1c5c435d1fa13a263`。沿用既有patched gRPC，不重建或替換第三方來源。Windows native29/29、portable configure/build/CTest4/4、learned HUD264 checks、glyph172 checks與面板SelfTest52 checks通過。首音、phase、Flick及既有profile／compiled fingerprint保持。
+
+以下 Perfect／Good／Bad／Miss 由 computer-use 暫存結算視圖獨立讀取，另寫文字sidecar；一般回合圖片0張。raw manifest的unreviewed／AP false不改寫。
+
+| 本輪序號／封存 | 曲目 | 分數與判定 | 原生結果 |
+| --- | --- | --- | --- |
+| 01／core001 | Credits AT | 0，0／0／0／638；停止後僅只讀續播診斷 | 0 DOWN，user_stop，未完成 |
+| 02／core002 | Credits AT | 446708，285／0／0／353 | 285 DOWN／284 UP，HUD逾期停止 |
+| 03／core003 | Credits AT | **1000000，638／0／0／0，本輪AP** | 638／638，2530 receipts，完整結算 |
+| 04／core003 | Credits IN | **1000000，535／0／0／0，本輪AP** | 535／535，1780 receipts，完整結算 |
+| 05／core003 | Glaciaxion IN／直線72px | 999568，728／1／0／0，Early1 | 729／729，6037 receipts，完整結算；不是AP |
+| 06／core003 | Dlyrotz IN | 無結算，暫停離開；不補造數字 | 0 DOWN，first_note_observation_budget |
+| 07／core003 | Eradication Catastrophe IN | **1000000，593／0／0／0，本輪AP** | 593／593，3455 receipts，完整結算 |
+| 08／core003 | Credits AT重跑 | 999506，637／1／0／0，Early1 | 638／638，2530 receipts，完整結算；AP未重現 |
+
+最終binary的6輪中5輪完整，涵蓋3首／4份IN或AT；同設定Credits AT兩輪均全曲完成、無Miss，其中一次AP、一次Good Early。不能由此宣稱全庫穩定、穩定AP或Flick因果改善，也未改時機。Dlyrotz的513候選全在PLAYING後產生，70幀有首音positive，卻因原譜高速／負速source／time別名保留多分支而保守拒絕。沒有增加預算強行起跑，既有AP資格不帶入這輪。
+
+`final-live-independent-audit.json`獨立核對五輪 **16332／16332** 個完整steps的scheduled時間、phase、pixel、pointer ownership均吻合，沒有漏步／多步；全部8輪release known、kernel zero、實際0圖片。兩AT新prefix fallback分別141／152個CURRENT實際觀測，其中30／32連續幀跨過舊44秒失效段，並未延長500ms。journal各小於64MiB／16000 rows，HUD容量無drop。首次launch helper參數shadow與Python UTF-8準備錯誤均在native啟動前發生，另存setup紀錄，沒有漏列裝置回合。
+
+## 最終人工入口與保留
+
+最終設定是本輪根下 `panel-final/launch-config.json`，SHA256 `0a4866754d29973d6a8b174a6477e5959496fe748421b77f8f82722de63c09be`。完整389份仍可見；262份可進入逐首前檢，126份原跳過加Dlyrotz這份實測開場待修，共127份列明原因。預選Credits AT。1158個pins全部核對；新視窗實際有非零handle／正確標題，桌面Test Panel／Song Library均改指向新003封存與設定，舊快捷方式另存備份。操作仍為選曲、啟動本首、READY後Play；本次明示授權的computer-use驗證已結束，沒有native owner等待或自動開始下一輪。
+
+舊8798份私人原件的存在／大小／mtime及369個原身份SHA、舊005manifest與兩輪ledger額外3個SHA全部不變；13個保留PAS source Git blobs及proto／third_party tree保持抽取身份。origin/main仍為 `2d479e17fa1566c089dce019cbb11eb883ba47fd`。本輪不動main、不force push、不提交私人RGB、譜面、音源或校正。

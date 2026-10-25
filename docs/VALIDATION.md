@@ -1,5 +1,9 @@
 # 本輪驗證：2026-10-23 起，更新至 2026-10-25
 
+## 2026-10-25 Credits AT無點擊修復與多曲實機
+
+最終core003 native29/29、portable configure/build/CTest4/4、learned HUD264／glyph172 checks與面板52 checks通過。使用者明示授權computer-use選曲與Play；8個新增回合全保留（2早期候選失敗、最終binary6輪中5輪完整／1輪Dlyrotz開場別名拒絕）。五輪實際16332個steps／receipts逐項時間、phase、pixel與ownership吻合，native結算確認、failure null及kernel zero；全部8輪0圖片。Credits AT一次AP、重跑637Perfect／1Good Early／0Bad／0Miss，AP未重現；Credits IN／Eradication IN各一次AP，Glaciaxion728／1／0／0。原500ms／60ms與觸控時機不變，未宣稱全庫穩定／穩定AP。完整回合、RAM診斷、獨立稽核、262／127最終面板及私人原件保存核對見[Credits AT實測紀錄](CREDITS_AT_HUD_FIX_2026-10-25.md)。
+
 ## 2026-10-25 完整操作面板／AT與接點預算
 
 新005 native29/29 CTest、Flick／來源／opening207 checks、learned HUD161 checks、HUD glyph158 checks；Python244項（243通過／1個symlink權限skip），portable configure/build/CTest4/4，面板SelfTest52 checks。全389份已逐譜記錄準備或跳過；最終binary263/263離線前檢（IN241／AT22）及實際v2 context1166個pins核對通過。授權APK原譜384份bytes相同、5份版本差異保留；Credits AT真實只讀校正與離線正／負例通過。2001接點／4002事件的compiler、opening及runtime回歸通過，沒有截斷音符。126份按格式／身份／資源原因跳過；不把離線準備稱為遊戲判定或AP。詳見[完整面板、身份與限制](FULL_LIBRARY_PANEL_2026-10-25.md)。

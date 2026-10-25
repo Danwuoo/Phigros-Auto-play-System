@@ -1,5 +1,7 @@
 # Rhythm Chart Memory — Phigros / 世界計畫研究分支
 
+**2026-10-25 Credits AT點擊修復與實測**：修正AT pause頂邊光柵變化，並於primary字樣失配時獨立驗證CURRENT完整AT／曲名／pause／score。新core003 native29/29、portable4/4；實測Credits AT兩輪638／0／0／0與637／1／0／0、Credits IN及Eradication IN各一次AP，Glaciaxion直線72px為728／1／0／0。五輪全曲／結算／kernel zero、全部回合0圖片；Dlyrotz另有0觸控首音別名失敗，面板暫列待修。389份全保留，262可前檢／127跳過，桌面入口已更新；未宣稱全庫穩定或穩定AP。[全部8輪、封存與入口](docs/CREDITS_AT_HUD_FIX_2026-10-25.md)。
+
 **2026-10-25 完整操作面板／AT**：327首、389份IN／AT與變體已放入同一人工測試台，可搜尋／篩選；263份通過最終離線前檢（IN241／AT22，含Credits AT），其餘126份列明原因跳過。384份與授權安裝APK原譜bytes相同，5份版本差異不強制映射。使用真實Credits AT HUD建立獨立policy，移除獨立2000 notes拒絕並保留完整事件／時間／容量預算。新005封存native29/29、portable4/4、Python244項含1skip；選曲／READY／Play仍由人操作，每輪不存圖片，新遊戲判定仍待測。[完整操作、身份與封存](docs/FULL_LIBRARY_PANEL_2026-10-25.md)。
 
 **2026-10-25 Flick路徑候選**：新增明確啟用的固定判定錨點直線policy。Glaciaxion IN原譜離線核對51個Flick折返28→0次、端點位移71.25–72.25 px，判定座標／DOWN／滑動末端／UP時機及678個非Flick接點不變。新004封存native29/29、portable4/4、21首離線前檢通過；只預選Glaciaxion直線72px，人工選曲／READY／Play、不存圖片。新實機判定仍待測，未宣稱改善或AP。[修改、封存與入口](docs/FLICK_STRAIGHT_PATH_2026-10-25.md)。
