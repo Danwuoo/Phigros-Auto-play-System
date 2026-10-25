@@ -40,7 +40,7 @@ constexpr const char* source_id="live-grpc-phigros-whole-song";
 constexpr const char* dlyrotz_hud_reference_sha="397431f2749bb38a845c6845977fc5c37cb2de51a79ff273dd3417ef2756e09a";
 constexpr const char* usage=
     "chart_experiment run SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song [--experimental-hud-reference CLEAN.rgb]\n"
-    "chart_experiment prepare-adaptive CHART.json SOURCE-MANIFEST.json NEW_DIR [--normal-projection-pixels LIMIT] [--drag-duration-ms MS] [--input-inset-pixels PIXELS] [--contact-capacity N] [--hud-policy calibrated-title-v1|shared-in-prefix-score-v1|shared-in-cell-score-v2|shared-in-subpixel-prefix-score-v3] [--import-policy POLICY_ID] [--tight-projection-speed-bounds 0|1] [--flick-lead-ms 1..100] [--flick-travel-ms 2..200] [--flick-distance-pixels 1..240] [--flick-release-ms 1..100]\n"
+    "chart_experiment prepare-adaptive CHART.json SOURCE-MANIFEST.json NEW_DIR [--normal-projection-pixels LIMIT] [--drag-duration-ms MS] [--input-inset-pixels PIXELS] [--contact-capacity N] [--hud-policy calibrated-title-v1|shared-in-prefix-score-v1|shared-in-cell-score-v2|shared-in-subpixel-prefix-score-v3] [--import-policy POLICY_ID] [--tight-projection-speed-bounds 0|1] [--flick-lead-ms 1..100] [--flick-travel-ms 2..200] [--flick-distance-pixels 1..240] [--flick-release-ms 1..100] [--flick-path-policy dynamic-line-v1|judgment-anchored-straight-v1]\n"
     "chart_experiment run-adaptive SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song --song-profile PROFILE.json --experimental-hud-reference CLEAN.rgb [--capacity-evidence EVIDENCE.json]\n"
     "Use check or check-adaptive in place of run/run-adaptive for offline preflight only (no device discovery/input/output directory).\n"
     "Optional final suffix: --image-retention none|result|diagnostic (default none; result saves only a confirmed result PNG).\n"
@@ -144,6 +144,7 @@ Json compiled_json(const CompiledContactPlan& plan) {
         {"tap_duration_ns",plan.metadata.options.tap_duration_ns},{"drag_duration_ns",plan.metadata.options.drag_duration_ns},
         {"flick_lead_ns",plan.metadata.options.flick_lead_ns},{"flick_travel_ns",plan.metadata.options.flick_travel_ns},
         {"flick_release_ns",plan.metadata.options.flick_release_ns},{"flick_distance_reference_pixels",plan.metadata.options.flick_distance_reference_pixels},
+        {"flick_path_policy",flick_path_policy_name(plan.metadata.options.flick_path_policy)},
         {"calibration_id",plan.metadata.options.calibration_id},{"input_geometry",{1280,720,0}}};
     for(const auto& contact:plan.memory.contacts) {
         Json steps=Json::array();
@@ -319,7 +320,7 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
     return song;
 }
 int prepare_adaptive(int argc,char** argv) {
-    if(argc<5||argc>27||(argc-5)%2)throw std::invalid_argument(usage);
+    if(argc<5||argc>29||(argc-5)%2)throw std::invalid_argument(usage);
     const std::filesystem::path output=std::filesystem::absolute(utf8_path(argv[4]));
     if(std::filesystem::exists(output))throw std::invalid_argument("output must not exist");
     const auto source_bytes=read_utf8_file(argv[3],1024*1024);const auto source=Json::parse(source_bytes);
@@ -339,6 +340,9 @@ int prepare_adaptive(int argc,char** argv) {
             if(song.hud_policy!="calibrated-title-v1"&&song.hud_policy!="shared-in-prefix-score-v1"&&song.hud_policy!="shared-in-cell-score-v2"&&song.hud_policy!="shared-in-subpixel-prefix-score-v3")
                 throw std::invalid_argument("unsupported explicit adaptive HUD policy");
             continue;
+        }
+        if(option=="--flick-path-policy") {
+            (void)set_flick_option(song.flick,option,Json(argv[index+1]));continue;
         }
         const auto value=Json::parse(argv[index+1]);
         if(set_flick_option(song.flick,option,value))continue;
@@ -626,8 +630,11 @@ int run(int argc,char** argv) {
         {"experimental_flick_release_ns",compile_options.flick_release_ns},
         {"experimental_flick_lead_ns",compile_options.flick_lead_ns},{"experimental_flick_travel_ns",compile_options.flick_travel_ns},
         {"experimental_flick_distance_reference_pixels",compile_options.flick_distance_reference_pixels},
+        {"experimental_flick_path_policy",flick_path_policy_name(compile_options.flick_path_policy)},
         {"flick_release_scope","hold final stroke position for experimental_flick_release_ns before UP"},
-        {"flick_stroke_scope","lead/travel/distance recorded above;dynamic line pose retained;normal-offset zero at judgment;not a qualified game hit region"},
+        {"flick_stroke_scope",compile_options.flick_path_policy==FlickPathPolicy::judgment_anchored_straight_v1 ?
+            "fixed projected judgment anchor and side normal;constant straight stroke;full distance without clipping;unchanged lead/travel/release;not a qualified game hit region" :
+            "lead/travel/distance recorded above;dynamic line pose retained;normal-offset zero at judgment;not a qualified game hit region"},
         {"dwell_scope","experimental per-song candidate; Tap/Drag durations are recorded above and bound by the compiled fingerprint; compiler defaults unchanged"},
         {"image_retention",image_retention_name(image_retention)},
         {"HUD_timeline_policy",diagnostic_images?"50ms actual receipt cadence; preallocated grayscale score/combo pixels; save after release; diagnostic only":"50ms actual receipt metadata only; no grayscale/pixel file; save after release"},

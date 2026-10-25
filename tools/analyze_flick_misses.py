@@ -379,6 +379,10 @@ def analyze_run(run_directory, *, miss_windows_path=None, proximity_pixels=48.0,
     for key in ("flick_lead_ns", "flick_travel_ns", "flick_release_ns", "flick_distance_reference_pixels"):
         if "experimental_" + key in manifest and manifest["experimental_" + key] != plan[key]:
             raise ValueError("Manifest and compiled Flick parameters differ")
+    path_policy = plan.get("flick_path_policy", "dynamic-line-v1")
+    if (path_policy not in ("dynamic-line-v1", "judgment-anchored-straight-v1")
+            or manifest.get("experimental_flick_path_policy", "dynamic-line-v1") != path_policy):
+        raise ValueError("Unknown or mismatched Flick path policy")
     receipts, receipt_ref = load_receipts(run_dir / "receipts.jsonl")
     gaps = ["game_per_note_judgment_not_observed", "Android_input_callbacks_not_observed",
             "moving_or_rotating_line_pose_not_reconstructed_from_compiled_steps"]
@@ -518,7 +522,8 @@ def analyze_run(run_directory, *, miss_windows_path=None, proximity_pixels=48.0,
     return dict(schema="pas.flick-diagnostics.v1", song_id=manifest.get("song_id"), difficulty=manifest.get("difficulty"),
                 chart_sha256=plan["chart_sha256"], compiled_fingerprint=plan["cache_sha256"],
                 sources=dict(manifest=manifest_ref, compiled_plan=plan_ref, receipts=receipt_ref, manual_windows=windows_ref),
-                parameters={key: plan.get(key) for key in ("flick_lead_ns", "flick_travel_ns", "flick_release_ns", "flick_distance_reference_pixels")},
+                parameters={**{key: plan.get(key) for key in ("flick_lead_ns", "flick_travel_ns", "flick_release_ns", "flick_distance_reference_pixels")},
+                            "flick_path_policy": path_policy},
                 experimental_phase_ms=phase, clock_model="manifest arrival-origin + explicit phase + song_ns; rate=1 hypothesis only",
                 thresholds=dict(dispatch_lateness_ns=lateness_limit, nearby_contact_pixels=proximity,
                                 screen_displacement_fraction=.25, host_stroke_duration_fraction=.5,

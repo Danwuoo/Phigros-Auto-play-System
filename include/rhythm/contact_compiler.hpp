@@ -9,12 +9,26 @@
 namespace rhythm {
 enum class CompileSeverity { warning, error };
 enum class OffscreenPolicy { reject, bounded_normal_candidate, bounded_normal_intersection_candidate_v1 };
+enum class FlickPathPolicy { dynamic_line_v1, judgment_anchored_straight_v1 };
+inline const char* flick_path_policy_name(FlickPathPolicy policy) {
+    switch(policy) {
+    case FlickPathPolicy::dynamic_line_v1:return "dynamic-line-v1";
+    case FlickPathPolicy::judgment_anchored_straight_v1:return "judgment-anchored-straight-v1";
+    }
+    return "invalid";
+}
 struct ContactCompileOptions {
     int max_contacts = 2;
     SongNs tap_duration_ns = 16'000'000, drag_duration_ns = 16'000'000;
     SongNs flick_lead_ns = 16'000'000, flick_travel_ns = 32'000'000,
            flick_release_ns = 4'000'000;
     double flick_distance_reference_pixels = 48;
+    // Explicit candidate: freeze the projected judgment anchor and side normal,
+    // then move at constant reference velocity through that anchor. No following
+    // line motion, per-sample projection, clipping, or timing changes. Reject a
+    // full stroke that does not fit the declared rectangle; never shorten it.
+    // Default preserves archived paths, sampling, and fingerprints.
+    FlickPathPolicy flick_path_policy = FlickPathPolicy::dynamic_line_v1;
     // Includes <sqrt(2) pixel rasterization error. Applies to zero-order held
     // coordinates, since PAS dispatches discrete MOVE events, not interpolation.
     double max_path_error_pixels = 4;

@@ -4,6 +4,8 @@
 
 同日依使用者追加要求，修改實驗 app 的結算標籤判讀與影像保存、metadata-only HUD 及分析／面板提示；以新 v2 policy 明確啟用，舊 v1 與原件保留。沒有改保留 PAS sources／傳輸／接點 compiler 或輸入期限，詳見 [結算與保存政策](RESULT_RECOGNITION_AND_STORAGE.md)。
 
+其後依使用者要求檢查Flick折返，另新增opt-in `judgment-anchored-straight-v1`到新contact compiler與實驗profile／CLI／manifest，並保留候選產生與分析工具的policy身份。缺欄位仍採舊dynamic-line-v1，不改共用預設、時機或非Flick路徑。保留PAS／proto／third_party不變；新幾何provenance與fingerprint獨立，不能繼承舊AP。見[Flick路徑契約](FLICK_TUNING.md)。
+
 來源 commit：`2d479e17fa1566c089dce019cbb11eb883ba47fd`。
 目的分支：`feature/chart-driven-multigame`。
 

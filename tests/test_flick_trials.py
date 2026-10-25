@@ -13,6 +13,20 @@ SPEC.loader.exec_module(trials)
 
 
 class FlickTrialPreparationTests(unittest.TestCase):
+    def test_straight_policy_is_preserved_in_every_trial_command(self):
+        self.profile_value["flick_path_policy"] = "judgment-anchored-straight-v1"
+        self.save_profile()
+        result = self.prepare()
+        for trial in result["trials"]:
+            self.assertEqual(trial["parameters"]["flick_path_policy"], "judgment-anchored-straight-v1")
+            args = trial["native_prepare_argv"]
+            self.assertEqual(args[args.index("--flick-path-policy") + 1], "judgment-anchored-straight-v1")
+
+    def test_invalid_path_policy_is_rejected(self):
+        for invalid in (None, True, 1, "unknown"):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                trials.parameters({"flick_path_policy": invalid})
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

@@ -17,6 +17,7 @@ DEFAULTS = dict(flick_lead_ms=30, flick_travel_ms=60,
 FLAGS = dict(flick_lead_ms="--flick-lead-ms", flick_travel_ms="--flick-travel-ms",
              flick_distance_reference_pixels="--flick-distance-pixels",
              flick_release_ms="--flick-release-ms")
+PATH_POLICIES = ("dynamic-line-v1", "judgment-anchored-straight-v1")
 
 
 def parameters(profile):
@@ -33,6 +34,11 @@ def parameters(profile):
         raise ValueError("Flick lead must be shorter than travel")
     # Normalize 60 and 60.0 so baseline/duplicate candidate detection is numeric.
     result["flick_distance_reference_pixels"] = float(distance)
+    policy = profile.get("flick_path_policy", PATH_POLICIES[0])
+    if type(policy) is not str or policy not in PATH_POLICIES:
+        raise ValueError("Unknown Flick path policy")
+    if policy != PATH_POLICIES[0]:
+        result["flick_path_policy"] = policy
     return result
 
 
@@ -99,6 +105,8 @@ def prepare_trials(profile_path, chart_path, source_path, executable_path, outpu
               "--hud-policy", profile.get("hud_policy", "calibrated-title-v1"),
               "--import-policy", profile.get("import_policy_id", "phigros-v3-strict-v1"),
               "--tight-projection-speed-bounds", int(tight_bounds)]
+    if "flick_path_policy" in baseline:
+        common.extend(("--flick-path-policy", baseline["flick_path_policy"]))
     variants = [("baseline", baseline)]
     seen = {json.dumps(baseline, sort_keys=True)}
     for value in values:

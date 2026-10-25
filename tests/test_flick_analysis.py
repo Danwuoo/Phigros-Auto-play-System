@@ -66,6 +66,17 @@ def fixture():
 
 
 class FlickAnalysisTests(unittest.TestCase):
+    def test_explicit_path_policy_is_reported_and_mismatch_rejected(self):
+        self.plan["flick_path_policy"] = "judgment-anchored-straight-v1"
+        self.manifest["experimental_flick_path_policy"] = "judgment-anchored-straight-v1"
+        self.assertEqual(self.analyze()["parameters"]["flick_path_policy"], "judgment-anchored-straight-v1")
+        self.manifest["experimental_flick_path_policy"] = "dynamic-line-v1"
+        with self.assertRaisesRegex(ValueError, "path policy"):
+            self.analyze()
+        self.plan["flick_path_policy"] = "unknown"
+        with self.assertRaisesRegex(ValueError, "path policy"):
+            self.analyze()
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

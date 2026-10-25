@@ -4,6 +4,16 @@
 
 目前沒有證據能把各曲的 Flick Miss 歸結為同一個根因，也沒有宣稱本次修改已修好 AP。既有實測與缺錄項目仍以 [完整回合紀錄](SESSION_RECORDS_2026-10-24.md) 和 [驗證紀錄](VALIDATION.md) 為準；新工具的離線測試不增加遊戲實測成績。
 
+## 路徑候選：固定判定錨點的直線
+
+`flick_path_policy` 缺欄位時仍為 `dynamic-line-v1`，保留舊路徑與fingerprint。明確指定 `--flick-path-policy judgment-anchored-straight-v1` 時，新profile綁定固定判定錨點／方向的直線候選；`check-adaptive`／`run-adaptive`以該policy重編譯並核對新fingerprint，不能直接更改舊profile的policy後沿用舊身份。
+
+新路徑只在判定時刻J計算一次原生位置、side normal與既有normal projection。以該投影錨點A、固定單位方向N、距離D及travel T定義整段連續路徑 `P(t)=A+N*D*(t-J)/T`，不再跟隨滑動期間的line move／rotate，也不逐點投影。保留DOWN=`J−lead`、判定J的必要MOVE、滑動末端=`J−lead+travel`及原release後UP；內部MOVE採樣依直線速度與原離散保持誤差預算決定。Tap／Drag／Hold不使用這項policy。
+
+完整直線兩端必須落在既有canvas／inset矩形內；凸矩形可保證中間路徑也在內，無法容納時整份計畫拒絕，不裁切、縮短、換方向或自動退回舊路徑。像素取整沿用既有映射與inward rounding，方向各軸單調，可避免命令座標折返；這不代表實際Android運動或遊戲接受已驗證。投影provenance只記判定錨點，不將它標成整段動態line追蹤證明。新policy另綁入fingerprint與實驗manifest，不取得舊AP或遊戲資格。
+
+使用者指定先改善路徑、保持時機。此次準備沿用Glaciaxion IN最近一輪的72 reference pixels、phase −80 ms、lead／travel／release 30／60／24 ms、Tap／Drag 32 ms與其餘固定條件；新binary與profile另存，舊003／build006／AP原件保留。一般回合仍預設不保存圖片，保留receipts與metadata-only HUD；結果數字由使用者回報。之前[72→60→72比較](FLICK_BAB_2026-10-25.md)沒有證明幅度穩定改善，不把新幾何候選稱為已修好Flick Miss。
+
 ## 1. 四個可調參數
 
 | Profile 欄位 | `prepare-adaptive` 選項 | 缺欄位時的預設 | 接受範圍 |
@@ -98,7 +108,7 @@ python .\tools\prepare_flick_trials.py `
 定義 **A 為原始 baseline，B 為某一個候選**。先保存 A 的既有完整回合，再針對同一個 B 採 B–A–B 順序比較。第二個 B 不再改參數；另一個候選另開比較組。
 
 1. 固定同一 APK、chart SHA、歌曲難度、裝置／模擬器、解析度、phase、Tap／Drag、projection、inset、HUD 與 capacity。只變動選定的 Flick 欄位。
-2. 每個回合使用新輸出目錄，保存 manifest、compiled plan、receipts、HUD timeline、結算圖及人工結果。實跑沿用既有 `run-adaptive` 操作、裝置證據與停止／釋放流程；候選工具不自動開始或重試遊戲。
+2. 每個回合使用新輸出目錄，保存 manifest、compiled plan、receipts、HUD timeline metadata及人工結果。現行一般回合依使用者要求不存圖片；結算圖僅在另行明確啟用影像保存時才有。實跑沿用既有 `run-adaptive` 操作、裝置證據與停止／釋放流程；候選工具不自動開始或重試遊戲。
 3. 執行 B–A–B，核對兩次 B 是否出現一致方向的改變。可重複比較區塊並補 A，使 A／B 都有多次完整回合；一次 AP 或一次較低 Miss 不能單獨判定因果。
 4. 把未跑完、late stop、缺結算或缺原件的回合一併列出。它們不是可以刪除的差成績，也不能補記為 AP／0 Miss。
 5. 結算與人工窗口對照逐 Flick 診斷，再決定是否保留該曲的新 profile。證據不足時保留「待驗」，不由工具自動選優勝。

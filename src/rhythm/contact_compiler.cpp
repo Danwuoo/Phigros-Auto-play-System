@@ -410,9 +410,12 @@ struct Build {
     }
     Point projected_pixel(const PhigrosLinePose& pose,const SemanticNote& note,double offset,SongNs time) const {
         const auto target=projected(pose,note,offset,time);
-        const auto mapped=mapping.map_reference_pixels(target.point);
+        return projected_reference_pixel(target.point,time);
+    }
+    Point projected_reference_pixel(PosePoint target,SongNs time) const {
+        const auto mapped=mapping.map_reference_pixels(target);
         if(mapped.status!=GeometryStatus::mapped||!mapped.pixel)
-            throw Failure("uncertified_normal_projection","Projected normal intersection does not map inside declared input geometry",time,target.point);
+            throw Failure("uncertified_normal_projection","Projected normal intersection does not map inside declared input geometry",time,target);
         auto pixel=*mapped.pixel;
         if(inset_raster_bounds) {
             // Round a boundary inward at the raster stage only. This cannot
@@ -424,7 +427,7 @@ struct Build {
             const auto dx=static_cast<double>(pixel.x)-mapped.input_normalized.x*mapping.geometry().input_width;
             const auto dy=static_cast<double>(pixel.y)-mapped.input_normalized.y*mapping.geometry().input_height;
             if(std::hypot(dx,dy)>raster_error+input_scale*1e-6)
-                throw Failure("projection_inset_raster_error","Inward raster rounding exceeds declared projection error reserve",time,target.point);
+                throw Failure("projection_inset_raster_error","Inward raster rounding exceeds declared projection error reserve",time,target);
         }
         return {static_cast<double>(pixel.x)/(mapping.geometry().input_width-1),
                 static_cast<double>(pixel.y)/(mapping.geometry().input_height-1)};
@@ -496,9 +499,62 @@ struct Build {
         append(contact,last,flick ? Phase::move : Phase::up,projected_pixel(poses.line_at(line_index,last),note,offset_at(last),last),true);
         if(flick)append(contact,add(last,options.flick_release_ns),Phase::up,contact.steps.back().point,true);
     }
+    void straight_flick(Contact& contact,const SemanticNote& note,std::size_t line_index,
+            SongNs first,SongNs last,double projection,NoteContactOwnership& ownership) {
+        const auto pose=poses.line_at(line_index,note.start_ns);
+        const auto native=phigros_line_point(pose,note.position_x,note.side);
+        const bool dynamic=options.offscreen_policy==OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+        const auto anchor=dynamic ? projected(pose,note,0,note.start_ns).point :
+            phigros_line_point(pose,note.position_x,note.side,projection).reference_pixels;
+        const double velocity=options.flick_distance_reference_pixels/static_cast<double>(options.flick_travel_ns);
+        const auto at=[&](SongNs time) {
+            const double offset=velocity*static_cast<double>(static_cast<long double>(time)-note.start_ns);
+            return PosePoint{anchor.x+native.side_normal.x*offset,anchor.y+native.side_normal.y*offset};
+        };
+        const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
+        const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
+        // A rectangle is convex. Endpoint membership certifies the full straight
+        // stroke, independently of native line discontinuities during the stroke.
+        for(const auto time:{first,last}) {
+            const auto p=at(time);
+            if(!std::isfinite(p.x)||!std::isfinite(p.y)||p.x<xs.lo||p.x>xs.hi||p.y<ys.lo||p.y>ys.hi)
+                throw Failure("straight_flick_outside_rectangle","Full judgment-anchored stroke must fit without clipping or shortening",time,p);
+        }
+        const double speed=input_scale*velocity;
+        const long double allowance=(options.max_path_error_pixels-raster_error-input_scale*1e-6)/speed;
+        if(!std::isfinite(speed)||speed<=0||allowance<1)
+            throw Failure("straight_flick_resolution","Straight stroke cannot satisfy the discrete-held error bound",first);
+        const SongNs boundaries[]={first,note.start_ns,last};
+        std::size_t sampled=0;
+        for(std::size_t i=0;i<2;++i) {
+            const auto a=boundaries[i],b=boundaries[i+1];
+            append(contact,a,i==0 ? Phase::down : Phase::move,projected_reference_pixel(at(a),a),true);
+            const auto delta=allowance>=static_cast<long double>(b-a) ? b-a : static_cast<SongNs>(std::floor(allowance));
+            for(SongNs t=a;b-t>delta;) {
+                if(++sampled>options.max_steps_per_contact)
+                    throw Failure("straight_flick_work_budget","Straight stroke sampling exceeds finite work budget, including duplicate pixels",t);
+                t+=delta;
+                append(contact,t,Phase::move,projected_reference_pixel(at(t),t));
+            }
+        }
+        append(contact,last,Phase::move,projected_reference_pixel(at(last),last),true);
+        append(contact,add(last,options.flick_release_ns),Phase::up,contact.steps.back().point,true);
+        // Projection provenance applies at the judgment anchor only. This path
+        // does not claim to follow the moving line or its projected trajectory.
+        ownership.time_varying_normal_projection=false;
+        if(dynamic) {
+            if(++projection_span_count>options.max_steps_in_plan)
+                throw Failure("projection_span_budget","Straight Flick anchor provenance exceeds plan budget",note.start_ns);
+            const auto p=projected(pose,note,0,note.start_ns);
+            ownership.normal_projection_spans.push_back({note.start_ns,note.start_ns,projection,projection,p.edge,0});
+        }
+    }
 };
 
 void check_options(const ContactCompileOptions& options) {
+    if(options.flick_path_policy!=FlickPathPolicy::dynamic_line_v1&&
+       options.flick_path_policy!=FlickPathPolicy::judgment_anchored_straight_v1)
+        throw Failure("invalid_options","Unknown Flick path policy");
     if(options.max_contacts<1||options.max_contacts>10 || options.tap_duration_ns<=0 || options.drag_duration_ns<=0 ||
        options.flick_lead_ns<=0 || options.flick_travel_ns<=options.flick_lead_ns || options.flick_release_ns<=0 ||
        !std::isfinite(options.flick_distance_reference_pixels)||options.flick_distance_reference_pixels<=0 ||
@@ -547,6 +603,7 @@ std::string cache_key(const CompiledContactPlan& plan) {
         text("normal_projection_inset_reference_pixels.v1");stream<<o.normal_projection_inset_reference_pixels<<';';
     }
     if(o.tight_projection_speed_bounds)text("analytic-projected-derivative-v1");
+    if(o.flick_path_policy!=FlickPathPolicy::dynamic_line_v1)text(flick_path_policy_name(o.flick_path_policy));
     stream<<plan.ownership.size()<<':';
     for(const auto& owned:plan.ownership) {
         text(owned.source_note_id);text(owned.source_json_pointer);
@@ -608,6 +665,10 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
             if(options.tight_projection_speed_bounds)plan.metadata.strategy+="; analytic-projected-derivative-v1";
         } else if(options.offscreen_policy==OffscreenPolicy::bounded_normal_candidate)
             plan.metadata.projection_policy_version="bounded_fixed_normal_candidate_v1";
+        if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_straight_v1) {
+            plan.metadata.strategy+="; judgment-anchored-straight-v1";
+            plan.metadata.requires_calibration=true;
+        }
         std::set<std::string> source_ids;
         std::uint64_t next_id=1;
         std::size_t notes=0;
@@ -635,7 +696,9 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                 } else if(note.kind==NoteKind::flick) {
                     if(note.start_ns<options.flick_lead_ns) throw Failure("negative_flick_lead", "Flick stroke would begin before song zero",note.start_ns);
                     const auto first=note.start_ns-options.flick_lead_ns;
-                    if(dynamic_projection)build.projected_trajectory(contact,note,li,first,add(first,options.flick_travel_ns),true,owned);
+                    if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_straight_v1)
+                        build.straight_flick(contact,note,li,first,add(first,options.flick_travel_ns),projection,owned);
+                    else if(dynamic_projection)build.projected_trajectory(contact,note,li,first,add(first,options.flick_travel_ns),true,owned);
                     else build.trajectory(contact,note,li,first,add(first,options.flick_travel_ns),projection,true);
                     const auto& a=contact.steps.front().point;const auto& b=contact.steps[contact.steps.size()-2].point;
                     const double dx=(b.x-a.x)*(geometry.input_width-1),dy=(b.y-a.y)*(geometry.input_height-1);
