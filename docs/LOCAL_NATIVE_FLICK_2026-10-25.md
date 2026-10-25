@@ -2,11 +2,22 @@
 
 接續雲端 `d89af4c64c945230ecb7c7184fd7871ce3e9a4be`，以 fast-forward 從本機 `3e66ab7` 更新。本機起始工作樹無未提交變更；main 未修改。公開曲庫沿用固定上游與既有 LFS 物件，沒有重建曲庫或重新執行上游 sync。
 
+## LFS 全庫已在本機完成
+
+2026-10-25 本機完成 **716/716 LFS 物件**下載與 checkout：389 份 IN／AT 原譜、327 份 OGG。`git lfs fsck` 成功；`sync_song_catalog.py verify` 實際逐檔回驗 **719/719**（含 3 metadata），0 failed、0 missing，327 首、333 IN（含6變體）／56 AT／327 音源。
+
+重建的 library SHA256 與原固定索引相同：`555bc99aecd340c993520c5270a948a91ecc251c7276fbde828118e4f4a090b3`。本機驗證 report 留在專案外，原公共封存 report／library bytes 保持不變；沒有將本機時間或部分下載狀態提交覆蓋公共報告。Git index 經正常 LFS clean/filter 更新後沒有任何 assets 差異。
+
+桌面新入口為 **Phigros Song Library**；對應專案外本次 session 的 `open-song-library-v2.cmd`，連結 003 binary／結算v2／不存圖的人工面板。`start-verification-v2.cmd` 是新的 opt-in 開機／五指入口；本次不再啟動實測。新 boot 仍必須取得新 proof，不能用舊 boot 字串改寫設定。
+
+曲庫下載不等於389份譜面都可實測：公共來源4.0.1.2與本機4.0.1／157的身份對應、原本356／5／28的strict匯入範圍、AT／變體及資源限制仍保留；`live_ready_count=0` 沒有改成已取得遊戲資格。
+
 ## 追加要求：結算 v2／不存圖（目前使用版本）
 
 使用者暫停歌曲測試後要求先改善結算與容量。已完成 [結算與影像保存政策](RESULT_RECOGNITION_AND_STORAGE.md)，另建 `catalog-native-build-003`（195 份固定產物），不修改下列 002 封存。
 
 - 目前 `chart_experiment.exe` SHA256：`58c4ecd4ca86ee35113b80da499f036af19ad1c7f210ad93b81078db48c17228`。
+- 程式提交 `b4aee3ce40b8bc98802af7132414e04679546a47`；另有 post-build binding 逐檔核對封存中的172份程式來源，raw SHA與該提交的Git blob均相符。原 manifest 的建立時HEAD／未提交snapshot不改寫。
 - native **29/29**、portable configure/build/CTest **4/4**；完整 Python **229 項，228 通過、1 symlink 權限 skip**；面板離線 SelfTest **52 checks**。
 - v2 frozen-pixel **100/100**：8 個結算正例、92 個 playing 負例；三個舊漏記結果重新分類成功。歷史 failure／原圖不改，沒有補稱為本次實機成功。
 - `state-result-v2/dataset.json` 以原 RGB bytes 的絕對引用建立新 policy；`panel-v2-{48,60,72}` 及 `fresh-boot-v2-distance-{48,60,72}.json` 綁定 003，三組完整 GUI pins 及 **23/23 native offline preflights** 通過，全部回報 `image_retention=none`／新 result policy。`result`／`diagnostic` 兩個明確 opt-in suffix 另有兩次離線前檢通過。
