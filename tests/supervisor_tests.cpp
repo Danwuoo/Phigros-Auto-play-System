@@ -26,13 +26,13 @@ StateObservation state(Ns observed=0,std::uint64_t epoch=1,std::uint64_t sequenc
     s.identity=identity();s.sequence=sequence;s.epoch=epoch;s.geometry_version=7;s.evidence_id="actual-frame-"+std::to_string(sequence);
     s.observed_host_ns=observed;s.received_host_ns=observed+2*ms;s.expires_host_ns=observed+100*ms;s.timestamp_uncertainty_ns=ms;return s;
 }
-SupervisorSyncObservation sync(Ns observed=0,std::uint64_t epoch=1,std::uint64_t sequence=1) {
+SupervisorSyncObservation sync_observation(Ns observed=0,std::uint64_t epoch=1,std::uint64_t sequence=1) {
     SupervisorSyncObservation a;a.identity=identity();a.clock={0,observed,1};a.lease={true,epoch,7,observed,observed+120*ms,ms};
     a.sequence=sequence;a.received_host_ns=observed+2*ms;a.evidence_id="actual-audio-"+std::to_string(sequence);return a;
 }
 SupervisorDecision feed(RunSupervisor& supervisor,Ns observed=0,std::uint64_t epoch=1,std::uint64_t sequence=1) {
     supervisor.observe_state(state(observed,epoch,sequence),observed+2*ms);
-    return supervisor.observe_sync(sync(observed,epoch,sequence),observed+2*ms);
+    return supervisor.observe_sync(sync_observation(observed,epoch,sequence),observed+2*ms);
 }
 ReleaseAcknowledgement ack(const SupervisorDecision& d,Ns now,ReleaseKnowledge knowledge=ReleaseKnowledge::known_released) {
     return {d.revocation_id,d.revoked_epoch,knowledge,now,now,"actual FakeTouch zero-active receipt"};
@@ -121,14 +121,14 @@ int main() {
         run("sync expiry and uncertainty cannot be overwritten by new sync",[] {
             auto c=config();c.max_state_age_ns=200*ms;
             RunSupervisor supervisor(qualification(),c);auto s=state();s.expires_host_ns=180*ms;
-            supervisor.observe_state(s,2*ms);supervisor.observe_sync(sync(),2*ms);supervisor.arm(1,2*ms);
-            const auto updated=supervisor.observe_sync(sync(121*ms,1,2),123*ms);
+            supervisor.observe_state(s,2*ms);supervisor.observe_sync(sync_observation(),2*ms);supervisor.arm(1,2*ms);
+            const auto updated=supervisor.observe_sync(sync_observation(121*ms,1,2),123*ms);
             require(updated.release_required&&!updated.dispatch_permitted&&updated.revocation_reason==SupervisorReason::stale_sync,"old sync lease gap revoked before replacement");
             c=config();c.max_sync_uncertainty_ns=1'050'000;c.max_clock_drift_ppm=3000;
             RunSupervisor uncertainty(qualification(),c);feed(uncertainty);require(uncertainty.arm(1,2*ms).dispatch_permitted,"uncertainty initially acceptable");
             const auto grant=uncertainty.status(3*ms);
             require(grant.grant->lease.expires_host_ns<17*ms,"grant self-expires before drift exceeds budget without synthetic renewal");
-            const auto renewed=uncertainty.observe_sync(sync(20*ms,1,2),22*ms);
+            const auto renewed=uncertainty.observe_sync(sync_observation(20*ms,1,2),22*ms);
             require(renewed.release_required&&renewed.revocation_reason==SupervisorReason::uncertainty,"uncertainty gap revoked before replacing evidence");
         });
         run("actual sequences future samples arrivals and manual expiry are enforced",[] {
@@ -147,11 +147,11 @@ int main() {
             }
             RunSupervisor manual(qualification(),config());auto s=state();s.source=StateObservationSource::manual_confirmation;
             s.timestamp_kind=StateTimestampKind::host_confirmation;s.expires_host_ns=500*ms;
-            manual.observe_state(s,2*ms);manual.observe_sync(sync(),2*ms);
+            manual.observe_state(s,2*ms);manual.observe_sync(sync_observation(),2*ms);
             const auto armed=manual.arm(1,2*ms);
             require(armed.dispatch_permitted&&armed.manual_state&&!armed.capture_timestamp_known,"manual evidence explicitly labeled");
             const auto old_sequence=armed.grant->sequence;
-            manual.observe_sync(sync(80*ms,1,2),82*ms);
+            manual.observe_sync(sync_observation(80*ms,1,2),82*ms);
             const auto aged=manual.status(90*ms);
             require(aged.grant->state_sequence==1&&aged.grant->lease.observed_host_ns==0&&aged.grant->sequence==old_sequence+1,"audio evidence does not renew manual timestamp");
             auto disabled=config();disabled.allow_manual_confirmation=false;
@@ -178,9 +178,9 @@ int main() {
             require(live.arm(1,2*ms).live_permitted,"fully asserted synthetic live qualification passes contract only");
             RunSupervisor arrival(qualification(),config(SupervisorMode::live));auto s=state();s.timestamp_kind=StateTimestampKind::arrival_only;
             s.observed_host_ns=s.received_host_ns;s.timestamp_uncertainty_ns=-1;
-            arrival.observe_state(s,2*ms);arrival.observe_sync(sync(),2*ms);
+            arrival.observe_state(s,2*ms);arrival.observe_sync(sync_observation(),2*ms);
             require(!arrival.arm(1,2*ms).live_permitted,"arrival-only visual timestamp cannot qualify live");
-            RunSupervisor fake(qualification(),config());fake.observe_state(s,2*ms);fake.observe_sync(sync(),2*ms);
+            RunSupervisor fake(qualification(),config());fake.observe_state(s,2*ms);fake.observe_sync(sync_observation(),2*ms);
             const auto allowed=fake.arm(1,2*ms);require(allowed.dispatch_permitted&&!allowed.capture_timestamp_known&&!allowed.live_permitted,"arrival-only precision remains explicit in FakeTouch");
         });
         run("identity geometry epochs and lease lock mismatches revoke",[] {
@@ -194,7 +194,7 @@ int main() {
                 if(mismatch==4)s.epoch=2;
                 SupervisorDecision stopped;
                 if(mismatch<5)stopped=supervisor.observe_state(s,12*ms);
-                else {auto a=sync(10*ms,1,2);if(mismatch==5)a.lease.locked=false;else a.lease.uncertainty_ns=-1;stopped=supervisor.observe_sync(a,12*ms);}
+                else {auto a=sync_observation(10*ms,1,2);if(mismatch==5)a.lease.locked=false;else a.lease.uncertainty_ns=-1;stopped=supervisor.observe_sync(a,12*ms);}
                 require(stopped.release_required&&!stopped.dispatch_permitted,"identity/geometry/epoch/unlocked/unknown uncertainty fail closed");
             }
         });

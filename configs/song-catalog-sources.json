@@ -1,0 +1,19 @@
+{
+  "schema": "pas.song-catalog-sources.v1",
+  "repository": "7aGiven/Phigros_Resource",
+  "version": "4.0.1.2",
+  "commits": {
+    "info": "da34d1de07cd59b096ca0520b2815a2ea11cc13e",
+    "chart": "5d40bfdf05bee53f5107a6ea5620ca0e953de815",
+    "music": "5142ba2673ccbeb23173886f3bd851e9c881e6ec"
+  },
+  "expected": {
+    "song_count": 327,
+    "IN": 333,
+    "AT": 56,
+    "variant_count": 6,
+    "audio_count": 327
+  },
+  "native_runtime_revision": "4.0.1/157",
+  "scope": "Fixed public-source IN/AT snapshot including native variant IDs. Source metadata is not proof of installed-game identity or gameplay readiness."
+}

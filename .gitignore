@@ -17,3 +17,7 @@ __pycache__/
 *.pdb
 compile_commands.json
 .DS_Store
+/assets/phigros/**/*.part
+/assets/phigros/**/*.corrupt-*
+/assets/phigros/**/.sync-lock
+/work/

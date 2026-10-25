@@ -4,6 +4,8 @@
 #include <functional>
 #include <iostream>
 #include <limits>
+#include <locale>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -13,6 +15,17 @@ constexpr SongNs second=1000000000;
 int checks=0;
 void require(bool ok,const char* message) {if(!ok) throw std::runtime_error(message);++checks;}
 void run(const char* name,const std::function<void()>& test) {test();std::cout<<"PASS "<<name<<'\n';}
+const char* v2_golden(const char* padded_hex,const char* compact_hex) {
+    // Archived v2 fingerprints include the standard library's hexfloat spelling.
+    // MSVC emits 13 fractional digits; libstdc++ emits the shortest exact form.
+    // Both goldens below were reproduced from the unchanged pre-inset baseline;
+    // padding the GNU canonical transcript to 13 digits gives the MSVC hashes.
+    // Keep production v2 unchanged so existing Windows archives stay valid.
+    std::ostringstream probe;probe.imbue(std::locale::classic());probe<<std::hexfloat<<1.0;
+    if(probe.str()=="0x1.0000000000000p+0")return padded_hex;
+    if(probe.str()=="0x1p+0")return compact_hex;
+    throw std::runtime_error("Unverified standard-library hexfloat spelling for archived v2 goldens");
+}
 SemanticChart chart() {
     SemanticChart chart;chart.source={"synthetic",std::string(64,'a'),"test-song","IN","synthetic-v3"};
     ChartLine line;line.bpm=120;
@@ -374,13 +387,17 @@ int main() {
         run("zero inset preserves pinned strict and dynamic fingerprints",[] {
             auto c=chart();note(c,NoteKind::tap);
             const auto strict=compile_phigros_contacts(c,identity(c),geometry());
-            require(plan(strict).metadata.cache_sha256=="2a9e0c0b1a909416bd2a440175bb5ccf96a9dae9a2a68aae3a449026df9305b7",
+            require(plan(strict).metadata.cache_sha256==v2_golden(
+                "2a9e0c0b1a909416bd2a440175bb5ccf96a9dae9a2a68aae3a449026df9305b7",
+                "b5e1a3a49232589c072a7fa5d433b523bc2112e5cec71b037be3347da451468b"),
                 "pre-inset strict golden fingerprint changed");
             ContactCompileOptions options;options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
             options.max_normal_projection_reference_pixels=250;options.calibration_id="pending-inset-baseline";
             const auto original=compile_phigros_contacts(c,identity(c),geometry(),options);
             const auto zero_hash=plan(original).metadata.cache_sha256;
-            require(zero_hash=="e70738a35d657526185a1d10dc696e0b85e3e8c50f2e8d88dfccdc34f1eac62b",
+            require(zero_hash==v2_golden(
+                "e70738a35d657526185a1d10dc696e0b85e3e8c50f2e8d88dfccdc34f1eac62b",
+                "42a06b7e0b5cb5480bd5c3a809f772092a4888d96da55596f4cd4815a1675e8f"),
                 "pre-inset dynamic golden fingerprint changed");
             options.normal_projection_inset_reference_pixels=0;
             require(plan(compile_phigros_contacts(c,identity(c),geometry(),options)).metadata.cache_sha256==zero_hash,
@@ -556,7 +573,8 @@ int main() {
         run("native import interpretation provenance is automatic and conditionally fingerprinted",[] {
             auto c=chart();note(c,NoteKind::tap);const auto strict=compile_phigros_contacts(c,identity(c),geometry());
             const auto strict_hash=plan(strict).metadata.cache_sha256;
-            require(strict_hash=="2a9e0c0b1a909416bd2a440175bb5ccf96a9dae9a2a68aae3a449026df9305b7","strict import default changed archived golden");
+            require(strict_hash==v2_golden("2a9e0c0b1a909416bd2a440175bb5ccf96a9dae9a2a68aae3a449026df9305b7",
+                "b5e1a3a49232589c072a7fa5d433b523bc2112e5cec71b037be3347da451468b"),"strict import default changed archived golden");
             c.import_policy_id="phigros-v3-source-priority-constant-empty-candidate-v1";c.import_interpretation_unqualified=true;
             ChartImportAnomaly anomaly;anomaly.source.json_pointer="/judgeLineList/0/judgeLineDisappearEvents/0";
             anomaly.source.id=c.source.chart_sha256+'#'+anomaly.source.json_pointer;c.import_anomalies.push_back(anomaly);

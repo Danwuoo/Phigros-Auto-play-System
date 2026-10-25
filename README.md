@@ -1,5 +1,9 @@
 # Rhythm Chart Memory — Phigros / 世界計畫研究分支
 
+**2026-10-25 全曲 IN／AT 曲庫與 Flick 微調**：固定公開來源 4.0.1.2 的 327 首、389 份譜面（333 IN／56 AT，含 6 變體）與 327 份配對音源已下載並逐檔核對；原件由 Git LFS 管理。新增 Windows 全曲搜尋／篩選／來源核對介面、原生匯入報告（356 通過／5 格式未支援／28 拒絕），以及真正接入 adaptive runtime 的 Flick 幅度／時機參數與單變量比較工具。曲庫入檔與離線匯入不等於新曲已能實跑；本機版本、AT HUD 與其餘限制另列。[曲庫與取得方式](docs/SONG_CATALOG.md) · [使用端](docs/SONG_CATALOG_CLIENT.md) · [Flick 微調](docs/FLICK_TUNING.md) · [本輪驗證](docs/VALIDATION_CATALOG_2026-10-25.md) · [本機 6.1 sol xhigh 交接 prompt](docs/HANDOFF_LOCAL_6_1_SOL_XHIGH.md)。
+
+已取得本分支與 LFS 原件後，Windows 快捷入口：`pwsh -NoProfile -STA -File tools/start-song-library.ps1`。離線建置入口：`pwsh -NoProfile -File tools/build-local.ps1 -Mode Portable`。
+
 **2026-10-24 封存結果**：build006已有18輪實測，14輪完整輸入／8輪原生確認結算；正式Legacy20首中8首有保存結算AP，另有Verrückt暖身AP。結算漏記、20ms遲到、缺錄與剩餘未測6首均保留為待處理，未宣稱全測完成。依使用者要求先封存程式與文件；原始素材／證據留本機。見[逐曲結果與全部回合](docs/SESSION_RECORDS_2026-10-24.md)。
 
 **視窗面板與曲庫**：新增Verruckt IN作額外暖身，與原Legacy20首分列；用滑鼠啟動本首／整批、查看READY、停止及開啟紀錄，選曲與Play仍由使用者操作。準備完不自動開始。[使用方式](docs/SONG_TEST_PANEL.md)。

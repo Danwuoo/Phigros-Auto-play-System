@@ -1,0 +1,138 @@
+name: Archive fixed song catalogue with Git LFS
+
+on:
+  push:
+    branches: [feature/chart-driven-multigame]
+    paths:
+      - '.github/workflows/catalog-lfs.yml'
+      - 'configs/song-catalog-sources.json'
+      - 'tools/song_catalog.py'
+      - 'tools/sync_song_catalog.py'
+  workflow_dispatch:
+
+concurrency:
+  group: fixed-song-catalogue-lfs-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    # An explicit commit marker requests the transfer. Ordinary code pushes do
+    # not download or publish assets. This is scoped to the user's work branch.
+    if: github.ref == 'refs/heads/feature/chart-driven-multigame' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[catalog-lfs-sync]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    outputs:
+      published_sha: ${{ steps.publish.outputs.sha }}
+    env:
+      CATALOG_ROOT: assets/phigros/4.0.1.2
+      TARGET_BRANCH: feature/chart-driven-multigame
+      GIT_LFS_SKIP_SMUDGE: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - name: Check out the requested revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          lfs: false
+          persist-credentials: true
+      - name: Install Git LFS hooks for this checkout
+        run: git lfs install --local
+      - name: Test the catalogue downloader without network fixtures
+        run: python3 -m unittest discover -s tests -p 'test_song_catalog.py' -v
+      - name: Download the fixed public snapshot and verify source bytes
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/sync_song_catalog.py sync --output "$CATALOG_ROOT" --jobs 4
+      - name: Recheck every asset and rebuild the browse-only library
+        run: python3 tools/sync_song_catalog.py verify --output "$CATALOG_ROOT"
+      - name: Bind the preserved native audit to the rebuilt catalogue
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path(os.environ['CATALOG_ROOT'])
+          report = json.loads((root / 'manifests/native-import-report.json').read_text())
+          for key, path in [('library', 'library.json'), ('source_lock', 'manifests/source-lock.json')]:
+              actual = hashlib.sha256((root / path).read_bytes()).hexdigest()
+              if actual != report[key]['sha256']:
+                  raise SystemExit('Preserved native audit no longer matches ' + path)
+          print('Native audit remains bound to the exact fixed catalogue bytes.')
+          PY
+      - name: Commit only the catalogue and upload its LFS objects
+        id: publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- .gitattributes "$CATALOG_ROOT"
+          if git diff --cached --quiet; then
+            echo 'The fixed catalogue is already archived.'
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'data: archive fixed IN/AT catalogue with Git LFS [skip ci]'
+          git lfs fsck
+          git lfs push origin HEAD
+          git fetch origin "$TARGET_BRANCH"
+          if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+            echo 'The branch advanced during the transfer. LFS objects are uploaded; the ref is left unchanged.' >&2
+            exit 1
+          fi
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Save diagnostic manifests
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: catalogue-transfer-report
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            assets/phigros/4.0.1.2/library.json
+            assets/phigros/4.0.1.2/manifests/*.json
+
+  windows-client:
+    name: Validate and render the Windows catalogue client
+    needs: archive
+    if: needs.archive.result == 'success'
+    runs-on: windows-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - name: Check out the published catalogue without hydrating audio
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.archive.outputs.published_sha }}
+          lfs: false
+          persist-credentials: false
+      - name: Run headless client contract tests
+        shell: pwsh
+        run: |
+          $env:PAS_TEST_PWSH = (Get-Command pwsh).Source
+          python -m unittest discover -s tests -p test_song_library_panel.py -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./tools/start-song-library.ps1 -SelfTest
+      - name: Build and test the portable contracts on Windows
+        shell: pwsh
+        run: ./tools/build-local.ps1 -Mode Portable
+      - name: Render the real catalogue in WinForms at two sizes
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -STA -File tools/song-library-panel.ps1 -Library assets/phigros/4.0.1.2/library.json -PreviewDirectory "$env:RUNNER_TEMP/catalogue-client-preview"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Save Windows layout previews
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-catalogue-client-preview
+          if-no-files-found: warn
+          retention-days: 7
+          path: ${{ runner.temp }}/catalogue-client-preview

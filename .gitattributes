@@ -38,3 +38,12 @@ include/pas/manual_score_diagnostics.hpp text eol=lf
 research/manual_score_only/variants/lazy/manual_session.cpp -text -whitespace
 research/manual_score_only/review/evidence/** -text -whitespace
 research/manual_score_only/result-20261013.json -text -whitespace
+
+# User-requested public catalogue snapshot (2026-10-25). Keep source bytes exact.
+# Private APKs, calibration, device recordings and historical local-assets stay local.
+assets/phigros/** -text
+assets/phigros/**/charts/** filter=lfs diff=lfs merge=lfs -text
+assets/phigros/**/music/** filter=lfs diff=lfs merge=lfs -text
+tools/song-library-panel.ps1 text eol=lf
+tools/start-song-library.ps1 text eol=lf
+tools/build-local.ps1 text eol=lf

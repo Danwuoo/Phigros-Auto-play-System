@@ -1,4 +1,5 @@
 #include "experimental_runtime.hpp"
+#include "flick_policy.hpp"
 #include "../chart_calibrate/trial_io.hpp"
 #include "../chart_calibrate/opening_detector.hpp"
 #include "first_note_trigger.hpp"
@@ -38,11 +39,11 @@ constexpr const char* source_id="live-grpc-phigros-whole-song";
 constexpr const char* dlyrotz_hud_reference_sha="397431f2749bb38a845c6845977fc5c37cb2de51a79ff273dd3417ef2756e09a";
 constexpr const char* usage=
     "chart_experiment run SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song [--experimental-hud-reference CLEAN.rgb]\n"
-    "chart_experiment prepare-adaptive CHART.json SOURCE-MANIFEST.json NEW_DIR [--normal-projection-pixels LIMIT] [--drag-duration-ms MS] [--input-inset-pixels PIXELS] [--contact-capacity N] [--hud-policy calibrated-title-v1|shared-in-prefix-score-v1|shared-in-cell-score-v2|shared-in-subpixel-prefix-score-v3] [--import-policy POLICY_ID] [--tight-projection-speed-bounds 0|1]\n"
+    "chart_experiment prepare-adaptive CHART.json SOURCE-MANIFEST.json NEW_DIR [--normal-projection-pixels LIMIT] [--drag-duration-ms MS] [--input-inset-pixels PIXELS] [--contact-capacity N] [--hud-policy calibrated-title-v1|shared-in-prefix-score-v1|shared-in-cell-score-v2|shared-in-subpixel-prefix-score-v3] [--import-policy POLICY_ID] [--tight-projection-speed-bounds 0|1] [--flick-lead-ms 1..100] [--flick-travel-ms 2..200] [--flick-distance-pixels 1..240] [--flick-release-ms 1..100]\n"
     "chart_experiment run-adaptive SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song --song-profile PROFILE.json --experimental-hud-reference CLEAN.rgb [--capacity-evidence EVIDENCE.json]\n"
     "Use check or check-adaptive in place of run/run-adaptive for offline preflight only (no device discovery/input/output directory).\n"
     "Dlyrotz IN13 complete 584-note / 5669-step candidate, capacity 4, D250 projection.\n"
-    "Experimental Tap/Drag dwell32ms; Flick lead30ms/travel60ms/distance60px/release24ms; HUD timeline at50ms.\n"
+    "Default experimental Tap/Drag dwell32ms; Flick lead30ms/travel60ms/distance60px/release24ms. Adaptive Flick lead must be less than travel; HUD timeline at50ms.\n"
     "Begin on its manually verified song-selection or result screen, then start/retry once. Phase -100..100 ms; -80 is the current hypothesis.\n"
     "Arrival-only rate=1 experiment; no qualified SyncLease/input latency/audio. Esc/Ctrl+C/NEW_DIR/STOP cancels.\n";
 std::atomic<bool> interrupted{false};
@@ -233,6 +234,7 @@ struct SongProfile {
     std::string hud_policy="calibrated-title-v1";
     std::string import_policy="phigros-v3-strict-v1";
     bool tight_projection_speed_bounds=false;
+    FlickParameters flick;
     std::size_t notes=584,steps=dlyrotz_expected_steps;
     int peak=4,capacity=4,projection_pixels=250,input_inset_pixels=0;
     Ns first_down=12*second,drag_duration_ns=32*ms;
@@ -240,8 +242,7 @@ struct SongProfile {
 ContactCompileOptions song_compile_options(const SongProfile& song) {
     ContactCompileOptions options;options.max_contacts=song.capacity;
     options.tap_duration_ns=32*ms;options.drag_duration_ns=song.drag_duration_ns;
-    options.flick_release_ns=24*ms;options.flick_lead_ns=30*ms;options.flick_travel_ns=60*ms;
-    options.flick_distance_reference_pixels=60;
+    apply_flick_parameters(options,song.flick);
     options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
     options.max_normal_projection_reference_pixels=song.projection_pixels;options.calibration_id=song.calibration_id;
     options.normal_projection_inset_reference_pixels=song.input_inset_pixels;
@@ -289,6 +290,7 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
     song.hud_policy=value.value("hud_policy",std::string("calibrated-title-v1"));
     song.import_policy=value.value("import_policy_id",std::string("phigros-v3-strict-v1"));
     song.tight_projection_speed_bounds=value.value("tight_projection_speed_bounds",false);
+    song.flick=flick_parameters_from_profile(value);
     (void)song_import_options(song);
     if(song.hud_policy!="calibrated-title-v1"&&song.hud_policy!="shared-in-prefix-score-v1"&&song.hud_policy!="shared-in-cell-score-v2"&&song.hud_policy!="shared-in-subpixel-prefix-score-v3")
         throw std::invalid_argument("unsupported explicit adaptive HUD policy");
@@ -311,7 +313,7 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
     return song;
 }
 int prepare_adaptive(int argc,char** argv) {
-    if(argc<5||argc>19||(argc-5)%2)throw std::invalid_argument(usage);
+    if(argc<5||argc>27||(argc-5)%2)throw std::invalid_argument(usage);
     const std::filesystem::path output=std::filesystem::absolute(utf8_path(argv[4]));
     if(std::filesystem::exists(output))throw std::invalid_argument("output must not exist");
     const auto source_bytes=read_utf8_file(argv[3],1024*1024);const auto source=Json::parse(source_bytes);
@@ -333,6 +335,7 @@ int prepare_adaptive(int argc,char** argv) {
             continue;
         }
         const auto value=Json::parse(argv[index+1]);
+        if(set_flick_option(song.flick,option,value))continue;
         if(option=="--normal-projection-pixels")song.projection_pixels=static_cast<int>(kernel_integer(value,1,10000));
         else if(option=="--drag-duration-ms")song.drag_duration_ns=kernel_integer(value,1,32)*ms;
         else if(option=="--input-inset-pixels")song.input_inset_pixels=static_cast<int>(kernel_integer(value,0,100));
@@ -340,6 +343,7 @@ int prepare_adaptive(int argc,char** argv) {
         else if(option=="--tight-projection-speed-bounds")song.tight_projection_speed_bounds=kernel_integer(value,0,1)!=0;
         else throw std::invalid_argument(usage);
     }
+    validate_flick_parameters(song.flick);
     song.chart_sha=source.at("chart").at("sha256");
     song.audio_sha=source.at("decoded_audio").at("sha256");
     song.song=source.at("track_id");song.difficulty=source.at("difficulty");
@@ -351,12 +355,17 @@ int prepare_adaptive(int argc,char** argv) {
         throw std::invalid_argument("source WAV hash mismatch");
     const auto chart=parse_phigros(read_utf8_file(argv[2],32*1024*1024),
         {argv[2],song.chart_sha,song.song,song.difficulty,song.revision},{},song_import_options(song));
-    AdaptiveFirstNoteTrigger opening(chart,-80*ms);const auto& description=opening.description();
     PhigrosGeometry geometry;geometry.input_width=1280;geometry.input_height=720;
     const auto compiled=compile_phigros_contacts(chart,song_identity(song),geometry,song_compile_options(song));
+    // The first dispatched contact can be a Flick whose configurable lead
+    // precedes even an earlier native Tap. Bind the visual model to the exact
+    // compiled first DOWN, not a second hard-coded 30ms assumption.
+    const auto first_down=compiled.plan&&!compiled.plan->events.empty()?compiled.plan->events.front().song_ns:-1;
+    AdaptiveFirstNoteTrigger opening(chart,-80*ms,first_down);const auto& description=opening.description();
     Json report={{"schema","pas.adaptive-song-prepare.v1"},{"offline_only",true},{"device_discovery",false},
         {"chart_sha256",song.chart_sha},{"audio_sha256",song.audio_sha},{"source_manifest_sha256",chart_text_sha256(source_bytes)},
         {"import",import_json(chart)},{"source_notes",chart.note_count},{"compiled",compiled.plan.has_value()},{"diagnostics",Json::array()},
+        {"flick_parameters",flick_parameters_json(song.flick)},
         {"opening",{{"note_time_ns",description.note_time_ns},{"first_down_ns",description.first_down_ns},{"note_kind",static_cast<int>(description.note_kind)},
             {"note_id",description.note_id},{"note_json_pointer",description.note_json_pointer},
             {"model_id",description.model_id},{"model_sha256",description.model_sha256},
@@ -385,6 +394,7 @@ int prepare_adaptive(int argc,char** argv) {
                 {"import_policy_id",song.import_policy},{"tight_projection_speed_bounds",song.tight_projection_speed_bounds},
                 {"opening_model_sha256",description.model_sha256},{"source_manifest_sha256",chart_text_sha256(source_bytes)},
                 {"gameplay_qualified",false},{"scope","per-song offline candidate; actual opening/HUD and full gameplay remain to be observed"}};
+            profile.update(flick_parameters_json(song.flick));
             write_json(output/"song-profile.json",profile);
         }
     }
@@ -458,7 +468,7 @@ int run(int argc,char** argv) {
     }
     std::unique_ptr<AdaptiveFirstNoteTrigger> adaptive_trigger;
     if(adaptive) {
-        adaptive_trigger=std::make_unique<AdaptiveFirstNoteTrigger>(chart,static_cast<Ns>(phase)*ms);
+        adaptive_trigger=std::make_unique<AdaptiveFirstNoteTrigger>(chart,static_cast<Ns>(phase)*ms,first_song_ns);
         if(adaptive_trigger->description().model_sha256!=song.opening_sha||
            adaptive_trigger->description().first_down_ns!=first_song_ns)
             throw std::invalid_argument("fresh adaptive opening differs from prepared song profile");
@@ -524,6 +534,7 @@ int run(int argc,char** argv) {
             {"executable_sha256",binary_sha()},{"song_id",song.song},{"difficulty",song.difficulty},
             {"chart_sha256",chart_sha},{"import",import_json(chart)},{"compiled_sha256",compiled.plan->metadata.cache_sha256},
             {"contacts",expected_notes},{"events",expected_steps},{"peak",expected_peak},
+            {"flick_parameters",flick_parameters_json(song.flick)},
             {"screen_calibration_sha256",screen_calibration.dataset_sha256},{"HUD_reference_sha256",hud_reference_sha},{"HUD_policy",song.hud_policy},{"result_label_policy",result_policy},{"playing_redundancy_policy",redundancy_policy},
             {"kernel_profile_sha256",chart_text_sha256(kernel_bytes)},
             {"scope","offline artifact/config validation; current boot, foreground, contacts and game judgment NOT RUN"}}).dump(2)<<'\n';
@@ -604,8 +615,8 @@ int run(int argc,char** argv) {
         {"experimental_flick_release_ns",compile_options.flick_release_ns},
         {"experimental_flick_lead_ns",compile_options.flick_lead_ns},{"experimental_flick_travel_ns",compile_options.flick_travel_ns},
         {"experimental_flick_distance_reference_pixels",compile_options.flick_distance_reference_pixels},
-        {"flick_release_scope","hold final stroke position 24ms before UP"},
-        {"flick_stroke_scope","30ms before/after native judgment;60 reference pixels;dynamic line pose retained;normal-offset zero at judgment;not a qualified game hit region"},
+        {"flick_release_scope","hold final stroke position for experimental_flick_release_ns before UP"},
+        {"flick_stroke_scope","lead/travel/distance recorded above;dynamic line pose retained;normal-offset zero at judgment;not a qualified game hit region"},
         {"dwell_scope","experimental per-song candidate; Tap/Drag durations are recorded above and bound by the compiled fingerprint; compiler defaults unchanged"},
         {"HUD_timeline_policy","50ms actual receipt cadence; preallocated grayscale score/combo pixels; save after release; diagnostic only"},
         {"max_normal_projection_reference_pixels",song.projection_pixels},{"requires_calibration",true},{"session_limit_seconds",240},
