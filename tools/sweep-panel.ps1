@@ -324,6 +324,9 @@ function Get-PanelRoundPresentation($Result) {
     $hasResult=@($Result.EvidenceFiles|Where-Object{[IO.Path]::GetFileName($_.file) -eq 'result.png'}).Count -gt 0
     $hasLast=@($Result.EvidenceFiles|Where-Object{[IO.Path]::GetFileName($_.file) -eq 'last-observed.png'}).Count -gt 0
     $imageText=if($hasResult){'結算圖片檔已保存'}elseif($hasLast){'最後畫面已保存'}else{'未找到結算圖片，請開啟紀錄檢查'}
+    if($Result.PSObject.Properties['Manifest'] -and $Result.Manifest -and $Result.Manifest.image_retention -eq 'none'){
+        $imageText=if($Result.ResultState -eq 'confirmed_by_native'){'結算確認資料已記錄，依設定未保存圖片'}else{'依設定未保存圖片，請保留遊戲結算頁供複核'}
+    }
     if($Result.Success -is [bool] -and $Result.Success){return [pscustomobject]@{Title='本首完成，結算已確認';Detail=$imageText+'；分數與判定仍待複核。';RowStatus='完成 · 待複核';InputCompleteResultUnconfirmed=$false}}
     if($Result.ExecutionState -eq 'completed' -and $Result.ResultState -eq 'not_confirmed' -and $Result.ReleaseState -eq 'kernel_zero_confirmed'){
         return [pscustomobject]@{Title='輸入已完成，結算辨識尚未確認';Detail='觸控已釋放，佇列已停止；'+$imageText+'，分數與判定待複核。';RowStatus='輸入完成／待確認';InputCompleteResultUnconfirmed=$true}
@@ -477,6 +480,11 @@ if ($SelfTest) {
         $stages|ConvertTo-Json|Set-Content -LiteralPath $stagePath -Encoding utf8;[IO.File]::WriteAllBytes((Join-Path $future 'result.png'),$png)
         $confirmed=Get-PanelRoundResult $future 0
         if(-not $confirmed.Success -or $confirmed.JudgmentState -ne 'unreviewed' -or (Get-PanelRoundPresentation $confirmed).Detail -notmatch '結算圖片檔已保存'){throw '已保存結果的提示或待複核判定錯誤。'};$checks++
+        $noImages=[pscustomobject]@{Success=$true;ResultState='confirmed_by_native';EvidenceFiles=@();Manifest=[pscustomobject]@{image_retention='none'}}
+        $noImagePresentation=Get-PanelRoundPresentation $noImages
+        if($noImagePresentation.Title -notmatch '結算已確認' -or $noImagePresentation.Detail -notmatch '依設定未保存圖片' -or $noImagePresentation.Detail -match '未找到'){
+            throw '不存圖模式被誤報成結算或圖片遺失。'
+        };$checks++
         $stages['full_chart_notes']=1285;$stages['full_compiled_steps']=3358;$stages['receipt_rows']=3358
         $stages['runtime_final']=[pscustomobject]@{selected_contacts=1285;selected_steps=3358;completed_contacts=1285;active=0;pending=0}
         $stages|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $stagePath -Encoding utf8

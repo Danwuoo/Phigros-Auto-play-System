@@ -44,6 +44,7 @@ public:
     static constexpr std::int64_t sample_interval_ns=50'000'000;
 private:
     const std::size_t capacity_;
+    const bool retain_pixels_;
     std::vector<std::uint8_t> pixels_;
     std::vector<HudTimelineSample> index_;
     HudTimelineStats stats_;
@@ -70,8 +71,9 @@ private:
         }
     }
 public:
-    explicit HudTimeline(std::size_t capacity=maximum_samples)
-        :capacity_(checked_capacity(capacity)),pixels_(capacity_*sample_bytes),index_(capacity_) {}
+    explicit HudTimeline(std::size_t capacity=maximum_samples,bool retain_pixels=true)
+        :capacity_(checked_capacity(capacity)),retain_pixels_(retain_pixels),
+         pixels_(retain_pixels_?capacity_*sample_bytes:0),index_(capacity_) {}
     HudTimelineOutcome observe(const RgbImageView& image,const HudTimelineMeta& meta,bool caller_armed) noexcept {
         ++stats_.observe_calls;
         if(!caller_armed) {++stats_.not_armed;return HudTimelineOutcome::not_armed;}
@@ -95,15 +97,18 @@ public:
             return HudTimelineOutcome::capacity_exhausted;
         }
         const auto offset=stats_.samples*sample_bytes;
-        copy_gray(image,score_region,pixels_.data()+offset);
-        copy_gray(image,combo_region,pixels_.data()+offset+score_bytes);
-        index_[stats_.samples]={meta,offset};
+        if(retain_pixels_) {
+            copy_gray(image,score_region,pixels_.data()+offset);
+            copy_gray(image,combo_region,pixels_.data()+offset+score_bytes);
+        }
+        index_[stats_.samples]={meta,retain_pixels_?offset:0};
         if(last_saved_received_>=0)stats_.max_sample_gap_ns=std::max(stats_.max_sample_gap_ns,meta.received_ns-last_saved_received_);
         last_saved_received_=meta.received_ns;++stats_.samples;
         return HudTimelineOutcome::sampled;
     }
     std::span<const HudTimelineSample> samples() const noexcept {return {index_.data(),stats_.samples};}
-    std::span<const std::uint8_t> bytes() const noexcept {return {pixels_.data(),stats_.samples*sample_bytes};}
+    std::span<const std::uint8_t> bytes() const noexcept {return {pixels_.data(),retain_pixels_?stats_.samples*sample_bytes:0};}
+    bool pixels_retained() const noexcept {return retain_pixels_;}
     const HudTimelineStats& stats() const noexcept {return stats_;}
     std::size_t capacity() const noexcept {return capacity_;}
     std::size_t allocated_pixel_bytes() const noexcept {return pixels_.size();}

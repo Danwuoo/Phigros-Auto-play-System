@@ -103,6 +103,25 @@ class FlickAnalysisTests(unittest.TestCase):
         (self.run / "hud-timeline.gray").write_bytes(pixels)
         return value
 
+    def test_metadata_only_hud_keeps_receipt_neighbors_without_claiming_pixels(self):
+        value = self.save_hud()
+        (self.run / "hud-timeline.gray").unlink()
+        value.update(schema="pas.experimental-hud-timeline-metadata.v1", pixels_retained=False,
+                     pixels_file=None, pixels_sha256=None, pixels_bytes=0, allocated_pixel_bytes=0)
+        for sample in value["samples"]:
+            sample["byte_offset"] = None
+        (self.run / "hud-timeline.json").write_text(json.dumps(value), encoding="utf-8")
+        result = self.analyze()
+        self.assertTrue(result["hud"]["available"])
+        self.assertFalse(result["hud"]["pixel_hash_verified"])
+        self.assertIn("hud_pixels_not_retained_by_policy", result["hud"]["gaps"])
+        self.assertTrue(result["notes"][0]["hud_neighbors"])
+        self.assertTrue(all(x["byte_offset"] is None for x in result["notes"][0]["hud_neighbors"]))
+        value["pixels_file"] = "elsewhere.gray"
+        (self.run / "hud-timeline.json").write_text(json.dumps(value), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "retained image data"):
+            self.analyze()
+
     def test_matches_birth_sorted_intent_and_reports_host_metrics_without_verdict(self):
         report = self.analyze()
         row = report["notes"][0]

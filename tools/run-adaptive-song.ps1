@@ -8,6 +8,7 @@ param(
     [Parameter(Mandatory=$true)][string]$KernelProfile,
     [string]$CapacityEvidence,
     [ValidateRange(-100,100)][int]$PhaseMs = -80,
+    [ValidateSet('none','result','diagnostic')][string]$ImageRetention = 'none',
     [string]$OutputDirectory,
     [switch]$CheckOnly
 )
@@ -48,5 +49,6 @@ $runArguments = @($mode, 'emulator-5554', 'phigros', $Chart, $StateCalibration, 
 if ($CapacityEvidence) {
     $runArguments += @('--capacity-evidence', (Resolve-Path -LiteralPath $CapacityEvidence).Path)
 }
+if ($ImageRetention -ne 'none') { $runArguments += @('--image-retention', $ImageRetention) }
 & $executable @runArguments
 exit $LASTEXITCODE

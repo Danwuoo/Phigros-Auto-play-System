@@ -1,5 +1,11 @@
 # 本輪驗證：2026-10-23 起，更新至 2026-10-24
 
+## 2026-10-25 本機 native、結算與保存政策
+
+新003封存使用既有patched gRPC，Windows native **29/29 CTest**、portable configure/build/CTest **4/4**；Python **229項：228通過、1項Windows symlink權限skip**，面板離線SelfTest52 checks。21份baseline plan/opening身份不變，三組距離設定共23次離線前檢通過，另核對兩種明確影像opt-in模式。
+
+結算local-contrast-v2在8張既有結算／92張playing影格上100/100通過，修復三張舊漏記圖的離線分類。一般回合預設不寫PNG與HUD灰階，保留receipts、actual receipt metadata及結算frame SHA；舊原件不刪改。此前002 probe另完成一次新boot五指fixture及最後kernel zero；這不是003新遊戲資格。歌曲實測依使用者要求暫停，**新003歌曲／裝置整合NOT RUN，沒有新改善或AP宣稱**。詳見[本機接續](LOCAL_NATIVE_FLICK_2026-10-25.md)及[結算與保存](RESULT_RECOGNITION_AND_STORAGE.md)。
+
 ## 本次封存核對
 
 使用者要求停止修正並commit／push。最新使用者實跑與結果圖已整理為[逐曲／逐回合表](SESSION_RECORDS_2026-10-24.md)及[機器索引](SESSION_RECORDS_2026-10-24.json)：build006共18輪，14輪完整輸入／8輪原生確認結算／6輪完成但未確認；正式章節8首AP與額外Verrückt AP由保存PNG複核。FULi／Winter的AP與Cipher結果補記在衍生表，原生failure不改寫；Engine／Non-Melodic缺完整結果圖，不由選曲頁最佳分補造本輪成績。

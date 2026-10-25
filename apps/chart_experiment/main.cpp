@@ -8,6 +8,7 @@
 #include "result_label_evidence.hpp"
 #include "learned_hud_redundancy.hpp"
 #include "hud_timeline.hpp"
+#include "image_retention.hpp"
 #include "../chart_manual/foreground_watch.hpp"
 #include "rhythm/manual_lifecycle.hpp"
 #include "rhythm/screen_state_io.hpp"
@@ -42,6 +43,7 @@ constexpr const char* usage=
     "chart_experiment prepare-adaptive CHART.json SOURCE-MANIFEST.json NEW_DIR [--normal-projection-pixels LIMIT] [--drag-duration-ms MS] [--input-inset-pixels PIXELS] [--contact-capacity N] [--hud-policy calibrated-title-v1|shared-in-prefix-score-v1|shared-in-cell-score-v2|shared-in-subpixel-prefix-score-v3] [--import-policy POLICY_ID] [--tight-projection-speed-bounds 0|1] [--flick-lead-ms 1..100] [--flick-travel-ms 2..200] [--flick-distance-pixels 1..240] [--flick-release-ms 1..100]\n"
     "chart_experiment run-adaptive SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song --song-profile PROFILE.json --experimental-hud-reference CLEAN.rgb [--capacity-evidence EVIDENCE.json]\n"
     "Use check or check-adaptive in place of run/run-adaptive for offline preflight only (no device discovery/input/output directory).\n"
+    "Optional final suffix: --image-retention none|result|diagnostic (default none; result saves only a confirmed result PNG).\n"
     "Dlyrotz IN13 complete 584-note / 5669-step candidate, capacity 4, D250 projection.\n"
     "Default experimental Tap/Drag dwell32ms; Flick lead30ms/travel60ms/distance60px/release24ms. Adaptive Flick lead must be less than travel; HUD timeline at50ms.\n"
     "Begin on its manually verified song-selection or result screen, then start/retry once. Phase -100..100 ms; -80 is the current hypothesis.\n"
@@ -164,10 +166,14 @@ Json compiled_json(const CompiledContactPlan& plan) {
 }
 Json save_hud_timeline(const std::filesystem::path& output,const HudTimeline& timeline,const std::string& source_sha) {
     const auto pixels=timeline.bytes();
-    const auto pixel_sha=chart_text_sha256({reinterpret_cast<const char*>(pixels.data()),pixels.size()});
-    std::ofstream raw(output/"hud-timeline.gray",std::ios::binary);
-    raw.write(reinterpret_cast<const char*>(pixels.data()),static_cast<std::streamsize>(pixels.size()));
-    raw.close();if(!raw)throw std::runtime_error("HUD timeline pixel write failed");
+    const bool retain_pixels=timeline.pixels_retained();
+    Json pixel_sha=nullptr;
+    if(retain_pixels) {
+        pixel_sha=chart_text_sha256({reinterpret_cast<const char*>(pixels.data()),pixels.size()});
+        std::ofstream raw(output/"hud-timeline.gray",std::ios::binary);
+        raw.write(reinterpret_cast<const char*>(pixels.data()),static_cast<std::streamsize>(pixels.size()));
+        raw.close();if(!raw)throw std::runtime_error("HUD timeline pixel write failed");
+    }
     Json rows=Json::array();
     for(const auto& sample:timeline.samples()) {
         const auto& frame=sample.frame;
@@ -175,7 +181,7 @@ Json save_hud_timeline(const std::filesystem::path& output,const HudTimeline& ti
             {"geometry_version",frame.geometry_version},{"received_ns",frame.received_ns},{"processed_ns",frame.processed_ns},
             {"source_timestamp_us",frame.source_timestamp_us?Json(*frame.source_timestamp_us):Json(nullptr)},
             {"raw_class",static_cast<int>(frame.raw_class)},{"effective_HUD",frame.effective_HUD},
-            {"source_valid",frame.source_valid},{"byte_offset",sample.byte_offset}});
+            {"source_valid",frame.source_valid},{"byte_offset",retain_pixels?Json(sample.byte_offset):Json(nullptr)}});
     }
     const auto& s=timeline.stats();
     Json stats={{"observe_calls",s.observe_calls},{"samples",s.samples},{"not_armed",s.not_armed},
@@ -183,17 +189,17 @@ Json save_hud_timeline(const std::filesystem::path& output,const HudTimeline& ti
         {"sequence_rejects",s.sequence_rejects},{"timestamp_rejects",s.timestamp_rejects},{"interval_skips",s.interval_skips},
         {"capacity_drops",s.capacity_drops},{"first_capacity_drop_received_ns",s.first_capacity_drop_received_ns},
         {"last_capacity_drop_received_ns",s.last_capacity_drop_received_ns},{"max_sample_gap_ns",s.max_sample_gap_ns}};
-    Json index={{"schema","pas.experimental-hud-timeline.v1"},{"source_id",source_id},{"source_sha256",source_sha},
+    Json index={{"schema",retain_pixels?"pas.experimental-hud-timeline.v1":"pas.experimental-hud-timeline-metadata.v1"},{"source_id",source_id},{"source_sha256",source_sha},
         {"clock_id","host-QPC-receipt-only"},{"source_timestamp_scope","raw emulator metadata; no qualified host mapping"},
-        {"pixels_file","hud-timeline.gray"},{"pixels_sha256",pixel_sha},{"pixels_bytes",pixels.size()},
+        {"pixels_retained",retain_pixels},{"pixels_file",retain_pixels?Json("hud-timeline.gray"):Json(nullptr)},{"pixels_sha256",pixel_sha},{"pixels_bytes",pixels.size()},
         {"pixel_format","uint8 grayscale (77R+150G+29B+128)>>8; row-major score then combo per sample"},
         {"frame_geometry",{1280,720}},{"score_region_xywh",{1076,20,180,40}},{"combo_region_xywh",{560,8,160,72}},
         {"sample_bytes",HudTimeline::sample_bytes},{"minimum_receipt_interval_ns",HudTimeline::sample_interval_ns},
         {"capacity",timeline.capacity()},{"allocated_pixel_bytes",timeline.allocated_pixel_bytes()},
-        {"scope","actual received pixels after arm; diagnostic only, no OCR or permission renewal"},
+        {"scope",retain_pixels?"actual received pixels after arm; diagnostic only, no OCR or permission renewal":"actual receipt metadata only; images not retained; no OCR or permission renewal"},
         {"stats",stats},{"samples",std::move(rows)}};
     write_json(output/"hud-timeline.json",index);
-    return {{"index_file","hud-timeline.json"},{"pixels_file","hud-timeline.gray"},{"pixels_sha256",pixel_sha},
+    return {{"index_file","hud-timeline.json"},{"pixels_retained",retain_pixels},{"pixels_file",retain_pixels?Json("hud-timeline.gray"):Json(nullptr)},{"pixels_sha256",pixel_sha},
         {"pixels_bytes",pixels.size()},{"stats",std::move(stats)}};
 }
 // All actual transport receipts survive an exception in the scheduler tick.
@@ -432,6 +438,8 @@ Json checked_capacity_evidence(const std::filesystem::path& path,const Json& ker
     proof["evidence_sha256"]=chart_text_sha256(bytes);return proof;
 }
 int run(int argc,char** argv) {
+    const auto image_retention=image_retention_suffix(argc,argv);
+    const bool diagnostic_images=retain_diagnostic_images(image_retention);
     const std::string command=argc>1?argv[1]:"";
     const bool adaptive=command=="run-adaptive"||command=="check-adaptive";
     const bool offline=command=="check"||command=="check-adaptive";
@@ -495,8 +503,10 @@ int run(int argc,char** argv) {
     const auto result_policy=state_dataset.value("experimental_result_label_policy",std::string());
     std::unique_ptr<ResultLabelEvidenceProducer> result_labels;
     if(!result_policy.empty()) {
-        if(!shared_hud||result_policy!="shared-result-labels-v1")throw std::invalid_argument("result label policy differs");
-        result_labels=std::make_unique<ResultLabelEvidenceProducer>(screen_calibration.templates);
+        if(!shared_hud||(result_policy!="shared-result-labels-v1"&&result_policy!="shared-result-local-contrast-v2"))
+            throw std::invalid_argument("result label policy differs");
+        result_labels=std::make_unique<ResultLabelEvidenceProducer>(screen_calibration.templates,
+            result_policy=="shared-result-local-contrast-v2"?ResultLabelPolicy::local_contrast_v2:ResultLabelPolicy::absolute_v1);
     }
     const auto redundancy_policy=state_dataset.value("experimental_playing_redundancy_policy",std::string());
     std::unique_ptr<LearnedHudRedundancy> hud_redundancy;
@@ -535,6 +545,7 @@ int run(int argc,char** argv) {
             {"chart_sha256",chart_sha},{"import",import_json(chart)},{"compiled_sha256",compiled.plan->metadata.cache_sha256},
             {"contacts",expected_notes},{"events",expected_steps},{"peak",expected_peak},
             {"flick_parameters",flick_parameters_json(song.flick)},
+            {"image_retention",image_retention_name(image_retention)},
             {"screen_calibration_sha256",screen_calibration.dataset_sha256},{"HUD_reference_sha256",hud_reference_sha},{"HUD_policy",song.hud_policy},{"result_label_policy",result_policy},{"playing_redundancy_policy",redundancy_policy},
             {"kernel_profile_sha256",chart_text_sha256(kernel_bytes)},
             {"scope","offline artifact/config validation; current boot, foreground, contacts and game judgment NOT RUN"}}).dump(2)<<'\n';
@@ -544,7 +555,7 @@ int run(int argc,char** argv) {
     if(avd_text.substr(0,avd_text.find_first_of("\r\n"))!=avd)throw std::runtime_error("AVD mismatch");
     const auto package_report=adb_text(adb,serial,{"shell","dumpsys","package","com.PigeonGames.Phigros"});
     if(field(package_report,"versionName=")!="4.0.1"||field(package_report,"versionCode=")!="157")throw std::runtime_error("game version mismatch");
-    HudTimeline hud_timeline; // Preallocate before capture, foreground ownership and READY.
+    HudTimeline hud_timeline(HudTimeline::maximum_samples,diagnostic_images); // Metadata only by default; preallocate before READY.
     pas::HostClock clock;OwnerWait owner_wait(clock);
     const auto foreground_begin=clock.now_ns();foreground(adb,serial);const auto foreground_end=clock.now_ns();
     manual_ui::ForegroundWatch foreground_watch([adb,serial]{foreground(adb,serial);},[clock]{return clock.now_ns();},{foreground_begin,foreground_end});
@@ -618,7 +629,8 @@ int run(int argc,char** argv) {
         {"flick_release_scope","hold final stroke position for experimental_flick_release_ns before UP"},
         {"flick_stroke_scope","lead/travel/distance recorded above;dynamic line pose retained;normal-offset zero at judgment;not a qualified game hit region"},
         {"dwell_scope","experimental per-song candidate; Tap/Drag durations are recorded above and bound by the compiled fingerprint; compiler defaults unchanged"},
-        {"HUD_timeline_policy","50ms actual receipt cadence; preallocated grayscale score/combo pixels; save after release; diagnostic only"},
+        {"image_retention",image_retention_name(image_retention)},
+        {"HUD_timeline_policy",diagnostic_images?"50ms actual receipt cadence; preallocated grayscale score/combo pixels; save after release; diagnostic only":"50ms actual receipt metadata only; no grayscale/pixel file; save after release"},
         {"max_normal_projection_reference_pixels",song.projection_pixels},{"requires_calibration",true},{"session_limit_seconds",240},
         {"round_watchdog_seconds",180},{"UI_watchdog_ns",ui_watchdog},{"anchor_receipt_max_age_ns",100*ms},
         {"UI_watchdog_scope","actual recognized playing receipt; unknown does not refresh; pause/result/source loss stop immediately; separate from fixed song timing"},
@@ -630,7 +642,7 @@ int run(int argc,char** argv) {
         {"journal_policy","64MiB/16000 UI rows; transport receipts preallocated to whole plan step count; flush after release"},
         {"transport",pas::grpc_transport_manifest(options.grpc_read_chunk_kib)}};
     write_json(output/"compiled-plan.json",full_plan_json);write_json(output/"plan.json",manifest);
-    pas::write_diagnostic_png(output/"initial.png",initial_frame);
+    if(diagnostic_images)pas::write_diagnostic_png(output/"initial.png",initial_frame);
     SignalGuard signal_guard;pas::PixelCoordinateMap mapping(1280,720,720,1280,90);
     pas::GrpcTouch transport(clock,endpoint,mapping,720,1280,song.capacity,std::chrono::milliseconds(100));
     GuardedTouch touch(transport,clock,expected_steps);
@@ -646,12 +658,12 @@ int run(int argc,char** argv) {
     std::string failure,opening_reason="waiting_for_native_note_centers";
     // Opening diagnostics must not allocate/fault a fresh multi-megabyte RGB
     // vector on each input deadline. All 48 bounded buffers are touched now.
-    std::vector<pas::Frame> saved_frames(48);
+    std::vector<pas::Frame> saved_frames(diagnostic_images?48:0);
     for(auto& diagnostic:saved_frames)diagnostic.rgb.resize(1280u*720u*3u);
     std::size_t saved_count=0;
     // Bounded pre-input diagnostics, saved only after cleanup. A failed
     // acquisition must retain actual pixels, not just center coordinates.
-    std::vector<pas::Frame> acquisition_frames;acquisition_frames.reserve(24);
+    std::vector<pas::Frame> acquisition_frames;if(diagnostic_images)acquisition_frames.reserve(24);
     std::optional<pas::Frame> anchor_frame,result_frame,first_unknown_frame;
     // At most two distinct pool leases survive an iteration. One-time anchor/
     // result/first-unknown diagnostics own copies, leaving producer headroom.
@@ -706,7 +718,7 @@ int run(int argc,char** argv) {
             if(frame) {
                 consumed=frame->sequence;
                 last_owner_sequence=frame->sequence;last_owner_frame_begin=clock.now_ns();
-                last_frame=frame;
+                if(diagnostic_images)last_frame=frame;
                 const auto classified=classify_screen_state({frame->width,frame->height,frame->stride,frame->rgb},screen_calibration.templates);
                 last_classify_end=clock.now_ns();
                 Json feature_diagnostic=nullptr;bool feature_playing=false;
@@ -714,7 +726,7 @@ int run(int argc,char** argv) {
                 bool pause_ok=false,prefix_ok=false,score_ok=false;
                 std::string hud_feature_reason="waiting_for_playing_HUD";
                 if((armed&&classified.state==ObservedGameState::unknown)||shared_hud) {
-                    if(classified.state==ObservedGameState::unknown) {
+                    if(diagnostic_images&&classified.state==ObservedGameState::unknown) {
                         if(!first_unknown_frame)first_unknown_frame=*frame;
                         last_unknown_frame=frame;
                     }
@@ -836,7 +848,7 @@ int run(int argc,char** argv) {
                     }
                     // Evidence is bounded to the opening judgment window. The
                     // full stream is classified but not copied into RAM images.
-                    if(now>=first_due-200*ms&&now<=first_due+1200*ms&&saved_count<saved_frames.size()&&
+                    if(diagnostic_images&&now>=first_due-200*ms&&now<=first_due+1200*ms&&saved_count<saved_frames.size()&&
                        (last_saved<0||frame->capture_complete_ns-last_saved>=20*ms)) {
                         last_snapshot_begin=clock.now_ns();
                         // The published geometry is fixed/tightly packed, so
@@ -851,7 +863,7 @@ int run(int argc,char** argv) {
                         detect_adaptive_opening_centers(frame->width,frame->height,frame->stride,frame->rgb,adaptive_trigger->description().note_kind):
                         calibration::detect_opening_centers(frame->width,frame->height,frame->stride,frame->rgb);
                     if(detected.valid&&!detected.centers.empty()) {
-                        if(acquisition_frames.size()<24&&(last_acquisition_saved<0||
+                        if(diagnostic_images&&acquisition_frames.size()<24&&(last_acquisition_saved<0||
                            frame->capture_complete_ns-last_acquisition_saved>=100*ms)) {
                             acquisition_frames.push_back(*frame);last_acquisition_saved=frame->capture_complete_ns;
                         }
@@ -916,7 +928,8 @@ int run(int argc,char** argv) {
                             if(initial.selected_contacts!=expected_notes||initial.selected_steps!=expected_steps||initial.peak_contacts!=expected_peak)
                                 throw std::runtime_error("runtime must retain every full-plan contact and step");
                             if(!runtime->arm())throw std::runtime_error(runtime->status().reason);
-                            armed=true;first_due=anchor.origin_host_ns+anchor.explicit_phase_ns+first_song_ns;anchor_frame=*frame;
+                            armed=true;first_due=anchor.origin_host_ns+anchor.explicit_phase_ns+first_song_ns;
+                            if(diagnostic_images)anchor_frame=*frame;
                             manifest["anchor"]={{"origin_host_ns",anchor.origin_host_ns},{"received_host_ns",anchor.received_host_ns},
                                 {"song_interval",{anchor.chosen_song_interval.lower,anchor.chosen_song_interval.upper}},
                                 {"evidence_id",anchor.evidence_id},{"supporting_evidence_ids",anchor.supporting_evidence_ids},
@@ -1014,12 +1027,18 @@ int run(int argc,char** argv) {
         row["source_frame_sequence"]=receipt.command.source_frame_sequence;receipts.append(row);
     }
     receipts.flush_after_cleanup();
-    if(anchor_frame)pas::write_diagnostic_png(output/"anchor.png",*anchor_frame);
-    if(last_frame)pas::write_diagnostic_png(output/"last-observed.png",*last_frame);
-    if(result_frame)pas::write_diagnostic_png(output/"result.png",*result_frame);
+    if(diagnostic_images&&anchor_frame)pas::write_diagnostic_png(output/"anchor.png",*anchor_frame);
+    if(diagnostic_images&&last_frame)pas::write_diagnostic_png(output/"last-observed.png",*last_frame);
+    if(result_frame) {
+        manifest["result_observation"]={{"sequence",result_frame->sequence},{"received_host_ns",result_frame->capture_complete_ns},
+            {"rgb_sha256",rgb_sha(*result_frame)},{"policy",result_policy},
+            {"image_saved",retain_result_image(image_retention)},
+            {"scope","terminal UI confirmation only; score/judgments/AP unreviewed"}};
+        if(retain_result_image(image_retention))pas::write_diagnostic_png(output/"result.png",*result_frame);
+    }
     Json unknown_frames=Json::array();
     const auto save_unknown=[&](const char* name,const auto& frame) {
-        if(!frame)return;
+        if(!diagnostic_images||!frame)return;
         pas::write_diagnostic_png(output/name,*frame);
         unknown_frames.push_back({{"file",name},{"sequence",frame->sequence},{"received_host_ns",frame->capture_complete_ns},{"rgb_sha256",rgb_sha(*frame)}});
     };
@@ -1030,12 +1049,12 @@ int run(int argc,char** argv) {
         {"HUD_end_ns",last_HUD_end},{"ui_append_begin_ns",last_ui_append_begin},{"ui_append_end_ns",last_ui_append_end},
         {"tick_begin_ns",last_tick_begin},{"tick_end_ns",last_tick_end},
         {"snapshot_begin_ns",last_snapshot_begin},{"snapshot_end_ns",last_snapshot_end},
-        {"opening_snapshot_RGB_buffers_preallocated",48},
+        {"opening_snapshot_RGB_buffers_preallocated",diagnostic_images?48:0},
         {"diagnostic_pool_leases_max",2},{"frame_pool_slots",5},{"journal_budget_preallocated_before_READY",true}};
     if(hud_redundancy) {
         const auto& learned=hud_redundancy->status();
         const auto save_learned=[&](const char* name,std::span<const std::uint8_t> pixels,int stride,const LearnedHudFrame& meta) {
-            if(pixels.empty())return;
+            if(!diagnostic_images||pixels.empty())return;
             pas::Frame actual;actual.width=1280;actual.height=720;actual.stride=stride;
             actual.rgb.assign(pixels.begin(),pixels.end());actual.sequence=meta.sequence;actual.capture_complete_ns=meta.received_ns;
             pas::write_diagnostic_png(output/name,actual);

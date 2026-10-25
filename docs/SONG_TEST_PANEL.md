@@ -1,5 +1,7 @@
 # 曲庫與視窗測試面板
 
+2026-10-25 新本機 binary 預設不保存每輪圖片或 HUD 灰階檔，保留 receipts／結算確認 metadata；新的結算 v2 判讀已完成原圖離線回放，實機仍暫停。新設定與舊 build006 分開，見 [結算與影像保存](RESULT_RECOGNITION_AND_STORAGE.md)及[本機接續](LOCAL_NATIVE_FLICK_2026-10-25.md)。
+
 ## 本輪已實跑並封存
 
 最新build006已由使用者實跑：18個回合、14輪完整輸入、8輪原生確認結算；正式Legacy有8首保存結算AP，另有Verrückt暖身AP。6個完成輸入未確認結算的回合及剩餘未測歌曲已列入[完整封存紀錄](SESSION_RECORDS_2026-10-24.md)。使用者要求先停止修正並commit／push；本次整理不新增實測。

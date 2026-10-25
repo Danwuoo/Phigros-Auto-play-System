@@ -129,7 +129,7 @@ class NativeAuditTests(NativeFixture):
 
     def test_timeout_and_invalid_summary_are_execution_failures(self):
         def runner(command, timeout, scratch):
-            if command[1].endswith("/IN.json"):
+            if Path(command[1]).name == "IN.json":
                 return dict(returncode=-9, stdout="", stderr="", failure="timeout")
             return dict(returncode=0, stdout="{\"chart_sha256\":\"wrong\"}", stderr="", failure=None)
         result = self.audit(runner=runner)

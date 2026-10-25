@@ -1,4 +1,5 @@
 #include "../apps/chart_experiment/hud_timeline.hpp"
+#include "../apps/chart_experiment/image_retention.hpp"
 #include <array>
 #include <cstdlib>
 #include <iostream>
@@ -93,6 +94,30 @@ int main() {
                 bool rejected=false;try {HudTimeline invalid(capacity);}catch(const std::invalid_argument&) {rejected=true;}
                 check(rejected,"invalid capacity allowed large/overflow allocation");
             }
+        }
+        ++groups;{
+            HudTimeline metadata(3,false);
+            check(!metadata.pixels_retained()&&metadata.allocated_pixel_bytes()==0,"metadata-only mode allocated image storage");
+            allocations=0;track_allocations=true;
+            const auto a=metadata.observe(image,meta(1,0),true);
+            const auto b=metadata.observe(image,meta(2,50'000'000),true);
+            track_allocations=false;
+            check(a==HudTimelineOutcome::sampled&&b==HudTimelineOutcome::sampled&&allocations==0,"metadata-only sampling allocated or failed");
+            check(metadata.bytes().empty()&&metadata.samples().size()==2&&metadata.samples()[1].frame.sequence==2,
+                "metadata-only mode retained pixels or lost actual receipts");
+            check(parse_image_retention("none")==ImageRetention::none&&!retain_result_image(ImageRetention::none)&&
+                !retain_diagnostic_images(ImageRetention::none),"none policy permits images");
+            check(retain_result_image(parse_image_retention("result"))&&!retain_diagnostic_images(ImageRetention::result),"result-only policy permits diagnostics");
+            check(retain_diagnostic_images(parse_image_retention("diagnostic")),"explicit diagnostics unavailable");
+            bool rejected=false;try{(void)parse_image_retention("all");}catch(const std::invalid_argument&){rejected=true;}
+            check(rejected,"unknown image policy accepted");
+            const char* ordinary[]={"program","run-adaptive"};int ordinary_count=2;
+            check(image_retention_suffix(ordinary_count,ordinary)==ImageRetention::none&&ordinary_count==2,"ordinary run default saves images or consumes arguments");
+            const char* explicit_result[]={"program","run-adaptive","--image-retention","result"};int result_count=4;
+            check(image_retention_suffix(result_count,explicit_result)==ImageRetention::result&&result_count==2,"explicit suffix did not preserve base argv");
+            const char* missing[]={"program","--image-retention"};int missing_count=2;
+            rejected=false;try{(void)image_retention_suffix(missing_count,missing);}catch(const std::invalid_argument&){rejected=true;}
+            check(rejected,"missing retention argument accepted");
         }
         std::cout<<groups<<" groups / "<<checks<<" HUD timeline checks passed; diagnostic memory only.\n";return 0;
     }catch(const std::exception& e){track_allocations=false;std::cerr<<"FAILED: "<<e.what()<<'\n';return 1;}

@@ -8,6 +8,7 @@
 #include <vector>
 
 namespace rhythm::experimental {
+enum class ResultLabelPolicy { absolute_v1, local_contrast_v2 };
 // Receipt-only terminal UI evidence. This policy never identifies a score,
 // judgment, song, clock, or permission to send input.
 inline bool result_label_fallback_eligible(bool sequence_complete,bool source_valid,const ScreenStateResult& raw) {
@@ -31,7 +32,8 @@ public:
     static constexpr std::array<PixelRegion,5> regions={PixelRegion{710,432,100,20},
         PixelRegion{1050,432,82,22},PixelRegion{783,538,33,14},
         PixelRegion{850,538,30,14},PixelRegion{915,538,33,14}};
-    explicit ResultLabelEvidenceProducer(std::span<const ScreenStateTemplate> templates) {
+    explicit ResultLabelEvidenceProducer(std::span<const ScreenStateTemplate> templates,
+        ResultLabelPolicy policy=ResultLabelPolicy::absolute_v1):policy_(policy) {
         for(const auto& item:templates)if(item.state==ObservedGameState::result) {
             // Retain the earlier calibrated three-anchor result templates.
             // Only the explicitly versioned caption references join this policy.
@@ -44,8 +46,10 @@ public:
                 if(anchor.region.x!=r.x||anchor.region.y!=r.y||anchor.region.width!=r.width||anchor.region.height!=r.height||
                    anchor.grayscale.size()!=static_cast<std::size_t>(r.width*r.height))
                     throw std::invalid_argument("result label regions differ from versioned policy");
+                const auto threshold=caption_threshold(anchor.grayscale);
+                if(threshold<0)throw std::invalid_argument("result label reference lacks local contrast");
                 auto& mask=reference.masks[n];mask.reserve(anchor.grayscale.size());
-                for(const auto gray:anchor.grayscale)mask.push_back(gray>=128?1:0);
+                for(const auto gray:anchor.grayscale)mask.push_back(gray>=threshold?1:0);
                 reference.counts[n]=std::count(mask.begin(),mask.end(),1);
                 if(reference.counts[n]<20||reference.counts[n]*2>=mask.size())
                     throw std::invalid_argument("result label reference lacks bounded caption ink");
@@ -72,8 +76,12 @@ public:
                     const auto gray=(77u*image.pixels[p]+150u*image.pixels[p+1]+29u*image.pixels[p+2]+128u)>>8;
                     const auto index=static_cast<std::size_t>(y*r.width+x);
                     grayscale[index]=static_cast<std::uint8_t>(gray);
-                    observed[index]=gray>=128?1:0;ink+=observed[index];
-                    if(observed[index])ink_sum+=gray;
+                }
+                const auto threshold=caption_threshold({grayscale.data(),expected.size()});
+                if(threshold<0)current.candidate=false;
+                for(std::size_t index=0;index<expected.size();++index) {
+                    observed[index]=threshold>=0&&grayscale[index]>=threshold?1:0;
+                    ink+=observed[index];if(observed[index])ink_sum+=grayscale[index];
                 }
                 for(int y=0;y<r.height;++y)for(int x=0;x<r.width;++x) {
                     const auto index=static_cast<std::size_t>(y*r.width+x);bool near_observed=false,near_expected=false;
@@ -103,6 +111,28 @@ public:
         return best;
     }
 private:
+    int caption_threshold(std::span<const std::uint8_t> pixels) const noexcept {
+        if(policy_==ResultLabelPolicy::absolute_v1)return 128;
+        // Normalize each fixed caption's foreground/background mixture. A
+        // global absolute cutoff made bright-background antialiasing count as
+        // extra ink. Both frozen references and current pixels use this rule.
+        // No learned/current-frame template and no score digits are involved.
+        std::array<std::size_t,256> histogram{};
+        for(const auto gray:pixels)++histogram[gray];
+        const auto percentile=[&](std::size_t numerator) {
+            const auto rank=(pixels.size()*numerator+99)/100;
+            std::size_t count=0;
+            for(int gray=0;gray<256;++gray) {
+                count+=histogram[static_cast<std::size_t>(gray)];
+                if(count>=rank)return gray;
+            }
+            return 255;
+        };
+        const auto background=percentile(20),foreground=percentile(99);
+        if(foreground-background<40)return -1;
+        return background+(foreground-background+1)/2;
+    }
+    ResultLabelPolicy policy_;
     struct Reference {std::string id;std::array<std::vector<std::uint8_t>,5> masks;std::array<std::size_t,5> counts{};};
     std::vector<Reference> references_; // At most two references, fixed 5x2000 pixels each.
 };

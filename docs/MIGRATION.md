@@ -1,5 +1,9 @@
 # 分支抽取與依賴邊界
 
+2026-10-25 本機接續新增有界 runtime archive 工具及其邊界測試，並修正原生稽核測試的 Windows 路徑判斷；保留 PAS／proto／third_party sources 未改。新 binary、profiles、launch configs 與比較證據另存，不繼承 build006／AP 資格，見 [本機 native 與 Flick 紀錄](LOCAL_NATIVE_FLICK_2026-10-25.md)。
+
+同日依使用者追加要求，修改實驗 app 的結算標籤判讀與影像保存、metadata-only HUD 及分析／面板提示；以新 v2 policy 明確啟用，舊 v1 與原件保留。沒有改保留 PAS sources／傳輸／接點 compiler 或輸入期限，詳見 [結算與保存政策](RESULT_RECOGNITION_AND_STORAGE.md)。
+
 來源 commit：`2d479e17fa1566c089dce019cbb11eb883ba47fd`。
 目的分支：`feature/chart-driven-multigame`。
 

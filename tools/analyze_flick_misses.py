@@ -272,7 +272,8 @@ def hud_context(run_dir, manifest):
     if not path.is_file():
         return dict(available=False, gaps=["hud_timeline_missing"]), []
     value, ref = read_json(path, 4 * 1024 * 1024)
-    if value.get("schema") != "pas.experimental-hud-timeline.v1" or value.get("clock_id") != "host-QPC-receipt-only":
+    metadata_only = value.get("schema") == "pas.experimental-hud-timeline-metadata.v1"
+    if value.get("schema") not in ("pas.experimental-hud-timeline.v1", "pas.experimental-hud-timeline-metadata.v1") or value.get("clock_id") != "host-QPC-receipt-only":
         raise ValueError("HUD schema/clock is not the native diagnostic timeline")
     if value.get("source_sha256") != manifest.get("source_sha256"):
         raise ValueError("HUD timeline belongs to a different capture source")
@@ -294,13 +295,23 @@ def hud_context(run_dir, manifest):
         boolean(row.get("effective_HUD"), "HUD classification")
         if not boolean(row.get("source_valid"), "HUD source validity"):
             raise ValueError("Native timeline cannot contain an invalid source sample")
-        if integer(row.get("byte_offset"), "HUD byte offset") != index * 18720:
+        if metadata_only:
+            if row.get("byte_offset") is not None:
+                raise ValueError("Metadata-only HUD must not claim a pixel offset")
+        elif integer(row.get("byte_offset"), "HUD byte offset") != index * 18720:
             raise ValueError("HUD byte offset does not match native sample layout")
         previous_sequence, previous_received = sequence, received
-    expected_bytes = len(samples) * 18720
+    expected_bytes = 0 if metadata_only else len(samples) * 18720
     stats = object_value(value.get("stats"), "HUD stats")
     if value.get("pixels_bytes") != expected_bytes or stats.get("samples") != len(samples):
         raise ValueError("HUD declared sample counts differ")
+    if metadata_only:
+        if (value.get("pixels_retained") is not False or value.get("pixels_file") is not None
+                or value.get("pixels_sha256") is not None or value.get("allocated_pixel_bytes") != 0):
+            raise ValueError("Metadata-only HUD claims retained image data")
+        return dict(available=True, index=ref, pixels=None, pixel_hash_verified=False,
+                    sample_count=len(samples), gaps=["hud_pixels_not_retained_by_policy"], stats=stats,
+                    scope="actual receipt-time metadata only; image retention disabled; no OCR or note verdict"), samples
     # Only the writer's fixed adjacent filename is accepted; do not follow
     # arbitrary paths embedded in imported evidence.
     if value.get("pixels_file") != "hud-timeline.gray":
