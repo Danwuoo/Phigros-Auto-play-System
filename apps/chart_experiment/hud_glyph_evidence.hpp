@@ -29,7 +29,7 @@ inline bool hud_candidate_eligible(bool shared_in,bool armed,bool source_valid,c
 }
 enum class HudTimestampKind { unknown, video_pts, host_arrival };
 enum class HudGlyphPolicy { calibrated_title_v1, shared_in_prefix_score_v1, shared_in_cell_score_v2, shared_in_subpixel_prefix_score_v3, shared_difficulty_subpixel_prefix_score_v4 };
-enum class HudPauseMaskPolicy { reference_white_v1, strong_white_core_v1 };
+enum class HudPauseMaskPolicy { reference_white_v1, eroded_strong_white_core_v2 };
 struct HudFrameMetadata {
     std::uint64_t sequence=0,epoch=0,generation=0,geometry_version=0;
     std::string source_id,source_sha256,frame_id,frame_sha256,evidence_id,clock_id;
@@ -131,12 +131,13 @@ class HudGlyphEvidenceProducer {
     static bool white(const std::uint8_t* p) {
         return p[0]>195&&p[1]>195&&p[2]>195&&std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<35;
     }
+    static bool strong_white(const std::uint8_t* p) {return white(p)&&std::min({p[0],p[1],p[2]})>=224;}
     static bool metadata_valid(const HudFrameMetadata& f) {
         return f.sequence&&f.epoch&&f.generation&&f.geometry_version&&text(f.source_id)&&sha(f.source_sha256)&&
             text(f.frame_id)&&sha(f.frame_sha256)&&text(f.evidence_id)&&text(f.clock_id)&&f.timestamp_ns>=0&&
             (f.timestamp_kind==HudTimestampKind::video_pts||f.timestamp_kind==HudTimestampKind::host_arrival);
     }
-    static Mask make_mask(const RgbImageView& reference,PixelRegion r,bool strong_white_core=false) {
+    static Mask make_mask(const RgbImageView& reference,PixelRegion r,bool eroded_strong_white_core=false) {
         Mask mask;
         for(int y=r.y;y<r.y+r.height;++y)for(int x=r.x;x<r.x+r.width;++x) {
             const auto* p=pixel(reference,x,y);
@@ -145,12 +146,19 @@ class HudGlyphEvidenceProducer {
             // required; this catches the observed boundary-crossing failure.
             if((x==r.x||y==r.y||x+1==r.x+r.width||y+1==r.y+r.height)&&white(p))
                 throw std::invalid_argument("reference glyph ROI touches white boundary");
-            // v4's actual AT pause reference contains a 202-gray antialiased
-            // bottom edge. Its later raster phase is not reliably white. Bind
-            // the existing strict foreground checks to the strong reference
-            // core instead; retain the same boundary/negative-space guards.
+            // Actual AT pause observations move the reference's 255-gray top
+            // edge below white during raster phase changes. Brightness alone
+            // is not an interior core. Require a full 3x3 strong-white support
+            // neighborhood, retaining the strict checks and negative guards.
             if(white(p)) {
-                if(!strong_white_core||std::min({p[0],p[1],p[2]})>=224)
+                bool core=true;
+                if(eroded_strong_white_core)for(int dy=-1;dy<=1&&core;++dy)for(int dx=-1;dx<=1;++dx) {
+                    const int nx=x+dx,ny=y+dy;
+                    if(nx<r.x||ny<r.y||nx>=r.x+r.width||ny>=r.y+r.height||!strong_white(pixel(reference,nx,ny))) {
+                        core=false;break;
+                    }
+                }
+                if(core)
                     mask.foreground.push_back({x,y,static_cast<std::uint8_t>(gray(p))});
             }
             else if(gray(p)<128) {
@@ -406,12 +414,12 @@ public:
             policy_!=HudGlyphPolicy::shared_in_cell_score_v2&&policy_!=HudGlyphPolicy::shared_in_subpixel_prefix_score_v3&&policy_!=HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4)||
            (policy_==HudGlyphPolicy::calibrated_title_v1&&!title_region_valid(title_region_)))
             throw std::invalid_argument("invalid HUD diagnostic reference");
-        if((pause_mask_policy!=HudPauseMaskPolicy::reference_white_v1&&pause_mask_policy!=HudPauseMaskPolicy::strong_white_core_v1)||
-           (pause_mask_policy==HudPauseMaskPolicy::strong_white_core_v1&&policy_!=HudGlyphPolicy::calibrated_title_v1&&
+        if((pause_mask_policy!=HudPauseMaskPolicy::reference_white_v1&&pause_mask_policy!=HudPauseMaskPolicy::eroded_strong_white_core_v2)||
+           (pause_mask_policy==HudPauseMaskPolicy::eroded_strong_white_core_v2&&policy_!=HudGlyphPolicy::calibrated_title_v1&&
             policy_!=HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4))
-            throw std::invalid_argument("strong pause core is only for v4 or its calibrated title redundancy");
+            throw std::invalid_argument("eroded strong pause core is only for v4 or its calibrated title redundancy");
         masks_[0]=make_mask(reference,fixed_regions[0],policy_==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4||
-            pause_mask_policy==HudPauseMaskPolicy::strong_white_core_v1);
+            pause_mask_policy==HudPauseMaskPolicy::eroded_strong_white_core_v2);
         if(calibrated_difficulty_region&&policy_!=HudGlyphPolicy::calibrated_title_v1)
             throw std::invalid_argument("difficulty override is only for actual calibrated title redundancy");
         masks_[1]=make_mask(reference,shared()?prefix_region():calibrated_difficulty_region.value_or(fixed_regions[1]));

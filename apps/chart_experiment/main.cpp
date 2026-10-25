@@ -843,8 +843,9 @@ int run(int argc,char** argv) {
                     // Diagnostic only: this never updates UI permission,
                     // evidence timestamps, the trigger, or any clock estimate.
                     const bool report_hud=observation.hud&&ui_healthy(now);
+                    const bool partial_hud=(pause_ok&&prefix_ok)||(pause_ok&&score_ok)||(prefix_ok&&score_ok);
                     const char* stage=report_hud?"waiting_for_first_note":
-                        pause_ok&&score_ok?"waiting_for_valid_HUD":"waiting_for_manual_play";
+                        partial_hud?"waiting_for_valid_HUD":"waiting_for_manual_play";
                     const Json progress={{"schema","pas.opening-acquisition-progress.v1"},{"stage",stage},
                         {"reason",report_hud?opening_reason:observation.hud?"actual_UI_source_or_foreground_not_ready":hud_feature_reason},
                         {"pause_ok",pause_ok},{"prefix_ok",prefix_ok},{"score_ok",score_ok},{"hud_ok",report_hud}};

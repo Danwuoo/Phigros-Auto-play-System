@@ -204,7 +204,7 @@ public:
                 primary.policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4 ?
                     std::optional<PixelRegion>{PixelRegion{1144,673,109,26}} : std::nullopt,
                 primary.policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4 ?
-                    HudPauseMaskPolicy::strong_white_core_v1 : HudPauseMaskPolicy::reference_white_v1);
+                    HudPauseMaskPolicy::eroded_strong_white_core_v2 : HudPauseMaskPolicy::reference_white_v1);
             value_.auxiliary=producer_->observe_features(reference,raw.state);
             if(!clean_auxiliary_score(value_.auxiliary)){clear_model();value_.reason="reference_full_anchors_or_clean_score_unsupported";return value_;}
             value_.reference_frame=meta;value_.support_frames=1;value_.reason="waiting_for_distinct_60ms_support";

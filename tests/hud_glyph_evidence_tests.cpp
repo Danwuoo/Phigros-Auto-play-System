@@ -410,22 +410,28 @@ try {
         catch(const std::invalid_argument&){rejected=true;}
         check(rejected,"v3 reference silently calibrated nonliteral component layout");
         ++groups;{
-            // Reproduce the observed AT failure: only the antialiased bottom
-            // row moves below the white threshold, while the pause core,
-            // negative space, difficulty and all seven score glyphs remain.
-            auto soft=literal;rectangle(soft,24,51,5,1,202);rectangle(soft,38,51,5,1,202);
-            auto pause_phase=soft;rectangle(pause_phase,24,51,5,1,152);rectangle(pause_phase,38,51,5,1,152);
+            // Actual AT RAM observations: the 255-gray top edge moves to
+            // 148..151 while the reference's 202-gray bottom becomes white.
+            // Keep the interior, negative space and other HUD anchors intact.
+            auto soft=literal;rectangle(soft,21,23,28,33,32);
+            for(const int x:{24,39}){rectangle(soft,x,26,7,25,255);rectangle(soft,x,51,7,1,202);}
+            auto pause_phase=soft;
+            for(const int x:{24,39}){rectangle(pause_phase,x,26,7,1,151);rectangle(pause_phase,x,51,7,1,255);}
             HudGlyphEvidenceProducer v4(view(soft),std::string(64,'c'),"AT-pause-core-v4",{},HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4);
             HudGlyphEvidenceProducer v3(view(soft),std::string(64,'c'),"IN-pause-reference-v3",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);
             const auto accepted=v4.observe_features(view(pause_phase)),legacy=v3.observe_features(view(pause_phase));
             check(v4.observe_features(view(soft)).hud_candidate&&accepted.hud_candidate,"v4 rejected pause core with changed antialiased edge");
-            check(accepted.fixed_glyphs[0].foreground_pixels==240&&accepted.fixed_glyphs[0].foreground_white_fraction==1&&
+            check(accepted.fixed_glyphs[0].foreground_pixels==230&&accepted.fixed_glyphs[0].foreground_white_fraction==1&&
                 accepted.fixed_glyphs[0].foreground_mean_error==0,"v4 changed strict core checks or retained soft reference edge");
-            check(v3.observe_features(view(soft)).hud_candidate&&!legacy.hud_candidate&&legacy.fixed_glyphs[0].foreground_pixels==250&&
-                legacy.fixed_glyphs[0].foreground_white_fraction==.96,"v3 pause reference identity changed");
+            check(v3.observe_features(view(soft)).hud_candidate&&!legacy.hud_candidate&&legacy.fixed_glyphs[0].foreground_pixels==364&&
+                legacy.fixed_glyphs[0].foreground_white_fraction==350.0/364,"v3 pause reference identity changed");
+            for(const auto value:{148,150,151}) {
+                auto observed=pause_phase;for(const int x:{24,39})rectangle(observed,x,26,7,1,static_cast<std::uint8_t>(value));
+                check(v4.observe_features(view(observed)).hud_candidate,"v4 rejected observed 14-pixel AT top-edge phases");
+            }
             for(unsigned which=0;which<4;++which) {
                 auto invalid=pause_phase;
-                if(which==0)rectangle(invalid,24,27,5,1,32); // >2% genuinely missing core.
+                if(which==0)rectangle(invalid,25,27,5,1,32); // >2% genuinely missing interior core.
                 if(which==1)rectangle(invalid,21,23,28,33,32);
                 if(which==2)rectangle(invalid,21,23,28,33);
                 if(which==3)for(auto& value:invalid)value=static_cast<std::uint8_t>(value/2);
@@ -433,13 +439,13 @@ try {
             }
             for(const auto state:{ObservedGameState::paused,ObservedGameState::result})
                 check(!v4.observe_features(view(pause_phase),state).hud_candidate,"v4 pause core overrode denied state");
-            auto faint=soft;rectangle(faint,24,27,5,25,202);rectangle(faint,38,27,5,25,202);
+            auto faint=soft;for(const int x:{24,39})rectangle(faint,x,26,7,26,202);
             rejected=false;
             try {HudGlyphEvidenceProducer bad(view(faint),std::string(64,'c'),"no-strong-pause",{},HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4);}
             catch(const std::invalid_argument&){rejected=true;}
             check(rejected,"v4 calibrated a pause without strong foreground support");
             rejected=false;
-            try {HudGlyphEvidenceProducer bad(view(soft),std::string(64,'c'),"v3-forced-core",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3,{},HudPauseMaskPolicy::strong_white_core_v1);}
+            try {HudGlyphEvidenceProducer bad(view(soft),std::string(64,'c'),"v3-forced-core",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3,{},HudPauseMaskPolicy::eroded_strong_white_core_v2);}
             catch(const std::invalid_argument&){rejected=true;}
             check(rejected,"v3 accepted a silent pause mask override");
         }
