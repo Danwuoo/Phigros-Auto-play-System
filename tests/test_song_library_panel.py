@@ -152,12 +152,17 @@ class SongLibraryPanelTests(unittest.TestCase):
             target=elsewhere,
             expected=self.sha,
         )
-        self.assertEqual(Path(value["path"]), self.library)
+        # Windows temp paths may use RUNNER~1 while PowerShell returns the long
+        # spelling. Compare actual identity without weakening the cwd contract.
+        self.assertTrue(os.path.samefile(value["path"], self.library))
         self.assertEqual(value["charts"], 4)
         self.assertEqual(value["schema"], "pas.catalog-library.v1")
         self.assertTrue(value["verified"])
-        self.assertEqual(Path(value["preview"]), self.root / "outputs" / "new-preview")
-        self.assertEqual(Path(value["process_cwd"]), elsewhere)
+        preview = Path(value["preview"])
+        self.assertEqual(preview.parts[-2:], ("outputs", "new-preview"))
+        self.assertTrue(os.path.samefile(preview.parent.parent, self.root))
+        self.assertFalse(preview.exists())
+        self.assertTrue(os.path.samefile(value["process_cwd"], elsewhere))
 
     def test_multi_difficulty_variant_counts_and_literal_unicode_search(self):
         value = self.invoke(

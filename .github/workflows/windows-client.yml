@@ -1,0 +1,58 @@
+name: Windows catalogue client
+
+on:
+  push:
+    branches: [feature/chart-driven-multigame]
+    paths:
+      - '.github/workflows/windows-client.yml'
+      - 'tools/song-library-panel.ps1'
+      - 'tools/start-song-library.ps1'
+      - 'tools/build-local.ps1'
+      - 'tests/test_song_library_panel.py'
+      - 'CMakeLists.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-catalogue-client-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  client:
+    if: github.ref == 'refs/heads/feature/chart-driven-multigame'
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - name: Check out the exact client revision without hydrating audio
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          lfs: false
+          persist-credentials: false
+      - name: Run headless client contract tests
+        shell: pwsh
+        run: |
+          $env:PAS_TEST_PWSH = (Get-Command pwsh).Source
+          python -m unittest discover -s tests -p test_song_library_panel.py -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./tools/start-song-library.ps1 -SelfTest
+      - name: Build and test the portable contracts on Windows
+        shell: pwsh
+        run: ./tools/build-local.ps1 -Mode Portable
+      - name: Render the real catalogue in WinForms at two sizes
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -STA -File tools/song-library-panel.ps1 -Library assets/phigros/4.0.1.2/library.json -PreviewDirectory "$env:RUNNER_TEMP/catalogue-client-preview"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Save Windows layout previews
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-catalogue-client-preview
+          if-no-files-found: warn
+          retention-days: 7
+          path: ${{ runner.temp }}/catalogue-client-preview
