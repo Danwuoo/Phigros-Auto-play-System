@@ -1,5 +1,7 @@
 # 本機 6.1 sol xhigh 交接 prompt
 
+**最新完整曲庫接續**：新005封存／v2操作面板已列出327首389份IN／AT，263份完成最終離線前檢（IN241／AT22，含Credits AT），其餘126份按使用者要求保留原因並跳過。384份已與授權APK原譜bytes核對，5份不同版本不強制映射；AT使用實際Credits AT Lv.15參考與獨立v4 policy。已解除獨立2000 notes拒絕，但事件／時間／容量預算保留。每輪不存圖，人工選曲／READY／Play；新005遊戲判定NOT RUN。程式a50229d，binary／設定／本機路徑與全部驗證見[完整面板紀錄](FULL_LIBRARY_PANEL_2026-10-25.md)。勿將下列舊入口與NOT RUN範圍視為最新整體狀態；重啟後仍須重新取得真實boot／五指證據。
+
 **最新接續**：使用者其後要求改善Flick折返且時機不變。已另建004封存與Glaciaxion直線72px profile，離線51個Flick折返28→0、全部判定錨點與關鍵時機不變，678個非Flick接點不變；新native29/29、portable4/4、21首offline前檢與324個GUI pins通過。新實機仍待使用者人工選曲／READY／Play；一般回合不存圖片、保留每輪紀錄，不自動重試。見[新路徑與本機入口](FLICK_STRAIGHT_PATH_2026-10-25.md)。舊003與三輪紀錄保留，不繼承AP。
 
 2026-10-25 本機接續已完成新 Windows native 29/29 CTest、21 份 baseline 重建、23 次離線前檢與新 boot 五指 fixture。其後使用者恢復實測，Glaciaxion IN的72→60→72 px三輪已完成；文字判定為725/3/1/0、726/0/0/3、725/0/0/4，無穩定改善或新AP，不改時機／共用預設。見[三輪比較](FLICK_BAB_2026-10-25.md)及[本機接續紀錄](LOCAL_NATIVE_FLICK_2026-10-25.md)，勿將下列歷史待辦或 NOT RUN 當作最新狀態。

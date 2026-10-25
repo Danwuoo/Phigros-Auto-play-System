@@ -1,5 +1,9 @@
 # 本輪驗證：2026-10-23 起，更新至 2026-10-25
 
+## 2026-10-25 完整操作面板／AT與接點預算
+
+新005 native29/29 CTest、Flick／來源／opening207 checks、learned HUD161 checks、HUD glyph158 checks；Python244項（243通過／1個symlink權限skip），portable configure/build/CTest4/4，面板SelfTest52 checks。全389份已逐譜記錄準備或跳過；最終binary263/263離線前檢（IN241／AT22）及實際v2 context1166個pins核對通過。授權APK原譜384份bytes相同、5份版本差異保留；Credits AT真實只讀校正與離線正／負例通過。2001接點／4002事件的compiler、opening及runtime回歸通過，沒有截斷音符。126份按格式／身份／資源原因跳過；不把離線準備稱為遊戲判定或AP。詳見[完整面板、身份與限制](FULL_LIBRARY_PANEL_2026-10-25.md)。
+
 ## 2026-10-25 固定判定錨點直線Flick候選
 
 新004封存native29/29 CTest、Flick policy199 checks、portable configure/build/CTest4/4、Python232項（231通過／1個Windows symlink權限skip），面板SelfTest52 checks。21首native offline preflight與324個GUI pins通過。Glaciaxion IN原譜51個Flick離線折返28→0，端點位移71.253–72.250px；判定時刻座標、DOWN／滑動末端／UP時間、opening及678個非Flick接點均保持一致。原dynamic政策fingerprint重現，新policy與profile／plan獨立綁定。新004遊戲實測NOT RUN，不從離線命令座標宣稱Miss或AP改善。初次Python WinError32清理錯誤及後續成功重跑均保留，詳見[完整路徑／封存紀錄](FLICK_STRAIGHT_PATH_2026-10-25.md)。

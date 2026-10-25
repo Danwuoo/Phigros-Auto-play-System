@@ -1,5 +1,7 @@
 # Rhythm Chart Memory — Phigros / 世界計畫研究分支
 
+**2026-10-25 完整操作面板／AT**：327首、389份IN／AT與變體已放入同一人工測試台，可搜尋／篩選；263份通過最終離線前檢（IN241／AT22，含Credits AT），其餘126份列明原因跳過。384份與授權安裝APK原譜bytes相同，5份版本差異不強制映射。使用真實Credits AT HUD建立獨立policy，移除獨立2000 notes拒絕並保留完整事件／時間／容量預算。新005封存native29/29、portable4/4、Python244項含1skip；選曲／READY／Play仍由人操作，每輪不存圖片，新遊戲判定仍待測。[完整操作、身份與封存](docs/FULL_LIBRARY_PANEL_2026-10-25.md)。
+
 **2026-10-25 Flick路徑候選**：新增明確啟用的固定判定錨點直線policy。Glaciaxion IN原譜離線核對51個Flick折返28→0次、端點位移71.25–72.25 px，判定座標／DOWN／滑動末端／UP時機及678個非Flick接點不變。新004封存native29/29、portable4/4、21首離線前檢通過；只預選Glaciaxion直線72px，人工選曲／READY／Play、不存圖片。新實機判定仍待測，未宣稱改善或AP。[修改、封存與入口](docs/FLICK_STRAIGHT_PATH_2026-10-25.md)。
 
 **2026-10-25 本機接續**：新 Windows native／patched gRPC 建置與29/29 CTest完成；結算v2通過100張既有影格離線回放。其後完成Glaciaxion IN的72→60→72 px三輪：使用者回報725/3/1/0、726/0/0/3、725/0/0/4（Perfect／Good／Bad／Miss），三輪原生確認結算、最後kernel zero、各0張圖片。尚無穩定改善或新AP，不改共用預設或時機。新003 binary／profile／設定與舊build006／AP原件分開。[三輪比較](docs/FLICK_BAB_2026-10-25.md)／[本機紀錄](docs/LOCAL_NATIVE_FLICK_2026-10-25.md)／[結算與保存政策](docs/RESULT_RECOGNITION_AND_STORAGE.md)。
