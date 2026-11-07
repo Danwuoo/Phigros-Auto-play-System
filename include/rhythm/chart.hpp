@@ -91,6 +91,33 @@ struct ChartLine {
     std::vector<SpeedLineEvent> speed_events;
     std::optional<NativeLineEventDeclarations> native_event_declarations;
 };
+struct BlockAreaPoint { double x = 0, y = 0; };
+struct BlockAreaMove {
+    SongNs time_ns = 0;
+    BlockAreaPoint end_position;
+    int ease_x = 0, ease_y = 0;
+};
+struct BlockAreaRotation {
+    SongNs time_ns = 0;
+    BlockAreaPoint anchor;
+    double degrees = 0;
+    int ease = 0;
+};
+struct BlockAreaScale {
+    SongNs time_ns = 0;
+    BlockAreaPoint anchor, scale;
+    int ease_x = 0, ease_y = 0;
+};
+struct ChartBlockArea {
+    SourceLocation source;
+    BlockAreaPoint top_right, bottom_left;
+    // Song time, including chart offset. Touch blocking uses [enable_ns, disable_ns).
+    SongNs appear_ns = 0, enable_ns = 0, disable_ns = 0, disappear_ns = 0;
+    bool subtract = false;
+    std::vector<BlockAreaMove> moves;
+    std::vector<BlockAreaRotation> rotations;
+    std::vector<BlockAreaScale> scales;
+};
 struct SemanticChart {
     ChartSource source;
     int format_version = 3;
@@ -106,6 +133,7 @@ struct SemanticChart {
     bool import_interpretation_unqualified = false;
     std::vector<ChartImportAnomaly> import_anomalies;
     std::size_t evaluated_pose_event_count = 0;
+    std::vector<ChartBlockArea> block_areas;
 };
 struct ChartImportLimits {
     std::size_t max_json_bytes = 32 * 1024 * 1024;

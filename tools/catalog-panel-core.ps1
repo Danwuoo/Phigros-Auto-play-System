@@ -47,7 +47,16 @@ function Get-PanelBudgetText($Job) {
     if($Job.PSObject.Properties['runtime_budget'] -and $null -ne $Job.runtime_budget){
         $budget=$Job.runtime_budget
         $tail=if($null -ne $budget.last_up_song_ns){'{0:N1}' -f ($budget.last_up_song_ns/1e9)}else{'未記錄'}
-        return "$($Job.notes) 音符 · $($Job.events)/$($budget.runtime_step_budget) 動作 · 峰值 $($Job.peak)/$($Job.contact_capacity) 指`r`n尾音 $tail 秒／時長預算 $($budget.runtime_duration_limit_ns/1e9) 秒"
+        $blockArea=''
+        if($Job.PSObject.Properties['preparation'] -and $null -ne $Job.preparation -and
+           $Job.preparation.PSObject.Properties['block_area'] -and $null -ne $Job.preparation.block_area){
+            $proof=$Job.preparation.block_area
+            $blockArea="`r`n禁觸區：$($proof.active_regions) 區，$($proof.detoured_contacts) 筆改道（離線）"
+            if($proof.PSObject.Properties['temporal_fallback_contacts'] -and $proof.temporal_fallback_contacts -gt 0){
+                $blockArea+="，其中 $($proof.temporal_fallback_contacts) 筆在可觸控區依時序執行"
+            }
+        }
+        return "$($Job.notes) 音符 · $($Job.events)/$($budget.runtime_step_budget) 動作 · 峰值 $($Job.peak)/$($Job.contact_capacity) 指`r`n尾音 $tail 秒／時長預算 $($budget.runtime_duration_limit_ns/1e9) 秒$blockArea"
     }
     if($Job.PSObject.Properties['preparation'] -and $null -ne $Job.preparation -and $null -ne $Job.preparation.events){
         return "已編譯 $($Job.preparation.events) 動作／預算 $($Job.preparation.runtime_step_budget)；時長預算 $($Job.preparation.runtime_duration_limit_ns/1e9) 秒"

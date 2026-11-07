@@ -52,6 +52,8 @@ struct ExperimentalRuntimeOptions {
     Ns anchor_domain_begin_ns=10'800'000'000,anchor_domain_end_ns=11'950'000'000;
     Ns max_coincident_flick_delay_ns=0; // Explicit shared-head candidate: 0 or 32ms.
     bool allow_advance_below_drags=false; // Explicit below-side early Drag candidate.
+    bool allow_block_area_temporal_fallback=false;
+    std::optional<Ns> block_area_phase_ns;
     ClockProbe clock_probe; // Static opt-in whole-suffix mapping, fixed before READY.
 };
 enum class ExperimentalRuntimeState { waiting,ready,armed,completed,stopped };
@@ -168,7 +170,7 @@ class ExperimentalContactRuntime {
             a.point.x==b.point.x&&a.point.y==b.point.y;
     }
     static bool projection_free(const NoteContactOwnership& owner) {
-        return owner.normal_projection_reference_pixels==0&&owner.projection_min_reference_pixels==0&&
+        return !owner.block_area_temporal_fallback&&owner.normal_projection_reference_pixels==0&&owner.projection_min_reference_pixels==0&&
             owner.projection_max_reference_pixels==0&&
             owner.tangent_projection_min_reference_pixels==0&&owner.tangent_projection_max_reference_pixels==0&&
             owner.gap_tangent_projection_min_reference_pixels==0&&owner.gap_tangent_projection_max_reference_pixels==0&&
@@ -215,17 +217,20 @@ class ExperimentalContactRuntime {
             distance(cert.bend_reference,cert.middle->reference)+distance(cert.middle->reference,cert.end_reference):
             distance(cert.bend_reference,cert.end_reference));
         const auto approx=[](double a,double b){return std::isfinite(a)&&std::isfinite(b)&&std::abs(a-b)<=1e-6*std::max({1.0,std::abs(a),std::abs(b)});};
+        const bool narrow_oblique=owner.block_area_temporal_fallback&&
+            approx(std::min(std::abs(direction.x),std::abs(direction.y)),.075);
         if(!approx(length,options.flick_distance_reference_pixels)||!approx(cert.endpoint_distance_reference_pixels,length)||
            !approx(cert.polyline_length_reference_pixels,polyline)||!approx(std::hypot(direction.x,direction.y),1)||
-           !approx(dx,length*direction.x)||!approx(dy,length*direction.y)||!approx(std::abs(dx),std::abs(dy))||
+           !approx(dx,length*direction.x)||!approx(dy,length*direction.y)||(!narrow_oblique&&!approx(std::abs(dx),std::abs(dy)))||
            std::abs(dx*by-dy*bx)<.01)return false;
         if(sampled){
             const auto sign=(direction.x*by-direction.y*bx)>0?1.:-1.;
             const PosePoint perpendicular{-direction.y,direction.x};
-            const PosePoint first{anchor.x+length*(.20*direction.x+sign*.10*perpendicular.x),
-                anchor.y+length*(.20*direction.y+sign*.10*perpendicular.y)};
-            const PosePoint middle{anchor.x+length*(.55*direction.x+sign*.12*perpendicular.x),
-                anchor.y+length*(.55*direction.y+sign*.12*perpendicular.y)};
+            const double bend_curve=narrow_oblique?.018:.10,middle_curve=narrow_oblique?.030:.12;
+            const PosePoint first{anchor.x+length*(.20*direction.x+sign*bend_curve*perpendicular.x),
+                anchor.y+length*(.20*direction.y+sign*bend_curve*perpendicular.y)};
+            const PosePoint middle{anchor.x+length*(.55*direction.x+sign*middle_curve*perpendicular.x),
+                anchor.y+length*(.55*direction.y+sign*middle_curve*perpendicular.y)};
             if(distance(first,cert.bend_reference)>1e-6||distance(middle,cert.middle->reference)>1e-6)return false;
         }
         const std::array<PosePoint,5> vertices{anchor,cert.bend_reference,
@@ -322,6 +327,14 @@ public:
         const bool rectangle=policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
         const bool candidate=policy==OffscreenPolicy::bounded_normal_candidate||
             policy==OffscreenPolicy::bounded_normal_intersection_candidate_v1||rectangle;
+        const bool block_areas=meta.block_area_count!=0;
+        if((block_areas?meta.block_area_policy_id!="phira-block-area-continuous-detour-v1":!meta.block_area_policy_id.empty())||
+           (block_areas&&(options_.clock_probe.enabled||meta.options.block_area_phase_ns!=options_.block_area_phase_ns))||
+           meta.options.allow_block_area_temporal_fallback!=options_.allow_block_area_temporal_fallback||
+           (meta.options.allow_block_area_temporal_fallback&&(!block_areas||!rectangle||!options_.block_area_phase_ns))||
+           meta.block_area_temporal_contacts>meta.block_area_detoured_contacts||
+           meta.block_area_detoured_contacts>full.ownership.size())
+            throw std::invalid_argument("whole-song BlockArea metadata is inconsistent");
         if((policy!=OffscreenPolicy::reject&&!candidate)||meta.requires_calibration!=candidate||
            (candidate&&(!std::isfinite(meta.options.max_normal_projection_reference_pixels)||
              meta.options.max_normal_projection_reference_pixels<0||
@@ -363,16 +376,28 @@ public:
         std::map<std::uint64_t,const NoteContactOwnership*> owners;
         std::map<std::string,const NoteContactOwnership*> source_notes;
         std::set<Ns> non_flick_heads;
-        std::size_t certificates=0;
+        std::size_t certificates=0,block_area_temporal_contacts=0,block_area_detoured_contacts=0;
         for(const auto& owner:full.ownership) {
             if(owner.source_note_id!=full.memory.identity.chart_sha256+'#'+owner.source_json_pointer||
                !text(owner.source_json_pointer)||!source_notes.emplace(owner.source_note_id,&owner).second||
                !owners.emplace(owner.contact_id,&owner).second||owner.normal_projection_spans.size()>options_.max_song_steps-certificates)
                 throw std::invalid_argument("invalid full note ownership");
             certificates+=owner.normal_projection_spans.size();
+            if(owner.block_area_translation_reference||owner.block_area_temporal_fallback) {
+                if(!block_areas||!rectangle)throw std::invalid_argument("unrecorded BlockArea contact detour");
+                ++block_area_detoured_contacts;
+            }
+            if(owner.block_area_temporal_fallback) {
+                if(!options_.allow_block_area_temporal_fallback||!owner.normal_projection_spans.empty()||
+                   !projection_bounded(owner,0,options_.song_duration_limit_ns,0,0))
+                    throw std::invalid_argument("invalid or unexpected BlockArea timing-only contact");
+                ++block_area_temporal_contacts;
+            }
             if(owner.kind==NoteKind::tap||owner.kind==NoteKind::hold||owner.kind==NoteKind::drag)
                 non_flick_heads.insert(owner.judgment_ns);
         }
+        if(block_area_temporal_contacts!=meta.block_area_temporal_contacts||block_area_detoured_contacts!=meta.block_area_detoured_contacts)
+            throw std::invalid_argument("BlockArea contact counts differ from compiled ownership");
         std::set<std::string> filtered_sources;
         for(const auto& id:meta.options.below_drag_source_ids){
             const auto found=source_notes.find(id);
@@ -436,7 +461,7 @@ public:
             }else if(owner.hold_tracking_end_ns>=0){
                 throw std::invalid_argument("unexpected Hold tracking-domain metadata");
             }
-            if(candidate&&owner.kind==NoteKind::hold){
+            if(candidate&&owner.kind==NoteKind::hold&&!owner.block_area_temporal_fallback){
                 auto cursor=contact.steps.front().song_ns;
                 for(const auto& span:owner.normal_projection_spans){
                     if(span.begin_ns!=cursor||span.end_ns<span.begin_ns)
@@ -451,7 +476,7 @@ public:
             if(!projection_bounded(owner,candidate?meta.options.max_normal_projection_reference_pixels:0,options_.song_duration_limit_ns,
                  rectangle?meta.options.max_tangent_error_reference_pixels:0,meta.options.max_hold_reacquire_gap_ns))
                 throw std::invalid_argument("whole-song contact exceeds recorded projection bounds: "+owner.source_json_pointer);
-            if(candidate&&owner.normal_projection_spans.empty())
+            if(candidate&&owner.normal_projection_spans.empty()&&!owner.block_area_temporal_fallback)
                 throw std::invalid_argument("whole-song candidate lacks a projection certificate: "+owner.source_json_pointer);
             if(contact.steps.size()>options_.max_song_steps-value_.selected_steps)
                 throw std::invalid_argument("whole-song contact exceeds explicit event budget: "+owner.source_json_pointer);
@@ -477,6 +502,7 @@ private:
         const auto& a=anchor_;
         if(a.origin_host_ns<0||a.origin_host_ns>safe||a.received_host_ns<0||a.received_host_ns>safe||
            a.explicit_phase_ns< -100*ms||a.explicit_phase_ns>100*ms||
+           (options_.block_area_phase_ns&&a.explicit_phase_ns!=*options_.block_area_phase_ns)||
            a.chosen_song_interval.lower<options_.anchor_domain_begin_ns||a.chosen_song_interval.upper>options_.anchor_domain_end_ns||
            a.chosen_song_interval.upper<a.chosen_song_interval.lower||
            a.chosen_song_interval.upper-a.chosen_song_interval.lower>80*ms||

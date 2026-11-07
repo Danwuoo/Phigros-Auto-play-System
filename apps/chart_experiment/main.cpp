@@ -40,6 +40,7 @@ constexpr Ns ms=1'000'000,second=1'000'000'000;
 // UI is a bounded pause/exit watchdog, not the song clock. Only an actual
 // recognized playing frame renews it; unknown pixels never renew permission.
 constexpr Ns ui_watchdog=500*ms;
+constexpr Ns desktop_kernel_probe_interval=220*ms;
 constexpr std::size_t dlyrotz_expected_steps=5669;
 constexpr const char* dlyrotz_plan_sha="74e16603971e407627ea679a56f20300043a43c9fdf89008d9d6645d703e3ce5";
 constexpr const char* dlyrotz_chart_sha="aeadac362f9caca96eee66153b8c32f5a891113453635d1791d434768138ce90";
@@ -52,6 +53,7 @@ constexpr const char* usage=
     "[--flick-path-policy dynamic-line-v1|judgment-anchored-straight-v1|judgment-anchored-screen-fit-v1|judgment-anchored-diagonal-snap-v1|judgment-anchored-diagonal-sampled-v2] [--hold-tail-policy full-pose-v1|phira-tail-grace-candidate-v1] "
     "[--offscreen-policy bounded-normal-intersection-candidate-v1|bounded-judgment-rectangle-candidate-v1] [--max-tangent-error-pixels 0..151.2] "
     "[--max-prejudge-ms 0..30] [--advance-above-drags 0|1] [--above-drag-source-ids JSON_ARRAY] [--advance-below-drags 0|1] [--below-drag-source-ids JSON_ARRAY] [--max-hold-gap-ms 0..20] [--coincident-flick-delay-ms 0|32] [--outlined-drag-heads 0|1] [--native-head-appearance-witness 0|1] [--tap-duration-ms 32|64|96]\n"
+    "prepare-adaptive optionally pins the block area dispatch phase with --block-area-phase-ms -100..100 [--allow-block-area-temporal-fallback 0|1].\n"
     "chart_experiment run-adaptive SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song --song-profile PROFILE.json --experimental-hud-reference CLEAN.rgb [--capacity-evidence EVIDENCE.json | --capacity-policy configured-ten-contact-v1]\n"
     "Use check or check-adaptive in place of run/run-adaptive for offline preflight only (no device discovery/input/output directory).\n"
     "Optional final suffix: --image-retention none|result|diagnostic (default none; result saves only a confirmed result PNG).\n"
@@ -364,6 +366,14 @@ Json template_scores_json(const ScreenStateResult& classified) {
             {"worst_anchor_mean_error",score.worst_anchor_mean_error},{"all_anchors_match",score.all_anchors_match}});
     return out;
 }
+void add_block_area_evidence(Json& json,const ContactCompileMetadata& metadata) {
+    if(metadata.block_area_policy_id.empty())return;
+    json["block_area"]={{"policy_id",metadata.block_area_policy_id},{"active_regions",metadata.block_area_count},
+        {"detoured_contacts",metadata.block_area_detoured_contacts},
+        {"phase_ns",metadata.options.block_area_phase_ns?Json(*metadata.options.block_area_phase_ns):Json(nullptr)},
+        {"temporal_fallback_enabled",metadata.options.allow_block_area_temporal_fallback},
+        {"temporal_fallback_contacts",metadata.block_area_temporal_contacts}};
+}
 Json compiled_json(const CompiledContactPlan& plan) {
     Json result={{"schema","pas.experimental-whole-song-compiled.v1"},{"cache_sha256",plan.metadata.cache_sha256},
         {"compiler_version",plan.metadata.compiler_version},
@@ -379,6 +389,7 @@ Json compiled_json(const CompiledContactPlan& plan) {
         {"flick_release_ns",plan.metadata.options.flick_release_ns},{"flick_distance_reference_pixels",plan.metadata.options.flick_distance_reference_pixels},
         {"flick_path_policy",flick_path_policy_name(plan.metadata.options.flick_path_policy)},
         {"calibration_id",plan.metadata.options.calibration_id},{"input_geometry",{1280,720,0}}};
+    add_block_area_evidence(result,plan.metadata);
     if(plan.metadata.source_format_version!=3)result["source_format_version"]=plan.metadata.source_format_version;
     if(plan.metadata.options.hold_tail_policy!=HoldTailPolicy::full_pose_v1){
         result["hold_tail_policy_id"]=hold_tail_policy_name(plan.metadata.options.hold_tail_policy);
@@ -421,6 +432,9 @@ Json compiled_json(const CompiledContactPlan& plan) {
             {"projection_min_reference_pixels",owner.projection_min_reference_pixels},
             {"projection_max_reference_pixels",owner.projection_max_reference_pixels},{"normal_projection_spans",std::move(spans)}});
         if(owner.hold_tracking_end_ns>=0)result["ownership"].back()["hold_tracking_end_ns"]=owner.hold_tracking_end_ns;
+        if(owner.block_area_translation_reference)result["ownership"].back()["block_area_translation_reference"]={
+            owner.block_area_translation_reference->x,owner.block_area_translation_reference->y};
+        if(owner.block_area_temporal_fallback)result["ownership"].back()["block_area_temporal_fallback"]=true;
         if(owner.flick_anchor_reference)result["ownership"].back()["flick_anchor_reference"]={owner.flick_anchor_reference->x,owner.flick_anchor_reference->y};
         if(owner.flick_direction_reference)result["ownership"].back()["flick_direction_reference"]={owner.flick_direction_reference->x,owner.flick_direction_reference->y};
         if(owner.flick_discrete_path){
@@ -534,6 +548,8 @@ struct SongProfile {
     HoldTailPolicy hold_tail_policy=HoldTailPolicy::full_pose_v1;
     OffscreenPolicy offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
     double max_tangent_error_reference_pixels=0;
+    std::optional<Ns> block_area_phase_ns;
+    bool allow_block_area_temporal_fallback=false;
     Ns max_prejudge_ns=0,max_hold_reacquire_gap_ns=0;
     bool advance_above_drags=false;
     std::string installed_source_manifest;
@@ -607,6 +623,8 @@ ContactCompileOptions song_compile_options(const SongProfile& song) {
     options.hold_tail_policy=song.hold_tail_policy;
     options.offscreen_policy=song.offscreen_policy;
     options.max_tangent_error_reference_pixels=song.max_tangent_error_reference_pixels;
+    options.block_area_phase_ns=song.block_area_phase_ns;
+    options.allow_block_area_temporal_fallback=song.allow_block_area_temporal_fallback;
     options.max_prejudge_ns=song.max_prejudge_ns;
     options.advance_above_drags=song.advance_above_drags;
     options.max_hold_reacquire_gap_ns=song.max_hold_reacquire_gap_ns;
@@ -673,6 +691,12 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
     song.tap_duration_ns=tap_dwell_ns_from_profile(value);
     song.offscreen_policy=song_offscreen_policy(value.value("offscreen_policy_id",std::string("bounded-normal-intersection-candidate-v1")));
     song.max_tangent_error_reference_pixels=tangent_ceiling(value.value("max_tangent_error_reference_pixels",Json(0)));
+    if(value.contains("block_area_phase_ms"))song.block_area_phase_ns=kernel_integer(value.at("block_area_phase_ms"),-100,100)*ms;
+    if(value.contains("allow_block_area_temporal_fallback")) {
+        const auto& fallback=value.at("allow_block_area_temporal_fallback");
+        if(!fallback.is_boolean())throw std::invalid_argument("block area temporal fallback must be a boolean");
+        song.allow_block_area_temporal_fallback=fallback.get<bool>();
+    }
     song.max_prejudge_ns=kernel_integer(value.value("max_prejudge_ns",Json(0)),0,30*ms);
     song.max_hold_reacquire_gap_ns=kernel_integer(value.value("max_hold_reacquire_gap_ns",Json(0)),0,20*ms);
     song.coincident_flick_delay_ns=coincident_flick_delay(value.value("coincident_flick_delay_ns",Json(0)));
@@ -727,8 +751,8 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
     return song;
 }
 int prepare_adaptive(int argc,char** argv) {
-    // At most25 distinct option/value pairs, including both source filters.
-    if(argc<5||argc>55||(argc-5)%2)throw std::invalid_argument(usage);
+    // Bounded option/value pairs, including both source filters and BlockArea.
+    if(argc<5||argc>59||(argc-5)%2)throw std::invalid_argument(usage);
     const std::filesystem::path output=std::filesystem::absolute(utf8_path(argv[4]));
     if(std::filesystem::exists(output))throw std::invalid_argument("output must not exist");
     const auto source_bytes=read_utf8_file(argv[3],1024*1024);const auto source=Json::parse(source_bytes);
@@ -769,6 +793,8 @@ int prepare_adaptive(int argc,char** argv) {
         else if(option=="--contact-capacity")song.capacity=static_cast<int>(kernel_integer(value,1,10));
         else if(option=="--tight-projection-speed-bounds")song.tight_projection_speed_bounds=kernel_integer(value,0,1)!=0;
         else if(option=="--max-tangent-error-pixels")song.max_tangent_error_reference_pixels=tangent_ceiling(value);
+        else if(option=="--block-area-phase-ms")song.block_area_phase_ns=kernel_integer(value,-100,100)*ms;
+        else if(option=="--allow-block-area-temporal-fallback")song.allow_block_area_temporal_fallback=kernel_integer(value,0,1)!=0;
         else if(option=="--max-prejudge-ms")song.max_prejudge_ns=kernel_integer(value,0,30)*ms;
         else if(option=="--advance-above-drags")song.advance_above_drags=kernel_integer(value,0,1)!=0;
         else if(option=="--advance-below-drags")song.advance_below_drags=kernel_integer(value,0,1)!=0;
@@ -837,6 +863,7 @@ int prepare_adaptive(int argc,char** argv) {
     if(!std::filesystem::create_directory(output))throw std::runtime_error("output creation failed");
     if(compiled.plan) {
         const auto& plan=*compiled.plan;
+        add_block_area_evidence(report,plan.metadata);
         song.runtime_step_budget=65536;
         if(!plan.events.empty())song.runtime_duration_limit_ns=std::max(180*second,(plan.events.back().song_ns/second+31)*second);
         const bool bounded=plan.memory.contacts.size()==chart.note_count&&plan.total_steps<=song.runtime_step_budget&&
@@ -870,6 +897,10 @@ int prepare_adaptive(int argc,char** argv) {
                 {"opening_model_sha256",description.model_sha256},{"source_manifest_sha256",chart_text_sha256(source_bytes)},
                 {"gameplay_qualified",false},{"scope","per-song offline candidate; actual opening/HUD and full gameplay remain to be observed"}};
             profile.update(flick_parameters_json(song.flick));
+            if(!plan.metadata.block_area_policy_id.empty()&&song.block_area_phase_ns)
+                profile["block_area_phase_ms"]=*song.block_area_phase_ns/ms;
+            if(plan.metadata.options.allow_block_area_temporal_fallback)
+                profile["allow_block_area_temporal_fallback"]=true;
             store_tap_dwell_profile_fields(profile,song.tap_duration_ns);
             if(song.coincident_flick_delay_ns>0)profile["coincident_flick_delay_ns"]=song.coincident_flick_delay_ns;
             if(song.advance_below_drags)profile["advance_below_drags"]=true;
@@ -959,6 +990,14 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     ChartSource chart_source;chart_source.label=argv[4];chart_source.chart_sha256=chart_sha;
     chart_source.song_id=song.song;chart_source.difficulty=song.difficulty;chart_source.game_revision=song.revision;
     const auto chart=parse_phigros(chart_bytes,chart_source,{},song_import_options(song));
+    const auto active_block_areas=std::any_of(chart.block_areas.begin(),chart.block_areas.end(),
+        [](const auto& area){return area.enable_ns<area.disable_ns;});
+    if(active_block_areas&&song.block_area_phase_ns&&*song.block_area_phase_ns!=static_cast<Ns>(phase)*ms)
+        throw std::invalid_argument("block_area_dispatch_phase_does_not_match_profile");
+    if(active_block_areas&&clock_probe.enabled)
+        throw std::invalid_argument("block_area_requires_unshifted_compiled_plan");
+    if(song.allow_block_area_temporal_fallback&&(!active_block_areas||!song.block_area_phase_ns))
+        throw std::invalid_argument("block_area_temporal_fallback_requires_active_areas_and_pinned_phase");
     if(chart.note_count!=expected_notes)throw std::runtime_error("whole original chart note count differs from song profile");
     const auto compile_options=song_compile_options(song);
     PhigrosGeometry geometry;geometry.input_width=1280;geometry.input_height=720;
@@ -986,7 +1025,8 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     if(adaptive) {
         adaptive_trigger=std::make_unique<AdaptiveFirstNoteTrigger>(
             chart,static_cast<Ns>(phase)*ms,first_song_ns,song.outlined_drag_heads,
-            song.native_head_appearance_witness,desktop!=nullptr);
+            song.native_head_appearance_witness,desktop!=nullptr,
+            desktop?desktop_first_note_dispatch_lead_ns:default_first_note_dispatch_lead_ns);
         if(adaptive_trigger->description().native_head_appearance_witness!=song.native_head_appearance_witness)
             throw std::invalid_argument("native head appearance witness differs from explicit song profile");
         if(adaptive_trigger->description().model_sha256!=song.opening_sha||
@@ -1013,6 +1053,8 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     runtime_options.max_hold_reacquire_gap_ns=song.max_hold_reacquire_gap_ns;
     runtime_options.max_coincident_flick_delay_ns=song.coincident_flick_delay_ns;
     runtime_options.allow_advance_below_drags=song.advance_below_drags;
+    runtime_options.allow_block_area_temporal_fallback=song.allow_block_area_temporal_fallback;
+    if(active_block_areas)runtime_options.block_area_phase_ns=song.block_area_phase_ns;
     runtime_options.clock_probe=clock_probe;
     if(adaptive) {
         runtime_options.max_normal_projection_reference_pixels=song.projection_pixels;
@@ -1115,6 +1157,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
             preflight["native_head_appearance_witness"]=true;
             preflight["native_head_appearance_witness_policy"]=native_head_appearance_witness_json();
         }
+        add_block_area_evidence(preflight,compiled.plan->metadata);
         std::cout<<preflight.dump(2)<<'\n';
         return 0;
     }
@@ -1205,6 +1248,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
             {"source_clock","arrival_only"},{"scope","native chart opening; conditional rendering hypothesis"}};
         if(description.certified_first_group_coverage)
             model_settings["opening_witness_policy"]="certified-first-group-coverage-v1";
+        model_settings["minimum_dispatch_lead_ns"]=desktop?desktop_first_note_dispatch_lead_ns:default_first_note_dispatch_lead_ns;
         if(song.outlined_drag_heads)model_settings["includes_outlined_drag_heads"]=true;
         if(song.native_head_appearance_witness) {
             model_settings["native_head_appearance_witness"]=true;
@@ -1302,6 +1346,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
         {"preinput_UI_journal_cadence_ns",100*ms},
         {"journal_row_budget",journal.row_limit},
         {"transport",pas::grpc_transport_manifest(options.grpc_read_chunk_kib)}};
+    add_block_area_evidence(manifest,compiled.plan->metadata);
     manifest["numeric_HUD_observer_requested"]=numeric_hud_enabled;
     if(!song.above_drag_source_ids.empty())manifest["above_drag_source_ids"]=song.above_drag_source_ids;
     if(song.native_head_appearance_witness) {
@@ -1349,6 +1394,9 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     manifest["acquisition_deadline_host_ns"]=session_deadline_host_ns;
     Ns next_candidate=started,last_saved=-1,kernel_request=-1,first_due=-1,next_acquisition_report=started,last_acquisition_saved=-1;
     const bool sample_opening_by_receipt=adaptive&&desktop;
+    Ns next_first_kernel_probe=started;
+    Ns first_kernel_valid_after=started;
+    std::size_t first_kernel_probes=0,first_kernel_rejected=0;
     std::uint64_t consumed=0,candidate_sequence=0;
     bool armed=false,kernel_started=false,kernel_ready=false,finished=false,release_known=false,final_zero=false,sequence_complete=false;
     std::string failure,opening_reason="waiting_for_native_note_centers";
@@ -1387,14 +1435,47 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
         observation.playing=ui_healthy(now);return observation;
     };
     std::optional<std::uint64_t> first_down_intent;
+    std::string last_first_kernel_probe_error;
+    const auto harvest_desktop_first_kernel=[&] {
+        if(!kernel_pending.valid()||kernel_pending.wait_for(std::chrono::milliseconds(0))!=std::future_status::ready)
+            return false;
+        try {
+            auto snapshot=kernel_pending.get();
+            kernel_request=snapshot.at("host_request_begin_ns").get<Ns>();
+            kernel_ready=kernel_request>=first_kernel_valid_after&&snapshot.at("active_count")==0&&
+                snapshot.at("causal_host_interval_valid")==true;
+            kernel_before=std::move(snapshot);
+        } catch(const std::exception& error) {
+            kernel_ready=false;
+            last_first_kernel_probe_error=error.what();
+        }
+        if(!kernel_ready)++first_kernel_rejected;
+        return true;
+    };
+    const auto service_desktop_first_kernel=[&](Ns now) {
+        if(!sample_opening_by_receipt||first_down_intent)return;
+        if(harvest_desktop_first_kernel()&&!kernel_ready&&armed)
+            throw std::runtime_error("pre_down_kernel_not_fresh_zero");
+        const bool needs_probe=!armed||
+            (now>=first_due-350*ms&&(!kernel_ready||first_due-kernel_request>=500*ms));
+        if(needs_probe&&!kernel_pending.valid()&&now>=next_first_kernel_probe&&ui_healthy(now)) {
+            next_first_kernel_probe=now+desktop_kernel_probe_interval;
+            ++first_kernel_probes;
+            kernel_pending=std::async(std::launch::async,[&kernel]{return kernel.query();});
+        }
+    };
     touch.guard=[&](const pas::TouchCommand& command)->std::string {
         const auto now=clock.now_ns();
         if(interrupted.load()||stop_file.load()||(GetAsyncKeyState(VK_ESCAPE)&0x8000))return "user_stop";
         if(now>=session_deadline_host_ns)return armed?"playback_session_timeout":"manual_acquisition_timeout";
         if(const auto rejected=ui_failure(now))return rejected;
         if(command.phase==pas::Phase::down&&!first_down_intent)first_down_intent=command.intent_id;
-        if(command.phase==pas::Phase::down&&command.intent_id==first_down_intent&&
-           (!kernel_ready||now<kernel_request||now-kernel_request>=500*ms))return "first_DOWN_kernel_zero_not_fresh";
+        if(command.phase==pas::Phase::down&&command.intent_id==first_down_intent) {
+            if(sample_opening_by_receipt)(void)harvest_desktop_first_kernel();
+            const auto checked_at=clock.now_ns();
+            if(!kernel_ready||checked_at<kernel_request||checked_at-kernel_request>=500*ms)
+                return "first_DOWN_kernel_zero_not_fresh";
+        }
         return {};
     };
     transport.before_write=touch.guard;
@@ -1620,8 +1701,12 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
                     if(desktop&&desktop->first_HUD_receipt_ns<0){
                         desktop->first_HUD_receipt_ns=observation.received_host_ns;desktop->stage="first_note";
                     }
+                    if(!armed)service_desktop_first_kernel(now);
                 } else if(observation.pause||observation.result||!observation.source_valid) {
                     last_playing_ui.reset();
+                    if(sample_opening_by_receipt&&!armed) {
+                        kernel_ready=false;first_kernel_valid_after=next_first_kernel_probe=now;
+                    }
                     if(armed&&!sequence_complete)throw std::runtime_error("explicit_pause_result_or_source_loss");
                 }
                 if(!armed&&now>=next_acquisition_report) {
@@ -1842,12 +1927,14 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
                 } else if(!armed&&!ui_healthy(now))trigger_health(now,false);
             }
             now=clock.now_ns();
+            service_desktop_first_kernel(now);
             if(armed&&!sequence_complete) {
                 if(const auto rejected=ui_failure(now))throw std::runtime_error(rejected);
-                if(!kernel_started&&now>=first_due-350*ms) {
+                if(!sample_opening_by_receipt&&!kernel_started&&now>=first_due-350*ms) {
                     kernel_started=true;kernel_pending=std::async(std::launch::async,[&kernel]{return kernel.query();});
                 }
-                if(kernel_started&&!kernel_ready&&kernel_pending.wait_for(std::chrono::milliseconds(0))==std::future_status::ready) {
+                if(!sample_opening_by_receipt&&kernel_started&&!kernel_ready&&
+                   kernel_pending.wait_for(std::chrono::milliseconds(0))==std::future_status::ready) {
                     kernel_before=kernel_pending.get();kernel_request=kernel_before.at("host_request_begin_ns").get<Ns>();
                     journal.append({{"event","kernel_pre_down"},{"snapshot",kernel_before}});
                     if(kernel_before.at("active_count")!=0||kernel_before.at("causal_host_interval_valid")!=true)
@@ -2154,6 +2241,10 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     manifest["acquisition_diagnostic_scope"]="at most24 actual pre-input center frames at100ms cadence; saved after release; no clock/coverage qualification";
     manifest["frames"]=frame_index;manifest["down_attempts"]=touch.down_attempts;manifest["up_attempts"]=touch.up_attempts;
     manifest["kernel_before_down"]=kernel_before;manifest["release_rpc_known"]=release_known;manifest["kernel_final_zero"]=final_zero;
+    if(sample_opening_by_receipt)manifest["kernel_before_down_probe_policy"]={
+        {"trigger","actual-playing-HUD-before-arm"},{"interval_ns",desktop_kernel_probe_interval},{"maximum_inflight",1},
+        {"queries",first_kernel_probes},{"rejected",first_kernel_rejected},{"first_write_max_age_ns",500*ms},
+        {"last_probe_error",last_first_kernel_probe_error.empty()?Json(nullptr):Json(last_first_kernel_probe_error)}};
     manifest["whole_song_sequence_complete"]=sequence_complete;manifest["manual_result_confirmed"]=status.result_confirmed;
     manifest["game_judgment"]="unreviewed";manifest["AP_verified"]=false;manifest["failure"]=failure.empty()?Json(nullptr):Json(failure);
     manifest["status"]=failure.empty()&&sequence_complete&&status.result_confirmed&&touch.down_attempts==expected_notes&&touch.up_attempts==expected_notes&&release_known&&final_zero?

@@ -104,6 +104,11 @@ struct ContactCompileOptions {
     // Empty preserves all-above behavior and archived fingerprints. Nonempty
     // requires advance_above_drags and exact original above-Drag identities.
     std::vector<std::string> above_drag_source_ids;
+    // Restrict BlockArea trajectory proofs to the pinned desktop input phase.
+    // Absent covers the full supported +/-100 ms phase range.
+    std::optional<SongNs> block_area_phase_ns;
+    // Explicitly permit temporal-only alternatives during active BlockAreas.
+    bool allow_block_area_temporal_fallback=false;
 };
 struct CompileDiagnostic {
     CompileSeverity severity = CompileSeverity::error;
@@ -160,6 +165,8 @@ struct NoteContactOwnership {
     SongNs dispatch_judgment_ns = -1; // Actual Drag/Flick anchor; judgment_ns remains native.
     std::optional<PosePoint> flick_anchor_reference, flick_direction_reference;
     std::optional<FlickDiscretePathCertificate> flick_discrete_path;
+    std::optional<PosePoint> block_area_translation_reference;
+    bool block_area_temporal_fallback=false;
 };
 struct CompiledSongEvent {
     SongNs song_ns = 0;
@@ -182,6 +189,9 @@ struct ContactCompileMetadata {
     ContactCompileOptions options;
     bool requires_calibration = false;
     std::string projection_policy_version = "none";
+    std::string block_area_policy_id;
+    std::size_t block_area_count=0,block_area_detoured_contacts=0;
+    std::size_t block_area_temporal_contacts=0;
     // All strategies are offline candidates, not verified game judgment rules.
     std::string strategy = "exclusive-note-ownership; discrete-held-error-bound; raster-pixel-normalized";
 };

@@ -68,6 +68,23 @@ ContactCompileOptions sampled_options() {
     options.max_normal_projection_reference_pixels=7000;options.normal_projection_inset_reference_pixels=64;
     options.calibration_id="sampled-v2-unqualified";return options;
 }
+ChartBlockArea& block(SemanticChart& c,double left,double top,double right,double bottom,
+                      SongNs enable=0,SongNs disable=3*second,bool subtract=false) {
+    ChartBlockArea area;
+    area.bottom_left={left/1280,1-bottom/720};area.top_right={right/1280,1-top/720};
+    area.appear_ns=area.enable_ns=enable;area.disable_ns=area.disappear_ns=disable;
+    area.subtract=subtract;
+    area.source.json_pointer="/blockAreaList/"+std::to_string(c.block_areas.size());
+    area.source.id=c.source.chart_sha256+'#'+area.source.json_pointer;
+    return c.block_areas.emplace_back(std::move(area));
+}
+ContactCompileOptions block_options() {
+    auto options=sampled_options();
+    options.offscreen_policy=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
+    options.max_tangent_error_reference_pixels=151.2;
+    options.block_area_phase_ns=0;
+    return options;
+}
 // Compare every canonical contact/owner field under the SAME metadata options,
 // including source mapping, projection spans and the complete discrete proof.
 std::string contact_owner_digest(const CompiledContactPlan& p,std::size_t index,const ContactCompileMetadata& metadata) {
@@ -1541,6 +1558,143 @@ int main() {
             require(compiled_contact_fingerprint(changed)!=p.metadata.cache_sha256,"native anomalous source interpretation not fingerprinted");
             c.import_anomalies[0].source.id="forged";
             require(diagnostic(compile_phigros_contacts(c,identity(c),geometry()),"invalid_import_policy"),"invented native anomaly ownership accepted");
+        });
+        run("BlockArea detours preserve complete contacts, projected judgment bounds and Flick geometry",[] {
+            auto c=chart();
+            note(c,NoteKind::tap,second,second);note(c,NoteKind::drag,second,second);
+            note(c,NoteKind::hold,second,2*second);note(c,NoteKind::flick,second,second);
+            const auto options=block_options();
+            const auto baseline=compile_phigros_contacts(c,identity(c),geometry(),options);
+            block(c,600,320,680,400);
+            const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            const auto& before=plan(baseline);const auto& after=plan(result);
+            require(after.metadata.block_area_policy_id=="phira-block-area-continuous-detour-v1"&&
+                after.metadata.block_area_count==1&&after.metadata.block_area_detoured_contacts==4&&
+                after.metadata.cache_sha256!=before.metadata.cache_sha256,"BlockArea detour metadata or fingerprint missing");
+            require(before.peak_contacts==after.peak_contacts&&before.total_steps==after.total_steps,"BlockArea modified contact capacity or step count");
+            for(std::size_t n=0;n<before.memory.contacts.size();++n) {
+                const auto& a=before.memory.contacts[n];const auto& b=after.memory.contacts[n];
+                require(a.id==b.id&&a.steps.size()==b.steps.size(),"BlockArea changed contact ownership");
+                const auto displacement=*after.ownership[n].block_area_translation_reference;
+                for(std::size_t i=0;i<a.steps.size();++i) {
+                    const auto x=pixel_point(a.steps[i].point,1280,720),y=pixel_point(b.steps[i].point,1280,720);
+                    require(a.steps[i].song_ns==b.steps[i].song_ns&&a.steps[i].phase==b.steps[i].phase&&
+                        std::abs(y.first-x.first-displacement.x)<1e-6&&std::abs(y.second-x.second-displacement.y)<1e-6,
+                        "BlockArea changed contact timing or deformed its path");
+                }
+            }
+            const auto& old_flick=*before.ownership.back().flick_discrete_path;
+            const auto& flick=*after.ownership.back().flick_discrete_path;
+            require(flick.move_count==3&&flick.max_jump_input_pixels==old_flick.max_jump_input_pixels&&
+                flick.endpoint_distance_reference_pixels==old_flick.endpoint_distance_reference_pixels,
+                "BlockArea shortened or straightened sampled Flick");
+            check_complete_events(after);
+        });
+        run("BlockArea handles moving coverage, subtraction parity, phase windows and impossible paths",[] {
+            auto c=chart();note(c,NoteKind::hold,second,2*second);
+            auto options=block_options();
+            auto& moving=block(c,600,325,680,395);
+            moving.moves={{second,{.25,.5},0,0},{2*second,{.75,.5},0,0}};
+            auto result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(plan(result).metadata.block_area_detoured_contacts==1,
+                "BlockArea did not detect a moving region passing over a stationary Hold");
+            c.block_areas.clear();block(c,0,0,1280,720);
+            result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(!result.plan&&diagnostic(result,"block_area_no_safe_path"),"Blocked screen accepted without a safe route");
+            block(c,560,280,720,440,0,3*second,true);
+            result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(plan(result).metadata.block_area_detoured_contacts==0,"Subtractive hole did not preserve an allowed contact");
+            block(c,560,280,720,440,0,3*second,true);
+            result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(!result.plan&&diagnostic(result,"block_area_no_safe_path"),"Overlapping subtractive regions did not use XOR parity");
+            c.block_areas.clear();c.lines[0].notes.clear();note(c,NoteKind::tap);
+            block(c,600,320,680,400,second+50'000'000,second+500'000'000);
+            options.block_area_phase_ns=-70'000'000;
+            result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(plan(result).metadata.block_area_detoured_contacts==0,"Pinned phase did not exclude later region activation");
+            const auto pinned=plan(result).metadata.cache_sha256;
+            options.block_area_phase_ns.reset();
+            result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(plan(result).metadata.block_area_detoured_contacts==1&&plan(result).metadata.cache_sha256!=pinned,
+                "Unpinned phase window ignored later activation or reused the pinned fingerprint");
+            require(diagnostic(compile_phigros_contacts(c,identity(c),geometry()),"block_area_detour_requires_judgment_rectangle"),
+                "Blocked path was altered without bounded judgment geometry");
+        });
+        run("Active BlockArea temporal alternatives are explicit and retain exact contact timing",[] {
+            auto c=chart();
+            note(c,NoteKind::tap);note(c,NoteKind::drag);
+            note(c,NoteKind::hold,second,2*second);note(c,NoteKind::flick);
+            auto options=block_options();
+            const auto baseline=compile_phigros_contacts(c,identity(c),geometry(),options);
+            options.allow_block_area_temporal_fallback=true;
+            const auto unrelated=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(plan(unrelated).metadata.cache_sha256==plan(baseline).metadata.cache_sha256,
+                "Temporal opt-in affected a chart with no active regions");
+            block(c,0,0,950,720);
+            const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            const auto& p=plan(result);
+            require(p.metadata.block_area_temporal_contacts==4&&p.metadata.block_area_detoured_contacts==4,
+                "Temporal alternatives not counted separately from judgment-certified detours");
+            require(p.total_steps==plan(baseline).total_steps&&p.peak_contacts==plan(baseline).peak_contacts,
+                "Temporal alternatives did not preserve the contact budget or duration");
+            for(std::size_t i=0;i<p.memory.contacts.size();++i) {
+                const auto& owner=p.ownership[i];
+                require(owner.block_area_temporal_fallback&&owner.normal_projection_spans.empty(),
+                    "Temporal alternative made an unsupported geometric judgment claim");
+                const auto& before=plan(baseline).memory.contacts[i];const auto& after=p.memory.contacts[i];
+                for(std::size_t j=0;j<before.steps.size();++j) {
+                    require(before.steps[j].song_ns==after.steps[j].song_ns&&before.steps[j].phase==after.steps[j].phase,
+                        "Temporal route changed a contact's planned time or input phase");
+                    require(pixel_point(after.steps[j].point,1280,720).first>=928,"Temporal route entered the red area");
+                }
+            }
+            require(p.ownership.back().flick_discrete_path->move_count==3,"Temporal Flick lost sampled curved MOVE vertices");
+            check_complete_events(p);
+            c=chart();note(c,NoteKind::tap);c.lines[0].move_events[0].start_x=c.lines[0].move_events[0].end_x=1.5;
+            block(c,0,0,950,720,2*second,3*second);
+            const auto outside=compile_phigros_contacts(c,identity(c),geometry(),options);
+            require(!outside.plan&&diagnostic(outside,"judgment_domain_unreachable"),
+                "Temporal opt-in bypassed judgment geometry outside an active BlockArea time");
+        });
+        run("Moving BlockArea Hold alternative keeps one continuous pointer through a traveling hole",[] {
+            auto c=chart();note(c,NoteKind::hold,second,2*second);
+            block(c,-100,-100,1380,820);
+            auto& hole=block(c,220,240,420,480,0,3*second,true);
+            hole.moves={{second,{.25,.5},0,0},{2*second,{.75,.5},0,0}};
+            auto options=block_options();options.allow_block_area_temporal_fallback=true;
+            const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            const auto& p=plan(result);const auto& steps=p.memory.contacts.front().steps;
+            require(p.metadata.block_area_temporal_contacts==1&&p.peak_contacts==1&&steps.size()>2,
+                "Moving hole did not compile to one continuously owned pointer with MOVE");
+            require(steps.front().song_ns==second&&steps.front().phase==Phase::down&&
+                steps.back().song_ns==2*second&&steps.back().phase==Phase::up,
+                "Traveling Hold altered the original press or release");
+            for(std::size_t i=1;i+1<steps.size();++i) {
+                const auto [x,y]=pixel_point(steps[i].point,1280,720);
+                const double center=320+640*static_cast<double>(steps[i].song_ns-second)/second;
+                require(steps[i].phase==Phase::move&&std::abs(x-center)<100&&y>240&&y<480,
+                    "Moving Hold left the subtractive corridor or started an extra pointer");
+            }
+            check_complete_events(p);
+        });
+        run("Temporal Flick retains a curved full-length stroke in a narrow clear border",[] {
+            auto c=chart();note(c,NoteKind::flick);
+            block(c,0,0,1280,720);
+            auto options=block_options();options.allow_block_area_temporal_fallback=true;
+            options.normal_projection_inset_reference_pixels=12;
+            const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);
+            const auto& p=plan(result);const auto& owner=p.ownership.front();
+            require(owner.block_area_temporal_fallback&&owner.flick_discrete_path->move_count==3,
+                "Narrow border did not keep the sampled temporal Flick");
+            const auto& direction=*owner.flick_direction_reference;
+            require(std::abs(std::min(std::abs(direction.x),std::abs(direction.y))-.075)<1e-6&&
+                std::abs(owner.flick_discrete_path->endpoint_distance_reference_pixels-options.flick_distance_reference_pixels)<1e-6,
+                "Narrow Flick lost its oblique angle or original distance");
+            for(const auto& step:p.memory.contacts.front().steps) {
+                const auto [x,y]=pixel_point(step.point,1280,720);
+                require((y<=20||y>=700||x<=20||x>=1260)&&x>=12&&x<=1267&&y>=12&&y<=707,
+                    "Narrow Flick entered a red area or crossed the playable inset");
+            }
         });
         run("invalid identity source time dimensions NaN and bounded budgets",[] {
             auto c=chart();note(c,NoteKind::tap);auto id=identity(c);id.revision="wrong";

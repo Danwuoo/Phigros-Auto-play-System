@@ -224,20 +224,54 @@ int main() {
                                     replace(text, "\"offset\":0", "\"offset\":0,\"offset\":1")})
                 rejects([&] { parse(bad); });
         }},
-        {"block areas cannot become strict or candidate playable charts", [] {
+        {"v3 block areas preserve note declarations and normalize their seconds and keyframes", [] {
+            const auto text = replace(chart(line("[" + note() + "]"), "0.125"), "\"offset\":0.125",
+                R"("offset":0.125,"blockAreaList":[{
+                    "topRightPercentage":{"x":0.7,"y":0.2},"bottomLeftPercentage":{"x":0.3,"y":0.8},
+                    "appearTime":1,"enableTime":0.9,"disableTime":2,"disappearTime":0,
+                    "isSubtract":true,
+                    "moveEvents":[{"time":1.5,"endPosition":{"x":0.9,"y":0.6},"easeTypeX":13},
+                                  {"time":0.5,"endPosition":{"x":0.5,"y":0.5}}],
+                    "rotateEvents":[{"time":1,"anchor":{"x":0.5,"y":0.5},"rotation":0},
+                                    {"time":1,"anchor":{"x":0.5,"y":0.5},"rotation":180,"easeType":14}],
+                    "scaleEvents":[{"time":1.25,"anchor":{"x":0.5,"y":0.5},"scale":{"x":0,"y":-1},"easeTypeY":6}]
+                }])");
+            const auto c = parse(text);
+            check(c.note_count == 1 && c.event_count == 0 && c.lines[0].notes[0].start_ns == 625000000);
+            check(c.block_areas.size() == 1 && c.import_interpretation_unqualified);
+            const auto& area = c.block_areas.front();
+            check(area.source.id == chart_text_sha256(text) + "#/blockAreaList/0" &&
+                  area.source.json_pointer == "/blockAreaList/0");
+            check(area.top_right.y == 0.2 && area.bottom_left.y == 0.8 && area.subtract);
+            check(area.appear_ns == 1125000000 && area.enable_ns == 1125000000 &&
+                  area.disable_ns == 2125000000 && area.disappear_ns == 2125000000);
+            check(area.moves[0].time_ns == 625000000 && area.moves[0].ease_x == 0 &&
+                  area.moves[1].time_ns == 1625000000 && area.moves[1].ease_x == 13);
+            check(area.rotations[0].time_ns == area.rotations[1].time_ns &&
+                  area.rotations[0].degrees == 0 && area.rotations[1].degrees == 180 && area.rotations[1].ease == 14);
+            check(area.scales.front().time_ns == 1375000000 && area.scales.front().scale.y == -1 &&
+                  area.scales.front().ease_y == 6);
+            rejects([&] { parse(replace(text, "\"easeType\":14", "\"easeType\":15")); });
+            rejects([&] { parse(replace(text, "\"isSubtract\":true", "\"isSubtract\":1")); });
+            ChartImportLimits limits;
+            limits.max_events = 5;
+            rejects([&] { parse(text, limits); });
+        }},
+        {"only the exact top-level v3 block area field is accepted", [] {
             for (const auto& key : {"blockAreaList", "block area list", "block_area_list"}) {
                 for (const auto& value : {"[]", "[{}]", "null", "{}"}) {
                     const auto root = replace(chart(line()), "\"offset\":0", "\"offset\":0,\"" + std::string(key) + "\":" + value);
                     const auto nested = chart(line("[]", "[]", "120", ",\"" + std::string(key) + "\":" + value));
-                    for (const auto& text : {root, nested}) {
-                        for (const bool use_candidate : {false, true}) {
-                            bool blocked = false;
-                            try { if (use_candidate) candidate(text); else parse(text); }
-                            catch (const std::invalid_argument& error) {
-                                blocked = std::string(error.what()).find("unsupported blockAreaList") != std::string::npos;
-                            }
-                            check(blocked);
-                        }
+                    rejects([&] { parse(nested); });
+                    rejects([&] { candidate(nested); });
+                    if (std::string_view(key) == "blockAreaList" &&
+                        (std::string_view(value) == "[]" || std::string_view(value) == "null")) {
+                        const auto c = parse(root);
+                        check(c.block_areas.empty() && !c.import_interpretation_unqualified);
+                        check(candidate(root).block_areas.empty());
+                    } else {
+                        rejects([&] { parse(root); });
+                        rejects([&] { candidate(root); });
                     }
                 }
             }

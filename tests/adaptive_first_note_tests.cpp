@@ -180,6 +180,18 @@ try {
               gate->received_host_ns==final.received_host_ns&&gate->evaluated_host_ns==final.received_host_ns+ms&&
               gate->minimum_lead_ns==200*ms&&gate->target_host_ns-gate->evaluated_host_ns<gate->minimum_lead_ns,
               "cancelled dispatch gate lost its actual evaluation, receipt, or lead");
+        AdaptiveFirstNoteTrigger short_lead(c,-60*ms,-1,false,true,false,desktop_first_note_dispatch_lead_ns);
+        feed(short_lead,appearance_frame(1,2350*ms,false));feed(short_lead,appearance_frame(2,2490*ms,false));
+        const auto earlier=feed(short_lead,final);
+        const auto& short_gate=short_lead.dispatch_gate();
+        check(earlier.state==FirstNoteTriggerState::ready&&earlier.anchor&&short_gate&&short_gate->allowed&&
+              short_gate->minimum_lead_ns==desktop_first_note_dispatch_lead_ns&&
+              short_gate->target_host_ns-short_gate->evaluated_host_ns<default_first_note_dispatch_lead_ns&&
+              short_lead.description().model_sha256==late.description().model_sha256,
+              "short pop-in lead changed the chart digest or failed with actual witnesses");
+        const auto expired_lead=earlier.anchor->target_host_ns-desktop_first_note_dispatch_lead_ns+1;
+        check(expired_lead-final.received_host_ns<100*ms&&!short_lead.take_anchor(expired_lead),
+              "short lead was not rechecked when the anchor was consumed");
         c=appearance_chart();AdaptiveFirstNoteTrigger stale(c,0,-1,false,true);auto f=appearance_frame(1,2350*ms,false);
         check(stale.observe(f,true,f.received_host_ns+100*ms).state==FirstNoteTriggerState::cancelled,"appearance renewed a100ms stale receipt");
         AdaptiveFirstNoteTrigger epoch(c,0,-1,false,true);feed(epoch,appearance_frame(1,2350*ms,false));f=appearance_frame(2,2490*ms,false);++f.epoch;
@@ -589,6 +601,17 @@ try {
         AdaptiveFirstNoteTrigger late(chart(),-80*ms);feed(late,frame(1,1700*ms));
         check(feed(late,frame(2,1800*ms)).state==FirstNoteTriggerState::cancelled,"late native origin accepted");
         AdaptiveFirstNoteTrigger clock(chart(),0);ready(clock);check(clock.status(O+1660*ms).state==FirstNoteTriggerState::cancelled,"native host rollback accepted");}
+    {++groups;auto c=chart();AdaptiveFirstNoteTrigger short_lead(c,-80*ms,-1,false,false,false,desktop_first_note_dispatch_lead_ns);
+        feed(short_lead,frame(1,1700*ms));const auto status=feed(short_lead,frame(2,1800*ms));
+        check(status.state==FirstNoteTriggerState::ready&&status.anchor&&short_lead.take_anchor(O+1802*ms),
+              "short native motion lead could not be consumed");
+        AdaptiveFirstNoteTrigger passed_due(c,-100*ms,-1,false,false,false,desktop_first_note_dispatch_lead_ns);
+        auto one=frame(1,1700*ms),two=frame(2,1800*ms);
+        feed(passed_due,one);
+        const auto expired=passed_due.observe(two,true,two.received_host_ns+99*ms);
+        check(expired.state==FirstNoteTriggerState::cancelled&&expired.reason=="first_note_dispatch_lead_below_minimum",
+              "short gate accepted an observation without enough remaining lead");
+        rejects([&]{AdaptiveFirstNoteTrigger invalid(c,0,-1,false,false,false,0);},"zero dispatch lead accepted");}
     {++groups;auto c=chart();auto alias=c.lines[0].notes[0];alias.start_ns=alias.end_ns=3*S;alias.source_index=1;
         alias.source.json_pointer="/judgeLineList/0/notesAbove/1";alias.source.id=c.source.chart_sha256+'#'+alias.source.json_pointer;
         alias.floor_position=3.15;c.lines[0].notes.push_back(alias);++c.note_count;

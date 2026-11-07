@@ -21,9 +21,10 @@ using Json = nlohmann::json;
 [[noreturn]] void fail(const std::string& path, const std::string& reason) {
     throw std::invalid_argument(path + ": " + reason);
 }
-void reject_block_area_fields(const Json& value, const std::string& path) {
+void reject_block_area_fields(const Json& value, const std::string& path, bool allow_v3_root) {
     if (value.is_object()) {
         for (const auto& [key, child] : value.items()) {
+            if (allow_v3_root && path.empty() && key == "blockAreaList") continue;
             std::string normalized;
             for (const unsigned char c : key) {
                 if (c == ' ' || c == '_' || c == '-') continue;
@@ -31,12 +32,12 @@ void reject_block_area_fields(const Json& value, const std::string& path) {
             }
             const auto child_path = path + "/" + key;
             if (normalized == "blockarealist")
-                fail(child_path, "unsupported blockAreaList; chart cannot currently be completed (including empty lists)");
-            reject_block_area_fields(child, child_path);
+                fail(child_path, "unsupported blockAreaList declaration; expected exact top-level v3 field");
+            reject_block_area_fields(child, child_path, false);
         }
     } else if (value.is_array()) {
         for (std::size_t i = 0; i < value.size(); ++i)
-            reject_block_area_fields(value[i], path + "/" + std::to_string(i));
+            reject_block_area_fields(value[i], path + "/" + std::to_string(i), false);
     }
 }
 void object_fields(const Json& object, const std::string& path,
@@ -64,6 +65,92 @@ const Json& array(const Json& value, const std::string& path) {
 }
 SourceLocation location(const ChartSource& source, std::string path) {
     return {source.chart_sha256 + "#" + path, std::move(path)};
+}
+BlockAreaPoint block_area_point(const Json& value, const std::string& path, const ChartImportLimits& limits) {
+    object_fields(value, path, {"x", "y"});
+    return {number(value["x"], path + "/x", limits.max_abs_value),
+            number(value["y"], path + "/y", limits.max_abs_value)};
+}
+SongNs block_area_time(const Json& value, const std::string& path, double offset, const ChartImportLimits& limits) {
+    const auto seconds = number(value, path, limits.max_abs_note_seconds);
+    const auto ns = std::round((static_cast<long double>(seconds) + offset) * 1e9L);
+    if (!std::isfinite(ns) || std::abs(ns) > static_cast<long double>(limits.max_abs_note_seconds) * 1e9L ||
+        ns < static_cast<long double>(std::numeric_limits<SongNs>::min()) ||
+        ns >= static_cast<long double>(std::numeric_limits<SongNs>::max()))
+        fail(path, "block area song-time range exceeded");
+    return static_cast<SongNs>(ns);
+}
+int block_area_ease(const Json& object, const char* key, const std::string& path) {
+    if (!object.contains(key)) return 0;
+    const auto& value = object[key];
+    if (!value.is_number_integer() || value < 0 || value > 14) fail(path + "/" + key, "unknown block area easing");
+    return value.get<int>();
+}
+template<class Event, class Parse>
+void block_area_track(std::vector<Event>& track, const Json& value, const std::string& path,
+                      std::size_t& remaining, Parse parse) {
+    const auto& events = array(value, path);
+    if (events.size() > remaining) fail(path, "block area keyframe limit exceeded");
+    remaining -= events.size();
+    track.reserve(events.size());
+    for (std::size_t i = 0; i < events.size(); ++i)
+        track.push_back(parse(events[i], path + "/" + std::to_string(i)));
+    std::stable_sort(track.begin(), track.end(), [](const Event& a, const Event& b) { return a.time_ns < b.time_ns; });
+}
+void import_block_areas(const Json& value, SemanticChart& chart, const ChartImportLimits& limits) {
+    if (value.is_null()) return;
+    const auto& areas = array(value, "/blockAreaList");
+    constexpr std::size_t area_limit = 20000;
+    auto remaining = limits.max_events - chart.event_count;
+    if (areas.size() > area_limit || areas.size() > remaining) fail("/blockAreaList", "block area limit exceeded");
+    remaining -= areas.size();
+    chart.block_areas.reserve(areas.size());
+    for (std::size_t i = 0; i < areas.size(); ++i) {
+        const auto path = "/blockAreaList/" + std::to_string(i);
+        const auto& item = areas[i];
+        object_fields(item, path, {"topRightPercentage", "bottomLeftPercentage", "appearTime", "enableTime",
+                                   "disableTime", "disappearTime", "isSubtract", "moveEvents", "rotateEvents", "scaleEvents"});
+        const auto time = [&](const Json& keyframe, const std::string& event_path, const char* key) {
+            return block_area_time(keyframe[key], event_path + "/" + key, chart.offset_seconds, limits);
+        };
+        const auto point = [&](const Json& keyframe, const std::string& event_path, const char* key) {
+            return block_area_point(keyframe[key], event_path + "/" + key, limits);
+        };
+        ChartBlockArea area;
+        area.source = location(chart.source, path);
+        area.top_right = point(item, path, "topRightPercentage");
+        area.bottom_left = point(item, path, "bottomLeftPercentage");
+        if (!item["isSubtract"].is_boolean()) fail(path + "/isSubtract", "expected boolean");
+        area.subtract = item["isSubtract"].get<bool>();
+        // Candidate phase and keyframe conventions follow the community implementation
+        // at TeamFlos/phira#901 (0afa0fa11320a7c457f2fcce536c446df4b898ed).
+        area.appear_ns = time(item, path, "appearTime");
+        area.enable_ns = std::max(area.appear_ns, time(item, path, "enableTime"));
+        area.disable_ns = std::max(area.enable_ns, time(item, path, "disableTime"));
+        area.disappear_ns = std::max(area.disable_ns, time(item, path, "disappearTime"));
+        block_area_track(area.moves, item["moveEvents"], path + "/moveEvents", remaining,
+            [&](const Json& event, const std::string& event_path) {
+                object_fields(event, event_path, {"time", "endPosition"}, {"easeTypeX", "easeTypeY"});
+                return BlockAreaMove{time(event, event_path, "time"), point(event, event_path, "endPosition"),
+                    block_area_ease(event, "easeTypeX", event_path), block_area_ease(event, "easeTypeY", event_path)};
+            });
+        block_area_track(area.rotations, item["rotateEvents"], path + "/rotateEvents", remaining,
+            [&](const Json& event, const std::string& event_path) {
+                object_fields(event, event_path, {"time", "anchor", "rotation"}, {"easeType"});
+                return BlockAreaRotation{time(event, event_path, "time"), point(event, event_path, "anchor"),
+                    number(event["rotation"], event_path + "/rotation", limits.max_abs_value),
+                    block_area_ease(event, "easeType", event_path)};
+            });
+        block_area_track(area.scales, item["scaleEvents"], path + "/scaleEvents", remaining,
+            [&](const Json& event, const std::string& event_path) {
+                object_fields(event, event_path, {"time", "anchor", "scale"}, {"easeTypeX", "easeTypeY"});
+                return BlockAreaScale{time(event, event_path, "time"), point(event, event_path, "anchor"),
+                    point(event, event_path, "scale"), block_area_ease(event, "easeTypeX", event_path),
+                    block_area_ease(event, "easeTypeY", event_path)};
+            });
+        chart.block_areas.push_back(std::move(area));
+    }
+    chart.import_interpretation_unqualified |= !chart.block_areas.empty();
 }
 ChartEventTime event_time(const Json& event, const std::string& path, double bpm,
                           double offset, const ChartImportLimits& limits, bool candidate_pose=false) {
@@ -302,8 +389,8 @@ SemanticChart parse_phigros(std::string_view text, ChartSource source, const Cha
             return true;
         });
     } catch (const Json::exception&) { fail("/", "invalid JSON or numeric overflow"); }
-    reject_block_area_fields(root, "");
-    object_fields(root, "", {"formatVersion", "offset", "judgeLineList"});
+    reject_block_area_fields(root, "", !native_v1);
+    object_fields(root, "", {"formatVersion", "offset", "judgeLineList"}, {"blockAreaList"});
     const int required_version=native_v1 ? 1 : 3;
     if (!root["formatVersion"].is_number_integer() || root["formatVersion"] != required_version)
         fail("/formatVersion",native_v1 ? "explicit native v1 policy requires version 1" : "only version 3 is supported under this import policy");
@@ -400,6 +487,7 @@ SemanticChart parse_phigros(std::string_view text, ChartSource source, const Cha
         } else chart.evaluated_pose_event_count+=line.move_events.size()+line.rotate_events.size()+line.opacity_events.size();
         chart.lines.push_back(std::move(line));
     }
+    if (root.contains("blockAreaList")) import_block_areas(root["blockAreaList"], chart, limits);
     return chart;
 }
 } // namespace rhythm

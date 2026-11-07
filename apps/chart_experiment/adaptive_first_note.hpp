@@ -8,6 +8,9 @@
 #include <numbers>
 
 namespace rhythm::experimental {
+inline constexpr Ns default_first_note_dispatch_lead_ns=200'000'000;
+inline constexpr Ns desktop_first_note_dispatch_lead_ns=20'000'000;
+
 // Native opening geometry is a conditional rendering hypothesis, never a
 // capture-clock qualification or a calibrated game hit region. This separate
 // path leaves the archived Dlyrotz first-note model unchanged.
@@ -350,7 +353,7 @@ class AdaptiveFirstNoteTrigger {
         std::vector<VisualTimeInterval> time,without_complete_group,without_first;
     };
     AdaptiveOpeningDescription description_;
-    Ns phase_=0,last_now_=-1,last_received_=-1;
+    Ns phase_=0,minimum_dispatch_lead_ns_=default_first_note_dispatch_lead_ns,last_now_=-1,last_received_=-1;
     std::uint64_t last_sequence_=0;
     std::size_t first_note_=0,work_=0;
     Ns native_zero_=0;
@@ -367,12 +370,13 @@ class AdaptiveFirstNoteTrigger {
     std::optional<AdaptiveFirstDispatchGate> dispatch_gate_;
     bool consumed_=false;
     bool allows_first_dispatch(const FirstNoteTriggerAnchor& anchor,Ns now) {
-        constexpr Ns minimum_lead=200*ms;
         const char* reason=anchor.origin_host_ns<0?"negative_origin":
             anchor.target_host_ns>safe?"target_out_of_range":
-            anchor.target_host_ns-now<minimum_lead?"insufficient_lead":nullptr;
+            anchor.target_host_ns-now<minimum_dispatch_lead_ns_?"insufficient_lead":nullptr;
         dispatch_gate_=AdaptiveFirstDispatchGate{anchor.origin_host_ns,anchor.target_host_ns,anchor.received_host_ns,
-            now,minimum_lead,anchor.chosen_song_interval,reason?reason:"accepted",reason==nullptr};
+            now,minimum_dispatch_lead_ns_,anchor.chosen_song_interval,reason?reason:"accepted",reason==nullptr};
+        if(reason)cancel(minimum_dispatch_lead_ns_==default_first_note_dispatch_lead_ns?
+            "first_note_dispatch_lead_below_200ms":"first_note_dispatch_lead_below_minimum");
         return reason==nullptr;
     }
     static long double down(long double v){return std::nextafter(v,-std::numeric_limits<long double>::infinity());}
@@ -531,7 +535,8 @@ class AdaptiveFirstNoteTrigger {
         if(now<0||now>safe||(last_now_>=0&&now<last_now_)){cancel("host_clock_invalid_or_rollback");return false;}last_now_=now;
         if(!healthy){reset("waiting_for_healthy_actual_UI");return false;}
         if(value_.state==FirstNoteTriggerState::ready&&value_.anchor&&
-           (now-value_.anchor->received_host_ns>=100*ms||value_.anchor->target_host_ns-now<200*ms))reset("first_note_readiness_expired");
+           (now-value_.anchor->received_host_ns>=100*ms||
+            value_.anchor->target_host_ns-now<minimum_dispatch_lead_ns_))reset("first_note_readiness_expired");
         return true;
     }
     std::vector<VisualTimeCandidate> solve(const VisualCandidateFrame& f,const std::vector<int>& families,
@@ -761,16 +766,20 @@ class AdaptiveFirstNoteTrigger {
         anchor.supporting_evidence_ids={support_history_[*supporting].frame.evidence_id};
         if(constraining)anchor.supporting_evidence_ids.push_back(support_history_[*constraining].frame.evidence_id);
         anchor.supporting_evidence_ids.push_back(f.evidence_id);
-        if(!allows_first_dispatch(anchor,now)){cancel("first_note_dispatch_lead_below_200ms");return value_;}
+        if(!allows_first_dispatch(anchor,now))return value_;
         value_.anchor=std::move(anchor);value_.state=FirstNoteTriggerState::ready;
         value_.reason="two_actual_native_group_frames_motion_or_certified_pop_in_on_all_support_origin";return value_;
     }
 public:
     AdaptiveFirstNoteTrigger(const SemanticChart& chart,Ns phase_ns,Ns first_down_ns=-1,bool outlined_drag_heads=false,
-                             bool native_head_appearance_witness=false,bool certified_first_group_coverage=false):phase_(phase_ns) {
+                             bool native_head_appearance_witness=false,bool certified_first_group_coverage=false,
+                             Ns minimum_dispatch_lead_ns=default_first_note_dispatch_lead_ns)
+      :phase_(phase_ns),minimum_dispatch_lead_ns_(minimum_dispatch_lead_ns) {
         require(phase_ns>=-100*ms&&phase_ns<=100*ms,"first-note phase must be +/-100ms");
+        require(minimum_dispatch_lead_ns_>0&&minimum_dispatch_lead_ns_<=default_first_note_dispatch_lead_ns,
+                "adaptive first-note dispatch lead must be positive and at most 200ms");
         require(chart.format_version==3&&std::isfinite(chart.offset_seconds)&&sha256_text(chart.source.chart_sha256)&&
-                !chart.lines.empty()&&chart.lines.size()<=64&&chart.note_count>0&&chart.note_count<=max_notes,"adaptive opening chart scope unsupported");
+                !chart.lines.empty()&&chart.lines.size()<=128&&chart.note_count>0&&chart.note_count<=max_notes,"adaptive opening chart scope unsupported");
         const SemanticNote* first=nullptr;std::size_t first_line=0,actual_notes=0;
         for(std::size_t l=0;l<chart.lines.size();++l)for(const auto& n:chart.lines[l].notes) {
             require(++actual_notes<=max_notes,"adaptive opening actual note budget derived from closed-contact steps");
@@ -930,6 +939,8 @@ public:
             <<chart.import_policy_id<<'\n'<<chart.import_interpretation_unqualified<<'\n';
         for(const auto& anomaly:chart.import_anomalies)canonical<<anomaly.source.id<<'\n'<<anomaly.code<<'\n'<<anomaly.original_declaration_json<<'\n';
         for(const auto& id:description_.earliest_note_ids)canonical<<id<<'\n';
+        // Keep the archived 200ms token in the pinned geometry model digest.
+        // The actual dispatch policy is independently recorded in the run gate.
         canonical<<description_.note_time_ns<<'\n'<<description_.first_down_ns<<'\n'<<description_.detector_policy_id<<'\n'<<std::setprecision(17)
             <<description_.approach_pixels_per_floor_unit<<"\npixel_error=3;chord_curvature_enclosure;native_zero_floor_hold;full_head_visibility=95,1184,125,474;lead=200ms";
         if(description_.includes_extended_drag_heads)canonical<<"\nfirst_drag_detector_roi=0,1280,30,650;clipped_head_rejected;shape_thresholds_legacy_v1;negative_full_head_visibility_legacy=95,1184,125,474";
@@ -1107,7 +1118,7 @@ public:
         anchor.chosen_song_interval=value_.selected_intervals[0];anchor.origin_host_ns=f.received_host_ns-midpoint(anchor.chosen_song_interval);
         anchor.target_host_ns=anchor.origin_host_ns+description_.first_down_ns+phase_;anchor.evidence_id=f.evidence_id;
         anchor.supporting_evidence_ids={support_history_[*supporting].frame.evidence_id,f.evidence_id};
-        if(!allows_first_dispatch(anchor,now)){cancel("first_note_dispatch_lead_below_200ms");return value_;}
+        if(!allows_first_dispatch(anchor,now))return value_;
         value_.anchor=std::move(anchor);value_.state=FirstNoteTriggerState::ready;
         value_.reason=used_certified_witness?"two_distinct_native_frames_certify_first_group_and_motion":
             "two_distinct_native_group_motion_frames_on_unique_temporal_branch";return value_;

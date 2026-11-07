@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <limits>
 #include <locale>
+#include <numeric>
 #include <set>
 #include <sstream>
 #include <stdexcept>
@@ -317,17 +318,295 @@ std::optional<ProjectionCertificate> certify_projection(const SemanticNote& note
     if(!std::isfinite(certificate.speed)||!certificate.edge_mask)return {};
     return certificate;
 }
+// Geometry follows the chart-space model in TeamFlos/phira#901 (0afa0fa):
+// bottom-left percentage coordinates, scale then rotate then translate, and
+// normal-union XOR subtract-parity in both raw and adjusted rectangles.
+// Work in upright reference pixels, where the Y axis points down.
+struct BlockAreaField {
+    struct Box { Range x,y; };
+    struct Bounds { Range x,y,half_x,half_y,angle; };
+    struct Piece {
+        const ChartBlockArea* area;
+        SongNs begin,end; // Inclusive nanoseconds, already clipped to active time.
+        Bounds bounds;
+        Box enclosing;
+    };
+    enum class Certainty { no,yes,unknown };
+    struct Coverage {
+        Certainty ordinary=Certainty::no, subtract=Certainty::no;
+        void add(Certainty value,bool subtracting) {
+            if(!subtracting) {
+                if(value==Certainty::yes||ordinary==Certainty::no)ordinary=value;
+            } else if(subtract!=Certainty::unknown) {
+                if(value==Certainty::unknown)subtract=value;
+                else if(value==Certainty::yes)
+                    subtract=subtract==Certainty::yes?Certainty::no:Certainty::yes;
+            }
+        }
+        Certainty blocked() const {
+            if(ordinary==Certainty::unknown||subtract==Certainty::unknown)return Certainty::unknown;
+            return ordinary==subtract?Certainty::no:Certainty::yes;
+        }
+    };
+    std::vector<Piece> pieces;
+    struct IndexEntry { SongNs maximum_end; Box enclosing; };
+    std::vector<IndexEntry> nodes;
+    std::size_t area_count=0,work=0,work_limit=0;
+    SongNs time_before,time_after;
+    static constexpr double edge_tolerance_pixels=21.6;
+    static constexpr double minimum_half_size=0.0036;
+
+    static PosePoint reference(BlockAreaPoint p) {
+        return {p.x*phigros_reference_width,(1-p.y)*phigros_reference_height};
+    }
+    static Range magnitude(Range value) {
+        return {value.lo<=0&&value.hi>=0?0:std::min(std::abs(value.lo),std::abs(value.hi)),
+            std::max(std::abs(value.lo),std::abs(value.hi))};
+    }
+    static Range shift(Range value,double amount) {return {value.lo+amount,value.hi+amount};}
+    static Range fixed(double value) {return {value,value};}
+    static double easing_raw(int kind,double t) {
+        if(kind==13)return 0;
+        if(kind==14)return 1;
+        if(kind==0)return t;
+        const int power=(kind-1)/3+2;
+        switch((kind-1)%3) {
+            case 0:return std::pow(t,power);
+            case 1:return 1-std::pow(1-t,power);
+            default:return t<.5?std::pow(2*t,power)/2:1-std::pow(2-2*t,power)/2;
+        }
+    }
+    static double easing(int kind,SongNs t,SongNs start,SongNs end) {
+        if(t>=end)return 1;
+        const double p=end<=start?100:100*std::clamp(
+            static_cast<double>((static_cast<long double>(t)-start)/(static_cast<long double>(end)-start)),0.,1.);
+        const auto i=std::floor(p);
+        return std::lerp(easing_raw(kind,i/100),easing_raw(kind,std::min(i+1,100.)/100),p-i);
+    }
+    static Range blend(double from,double to,int kind,SongNs start,SongNs end,SongNs lo,SongNs hi) {
+        return range(std::lerp(from,to,easing(kind,lo,start,end)),std::lerp(from,to,easing(kind,hi,start,end)));
+    }
+    static Bounds bounds(const ChartBlockArea& area,SongNs lo,SongNs hi) {
+        const auto a=reference(area.bottom_left),b=reference(area.top_right);
+        const PosePoint base{(a.x+b.x)/2,(a.y+b.y)/2};
+        Bounds out{fixed(base.x),fixed(base.y),fixed(std::abs(b.x-a.x)/2),fixed(std::abs(b.y-a.y)/2),fixed(0)};
+        const auto& scales=area.scales;
+        if(!scales.empty()) {
+            Range sx=fixed(scales.front().scale.x),sy=fixed(scales.front().scale.y);
+            for(std::size_t i=0;i+1<scales.size();++i) {
+                const auto& key=scales[i];const auto& next=scales[i+1];
+                sx=blend(key.scale.x,next.scale.x,key.ease_x,key.time_ns,next.time_ns,lo,hi);
+                sy=blend(key.scale.y,next.scale.y,key.ease_y,key.time_ns,next.time_ns,lo,hi);
+                const auto anchor=reference(key.anchor);
+                const auto ratio=[](Range value,double old) {
+                    return std::abs(old)<8*std::numeric_limits<float>::denorm_min()?fixed(1):
+                        range(value.lo/old,value.hi/old);
+                };
+                out.x=shift(product(shift(out.x,-anchor.x),ratio(sx,key.scale.x)),anchor.x);
+                out.y=shift(product(shift(out.y,-anchor.y),ratio(sy,key.scale.y)),anchor.y);
+                if(hi<next.time_ns)break;
+            }
+            out.half_x=product(out.half_x,magnitude(sx));
+            out.half_y=product(out.half_y,magnitude(sy));
+        }
+        const auto& rotations=area.rotations;
+        if(!rotations.empty()) {
+            out.angle=fixed(-rotations.front().degrees*pi/180);
+            for(std::size_t i=0;i+1<rotations.size();++i) {
+                const auto& key=rotations[i];const auto& next=rotations[i+1];
+                out.angle=blend(-key.degrees*pi/180,-next.degrees*pi/180,key.ease,key.time_ns,next.time_ns,lo,hi);
+                const auto delta=shift(out.angle,key.degrees*pi/180);
+                const auto cs=trig(delta.lo,delta.hi,true),sn=trig(delta.lo,delta.hi,false);
+                const auto anchor=reference(key.anchor);
+                const auto dx=shift(out.x,-anchor.x),dy=shift(out.y,-anchor.y);
+                out.x=shift(plus(product(dx,cs),product(dy,{-sn.hi,-sn.lo})),anchor.x);
+                out.y=shift(plus(product(dx,sn),product(dy,cs)),anchor.y);
+                if(hi<next.time_ns)break;
+            }
+        }
+        const auto& moves=area.moves;
+        if(!moves.empty()) {
+            const auto first=reference(moves.front().end_position);
+            Range mx=fixed(first.x),my=fixed(first.y);
+            for(std::size_t i=0;i+1<moves.size();++i) {
+                const auto& key=moves[i];const auto& next=moves[i+1];
+                const auto from=reference(key.end_position),to=reference(next.end_position);
+                mx=blend(from.x,to.x,key.ease_x,key.time_ns,next.time_ns,lo,hi);
+                my=blend(from.y,to.y,key.ease_y,key.time_ns,next.time_ns,lo,hi);
+                if(hi<next.time_ns)break;
+            }
+            out.x=plus(out.x,shift(mx,-base.x));out.y=plus(out.y,shift(my,-base.y));
+        }
+        return out;
+    }
+    static Box enclosure(const Bounds& shape) {
+        // The widest possible shape is the adjusted subtract rectangle.
+        const double c=magnitude(trig(shape.angle.lo,shape.angle.hi,true)).hi;
+        const double s=magnitude(trig(shape.angle.lo,shape.angle.hi,false)).hi;
+        const double x=shape.half_x.hi+edge_tolerance_pixels,y=shape.half_y.hi+edge_tolerance_pixels;
+        const double dx=x*c+y*s,dy=x*s+y*c;
+        return {{shape.x.lo-dx,shape.x.hi+dx},{shape.y.lo-dy,shape.y.hi+dy}};
+    }
+    static void validate(const ChartBlockArea& area,const ChartSource& source) {
+        const auto finite=[](BlockAreaPoint p){return std::isfinite(p.x)&&std::isfinite(p.y);};
+        const auto ease=[](int kind){return kind>=0&&kind<=14;};
+        const auto valid_track=[](const auto& keys,auto valid_key) {
+            return std::is_sorted(keys.begin(),keys.end(),[](const auto& a,const auto& b){return a.time_ns<b.time_ns;})&&
+                std::all_of(keys.begin(),keys.end(),valid_key);
+        };
+        if(area.source.json_pointer.empty()||area.source.id!=source.chart_sha256+'#'+area.source.json_pointer||
+           !finite(area.top_right)||!finite(area.bottom_left)||area.appear_ns>area.enable_ns||
+           area.enable_ns>area.disable_ns||area.disable_ns>area.disappear_ns||
+           !valid_track(area.moves,[&](const auto& key){return finite(key.end_position)&&ease(key.ease_x)&&ease(key.ease_y);})||
+           !valid_track(area.rotations,[&](const auto& key){return finite(key.anchor)&&std::isfinite(key.degrees*pi)&&ease(key.ease);})||
+           !valid_track(area.scales,[&](const auto& key){return finite(key.anchor)&&finite(key.scale)&&ease(key.ease_x)&&ease(key.ease_y);}))
+            throw Failure("block_area_geometry","BlockArea source, time phases, or keyframe geometry is invalid: "+area.source.json_pointer,area.enable_ns);
+    }
+    explicit BlockAreaField(const SemanticChart& chart,const ContactCompileOptions& options)
+        :work_limit(std::clamp(options.max_steps_in_plan*128,std::size_t{200'000},std::size_t{32'000'000})),
+         time_before(options.block_area_phase_ns.value_or(-100'000'000)-20'000'000),
+         time_after(options.block_area_phase_ns.value_or(100'000'000)+40'000'000) {
+        if(chart.block_areas.size()>20'000)
+            throw Failure("block_area_work_budget","BlockArea region count exceeds the finite work budget");
+        for(const auto& area:chart.block_areas) {
+            consume(area.enable_ns,1+area.moves.size()+area.rotations.size()+area.scales.size());
+            validate(area,chart.source);
+            if(area.enable_ns>=area.disable_ns)continue;
+            ++area_count;
+            std::vector<SongNs> cuts{area.enable_ns,area.disable_ns};
+            const auto insert=[&](const auto& keys){
+                for(const auto& key:keys)if(key.time_ns>area.enable_ns&&key.time_ns<area.disable_ns)
+                    cuts.push_back(key.time_ns);
+            };
+            insert(area.moves);insert(area.rotations);insert(area.scales);
+            std::sort(cuts.begin(),cuts.end());
+            cuts.erase(std::unique(cuts.begin(),cuts.end()),cuts.end());
+            for(std::size_t i=1;i<cuts.size();++i) {
+                const auto begin=cuts[i-1],end=cuts[i]-1;
+                consume(begin,1+area.moves.size()+area.rotations.size()+area.scales.size());
+                const auto shape=bounds(area,begin,end);const auto box=enclosure(shape);
+                if(!std::isfinite(box.x.lo)||!std::isfinite(box.x.hi)||!std::isfinite(box.y.lo)||!std::isfinite(box.y.hi))
+                    throw Failure("block_area_geometry","BlockArea pose exceeds finite geometry",begin);
+                pieces.push_back({&area,begin,end,shape,box});
+            }
+        }
+        std::stable_sort(pieces.begin(),pieces.end(),[](const auto& a,const auto& b){return a.begin<b.begin;});
+        if(!pieces.empty()) {
+            nodes.resize(pieces.size()*4);
+            index(1,0,pieces.size());
+        }
+    }
+    void consume(SongNs time,std::size_t amount=1) {
+        if(amount>work_limit-work)
+            throw Failure("block_area_work_budget","BlockArea geometry proof exceeds the finite work budget",time);
+        work+=amount;
+    }
+    IndexEntry index(std::size_t node,std::size_t begin,std::size_t end) {
+        if(end-begin==1)return nodes[node]={pieces[begin].end,pieces[begin].enclosing};
+        const auto middle=begin+(end-begin)/2;
+        const auto a=index(node*2,begin,middle),b=index(node*2+1,middle,end);
+        const auto join=[](Range a,Range b){return Range{std::min(a.lo,b.lo),std::max(a.hi,b.hi)};};
+        return nodes[node]={std::max(a.maximum_end,b.maximum_end),
+            {join(a.enclosing.x,b.enclosing.x),join(a.enclosing.y,b.enclosing.y)}};
+    }
+    static bool intersects(Box a,Box b) {
+        return a.x.lo<=b.x.hi&&a.x.hi>=b.x.lo&&a.y.lo<=b.y.hi&&a.y.hi>=b.y.lo;
+    }
+    static Certainty contains(const Bounds& shape,Box path,bool adjusted,bool subtract) {
+        if(shape.half_x.hi<minimum_half_size||shape.half_y.hi<minimum_half_size)return Certainty::no;
+        const auto cs=trig(shape.angle.lo,shape.angle.hi,true),sn=trig(shape.angle.lo,shape.angle.hi,false);
+        const auto x=plus(path.x,{-shape.x.hi,-shape.x.lo}),y=plus(path.y,{-shape.y.hi,-shape.y.lo});
+        const auto dx=magnitude(plus(product(x,cs),product(y,sn)));
+        const auto dy=magnitude(plus(product(x,{-sn.hi,-sn.lo}),product(y,cs)));
+        const auto adjust=[&](double half) {
+            return adjusted?half+(subtract?1:-1)*std::min(edge_tolerance_pixels,half/2):half;
+        };
+        if(dx.lo>adjust(shape.half_x.hi)||dy.lo>adjust(shape.half_y.hi))return Certainty::no;
+        if(shape.half_x.lo>=minimum_half_size&&shape.half_y.lo>=minimum_half_size&&
+           dx.hi<=adjust(shape.half_x.lo)&&dy.hi<=adjust(shape.half_y.lo))return Certainty::yes;
+        return Certainty::unknown;
+    }
+    void assess(std::size_t node,std::size_t begin,std::size_t end,SongNs lo,SongNs hi,Box path,
+                Coverage& raw,Coverage& adjusted,std::optional<SongNs>& split) {
+        const auto& group=nodes[node];
+        if(pieces[begin].begin>hi||group.maximum_end<lo||!intersects(group.enclosing,path))return;
+        if(end-begin>1) {
+            const auto middle=begin+(end-begin)/2;
+            assess(node*2,begin,middle,lo,hi,path,raw,adjusted,split);
+            assess(node*2+1,middle,end,lo,hi,path,raw,adjusted,split);
+            return;
+        }
+        consume(lo);
+        const auto& piece=pieces[begin];
+        const auto first=std::max(lo,piece.begin),last=std::min(hi,piece.end);
+        const bool partial=first!=lo||last!=hi;
+        auto shape=piece.bounds;
+        const auto constant=[](Range value){return value.lo==value.hi;};
+        const bool stationary=constant(shape.x)&&constant(shape.y)&&constant(shape.half_x)&&constant(shape.half_y)&&constant(shape.angle);
+        if(!stationary&&(first!=piece.begin||last!=piece.end)) {
+            if(contains(shape,path,false,piece.area->subtract)==Certainty::no&&
+               contains(shape,path,true,piece.area->subtract)==Certainty::no)return;
+            consume(lo,piece.area->moves.size()+piece.area->rotations.size()+piece.area->scales.size());
+            shape=bounds(*piece.area,first,last);
+        }
+        const auto observe=[&](Coverage& coverage,bool narrow) {
+            auto state=contains(shape,path,narrow,piece.area->subtract);
+            if(partial&&state!=Certainty::no) {
+                state=Certainty::unknown;
+                const auto middle=std::midpoint(lo,hi);
+                const auto consider=[&](SongNs candidate){
+                    const auto distance=[&](SongNs time){return std::abs(static_cast<long double>(time)-middle);};
+                    if(!split||distance(candidate)<distance(*split))split=candidate;
+                };
+                if(first>lo)consider(first);
+                if(last<hi)consider(last+1);
+            }
+            coverage.add(state,piece.area->subtract);
+        };
+        observe(raw,false);observe(adjusted,true);
+    }
+    Certainty blocked(Box path,SongNs lo,SongNs hi,std::optional<SongNs>& split) {
+        if(pieces.empty())return Certainty::no;
+        Coverage raw,adjusted;
+        assess(1,0,pieces.size(),lo,hi,path,raw,adjusted,split);
+        if(raw.blocked()==Certainty::no||adjusted.blocked()==Certainty::no)return Certainty::no;
+        if(raw.blocked()==Certainty::yes&&adjusted.blocked()==Certainty::yes)return Certainty::yes;
+        return Certainty::unknown;
+    }
+    bool clear(Box path,SongNs lo,SongNs hi,unsigned depth=0) {
+        std::optional<SongNs> split;
+        const auto state=blocked(path,lo,hi,split);
+        if(state==Certainty::no)return true;
+        if(state==Certainty::yes||depth>=12||hi==lo)return false;
+        const auto middle=std::midpoint(lo,hi);
+        std::optional<SongNs> unused;
+        if(blocked(path,middle,middle,unused)!=Certainty::no)return false;
+        const auto cut=split.value_or(middle+1);
+        return clear(path,lo,cut-1,depth+1)&&clear(path,cut,hi,depth+1);
+    }
+    bool active_during(SongNs lo,SongNs hi,std::size_t node,std::size_t begin,std::size_t end) const {
+        if(pieces[begin].begin>hi||nodes[node].maximum_end<lo)return false;
+        if(end-begin==1)return true;
+        const auto middle=begin+(end-begin)/2;
+        return active_during(lo,hi,node*2,begin,middle)||active_during(lo,hi,node*2+1,middle,end);
+    }
+    bool active_during(SongNs lo,SongNs hi) const {
+        return !pieces.empty()&&active_during(lo,hi,1,0,pieces.size());
+    }
+};
+
 struct Build {
     const SemanticChart& chart;
     PhigrosPoseEvaluator poses;
     PhigrosGeometryMap mapping;
     ContactCompileOptions options;
+    BlockAreaField block_areas;
     double input_scale,input_min_scale;
     std::size_t visibility_checks=0;
     std::size_t projection_span_count=0;
     std::optional<std::array<std::uint32_t,4>> inset_raster_bounds; // x-low/high, y-low/high, inclusive.
     Build(const SemanticChart& chart_,PhigrosGeometry geometry,ContactCompileOptions options_)
-        :chart(chart_),poses(chart_),mapping(geometry),options(std::move(options_)),input_scale(0),input_min_scale(0) {
+        :chart(chart_),poses(chart_),mapping(geometry),options(std::move(options_)),block_areas(chart,options),input_scale(0),input_min_scale(0) {
         const auto viewport=mapping.content_viewport();
         input_scale=std::max(viewport.width/phigros_reference_width,viewport.height/phigros_reference_height);
         input_min_scale=std::min(viewport.width/phigros_reference_width,viewport.height/phigros_reference_height);
@@ -528,6 +807,358 @@ struct Build {
            reserve>=options.max_normal_projection_reference_pixels)
             throw Failure("judgment_domain_precision_budget","Held/raster error exhausts the finite normal/tangent judgment domain");
         return reserve;
+    }
+    // Input Steps are integer pixels encoded with extent-1. Invert the
+    // viewport's extent-based transform after decoding those integers.
+    PosePoint block_area_reference(double x,double y) const {
+        const auto& g=mapping.geometry();
+        const auto view=mapping.content_viewport();
+        const bool quarter=g.rotation==InputRotation::clockwise_90||g.rotation==InputRotation::clockwise_270;
+        const double u=x/g.input_width,v=y/g.input_height;
+        PosePoint display{u,v};
+        switch(g.rotation) {
+            case InputRotation::none:break;
+            case InputRotation::clockwise_90:display={v,1-u};break;
+            case InputRotation::clockwise_180:display={1-u,1-v};break;
+            case InputRotation::clockwise_270:display={1-v,u};break;
+        }
+        return {(display.x*(quarter?g.input_height:g.input_width)-view.left)*phigros_reference_width/view.width,
+            (display.y*(quarter?g.input_width:g.input_height)-view.top)*phigros_reference_height/view.height};
+    }
+    static bool block_area_outside_corners(BlockAreaField::Box box) {
+        constexpr double inset=64;
+        const bool horizontal=box.x.lo<inset||box.x.hi>phigros_reference_width-inset;
+        const bool vertical=box.y.lo<inset||box.y.hi>phigros_reference_height-inset;
+        return !horizontal||!vertical;
+    }
+    bool block_area_domain(const SemanticNote& note,std::size_t line,PosePoint shift,
+                           NoteContactOwnership& owner,bool commit) {
+        const auto reserve=judgment_domain_reserve();
+        const auto fits=[](Range values,double limit){return values.lo>=-limit&&values.hi<=limit;};
+        const double normal_limit=options.max_normal_projection_reference_pixels-reserve;
+        const double tangent_limit=options.max_tangent_error_reference_pixels-reserve;
+        const double side=note.side==NoteSide::above?1:-1;
+        const auto dot=[&](double angle,double last,double x,double y) {
+            return plus(product({x,x},trig(angle,last,true)),product({y,y},trig(angle,last,false)));
+        };
+        const auto normal=[&](double first,double last){return dot(first,last,-side*shift.y,-side*shift.x);};
+        const auto tangent=[&](double first,double last){return dot(first,last,shift.x,-shift.y);};
+        const auto radians=[&](SongNs t){return std::remainder(poses.line_at(line,t).rotation_degrees,360.)*pi/180;};
+        const double anchor=radians(note.start_ns);
+        const auto normal_at=BlockAreaField::shift(normal(anchor,anchor),owner.normal_projection_reference_pixels);
+        if(!fits(normal_at,normal_limit))return false;
+        double nlo=normal_at.lo,nhi=normal_at.hi;
+        double tlo=std::numeric_limits<double>::infinity(),thi=-tlo;
+        for(auto& span:owner.normal_projection_spans) {
+            block_areas.consume(note.start_ns);
+            if(span.judgment_domain_gap)return false;
+            const auto angle=radians(span.begin_ns);
+            const auto last=angle+slope_at(chart.lines[line],span.begin_ns).radians*static_cast<double>(span.end_ns-span.begin_ns);
+            const auto n=plus({span.correction_lower_reference_pixels,span.correction_upper_reference_pixels},normal(angle,last));
+            const auto t=plus({span.tangent_correction_lower_reference_pixels,span.tangent_correction_upper_reference_pixels},tangent(angle,last));
+            if(!fits(n,normal_limit)||!fits(t,tangent_limit))return false;
+            nlo=std::min(nlo,n.lo);nhi=std::max(nhi,n.hi);
+            tlo=std::min(tlo,t.lo);thi=std::max(thi,t.hi);
+            if(commit) {
+                span.correction_lower_reference_pixels=n.lo;span.correction_upper_reference_pixels=n.hi;
+                span.tangent_correction_lower_reference_pixels=t.lo;span.tangent_correction_upper_reference_pixels=t.hi;
+                span.possible_edge_mask=16;
+            }
+        }
+        // The last dynamic sample can be on a different native pose at a
+        // discontinuous key. Its exact pose is separate from the left span.
+        const bool dynamic_flick=note.kind==NoteKind::flick&&options.flick_path_policy==FlickPathPolicy::dynamic_line_v1;
+        if(note.kind==NoteKind::hold||dynamic_flick) {
+            const auto last=dynamic_flick?add(note.start_ns-options.flick_lead_ns,options.flick_travel_ns):
+                (owner.hold_tracking_end_ns>=0?owner.hold_tracking_end_ns:note.end_ns);
+            const double offset=dynamic_flick?options.flick_distance_reference_pixels*
+                static_cast<double>(last-note.start_ns)/static_cast<double>(options.flick_travel_ns):0;
+            const auto projected_last=projected(poses.line_at(line,last),note,offset,last);
+            const auto angle=radians(last);
+            const auto n=BlockAreaField::shift(normal(angle,angle),projected_last.correction);
+            const auto t=BlockAreaField::shift(tangent(angle,angle),projected_last.tangent_correction);
+            if(!fits(n,normal_limit)||!fits(t,tangent_limit))return false;
+            nlo=std::min(nlo,n.lo);nhi=std::max(nhi,n.hi);
+            tlo=std::min(tlo,t.lo);thi=std::max(thi,t.hi);
+        }
+        if(commit) {
+            owner.normal_projection_reference_pixels=normal_at.lo;
+            owner.projection_min_reference_pixels=nlo;owner.projection_max_reference_pixels=nhi;
+            owner.tangent_projection_min_reference_pixels=tlo;owner.tangent_projection_max_reference_pixels=thi;
+        }
+        return !owner.normal_projection_spans.empty();
+    }
+    bool avoid_block_areas(Contact& contact,NoteContactOwnership& owner,const SemanticNote& note,std::size_t line) {
+        if(!block_areas.area_count)return false;
+        const auto& g=mapping.geometry();
+        const int width=static_cast<int>(g.input_width),height=static_cast<int>(g.input_height);
+        const auto raster_bounds=inset_raster_bounds.value_or(std::array<std::uint32_t,4>{0,g.input_width-1,0,g.input_height-1});
+        struct Segment { BlockAreaField::Box box; SongNs first,last; };
+        std::vector<Segment> segments;
+        std::vector<std::pair<int,int>> pixels;
+        pixels.reserve(contact.steps.size());segments.reserve(contact.steps.size()-1);
+        BlockAreaField::Box path{{phigros_reference_width,0},{phigros_reference_height,0}};
+        // Include the rendered integer pixel cell and guard against rounding
+        // at a BlockArea edge. Consecutive steps enclose both a held position
+        // and every point on a possible interpolated motion between them.
+        const double margin=raster_error/input_min_scale+1e-6;
+        if(!std::isfinite(margin))throw Failure("block_area_geometry","BlockArea requires a finite input geometry scale",note.start_ns);
+        for(std::size_t i=0;i<contact.steps.size();++i) {
+            pixels.push_back(pixel_point(contact.steps[i].point,width,height));
+            const auto p=block_area_reference(pixels.back().first,pixels.back().second);
+            path.x={std::min(path.x.lo,p.x),std::max(path.x.hi,p.x)};
+            path.y={std::min(path.y.lo,p.y),std::max(path.y.hi,p.y)};
+            if(i) {
+                const auto q=block_area_reference(pixels[i-1].first,pixels[i-1].second);
+                auto x=range(p.x,q.x),y=range(p.y,q.y);
+                x.lo-=margin;x.hi+=margin;y.lo-=margin;y.hi+=margin;
+                const auto end=contact.steps[i].song_ns;
+                if(end>std::numeric_limits<SongNs>::max()-std::max(SongNs{0},block_areas.time_after))
+                    throw Failure("block_area_time_range","BlockArea timing margin overflows the song clock",end);
+                segments.push_back({{x,y},contact.steps[i-1].song_ns+block_areas.time_before,end+block_areas.time_after});
+            }
+        }
+        const auto clear=[&](PosePoint shift,bool protect_corners) {
+            return std::all_of(segments.begin(),segments.end(),[&](const auto& s){
+                block_areas.consume(s.first);
+                const BlockAreaField::Box box{BlockAreaField::shift(s.box.x,shift.x),BlockAreaField::shift(s.box.y,shift.y)};
+                return (!protect_corners||block_area_outside_corners(box))&&block_areas.clear(box,s.first,s.last);
+            });
+        };
+        if(clear({},false))return false;
+        if(options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1)
+            throw Failure("block_area_detour_requires_judgment_rectangle","Blocked contact requires a bounded normal/tangent judgment domain",note.start_ns);
+        const auto pose=poses.line_at(line,note.start_ns);
+        const auto target=phigros_line_point(pose,note.position_x,note.side);
+        const auto view=mapping.content_viewport();
+        const double ref_x=phigros_reference_width/view.width,ref_y=phigros_reference_height/view.height;
+        PosePoint basis_x{ref_x,0},basis_y{0,ref_y};
+        switch(g.rotation) {
+            case InputRotation::none:break;
+            case InputRotation::clockwise_90:basis_x={0,-ref_y};basis_y={ref_x,0};break;
+            case InputRotation::clockwise_180:basis_x={-ref_x,0};basis_y={0,-ref_y};break;
+            case InputRotation::clockwise_270:basis_x={0,ref_y};basis_y={-ref_x,0};break;
+        }
+        const auto translated=[&](PosePoint offset,int dx,int dy) {
+            if(path.x.lo+offset.x< -1e-6||path.y.lo+offset.y< -1e-6||
+               path.x.hi+offset.x>phigros_reference_width+1e-6||path.y.hi+offset.y>phigros_reference_height+1e-6)return false;
+            if(!block_area_domain(note,line,offset,owner,false))return false;
+            for(const auto& [x,y]:pixels) {
+                block_areas.consume(note.start_ns);
+                if(x+dx<static_cast<int>(raster_bounds[0])||x+dx>static_cast<int>(raster_bounds[1])||
+                   y+dy<static_cast<int>(raster_bounds[2])||y+dy>static_cast<int>(raster_bounds[3]))return false;
+            }
+            if(!clear(offset,true))return false;
+            const auto update=[&](PosePoint p){return PosePoint{p.x+offset.x,p.y+offset.y};};
+            const auto vertex_matches=[&](PosePoint point,std::size_t index){
+                const auto p=update(point);
+                const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
+                const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
+                if(p.x<xs.lo||p.x>xs.hi||p.y<ys.lo||p.y>ys.hi)return false;
+                const auto raster=pixel_point(projected_reference_pixel(p,contact.steps[index].song_ns),width,height);
+                return raster.first==pixels[index].first+dx&&raster.second==pixels[index].second+dy;
+            };
+            if(owner.flick_discrete_path) {
+                const auto& flick=*owner.flick_discrete_path;
+                if(!owner.flick_anchor_reference||!vertex_matches(*owner.flick_anchor_reference,0)||
+                   !vertex_matches(flick.bend_reference,1)||!vertex_matches(flick.end_reference,pixels.size()-2)||
+                   (flick.middle&&!vertex_matches(flick.middle->reference,2)))return false;
+            }
+            for(std::size_t i=0;i<pixels.size();++i)
+                contact.steps[i].point={static_cast<double>(pixels[i].first+dx)/(width-1),static_cast<double>(pixels[i].second+dy)/(height-1)};
+            (void)block_area_domain(note,line,offset,owner,true);
+            if(owner.flick_anchor_reference)*owner.flick_anchor_reference=update(*owner.flick_anchor_reference);
+            if(owner.flick_discrete_path) {
+                auto& flick=*owner.flick_discrete_path;
+                flick.bend_reference=update(flick.bend_reference);flick.end_reference=update(flick.end_reference);
+                if(flick.middle)flick.middle->reference=update(flick.middle->reference);
+            }
+            owner.block_area_translation_reference=offset;
+            return true;
+        };
+        // Deterministic outward grid in note-local normal/tangent coordinates.
+        // The cap is the screen diagonal, independent of the declared normal bound.
+        const int spacing=options.allow_block_area_temporal_fallback?24:16;
+        const int normal_steps=1472/spacing,tangent_steps=144/spacing;
+        const auto search_start=block_areas.work;
+        const auto search_budget=options.allow_block_area_temporal_fallback?160'000u:1'000'000u;
+        std::set<std::pair<int,int>> visited{{0,0}};
+        const auto search=[&](int n,int t) {
+            if(block_areas.work-search_start>=search_budget)return false;
+            block_areas.consume(note.start_ns);
+            const PosePoint requested{spacing*(n*target.side_normal.x+t*pose.tangent.x),
+                spacing*(n*target.side_normal.y+t*pose.tangent.y)};
+            const auto dx=static_cast<int>(std::lround(basis_x.x==0?requested.y/basis_x.y:requested.x/basis_x.x));
+            const auto dy=static_cast<int>(std::lround(basis_y.x==0?requested.y/basis_y.y:requested.x/basis_y.x));
+            if(!visited.emplace(dx,dy).second)return false;
+            const PosePoint offset{dx*basis_x.x+dy*basis_y.x,dx*basis_x.y+dy*basis_y.y};
+            return translated(offset,dx,dy);
+        };
+        for(int radius=1;radius<=normal_steps&&block_areas.work-search_start<search_budget;++radius) {
+            if(search(-radius,0)||search(radius,0))return true;
+            for(int t=1;t<=std::min(radius,tangent_steps);++t)
+                if(search(-radius,-t)||search(radius,-t)||search(-radius,t)||search(radius,t))return true;
+            if(radius<=tangent_steps)
+                for(int n=1-radius;n<radius;++n)
+                    if(search(n,-radius)||search(n,radius))return true;
+        }
+        throw Failure("block_area_no_safe_path","No continuously clear bounded BlockArea detour was certified for this contact",note.start_ns,target.reference_pixels);
+    }
+    bool block_area_temporal_route(Contact& contact,NoteContactOwnership& owner,const SemanticNote& note,std::size_t line) {
+        if(!options.allow_block_area_temporal_fallback||!block_areas.area_count)return false;
+        const bool flick=note.kind==NoteKind::flick;
+        const bool sampled=options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2;
+        const bool snap=options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_snap_v1;
+        if(flick&&((!sampled&&!snap)||note.start_ns<options.flick_lead_ns))return false;
+        const auto first=flick?note.start_ns-options.flick_lead_ns:note.start_ns;
+        const auto stroke_end=flick?add(first,options.flick_travel_ns):first;
+        const auto last=flick?add(stroke_end,options.flick_release_ns):note.kind==NoteKind::hold?note.end_ns:
+            add(first,note.kind==NoteKind::tap?options.tap_duration_ns:options.drag_duration_ns);
+        if(last<=first||last>std::numeric_limits<SongNs>::max()-std::max(SongNs{0},block_areas.time_after)||
+           !block_areas.active_during(first+block_areas.time_before,last+block_areas.time_after))return false;
+        const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
+        const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
+        const auto target=phigros_line_point(poses.line_at(line,note.start_ns),note.position_x,note.side).reference_pixels;
+        const auto& g=mapping.geometry();
+        const double margin=raster_error/input_min_scale+1e-6;
+        const auto contains=[&](PosePoint p){return p.x>=xs.lo&&p.x<=xs.hi&&p.y>=ys.lo&&p.y<=ys.hi;};
+        const auto actual=[&](PosePoint p,SongNs time){
+            const auto normalized=projected_reference_pixel(p,time);
+            const auto [x,y]=pixel_point(normalized,g.input_width,g.input_height);
+            return std::pair{normalized,block_area_reference(x,y)};
+        };
+        const auto clear=[&](PosePoint a,PosePoint b,SongNs start,SongNs end){
+            block_areas.consume(start);
+            const BlockAreaField::Box box{{std::min(a.x,b.x)-margin,std::max(a.x,b.x)+margin},
+                {std::min(a.y,b.y)-margin,std::max(a.y,b.y)+margin}};
+            return block_area_outside_corners(box)&&block_areas.clear(box,start+block_areas.time_before,end+block_areas.time_after);
+        };
+        std::vector<PosePoint> candidates{{std::clamp(target.x,xs.lo,xs.hi),std::clamp(target.y,ys.lo,ys.hi)}};
+        constexpr double spacing=24;
+        for(double y=ys.lo;;y=std::min(y+spacing,ys.hi)) {
+            for(double x=xs.lo;;x=std::min(x+spacing,xs.hi)) {
+                candidates.push_back({x,y});if(x==xs.hi)break;
+            }
+            if(y==ys.hi)break;
+        }
+        std::stable_sort(candidates.begin(),candidates.end(),[&](PosePoint a,PosePoint b){
+            return norm({a.x-target.x,a.y-target.y})<norm({b.x-target.x,b.y-target.y});
+        });
+        const auto accept=[&](bool track_full_hold=false){
+            owner.block_area_temporal_fallback=true;
+            if(note.kind==NoteKind::hold&&options.hold_tail_policy==HoldTailPolicy::phira_tail_grace_candidate_v1)
+                owner.hold_tracking_end_ns=track_full_hold?note.end_ns:std::max(note.start_ns,note.end_ns-220'000'000);
+            return true;
+        };
+        for(const auto anchor:candidates) {
+            const auto [input,reference]=actual(anchor,first);
+            if(!flick) {
+                if(!clear(reference,reference,first,last))continue;
+                append(contact,first,Phase::down,input,true);append(contact,last,Phase::up,input,true);
+                return accept();
+            }
+            const SongNs post=stroke_end-note.start_ns;
+            if(post<(sampled?7:3)||(sampled&&post>std::numeric_limits<SongNs>::max()/4))return false;
+            const auto bend_time=add(note.start_ns,post/(sampled?7:3));
+            const auto middle_time=sampled?add(note.start_ns,post*4/7):stroke_end;
+            constexpr double diagonal=0.70710678118654752440,minor=.075;
+            const double major=std::sqrt(1-minor*minor);
+            const double distance=options.flick_distance_reference_pixels;
+            if(!clear(reference,reference,first,bend_time))continue;
+            const std::array<PosePoint,12> directions{{{diagonal,diagonal},{-diagonal,diagonal},{diagonal,-diagonal},{-diagonal,-diagonal},
+                {major,minor},{-major,minor},{major,-minor},{-major,-minor},
+                {minor,major},{-minor,major},{minor,-major},{-minor,-major}}};
+            for(const auto direction:directions)
+                for(const double sign:{1.,-1.}) {
+                    const bool narrow=std::abs(direction.x)!=std::abs(direction.y);
+                    const PosePoint perpendicular{-direction.y,direction.x};
+                    const auto vertex=[&](double travel,double curve){return PosePoint{
+                        anchor.x+distance*(travel*direction.x+sign*curve*perpendicular.x),
+                        anchor.y+distance*(travel*direction.y+sign*curve*perpendicular.y)};};
+                    const auto bend=sampled?vertex(.20,narrow?.018:.10):vertex(.28,narrow?.022:.10);
+                    const auto middle=sampled?vertex(.55,narrow?.030:.12):vertex(1,0);
+                    const auto end=vertex(1,0);
+                    if(!contains(bend)||!contains(middle)||!contains(end))continue;
+                    const auto [bend_input,bend_ref]=actual(bend,bend_time);
+                    const auto [middle_input,middle_ref]=actual(middle,middle_time);
+                    const auto [end_input,end_ref]=actual(end,stroke_end);
+                    const auto length=[](PosePoint a,PosePoint b){return norm({a.x-b.x,a.y-b.y});};
+                    const auto jump=[&](Point a,Point b){return std::hypot((a.x-b.x)*(g.input_width-1),(a.y-b.y)*(g.input_height-1));};
+                    const auto turn=[](PosePoint a,PosePoint b,PosePoint c){return (b.x-a.x)*(c.y-b.y)-(b.y-a.y)*(c.x-b.x);};
+                    const auto jump1=jump(input,bend_input),jump2=jump(bend_input,middle_input),jump3=jump(middle_input,end_input);
+                    if(end_ref.x==reference.x||end_ref.y==reference.y||jump1<1||jump2<1||
+                       jump(input,end_input)<std::max(1.,distance*input_min_scale-2*raster_error)||turn(reference,bend_ref,middle_ref)==0||
+                       (sampled&&(jump3<1||turn(bend_ref,middle_ref,end_ref)==0)))continue;
+                    if(!clear(reference,bend_ref,first,bend_time)||!clear(bend_ref,middle_ref,bend_time,middle_time)||
+                       (sampled&&!clear(middle_ref,end_ref,middle_time,stroke_end))||!clear(end_ref,end_ref,stroke_end,last))continue;
+                    append(contact,first,Phase::down,input,true);append(contact,bend_time,Phase::move,bend_input,true);
+                    if(sampled)append(contact,middle_time,Phase::move,middle_input,true);
+                    append(contact,stroke_end,Phase::move,end_input,true);append(contact,last,Phase::up,end_input,true);
+                    owner.flick_anchor_reference=anchor;owner.flick_direction_reference=direction;
+                    owner.flick_discrete_path=FlickDiscretePathCertificate{
+                        flick_path_policy_name(options.flick_path_policy),bend,end,bend_time,stroke_end,length(anchor,end),
+                        length(anchor,bend)+length(bend,middle)+length(middle,end),std::max({jump1,jump2,jump3}),sampled?3u:2u};
+                    if(sampled)owner.flick_discrete_path->middle=FlickDiscreteMiddleVertex{middle,middle_time};
+                    return accept();
+                }
+        }
+        if(note.kind!=NoteKind::hold)return false;
+        // Stationary alternatives are preferable. When a moving area sweeps
+        // every stationary point, try a bounded search with the same pointer
+        // held from original DOWN to original UP. Only MOVE nodes are added.
+        constexpr SongNs tick=48'000'000;
+        constexpr std::size_t beam=24;
+        if((last-first)/tick>=static_cast<SongNs>(std::min(options.max_steps_per_contact,std::size_t{512})-1))return false;
+        struct Waypoint { PosePoint anchor,reference; Point input; std::size_t previous; double cost; };
+        std::vector<std::vector<Waypoint>> route;
+        const auto next_tick=[&](SongNs time){return time+std::min(tick,last-time);};
+        const auto apart=[](PosePoint a,PosePoint b){return norm({a.x-b.x,a.y-b.y});};
+        const auto insert_spaced=[&](std::vector<Waypoint>& layer,const Waypoint& point){
+            if(std::none_of(layer.begin(),layer.end(),[&](const auto& prior){return apart(point.reference,prior.reference)<spacing*1.5;}))
+                layer.push_back(point);
+        };
+        route.emplace_back();
+        for(const auto anchor:candidates) {
+            const auto [input,reference]=actual(anchor,first);
+            if(clear(reference,reference,first,next_tick(first)))
+                insert_spaced(route.back(),{anchor,reference,input,0,apart(reference,target)*.05});
+            if(route.back().size()==beam)break;
+        }
+        if(route.back().empty())return false;
+        for(auto time=next_tick(first);time<last;time=next_tick(time)) {
+            const auto end=next_tick(time);
+            std::vector<Waypoint> next;
+            const auto& previous=route.back();
+            for(std::size_t i=0;i<previous.size();++i) {
+                const auto& prior=previous[i];
+                for(int x=-2;x<=2;++x)for(int y=-2;y<=2;++y) {
+                    const PosePoint anchor{std::clamp(prior.anchor.x+spacing*x,xs.lo,xs.hi),
+                        std::clamp(prior.anchor.y+spacing*y,ys.lo,ys.hi)};
+                    const auto [input,reference]=actual(anchor,time);
+                    if(!clear(reference,reference,time,end))continue;
+                    const double move=apart(prior.reference,reference);
+                    if(move>0&&!clear(prior.reference,reference,time,time))continue;
+                    next.push_back({anchor,reference,input,i,prior.cost+move+apart(reference,target)*.001});
+                }
+            }
+            if(next.empty())return false;
+            std::stable_sort(next.begin(),next.end(),[](const auto& a,const auto& b){return a.cost<b.cost;});
+            route.emplace_back();
+            for(const auto& candidate:next) {
+                insert_spaced(route.back(),candidate);
+                if(route.back().size()==beam)break;
+            }
+        }
+        std::vector<Point> path(route.size());
+        std::size_t index=0;
+        for(std::size_t i=route.size();i-->0;) {
+            const auto& waypoint=route[i][index];path[i]=waypoint.input;index=waypoint.previous;
+        }
+        append(contact,first,Phase::down,path.front(),true);
+        for(std::size_t i=1;i<path.size();++i)
+            append(contact,first+static_cast<SongNs>(i)*tick,Phase::move,path[i]);
+        append(contact,last,Phase::up,path.back(),true);
+        return accept(true);
     }
     void projected_segment(Contact& contact,const SemanticNote& note,std::size_t line_index,SongNs a,SongNs b,
             const std::function<double(SongNs)>& offset_at,double offset_slope,NoteContactOwnership& ownership,
@@ -941,6 +1572,8 @@ struct Build {
 };
 
 void check_options(const ContactCompileOptions& options) {
+    if(options.block_area_phase_ns&&(*options.block_area_phase_ns < -100'000'000||*options.block_area_phase_ns > 100'000'000))
+        throw Failure("invalid_options","BlockArea phase must be within -100..100ms");
     if(!options.above_drag_source_ids.empty()&&!options.advance_above_drags)
         throw Failure("invalid_options","An above-Drag source filter requires the explicit above-Drag advance option");
     if(options.above_drag_source_ids.size()>2048)
@@ -1110,6 +1743,14 @@ std::string cache_key(const CompiledContactPlan& plan) {
     }
     if(o.max_hold_reacquire_gap_ns!=0) {text("phira-hold-reacquire-candidate.v1");stream<<o.max_hold_reacquire_gap_ns<<';';}
     if(o.coincident_flick_delay_ns!=0) {text("coincident-flick-delay-candidate.v1");stream<<o.coincident_flick_delay_ns<<';';}
+    if(!plan.metadata.block_area_policy_id.empty()) {
+        text(plan.metadata.block_area_policy_id);
+        stream<<plan.metadata.block_area_count<<','<<plan.metadata.block_area_detoured_contacts<<','
+            <<o.block_area_phase_ns.has_value()<<','<<o.block_area_phase_ns.value_or(0)<<';';
+        if(o.allow_block_area_temporal_fallback) {
+            text("block-area-temporal-fallback.v1");stream<<plan.metadata.block_area_temporal_contacts<<';';
+        }
+    }
     stream<<plan.ownership.size()<<':';
     for(const auto& owned:plan.ownership) {
         text(owned.source_note_id);text(owned.source_json_pointer);
@@ -1128,6 +1769,11 @@ std::string cache_key(const CompiledContactPlan& plan) {
         }
         if(owned.hold_tracking_end_ns!=-1) {text("hold-tracking-end.v1");stream<<owned.hold_tracking_end_ns<<';';}
         if(owned.dispatch_judgment_ns!=-1) {text("dispatch-judgment.v1");stream<<owned.dispatch_judgment_ns<<';';}
+        if(owned.block_area_translation_reference) {
+            text("block-area-translation-reference.v1");
+            stream<<owned.block_area_translation_reference->x<<','<<owned.block_area_translation_reference->y<<';';
+        }
+        if(owned.block_area_temporal_fallback)text("block-area-temporal-owner.v1");
         if(o.max_hold_reacquire_gap_ns!=0) {
             text("judgment-domain-gap-spans.v1");stream<<owned.gap_tangent_projection_min_reference_pixels<<','<<owned.gap_tangent_projection_max_reference_pixels<<';';
             for(const auto& span:owned.normal_projection_spans)stream<<span.judgment_domain_gap<<';';
@@ -1337,7 +1983,11 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
         std::sort(options.above_drag_source_ids.begin(),options.above_drag_source_ids.end());
         validate_below_drag_sources(chart,options);
         validate_above_drag_sources(chart,options);
-        if(options.coincident_flick_delay_ns>0)return compile_coincident_flick_delay(chart,identity,geometry,options);
+        if(options.coincident_flick_delay_ns>0) {
+            if(std::any_of(chart.block_areas.begin(),chart.block_areas.end(),[](const auto& area){return area.enable_ns<area.disable_ns;}))
+                throw Failure("block_area_time_shift_unavailable","Coincident Flick time shifts would invalidate the BlockArea clearance proof");
+            return compile_coincident_flick_delay(chart,identity,geometry,options);
+        }
         if(options.max_prejudge_ns>0)return compile_prejudge(chart,identity,geometry,options);
         if(identity.game!=Game::phigros||identity.song_id.empty()||identity.difficulty.empty()||identity.revision.empty()||identity.layout_id.empty()||
            !sha256_text(identity.chart_sha256)||!sha256_text(identity.audio_sha256)||
@@ -1401,6 +2051,18 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
         if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2)
             plan.metadata.judgment_policy_provenance+="; explicit sampled diagonal Flick v2: held native judgment anchor then three curved MOVE vertices; no continuous target interpolation, device sampling or actual game acceptance qualification";
         if(options.max_hold_reacquire_gap_ns>0)plan.metadata.judgment_policy_provenance+="; Hold tangent-only reacquire gaps conservatively merged <=20ms with valid recovery, within community 50ms grace; physical path and finite normal bound remain continuous";
+        if(build.block_areas.area_count) {
+            plan.metadata.block_area_policy_id="phira-block-area-continuous-detour-v1";
+            plan.metadata.block_area_count=build.block_areas.area_count;
+            plan.metadata.requires_calibration=true;
+            plan.metadata.strategy+="; phira-block-area-continuous-detour-v1";
+            if(!plan.metadata.judgment_policy_provenance.empty())plan.metadata.judgment_policy_provenance+="; ";
+            plan.metadata.judgment_policy_provenance+="https://github.com/TeamFlos/phira/pull/901; community BlockArea geometry and sticky contact cancellation; conservative raster-path and phase-window proof; actual game acceptance unverified";
+            if(options.allow_block_area_temporal_fallback) {
+                plan.metadata.strategy+="; active-block-area-temporal-fallback-v1";
+                plan.metadata.judgment_policy_provenance+="; explicitly opted-in temporal alternatives have no tangent/normal judgment assertion";
+            }
+        }
         std::set<std::string> source_ids;
         std::uint64_t next_id=1;
         std::size_t notes=0;
@@ -1414,12 +2076,14 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                    !std::isfinite(note.time_tick)||!std::isfinite(note.hold_ticks)||
                    (note.side!=NoteSide::above&&note.side!=NoteSide::below))
                     throw Failure("invalid_note", "Invalid note time, finite field, or side",note.start_ns);
-                const auto judgment_target=dynamic_projection ? build.projected(build.poses.line_at(li,note.start_ns),note,0,note.start_ns):ProjectedPoint{};
-                const double projection=dynamic_projection ? judgment_target.correction : build.projection(note,li);
                 Contact contact;contact.id=next_id++;
                 NoteContactOwnership owned;
                 owned.source_note_id=note.source.id;owned.source_json_pointer=note.source.json_pointer;owned.line_index=li;owned.note_index=ni;
                 owned.kind=note.kind;owned.side=note.side;owned.contact_id=contact.id;owned.judgment_ns=note.start_ns;
+                const auto span_count=build.projection_span_count;
+                const auto regular_contact=[&]{
+                const auto judgment_target=dynamic_projection ? build.projected(build.poses.line_at(li,note.start_ns),note,0,note.start_ns):ProjectedPoint{};
+                const double projection=dynamic_projection ? judgment_target.correction : build.projection(note,li);
                 owned.normal_projection_reference_pixels=projection;owned.time_varying_normal_projection=dynamic_projection;
                 owned.projection_min_reference_pixels=owned.projection_max_reference_pixels=projection;
                 owned.tangent_projection_min_reference_pixels=owned.tangent_projection_max_reference_pixels=judgment_target.tangent_correction;
@@ -1473,6 +2137,25 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                     build.append(contact,note.start_ns,Phase::down,point,true);
                     build.append(contact,add(note.start_ns,note.kind==NoteKind::tap ? options.tap_duration_ns : options.drag_duration_ns),Phase::up,point,true);
                 } else throw Failure("unsupported_note", "Unknown note kind",note.start_ns);
+                return build.avoid_block_areas(contact,owned,note,li);
+                };
+                try {
+                    if(regular_contact())++plan.metadata.block_area_detoured_contacts;
+                } catch(const Failure& error) {
+                    if(!options.allow_block_area_temporal_fallback||
+                       (error.code!="block_area_no_safe_path"&&error.code!="block_area_detour_requires_judgment_rectangle"&&
+                        error.code!="judgment_domain_unreachable"&&error.code!="offscreen_target"&&
+                        error.code!="uncertified_normal_projection"&&error.code!="diagonal_sampled_unavailable"&&
+                        error.code!="diagonal_snap_unavailable"))throw;
+                    contact.steps.clear();build.projection_span_count=span_count;
+                    owned={};owned.source_note_id=note.source.id;owned.source_json_pointer=note.source.json_pointer;
+                    owned.line_index=li;owned.note_index=ni;owned.kind=note.kind;owned.side=note.side;
+                    owned.contact_id=contact.id;owned.judgment_ns=note.start_ns;
+                    if(!build.block_area_temporal_route(contact,owned,note,li))throw;
+                    ++plan.metadata.block_area_detoured_contacts;++plan.metadata.block_area_temporal_contacts;
+                    diagnostic({CompileSeverity::warning,"unverified_block_area_temporal_fallback",
+                        "Active BlockArea contact uses a clear temporal alternative; actual judgment acceptance unverified",note.source.id,{},li,ni,note.start_ns,{}});
+                }
                 if(contact.steps.size()>options.max_steps_in_plan||plan.total_steps>options.max_steps_in_plan-contact.steps.size()) throw Failure("plan_step_budget", "Whole-song step budget exceeded",note.start_ns);
                 plan.total_steps+=contact.steps.size();
                 const bool projected_candidate=owned.projection_min_reference_pixels!=0||owned.projection_max_reference_pixels!=0;

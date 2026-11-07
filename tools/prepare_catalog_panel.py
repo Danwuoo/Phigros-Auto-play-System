@@ -15,7 +15,6 @@ from pathlib import Path
 
 from inspect_catalog_native import run_bounded
 from verify_installed_catalog import reference, sha, write_new
-from song_catalog import block_area_fields
 
 
 def read(path):return json.loads(Path(path).read_text(encoding='utf-8-sig'))
@@ -35,11 +34,11 @@ def source_for_legacy(job):
     return reference(matches[0])
 
 
-def trim_derived_plan(folder):
+def trim_derived_plan(folder, data=None):
     path=folder/'compiled-plan.json'
     if not path.exists():return
     if path.is_symlink() or path.resolve().parent!=folder.resolve():raise ValueError('Derived plan escapes new preparation output')
-    data=read(path)
+    if data is None:data=read(path)
     last_up=max((step['song_ns'] for contact in data['contacts'] for step in contact.get('steps',[])),default=None)
     write_new(folder/'compiled-plan-summary.json',dict(sha256=sha(path),bytes=path.stat().st_size,
         cache_sha256=data['cache_sha256'],contacts=len(data['contacts']),events=data['total_steps'],
@@ -139,13 +138,20 @@ def preparation_failure(execution,details):
     return '；'.join(reasons) or execution.get('stderr','').strip()[:600] or '原生準備未通過；請檢視完整report'
 
 
-def cached_profile(cache,key,chart,source,policy,contact_capacity=5,import_policy=None,projection_policy=None):
+def matches_block_area_phase(profile, phase):
+    if phase is None:return 'block_area_phase_ms' not in profile
+    value=profile.get('block_area_phase_ms')
+    return type(value) is int and value==phase
+
+
+def cached_profile(cache,key,chart,source,policy,contact_capacity=5,import_policy=None,projection_policy=None,block_area_phase=None):
     contact_capacity=checked_contact_capacity(contact_capacity)
     if cache is None:return None
     path=(Path(cache).resolve()/'songs'/key/'prepared/song-profile.json').resolve()
     if not path.is_file() or not path.is_relative_to(Path(cache).resolve()):return None
     try:
         p=read(path)
+        if not matches_block_area_phase(p,block_area_phase):return None
         runtime_budget(p)
         actual_policy=compile_policy(p)
         if projection_policy is not None and any(actual_policy[key]!=value for key,value in projection_policy.items()):return None
@@ -207,19 +213,21 @@ def prepare(library,identity,legacy,at_state,at_reference,executable,output,prof
         folder.mkdir()
         try:
             raw=read(chart_path)
-            if block_area_fields(raw):
-                raise ValueError('blockAreaList 已完整歸檔；目前無法完成（包含空清單），不建立 READY')
             import_policy=import_policy_for(raw,v1_import_policy)
+            block_areas=raw.get('blockAreaList')
+            block_area_phase=-80 if isinstance(block_areas,list) and block_areas else None
             item=identities[chart['library_id']]
             if item['status']!='verified_exact_installed_chart':raise ValueError('安裝版原譜與公共版本不同，暫跳過；保留兩份身份')
             source=checked(item['source_manifest']);job['source_manifest']=reference(source)
             if chart['difficulty']=='AT' and at_state is None:
                 raise ValueError('AT 尚待真實開場HUD與獨立難度校正，準備完成前目前無法執行')
             previous=old_jobs.get((chart['track_id'],chart['difficulty']))
-            if (previous and previous['chart']['sha256']==chart['chart']['sha256'] and
-                read(checked(previous['profile'])).get('contact_capacity',4)==contact_capacity and projection_policy is None and
-                not custom_limits and
-                (raw['formatVersion']!=1 or v1_import_policy is None)):
+            previous_profile=None
+            if (previous and previous.get('profile') and previous['chart']['sha256']==chart['chart']['sha256'] and
+                projection_policy is None and not custom_limits and (raw['formatVersion']!=1 or v1_import_policy is None)):
+                previous_profile=read(checked(previous['profile']))
+            if (previous_profile and previous_profile.get('contact_capacity',4)==contact_capacity and
+                matches_block_area_phase(previous_profile,block_area_phase)):
                 for key in ('chart','profile','state_calibration','hud_reference','compiled_fingerprint','notes','events','peak'):
                     job[key]=previous[key]
                 job['source_manifest']=source_for_legacy(previous)
@@ -231,7 +239,7 @@ def prepare(library,identity,legacy,at_state,at_reference,executable,output,prof
                     baseline=next(j for j in old['songs'] if j['track_id']=='Glaciaxion.SunsetRay.0')
                     state,reference_path,policy=Path(baseline['state_calibration']['file']),Path(baseline['hud_reference']['file']),'shared-in-subpixel-prefix-score-v3'
                 destination=folder/'prepared'
-                cached=cached_profile(profile_cache,folder.name,chart,source,policy,contact_capacity,import_policy,requested_policy)
+                cached=cached_profile(profile_cache,folder.name,chart,source,policy,contact_capacity,import_policy,requested_policy,block_area_phase)
                 if cached:
                     destination=cached.parent;write_new(folder/'reused-offline-profile.json',reference(cached))
                     job['preparation_strategy']='retained-exact-profile'
@@ -245,6 +253,7 @@ def prepare(library,identity,legacy,at_state,at_reference,executable,output,prof
                         '--flick-distance-pixels','60','--flick-release-ms','24',
                         '--flick-path-policy','judgment-anchored-screen-fit-v1',
                         '--hold-tail-policy','phira-tail-grace-candidate-v1']
+                    if block_area_phase is not None:args+=['--block-area-phase-ms',str(block_area_phase)]
                     job['preparation_strategy']='screen-fit-phira-tail-candidate'
                     if projection_policy is not None:
                         args+=['--offscreen-policy',offscreen_policy,'--max-tangent-error-pixels',str(max_tangent_error_pixels)]
@@ -265,6 +274,8 @@ def prepare(library,identity,legacy,at_state,at_reference,executable,output,prof
                 job.update(profile=reference(destination/'song-profile.json'),state_calibration=reference(state),hud_reference=reference(reference_path),
                     compiled_fingerprint=profile['expected_plan_sha256'],notes=profile['expected_contacts'],events=profile['expected_steps'],peak=profile['expected_peak'])
             profile=read(job['profile']['file'])
+            if not matches_block_area_phase(profile,block_area_phase):
+                raise ValueError('Prepared block area phase differs from the -80 ms preflight phase')
             job['compile_policy']=compile_policy(profile)
             if profile['expected_contacts']!=chart['notes']:
                 raise ValueError('Native preparation must retain every source note exactly once')
