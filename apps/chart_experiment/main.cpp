@@ -58,11 +58,99 @@ constexpr const char* usage=
     "Optional last suffix after image retention: --numeric-hud-observer v1 (bounded numeric metadata only; diagnostic, no input permission).\n"
     "Optional last suffix after numeric HUD: --native-head-snapshot-window-ms BEGIN:END (adaptive only; <=13000ms window inside0..600000ms; metadata shadow only).\n"
     "Optional final suffix after native head shadow: --experimental-clock-probe-ms CUT:DELTA (static empty-contact-gap suffix offset; unqualified controlled timing experiment).\n"
+    "Optional final live adaptive suffix: --desktop-round-summary RUN_ID ATTEMPT_ID (compact terminal metadata; full manifest remains on disk).\n"
     "Dlyrotz IN13 complete 584-note / 5669-step candidate, capacity 4, D250 projection.\n"
     "Default experimental Tap/Drag dwell32ms; Flick lead30ms/travel60ms/distance60px/release24ms. Adaptive Flick lead must be less than travel; HUD timeline at50ms.\n"
     "Begin on its manually verified song-selection or result screen, then start/retry once. Phase -100..100 ms; -80 is the current hypothesis.\n"
     "Arrival-only rate=1 experiment; no qualified SyncLease/input latency/audio. Esc/Ctrl+C/NEW_DIR/STOP cancels.\n";
 std::atomic<bool> interrupted{false};
+struct DesktopRoundSummary {
+    std::string run_id,attempt_id;
+    std::filesystem::path output;
+    bool owns_output=false,ready_seen=false,manifest_written=false;
+    const char* stage="native_preflight";
+    const char* failure_stage=nullptr;
+    std::string failure_detail;
+    Json cleanup_errors=Json::array();
+    Json timing=Json::object();
+    std::optional<AdaptiveFirstDispatchGate> first_note_gate;
+    Ns ready_host_ns=-1,first_HUD_receipt_ns=-1;
+    Json down_attempts=nullptr,up_attempts=nullptr,receipt_rows=nullptr;
+    Json release_rpc_known=nullptr,kernel_final_zero=nullptr;
+    const char* execution_state="not_started";
+    const char* result_state="not_confirmed";
+    const char* release_state="unknown";
+
+    void cleanup_error(const char* cleanup_stage,std::string_view detail) {
+        cleanup_errors.push_back({{"stage",cleanup_stage},{"code",std::string(cleanup_stage)+"_failed"},
+            {"detail",std::string(detail.substr(0,384))}});
+    }
+};
+bool desktop_id(std::string_view id) {
+    return !id.empty()&&id.size()<=128&&std::all_of(id.begin(),id.end(),[](char c){
+        return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||c=='-'||c=='_'||c=='.';
+    });
+}
+std::optional<DesktopRoundSummary> desktop_round_summary_suffix(int& argc,char** argv) {
+    if(argc<5||std::string_view(argv[argc-3])!="--desktop-round-summary")return std::nullopt;
+    if(std::string_view(argv[1])!="run-adaptive"||!desktop_id(argv[argc-2])||!desktop_id(argv[argc-1]))
+        throw std::invalid_argument("desktop round summary requires run-adaptive and two bounded IDs");
+    DesktopRoundSummary summary;
+    summary.run_id=argv[argc-2];summary.attempt_id=argv[argc-1];argc-=3;
+    return summary;
+}
+std::string desktop_failure_code(std::string_view detail) {
+    constexpr std::string_view trigger_prefix="first_note_trigger_cancelled: ";
+    if(detail.starts_with(trigger_prefix))detail.remove_prefix(trigger_prefix.size());
+    if(detail=="source timestamp jumped beyond 10 seconds")return "source_timestamp_jump";
+    if(desktop_id(detail))return std::string(detail);
+    return "native_error";
+}
+Json desktop_gate_json(const std::optional<AdaptiveFirstDispatchGate>& gate) {
+    if(!gate)return nullptr;
+    return {{"allowed",gate->allowed},{"gate_reason",gate->reason},{"origin_host_ns",gate->origin_host_ns},
+        {"target_host_ns",gate->target_host_ns},{"received_host_ns",gate->received_host_ns},
+        {"evaluated_host_ns",gate->evaluated_host_ns},{"minimum_lead_ns",gate->minimum_lead_ns},
+        {"lead_ns",gate->target_host_ns-gate->evaluated_host_ns},{"receipt_age_ns",gate->evaluated_host_ns-gate->received_host_ns},
+        {"song_interval_ns",{gate->song_interval.lower,gate->song_interval.upper}}};
+}
+void publish_desktop_summary(DesktopRoundSummary& desktop,int exit_code,std::string_view unhandled={}) noexcept {
+    try {
+        if(!unhandled.empty()){
+            if(desktop.failure_stage)desktop.cleanup_error(desktop.stage,unhandled);
+            else{desktop.failure_stage=desktop.stage;desktop.failure_detail=unhandled.substr(0,384);}
+        }
+        Json failure_stage=nullptr,failure_code=nullptr,failure_detail=nullptr;
+        if(desktop.failure_stage){
+            failure_stage=desktop.failure_stage;failure_code=desktop_failure_code(desktop.failure_detail);
+            failure_detail=desktop.failure_detail;
+        }else if(!desktop.cleanup_errors.empty()){
+            failure_stage="cleanup";failure_code=desktop.cleanup_errors.front().at("code");
+            failure_detail=desktop.cleanup_errors.front().at("detail");
+        }
+        desktop.timing["ready_host_ns"]=desktop.ready_host_ns<0?Json(nullptr):Json(desktop.ready_host_ns);
+        desktop.timing["first_HUD_receipt_host_ns"]=desktop.first_HUD_receipt_ns<0?Json(nullptr):Json(desktop.first_HUD_receipt_ns);
+        const Json summary={{"schema","pas.desktop-round-summary.v1"},{"run_id",desktop.run_id},{"attempt_id",desktop.attempt_id},
+            {"stage",exit_code==0?Json("completed"):failure_stage.is_null()?Json(desktop.stage):failure_stage},{"exit_code",exit_code},
+            {"manifest_written",desktop.manifest_written},{"ready_seen",desktop.ready_seen},
+            {"execution_state",desktop.execution_state},{"result_state",desktop.result_state},
+            {"release_state",desktop.release_state},{"judgment_state","unreviewed"},
+            {"down_attempts",desktop.down_attempts},{"up_attempts",desktop.up_attempts},{"receipt_rows",desktop.receipt_rows},
+            {"release_rpc_known",desktop.release_rpc_known},{"kernel_final_zero",desktop.kernel_final_zero},
+            {"failure_stage",std::move(failure_stage)},{"failure_code",std::move(failure_code)},{"failure_detail",std::move(failure_detail)},
+            {"cleanup_errors",desktop.cleanup_errors},{"first_note_gate",desktop_gate_json(desktop.first_note_gate)},
+            {"timing",desktop.timing}};
+        const auto line=summary.dump(-1,' ',false,Json::error_handler_t::replace);
+        if(desktop.owns_output)try {
+            const auto temporary=desktop.output/"desktop-summary.next.json",final=desktop.output/"desktop-summary.json";
+            if(!std::filesystem::exists(temporary)&&!std::filesystem::exists(final)){
+                std::ofstream stream(temporary,std::ios::binary);stream<<line<<'\n';stream.close();
+                if(stream)std::filesystem::rename(temporary,final);
+            }
+        }catch(const std::exception&){} // The stdout record remains available.
+        std::cout<<"DESKTOP ROUND SUMMARY: "<<line<<'\n'<<std::flush;
+    }catch(const std::exception&){} // Optional recording cannot change the native outcome.
+}
 ClockProbe clock_probe_suffix(int& argc,char** argv) {
     if(argc<3||std::string_view(argv[argc-2])!="--experimental-clock-probe-ms")return {};
     const auto probe=parse_clock_probe_ms(argv[argc-1]);argc-=2;return probe;
@@ -837,7 +925,7 @@ Json checked_capacity_evidence(const std::filesystem::path& path,const Json& ker
         throw std::invalid_argument("capacity evidence native path/geometry/boot binding failed");
     proof["evidence_sha256"]=chart_text_sha256(bytes);return proof;
 }
-int run(int argc,char** argv) {
+int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     const auto clock_probe=clock_probe_suffix(argc,argv);
     const auto native_head_window=native_head_snapshot_suffix(argc,argv);
     const bool numeric_hud_enabled=numeric_hud_suffix(argc,argv);
@@ -1028,6 +1116,7 @@ int run(int argc,char** argv) {
         std::cout<<preflight.dump(2)<<'\n';
         return 0;
     }
+    if(desktop)desktop->stage="adb_setup";
     const auto adb=pas::find_adb();const auto avd_text=adb_text(adb,serial,{"emu","avd","name"});
     if(avd_text.substr(0,avd_text.find_first_of("\r\n"))!=avd)throw std::runtime_error("AVD mismatch");
     const auto package_report=adb_text(adb,serial,{"shell","dumpsys","package","com.PigeonGames.Phigros"});
@@ -1056,6 +1145,7 @@ int run(int argc,char** argv) {
         if(initial_kernel.at("causal_host_interval_valid")==true)break;
     }
     if(initial_kernel.at("causal_host_interval_valid")!=true)throw std::runtime_error("initial kernel state not fresh zero after bounded read-only retries");
+    if(desktop)desktop->stage="capture_setup";
     const auto endpoint=pas::discover_endpoint(serial);
     if(configured_capacity) {
         pas::CaptureOptions probe_options;
@@ -1078,7 +1168,9 @@ int run(int argc,char** argv) {
     if(!initial_frame.source_valid||initial_frame.width!=1280||initial_frame.height!=720||
        initial_state==ObservedGameState::playing||initial_state==ObservedGameState::paused)
         throw std::runtime_error("start from manually verified selected-song screen/result; already-playing or paused is rejected");
+    if(desktop)desktop->output=output;
     if(!std::filesystem::create_directory(output))throw std::runtime_error("output creation failed");
+    if(desktop){desktop->owns_output=true;desktop->stage="transport_setup";}
     Journal journal(output/"events.jsonl",song.runtime_step_budget>16000?65536:16000);
     // Allocate and touch the already bounded journal budget before READY/input,
     // rather than copying a growing multi-megabyte string on an owner deadline.
@@ -1369,6 +1461,10 @@ int run(int argc,char** argv) {
         catch(...){std::lock_guard lock(error_mutex);capture_error=std::current_exception();}
         capture_done=true;latest.close();
     });
+    if(desktop){
+        desktop->stage="waiting_for_play";desktop->ready_seen=true;desktop->ready_host_ns=clock.now_ns();
+        desktop->execution_state="unknown";desktop->result_state="unknown";
+    }
     std::cout<<"WHOLE SONG EXPERIMENT READY: manually start/retry "<<song.song<<' '<<song.difficulty<<" once; "<<expected_notes<<" notes / "<<expected_steps<<" steps / capacity "<<song.capacity<<".\n"<<std::flush;
     try {
         while(!finished) {
@@ -1510,6 +1606,9 @@ int run(int argc,char** argv) {
                     actual.epoch=acquisition_epoch;actual.generation=actual.geometry_version=1;actual.width=1280;actual.height=720;
                     actual.received_host_ns=observation.received_host_ns;actual.source_id=source_id;
                     actual.evidence_id=observation.evidence_id;actual.playing=actual.source_valid=true;last_playing_ui=std::move(actual);
+                    if(desktop&&desktop->first_HUD_receipt_ns<0){
+                        desktop->first_HUD_receipt_ns=observation.received_host_ns;desktop->stage="first_note";
+                    }
                 } else if(observation.pause||observation.result||!observation.source_valid) {
                     last_playing_ui.reset();
                     if(armed&&!sequence_complete)throw std::runtime_error("explicit_pause_result_or_source_loss");
@@ -1702,6 +1801,7 @@ int run(int argc,char** argv) {
                                 throw std::runtime_error("runtime must retain every full-plan contact and step");
                             if(!runtime->arm())throw std::runtime_error(runtime->status().reason);
                             armed=true;recovery_enabled=true;first_due=anchor.origin_host_ns+anchor.explicit_phase_ns+clock_probe.mapped_song_ns(first_song_ns);
+                            if(desktop)desktop->stage="pre_first_touch";
                             if(native_head_rows)native_head_rows->origin_host_ns=anchor.origin_host_ns;
                             // The chart's actual anchor fixes this deadline once.
                             // Neither fresh frames nor planner ticks can renew it.
@@ -1741,6 +1841,7 @@ int run(int argc,char** argv) {
                 if(tick.status.state==ExperimentalRuntimeState::stopped)throw std::runtime_error(tick.status.reason);
                 if(tick.status.state==ExperimentalRuntimeState::completed) {
                     sequence_complete=true;manifest["sequence_completed_host_ns"]=clock.now_ns();
+                    if(desktop)desktop->stage="awaiting_result";
                     journal.append({{"event","whole_song_command_queue_sequence_completed"},{"runtime",runtime_json(tick.status)}});
                     std::cout<<"WHOLE SONG COMMAND QUEUE SEQUENCE COMPLETED; waiting for stream completion and manual-mode result evidence.\n"<<std::flush;
                 }
@@ -1757,8 +1858,22 @@ int run(int argc,char** argv) {
         }
     }catch(const std::exception& error){failure=error.what();if(failure.empty())failure="trial_exception_without_message";}
     recovery_enabled=false;recovery_worker.request_stop();
+    const auto primary_failure_size=failure.size();
+    struct CleanupErrorRef {const char* stage;std::size_t offset,length;};
+    std::array<CleanupErrorRef,12> cleanup_refs{};
+    std::size_t cleanup_ref_count=0;
+    const auto remember_cleanup=[&](const char* stage,std::size_t length) noexcept {
+        if(desktop&&cleanup_ref_count<cleanup_refs.size())cleanup_refs[cleanup_ref_count++]={stage,failure.size()-length,length};
+    };
+    if(desktop){
+        if(primary_failure_size)
+            desktop->failure_stage=armed&&!sequence_complete&&touch.down_attempts?"playing":desktop->stage;
+        desktop->stage="cleanup";
+        desktop->first_note_gate=adaptive_trigger->dispatch_gate();
+    }
     const auto cleanup_error=[&](const char* stage,const std::exception& error) {
         if(!failure.empty())failure+="; ";failure+=std::string(stage)+": "+error.what();
+        if(desktop)remember_cleanup(stage,std::string_view(error.what()).size());
     };
     // Cleanup calls are independent: a failed runtime/release must not skip the
     // separate transport recovery or the read-only final slot query.
@@ -1770,6 +1885,7 @@ int run(int argc,char** argv) {
     }catch(const std::exception& error){cleanup_error("release",error);}
     if(!transport.fault().empty()) {
         if(!failure.empty())failure+="; ";failure+="touch_stream: "+transport.fault();
+        if(desktop)remember_cleanup("touch_stream",transport.fault().size());
     }
     bool recovery_attempted=false;
     const auto recovery_release=[&] {
@@ -1796,6 +1912,33 @@ int run(int argc,char** argv) {
     }
     capture_worker.request_stop();capture.cancel();latest.close();capture_worker.join();
     recovery_worker.join();
+    if(desktop)try {
+        desktop->execution_state=sequence_complete?"completed":touch.down_attempts?"incomplete":"not_started";
+        desktop->result_state=status.result_confirmed?"confirmed_by_native":"not_confirmed";
+        desktop->release_state=final_zero?"kernel_zero_confirmed":"kernel_zero_not_confirmed";
+        desktop->down_attempts=touch.down_attempts;desktop->up_attempts=touch.up_attempts;
+        desktop->release_rpc_known=release_known;desktop->kernel_final_zero=final_zero;
+        desktop->timing={{"clock","host-QPC"},{"phase_ms",phase},{"start_host_ns",started},
+            {"anchor_received_host_ns",manifest.contains("anchor")?manifest.at("anchor").at("received_host_ns"):Json(nullptr)},
+            {"first_target_host_ns",manifest.value("experimental_first_target_host_ns",Json(nullptr))},
+            {"sequence_completed_host_ns",manifest.value("sequence_completed_host_ns",Json(nullptr))},
+            {"result_receipt_host_ns",result_frame?Json(result_frame->capture_complete_ns):Json(nullptr)},
+            {"first_successful_write_host_ns",nullptr},{"last_successful_write_host_ns",nullptr},
+            {"max_successful_write_lateness_ns",nullptr}};
+        const auto& messages=transport.messages();
+        for(const auto& message:messages)if(message.write_ok){
+            if(desktop->timing.at("first_successful_write_host_ns").is_null())
+                desktop->timing["first_successful_write_host_ns"]=message.host_write_start_ns;
+            desktop->timing["last_successful_write_host_ns"]=message.host_write_start_ns;
+        }
+        std::optional<Ns> max_write_lateness;
+        for(const auto& event:transport.events())if(event.message_write_ok){
+            const auto& message=messages.at(static_cast<std::size_t>(event.message_id-1));
+            const auto lateness=message.host_write_start_ns-event.command.scheduled_ns;
+            if(!max_write_lateness||lateness>*max_write_lateness)max_write_lateness=lateness;
+        }
+        if(max_write_lateness)desktop->timing["max_successful_write_lateness_ns"]=*max_write_lateness;
+    }catch(const std::exception&){} // Optional diagnostics cannot change the native outcome.
     if(numeric_hud) {
         numeric_hud->finish();
         try {
@@ -1860,9 +2003,22 @@ int run(int argc,char** argv) {
         {"relative_stale_drops",capture_stats.relative_stale_drops},{"last_notification_ns",capture_stats.last_notification_ns}};
     owner_wait.finish();manifest["owner_wait"]=owner_wait_json(owner_wait.diagnostics());
     stop_worker.request_stop();stop_worker.join();
-    if(!foreground_watch.stop()&&failure.empty())failure="foreground_stop_timeout";
+    if(!foreground_watch.stop()&&failure.empty()){
+        failure="foreground_stop_timeout";
+        remember_cleanup("foreground_stop",failure.size());
+    }
     try {manifest["HUD_timeline"]=save_hud_timeline(output,hud_timeline,source_sha);}
         catch(const std::exception& error){cleanup_error("hud_timeline",error);}
+    if(desktop){
+        desktop->stage="recording";
+        try {
+            desktop->failure_detail=failure.substr(0,std::min<std::size_t>(primary_failure_size,384));
+            for(std::size_t i=0;i<cleanup_ref_count;++i){
+                const auto& entry=cleanup_refs[i];
+                desktop->cleanup_error(entry.stage,std::string_view(failure).substr(entry.offset,entry.length));
+            }
+        }catch(const std::exception&){} // Preserve release and manifest behavior if optional logging fails.
+    }
     journal.flush_after_cleanup();
     Journal receipts(output/"receipts.jsonl",expected_steps);for(const auto& receipt:touch.receipts) {
         auto row=receipt_json(receipt);row["intent_id"]=receipt.command.intent_id;
@@ -1870,6 +2026,7 @@ int run(int argc,char** argv) {
         row["source_frame_sequence"]=receipt.command.source_frame_sequence;receipts.append(row);
     }
     receipts.flush_after_cleanup();
+    if(desktop)desktop->receipt_rows=receipts.rows;
     // Queue receipts and actual message-write traces retain separate clocks.
     // Neither local queue acceptance nor a Write is an RPC completion.
     Json stream_events=Json::array(),stream_sessions=Json::array(),stream_messages=Json::array(),stream_schedule=Json::array(),stream_admissions=Json::array();
@@ -1986,15 +2143,33 @@ int run(int argc,char** argv) {
     manifest["preinput_UI_journal_skips"]=preinput_ui_journal_skips;
     manifest["opening_detector_metadata"]={{"rows",opening_detector_journal_rows},{"maximum_rows",1024},
         {"minimum_receipt_spacing_ns",250*ms},{"pixels_retained",false},{"input_permission",false}};
-    write_json(output/"manifest.json",manifest);std::cout<<manifest.dump(2)<<'\n';
-    return manifest.at("status")=="experimental_whole_song_sent_judgment_unreviewed"?0:2;
+    write_json(output/"manifest.json",manifest);
+    const int exit_code=manifest.at("status")=="experimental_whole_song_sent_judgment_unreviewed"?0:2;
+    if(desktop){
+        desktop->manifest_written=true;
+        try {
+            desktop->timing["stop_host_ns"]=manifest.at("stop_host_ns");
+            if(exit_code!=0&&!desktop->failure_stage&&desktop->cleanup_errors.empty()){
+                desktop->failure_stage="cleanup";
+                desktop->failure_detail=!release_known||!final_zero?"release_evidence_not_confirmed":"native_completion_not_confirmed";
+            }
+        }catch(const std::exception&){}
+        publish_desktop_summary(*desktop,exit_code);
+    }else std::cout<<manifest.dump(2)<<'\n';
+    return exit_code;
 }
 } // namespace
 int run_utf8(int argc,char** argv) {
+    std::optional<DesktopRoundSummary> desktop;
     try {if(argc==2&&std::string(argv[1])=="--help"){std::cout<<usage;return 0;}
         if(argc>1&&std::string(argv[1])=="prepare-adaptive")return prepare_adaptive(argc,argv);
-        return run(argc,argv);}
-    catch(const std::exception& error){std::cerr<<error.what()<<'\n';return 1;}
+        desktop=desktop_round_summary_suffix(argc,argv);
+        return run(argc,argv,desktop?&*desktop:nullptr);}
+    catch(const std::exception& error){
+        std::cerr<<error.what()<<'\n';
+        if(desktop)publish_desktop_summary(*desktop,1,error.what());
+        return 1;
+    }
 }
 
 // Windows command-line paths arrive as UTF-16. Keep native Unicode chart IDs

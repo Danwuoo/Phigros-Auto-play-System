@@ -47,7 +47,8 @@ if(Test-Path -LiteralPath $ManualConfiguration -PathType Leaf){
         $manifest=[IO.File]::ReadAllText($manifestPath,[Text.Encoding]::UTF8)|ConvertFrom-Json -Depth 16
         $expected=@('tools/desktop-start-runtime.ps1','tools/sweep-panel.ps1','tools/catalog-panel-core.ps1',
                     'tools/song-library-panel.ps1','tools/start-song-library.ps1')
-        if($manifest.schema -cne 'pas.desktop-frontend-release.v1' -or
+        if($manifest.schema -ceq 'pas.desktop-frontend-release.v2'){$expected+='tools/round_history.py'}
+        if($manifest.schema -cnotin @('pas.desktop-frontend-release.v1','pas.desktop-frontend-release.v2') -or
            $manifest.runtime -cne $expected[0] -or @($manifest.artifacts).Count -ne $expected.Count){
             throw '桌面介面版本格式不正確。'
         }

@@ -318,6 +318,13 @@ inline calibration::OpeningDetection detect_extended_drag_opening_centers(
 // explicit second-derivative enclosure, not a time-grid/nearest-time choice.
 // A broad enclosure can keep ambiguity and prevent arming; it never authorizes
 // silently dropping a visible alias. Rendering is still an unqualified model.
+struct AdaptiveFirstDispatchGate {
+    Ns origin_host_ns, target_host_ns, received_host_ns, evaluated_host_ns, minimum_lead_ns;
+    VisualTimeInterval song_interval;
+    const char* reason;
+    bool allowed;
+};
+
 class AdaptiveFirstNoteTrigger {
     static constexpr Ns ms=1'000'000,second=1'000'000'000,safe=(Ns{1}<<53)-1;
     // A closed contact needs at least two of the runtime's 20000 steps.
@@ -351,7 +358,17 @@ class AdaptiveFirstNoteTrigger {
     // intermediate receipt must not erase an older, still eligible support.
     std::vector<Support> support_history_;
     FirstNoteTriggerStatus value_;
+    std::optional<AdaptiveFirstDispatchGate> dispatch_gate_;
     bool consumed_=false;
+    bool allows_first_dispatch(const FirstNoteTriggerAnchor& anchor,Ns now) {
+        constexpr Ns minimum_lead=200*ms;
+        const char* reason=anchor.origin_host_ns<0?"negative_origin":
+            anchor.target_host_ns>safe?"target_out_of_range":
+            anchor.target_host_ns-now<minimum_lead?"insufficient_lead":nullptr;
+        dispatch_gate_=AdaptiveFirstDispatchGate{anchor.origin_host_ns,anchor.target_host_ns,anchor.received_host_ns,
+            now,minimum_lead,anchor.chosen_song_interval,reason?reason:"accepted",reason==nullptr};
+        return reason==nullptr;
+    }
     static long double down(long double v){return std::nextafter(v,-std::numeric_limits<long double>::infinity());}
     static long double up(long double v){return std::nextafter(v,std::numeric_limits<long double>::infinity());}
     static Range add(Range a,Range b){return {down(a.lo+b.lo),up(a.hi+b.hi)};}
@@ -695,7 +712,7 @@ class AdaptiveFirstNoteTrigger {
         anchor.supporting_evidence_ids={support_history_[*supporting].frame.evidence_id};
         if(constraining)anchor.supporting_evidence_ids.push_back(support_history_[*constraining].frame.evidence_id);
         anchor.supporting_evidence_ids.push_back(f.evidence_id);
-        if(anchor.origin_host_ns<0||anchor.target_host_ns>safe||anchor.target_host_ns-now<200*ms){cancel("first_note_dispatch_lead_below_200ms");return value_;}
+        if(!allows_first_dispatch(anchor,now)){cancel("first_note_dispatch_lead_below_200ms");return value_;}
         value_.anchor=std::move(anchor);value_.state=FirstNoteTriggerState::ready;
         value_.reason="two_actual_native_group_frames_motion_or_certified_pop_in_on_all_support_origin";return value_;
     }
@@ -988,10 +1005,11 @@ public:
         anchor.chosen_song_interval=value_.selected_intervals[0];anchor.origin_host_ns=f.received_host_ns-midpoint(anchor.chosen_song_interval);
         anchor.target_host_ns=anchor.origin_host_ns+description_.first_down_ns+phase_;anchor.evidence_id=f.evidence_id;
         anchor.supporting_evidence_ids={support_history_[*supporting].frame.evidence_id,f.evidence_id};
-        if(anchor.origin_host_ns<0||anchor.target_host_ns>safe||anchor.target_host_ns-now<200*ms){cancel("first_note_dispatch_lead_below_200ms");return value_;}
+        if(!allows_first_dispatch(anchor,now)){cancel("first_note_dispatch_lead_below_200ms");return value_;}
         value_.anchor=std::move(anchor);value_.state=FirstNoteTriggerState::ready;
         value_.reason="two_distinct_native_group_motion_frames_on_unique_temporal_branch";return value_;
     }
+    const std::optional<AdaptiveFirstDispatchGate>& dispatch_gate() const noexcept{return dispatch_gate_;}
     FirstNoteTriggerStatus status(Ns now,bool healthy=true){health(now,healthy);return value_;}
     std::optional<FirstNoteTriggerAnchor> take_anchor(Ns now) {
         if(consumed_||!health(now,true)||value_.state!=FirstNoteTriggerState::ready||!value_.anchor)return std::nullopt;

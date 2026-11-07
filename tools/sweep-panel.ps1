@@ -2,6 +2,7 @@
 [CmdletBinding()]
 param(
     [string]$Configuration,
+    [switch]$HistoryOnly,
     [switch]$SelfTest,
     [string]$RenderPreview,
     [string]$PreviewLibrary,
@@ -62,7 +63,7 @@ namespace PasSweep {
     try {if(bytes<=LogBytesLimit){(stderr?error:output).WriteLine(bounded);(stderr?error:output).Flush();}else LogLimit=true;}
     catch(Exception e){LogError=e.Message;}
    }
-   var display=bounded.Length>2048?bounded.Substring(0,2048)+" [詳細請開啟紀錄]":bounded;
+   var display=bounded.Length>2048&&!bounded.StartsWith("DESKTOP ROUND SUMMARY: ",StringComparison.Ordinal)?bounded.Substring(0,2048)+" [詳細請開啟紀錄]":bounded;
    if(Interlocked.Increment(ref queued)<=QueueLimit)Queue.Enqueue(new Notice(stderr?"stderr":"stdout",display));
    else {Interlocked.Decrement(ref queued);Interlocked.Increment(ref DroppedLines);}
   }
@@ -226,7 +227,7 @@ function Get-PanelContext([string]$Path,[string]$ScriptPath=$PSCommandPath) {
 function Test-PanelPins($Context) {
     foreach($entry in $Context.Pins.GetEnumerator()) {if ((Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -ne $entry.Value){throw "資產已改變：$($entry.Key)"}}
 }
-function New-PanelArguments($Context,$Job,[string]$Output,[switch]$CheckOnly) {
+function New-PanelArguments($Context,$Job,[string]$Output,[switch]$CheckOnly,[string]$RunId,[string]$AttemptId) {
     $mode=if($CheckOnly){'check-adaptive'}else{'run-adaptive'}
     $phase=-80;$phaseSource='曲庫'
     if($Job.PSObject.Properties['phase_ms']){
@@ -243,6 +244,11 @@ function New-PanelArguments($Context,$Job,[string]$Output,[switch]$CheckOnly) {
         $arguments+=@('--capacity-evidence',$Context.Configuration.capacity_evidence.file)
     }
     $arguments+=@('--image-retention',(Get-PanelImageRetention $Context))
+    if(-not $CheckOnly -and $Context.Configuration.PSObject.Properties['desktop_round_summary'] -and
+       $Context.Configuration.desktop_round_summary -ceq 'pas.desktop-round-summary.v1'){
+        if(-not $RunId -or -not $AttemptId){throw '本輪缺少紀錄 ID。'}
+        $arguments+=@('--desktop-round-summary',$RunId,$AttemptId)
+    }
     return [string[]]$arguments
 }
 function Request-PanelStop([string]$RoundDirectory) {
@@ -394,6 +400,16 @@ function Get-PanelRoundResult([string]$RoundDirectory,[int]$ExitCode,[string]$St
     return [pscustomobject]@{Success=$success;ExitCode=$ExitCode;Failure=$failure;StartupFailure=$startupFailure;ManifestReadError=$manifestReadError;KernelFinalZero=if($manifest){$manifest.kernel_final_zero}else{$null};ManifestFile=if($manifest){$path}else{$null};ManifestSha256=$hash;Manifest=$manifest;
         ManifestIdentityMatched=$identityMatched;CountersConsistent=$countersConsistent;ReleaseEvidenceConsistent=$releaseConsistent;ExecutionState=$execution;ResultState=$resultState;ReleaseState=$release;JudgmentState='unreviewed';EvidenceFiles=$images.ToArray()}
 }
+function Read-PanelDesktopSummary([string]$Directory,[string]$RunId,[string]$AttemptId,[int]$ExitCode,$Fallback) {
+    $summary=$Fallback
+    $path=Join-Path $Directory 'desktop-summary.json'
+    if(Test-Path -LiteralPath $path -PathType Leaf){
+        try{$summary=Read-PanelJson $path 65536}catch{return $null}
+    }
+    if($null -eq $summary -or $summary.schema -cne 'pas.desktop-round-summary.v1' -or
+       $summary.run_id -cne $RunId -or $summary.attempt_id -cne $AttemptId -or $summary.exit_code -ne $ExitCode){return $null}
+    return $summary
+}
 function Get-PanelRoundPresentation($Result) {
     if($Result.PSObject.Properties['StartupFailure'] -and $Result.StartupFailure){
         return [pscustomobject]@{Title='啟動尚未READY';Detail=[string]$Result.Failure;RowStatus='啟動失敗';InputCompleteResultUnconfirmed=$false}
@@ -506,6 +522,14 @@ if ($SelfTest) {
             $retentionArgs=New-PanelArguments $retentionContext $retentionJob 'new-run' -CheckOnly:$checkOnly
             if($retentionArgs[-2] -cne '--image-retention' -or $retentionArgs[-1] -cne 'result' -or $retentionArgs -contains 'diagnostic'){throw '人工執行或前檢沒有保留僅結算圖政策。'};$checks++
         }
+        $retentionContext.Configuration|Add-Member NoteProperty desktop_round_summary 'pas.desktop-round-summary.v1'
+        $summaryArgs=New-PanelArguments $retentionContext $retentionJob 'new-run' -RunId 'example' -AttemptId 'round-01'
+        if(($summaryArgs[-5..-1] -join ' ') -cne '--image-retention result --desktop-round-summary example round-01'){throw '新版回合缺少紀錄識別或結算圖政策。'};$checks++
+        if((New-PanelArguments $retentionContext $retentionJob 'new-run' -CheckOnly) -contains '--desktop-round-summary'){throw '離線前檢不應使用演奏摘要旗標。'};$checks++
+        $summary=[pscustomobject]@{schema='pas.desktop-round-summary.v1';run_id='example';attempt_id='round-01';exit_code=1}
+        if(-not (Read-PanelDesktopSummary $temporary 'example' 'round-01' 1 $summary) -or
+           (Read-PanelDesktopSummary $temporary 'different' 'round-01' 1 $summary)){throw '摘要沒有核對回合身分。'};$checks++
+        $retentionContext.Configuration.PSObject.Properties.Remove('desktop_round_summary')
         $configuredContext=[pscustomobject]@{Configuration=[pscustomobject]@{capacity_policy='configured-ten-contact-v1';contact_capacity=10;image_retention='result';kernel_profile=[pscustomobject]@{file='kernel.json'}}}
         $phaseContext=[pscustomobject]@{Configuration=$configuredContext.Configuration;Plan=[pscustomobject]@{phase_ms=-40}}
         foreach($checkOnly in @($false,$true)){
@@ -654,6 +678,97 @@ if ($SelfTest) {
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Windows.Forms.Application]::EnableVisualStyles()
+function Open-PanelHistoryPath([string]$Path) {
+    if(-not $Path -or -not (Test-Path -LiteralPath $Path)){return}
+    $info=[Diagnostics.ProcessStartInfo]::new('explorer.exe')
+    $info.UseShellExecute=$true;$info.ArgumentList.Add($Path)
+    $process=[Diagnostics.Process]::Start($info)
+    if($process){$process.Dispose()}
+}
+function Get-PanelHistoryRows($Config,[string]$Track,[string]$Difficulty) {
+    $tool=Join-Path $PSScriptRoot 'round_history.py'
+    if(-not (Test-Path -LiteralPath $Config.history_python -PathType Leaf) -or -not (Test-Path -LiteralPath $tool -PathType Leaf)){
+        throw '找不到已安裝的歷史紀錄工具或 Python。'
+    }
+    $arguments=@('-I','-B','-X','utf8',$tool,'--runs-dir',$Config.output_parent,'--format','json','--limit','60')
+    if($Track){$arguments+=@('--track='+$Track)}
+    if($Difficulty -in @('IN','AT')){$arguments+=@('--difficulty',$Difficulty)}
+    $info=[PasSweep.NativeOperation]::BuildStartInfo($Config.history_python,$PSScriptRoot,$arguments)
+    $process=[Diagnostics.Process]::new();$process.StartInfo=$info
+    try {
+        if(-not $process.Start()){throw '無法讀取歷史紀錄。'}
+        $process.StandardInput.Close()
+        $out=$process.StandardOutput.ReadToEndAsync();$err=$process.StandardError.ReadToEndAsync()
+        if(-not $process.WaitForExit(20000)){$process.Kill();throw '讀取歷史紀錄逾時，請縮小查詢範圍。'}
+        if($process.ExitCode -ne 0){throw $err.GetAwaiter().GetResult()}
+        $history=$out.GetAwaiter().GetResult()|ConvertFrom-Json -Depth 30
+        if($history.schema -cne 'pas.round-history.v1'){throw '歷史紀錄格式不相容。'}
+        return $history.rows
+    }finally{$process.Dispose()}
+}
+function Show-PanelHistory($Config,$Owner=$null) {
+    $dialog=[Windows.Forms.Form]::new()
+    $dialog.Text='Phigros 歷史紀錄';$dialog.Width=1060;$dialog.Height=610
+    $dialog.StartPosition='CenterParent'
+    $bar=[Windows.Forms.FlowLayoutPanel]::new();$bar.Dock='Top';$bar.Height=40
+    $query=[Windows.Forms.TextBox]::new();$query.Width=240;$query.MaxLength=128;$query.PlaceholderText='曲名或 ID'
+    $difficulty=[Windows.Forms.ComboBox]::new();$difficulty.DropDownStyle='DropDownList'
+    $difficulty.Items.AddRange(@('全部難度','IN','AT'));$difficulty.SelectedIndex=0
+    $refresh=[Windows.Forms.Button]::new();$refresh.Text='查詢'
+    $folder=[Windows.Forms.Button]::new();$folder.Text='開啟資料夾';$folder.AutoSize=$true;$folder.Enabled=$false
+    $result=[Windows.Forms.Button]::new();$result.Text='開啟結算圖';$result.AutoSize=$true;$result.Enabled=$false
+    $bar.Controls.AddRange(@($query,$difficulty,$refresh,$folder,$result))
+    $list=[Windows.Forms.ListView]::new();$list.Dock='Fill';$list.View='Details';$list.FullRowSelect=$true;$list.MultiSelect=$false
+    foreach($column in @(@('時間',164),@('曲目',280),@('難度',55),@('已送出步數',90),@('結算',86),@('釋放',89),@('判定',82),@('停止原因',205))){
+        $null=$list.Columns.Add($column[0],$column[1])
+    }
+    $details=[Windows.Forms.TextBox]::new();$details.Dock='Bottom';$details.Height=158
+    $details.Multiline=$true;$details.ReadOnly=$true;$details.ScrollBars='Vertical'
+    $load={
+        $list.Items.Clear();$details.Text='正在讀取…';$dialog.UseWaitCursor=$true
+        try {
+            foreach($row in @(Get-PanelHistoryRows $Config $query.Text.Trim() ([string]$difficulty.SelectedItem))){
+                $when=if($row.started_utc){([DateTimeOffset]$row.started_utc).ToLocalTime().ToString('yyyy-MM-dd HH:mm:ss')}else{$row.started_local_unqualified}
+                $item=[Windows.Forms.ListViewItem]::new([string]$when);$item.Tag=$row
+                $title=if($row.title){$row.title}else{$row.track_id}
+                $sent=if($null -ne $row.transport_written_steps){[string]$row.transport_written_steps}else{'未知'}
+                $settlement=switch($row.result_state){'confirmed_by_native'{'已確認'}'not_confirmed'{'未確認'}default{'未知'}}
+                $release=switch($row.release_state){'kernel_zero_confirmed'{'已歸零'}'kernel_zero_not_confirmed'{'未確認'}default{'未知'}}
+                $judgment=switch($row.judgment_state){'unreviewed'{'待複核'}'manually_reported'{'人工登記'}default{'未知'}}
+                foreach($cell in @($title,$row.difficulty,$sent,$settlement,$release,$judgment,$row.failure_code)){$null=$item.SubItems.Add([string]$cell)}
+                $null=$list.Items.Add($item)
+            }
+            $details.Text="最近 $($list.Items.Count) 輪。選取一輪以檢視原因與原始紀錄。"
+        }catch{$details.Text=$_.Exception.Message}finally{$dialog.UseWaitCursor=$false}
+    }
+    $list.Add_SelectedIndexChanged({
+        $folder.Enabled=$list.SelectedItems.Count -gt 0
+        $result.Enabled=$folder.Enabled -and [bool]$list.SelectedItems[0].Tag.result_file
+        if($folder.Enabled){
+            $row=$list.SelectedItems[0].Tag
+            $details.Text=@(
+                "$($row.run_id) / $($row.round_id)   $($row.origin)",
+                "主要原因  $($row.failure_detail)",
+                "控制端原因  $($row.controller_failure)",
+                "清理錯誤  $(@($row.cleanup_errors|ForEach-Object{$_.detail}) -join '；')",
+                $(if($row.legacy_first_note_gate_ambiguous){'舊首音代碼涵蓋多個條件，無法還原實際命中的條件。'}),
+                $(if($row.first_note_gate){"首音條件  $($row.first_note_gate.gate_reason)；預留 $($row.first_note_gate.lead_ns / 1000000) ms"}),
+                $(if($row.manual_judgments){"人工登記  $($row.manual_judgments.perfect) P／$($row.manual_judgments.good) G／$($row.manual_judgments.bad) Bad／$($row.manual_judgments.miss) Miss"}),
+                "觸控佇列回執  $($row.receipt_rows)   輸入狀態  $($row.execution_state)",
+                $row.run_directory
+            ) -join "`r`n"
+        }
+    })
+    $refresh.Add_Click($load);$dialog.AcceptButton=$refresh
+    $folder.Add_Click({Open-PanelHistoryPath $list.SelectedItems[0].Tag.run_directory})
+    $result.Add_Click({Open-PanelHistoryPath $list.SelectedItems[0].Tag.result_file})
+    $dialog.Controls.AddRange(@($list,$details,$bar));$dialog.Add_Shown($load)
+    try{if($Owner){$null=$dialog.ShowDialog($Owner)}else{$null=$dialog.ShowDialog()}}finally{$dialog.Dispose()}
+}
+if($HistoryOnly){
+    Show-PanelHistory (Read-PanelJson ([IO.Path]::GetFullPath($Configuration)) 1048576)
+    return
+}
 function Write-PanelStartupStage([string]$Stage,[string]$Detail=''){
     if($RenderPreview){return}
     try{
@@ -664,7 +779,7 @@ function Write-PanelStartupStage([string]$Stage,[string]$Detail=''){
         }
         $directory=Join-Path $localRoot 'panel-startup'
         [IO.Directory]::CreateDirectory($directory)|Out-Null
-        [ordered]@{utc=[DateTime]::UtcNow.ToString('o');pid=$PID;stage=$Stage;detail=$Detail}|
+        [ordered]@{utc=[DateTime]::UtcNow.ToString('o');pid=$PID;launch_id=$env:PHIGROS_DESKTOP_LAUNCH_ID;stage=$Stage;detail=$Detail}|
             ConvertTo-Json -Compress|Add-Content -LiteralPath (Join-Path $directory ("panel-$PID.jsonl")) -Encoding utf8
     }catch{}
 }
@@ -766,7 +881,7 @@ function Update-PanelButtons {
     $idle=$script:Panel.Phase -in @('idle','complete','failed','stopped');$waiting=$script:Panel.Phase -eq 'waiting'
     $startButton.Enabled=$idle;$onlyButton.Enabled=$idle;$launchButton.Enabled=$waiting -and -not $script:Panel.StopRequested
     $nextButton.Enabled=$script:Panel.Phase -eq 'result';$stopButton.Enabled=-not $idle -and -not $script:Panel.StopRequested
-    $logsButton.Enabled=[bool]$script:Panel.Session;$grid.ReadOnly=-not $idle
+    $logsButton.Enabled=$idle -and ($script:Panel.Context.Configuration.history_python -or $script:Panel.Session);$grid.ReadOnly=-not $idle
     foreach($control in @($search,$difficultyFilter,$readyFilter,$batchMode,$selectVisible,$clearSelected)){$control.Enabled=$idle}
     foreach($control in @($startButton,$launchButton,$nextButton,$selectVisible,$clearSelected)){$control.Visible=$batchMode.Checked}
     $grid.Columns['Selected'].Visible=$batchMode.Checked
@@ -793,13 +908,16 @@ function Start-PanelNative($Job,[switch]$CheckOnly) {
     $prefix=if($CheckOnly){'check'}else{'round'}
     $out=Join-Path $script:Panel.Session ('{0}-{1:D2}' -f $prefix,$ordinal)
     if(Test-Path -LiteralPath $out){throw '本輪輸出目錄已存在，拒絕覆寫。'}
-    $arguments=New-PanelArguments $script:Panel.Context $Job $out -CheckOnly:$CheckOnly
+    $attemptId='round-{0:D2}' -f $ordinal
+    $arguments=New-PanelArguments $script:Panel.Context $Job $out -CheckOnly:$CheckOnly -RunId $script:Panel.Ledger.run_id -AttemptId $attemptId
     $operation=[PasSweep.NativeOperation]::new()
-    $script:Panel.Purpose=$prefix;$script:Panel.ErrorTail='';$script:Panel.SuppressStdoutJson=$false;$script:Panel.AcquisitionKey=''
+    $script:Panel.Purpose=$prefix;$script:Panel.ErrorTail='';$script:Panel.SuppressStdoutJson=$false;$script:Panel.AcquisitionKey='';$script:Panel.NativeSummary=$null
     if($CheckOnly){$script:Panel.Phase='checking';Set-PanelStatus "離線檢查 $ordinal / $($script:Panel.Queue.Count)" $Job.display_name;Add-PanelLog ('離線檢查：'+$Job.display_name)}
     else {
         $script:Panel.Round=$out;$script:Panel.Phase='starting';$script:Panel.ReadySeen=$false;$script:Panel.Started=$null
         $entry=[ordered]@{order=$ordinal;library_id=$Job.library_id;track_id=$Job.track_id;status='starting';directory=$out;exit_code=$null;failure=$null;runtime_failure=$null;controller_failure=$null;kernel_final_zero=$null;manifest_file=$null;manifest_sha256=$null;manifest_identity_matched=$null;counters_consistent=$null;release_evidence_consistent=$null;execution_state='not_started';result_state='not_confirmed';release_state='unknown';judgment='unreviewed';evidence_files=@();stop_requested=$false;acquisition_status=$null;acquisition_progress_lines=0}
+        $entry.run_id=$script:Panel.Ledger.run_id;$entry.attempt_id=$attemptId;$entry.difficulty=$Job.difficulty;$entry.display_name=$Job.display_name
+        $entry.started_utc=[DateTime]::UtcNow.ToString('o');$entry.milestones=[ordered]@{starting=$entry.started_utc}
         $script:Panel.Ledger.rounds+=@($entry);$script:Panel.Ledger.status='running';Save-PanelLedger;Set-PanelRowStatus $Job '啟動中';Set-PanelStatus '啟動中，請稍候 READY' '先停在遊戲選曲頁，不要按 Play。'
         Add-PanelLog ('已啟動：'+$Job.display_name+'；等待程式 READY。')
     }
@@ -827,13 +945,23 @@ function Begin-PanelQueue([bool]$OnlyCurrent,[bool]$ReadyAfterCheck=$false) {
     foreach($job in $selected){if($job.ready_for_manual_preflight -ne $true -or @($job.blockers).Count){throw "此曲仍有準備阻擋：$($job.display_name)"}}
     $script:Panel.Queue=$selected;$script:Panel.Index=0;$script:Panel.CheckIndex=0;$script:Panel.StopRequested=$false;$script:Panel.Session='';$script:Panel.Ledger=$null;$script:Panel.PendingFailure=''
     $script:Panel['ReadyAfterCheck']=$ReadyAfterCheck
+    $sessionPrefix=if($script:Panel.Context.FullCatalog){'catalog-manual-panel-'}else{'chapter-IN-panel-'}
+    $runId=$sessionPrefix+(Get-Date -Format 'yyyyMMdd-HHmmss-fff')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,6)
+    $session=Join-Path $script:Panel.Context.Configuration.output_parent $runId
+    New-Item -ItemType Directory -Path $session -ErrorAction Stop|Out-Null
+    $script:Panel.Session=$session
+    $ledgerSchema=if($script:Panel.Context.FullCatalog){'pas.manual-catalog-panel-ledger.v1'}else{'pas.manual-IN-panel-ledger.v1'}
+    $script:Panel.Ledger=[ordered]@{schema=$ledgerSchema;status='hashing';run_id=$runId;launch_id=$env:PHIGROS_DESKTOP_LAUNCH_ID;configuration=$script:Panel.Context.ConfigPath;configuration_sha256=(Get-FileHash -LiteralPath $script:Panel.Context.ConfigPath).Hash.ToLowerInvariant();library=$script:Panel.Context.Configuration.library;plan=$script:Panel.Context.Configuration.plan;frontend_release=$script:Panel.Context.Configuration.frontend_release;selected_ids=@($selected|ForEach-Object library_id);started_utc=[DateTime]::UtcNow.ToString('o');automatic_play=$false;automatic_retry=$false;failure=$null;stopped_utc=$null;preflights=@();rounds=@()}
+    Save-PanelLedger
     Start-PanelHash 'queue'
 }
 function Request-PanelQueueStop {
     $script:Panel.StopRequested=$true
     if($script:Panel.Hash){$script:Panel.Hash.Cancel()}
     if($script:Panel.Purpose -eq 'round' -and $script:Panel.Process){$null=Request-PanelStop $script:Panel.Round
-        $script:Panel.Ledger.rounds[-1].stop_requested=$true;$script:Panel.Ledger.status='stop_requested';Save-PanelLedger
+        $entry=$script:Panel.Ledger.rounds[-1];$entry.stop_requested=$true
+        if(-not $entry.milestones.stop_requested){$entry.milestones.stop_requested=[DateTime]::UtcNow.ToString('o')}
+        $script:Panel.Ledger.status='stop_requested';Save-PanelLedger
         Set-PanelStatus '停止要求已送出，正在等待釋放' '介面會保留，直到原生程序結束並讀取 kernel／釋放紀錄。'
     }elseif(-not $script:Panel.Hash -and -not $script:Panel.Process){Stop-PanelQueue '操作者停止佇列。'}
     else{Set-PanelStatus '正在停止準備程序' '不會啟動任何後續實測。'}
@@ -857,7 +985,10 @@ $nextButton.Add_Click({Invoke-PanelAction {
     else{$script:Panel.Phase='waiting';$script:Panel.Ledger.status='waiting_for_operator';Save-PanelLedger;Set-PanelStatus '請選擇下一首歌曲' "第 $($script:Panel.Index+1) / $($script:Panel.Queue.Count) 首；選好 IN 後再啟動本首。"};Update-PanelButtons
 }})
 $stopButton.Add_Click({Invoke-PanelAction {Request-PanelQueueStop}})
-$logsButton.Add_Click({if($script:Panel.Session){$explorer=[Diagnostics.ProcessStartInfo]::new('explorer.exe');$explorer.UseShellExecute=$true;$explorer.ArgumentList.Add($script:Panel.Session);[Diagnostics.Process]::Start($explorer)|Out-Null}})
+$logsButton.Add_Click({
+    if($script:Panel.Context.Configuration.history_python){Show-PanelHistory $script:Panel.Context.Configuration $form}
+    elseif($script:Panel.Session){Open-PanelHistoryPath $script:Panel.Session}
+})
 $grid.Add_CurrentCellDirtyStateChanged({if($grid.IsCurrentCellDirty){$grid.CommitEdit([Windows.Forms.DataGridViewDataErrorContexts]::Commit)|Out-Null}})
 $grid.Add_SelectionChanged({Update-PanelButtons})
 function Update-PanelCatalogFilter {
@@ -889,11 +1020,7 @@ $timer.Add_Tick({Invoke-PanelAction {
             elseif(-not $operation.Success){Stop-PanelQueue $operation.Error -Failed}
             elseif($script:Panel.HashPurpose -eq 'round'){Start-PanelNative (Get-PanelCurrentJob)}
             else {
-                $sessionPrefix=if($script:Panel.Context.FullCatalog){'catalog-manual-panel-'}else{'chapter-IN-panel-'}
-                $session=Join-Path $script:Panel.Context.Configuration.output_parent ($sessionPrefix+(Get-Date -Format 'yyyyMMdd-HHmmss-fff')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,6))
-                if(Test-Path -LiteralPath $session){throw '新的紀錄目錄發生衝突。'};New-Item -ItemType Directory -Path $session|Out-Null;$script:Panel.Session=$session
-                $ledgerSchema=if($script:Panel.Context.FullCatalog){'pas.manual-catalog-panel-ledger.v1'}else{'pas.manual-IN-panel-ledger.v1'}
-                $script:Panel.Ledger=[ordered]@{schema=$ledgerSchema;status='offline_preflight';configuration=$script:Panel.Context.ConfigPath;configuration_sha256=(Get-FileHash -LiteralPath $script:Panel.Context.ConfigPath).Hash.ToLowerInvariant();library=$script:Panel.Context.Configuration.library;plan=$script:Panel.Context.Configuration.plan;selected_ids=@($script:Panel.Queue|ForEach-Object library_id);started_utc=[DateTime]::UtcNow.ToString('o');automatic_play=$false;automatic_retry=$false;failure=$null;stopped_utc=$null;preflights=@();rounds=@()};Save-PanelLedger
+                $script:Panel.Ledger.status='offline_preflight';Save-PanelLedger
                 Start-PanelNative $script:Panel.Queue[0] -CheckOnly
             }
         }
@@ -903,13 +1030,18 @@ $timer.Add_Tick({Invoke-PanelAction {
         if($script:Panel.StopRequested -and $script:Panel.Purpose -eq 'round'){$null=Request-PanelStop $script:Panel.Round}
         $line=$null;$drained=0
         while($drained++ -lt 120 -and $script:Panel.Process.TryRead([ref]$line)){
-            if($line.Kind -eq 'stderr'){
+            $summaryPrefix='DESKTOP ROUND SUMMARY: '
+            if($script:Panel.Purpose -eq 'round' -and $line.Text.StartsWith($summaryPrefix,[StringComparison]::Ordinal)){
+                try{$script:Panel.NativeSummary=$line.Text.Substring($summaryPrefix.Length)|ConvertFrom-Json -Depth 16}catch{}
+            }elseif($line.Kind -eq 'stderr'){
                 Add-PanelLog $line.Text;$script:Panel.ErrorTail=($script:Panel.ErrorTail+' '+$line.Text)
                 if($script:Panel.ErrorTail.Length -gt 1500){$script:Panel.ErrorTail=$script:Panel.ErrorTail.Substring($script:Panel.ErrorTail.Length-1500)}
             }elseif($line.Kind -eq 'stdout'){
                 $update=if($script:Panel.Purpose -eq 'round'){Get-PanelNativeStageUpdate $line.Text $script:Panel.Phase $script:Panel.StopRequested}else{$null}
                 if($update){
                     if($update.Kind -eq 'acquisition'){
+                        $entry=$script:Panel.Ledger.rounds[-1]
+                        if(-not $entry.milestones[$update.Progress.stage]){$entry.milestones[$update.Progress.stage]=[DateTime]::UtcNow.ToString('o')}
                         $script:Panel.Ledger.rounds[-1].acquisition_progress_lines++
                         if($script:Panel.AcquisitionKey -ne $update.Key){
                             $script:Panel.AcquisitionKey=$update.Key;$script:Panel.Ledger.rounds[-1].acquisition_status=$update.Progress
@@ -919,6 +1051,7 @@ $timer.Add_Tick({Invoke-PanelAction {
                         }
                     }else{
                         $script:Panel.Phase=$update.Phase;$script:Panel.Ledger.rounds[-1].status=$update.Phase
+                        $script:Panel.Ledger.rounds[-1].milestones[$update.Phase]=[DateTime]::UtcNow.ToString('o')
                         if($update.Kind -eq 'ready'){$script:Panel.ReadySeen=$true}
                         if($update.Kind -eq 'playing'){$script:Panel.Started=[Diagnostics.Stopwatch]::StartNew();$script:Panel.Ledger.rounds[-1].execution_state='in_progress';Set-PanelRowStatus (Get-PanelCurrentJob) '演奏中'}
                         if($update.Kind -eq 'awaiting_result'){$script:Panel.Ledger.rounds[-1].execution_state='completed';$script:Panel.Ledger.rounds[-1].result_state='waiting_for_confirmation'}
@@ -956,9 +1089,23 @@ $timer.Add_Tick({Invoke-PanelAction {
                 $entry.execution_state=$result.ExecutionState;$entry.result_state=$result.ResultState;$entry.release_state=$result.ReleaseState;$entry.judgment=$result.JudgmentState;$entry.evidence_files=@($result.EvidenceFiles)
                 $entry.manifest_identity_matched=$result.ManifestIdentityMatched;$entry.counters_consistent=$result.CountersConsistent;$entry.release_evidence_consistent=$result.ReleaseEvidenceConsistent
                 $entry.controller_failure=if($script:Panel.PendingFailure){$script:Panel.PendingFailure}else{$null}
-                $entry.runtime_failure=if($result.Manifest){$result.Manifest.failure}else{$null};$entry.status=if($result.Success){'sent_result_unreviewed'}else{'failed_or_stopped'};Save-PanelLedger
+                $entry.runtime_failure=if($result.Manifest){$result.Manifest.failure}else{$null};$entry.status=if($result.Success){'sent_result_unreviewed'}else{'failed_or_stopped'}
+                $entry.ended_utc=[DateTime]::UtcNow.ToString('o');$entry.milestones.ended=$entry.ended_utc
+                $entry.dropped_ui_lines=$dropped;$entry.log_limited=$limited
+                $summary=Read-PanelDesktopSummary $script:Panel.Round $entry.run_id $entry.attempt_id $exitCode $script:Panel.NativeSummary
+                if($summary){
+                    foreach($name in @('failure_stage','failure_code','failure_detail','cleanup_errors','first_note_gate','timing')){
+                        $entry[$name]=$summary.$name
+                    }
+                    if($summary.failure_code -ceq 'user_stop'){$entry.status='stopped_by_operator'}
+                }
+                Save-PanelLedger
                 $presentation=Get-PanelRoundPresentation $result
                 if($script:Panel.PendingFailure){Set-PanelRowStatus (Get-PanelCurrentJob) '介面停止';Stop-PanelQueue $script:Panel.PendingFailure -Failed}
+                elseif($entry.status -ceq 'stopped_by_operator'){
+                    Set-PanelRowStatus (Get-PanelCurrentJob) '操作者停止'
+                    Stop-PanelQueue "操作者停止。釋放狀態：$($entry.release_state)"
+                }
                 elseif(-not $result.Success){
                     Set-PanelRowStatus (Get-PanelCurrentJob) $presentation.RowStatus;Stop-PanelQueue ([string]$result.Failure) -Failed
                     if($result.ExecutionState -eq 'completed'){Set-PanelStatus $presentation.Title $presentation.Detail;Add-PanelLog ($presentation.Title+'。'+$presentation.Detail)}

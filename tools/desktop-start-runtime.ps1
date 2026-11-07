@@ -294,8 +294,10 @@ $null=New-Item -ItemType Directory -Force -Path $statusDirectory
 $session=Join-Path $statusDirectory (Get-Date -Format 'yyyyMMdd-HHmmss-fff')
 $null=New-Item -ItemType Directory -Path $session
 $statusFile=Join-Path $Repository 'local\startup-status.json'
+$sessionStatusFile=Join-Path $session 'status.json'
+$launchId=Split-Path -Leaf $session
 $status=[ordered]@{
-    schema='pas.desktop-manual-status.v1'; status='starting'; serial=$serial; avd=$avd; package=$package
+    schema='pas.desktop-manual-status.v1'; status='starting'; launch_id=$launchId; started_utc=[DateTime]::UtcNow.ToString('o'); serial=$serial; avd=$avd; package=$package
     image_retention='result'; automatic_song_selection=$false; automatic_play=$false; input_enabled=$false
     manual_configuration=$ManualConfiguration; manual_configuration_available=$false
     message='正在連接 phigros 模擬器與遊戲。'; session=$session
@@ -303,7 +305,11 @@ $status=[ordered]@{
     audio_backend=(Get-PhigrosAudioStartupInfo $EmulatorAudioBackend 'reuse_existing')
     landscape_normalization=(Initialize-PhigrosColdLandscape $false)
 }
-function Save-StartupStatus { $status | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $statusFile -Encoding utf8 }
+function Save-StartupStatus {
+    $json=$status | ConvertTo-Json -Depth 8
+    $json | Set-Content -LiteralPath $statusFile -Encoding utf8
+    $json | Set-Content -LiteralPath $sessionStatusFile -Encoding utf8
+}
 Save-StartupStatus
 $bootProcess=$null
 try {
@@ -379,6 +385,7 @@ try {
     }
     Save-StartupStatus
     $env:PHIGROS_MANUAL_STATUS_FILE=$statusFile
+    $env:PHIGROS_DESKTOP_LAUNCH_ID=$launchId
     $env:PHIGROS_EMULATOR_AUDIO_MODE=if($status.audio_backend.applied_backend){$status.audio_backend.applied_backend}else{'reuse_existing'}
     # Native PAS discovery must resolve the same SDK/ADB used by this launcher,
     # even when an older SDK is present in the desktop process environment.

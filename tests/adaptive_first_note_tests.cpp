@@ -172,9 +172,14 @@ try {
     }
     {++groups;auto c=appearance_chart();c.lines[0].notes[0].start_ns=c.lines[0].notes[0].end_ns=2650*ms;
         AdaptiveFirstNoteTrigger late(c,0,-1,false,true);feed(late,appearance_frame(1,2350*ms,false));feed(late,appearance_frame(2,2490*ms,false));
-        const auto status=feed(late,appearance_frame(3,2530*ms,true));
+        const auto final=appearance_frame(3,2530*ms,true);const auto status=feed(late,final);
         check(status.state==FirstNoteTriggerState::cancelled&&status.reason=="first_note_dispatch_lead_below_200ms",
               "appearance path bypassed actual200ms first-input lead");
+        const auto& gate=late.dispatch_gate();
+        check(gate&&!gate->allowed&&std::string_view(gate->reason)=="insufficient_lead"&&
+              gate->received_host_ns==final.received_host_ns&&gate->evaluated_host_ns==final.received_host_ns+ms&&
+              gate->minimum_lead_ns==200*ms&&gate->target_host_ns-gate->evaluated_host_ns<gate->minimum_lead_ns,
+              "cancelled dispatch gate lost its actual evaluation, receipt, or lead");
         c=appearance_chart();AdaptiveFirstNoteTrigger stale(c,0,-1,false,true);auto f=appearance_frame(1,2350*ms,false);
         check(stale.observe(f,true,f.received_host_ns+100*ms).state==FirstNoteTriggerState::cancelled,"appearance renewed a100ms stale receipt");
         AdaptiveFirstNoteTrigger epoch(c,0,-1,false,true);feed(epoch,appearance_frame(1,2350*ms,false));f=appearance_frame(2,2490*ms,false);++f.epoch;
@@ -428,6 +433,11 @@ try {
         check(feed(clipped,invalid).state==FirstNoteTriggerState::cancelled,"out-of-ROI Drag center was admitted");}
     {++groups;AdaptiveFirstNoteTrigger t(chart(),-80*ms);const auto s=ready(t);
         check(s.state==FirstNoteTriggerState::ready&&s.anchor&&s.support_count==2,"native Drag pair failed");
+        const auto& gate=t.dispatch_gate();
+        check(gate&&gate->allowed&&gate->target_host_ns==s.anchor->target_host_ns&&
+              gate->received_host_ns==s.anchor->received_host_ns&&gate->evaluated_host_ns==O+1671*ms&&
+              gate->target_host_ns-gate->evaluated_host_ns>=gate->minimum_lead_ns,
+              "accepted dispatch gate did not preserve the actual checked lead");
         check(s.anchor->target_host_ns==O+2*S-80*ms&&std::abs(s.anchor->origin_host_ns-O)<10,"native chart time or phase wrong");
         check(s.raw_candidate_count==1&&s.first_note_positive_candidates==1&&!s.timing_qualified,"native branch/qualification wrong");
         check(t.description().note_time_ns==2*S&&t.description().note_kind==NoteKind::drag&&t.description().modeled_notes==1,"description wrong");
