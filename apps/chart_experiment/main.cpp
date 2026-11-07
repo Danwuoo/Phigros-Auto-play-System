@@ -53,7 +53,7 @@ constexpr const char* usage=
     "[--flick-path-policy dynamic-line-v1|judgment-anchored-straight-v1|judgment-anchored-screen-fit-v1|judgment-anchored-diagonal-snap-v1|judgment-anchored-diagonal-sampled-v2] [--hold-tail-policy full-pose-v1|phira-tail-grace-candidate-v1] "
     "[--offscreen-policy bounded-normal-intersection-candidate-v1|bounded-judgment-rectangle-candidate-v1] [--max-tangent-error-pixels 0..151.2] "
     "[--max-prejudge-ms 0..30] [--advance-above-drags 0|1] [--above-drag-source-ids JSON_ARRAY] [--advance-below-drags 0|1] [--below-drag-source-ids JSON_ARRAY] [--max-hold-gap-ms 0..20] [--coincident-flick-delay-ms 0|32] [--outlined-drag-heads 0|1] [--native-head-appearance-witness 0|1] [--tap-duration-ms 32|64|96]\n"
-    "prepare-adaptive optionally pins the block area dispatch phase with --block-area-phase-ms -100..100 [--allow-block-area-temporal-fallback 0|1].\n"
+    "prepare-adaptive optionally pins the block area dispatch phase with --block-area-phase-ms -100..100 [--allow-block-area-temporal-fallback 0|1] [--block-area-offscreen-hold-source-ids JSON_ARRAY] [--allow-block-area-hold-handoffs 0|1].\n"
     "chart_experiment run-adaptive SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song --song-profile PROFILE.json --experimental-hud-reference CLEAN.rgb [--capacity-evidence EVIDENCE.json | --capacity-policy configured-ten-contact-v1]\n"
     "Use check or check-adaptive in place of run/run-adaptive for offline preflight only (no device discovery/input/output directory).\n"
     "Optional final suffix: --image-retention none|result|diagnostic (default none; result saves only a confirmed result PNG).\n"
@@ -373,6 +373,12 @@ void add_block_area_evidence(Json& json,const ContactCompileMetadata& metadata) 
         {"phase_ns",metadata.options.block_area_phase_ns?Json(*metadata.options.block_area_phase_ns):Json(nullptr)},
         {"temporal_fallback_enabled",metadata.options.allow_block_area_temporal_fallback},
         {"temporal_fallback_contacts",metadata.block_area_temporal_contacts}};
+    if(!metadata.options.block_area_offscreen_hold_source_ids.empty())
+        json["block_area"]["offscreen_hold_fallback_contacts"]=metadata.block_area_offscreen_hold_contacts;
+    if(metadata.options.allow_block_area_hold_handoffs) {
+        json["block_area"]["hold_handoff_contacts"]=metadata.block_area_hold_handoff_contacts;
+        json["block_area"]["hold_handoff_overlap_ns"]=block_area_hold_handoff_overlap_ns;
+    }
 }
 Json compiled_json(const CompiledContactPlan& plan) {
     Json result={{"schema","pas.experimental-whole-song-compiled.v1"},{"cache_sha256",plan.metadata.cache_sha256},
@@ -435,6 +441,8 @@ Json compiled_json(const CompiledContactPlan& plan) {
         if(owner.block_area_translation_reference)result["ownership"].back()["block_area_translation_reference"]={
             owner.block_area_translation_reference->x,owner.block_area_translation_reference->y};
         if(owner.block_area_temporal_fallback)result["ownership"].back()["block_area_temporal_fallback"]=true;
+        if(owner.block_area_offscreen_hold_fallback)result["ownership"].back()["block_area_offscreen_hold_fallback"]=true;
+        if(!owner.hold_handoff_contact_ids.empty())result["ownership"].back()["hold_handoff_contact_ids"]=owner.hold_handoff_contact_ids;
         if(owner.flick_anchor_reference)result["ownership"].back()["flick_anchor_reference"]={owner.flick_anchor_reference->x,owner.flick_anchor_reference->y};
         if(owner.flick_direction_reference)result["ownership"].back()["flick_direction_reference"]={owner.flick_direction_reference->x,owner.flick_direction_reference->y};
         if(owner.flick_discrete_path){
@@ -550,10 +558,12 @@ struct SongProfile {
     double max_tangent_error_reference_pixels=0;
     std::optional<Ns> block_area_phase_ns;
     bool allow_block_area_temporal_fallback=false;
+    bool allow_block_area_hold_handoffs=false;
+    std::vector<std::string> block_area_offscreen_hold_source_ids;
     Ns max_prejudge_ns=0,max_hold_reacquire_gap_ns=0;
     bool advance_above_drags=false;
     std::string installed_source_manifest;
-    std::size_t notes=584,steps=dlyrotz_expected_steps;
+    std::size_t notes=584,contacts=584,steps=dlyrotz_expected_steps;
     std::size_t runtime_step_budget=16000;
     std::size_t compiler_diagnostic_budget=2048;
     int peak=4,capacity=4,projection_pixels=250,input_inset_pixels=0;
@@ -609,6 +619,18 @@ std::vector<std::string> above_drag_source_ids(const Json& value) {
     if(std::adjacent_find(result.begin(),result.end())!=result.end())throw std::invalid_argument("duplicate above Drag source ID");
     return result;
 }
+std::vector<std::string> offscreen_hold_source_ids(const Json& value) {
+    if(!value.is_array()||value.size()>32)throw std::invalid_argument("Offscreen Hold filter requires at most 32 source IDs");
+    std::vector<std::string> ids;
+    for(const auto& item:value) {
+        if(!item.is_string()||item.get_ref<const std::string&>().size()>512)
+            throw std::invalid_argument("Offscreen Hold source ID must be a bounded string");
+        ids.push_back(item.get<std::string>());
+    }
+    std::sort(ids.begin(),ids.end());
+    if(std::adjacent_find(ids.begin(),ids.end())!=ids.end())throw std::invalid_argument("Duplicate offscreen Hold source ID");
+    return ids;
+}
 Ns coincident_flick_delay(const Json& value) {
     const auto delay=kernel_integer(value,0,32*ms);
     if(delay!=0&&delay!=32*ms)throw std::invalid_argument("coincident Flick delay must be exactly 0 or 32ms");
@@ -625,6 +647,8 @@ ContactCompileOptions song_compile_options(const SongProfile& song) {
     options.max_tangent_error_reference_pixels=song.max_tangent_error_reference_pixels;
     options.block_area_phase_ns=song.block_area_phase_ns;
     options.allow_block_area_temporal_fallback=song.allow_block_area_temporal_fallback;
+    options.allow_block_area_hold_handoffs=song.allow_block_area_hold_handoffs;
+    options.block_area_offscreen_hold_source_ids=song.block_area_offscreen_hold_source_ids;
     options.max_prejudge_ns=song.max_prejudge_ns;
     options.advance_above_drags=song.advance_above_drags;
     options.max_hold_reacquire_gap_ns=song.max_hold_reacquire_gap_ns;
@@ -697,6 +721,10 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
         if(!fallback.is_boolean())throw std::invalid_argument("block area temporal fallback must be a boolean");
         song.allow_block_area_temporal_fallback=fallback.get<bool>();
     }
+    song.block_area_offscreen_hold_source_ids=offscreen_hold_source_ids(value.value("block_area_offscreen_hold_source_ids",Json::array()));
+    const auto handoffs=value.value("allow_block_area_hold_handoffs",Json(false));
+    if(!handoffs.is_boolean())throw std::invalid_argument("BlockArea Hold handoffs require an explicit boolean");
+    song.allow_block_area_hold_handoffs=handoffs.get<bool>();
     song.max_prejudge_ns=kernel_integer(value.value("max_prejudge_ns",Json(0)),0,30*ms);
     song.max_hold_reacquire_gap_ns=kernel_integer(value.value("max_hold_reacquire_gap_ns",Json(0)),0,20*ms);
     song.coincident_flick_delay_ns=coincident_flick_delay(value.value("coincident_flick_delay_ns",Json(0)));
@@ -740,7 +768,10 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
     song.runtime_step_budget=static_cast<std::size_t>(kernel_integer(value.value("runtime_step_budget",Json(16000)),2,65536));
     song.compiler_diagnostic_budget=static_cast<std::size_t>(kernel_integer(value.value("compiler_diagnostic_budget",Json(2048)),1,65536));
     song.runtime_duration_limit_ns=kernel_integer(value.value("runtime_duration_limit_ns",Json(180*second)),second,600*second);
-    song.notes=static_cast<std::size_t>(kernel_integer(value.at("expected_contacts"),1,song.runtime_step_budget/2));
+    song.contacts=static_cast<std::size_t>(kernel_integer(value.at("expected_contacts"),1,song.runtime_step_budget/2));
+    song.notes=static_cast<std::size_t>(kernel_integer(value.value("expected_source_notes",value.at("expected_contacts")),1,song.contacts));
+    if(song.notes!=song.contacts&&!song.allow_block_area_hold_handoffs)
+        throw std::invalid_argument("Extra physical contacts require the explicit BlockArea Hold handoff policy");
     song.steps=static_cast<std::size_t>(kernel_integer(value.at("expected_steps"),1,song.runtime_step_budget));
     song.capacity=static_cast<int>(kernel_integer(value.value("contact_capacity",Json(4)),1,10));
     song.peak=static_cast<int>(kernel_integer(value.at("expected_peak"),1,song.capacity));
@@ -795,6 +826,8 @@ int prepare_adaptive(int argc,char** argv) {
         else if(option=="--max-tangent-error-pixels")song.max_tangent_error_reference_pixels=tangent_ceiling(value);
         else if(option=="--block-area-phase-ms")song.block_area_phase_ns=kernel_integer(value,-100,100)*ms;
         else if(option=="--allow-block-area-temporal-fallback")song.allow_block_area_temporal_fallback=kernel_integer(value,0,1)!=0;
+        else if(option=="--block-area-offscreen-hold-source-ids")song.block_area_offscreen_hold_source_ids=offscreen_hold_source_ids(value);
+        else if(option=="--allow-block-area-hold-handoffs")song.allow_block_area_hold_handoffs=kernel_integer(value,0,1)!=0;
         else if(option=="--max-prejudge-ms")song.max_prejudge_ns=kernel_integer(value,0,30)*ms;
         else if(option=="--advance-above-drags")song.advance_above_drags=kernel_integer(value,0,1)!=0;
         else if(option=="--advance-below-drags")song.advance_below_drags=kernel_integer(value,0,1)!=0;
@@ -866,7 +899,8 @@ int prepare_adaptive(int argc,char** argv) {
         add_block_area_evidence(report,plan.metadata);
         song.runtime_step_budget=65536;
         if(!plan.events.empty())song.runtime_duration_limit_ns=std::max(180*second,(plan.events.back().song_ns/second+31)*second);
-        const bool bounded=plan.memory.contacts.size()==chart.note_count&&plan.total_steps<=song.runtime_step_budget&&
+        const bool bounded=plan.ownership.size()==chart.note_count&&
+            plan.memory.contacts.size()==chart.note_count+plan.metadata.block_area_hold_handoff_contacts&&plan.total_steps<=song.runtime_step_budget&&
             plan.peak_contacts<=song.capacity&&!plan.events.empty()&&plan.events.front().phase==Phase::down&&
             plan.events.front().song_ns==description.first_down_ns&&song.runtime_duration_limit_ns<=600*second&&
             plan.events.back().song_ns<song.runtime_duration_limit_ns;
@@ -901,6 +935,10 @@ int prepare_adaptive(int argc,char** argv) {
                 profile["block_area_phase_ms"]=*song.block_area_phase_ns/ms;
             if(plan.metadata.options.allow_block_area_temporal_fallback)
                 profile["allow_block_area_temporal_fallback"]=true;
+            if(!song.block_area_offscreen_hold_source_ids.empty())
+                profile["block_area_offscreen_hold_source_ids"]=song.block_area_offscreen_hold_source_ids;
+            if(song.allow_block_area_hold_handoffs)profile["allow_block_area_hold_handoffs"]=true;
+            if(plan.memory.contacts.size()!=chart.note_count)profile["expected_source_notes"]=chart.note_count;
             store_tap_dwell_profile_fields(profile,song.tap_duration_ns);
             if(song.coincident_flick_delay_ns>0)profile["coincident_flick_delay_ns"]=song.coincident_flick_delay_ns;
             if(song.advance_below_drags)profile["advance_below_drags"]=true;
@@ -983,7 +1021,8 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     const auto song=adaptive?load_song_profile(utf8_path(argv[11])):SongProfile{};
     const auto& chart_sha=song.chart_sha;const auto& audio_sha=song.audio_sha;
     const auto& expected_plan_sha=song.plan_sha;const auto expected_steps=song.steps;
-    const auto expected_notes=song.notes;const auto expected_peak=song.peak;const auto first_song_ns=song.first_down;
+    const auto expected_notes=song.notes,expected_contacts=song.contacts;
+    const auto expected_peak=song.peak;const auto first_song_ns=song.first_down;
     const std::string serial=argv[2],avd=argv[3];const int phase=phase_option(argv[8]);
     if(serial!="emulator-5554"||avd!="phigros")throw std::invalid_argument("restricted to phigros / emulator-5554");
     const auto chart_bytes=read_utf8_file(argv[4],32*1024*1024);
@@ -1003,7 +1042,8 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     PhigrosGeometry geometry;geometry.input_width=1280;geometry.input_height=720;
     const auto identity=song_identity(song);
     auto compiled=compile_phigros_contacts(chart,identity,geometry,compile_options);
-    if(!compiled.plan||compiled.plan->memory.contacts.size()!=expected_notes||compiled.plan->total_steps!=expected_steps||compiled.plan->peak_contacts!=expected_peak||
+    if(!compiled.plan||compiled.plan->ownership.size()!=expected_notes||compiled.plan->memory.contacts.size()!=expected_contacts||
+       compiled.plan->total_steps!=expected_steps||compiled.plan->peak_contacts!=expected_peak||
        compiled.plan->metadata.cache_sha256!=expected_plan_sha||
        compiled.plan->events.empty()||compiled.plan->events.front().song_ns!=first_song_ns||compiled.plan->events.front().phase!=Phase::down)
         throw std::runtime_error("fresh whole-chart compile differs from pinned song profile and fingerprint");
@@ -1054,6 +1094,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     runtime_options.max_coincident_flick_delay_ns=song.coincident_flick_delay_ns;
     runtime_options.allow_advance_below_drags=song.advance_below_drags;
     runtime_options.allow_block_area_temporal_fallback=song.allow_block_area_temporal_fallback;
+    runtime_options.allow_block_area_hold_handoffs=song.allow_block_area_hold_handoffs;
     if(active_block_areas)runtime_options.block_area_phase_ns=song.block_area_phase_ns;
     runtime_options.clock_probe=clock_probe;
     if(adaptive) {
@@ -1126,7 +1167,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
         Json preflight={{"status","offline_preflight_passed"},{"device_discovery",false},{"input_enabled",false},
             {"executable_sha256",binary_sha()},{"song_id",song.song},{"difficulty",song.difficulty},
             {"chart_sha256",chart_sha},{"import",import_json(chart,false)},{"compiled_sha256",compiled.plan->metadata.cache_sha256},
-            {"contacts",expected_notes},{"events",expected_steps},{"peak",expected_peak},
+            {"contacts",expected_contacts},{"events",expected_steps},{"peak",expected_peak},
             {"contact_capacity",song.capacity},{"capacity_evidence_required_for_live",proof_required},
             {"runtime_step_budget",song.runtime_step_budget},{"runtime_duration_limit_ns",song.runtime_duration_limit_ns},
             {"last_up_song_ns",compiled.plan->events.back().song_ns},
@@ -1158,6 +1199,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
             preflight["native_head_appearance_witness_policy"]=native_head_appearance_witness_json();
         }
         add_block_area_evidence(preflight,compiled.plan->metadata);
+        if(expected_notes!=expected_contacts)preflight["source_notes"]=expected_notes;
         std::cout<<preflight.dump(2)<<'\n';
         return 0;
     }
@@ -1347,6 +1389,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
         {"journal_row_budget",journal.row_limit},
         {"transport",pas::grpc_transport_manifest(options.grpc_read_chunk_kib)}};
     add_block_area_evidence(manifest,compiled.plan->metadata);
+    if(expected_notes!=expected_contacts)manifest["full_physical_contacts"]=expected_contacts;
     manifest["numeric_HUD_observer_requested"]=numeric_hud_enabled;
     if(!song.above_drag_source_ids.empty())manifest["above_drag_source_ids"]=song.above_drag_source_ids;
     if(song.native_head_appearance_witness) {
@@ -1901,7 +1944,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
                             // The original actual receipt is intentionally retained
                             // across binding; preparation cannot renew it.
                             const auto initial=runtime->observe_ui(runtime_ui(clock.now_ns()));
-                            if(initial.selected_contacts!=expected_notes||initial.selected_steps!=expected_steps||initial.peak_contacts!=expected_peak)
+                            if(initial.selected_contacts!=expected_contacts||initial.selected_steps!=expected_steps||initial.peak_contacts!=expected_peak)
                                 throw std::runtime_error("runtime must retain every full-plan contact and step");
                             if(!runtime->arm())throw std::runtime_error(runtime->status().reason);
                             armed=true;recovery_enabled=true;first_due=anchor.origin_host_ns+anchor.explicit_phase_ns+clock_probe.mapped_song_ns(first_song_ns);
@@ -1921,7 +1964,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
                                 {"runtime_construction_begin_ns",construction_begin},{"runtime_construction_end_ns",construction_end}};
                             manifest["experimental_first_target_host_ns"]=first_due;
                             journal.append({{"event","armed_whole_song"},{"first_target_host_ns",first_due},{"runtime",runtime_json(runtime->status())}});
-                            std::cout<<"FIRST NOTE ACQUIRED: chart-driven whole song armed; "<<expected_notes<<" contacts.\n"<<std::flush;
+                            std::cout<<"FIRST NOTE ACQUIRED: chart-driven whole song armed; "<<expected_contacts<<" contacts.\n"<<std::flush;
                         }
                     }
                 } else if(!armed&&!ui_healthy(now))trigger_health(now,false);
@@ -2247,7 +2290,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
         {"last_probe_error",last_first_kernel_probe_error.empty()?Json(nullptr):Json(last_first_kernel_probe_error)}};
     manifest["whole_song_sequence_complete"]=sequence_complete;manifest["manual_result_confirmed"]=status.result_confirmed;
     manifest["game_judgment"]="unreviewed";manifest["AP_verified"]=false;manifest["failure"]=failure.empty()?Json(nullptr):Json(failure);
-    manifest["status"]=failure.empty()&&sequence_complete&&status.result_confirmed&&touch.down_attempts==expected_notes&&touch.up_attempts==expected_notes&&release_known&&final_zero?
+    manifest["status"]=failure.empty()&&sequence_complete&&status.result_confirmed&&touch.down_attempts==expected_contacts&&touch.up_attempts==expected_contacts&&release_known&&final_zero?
         "experimental_whole_song_sent_judgment_unreviewed":"failed_or_stopped";
     manifest["start_host_ns"]=started;manifest["stop_host_ns"]=clock.now_ns();manifest["journal_rows"]=journal.rows;manifest["receipt_rows"]=receipts.rows;
     manifest["preinput_UI_journal_skips"]=preinput_ui_journal_skips;
