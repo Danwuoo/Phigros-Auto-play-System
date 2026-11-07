@@ -106,6 +106,21 @@ def prepared_plan_pin(path: Path, expected_sha: str, config: dict, executable_sh
             raise RuntimeError(f'Prepared plan changed the existing {key}')
     if len(old['jobs']) != len(new['jobs']):
         raise RuntimeError('Prepared plan changed the catalog size')
+    for previous, following in zip(old['jobs'], new['jobs'], strict=True):
+        if any(previous.get(key) != following.get(key) for key in (
+                'library_id', 'track_id', 'difficulty', 'chart', 'phase_ms', 'notes')):
+            raise RuntimeError('Prepared plan changed a chart identity')
+        if previous['ready_for_manual_preflight'] and previous != following:
+            raise RuntimeError('Prepared plan changed an existing playable profile')
+        if following['ready_for_manual_preflight'] is True and following.get('gameplay_qualified') is not False:
+            raise RuntimeError('An offline prepared profile cannot claim gameplay qualification')
+    if any(new['counts'][key] != expected for key, expected in {
+            'songs': old['counts']['songs'], 'charts': len(new['jobs']),
+            'ready': sum(row['ready_for_manual_preflight'] is True for row in new['jobs']),
+            **{f'ready_{difficulty}': sum(row['ready_for_manual_preflight'] is True and row['difficulty'] == difficulty
+                                          for row in new['jobs']) for difficulty in ('IN', 'AT')},
+    }.items()):
+        raise RuntimeError('Prepared plan counts differ from the actual rows')
     reference = pin(path, raw)
     report_path = path.with_name('refresh-report.json')
     if report_path.stat().st_size > 2 * 1024 * 1024:
@@ -116,46 +131,6 @@ def prepared_plan_pin(path: Path, expected_sha: str, config: dict, executable_sh
             or report.get('device_discovery') is not False or report.get('input_enabled') is not False
             or report.get('gameplay_qualified') is not False):
         raise RuntimeError('Prepared plan evidence must match the archived engine and existing plan')
-    overrides = report.get('song_overrides', {})
-    receipts = {row['library_id']: row for row in report['rows']}
-    for previous, following in zip(old['jobs'], new['jobs'], strict=True):
-        if any(previous.get(key) != following.get(key) for key in (
-                'library_id', 'track_id', 'difficulty', 'chart', 'notes')):
-            raise RuntimeError('Prepared plan changed a chart identity')
-        if previous['ready_for_manual_preflight'] and previous != following:
-            raise RuntimeError('Prepared plan changed an existing playable profile')
-        phase = following.get('phase_ms')
-        if previous.get('phase_ms') != phase:
-            library_id = following['library_id']
-            receipt = receipts.get(library_id, {})
-            if (type(phase) is not int or not -100 <= phase <= 100
-                    or previous['ready_for_manual_preflight'] is not False
-                    or following['ready_for_manual_preflight'] is not True
-                    or overrides.get(library_id, {}).get('phase_ms') != phase
-                    or receipt.get('catalog_blocker') != 'unsupported_block_area'
-                    or receipt.get('ready') is not True or receipt.get('phase_ms') != phase
-                    or receipt.get('compiled_fingerprint') != following['compiled_fingerprint']
-                    or receipt.get('block_area') != following['preparation']['block_area']
-                    or receipt['block_area']['phase_ns'] != phase * 1_000_000
-                    or following['compile_policy']['block_area_phase_ms'] != phase):
-                raise RuntimeError('Prepared song phase changed without matching BlockArea preflight')
-            profile_pin = following['profile']
-            profile_bytes = Path(profile_pin['file']).read_bytes()
-            if len(profile_bytes) > 32768 or digest(profile_bytes) != profile_pin['sha256']:
-                raise RuntimeError('Prepared song phase profile pin differs')
-            profile = json.loads(profile_bytes)
-            if (profile['block_area_phase_ms'] != phase
-                    or profile['expected_plan_sha256'] != following['compiled_fingerprint']):
-                raise RuntimeError('Prepared song phase differs from the native profile')
-        if following['ready_for_manual_preflight'] is True and following.get('gameplay_qualified') is not False:
-            raise RuntimeError('An offline prepared profile cannot claim gameplay qualification')
-    if any(new['counts'][key] != expected for key, expected in {
-            'songs': old['counts']['songs'], 'charts': len(new['jobs']),
-            'ready': sum(row['ready_for_manual_preflight'] is True for row in new['jobs']),
-            **{f'ready_{difficulty}': sum(row['ready_for_manual_preflight'] is True and row['difficulty'] == difficulty
-                                          for row in new['jobs']) for difficulty in ('IN', 'AT')},
-    }.items()):
-        raise RuntimeError('Prepared plan counts differ from the actual rows')
     return reference, new['counts']
 
 

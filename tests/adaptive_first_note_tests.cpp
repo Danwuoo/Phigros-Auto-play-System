@@ -404,6 +404,24 @@ try {
         AdaptiveFirstNoteTrigger strict_partial(mixed_earliest_chart(),0,-1,false,false,true);
         check(!detect_model_opening_centers(1280,720,3840,pixels,strict_partial.description()).valid,
             "partial detector policy bypassed mixed ownership ambiguity");}
+    {++groups;auto c=mixed_earliest_chart();c.lines[1].notes[0].kind=NoteKind::drag;
+        AdaptiveFirstNoteTrigger strict(c,0),certified(c,0,-1,false,false,true);
+        for(auto observation:{frame(1,1570*ms),frame(2,1670*ms)}) {
+            auto pixels=image();const int y=static_cast<int>(std::round(observation.centers[0].y));
+            rectangle(pixels,440,y-2,80,4,{245,80,220});
+            rectangle(pixels,264,250,80,4,{250,235,60});rectangle(pixels,264,260,80,4,{250,235,60});
+            rectangle(pixels,304,254,1,6,{250,235,60});
+            const auto old=detect_model_opening_centers(1280,720,3840,pixels,strict.description());
+            const auto found=detect_model_opening_centers(1280,720,3840,pixels,certified.description());
+            const auto retained_rejection=[](const auto& detection){return detection.family_rejections.size()==1&&
+                detection.family_rejections[0].family==2&&detection.family_rejections[0].reason=="merged_horizontal_head_component";};
+            check(!old.valid&&retained_rejection(old)&&found.valid&&retained_rejection(found)&&
+                found.center_families==std::vector<int>{4}&&found.unavailable_kinds==std::vector<NoteKind>{NoteKind::drag},
+                "local Drag shape ambiguity lost diagnostics or erased independent Flick evidence");
+            observation.centers=found.centers;
+            const auto status=certified.observe(observation,found.center_families,true,observation.received_host_ns+ms,found.unavailable_kinds);
+            check(!status.raw_candidates.empty()&&!status.anchor,"unavailable onscreen Drag was silently promoted to earliest-group proof");
+        }}
     {++groups;for(const auto kind:{NoteKind::tap,NoteKind::drag,NoteKind::hold,NoteKind::flick}){
         auto c=chart();c.lines[0].notes[0].kind=kind;AdaptiveFirstNoteTrigger unchanged(c,0);const int family=kind==NoteKind::drag?2:kind==NoteKind::flick?4:1;
         check(!unchanged.description().includes_mixed_earliest_heads&&unchanged.description().required_center_families==std::vector<int>{family},

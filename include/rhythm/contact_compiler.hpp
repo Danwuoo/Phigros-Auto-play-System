@@ -109,12 +109,7 @@ struct ContactCompileOptions {
     std::optional<SongNs> block_area_phase_ns;
     // Explicitly permit temporal-only alternatives during active BlockAreas.
     bool allow_block_area_temporal_fallback=false;
-    // Exact original Hold IDs whose line leaves the ordinary projection domain.
-    std::vector<std::string> block_area_offscreen_hold_source_ids;
-    // Try an overlapping second pointer when one continuously safe pointer is unavailable.
-    bool allow_block_area_hold_handoffs=false;
 };
-inline constexpr SongNs block_area_hold_handoff_overlap_ns=24'000'000;
 struct CompileDiagnostic {
     CompileSeverity severity = CompileSeverity::error;
     std::string code, message, source_note_id, related_note_id;
@@ -172,8 +167,6 @@ struct NoteContactOwnership {
     std::optional<FlickDiscretePathCertificate> flick_discrete_path;
     std::optional<PosePoint> block_area_translation_reference;
     bool block_area_temporal_fallback=false;
-    bool block_area_offscreen_hold_fallback=false;
-    std::vector<std::uint64_t> hold_handoff_contact_ids;
 };
 struct CompiledSongEvent {
     SongNs song_ns = 0;
@@ -199,8 +192,6 @@ struct ContactCompileMetadata {
     std::string block_area_policy_id;
     std::size_t block_area_count=0,block_area_detoured_contacts=0;
     std::size_t block_area_temporal_contacts=0;
-    std::size_t block_area_offscreen_hold_contacts=0;
-    std::size_t block_area_hold_handoff_contacts=0;
     // All strategies are offline candidates, not verified game judgment rules.
     std::string strategy = "exclusive-note-ownership; discrete-held-error-bound; raster-pixel-normalized";
 };

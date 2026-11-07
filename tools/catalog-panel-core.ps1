@@ -55,9 +55,6 @@ function Get-PanelBudgetText($Job) {
             if($proof.PSObject.Properties['temporal_fallback_contacts'] -and $proof.temporal_fallback_contacts -gt 0){
                 $blockArea+="，其中 $($proof.temporal_fallback_contacts) 筆在可觸控區依時序執行"
             }
-            if($proof.PSObject.Properties['hold_handoff_contacts'] -and $proof.hold_handoff_contacts -gt 0){
-                $blockArea+="，$($proof.hold_handoff_contacts) 次 Hold 換指"
-            }
         }
         return "$($Job.notes) 音符 · $($Job.events)/$($budget.runtime_step_budget) 動作 · 峰值 $($Job.peak)/$($Job.contact_capacity) 指`r`n尾音 $tail 秒／時長預算 $($budget.runtime_duration_limit_ns/1e9) 秒$blockArea"
     }
@@ -90,16 +87,6 @@ function Assert-CatalogPanelJob($Job,$CatalogChart) {
     $profile=Read-PanelJson $Job.profile.file
     $budget=Get-PanelRuntimeBudget $profile
     if($CatalogChart.PSObject.Properties['notes'] -and $CatalogChart.notes -ne $Job.notes){throw '完整原生音符數不相同，不能省略來源音符。'}
-    $sourceNotes=if($profile.PSObject.Properties['expected_source_notes']){$profile.expected_source_notes}else{$profile.expected_contacts}
-    $physicalContacts=if($Job.PSObject.Properties['physical_contacts']){$Job.physical_contacts}else{$Job.notes}
-    if(($physicalContacts -isnot [int] -and $physicalContacts -isnot [long]) -or
-       $physicalContacts -lt $Job.notes -or $sourceNotes -ne $Job.notes){throw '實體觸點數與原譜音符數不一致。'}
-    if($physicalContacts -gt $Job.notes){
-        if($profile.allow_block_area_hold_handoffs -isnot [bool] -or -not $profile.allow_block_area_hold_handoffs -or
-           $Job.preparation.block_area.hold_handoff_contacts -ne ($physicalContacts-$Job.notes)){
-            throw '新增觸點必須對應已前檢的 Hold 換指。'
-        }
-    }
     if($Job.PSObject.Properties['compile_policy'] -and $null -ne $Job.compile_policy){
         $importPolicy=if($profile.PSObject.Properties['import_policy_id']){$profile.import_policy_id}else{'phigros-v3-strict-v1'}
         $flickPolicy=if($profile.PSObject.Properties['flick_path_policy']){$profile.flick_path_policy}else{'dynamic-line-v1'}
@@ -132,13 +119,13 @@ function Assert-CatalogPanelJob($Job,$CatalogChart) {
     if($profile.schema -cne 'pas.adaptive-song-profile.v1' -or $profile.song_id -cne $Job.track_id -or
        $profile.difficulty -cne $Job.difficulty -or $profile.chart_sha256 -cne $Job.chart.sha256 -or
        $profile.expected_plan_sha256 -cne $Job.compiled_fingerprint -or
-       $profile.expected_contacts -ne $physicalContacts -or $profile.expected_steps -ne $Job.events -or $profile.expected_peak -ne $Job.peak -or
-       $Job.events -lt 2 -or $Job.events -gt $budget.runtime_step_budget -or $Job.notes -lt 1 -or $physicalContacts -gt [Math]::Floor($Job.events/2) -or
+       $profile.expected_contacts -ne $Job.notes -or $profile.expected_steps -ne $Job.events -or $profile.expected_peak -ne $Job.peak -or
+       $Job.events -lt 2 -or $Job.events -gt $budget.runtime_step_budget -or $Job.notes -lt 1 -or $Job.notes -gt [Math]::Floor($Job.events/2) -or
        $Job.peak -lt 1 -or $Job.peak -gt $capacity){throw '曲庫profile／完整接點計畫身份或資源預算不相同。'}
     if($Job.PSObject.Properties['runtime_budget'] -and $null -ne $Job.runtime_budget){
         $declared=$Job.runtime_budget
         if($declared.runtime_step_budget -ne $budget.runtime_step_budget -or $declared.runtime_duration_limit_ns -ne $budget.runtime_duration_limit_ns -or
-           $declared.expected_contacts -ne $physicalContacts -or $declared.expected_steps -ne $Job.events -or $declared.expected_peak -ne $Job.peak -or
+           $declared.expected_contacts -ne $Job.notes -or $declared.expected_steps -ne $Job.events -or $declared.expected_peak -ne $Job.peak -or
            ($null -ne $declared.last_up_song_ns -and $declared.last_up_song_ns -ge $budget.runtime_duration_limit_ns) -or
            ($null -ne $budget.last_up_song_ns -and $declared.last_up_song_ns -ne $budget.last_up_song_ns)){
             throw '曲庫顯示的實際事件／尾音與profile明確預算不相同。'

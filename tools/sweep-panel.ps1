@@ -265,28 +265,20 @@ function Invoke-PanelOwnedStart($Owner,$Operation,[string]$Executable,[string]$W
 }
 function Test-PanelManifestCounters($Manifest,$ExpectedJob=$null) {
     $complete=$Manifest.whole_song_sequence_complete -is [bool] -and $Manifest.whole_song_sequence_complete
-    $contactsField=if($Manifest.PSObject.Properties['full_physical_contacts']){'full_physical_contacts'}else{'full_chart_notes'}
-    foreach($name in @('full_chart_notes','full_physical_contacts','full_compiled_steps','receipt_rows','down_attempts','up_attempts')){
+    foreach($name in @('full_chart_notes','full_compiled_steps','receipt_rows','down_attempts','up_attempts')){
         if($Manifest.PSObject.Properties[$name]){
             $number=$Manifest.$name
             if(($number -isnot [int] -and $number -isnot [long]) -or $number -lt 0 -or $number -gt 2000000){return $false}
             if($complete -and $number -eq 0){return $false}
         }
     }
-    if($contactsField -eq 'full_physical_contacts' -and
-       (-not $Manifest.PSObject.Properties['full_chart_notes'] -or -not $Manifest.PSObject.Properties['full_compiled_steps'] -or
-        $Manifest.full_physical_contacts -le $Manifest.full_chart_notes -or
-        $Manifest.full_physical_contacts -gt [Math]::Floor($Manifest.full_compiled_steps/2))){return $false}
     if($ExpectedJob){
         foreach($pair in @(@('full_chart_notes','notes'),@('full_compiled_steps','events'))){
             if($Manifest.PSObject.Properties[$pair[0]] -and $null -ne $ExpectedJob.($pair[1]) -and $Manifest.($pair[0]) -ne $ExpectedJob.($pair[1])){return $false}
         }
-        if($ExpectedJob.PSObject.Properties['physical_contacts']){
-            if($ExpectedJob.physical_contacts -ne $Manifest.$contactsField){return $false}
-        }elseif($contactsField -eq 'full_physical_contacts'){return $false}
     }
     if($complete){
-        foreach($pair in @(@('receipt_rows','full_compiled_steps'),@('down_attempts',$contactsField),@('up_attempts',$contactsField))){
+        foreach($pair in @(@('receipt_rows','full_compiled_steps'),@('down_attempts','full_chart_notes'),@('up_attempts','full_chart_notes'))){
             if($Manifest.PSObject.Properties[$pair[0]] -and $Manifest.PSObject.Properties[$pair[1]] -and $Manifest.($pair[0]) -ne $Manifest.($pair[1])){return $false}
         }
     }
@@ -296,12 +288,12 @@ function Test-PanelManifestCounters($Manifest,$ExpectedJob=$null) {
         foreach($name in @('selected_contacts','selected_steps','completed_contacts','active','pending')){
             if($runtime.PSObject.Properties[$name]){$number=$runtime.$name;if(($number -isnot [int] -and $number -isnot [long]) -or $number -lt 0 -or $number -gt 2000000){return $false}}
         }
-        foreach($pair in @(@('selected_contacts',$contactsField),@('selected_steps','full_compiled_steps'))){
+        foreach($pair in @(@('selected_contacts','full_chart_notes'),@('selected_steps','full_compiled_steps'))){
             if($runtime.PSObject.Properties[$pair[0]] -and $Manifest.PSObject.Properties[$pair[1]] -and $runtime.($pair[0]) -ne $Manifest.($pair[1])){return $false}
         }
         if($complete){
             if(($runtime.PSObject.Properties['active'] -and $runtime.active -ne 0) -or ($runtime.PSObject.Properties['pending'] -and $runtime.pending -ne 0)){return $false}
-            if($runtime.PSObject.Properties['completed_contacts'] -and $Manifest.PSObject.Properties[$contactsField] -and $runtime.completed_contacts -ne $Manifest.$contactsField){return $false}
+            if($runtime.PSObject.Properties['completed_contacts'] -and $Manifest.PSObject.Properties['full_chart_notes'] -and $runtime.completed_contacts -ne $Manifest.full_chart_notes){return $false}
         }
     }
     return $true
@@ -340,7 +332,7 @@ function Read-PanelRoundManifest([string]$Path) {
         $fields=@('schema','song_id','difficulty','chart_sha256','song_profile_sha256',
             'screen_calibration_sha256','expected_plan_sha256','executable_sha256','kernel_profile_sha256',
             'capacity_policy','status','failure','whole_song_sequence_complete','manual_result_confirmed',
-            'kernel_final_zero','kernel_final','full_chart_notes','full_physical_contacts','full_compiled_steps','receipt_rows',
+            'kernel_final_zero','kernel_final','full_chart_notes','full_compiled_steps','receipt_rows',
             'down_attempts','up_attempts','runtime_final','image_retention')
         $parts=[Collections.Generic.List[string]]::new();[long]$length=2
         foreach($name in $fields){
@@ -450,11 +442,6 @@ function Assert-PanelPreflight([string]$Path,$Job,$Context) {
         (-not $result.PSObject.Properties['capacity_policy'] -or $result.capacity_policy -cne 'configured-ten-contact-v1')){
         throw '原生前檢未使用設定中的十指模式。'
     }
-    if($Job.PSObject.Properties['physical_contacts'] -and
-       ($result.contacts -ne $Job.physical_contacts -or $result.source_notes -ne $Job.notes -or
-        $result.block_area.hold_handoff_contacts -ne ($Job.physical_contacts-$Job.notes))){
-        throw '原生前檢的 Hold 換指數與本首設定不一致。'
-    }
 }
 function ConvertFrom-PanelAcquisitionProgress([string]$Line) {
     $prefix='ACQUISITION STATUS: '
@@ -485,7 +472,7 @@ function Get-PanelAcquisitionReason($Progress) {
         'native_earliest_group_missing_or_ambiguous' {return '已偵測到音符，首組證據仍不足。尚未送出觸控。'}
         'native_group_temporal_or_source_ambiguity_retained' {return '首音時間或來源仍有歧義；尚未送出觸控。'}
         'receipt_expired_during_processing' {return '畫面已過期，正在等待新畫面；尚未送出觸控。'}
-        default {return '等待可確定的首音與時間；尚未送出觸控。'}
+        default {return '等待判定線或首組音符對上譜面時間。尚未送出觸控。'}
     }
 }
 function Get-PanelNativeStageUpdate([string]$Line,[string]$Phase,[bool]$StopRequested=$false) {
@@ -497,14 +484,17 @@ function Get-PanelNativeStageUpdate([string]$Line,[string]$Phase,[bool]$StopRequ
         $title=switch($progress.stage){
             'waiting_for_manual_play' {'READY｜程式備妥，請到遊戲按 Play'}
             'waiting_for_valid_HUD' {'遊戲 HUD 尚未通過｜尚未送出觸控'}
-            'waiting_for_first_note' {'遊戲已辨識，等待首音｜尚未送出觸控'}
+            'waiting_for_first_note' {'遊戲已辨識，等待入場對時｜尚未送出觸控'}
         }
         $reason=Get-PanelAcquisitionReason $progress
         $key=@($progress.stage,$progress.reason,$progress.pause_ok,$progress.prefix_ok,$progress.score_ok,$progress.hud_ok)-join '|'
         return [pscustomobject]@{Kind='acquisition';Phase='ready';Title=$title;Detail=$reason;Log=$title+'。'+$reason;Key=$key;Progress=$progress}
     }
     if($Phase -eq 'starting' -and $Line.StartsWith('WHOLE SONG EXPERIMENT READY:',[StringComparison]::Ordinal)){
-        return [pscustomobject]@{Kind='ready';Phase='ready';Title='READY｜程式備妥，請到遊戲按 Play';Detail='READY 代表程式已備妥；通過遊戲 HUD 與首音辨識後，才會送出觸控。';Log='程式已備妥，請到遊戲按 Play。首音確認前尚未送出觸控。';Key='ready';Progress=$null}
+        return [pscustomobject]@{Kind='ready';Phase='ready';Title='READY｜程式備妥，請到遊戲按 Play';Detail='遊戲 HUD 與入場時序確認後，程式才會送出觸控。';Log='程式已備妥，請到遊戲按 Play。入場對時前尚未送出觸控。';Key='ready';Progress=$null}
+    }
+    if($Phase -in @('starting','ready') -and $Line.StartsWith('OPENING SCENE ACQUIRED:',[StringComparison]::Ordinal)){
+        return [pscustomobject]@{Kind='playing';Phase='playing';Title='演奏已排程';Detail='已用判定線位移對齊譜面。請保持遊戲前景，隨時可按「停止」。';Log='已用判定線位移對齊譜面，開始排程。';Key='playing';Progress=$null}
     }
     if($Phase -in @('starting','ready') -and $Line.StartsWith('FIRST NOTE ACQUIRED:',[StringComparison]::Ordinal)){
         return [pscustomobject]@{Kind='playing';Phase='playing';Title='正在演奏';Detail='首音已由原生程式確認。保持遊戲前景；隨時可按「停止」。';Log='首音已確認，原生程式進入演奏階段。';Key='playing';Progress=$null}
@@ -627,7 +617,7 @@ if ($SelfTest) {
         if(Get-PanelNativeStageUpdate $line 'ready' $true){throw '停止後仍更新開場狀態。'};$checks++
         $progress.stage='waiting_for_first_note';$progress.prefix_ok=$true;$progress.hud_ok=$true
         $line='ACQUISITION STATUS: '+($progress|ConvertTo-Json -Compress)
-        if((Get-PanelNativeStageUpdate $line 'ready').Title -notmatch '等待首音'){throw '有效 HUD 未保持等待首音。'};$checks++
+        if((Get-PanelNativeStageUpdate $line 'ready').Title -notmatch '等待入場對時'){throw '有效 HUD 未保持等待入場對時。'};$checks++
         $progress.reason='waiting_for_second_distinct_native_group_frame'
         $line='ACQUISITION STATUS: '+($progress|ConvertTo-Json -Compress)
         if((Get-PanelNativeStageUpdate $line 'ready').Detail -notmatch '候選音符'){throw '候選音符被誤報為已確認首音。'};$checks++
@@ -635,6 +625,8 @@ if ($SelfTest) {
         foreach($bad in @('true',1,$null)){$copy=$progress|ConvertTo-Json -Compress|ConvertFrom-Json;$copy.hud_ok=$bad;if(ConvertFrom-PanelAcquisitionProgress ('ACQUISITION STATUS: '+($copy|ConvertTo-Json -Compress))){throw 'progress boolean 未嚴格檢查。'};$checks++}
         $copy=$progress|ConvertTo-Json -Compress|ConvertFrom-Json;$copy.stage='playing';if(ConvertFrom-PanelAcquisitionProgress ('ACQUISITION STATUS: '+($copy|ConvertTo-Json -Compress))){throw 'progress 偽造演奏階段。'};$checks++
         if((Get-PanelNativeStageUpdate 'FIRST NOTE ACQUIRED: native' 'ready').Phase -ne 'playing' -or (Get-PanelNativeStageUpdate 'WHOLE SONG EXPERIMENT READY: duplicate' 'playing')){throw '原生階段排序錯誤。'};$checks++
+        $sceneStage=Get-PanelNativeStageUpdate 'OPENING SCENE ACQUIRED: native' 'ready'
+        if($sceneStage.Phase -ne 'playing' -or $sceneStage.Detail -notmatch '判定線位移' -or (Get-PanelNativeStageUpdate 'OPENING SCENE ACQUIRED: native' 'result')){throw '判定線對時的狀態更新錯誤。'};$checks++
         $stages=[ordered]@{schema='pas.experimental-whole-song.v1';status='failed_or_stopped';failure='manual_round_ended_without_result_confirmation';whole_song_sequence_complete=$true;manual_result_confirmed=$false;kernel_final_zero=$true;AP_verified=$true;game_judgment='AP'}
         $stagePath=Join-Path $future 'manifest.json';$stages|ConvertTo-Json|Set-Content -LiteralPath $stagePath -Encoding utf8
         $separated=Get-PanelRoundResult $future 2
@@ -675,15 +667,6 @@ if ($SelfTest) {
             $copy|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $stagePath -Encoding utf8;$inconsistent=Get-PanelRoundResult $future 0
             if($inconsistent.Success -or $inconsistent.CountersConsistent -or $inconsistent.ExecutionState -ne 'unknown' -or $inconsistent.ReleaseState -ne 'unknown'){throw '數量矛盾的原生紀錄被歸因為完整完成。'};$checks++
         }
-        $handoff=$stages|ConvertTo-Json -Depth 8|ConvertFrom-Json
-        $handoff|Add-Member -NotePropertyName full_physical_contacts -NotePropertyValue 1286
-        $handoff|Add-Member -NotePropertyName down_attempts -NotePropertyValue 1286 -Force
-        $handoff|Add-Member -NotePropertyName up_attempts -NotePropertyValue 1286 -Force
-        $handoff.runtime_final.selected_contacts=$handoff.runtime_final.completed_contacts=1286
-        $handoffJob=[pscustomobject]@{notes=1285;events=3358;physical_contacts=1286}
-        if(-not (Test-PanelManifestCounters $handoff $handoffJob)){throw 'Hold 換指的實體觸點數被誤報為不完整。'};$checks++
-        $handoff.runtime_final.completed_contacts=1285
-        if(Test-PanelManifestCounters $handoff $handoffJob){throw 'Hold 換指的實體觸點尚未完成。'};$checks++
         $stages['kernel_final']=[pscustomobject]@{active_count=0;slot_count=2;tracking_ids=@(-1,-1);causal_host_interval_valid=$true}
         $stages|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $stagePath -Encoding utf8
         if(-not (Get-PanelRoundResult $future 0).ReleaseEvidenceConsistent){throw '一致的零接觸觀測被拒絕。'};$checks++

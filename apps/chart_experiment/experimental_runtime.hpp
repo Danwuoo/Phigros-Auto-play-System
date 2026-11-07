@@ -53,7 +53,6 @@ struct ExperimentalRuntimeOptions {
     Ns max_coincident_flick_delay_ns=0; // Explicit shared-head candidate: 0 or 32ms.
     bool allow_advance_below_drags=false; // Explicit below-side early Drag candidate.
     bool allow_block_area_temporal_fallback=false;
-    bool allow_block_area_hold_handoffs=false;
     std::optional<Ns> block_area_phase_ns;
     ClockProbe clock_probe; // Static opt-in whole-suffix mapping, fixed before READY.
 };
@@ -314,9 +313,7 @@ public:
         if(full.memory.identity.game!=Game::phigros||meta.compiler_version!="phigros-contact-v2"||
            meta.geometry.input_width!=1280||meta.geometry.input_height!=720||
            meta.geometry.rotation!=InputRotation::none||meta.geometry.viewport||meta.geometry.fit!=ViewportFit::contain||
-           full.memory.contacts.empty()||full.memory.contacts.size()>options_.max_song_steps/2||
-           full.ownership.size()>full.memory.contacts.size()||
-           full.memory.contacts.size()-full.ownership.size()!=meta.block_area_hold_handoff_contacts||
+           full.memory.contacts.empty()||full.memory.contacts.size()>options_.max_song_steps/2||full.ownership.size()!=full.memory.contacts.size()||
            full.events.size()>options_.max_song_steps||!sha256_text(meta.cache_sha256))
             throw std::invalid_argument("unsupported or unbounded full compiled plan");
         if(options_.clock_probe.enabled) {
@@ -334,9 +331,6 @@ public:
         if((block_areas?meta.block_area_policy_id!="phira-block-area-continuous-detour-v1":!meta.block_area_policy_id.empty())||
            (block_areas&&(options_.clock_probe.enabled||meta.options.block_area_phase_ns!=options_.block_area_phase_ns))||
            meta.options.allow_block_area_temporal_fallback!=options_.allow_block_area_temporal_fallback||
-           meta.options.allow_block_area_hold_handoffs!=options_.allow_block_area_hold_handoffs||
-           (options_.allow_block_area_hold_handoffs&&!options_.allow_block_area_temporal_fallback)||
-           (meta.block_area_hold_handoff_contacts&&!options_.allow_block_area_hold_handoffs)||
            (meta.options.allow_block_area_temporal_fallback&&(!block_areas||!rectangle||!options_.block_area_phase_ns))||
            meta.block_area_temporal_contacts>meta.block_area_detoured_contacts||
            meta.block_area_detoured_contacts>full.ownership.size())
@@ -380,11 +374,8 @@ public:
              meta.judgment_policy_provenance.find("coincident-flick-delay32-candidate-v1")==std::string::npos)))
             throw std::invalid_argument("unrecorded or unbounded coincident Flick handoff candidate");
         std::map<std::uint64_t,const NoteContactOwnership*> owners;
-        std::map<std::uint64_t,const Contact*> physical_contacts;
-        for(const auto& contact:full.memory.contacts)physical_contacts.emplace(contact.id,&contact);
         std::map<std::string,const NoteContactOwnership*> source_notes;
         std::set<Ns> non_flick_heads;
-        std::vector<std::string> offscreen_hold_ids;
         std::size_t certificates=0,block_area_temporal_contacts=0,block_area_detoured_contacts=0;
         for(const auto& owner:full.ownership) {
             if(owner.source_note_id!=full.memory.identity.chart_sha256+'#'+owner.source_json_pointer||
@@ -402,42 +393,11 @@ public:
                     throw std::invalid_argument("invalid or unexpected BlockArea timing-only contact");
                 ++block_area_temporal_contacts;
             }
-            if(owner.block_area_offscreen_hold_fallback) {
-                if(owner.kind!=NoteKind::hold||!owner.block_area_temporal_fallback||offscreen_hold_ids.size()>=32)
-                    throw std::invalid_argument("Invalid selected offscreen Hold continuation");
-                offscreen_hold_ids.push_back(owner.source_note_id);
-            }
-            if(!owner.hold_handoff_contact_ids.empty()) {
-                if(!options_.allow_block_area_hold_handoffs||owner.kind!=NoteKind::hold||!owner.block_area_temporal_fallback||
-                   owner.hold_handoff_contact_ids.size()>16||owner.hold_handoff_contact_ids.size()>meta.block_area_hold_handoff_contacts)
-                    throw std::invalid_argument("Unrecorded BlockArea Hold handoff");
-                auto preceding=physical_contacts.at(owner.contact_id);
-                if(preceding->steps.front().song_ns!=owner.judgment_ns)
-                    throw std::invalid_argument("BlockArea Hold handoff changed the original DOWN");
-                Ns prior_end=-1;
-                for(const auto id:owner.hold_handoff_contact_ids) {
-                    const auto following=physical_contacts.at(id);
-                    const auto down=following->steps.front().song_ns;
-                    const auto up=preceding->steps.back().song_ns;
-                    if(!owners.emplace(id,&owner).second||down<=preceding->steps.front().song_ns||down<prior_end||
-                       up-down!=block_area_hold_handoff_overlap_ns||following->steps.back().song_ns<=up)
-                        throw std::invalid_argument("BlockArea Hold handoff has invalid or overlapping pointer lifetimes");
-                    prior_end=up;
-                    preceding=following;
-                }
-                if(hold_grace&&owner.hold_tracking_end_ns!=preceding->steps.back().song_ns)
-                    throw std::invalid_argument("BlockArea Hold handoff must retain tracking through the original UP");
-            }
             if(owner.kind==NoteKind::tap||owner.kind==NoteKind::hold||owner.kind==NoteKind::drag)
                 non_flick_heads.insert(owner.judgment_ns);
         }
-        if(owners.size()!=physical_contacts.size())throw std::invalid_argument("Incomplete physical contact ownership");
         if(block_area_temporal_contacts!=meta.block_area_temporal_contacts||block_area_detoured_contacts!=meta.block_area_detoured_contacts)
             throw std::invalid_argument("BlockArea contact counts differ from compiled ownership");
-        std::sort(offscreen_hold_ids.begin(),offscreen_hold_ids.end());
-        if(offscreen_hold_ids!=meta.options.block_area_offscreen_hold_source_ids||
-           offscreen_hold_ids.size()!=meta.block_area_offscreen_hold_contacts)
-            throw std::invalid_argument("Offscreen Hold continuation differs from the selected source IDs");
         std::set<std::string> filtered_sources;
         for(const auto& id:meta.options.below_drag_source_ids){
             const auto found=source_notes.find(id);
@@ -487,7 +447,7 @@ public:
                    contact.steps.front().song_ns!=owner.dispatch_judgment_ns-(owner.kind==NoteKind::flick?meta.options.flick_lead_ns:0))
                     throw std::invalid_argument("candidate dispatch anchor differs from original note or bounded pre-judge policy");
             }else if(owner.dispatch_judgment_ns!=-1)throw std::invalid_argument("unexpected dispatch-anchor metadata outside explicit Drag/Flick candidate");
-            if(hold_grace&&owner.kind==NoteKind::hold&&owner.hold_handoff_contact_ids.empty()){
+            if(hold_grace&&owner.kind==NoteKind::hold){
                 if(owner.hold_tracking_end_ns<contact.steps.front().song_ns||
                    owner.hold_tracking_end_ns>contact.steps.back().song_ns||
                    contact.steps.back().song_ns-owner.hold_tracking_end_ns>220*ms)
@@ -498,7 +458,7 @@ public:
                     else if(step.point.x!=frozen.x||step.point.y!=frozen.y)
                         throw std::invalid_argument("Hold tail candidate must retain the last tracked point through original UP");
                 }
-            }else if((!hold_grace||owner.kind!=NoteKind::hold)&&owner.hold_tracking_end_ns>=0){
+            }else if(owner.hold_tracking_end_ns>=0){
                 throw std::invalid_argument("unexpected Hold tracking-domain metadata");
             }
             if(candidate&&owner.kind==NoteKind::hold&&!owner.block_area_temporal_fallback){

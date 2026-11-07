@@ -5,9 +5,14 @@
 #include "classic_flick_head.hpp"
 
 namespace rhythm::experimental {
+struct OpeningFamilyRejection {
+    int family;
+    std::string reason;
+};
 struct ModelOpeningDetection:calibration::OpeningDetection {
     std::vector<int> center_families;
     std::vector<NoteKind> unavailable_kinds;
+    std::vector<OpeningFamilyRejection> family_rejections;
     ModelOpeningDetection()=default;
     ModelOpeningDetection(calibration::OpeningDetection detected):calibration::OpeningDetection(std::move(detected)){}
 };
@@ -15,6 +20,15 @@ inline bool independently_unavailable_opening_shape(std::string_view reason) {
     return reason=="clipped_horizontal_head"||reason=="clipped_horizontal_head_band"||
         reason=="clipped_oriented_head"||reason=="clipped_classic_flick_head"||
         reason=="clipped_classic_oriented_hold_head"||reason=="classic_oriented_hold_head_body_side_ambiguous";
+}
+inline bool independently_unavailable_mixed_shape(std::string_view reason) {
+    // An ambiguous shape supplies neither a center nor evidence of its
+    // family's absence. Other families still need their own shape proof.
+    return independently_unavailable_opening_shape(reason)||
+        reason=="ambiguous_yellow_run_grouping"||reason=="horizontal_head_component_ownership_ambiguous"||
+        reason=="horizontal_head_body_extent_ambiguous"||reason=="merged_horizontal_head_component"||
+        reason=="nonrectangular_or_merged_oriented_head"||reason=="merged_classic_flick_head_core"||
+        reason=="nonrectangular_classic_flick_head_core"||reason=="classic_flick_head_pair_ownership_ambiguous";
 }
 // Keep every old typed center and add independently bounded classic heads.
 // A failed independent shape does not provide evidence of absence.
@@ -46,6 +60,7 @@ inline ModelOpeningDetection detect_single_model_opening_centers(
            !independently_unavailable_opening_shape(classic.reason))return classic;
         ModelOpeningDetection partial(std::move(original));
         partial.unavailable_kinds.push_back(description.includes_classic_flick_heads?NoteKind::flick:NoteKind::hold);
+        partial.family_rejections.push_back({description.includes_classic_flick_heads?4:1,classic.reason});
         partial.reason=description.detector_policy_id+";partial_detector_coverage_unverified";
         return partial;
     }
@@ -86,11 +101,13 @@ inline ModelOpeningDetection detect_model_opening_centers(
         single.includes_classic_flick_heads=family==4;single.includes_extended_drag_heads=family==2;
         single.includes_outlined_drag_heads=family==2&&description.includes_outlined_drag_heads;
         const auto detected=detect_single_model_opening_centers(width,height,stride,rgb,single);
+        result.family_rejections.insert(result.family_rejections.end(),detected.family_rejections.begin(),detected.family_rejections.end());
         if(!detected.valid){
             if(detected.reason=="no_supported_typed_head_centers"||detected.reason=="no_supported_cyan_centers"||
                detected.reason=="no_supported_yellow_centers"||detected.reason=="no_supported_classic_flick_head"||
                detected.reason=="no_supported_classic_hold_head"||detected.reason=="no_supported_classic_oriented_hold_head")continue;
-            if(!description.certified_first_group_coverage||!independently_unavailable_opening_shape(detected.reason))
+            result.family_rejections.push_back({family,detected.reason});
+            if(!description.certified_first_group_coverage||!independently_unavailable_mixed_shape(detected.reason))
                 return fail("mixed_family_detector_rejected_current_frame");
             result.unavailable_kinds.push_back(single.note_kind);
             if(single.includes_hold_heads)result.unavailable_kinds.push_back(NoteKind::hold);

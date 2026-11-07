@@ -1677,57 +1677,6 @@ int main() {
             }
             check_complete_events(p);
         });
-        run("BlockArea Hold graph keeps a distant playable island through a later sweep",[] {
-            auto c=chart();note(c,NoteKind::hold,second,2*second);
-            block(c,-100,-100,1380,820);
-            auto& hole=block(c,-70,-100,1350,820,0,3*second,true);
-            hole.scales={{second,{140./1280,.5},{1,1},0,0},
-                {second+200'000'000,{140./1280,.5},{.11,1},0,0}};
-            hole.moves={{second+200'000'000,{.5,.5},0,0},{2*second,{.7,.5},0,0}};
-            auto options=block_options();options.allow_block_area_temporal_fallback=true;
-            options.hold_tail_policy=HoldTailPolicy::phira_tail_grace_candidate_v1;
-            const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);
-            const auto& p=plan(result);const auto& contact=p.memory.contacts.front();
-            require(p.metadata.block_area_temporal_contacts==1&&p.peak_contacts==1&&contact.steps.size()>2,
-                "Distant playable island lost during moving Hold search");
-            require(contact.steps.front().song_ns==second&&contact.steps.front().phase==Phase::down&&
-                contact.steps.back().song_ns==2*second&&contact.steps.back().phase==Phase::up&&
-                p.ownership.front().hold_tracking_end_ns==2*second,
-                "Graph Hold modified lifetime or recorded a grace interval while moving");
-            check_complete_events(p);
-        });
-        run("Opt-in BlockArea Hold handoff overlaps independently clear pointers across a blocked gap",[] {
-            auto c=chart();note(c,NoteKind::hold,second,3*second);
-            block(c,-100,-100,1380,820,0,4*second);
-            block(c,100,200,340,520,0,2*second,true);
-            block(c,900,200,1140,520,second+400'000'000,4*second,true);
-            auto options=block_options();options.allow_block_area_temporal_fallback=true;
-            auto strict=compile_phigros_contacts(c,identity(c),geometry(),options);
-            require(!strict.plan&&diagnostic(strict,"block_area_no_safe_path"),"One pointer crossed the disconnected regions");
-            options.allow_block_area_hold_handoffs=true;
-            const auto result=compile_phigros_contacts(c,identity(c),geometry(),options);
-            const auto& p=plan(result);const auto& owner=p.ownership.front();
-            require(p.ownership.size()==1&&p.memory.contacts.size()==2&&p.peak_contacts==2&&p.total_steps==4&&
-                p.metadata.block_area_hold_handoff_contacts==1&&owner.hold_handoff_contact_ids.size()==1,
-                "Hold handoff changed source ownership or skipped physical contact accounting");
-            const auto& a=p.memory.contacts[0];const auto& b=p.memory.contacts[1];
-            require(a.id==owner.contact_id&&b.id==owner.hold_handoff_contact_ids.front()&&
-                a.steps.front().song_ns==second&&b.steps.back().song_ns==3*second&&
-                b.steps.front().song_ns>a.steps.front().song_ns&&
-                a.steps.back().song_ns-b.steps.front().song_ns==block_area_hold_handoff_overlap_ns,
-                "Hold handoff did not preserve original lifetime and exact pointer overlap");
-            require(pixel_point(a.steps.front().point,1280,720).first<361&&pixel_point(b.steps.front().point,1280,720).first>878,
-                "Pointer started outside its independently clear region");
-            check_complete_events(p);
-            options.max_contacts=1;
-            const auto over=compile_phigros_contacts(c,identity(c),geometry(),options);
-            require(!over.plan&&over.required_peak_contacts==2&&diagnostic(over,"capacity_exceeded"),
-                "Handoff bypassed physical pointer capacity");
-            options.max_contacts=10;c.block_areas.back().appear_ns=c.block_areas.back().enable_ns=2*second;
-            const auto without_overlap=compile_phigros_contacts(c,identity(c),geometry(),options);
-            require(!without_overlap.plan&&diagnostic(without_overlap,"block_area_no_safe_path"),
-                "Handoff accepted two regions with no clear timing overlap");
-        });
         run("Temporal Flick retains a curved full-length stroke in a narrow clear border",[] {
             auto c=chart();note(c,NoteKind::flick);
             block(c,0,0,1280,720);
