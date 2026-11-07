@@ -1,4 +1,66 @@
-# 本輪驗證：2026-10-23 起，更新至 2026-10-25
+# 本輪驗證：2026-10-23 起，更新至 2026-10-31
+
+## 2026-10-31 目前：Snow AP655後全局−70已部署，新第七批0/3
+
+Snow Desert phase−70指定控制實際1000000AP、655P0G0B0M／Max655，全655/3799、原生結算圖／release10／kernelzero通過，audit `b4ac10fc2bbc15c4213ecd0ccc84c85a2346d2f46e226ed009a01059d72ec90e`。先前同曲第六批Random1Bad2Miss仍為失敗；numericON指定控制與GUI OFF基線差異明示，沒有把分數變化稱為qualified clock或單因素因果。
+
+全局−70新library c84與實際控制plan bytes相同，相對6f只一個字元，389jobraw／374profile和CFP／15block exact；374profile已實際讀/hash，靜態最早DOWN−70=480.847458ms不能當actuallead。Guarded validate-only後只更新三個設定欄，現用configc80b，native025efb／archive850e／front192104保持、桌面已重開；無新build/nativeprepare或全庫nativecheck。新第七批從0/3PENDING，AP655／AP895指定控制及六批失敗不沿用；200／100／500／20不降。[部署與固定證據](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+## 2026-10-31 native025單列部署完成；指定Manifold AP895，新Random3為0/3
+
+native025 fresh Windows38/38、portable6/6及39critical sources通過。指定Manifold Hypothesis IN14實際1000000AP、895P0G0B0M／Max895／E0L0；895contacts／6657steps全送出、原生結算確認、release10／kernelzero、只有result.png，完整quality/native audit `09c71ccf94d8458bb83276e608cba4639314210211e79ec64cc18326f713f866`。壓力1024單變量前輪仍有1Miss，不能從AP判定壓力因果或qualified遊戲clock。
+
+現已原子部署native025efb08／archive850e＋Manifold Tap64／outlinedv13／ONLY Drag19629／單job−70，global−40、其他388整列及frontend192104保持；library6f3a／configcbde，桌面已正常重開。200／100／500／20門檻與Stop／release保留。新W `newrandom3-native025-manifold-drag196-rowphase70-001/`從0/3PENDING開始，指定AP和五批失敗均不沿用，15blockAreaList仍不支援；374ready只是離線可前檢。[完整固定原件與限制](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+以下各節按當時回合保留，不能當作目前版本或新批完成宣告。
+
+## 2026-10-31 Manifold新批首音0觸控失敗；第五批reset0
+
+新024-rowphase70RandomR1 Manifold Hypothesis IN14，first_note_observation_budget取消、DOWN0/UP0、無native確認結果或PNG，finalkernelzero。root實際自然結算0P0G0B895M，只列人類觀察、不當程式通過。五批failed與全部controls保留，streak0／task未完成；installed024/front192104/lib08d/config46da不變，Manifold phase−40，開場診斷中，200/100/500/20不降。[目前失敗原件](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+## 2026-10-31 單列phase−70前端／曲庫已安裝；新Random0/3
+
+Doppel指定AP921的相同profile/CFP/body以單列witness/closed5Drag/job phase−70部署；global−40、388列exact，lib08d/config46da/frontend192104，native024未重建。Strict phase整數解析與check/run拒錯由104PS SelfTest獨立receipt確認，installer不執行測試。新批從0/3，指定AP／舊四批失敗及controls不沿用；200/100/500/20不降，未宣稱qualifiedclock或全庫遊戲資格。[當前部署與證據](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+## 2026-10-31 Doppel phase−70指定AP；per-job前端／部署／新Random待驗
+
+相同closed5Drag profile／CFP／body，−40為912P3G5B1M，僅phase−70達1000000AP921P0G0B0M；全921/3115、native結算圖／release確認，actuallead471.455ms／age18.351ms。只支持offset因素，不宣稱qualifiedclock／個別source因果。前端strict per-job phase_ms與單列witness/Drag5/−70 bundle待freeze／tests／安裝，native024不重建；current仍024/global64bf/config1adc/front170826，新Random0／taskfalse，指定AP不計入。[固定原件與全部失敗](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+## 2026-10-31 native024已建置安裝；opt-in實測／新Random待驗
+
+最新Doppelganger首音0觸控失敗，無score／PNG，沒有release10 RPC而finalkernelzero確認，streak0／task未完成。024 explicit opt-in pure solidDrag appearance witness保all aliases／真viewport transition／共同origin；default legacy hash與六組synthetic通過，Windows38/38、portable6/6、39critical，沒有clock或rendering資格。Native-only已部署（設定1adc），前端170826/global64bf不變且目前witness仍false；Doppel單列v14實測opening accepted（lead498.731ms／age24.583ms／3supports）、原生全921/3115與結算圖／release通過，但915P1G4B1M品質失敗，candidate未安裝／現庫flag=false，新Random0/3，200/100/500/20不降。[完整證據與邊界](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+## 2026-10-31 共通保留DOWN的V2已安裝；指定回歸通過、新Random0/3
+
+Triumph單列V2安裝後，Chariot實際1002P5G0B2M，雖原生全1009／3776、結算圖／release完整，仍嚴格失敗、reset0／task未完成。後續366prepare＋366check全PASS，80／8／38／40保原DOWN；23列保留（2FAST仍30／60／40、6無Flick、15blocked），324906非Flick及24844Flick來源DOWN exact。Chariot指定1007P2G0B0M完整通過、不計Random。曲庫64bf／設定e070已安裝，新Random仍0/3；render cadence≠touch poll，未證Flick或Tap32造成兩Miss。舊批與controls全部保留且不計新streak。[來源及邊界](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+## 2026-10-31 native023結算修正已建置；Random批次失敗，重抽待驗
+
+native022真正Random批次為Credits IN13 AP535、いざ、参ります IN15 863P2G FC、云女孩 IN12畫面AP669；第三首原生manual_round_ended_without_result_confirmation、無result.png，故本批不算3/3，streak重置0。前兩輪原件保留。native023把manual settlement watchdog與input duration分離，使用原有input+60s固定總期限；Windows38/38、portable6/6與39critical凍結完成，已native-only部署（設定9fe864），指定云女孩AP669且原生origin+184.195s確認結算、result.png／release通過（不計Random）；其後freshRandom首輪Triumph & Regret 974438／1005P8G0B1M原生完整但品質失敗，重置0。後續指定V1／V2均1006P8G0B0M，不證因果；Triumph單列V2已安裝（設定61daa／曲庫c5a、其餘388列exact），新Random0/3待驗。input預算與CURRENT result／freshness／release條件不變。[精確身份、控制及失敗證據](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+## 2026-10-31 native022 單曲 0 Bad／0 Miss 控制通過；Random3 PENDING
+
+實際 source freeze 的 Windows native CTest38/38、portable6/6 通過。NULL host-audio backend 與媒體音量恢復後，Abs IN 依序保留 7B／5B／4B／1B／0B（各0Miss）的控制回合；最後29ms closed ABOVE-Drag subset 得999016、1595P／5G／0B／0M、Max Combo1600、exit0及末觸控零。只驗指定曲目本輪，沒有聲稱 AP、全庫穩定或 Random3 通過；native022＋29ms曲庫與前端170826已部署；coldskin-v2第三次實際冷開自動正向橫畫面通過，前兩次physical失敗保留。新Random3仍0/3待驗。見 [來源、順序證據與全部控制](DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+## 2026-10-30 桌面48px三首隨機實測與partial-score修復
+
+native013重新完成Windows native全目標Release build及最終CTest **33/33**、portable configure/build/CTest **4/4**。補上當前部分合併分數與清楚數字共同供應至少4個紋理窗口的HUD路徑，500ms／20ms條件不變；指定Xep+ion回歸完整698/1950、952736 S99.27%、kernel zero，實際45候選／36確認／9等待及11筆Write准入引用有獨立metadata證據。其後Computer經真正桌面READY／遊戲All Songs Random／Play，第二批連續完成Demiurge IN11（1000000 AP100%）、Get Ready!! IN13（937393 S98.44%）、Re: birth IN15（965021 V99.36%）；三輪各13項輸入／釋放／結算及6項capture稽核PASS、最後kernel zero、各只存結算圖。第一批FULi成功與Xep+ion HUD到期失敗保留並重置；指定回歸不計入三首。只有Demiurge這一輪AP，不宣稱全庫或跨輪AP保證。來源、成績、20項新建置身份與各回合索引見 [三首實測與修復](DESKTOP_THREE_RANDOM_2026-10-30.md)。以下未實測條目維持其原日期與範圍。
+
+## 2026-10-29 桌面短斜Flick48px候選（未測試）
+
+依使用者漏判回報，將桌面曲庫的短斜Flick幅度32→48px，8／20／6ms時間及native012保持。全374份用原生prepare製作新profile／fingerprint，15份blockAreaList原列保留。沒有執行任何測試、check-adaptive、GUI或裝置操作，不宣稱判定改善。見[48px調整](DESKTOP_FLICK48_2026-10-29.md)。
+
+## 2026-10-29 桌面中途停止修復（未測試）
+
+只讀分析四個使用者既存回合，修正共用session時限吃掉READY等待、HUD聯合prefix／mergedscore分派缺口、面板1MiB manifest誤拒三個問題。只建置chart_experiment並封存／安裝native012與新版前端；V10曲庫與短斜Flick不變。本輪所有測試、GUI、gRPC、裝置與遊玩均 **NOT RUN**（使用者明示自行測試）。新HUD路徑未在真實RGB或新回合驗證，不宣稱全曲或五首通過。見[中途停止修復](DESKTOP_MID_SONG_STOP_FIX_2026-10-29.md)。
+
+## 2026-10-29 桌面演奏核心手動實測版更新
+
+使用者要求將既有凍結 b451 核心與短斜向 Flick 更新至桌面，並由使用者測試。本輪只封裝核心／DLL、製作相容曲庫資料及安裝設定；離線 prepare 是部署資料製作，不當作 native preflight 或實際遊玩通過。未重新編譯，所有測試、自測、GUI、gRPC、裝置及遊玩均 **NOT RUN**。先前五首隨機驗證仍暫停且未完成；Thrash force 留一觸點的歷史異常仍未取得解決證據。見 [桌面演奏核心更新](DESKTOP_PLAYBACK_MANUAL_UPDATE_2026-10-29.md)。
+
+## 2026-10-29 桌面入口設定修復（未測試）
+
+修復正式桌面設定引用開發目錄舊面板 SHA256 的問題；改為五件前端相依檔的獨立版本快照，啟動前核對整組身份，並備份／原子更新設定。native archive 與曲庫／profile 保留原參照。依使用者明示要求，portable CMake／CTest、Windows／PowerShell 自測、GUI、gRPC、裝置及實際遊玩測試均 **NOT RUN**，由使用者測試。只完成安裝檔案的複製與身份核對，不宣稱實際開啟或全曲穩定。先前五首隨機驗證仍未完成、維持暫停。見 [桌面介面安裝](DESKTOP_FRONTEND_INSTALL.md)。
 
 ## 2026-10-25 Credits AT無點擊修復與多曲實機
 

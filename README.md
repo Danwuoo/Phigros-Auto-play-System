@@ -1,5 +1,11 @@
 # Rhythm Chart Memory — Phigros / 世界計畫研究分支
 
+**目前（2026-10-31）：全局phase−70已部署並正常重開；第七批新Random3為0/3、PENDING。** native025／frontend192104保持，library改為global-phase70-001／c84，設定c80b；相對前版6f只改全局−40→−70的一個字元，389曲目列／374份profile及CFP／15份blockAreaList列完全保持。Doppel與Manifold原單列−70不變，其他372個可前檢曲目提前30ms。指定Snow Desert AP655、Manifold AP895均完整原生結算／release／kernel zero通過，但不計新Random；六批先前失敗保留。這是同模擬器的固定phase提案，不是qualified遊戲clock或全374譜面保證。[目前部署與原件](docs/DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+**前階段（2026-10-31）：指定控制、長曲結算與Triumph單列候選。** Abs IN指定控制999016、1595P／5G／0B／0M，native022與29ms指定Drag曲庫已部署，前端170826冷啟動正向橫畫面通過。新Random批Credits AP與いざ、参ります FC通過，但云女孩畫面AP後原生未確認結算／無結算圖，整批重置0；不算3/3。native023已修正較短manual watchdog提前終止，Windows38/38、portable6/6通過；native-only部署已完成，前端與曲庫保持；指定云女孩AP669且原生origin+184.195s完成結算保存／釋放；此回歸不計隨機，新Random首輪Triumph & Regret 1005P8G0B1M雖原生完整仍失敗／重置0，其後指定V1／V2均FC，不足證明V2因果修復。Triumph單列V2現已安裝，其餘388列exact；新Random批次仍0/3待驗。只聲明這些固定回合，不保證全374譜面或AP。[目前修復與全部失敗證據](docs/DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
+
+**歷史2026-10-30 native013桌面修復與隨機三首完成**：修正分數區局部連成一塊時的 HUD 誤拒，安裝 native013，保留十指、48px 短斜向 Flick 與只存結算圖。Xep+ion 指定回歸通過後，使用 Computer 在 All Songs 重新隨機抽選 Demiurge IN11、Get Ready!! IN13、Re: birth IN15，三首連續完整演奏並確認結算與 kernel zero；分數為 1,000,000 AP／937,393 S／965,021 V。新 native 33/33、portable 4/4；不宣稱全庫穩定或全曲 AP。[修復、失敗保留與逐首證據](docs/DESKTOP_THREE_RANDOM_2026-10-30.md)。
+
 **2026-10-25 Credits AT點擊修復與實測**：修正AT pause頂邊光柵變化，並於primary字樣失配時獨立驗證CURRENT完整AT／曲名／pause／score。新core003 native29/29、portable4/4；實測Credits AT兩輪638／0／0／0與637／1／0／0、Credits IN及Eradication IN各一次AP，Glaciaxion直線72px為728／1／0／0。五輪全曲／結算／kernel zero、全部回合0圖片；Dlyrotz另有0觸控首音別名失敗，面板暫列待修。389份全保留，262可前檢／127跳過，桌面入口已更新；未宣稱全庫穩定或穩定AP。[全部8輪、封存與入口](docs/CREDITS_AT_HUD_FIX_2026-10-25.md)。
 
 **2026-10-25 完整操作面板／AT**：327首、389份IN／AT與變體已放入同一人工測試台，可搜尋／篩選；263份通過最終離線前檢（IN241／AT22，含Credits AT），其餘126份列明原因跳過。384份與授權安裝APK原譜bytes相同，5份版本差異不強制映射。使用真實Credits AT HUD建立獨立policy，移除獨立2000 notes拒絕並保留完整事件／時間／容量預算。新005封存native29/29、portable4/4、Python244項含1skip；選曲／READY／Play仍由人操作，每輪不存圖片，新遊戲判定仍待測。[完整操作、身份與封存](docs/FULL_LIBRARY_PANEL_2026-10-25.md)。
