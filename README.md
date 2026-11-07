@@ -1,5 +1,7 @@
 # Rhythm Chart Memory — Phigros / 世界計畫研究分支
 
+桌面紀錄、離線歷史視窗及六輪驗收見 [桌面回合紀錄](docs/DESKTOP_ROUND_RECORDS.md)。
+
 **目前（2026-10-31）：全局phase−70已部署並正常重開；第七批新Random3為0/3、PENDING。** native025／frontend192104保持，library改為global-phase70-001／c84，設定c80b；相對前版6f只改全局−40→−70的一個字元，389曲目列／374份profile及CFP／15份blockAreaList列完全保持。Doppel與Manifold原單列−70不變，其他372個可前檢曲目提前30ms。指定Snow Desert AP655、Manifold AP895均完整原生結算／release／kernel zero通過，但不計新Random；六批先前失敗保留。這是同模擬器的固定phase提案，不是qualified遊戲clock或全374譜面保證。[目前部署與原件](docs/DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
 
 **前階段（2026-10-31）：指定控制、長曲結算與Triumph單列候選。** Abs IN指定控制999016、1595P／5G／0B／0M，native022與29ms指定Drag曲庫已部署，前端170826冷啟動正向橫畫面通過。新Random批Credits AP與いざ、参ります FC通過，但云女孩畫面AP後原生未確認結算／無結算圖，整批重置0；不算3/3。native023已修正較短manual watchdog提前終止，Windows38/38、portable6/6通過；native-only部署已完成，前端與曲庫保持；指定云女孩AP669且原生origin+184.195s完成結算保存／釋放；此回歸不計隨機，新Random首輪Triumph & Regret 1005P8G0B1M雖原生完整仍失敗／重置0，其後指定V1／V2均FC，不足證明V2因果修復。Triumph單列V2現已安裝，其餘388列exact；新Random批次仍0/3待驗。只聲明這些固定回合，不保證全374譜面或AP。[目前修復與全部失敗證據](docs/DESKTOP_BAD_MISS_FIX_2026-10-31.md)。
