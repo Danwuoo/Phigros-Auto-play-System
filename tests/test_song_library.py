@@ -65,6 +65,48 @@ class SongLibraryTests(unittest.TestCase):
     def build(self):
         return MODULE.build_library(self.plan, [self.extra], self.output)
 
+    def capacity_job(self, capacity, peak=None):
+        peak = capacity if peak is None else peak
+        job = self.job("capacity-" + str(capacity) + "-" + str(peak), 0)
+        profile = json.loads(Path(job["profile"]["file"]).read_text(encoding="utf-8"))
+        profile.update(contact_capacity=capacity, expected_peak=peak,
+                       expected_contacts=peak, expected_steps=2 * peak)
+        job.update(peak=peak, notes=peak, events=2 * peak,
+                   profile=self.file("capacity-test.profile", profile))
+        return job
+
+    def test_six_through_ten_follow_pinned_profile_capacity(self):
+        for capacity in range(6, 11):
+            with self.subTest(capacity=capacity):
+                checked = MODULE.checked_job(self.capacity_job(capacity))
+                self.assertEqual(checked["peak"], capacity)
+                self.assertEqual(checked["contact_capacity"], capacity)
+
+    def test_capacity_above_ten_and_understated_profile_rejected(self):
+        for capacity, peak in ((11, 11), (5, 6), (5, 10), (10, 11)):
+            with self.subTest(capacity=capacity, peak=peak), self.assertRaises(ValueError):
+                MODULE.checked_job(self.capacity_job(capacity, peak))
+        for capacity in (0, True, 5.0, "10", None):
+            with self.subTest(capacity=capacity), self.assertRaisesRegex(ValueError, "capacity"):
+                MODULE.checked_job(self.capacity_job(capacity, 1))
+
+    def test_absent_profile_capacity_keeps_four_contact_legacy_default(self):
+        job = self.capacity_job(4)
+        profile = json.loads(Path(job["profile"]["file"]).read_text(encoding="utf-8"))
+        del profile["contact_capacity"]
+        job["profile"] = self.file("legacy-four.profile", profile)
+        self.assertEqual(MODULE.checked_job(job)["contact_capacity"], 4)
+        profile.update(expected_peak=5, expected_contacts=5, expected_steps=10)
+        job.update(peak=5, notes=5, events=10, profile=self.file("legacy-five.profile", profile))
+        with self.assertRaisesRegex(ValueError, "resource bounds"):
+            MODULE.checked_job(job)
+
+    def test_job_cannot_overclaim_the_profile_capacity(self):
+        job = self.capacity_job(5)
+        job["contact_capacity"] = 10
+        with self.assertRaisesRegex(ValueError, "differs from pinned profile"):
+            MODULE.checked_job(job)
+
     def test_warmup_is_separate_and_native_twenty_remain_in_order(self):
         original = self.plan.read_bytes()
         value = self.build()

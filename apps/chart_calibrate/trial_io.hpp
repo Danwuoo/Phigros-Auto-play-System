@@ -1,4 +1,5 @@
 #pragma once
+#include "bounded_journal.hpp"
 #include "pas/adb.hpp"
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -34,7 +35,22 @@ inline void write_json(const std::filesystem::path& path,const Json& value) {
 inline std::string adb_text(const std::filesystem::path& adb,const std::string& serial,
                             const std::vector<std::string>& tail,int timeout=2000) {
     std::vector<std::string> args{"-s",serial};args.insert(args.end(),tail.begin(),tail.end());
-    const auto raw=pas::adb_call(adb,args,timeout);return {raw.begin(),raw.end()};
+    try {const auto raw=pas::adb_call(adb,args,timeout);return {raw.begin(),raw.end()};}
+    catch(const std::exception& error) {
+        // Retained adb_call intentionally discards child stderr. Give this
+        // app's fixed requests a useful stage without exposing arbitrary args.
+        const auto starts=[&](std::initializer_list<const char*> words){
+            if(tail.size()<words.size())return false;
+            std::size_t i=0;for(const auto* word:words)if(tail[i++]!=word)return false;return true;
+        };
+        const char* stage=starts({"emu","avd","name"})?"AVD identity":
+            starts({"shell","dumpsys","package"})?"installed game package":
+            starts({"shell","cat","/proc/sys/kernel/random/boot_id"})?"current boot identity":
+            starts({"shell","dumpsys","window"})?"game foreground":
+            starts({"shell","sha256sum"})?"kernel observer executable":
+            starts({"shell","/data/local/tmp/pas-evdev-slots-1bee0d00ef2e69bb"})?"read-only kernel observer snapshot":"device request";
+        throw std::runtime_error(std::string("ADB ")+stage+": "+error.what());
+    }
 }
 inline std::string field(const std::string& text,const std::string& key) {
     const auto position=text.find(key);if(position==std::string::npos)return {};
@@ -46,24 +62,6 @@ inline void foreground(const std::filesystem::path& adb,const std::string& seria
     if(begin==std::string::npos||report.substr(begin,report.find('\n',begin)-begin).find("com.PigeonGames.Phigros/")==std::string::npos)
         throw std::runtime_error("Phigros is not foreground");
 }
-struct Journal {
-    std::ofstream stream;std::string pending;std::size_t rows=0,bytes=0;
-    explicit Journal(const std::filesystem::path& path):stream(path,std::ios::binary) {
-        if(!stream)throw std::runtime_error("journal open failed");
-        pending.reserve(65536);
-    }
-    void append(const Json& row) {
-        const auto text=row.dump()+"\n";
-        if(rows>=16000||text.size()>64*1024*1024-bytes)throw std::runtime_error("journal budget");
-        pending+=text;
-        ++rows;bytes+=text.size();
-    }
-    void flush_after_cleanup() {
-        stream<<pending;stream.flush();
-        if(!stream)throw std::runtime_error("journal write failed after cleanup");
-        pending.clear();
-    }
-};
 inline Json receipt_json(const pas::TouchReceipt& value) {
     return {{"event","rpc"},{"phase",static_cast<int>(value.command.phase)},
         {"id",value.command.contact_id},{"x",value.command.x},{"y",value.command.y},

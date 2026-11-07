@@ -1,10 +1,12 @@
 #include "experimental_runtime.hpp"
+#include "desktop_runtime_policy.hpp"
 #include "flick_policy.hpp"
 #include "catalog_source.hpp"
 #include "../chart_calibrate/trial_io.hpp"
 #include "../chart_calibrate/opening_detector.hpp"
 #include "first_note_trigger.hpp"
 #include "adaptive_first_note.hpp"
+#include "adaptive_opening_detector.hpp"
 #include "hud_glyph_evidence.hpp"
 #include "result_label_evidence.hpp"
 #include "learned_hud_redundancy.hpp"
@@ -16,6 +18,11 @@
 #define NOMINMAX
 #include <windows.h>
 #include "owner_wait.hpp"
+#include "streaming_touch.hpp"
+#include "fresh_capture_recovery.hpp"
+#include "numeric_hud_observer.hpp"
+#include "native_head_snapshot.hpp"
+#include "tap_dwell_policy.hpp"
 #include <atomic>
 #include <charconv>
 #include <future>
@@ -41,15 +48,119 @@ constexpr const char* source_id="live-grpc-phigros-whole-song";
 constexpr const char* dlyrotz_hud_reference_sha="397431f2749bb38a845c6845977fc5c37cb2de51a79ff273dd3417ef2756e09a";
 constexpr const char* usage=
     "chart_experiment run SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song [--experimental-hud-reference CLEAN.rgb]\n"
-    "chart_experiment prepare-adaptive CHART.json SOURCE-MANIFEST.json NEW_DIR [--normal-projection-pixels LIMIT] [--drag-duration-ms MS] [--input-inset-pixels PIXELS] [--contact-capacity N] [--hud-policy calibrated-title-v1|shared-in-prefix-score-v1|shared-in-cell-score-v2|shared-in-subpixel-prefix-score-v3] [--import-policy POLICY_ID] [--tight-projection-speed-bounds 0|1] [--flick-lead-ms 1..100] [--flick-travel-ms 2..200] [--flick-distance-pixels 1..240] [--flick-release-ms 1..100] [--flick-path-policy dynamic-line-v1|judgment-anchored-straight-v1]\n"
-    "chart_experiment run-adaptive SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song --song-profile PROFILE.json --experimental-hud-reference CLEAN.rgb [--capacity-evidence EVIDENCE.json]\n"
+    "chart_experiment prepare-adaptive CHART.json SOURCE-MANIFEST.json NEW_DIR [--normal-projection-pixels LIMIT] [--drag-duration-ms MS] [--input-inset-pixels PIXELS] [--contact-capacity 1..10] [--hud-policy POLICY_ID] [--import-policy POLICY_ID] [--tight-projection-speed-bounds 0|1] [--flick-lead-ms 1..100] [--flick-travel-ms 2..200] [--flick-distance-pixels 1..240] [--flick-release-ms 1..100] "
+    "[--flick-path-policy dynamic-line-v1|judgment-anchored-straight-v1|judgment-anchored-screen-fit-v1|judgment-anchored-diagonal-snap-v1|judgment-anchored-diagonal-sampled-v2] [--hold-tail-policy full-pose-v1|phira-tail-grace-candidate-v1] "
+    "[--offscreen-policy bounded-normal-intersection-candidate-v1|bounded-judgment-rectangle-candidate-v1] [--max-tangent-error-pixels 0..151.2] "
+    "[--max-prejudge-ms 0..30] [--advance-above-drags 0|1] [--above-drag-source-ids JSON_ARRAY] [--advance-below-drags 0|1] [--below-drag-source-ids JSON_ARRAY] [--max-hold-gap-ms 0..20] [--coincident-flick-delay-ms 0|32] [--outlined-drag-heads 0|1] [--native-head-appearance-witness 0|1] [--tap-duration-ms 32|64|96]\n"
+    "chart_experiment run-adaptive SERIAL AVD CHART.json STATE.json KERNEL.json NEW_DIR PHASE_MS --experimental-whole-song --song-profile PROFILE.json --experimental-hud-reference CLEAN.rgb [--capacity-evidence EVIDENCE.json | --capacity-policy configured-ten-contact-v1]\n"
     "Use check or check-adaptive in place of run/run-adaptive for offline preflight only (no device discovery/input/output directory).\n"
     "Optional final suffix: --image-retention none|result|diagnostic (default none; result saves only a confirmed result PNG).\n"
+    "Optional last suffix after image retention: --numeric-hud-observer v1 (bounded numeric metadata only; diagnostic, no input permission).\n"
+    "Optional last suffix after numeric HUD: --native-head-snapshot-window-ms BEGIN:END (adaptive only; <=13000ms window inside0..600000ms; metadata shadow only).\n"
+    "Optional final suffix after native head shadow: --experimental-clock-probe-ms CUT:DELTA (static empty-contact-gap suffix offset; unqualified controlled timing experiment).\n"
     "Dlyrotz IN13 complete 584-note / 5669-step candidate, capacity 4, D250 projection.\n"
     "Default experimental Tap/Drag dwell32ms; Flick lead30ms/travel60ms/distance60px/release24ms. Adaptive Flick lead must be less than travel; HUD timeline at50ms.\n"
     "Begin on its manually verified song-selection or result screen, then start/retry once. Phase -100..100 ms; -80 is the current hypothesis.\n"
     "Arrival-only rate=1 experiment; no qualified SyncLease/input latency/audio. Esc/Ctrl+C/NEW_DIR/STOP cancels.\n";
 std::atomic<bool> interrupted{false};
+ClockProbe clock_probe_suffix(int& argc,char** argv) {
+    if(argc<3||std::string_view(argv[argc-2])!="--experimental-clock-probe-ms")return {};
+    const auto probe=parse_clock_probe_ms(argv[argc-1]);argc-=2;return probe;
+}
+Json clock_probe_proof_json(const ClockProbeProof& proof) {
+    return {{"schema","pas.static-clock-probe-proof.v1"},{"enabled",proof.enabled},
+        {"policy","experimental-static-piecewise-offset-probe-v1"},{"cut_song_ns",proof.cut_ns},{"suffix_delta_ns",proof.delta_ns},
+        {"prefix_events",proof.prefix_events},{"suffix_events",proof.suffix_events},
+        {"prefix_contacts",proof.prefix_contacts},{"suffix_contacts",proof.suffix_contacts},
+        {"original_first_song_ns",proof.original_first_ns},{"original_last_song_ns",proof.original_last_ns},
+        {"mapped_first_relative_ns",proof.mapped_first_ns},{"mapped_last_relative_ns",proof.mapped_last_ns},
+        {"source_compiled_sha256",proof.source_cfp},{"map_identity",proof.map_identity},
+        {"map_identity_sha256",chart_text_sha256(proof.map_identity)},
+        {"source_chart_and_compiled_plan_unchanged",true},{"contact_internal_durations_unchanged",true},
+        {"original_order_and_ties_preserved",true},{"mapping_fixed_before_READY",true},
+        {"timing_qualified",false},{"source_pixel_age_qualified",false},{"global_rate_one_claim",false},
+        {"scope","due=original_visual_origin+phase+original_song_ns+explicit_suffix_offset; no observation/clock updater; head-shadow prediction remains original received-origin; all input guards unchanged"}};
+}
+bool numeric_hud_suffix(int& argc,char** argv) {
+    if(argc<3||std::string_view(argv[argc-2])!="--numeric-hud-observer")return false;
+    if(std::string_view(argv[argc-1])!="v1")throw std::invalid_argument("numeric HUD observer requires explicit v1");
+    argc-=2;return true;
+}
+std::optional<NativeHeadSnapshotWindow> native_head_snapshot_suffix(int& argc,char** argv) {
+    if(argc<3||std::string_view(argv[argc-2])!="--native-head-snapshot-window-ms")return std::nullopt;
+    const std::string_view text=argv[argc-1];const auto colon=text.find(':');
+    if(colon==std::string_view::npos||colon==0||colon+1==text.size()||text.find(':',colon+1)!=std::string_view::npos)
+        throw std::invalid_argument("native head snapshot requires explicit BEGIN:END milliseconds");
+    const auto integer=[](std::string_view part){Ns value=0;const auto parsed=std::from_chars(part.data(),part.data()+part.size(),value);
+        if(parsed.ec!=std::errc{}||parsed.ptr!=part.data()+part.size()||value<0||value>600000)
+            throw std::invalid_argument("native head snapshot milliseconds must be0..600000");return value;};
+    const auto begin=integer(text.substr(0,colon)),end=integer(text.substr(colon+1));
+    if(end<=begin||end-begin>13000||(end-begin)%5!=0)
+        throw std::invalid_argument("native head snapshot window must be positive, <=13000ms and a multiple of5ms");
+    argc-=2;return NativeHeadSnapshotWindow{begin*ms,end*ms,5*ms};
+}
+struct NativeHeadShadowRow {
+    std::uint64_t sequence=0,epoch=0,generation=0,geometry_version=0;
+    std::optional<std::uint64_t> source_sequence;
+    std::optional<Ns> source_timestamp_us;
+    Ns received_ns=-1,processing_begin_ns=-1,processed_ns=-1,predicted_song_ns=-1,next_wake_at_admission_ns=-1;
+    bool detector_valid=false;
+    std::string detector_reason,error;
+    std::size_t center_count=0;
+    std::array<VisualCenter,8> centers{};
+    NativeHeadSnapshotMatch matches;
+};
+struct NativeHeadShadowRows {
+    std::vector<NativeHeadShadowRow> rows;
+    std::size_t size=0,near_due_skips=0,cadence_skips=0,capacity_skips=0;
+    Ns last_received_ns=-1,origin_host_ns=-1;
+    bool disabled=false;
+    NativeHeadShadowRows(){rows.resize(64);for(auto& row:rows){row.detector_reason.reserve(256);row.error.reserve(256);
+        for(auto& center:row.centers)center.id.reserve(64);}}
+};
+const char* native_head_visibility_name(NativeHeadVisibility value) {
+    switch(value){case NativeHeadVisibility::full_visible:return "full_visible";
+    case NativeHeadVisibility::partial:return "partial";case NativeHeadVisibility::clipped:return "clipped";}
+    return "invalid_visibility";
+}
+Json native_head_shadow_model_json(const NativeHeadSnapshotModel& model,std::size_t caller_pose_events) {
+    return {{"model_id","native-head-grid-shadow-v1"},{"chart_sha256",model.chart_sha256()},
+        {"window_ns",{model.window().begin_ns,model.window().end_ns}},{"grid_step_ns",model.window().step_ns},
+        {"samples",model.samples().size()},{"sources",model.sources().size()},{"precompute_work",model.precompute_work()},
+        {"owned_storage_bytes_estimate",model.storage_bytes_estimate()},{"owned_storage_limit_bytes",8*1024*1024},
+        {"caller_pose_events",caller_pose_events},{"caller_pose_storage_scope","temporary evaluator copies original validated pose tracks before READY; excluded from model owned8MiB bound"},
+        {"detector_roi_xywh",{0,30,1280,540}},{"full_visibility_center_roi_xyxy",{95,125,1184,474}},
+        {"local_search_radius_ns",250*ms},{"match_radius_pixels",3},{"maximum_rows",64},{"minimum_receipt_spacing_ns",250*ms},
+        {"maximum_match_work",262144},{"maximum_assignments_per_row",4096},{"pixels_retained",false},
+        {"diagnostic_only",true},{"input_permission",false},{"source_pixel_age_qualified",false}};
+}
+Json native_head_shadow_row_json(const NativeHeadShadowRow& row,const NativeHeadSnapshotModel& model) {
+    Json centers=Json::array(),grids=Json::array(),assignments=Json::array();
+    for(std::size_t i=0;i<row.center_count;++i)centers.push_back({{"id",row.centers[i].id},{"x",row.centers[i].x},{"y",row.centers[i].y}});
+    const auto& matched=row.matches;
+    for(std::size_t i=0;i<matched.matched_grid_count;++i){const auto index=matched.matched_grid_indices[i];const auto& sample=model.samples().at(index);
+        Json heads=Json::array();for(std::size_t h=0;h<sample.head_count;++h){const auto& head=sample.heads[h];
+            heads.push_back({{"source_index",head.source_index},{"x",head.x},{"y",head.y},{"visibility",native_head_visibility_name(head.visibility)}});}
+        grids.push_back({{"grid_index",index},{"song_ns",sample.song_ns},{"future_sources",sample.future_sources},
+            {"outside_center_roi",sample.outside_center_roi},{"possible_heads",sample.possible_heads},
+            {"full_visible_heads",sample.full_visible_heads},{"partial_heads",sample.partial_heads},{"clipped_heads",sample.clipped_heads},
+            {"coincident_sources",sample.coincident_sources},{"heads",std::move(heads)}});}
+    for(const auto& assignment:matched.assignments){Json sources=Json::array();
+        for(std::size_t i=0;i<assignment.observed_count;++i)sources.push_back(assignment.source_indices[i]);
+        assignments.push_back({{"grid_index",assignment.grid_index},{"source_indices_in_observation_order",std::move(sources)},
+            {"partial_match",assignment.partial_match}});}
+    return {{"sequence",row.sequence},{"epoch",row.epoch},{"generation",row.generation},{"geometry_version",row.geometry_version},
+        {"source_sequence",row.source_sequence?Json(*row.source_sequence):Json(nullptr)},
+        {"source_timestamp_us",row.source_timestamp_us?Json(*row.source_timestamp_us):Json(nullptr)},
+        {"received_ns",row.received_ns},{"processing_begin_ns",row.processing_begin_ns},{"processed_ns",row.processed_ns},
+        {"fixed_origin_prediction_song_ns",row.predicted_song_ns},{"next_wake_at_admission_ns",row.next_wake_at_admission_ns},
+        {"detector_valid",row.detector_valid},{"detector_reason",row.detector_reason},{"detected_centers",std::move(centers)},
+        {"valid",matched.valid},{"reason",matched.reason},{"error",row.error},{"work",matched.work},
+        {"budget_exhausted",matched.budget_exhausted},{"source_ambiguity",matched.source_ambiguity},
+        {"local_domain_clipped",matched.local_domain_clipped},{"local_sampled_domain_ns",{matched.local_begin_ns,matched.local_end_ns}},
+        {"examined_samples",matched.examined_samples},{"incomplete_samples",matched.incomplete_samples},
+        {"unobservable_samples",matched.unobservable_samples},{"matched_grids",std::move(grids)},{"assignments",std::move(assignments)}};
+}
 BOOL WINAPI on_stop(DWORD signal) {
     if(signal==CTRL_C_EVENT||signal==CTRL_BREAK_EVENT||signal==CTRL_CLOSE_EVENT||signal==CTRL_SHUTDOWN_EVENT) {
         interrupted=true;return TRUE;
@@ -101,7 +212,7 @@ Json candidate_assignments(const std::vector<VisualTimeCandidate>& values) {
     return result;
 }
 Json runtime_json(const ExperimentalRuntimeStatus& s) {
-    return {{"state",static_cast<int>(s.state)},{"reason",s.reason},{"selected_contacts",s.selected_contacts},
+    Json result={{"state",static_cast<int>(s.state)},{"reason",s.reason},{"selected_contacts",s.selected_contacts},
         {"selected_steps",s.selected_steps},{"completed_contacts",s.completed_contacts},{"pending",s.pending},
         {"active",s.active},{"peak_contacts",s.peak_contacts},{"cache_sha256",s.full_cache_sha256},
         {"plan_end_song_ns",s.plan_end_song_ns},{"projected_contacts",s.projected_contacts},
@@ -109,10 +220,43 @@ Json runtime_json(const ExperimentalRuntimeStatus& s) {
         {"max_step_lateness_ns",s.max_step_lateness_ns},{"overdue_tail_revisions_deferred",s.overdue_tail_revisions_deferred},
         {"contact_capacity",s.contact_capacity},
         {"max_normal_projection_reference_pixels",s.max_normal_projection_reference_pixels},
+        {"max_tangent_error_reference_pixels",s.max_tangent_error_reference_pixels},
         {"anchor_domain_ns",{s.anchor_domain_begin_ns,s.anchor_domain_end_ns}},
         {"selected_projection_free",s.selected_projection_free},{"requires_calibration",s.full_plan_requires_calibration},
         {"release_required",s.release_required},{"release_rpc_ok",s.release_rpc_ok},{"release",release_json(s.release)},
         {"timing_qualified",s.timing_qualified},{"source_pixel_age_qualified",s.source_pixel_age_qualified}};
+    if(s.clock_probe.enabled) {
+        result["rate_one_hypothesis"]=false;result["timing_model"]="static_piecewise_offset_probe_unqualified";
+        result["experimental_clock_probe"]={{"cut_song_ns",s.clock_probe.cut_ns},{"suffix_delta_ns",s.clock_probe.delta_ns}};
+    }
+    return result;
+}
+Json owner_wait_json(const OwnerWaitDiagnostics& d) {
+    const auto sample=[](const OwnerWaitSample& s){return Json{{"sequence",s.sequence},{"kind",owner_wait_kind_name(s.kind)},
+        {"begin_ns",s.begin_ns},{"target_ns",s.target_ns},{"input_due_ns",s.input_due_ns},{"planned_return_ns",s.planned_return_ns},{"end_ns",s.end_ns},
+        {"timer_begin_ns",s.timer_begin_ns},{"timer_end_ns",s.timer_end_ns},{"timer_request_ns",s.timer_request_ns},
+        {"spin_begin_ns",s.spin_begin_ns},{"spin_end_ns",s.spin_end_ns},{"spin_iterations",s.spin_iterations},
+        {"elapsed_ns",s.elapsed_ns},{"overshoot_ns",s.overshoot_ns},{"input_lateness_ns",s.input_lateness_ns},
+        {"critical_deadline",s.critical_deadline},{"spin_iteration_limit_reached",s.spin_iteration_limit_reached},{"failed",s.failed}};};
+    const auto& p=d.platform;Json recent=Json::array();
+    for(std::size_t i=0;i<d.recent_size;++i)recent.push_back(sample(d.recent[(d.recent_next+d.recent.size()-d.recent_size+i)%d.recent.size()]));
+    return {{"count",d.waits},{"calls",d.calls},{"timer_count",d.timer_count},{"spin_count",d.spin_count},{"no_wait_count",d.no_wait_count},
+        {"failed_count",d.failed_count},{"spin_iterations",d.spin_iterations},{"spin_elapsed_ns",d.spin_elapsed_ns},
+        {"spin_iteration_limit_reached",d.spin_iteration_limit_reached},{"maximum_elapsed_ns",d.maximum_elapsed_ns},
+        {"maximum_overshoot_ns",d.maximum_overshoot_ns},{"last",sample(d.last)},{"last_timer",sample(d.last_timer)},
+        {"last_spin",sample(d.last_spin)},{"maximum_elapsed",sample(d.maximum_elapsed)},{"maximum_overshoot",sample(d.maximum_overshoot)},
+        {"recent",std::move(recent)},
+        {"options",{{"poll_limit_ns",d.options.poll_limit_ns},{"critical_guard_ns",d.options.critical_guard_ns},
+            {"spin_slice_ns",d.options.spin_slice_ns},{"spin_iteration_limit",d.options.spin_iteration_limit}}},
+        {"platform",{{"owner_thread_id",p.owner_thread_id},{"original_thread_priority",p.original_thread_priority},
+            {"applied_thread_priority",p.applied_thread_priority},{"priority_requested",p.priority_requested},{"priority_changed",p.priority_changed},
+            {"priority_restore_attempted",p.priority_restore_attempted},{"priority_restored",p.priority_restored},
+            {"priority_error",p.priority_error},{"priority_restore_error",p.priority_restore_error},{"high_resolution_timer",p.high_resolution_timer},
+            {"timer_resolution_requested",p.timer_resolution_requested},{"timer_resolution_active",p.timer_resolution_active},
+            {"timer_resolution_ms",p.timer_resolution_ms},{"timer_resolution_begin_result",p.timer_resolution_begin_result},
+            {"timer_resolution_load_error",p.timer_resolution_load_error},{"timer_resolution_end_attempted",p.timer_resolution_end_attempted},
+            {"timer_resolution_end_result",p.timer_resolution_end_result},{"finished",p.finished}}},
+        {"scope","actual owner waits with bounded timing history; OS preemption remains possible; input lateness and actual UI guards are unchanged"}};
 }
 Json hud_glyph_json(const HudGlyphMetrics& m) {
     return {{"foreground_error",m.foreground_mean_error},{"white_fraction",m.foreground_white_fraction},
@@ -147,6 +291,25 @@ Json compiled_json(const CompiledContactPlan& plan) {
         {"flick_release_ns",plan.metadata.options.flick_release_ns},{"flick_distance_reference_pixels",plan.metadata.options.flick_distance_reference_pixels},
         {"flick_path_policy",flick_path_policy_name(plan.metadata.options.flick_path_policy)},
         {"calibration_id",plan.metadata.options.calibration_id},{"input_geometry",{1280,720,0}}};
+    if(plan.metadata.source_format_version!=3)result["source_format_version"]=plan.metadata.source_format_version;
+    if(plan.metadata.options.hold_tail_policy!=HoldTailPolicy::full_pose_v1){
+        result["hold_tail_policy_id"]=hold_tail_policy_name(plan.metadata.options.hold_tail_policy);
+    }
+    if(!plan.metadata.judgment_policy_provenance.empty())result["judgment_policy_provenance"]=plan.metadata.judgment_policy_provenance;
+    if(plan.metadata.options.max_prejudge_ns>0){
+        result["max_prejudge_ns"]=plan.metadata.options.max_prejudge_ns;
+        result["advance_above_drags"]=plan.metadata.options.advance_above_drags;
+    }
+    if(plan.metadata.options.max_hold_reacquire_gap_ns>0)result["max_hold_reacquire_gap_ns"]=plan.metadata.options.max_hold_reacquire_gap_ns;
+    if(plan.metadata.options.coincident_flick_delay_ns>0)result["coincident_flick_delay_ns"]=plan.metadata.options.coincident_flick_delay_ns;
+    if(plan.metadata.options.advance_below_drags)result["advance_below_drags"]=true;
+    if(!plan.metadata.options.below_drag_source_ids.empty())result["below_drag_source_ids"]=plan.metadata.options.below_drag_source_ids;
+    if(!plan.metadata.options.above_drag_source_ids.empty())result["above_drag_source_ids"]=plan.metadata.options.above_drag_source_ids;
+    const bool rectangle=plan.metadata.options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
+    if(rectangle){
+        result["offscreen_policy_id"]=offscreen_policy_name(plan.metadata.options.offscreen_policy);
+        result["max_tangent_error_reference_pixels"]=plan.metadata.options.max_tangent_error_reference_pixels;
+    }
     for(const auto& contact:plan.memory.contacts) {
         Json steps=Json::array();
         for(const auto& step:contact.steps)steps.push_back({{"song_ns",step.song_ns},{"phase",static_cast<int>(step.phase)},
@@ -155,14 +318,45 @@ Json compiled_json(const CompiledContactPlan& plan) {
     }
     for(const auto& owner:plan.ownership) {
         Json spans=Json::array();
-        for(const auto& span:owner.normal_projection_spans)spans.push_back({{"begin_ns",span.begin_ns},{"end_ns",span.end_ns},
+        for(const auto& span:owner.normal_projection_spans){spans.push_back({{"begin_ns",span.begin_ns},{"end_ns",span.end_ns},
             {"correction_lower_reference_pixels",span.correction_lower_reference_pixels},
             {"correction_upper_reference_pixels",span.correction_upper_reference_pixels},
             {"possible_edge_mask",span.possible_edge_mask},{"speed_bound_input_pixels_per_ns",span.speed_bound_input_pixels_per_ns}});
+            if(rectangle){
+                spans.back()["tangent_correction_lower_reference_pixels"]=span.tangent_correction_lower_reference_pixels;
+                spans.back()["tangent_correction_upper_reference_pixels"]=span.tangent_correction_upper_reference_pixels;
+                if(span.judgment_domain_gap)spans.back()["judgment_domain_gap"]=true;
+            }
+        }
         result["ownership"].push_back({{"source_note_id",owner.source_note_id},{"json_pointer",owner.source_json_pointer},
             {"contact_id",owner.contact_id},{"judgment_ns",owner.judgment_ns},{"kind",static_cast<int>(owner.kind)},
             {"projection_min_reference_pixels",owner.projection_min_reference_pixels},
             {"projection_max_reference_pixels",owner.projection_max_reference_pixels},{"normal_projection_spans",std::move(spans)}});
+        if(owner.hold_tracking_end_ns>=0)result["ownership"].back()["hold_tracking_end_ns"]=owner.hold_tracking_end_ns;
+        if(owner.flick_anchor_reference)result["ownership"].back()["flick_anchor_reference"]={owner.flick_anchor_reference->x,owner.flick_anchor_reference->y};
+        if(owner.flick_direction_reference)result["ownership"].back()["flick_direction_reference"]={owner.flick_direction_reference->x,owner.flick_direction_reference->y};
+        if(owner.flick_discrete_path){
+            const auto& path=*owner.flick_discrete_path;
+            result["ownership"].back()["flick_discrete_path"]={{"model_id",path.model_id},
+                {"bend_reference",{path.bend_reference.x,path.bend_reference.y}},{"end_reference",{path.end_reference.x,path.end_reference.y}},
+                {"bend_ns",path.bend_ns},{"end_ns",path.end_ns},
+                {"endpoint_distance_reference_pixels",path.endpoint_distance_reference_pixels},
+                {"polyline_length_reference_pixels",path.polyline_length_reference_pixels},
+                {"max_jump_input_pixels",path.max_jump_input_pixels},{"move_count",path.move_count}};
+            if(path.middle){
+                result["ownership"].back()["flick_discrete_path"]["middle_reference"]={path.middle->reference.x,path.middle->reference.y};
+                result["ownership"].back()["flick_discrete_path"]["middle_ns"]=path.middle->song_ns;
+            }
+        }
+        if(owner.dispatch_judgment_ns>=0)result["ownership"].back()["dispatch_judgment_ns"]=owner.dispatch_judgment_ns;
+        if(rectangle){
+            result["ownership"].back()["tangent_projection_min_reference_pixels"]=owner.tangent_projection_min_reference_pixels;
+            result["ownership"].back()["tangent_projection_max_reference_pixels"]=owner.tangent_projection_max_reference_pixels;
+            if(plan.metadata.options.max_hold_reacquire_gap_ns>0){
+                result["ownership"].back()["gap_tangent_projection_min_reference_pixels"]=owner.gap_tangent_projection_min_reference_pixels;
+                result["ownership"].back()["gap_tangent_projection_max_reference_pixels"]=owner.gap_tangent_projection_max_reference_pixels;
+            }
+        }
     }
     return result;
 }
@@ -207,6 +401,12 @@ Json save_hud_timeline(const std::filesystem::path& output,const HudTimeline& ti
 // All actual transport receipts survive an exception in the scheduler tick.
 // No JSON serialization or disk I/O happens while a command is being injected.
 // UP and release-all remain available when the permission guard fails.
+struct TouchMessageAdmission {
+    pas::TouchCommand command{};Ns check_begin_ns=0,check_return_ns=0,received_ns=0;
+    std::uint64_t sequence=0,epoch=0,generation=0,geometry_version=0;
+    bool allowed=false,playing=false,source_valid=false,foreground_healthy=false,source_matches=false;
+    std::string reason;
+};
 class GuardedTouch final:public pas::TouchBackend {
     pas::TouchBackend& backend_;const pas::Clock& clock_;
     std::size_t receipt_budget_;
@@ -216,7 +416,7 @@ public:
     std::size_t down_attempts=0,up_attempts=0;
     GuardedTouch(pas::TouchBackend& backend,const pas::Clock& clock,std::size_t receipt_budget)
       :backend_(backend),clock_(clock),receipt_budget_(receipt_budget) {
-        if(receipt_budget<1||receipt_budget>16000)throw std::invalid_argument("transport receipt budget 1..16000");
+        if(receipt_budget<1||receipt_budget>65536)throw std::invalid_argument("transport receipt budget 1..65536");
         receipts.reserve(receipt_budget);
     }
     pas::TouchReceipt inject(const pas::TouchCommand& command) override {
@@ -243,16 +443,89 @@ struct SongProfile {
     std::string import_policy="phigros-v3-strict-v1";
     bool tight_projection_speed_bounds=false;
     FlickParameters flick;
+    HoldTailPolicy hold_tail_policy=HoldTailPolicy::full_pose_v1;
+    OffscreenPolicy offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+    double max_tangent_error_reference_pixels=0;
+    Ns max_prejudge_ns=0,max_hold_reacquire_gap_ns=0;
+    bool advance_above_drags=false;
     std::string installed_source_manifest;
     std::size_t notes=584,steps=dlyrotz_expected_steps;
+    std::size_t runtime_step_budget=16000;
+    std::size_t compiler_diagnostic_budget=2048;
     int peak=4,capacity=4,projection_pixels=250,input_inset_pixels=0;
-    Ns first_down=12*second,drag_duration_ns=32*ms;
+    Ns first_down=12*second,drag_duration_ns=32*ms,tap_duration_ns=tap_dwell_default_ns;
+    Ns runtime_duration_limit_ns=180*second;
+    Ns coincident_flick_delay_ns=0;
+    bool advance_below_drags=false;
+    std::vector<std::string> below_drag_source_ids;
+    std::vector<std::string> above_drag_source_ids;
+    bool outlined_drag_heads=false;
+    bool native_head_appearance_witness=false;
 };
+Json native_head_appearance_witness_json() {
+    return {{"policy_id","native-certified-head-pop-in-v1"},
+        {"source_rule","original chart, note identities and required native earliest group retained; constrain native head appearance without rewriting or deleting source notes"},
+        {"scope","explicit arrival-only rendering hypothesis; not a qualified sample clock, render age or game touch callback"}};
+}
+OffscreenPolicy song_offscreen_policy(std::string_view name) {
+    for(const auto policy:{OffscreenPolicy::reject,OffscreenPolicy::bounded_normal_candidate,
+        OffscreenPolicy::bounded_normal_intersection_candidate_v1,OffscreenPolicy::bounded_judgment_rectangle_candidate_v1})
+        if(name==offscreen_policy_name(policy))return policy;
+    throw std::invalid_argument("unknown explicit offscreen judgment policy");
+}
+double tangent_ceiling(const Json& value) {
+    if(!value.is_number())throw std::invalid_argument("tangent error ceiling must be a finite number");
+    const auto bound=value.get<double>();
+    if(!std::isfinite(bound)||bound<0||bound>151.2)throw std::invalid_argument("tangent error ceiling must be finite 0..151.2 reference pixels");
+    return bound;
+}
+std::vector<std::string> below_drag_source_ids(const Json& value) {
+    if(!value.is_array()||value.size()>2048)throw std::invalid_argument("below_drag_source_ids requires at most2048 exact source IDs");
+    std::vector<std::string> result;result.reserve(value.size());
+    for(const auto& item:value){
+        if(!item.is_string())throw std::invalid_argument("below_drag_source_ids requires strings");
+        auto id=item.get<std::string>();
+        if(id.empty()||id.size()>512)throw std::invalid_argument("below Drag source ID length outside1..512");
+        result.push_back(std::move(id));
+    }
+    std::sort(result.begin(),result.end());
+    if(std::adjacent_find(result.begin(),result.end())!=result.end())throw std::invalid_argument("duplicate below Drag source ID");
+    return result;
+}
+std::vector<std::string> above_drag_source_ids(const Json& value) {
+    if(!value.is_array()||value.size()>2048)throw std::invalid_argument("above_drag_source_ids requires at most2048 exact source IDs");
+    std::vector<std::string> result;result.reserve(value.size());
+    for(const auto& item:value){
+        if(!item.is_string())throw std::invalid_argument("above_drag_source_ids requires strings");
+        auto id=item.get<std::string>();
+        if(id.empty()||id.size()>512)throw std::invalid_argument("above Drag source ID length outside1..512");
+        result.push_back(std::move(id));
+    }
+    std::sort(result.begin(),result.end());
+    if(std::adjacent_find(result.begin(),result.end())!=result.end())throw std::invalid_argument("duplicate above Drag source ID");
+    return result;
+}
+Ns coincident_flick_delay(const Json& value) {
+    const auto delay=kernel_integer(value,0,32*ms);
+    if(delay!=0&&delay!=32*ms)throw std::invalid_argument("coincident Flick delay must be exactly 0 or 32ms");
+    return delay;
+}
 ContactCompileOptions song_compile_options(const SongProfile& song) {
     ContactCompileOptions options;options.max_contacts=song.capacity;
-    options.tap_duration_ns=32*ms;options.drag_duration_ns=song.drag_duration_ns;
+    options.max_diagnostics=song.compiler_diagnostic_budget;
+    validate_tap_dwell_ns(song.tap_duration_ns);
+    options.tap_duration_ns=song.tap_duration_ns;options.drag_duration_ns=song.drag_duration_ns;
     apply_flick_parameters(options,song.flick);
-    options.offscreen_policy=OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+    options.hold_tail_policy=song.hold_tail_policy;
+    options.offscreen_policy=song.offscreen_policy;
+    options.max_tangent_error_reference_pixels=song.max_tangent_error_reference_pixels;
+    options.max_prejudge_ns=song.max_prejudge_ns;
+    options.advance_above_drags=song.advance_above_drags;
+    options.max_hold_reacquire_gap_ns=song.max_hold_reacquire_gap_ns;
+    options.coincident_flick_delay_ns=song.coincident_flick_delay_ns;
+    options.advance_below_drags=song.advance_below_drags;
+    options.below_drag_source_ids=song.below_drag_source_ids;
+    options.above_drag_source_ids=song.above_drag_source_ids;
     options.max_normal_projection_reference_pixels=song.projection_pixels;options.calibration_id=song.calibration_id;
     options.normal_projection_inset_reference_pixels=song.input_inset_pixels;
     options.tight_projection_speed_bounds=song.tight_projection_speed_bounds;
@@ -264,10 +537,18 @@ ImportOptions song_import_options(const SongProfile& song) {
         options.policy=PhigrosImportPolicy::strict_v3;
     else if(song.import_policy==phigros_import_policy_id(PhigrosImportPolicy::source_priority_constant_empty_candidate_v1))
         options.policy=PhigrosImportPolicy::source_priority_constant_empty_candidate_v1;
+    else if(song.import_policy==phigros_import_policy_id(PhigrosImportPolicy::native_v1_source_priority_constant_empty_candidate_v1))
+        options.policy=PhigrosImportPolicy::native_v1_source_priority_constant_empty_candidate_v1;
+    else if(song.import_policy==phigros_import_policy_id(PhigrosImportPolicy::native_v1_source_priority_empty_interval_candidate_v1))
+        options.policy=PhigrosImportPolicy::native_v1_source_priority_empty_interval_candidate_v1;
     else throw std::invalid_argument("unsupported explicit Phigros import policy");
     return options;
 }
-Json import_json(const SemanticChart& chart) {
+Json import_json(const SemanticChart& chart,bool include_anomalies=true) {
+    if(!include_anomalies)return {{"policy_id",chart.import_policy_id},{"interpretation_unqualified",chart.import_interpretation_unqualified},
+        {"source_chart_sha256",chart.source.chart_sha256},{"source_format_version",chart.source_format_version},
+        {"normalized_format_version",chart.format_version},{"anomaly_count",chart.import_anomalies.size()},
+        {"anomalies_included",false},{"detail_scope","Full anomaly inventory remains in the immutable preparation report.json"}};
     Json anomalies=Json::array();
     for(const auto& anomaly:chart.import_anomalies) {
         Json evaluated=Json::array();
@@ -282,7 +563,8 @@ Json import_json(const SemanticChart& chart) {
             {"evaluated_segments",std::move(evaluated)}});
     }
     return {{"policy_id",chart.import_policy_id},{"interpretation_unqualified",chart.import_interpretation_unqualified},
-        {"source_chart_sha256",chart.source.chart_sha256},{"anomalies",std::move(anomalies)}};
+        {"source_chart_sha256",chart.source.chart_sha256},{"source_format_version",chart.source_format_version},
+        {"normalized_format_version",chart.format_version},{"anomalies",std::move(anomalies)}};
 }
 Identity song_identity(const SongProfile& song) {
     return {Game::phigros,song.song,song.difficulty,song.revision,song.chart_sha,song.audio_sha,
@@ -300,6 +582,30 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
     song.import_policy=value.value("import_policy_id",std::string("phigros-v3-strict-v1"));
     song.tight_projection_speed_bounds=value.value("tight_projection_speed_bounds",false);
     song.flick=flick_parameters_from_profile(value);
+    song.tap_duration_ns=tap_dwell_ns_from_profile(value);
+    song.offscreen_policy=song_offscreen_policy(value.value("offscreen_policy_id",std::string("bounded-normal-intersection-candidate-v1")));
+    song.max_tangent_error_reference_pixels=tangent_ceiling(value.value("max_tangent_error_reference_pixels",Json(0)));
+    song.max_prejudge_ns=kernel_integer(value.value("max_prejudge_ns",Json(0)),0,30*ms);
+    song.max_hold_reacquire_gap_ns=kernel_integer(value.value("max_hold_reacquire_gap_ns",Json(0)),0,20*ms);
+    song.coincident_flick_delay_ns=coincident_flick_delay(value.value("coincident_flick_delay_ns",Json(0)));
+    const auto above_drags=value.value("advance_above_drags",Json(false));
+    if(!above_drags.is_boolean())throw std::invalid_argument("advance_above_drags must be an explicit boolean");
+    song.advance_above_drags=above_drags.get<bool>();
+    const auto below_drags=value.value("advance_below_drags",Json(false));
+    if(!below_drags.is_boolean())throw std::invalid_argument("advance_below_drags must be an explicit boolean");
+    song.advance_below_drags=below_drags.get<bool>();
+    song.below_drag_source_ids=below_drag_source_ids(value.value("below_drag_source_ids",Json::array()));
+    song.above_drag_source_ids=above_drag_source_ids(value.value("above_drag_source_ids",Json::array()));
+    const auto outlined=value.value("outlined_drag_heads",Json(false));
+    if(!outlined.is_boolean())throw std::invalid_argument("outlined_drag_heads must be an explicit boolean");
+    song.outlined_drag_heads=outlined.get<bool>();
+    const auto appearance=value.value("native_head_appearance_witness",Json(false));
+    if(!appearance.is_boolean())throw std::invalid_argument("native_head_appearance_witness must be an explicit boolean");
+    song.native_head_appearance_witness=appearance.get<bool>();
+    const auto hold_policy=value.value("hold_tail_policy_id",std::string("full-pose-v1"));
+    if(hold_policy=="full-pose-v1")song.hold_tail_policy=HoldTailPolicy::full_pose_v1;
+    else if(hold_policy=="phira-tail-grace-candidate-v1")song.hold_tail_policy=HoldTailPolicy::phira_tail_grace_candidate_v1;
+    else throw std::invalid_argument("unknown Hold tail policy");
     (void)song_import_options(song);
     if(!valid_adaptive_hud_policy(song.hud_policy))
         throw std::invalid_argument("unsupported explicit adaptive HUD policy");
@@ -319,18 +625,22 @@ SongProfile load_song_profile(const std::filesystem::path& path) {
         if(name->empty()||name->size()>256||name->find_first_of("\r\n\0",0,3)!=std::string::npos)
             throw std::invalid_argument("invalid song profile label");
     if(song.revision!="4.0.1/157")throw std::invalid_argument("song revision unsupported");
-    song.notes=static_cast<std::size_t>(kernel_integer(value.at("expected_contacts"),1,16000/2));
-    song.steps=static_cast<std::size_t>(kernel_integer(value.at("expected_steps"),1,16000));
-    song.capacity=static_cast<int>(kernel_integer(value.value("contact_capacity",Json(4)),1,5));
+    song.runtime_step_budget=static_cast<std::size_t>(kernel_integer(value.value("runtime_step_budget",Json(16000)),2,65536));
+    song.compiler_diagnostic_budget=static_cast<std::size_t>(kernel_integer(value.value("compiler_diagnostic_budget",Json(2048)),1,65536));
+    song.runtime_duration_limit_ns=kernel_integer(value.value("runtime_duration_limit_ns",Json(180*second)),second,600*second);
+    song.notes=static_cast<std::size_t>(kernel_integer(value.at("expected_contacts"),1,song.runtime_step_budget/2));
+    song.steps=static_cast<std::size_t>(kernel_integer(value.at("expected_steps"),1,song.runtime_step_budget));
+    song.capacity=static_cast<int>(kernel_integer(value.value("contact_capacity",Json(4)),1,10));
     song.peak=static_cast<int>(kernel_integer(value.at("expected_peak"),1,song.capacity));
     song.first_down=kernel_integer(value.at("first_down_song_ns"),0,180*second-1);
-    song.projection_pixels=static_cast<int>(kernel_integer(value.at("max_normal_projection_reference_pixels"),1,10000));
+    song.projection_pixels=static_cast<int>(kernel_integer(value.at("max_normal_projection_reference_pixels"),1,1000000));
     song.drag_duration_ns=kernel_integer(value.at("drag_duration_ns"),ms,32*ms);
     song.input_inset_pixels=static_cast<int>(kernel_integer(value.value("input_inset_pixels",Json(0)),0,100));
     return song;
 }
 int prepare_adaptive(int argc,char** argv) {
-    if(argc<5||argc>29||(argc-5)%2)throw std::invalid_argument(usage);
+    // At most25 distinct option/value pairs, including both source filters.
+    if(argc<5||argc>55||(argc-5)%2)throw std::invalid_argument(usage);
     const std::filesystem::path output=std::filesystem::absolute(utf8_path(argv[4]));
     if(std::filesystem::exists(output))throw std::invalid_argument("output must not exist");
     const auto source_bytes=read_utf8_file(argv[3],1024*1024);const auto source=Json::parse(source_bytes);
@@ -354,16 +664,39 @@ int prepare_adaptive(int argc,char** argv) {
         if(option=="--flick-path-policy") {
             (void)set_flick_option(song.flick,option,Json(argv[index+1]));continue;
         }
+        if(option=="--hold-tail-policy") {
+            const std::string policy=argv[index+1];
+            if(policy=="full-pose-v1")song.hold_tail_policy=HoldTailPolicy::full_pose_v1;
+            else if(policy=="phira-tail-grace-candidate-v1")song.hold_tail_policy=HoldTailPolicy::phira_tail_grace_candidate_v1;
+            else throw std::invalid_argument("unknown explicit Hold tail policy");
+            continue;
+        }
+        if(option=="--offscreen-policy") {song.offscreen_policy=song_offscreen_policy(argv[index+1]);continue;}
         const auto value=Json::parse(argv[index+1]);
         if(set_flick_option(song.flick,option,value))continue;
-        if(option=="--normal-projection-pixels")song.projection_pixels=static_cast<int>(kernel_integer(value,1,10000));
+        if(option=="--normal-projection-pixels")song.projection_pixels=static_cast<int>(kernel_integer(value,1,1000000));
+        else if(option=="--tap-duration-ms")song.tap_duration_ns=tap_dwell_ns_from_ms_json(value);
         else if(option=="--drag-duration-ms")song.drag_duration_ns=kernel_integer(value,1,32)*ms;
         else if(option=="--input-inset-pixels")song.input_inset_pixels=static_cast<int>(kernel_integer(value,0,100));
-        else if(option=="--contact-capacity")song.capacity=static_cast<int>(kernel_integer(value,1,5));
+        else if(option=="--contact-capacity")song.capacity=static_cast<int>(kernel_integer(value,1,10));
         else if(option=="--tight-projection-speed-bounds")song.tight_projection_speed_bounds=kernel_integer(value,0,1)!=0;
+        else if(option=="--max-tangent-error-pixels")song.max_tangent_error_reference_pixels=tangent_ceiling(value);
+        else if(option=="--max-prejudge-ms")song.max_prejudge_ns=kernel_integer(value,0,30)*ms;
+        else if(option=="--advance-above-drags")song.advance_above_drags=kernel_integer(value,0,1)!=0;
+        else if(option=="--advance-below-drags")song.advance_below_drags=kernel_integer(value,0,1)!=0;
+        else if(option=="--below-drag-source-ids")song.below_drag_source_ids=below_drag_source_ids(value);
+        else if(option=="--above-drag-source-ids")song.above_drag_source_ids=above_drag_source_ids(value);
+        else if(option=="--outlined-drag-heads")song.outlined_drag_heads=kernel_integer(value,0,1)!=0;
+        else if(option=="--native-head-appearance-witness")song.native_head_appearance_witness=kernel_integer(value,0,1)!=0;
+        else if(option=="--max-hold-gap-ms")song.max_hold_reacquire_gap_ns=kernel_integer(value,0,20)*ms;
+        else if(option=="--coincident-flick-delay-ms")song.coincident_flick_delay_ns=coincident_flick_delay(Json(kernel_integer(value,0,32)*ms));
         else throw std::invalid_argument(usage);
     }
     validate_flick_parameters(song.flick);
+    if(song.flick.path_policy==FlickPathPolicy::judgment_anchored_screen_fit_v1||
+       song.hold_tail_policy==HoldTailPolicy::phira_tail_grace_candidate_v1||
+       song.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1||song.max_prejudge_ns>0||song.max_hold_reacquire_gap_ns>0||song.coincident_flick_delay_ns>0)
+        song.compiler_diagnostic_budget=65536;
     song.chart_sha=source.at("chart").at("sha256");
     const bool installed_catalog=source.value("schema",std::string())=="pas.installed-catalog-song-source.v1";
     song.audio_sha=installed_catalog ? installed_catalog_audio_identity(source) : source.at("decoded_audio").at("sha256").get<std::string>();
@@ -382,7 +715,9 @@ int prepare_adaptive(int argc,char** argv) {
     // precedes even an earlier native Tap. Bind the visual model to the exact
     // compiled first DOWN, not a second hard-coded 30ms assumption.
     const auto first_down=compiled.plan&&!compiled.plan->events.empty()?compiled.plan->events.front().song_ns:-1;
-    AdaptiveFirstNoteTrigger opening(chart,-80*ms,first_down);const auto& description=opening.description();
+    AdaptiveFirstNoteTrigger opening(chart,-80*ms,first_down,song.outlined_drag_heads,song.native_head_appearance_witness);const auto& description=opening.description();
+    if(description.native_head_appearance_witness!=song.native_head_appearance_witness)
+        throw std::runtime_error("native head appearance witness differs from explicit preparation policy");
     Json report={{"schema","pas.adaptive-song-prepare.v1"},{"offline_only",true},{"device_discovery",false},
         {"chart_sha256",song.chart_sha},{"audio_sha256",song.audio_sha},{"source_manifest_sha256",chart_text_sha256(source_bytes)},
         {"import",import_json(chart)},{"source_notes",chart.note_count},{"compiled",compiled.plan.has_value()},{"diagnostics",Json::array()},
@@ -390,18 +725,41 @@ int prepare_adaptive(int argc,char** argv) {
         {"opening",{{"note_time_ns",description.note_time_ns},{"first_down_ns",description.first_down_ns},{"note_kind",static_cast<int>(description.note_kind)},
             {"note_id",description.note_id},{"note_json_pointer",description.note_json_pointer},
             {"model_id",description.model_id},{"model_sha256",description.model_sha256},
-            {"detector_policy_id",description.detector_policy_id},{"earliest_note_ids",description.earliest_note_ids},
+            {"detector_policy_id",description.detector_policy_id},{"includes_hold_heads",description.includes_hold_heads},
+            {"includes_classic_flick_heads",description.includes_classic_flick_heads},
+            {"includes_extended_drag_heads",description.includes_extended_drag_heads},
+            {"includes_mixed_earliest_heads",description.includes_mixed_earliest_heads},
+            {"required_center_families",description.required_center_families},
+            {"earliest_note_ids",description.earliest_note_ids},
             {"retained_equations",description.retained_equations},{"provably_invisible_equations",description.provably_invisible_equations}}}};
+    if(song.coincident_flick_delay_ns>0)report["coincident_flick_delay_ns"]=song.coincident_flick_delay_ns;
+    if(song.advance_below_drags)report["advance_below_drags"]=true;
+    if(!song.below_drag_source_ids.empty())report["below_drag_source_ids"]=song.below_drag_source_ids;
+    if(!song.above_drag_source_ids.empty())report["above_drag_source_ids"]=song.above_drag_source_ids;
+    if(song.outlined_drag_heads){report["outlined_drag_heads"]=true;report["opening"]["includes_outlined_drag_heads"]=true;}
+    if(song.native_head_appearance_witness) {
+        report["native_head_appearance_witness"]=true;
+        report["native_head_appearance_witness_policy"]=native_head_appearance_witness_json();
+        report["opening"]["native_head_appearance_witness"]=true;
+    }
+    store_tap_dwell_profile_fields(report,song.tap_duration_ns);
     for(const auto& diagnostic:compiled.diagnostics)report["diagnostics"].push_back({
         {"severity",static_cast<int>(diagnostic.severity)},{"code",diagnostic.code},{"message",diagnostic.message},
         {"source_note_id",diagnostic.source_note_id},{"song_ns",diagnostic.song_ns}});
     if(!std::filesystem::create_directory(output))throw std::runtime_error("output creation failed");
     if(compiled.plan) {
         const auto& plan=*compiled.plan;
-        const bool bounded=plan.memory.contacts.size()==chart.note_count&&plan.total_steps<=16000&&
+        song.runtime_step_budget=65536;
+        if(!plan.events.empty())song.runtime_duration_limit_ns=std::max(180*second,(plan.events.back().song_ns/second+31)*second);
+        const bool bounded=plan.memory.contacts.size()==chart.note_count&&plan.total_steps<=song.runtime_step_budget&&
             plan.peak_contacts<=song.capacity&&!plan.events.empty()&&plan.events.front().phase==Phase::down&&
-            plan.events.front().song_ns==description.first_down_ns&&plan.events.back().song_ns<180*second;
+            plan.events.front().song_ns==description.first_down_ns&&song.runtime_duration_limit_ns<=600*second&&
+            plan.events.back().song_ns<song.runtime_duration_limit_ns;
         report["within_live_experiment_bounds"]=bounded;
+        report["runtime_step_budget"]=song.runtime_step_budget;report["runtime_duration_limit_ns"]=song.runtime_duration_limit_ns;
+        report["hold_tail_policy_id"]=hold_tail_policy_name(song.hold_tail_policy);
+        if(!plan.metadata.judgment_policy_provenance.empty())report["judgment_policy_provenance"]=plan.metadata.judgment_policy_provenance;
+        if(!plan.events.empty())report["last_up_song_ns"]=plan.events.back().song_ns;
         write_json(output/"compiled-plan.json",compiled_json(plan));
         if(bounded) {
             Json profile={{"schema","pas.adaptive-song-profile.v1"},{"song_id",song.song},{"difficulty",song.difficulty},
@@ -412,10 +770,26 @@ int prepare_adaptive(int argc,char** argv) {
                 {"drag_duration_ns",song.drag_duration_ns},{"max_normal_projection_reference_pixels",song.projection_pixels},
                 {"input_inset_pixels",song.input_inset_pixels},
                 {"contact_capacity",song.capacity},{"hud_policy",song.hud_policy},
+                {"runtime_step_budget",song.runtime_step_budget},{"runtime_duration_limit_ns",song.runtime_duration_limit_ns},
+                {"compiler_diagnostic_budget",song.compiler_diagnostic_budget},
+                {"last_up_song_ns",plan.events.back().song_ns},
+                {"hold_tail_policy_id",hold_tail_policy_name(song.hold_tail_policy)},
+                {"offscreen_policy_id",offscreen_policy_name(song.offscreen_policy)},
+                {"max_tangent_error_reference_pixels",song.max_tangent_error_reference_pixels},
+                {"max_prejudge_ns",song.max_prejudge_ns},{"advance_above_drags",song.advance_above_drags},
+                {"max_hold_reacquire_gap_ns",song.max_hold_reacquire_gap_ns},
                 {"import_policy_id",song.import_policy},{"tight_projection_speed_bounds",song.tight_projection_speed_bounds},
                 {"opening_model_sha256",description.model_sha256},{"source_manifest_sha256",chart_text_sha256(source_bytes)},
                 {"gameplay_qualified",false},{"scope","per-song offline candidate; actual opening/HUD and full gameplay remain to be observed"}};
             profile.update(flick_parameters_json(song.flick));
+            store_tap_dwell_profile_fields(profile,song.tap_duration_ns);
+            if(song.coincident_flick_delay_ns>0)profile["coincident_flick_delay_ns"]=song.coincident_flick_delay_ns;
+            if(song.advance_below_drags)profile["advance_below_drags"]=true;
+            if(!song.below_drag_source_ids.empty())profile["below_drag_source_ids"]=song.below_drag_source_ids;
+            if(!song.above_drag_source_ids.empty())profile["above_drag_source_ids"]=song.above_drag_source_ids;
+            if(song.outlined_drag_heads)profile["outlined_drag_heads"]=true;
+            if(song.native_head_appearance_witness)profile["native_head_appearance_witness"]=true;
+            if(!plan.metadata.judgment_policy_provenance.empty())profile["judgment_policy_provenance"]=plan.metadata.judgment_policy_provenance;
             if(installed_catalog) {
                 const auto path=std::filesystem::absolute(utf8_path(argv[3])).u8string();
                 profile["installed_source_manifest"]=std::string(path.begin(),path.end());
@@ -424,13 +798,19 @@ int prepare_adaptive(int argc,char** argv) {
             write_json(output/"song-profile.json",profile);
         }
     }
-    write_json(output/"report.json",report);std::cout<<report.dump(2)<<'\n';
+    write_json(output/"report.json",report);
+    // A large source-anomaly inventory belongs in the report file. Printing it
+    // again must not make a successful preparation exceed the caller's pipe cap.
+    std::cout<<Json({{"schema","pas.adaptive-song-prepare-summary.v1"},{"report_file","report.json"},
+        {"compiled",compiled.plan.has_value()},{"source_notes",chart.note_count},
+        {"within_live_experiment_bounds",report.value("within_live_experiment_bounds",false)},
+        {"diagnostic_count",compiled.diagnostics.size()}}).dump(2)<<'\n';
     return compiled.plan&&report.value("within_live_experiment_bounds",false)?0:2;
 }
 Json checked_capacity_evidence(const std::filesystem::path& path,const Json& kernel,int capacity) {
     const auto bytes=read_utf8_file(path,65536);auto proof=Json::parse(bytes);
     if(proof.at("schema")!="pas.fixture-capacity-evidence.v1"||proof.at("boot_id")!=kernel.at("boot_id")||
-       kernel_integer(proof.at("capacity"),capacity,5)<capacity||proof.at("normal_path_valid")!=true||proof.at("final_zero")!=true||
+       kernel_integer(proof.at("capacity"),capacity,10)<capacity||proof.at("normal_path_valid")!=true||proof.at("final_zero")!=true||
        proof.at("fixture_apk_sha256")!="d4ae58c7f9561b4262791a1711e2688db233ec054b10400e88b5e60fccfc34a2")
         throw std::invalid_argument("capacity evidence does not qualify this boot/capacity");
     const auto artifact=[&](const Json& value) {
@@ -447,10 +827,10 @@ Json checked_capacity_evidence(const std::filesystem::path& path,const Json& ker
     const auto retrieval=Json::parse(artifact(proof.at("retrieval_report")));
     const auto& native=analysis.at("android");const auto& geometry=host.at("geometry");
     if(analysis.at("status")!="passed_observed_fixture_path"||!analysis.at("failures").empty()||!analysis.at("incomplete_reasons").empty()||
-       kernel_integer(native.at("peak_contacts"),capacity,5)<capacity||native.at("stream_complete")!=true||
+       kernel_integer(native.at("peak_contacts"),capacity,10)<capacity||native.at("stream_complete")!=true||
        native.at("expected_path_verified")!=true||native.at("pointer_lifecycle_valid")!=true||native.at("final_zero_observed")!=true||
        host.at("serial")!="emulator-5554"||host.at("avd")!="phigros"||host.at("path_verified")!=true||host.at("zero_active_observed")!=true||
-       kernel_integer(host.at("capacity_requested"),capacity,5)<capacity||
+       kernel_integer(host.at("capacity_requested"),capacity,10)<capacity||
        geometry.at("touch_width")!=720||geometry.at("touch_height")!=1280||geometry.at("touch_rotation")!=90||
        retrieval.at("status")!="retrieved_closed_snapshot"||retrieval.at("association_stable")!=true||
        retrieval.at("identity_before").at("boot_id")!=kernel.at("boot_id")||retrieval.at("identity_after").at("boot_id")!=kernel.at("boot_id"))
@@ -458,17 +838,29 @@ Json checked_capacity_evidence(const std::filesystem::path& path,const Json& ker
     proof["evidence_sha256"]=chart_text_sha256(bytes);return proof;
 }
 int run(int argc,char** argv) {
+    const auto clock_probe=clock_probe_suffix(argc,argv);
+    const auto native_head_window=native_head_snapshot_suffix(argc,argv);
+    const bool numeric_hud_enabled=numeric_hud_suffix(argc,argv);
     const auto image_retention=image_retention_suffix(argc,argv);
     const bool diagnostic_images=retain_diagnostic_images(image_retention);
     const std::string command=argc>1?argv[1]:"";
     const bool adaptive=command=="run-adaptive"||command=="check-adaptive";
     const bool offline=command=="check"||command=="check-adaptive";
+    if(native_head_window&&(!adaptive||!numeric_hud_enabled))
+        throw std::invalid_argument("native head snapshot requires run/check-adaptive and --numeric-hud-observer v1");
+    if(native_head_window&&diagnostic_images)
+        throw std::invalid_argument("native head snapshot shadow requires none or result image retention");
+    if(clock_probe.enabled&&(!adaptive||!numeric_hud_enabled||!native_head_window))
+        throw std::invalid_argument("clock probe requires adaptive mode, numeric HUD and native head snapshot diagnostics");
     if((!adaptive&&(argc!=10&&argc!=12))||(adaptive&&argc!=14&&argc!=16)||
        (!adaptive&&command!="run"&&command!="check")||std::string(argv[9])!="--experimental-whole-song"||
        (!adaptive&&argc==12&&std::string(argv[10])!="--experimental-hud-reference")||
        (adaptive&&(std::string(argv[10])!="--song-profile"||std::string(argv[12])!="--experimental-hud-reference"))||
-       (argc==16&&std::string(argv[14])!="--capacity-evidence"))
+       (argc==16&&std::string(argv[14])!="--capacity-evidence"&&std::string(argv[14])!="--capacity-policy"))
         throw std::invalid_argument(usage);
+    const auto capacity_policy=argc==16&&std::string(argv[14])=="--capacity-policy"?
+        parse_capacity_policy(argv[15]):CapacityPolicy::current_boot_fixture;
+    const bool configured_capacity=capacity_policy==CapacityPolicy::configured_ten_contact;
     const auto song=adaptive?load_song_profile(utf8_path(argv[11])):SongProfile{};
     const auto& chart_sha=song.chart_sha;const auto& audio_sha=song.audio_sha;
     const auto& expected_plan_sha=song.plan_sha;const auto expected_steps=song.steps;
@@ -489,6 +881,14 @@ int run(int argc,char** argv) {
        compiled.plan->events.empty()||compiled.plan->events.front().song_ns!=first_song_ns||compiled.plan->events.front().phase!=Phase::down)
         throw std::runtime_error("fresh whole-chart compile differs from pinned song profile and fingerprint");
     const auto full_plan_json=compiled_json(*compiled.plan);
+    std::optional<ClockProbeProof> clock_probe_proof;
+    if(clock_probe.enabled) {
+        clock_probe_proof=validate_clock_probe(*compiled.plan,clock_probe);
+        if(!clock_probe_proof->prefix_events||!clock_probe_proof->suffix_events||
+           clock_probe_proof->mapped_first_ns!=clock_probe_proof->original_first_ns||
+           clock_probe_proof->mapped_last_ns>=song.runtime_duration_limit_ns)
+            throw std::invalid_argument("clock probe must retain a first-input prefix and suffix inside the existing duration budget");
+    }
     for(const auto& event:compiled.plan->events) {
         const auto point=pixel_point(event.point,1280,720);const auto inset=song.input_inset_pixels;
         if(point.first<inset||point.first>=1280-inset||point.second<inset||point.second>=720-inset)
@@ -496,13 +896,34 @@ int run(int argc,char** argv) {
     }
     std::unique_ptr<AdaptiveFirstNoteTrigger> adaptive_trigger;
     if(adaptive) {
-        adaptive_trigger=std::make_unique<AdaptiveFirstNoteTrigger>(chart,static_cast<Ns>(phase)*ms,first_song_ns);
+        adaptive_trigger=std::make_unique<AdaptiveFirstNoteTrigger>(chart,static_cast<Ns>(phase)*ms,first_song_ns,song.outlined_drag_heads,song.native_head_appearance_witness);
+        if(adaptive_trigger->description().native_head_appearance_witness!=song.native_head_appearance_witness)
+            throw std::invalid_argument("native head appearance witness differs from explicit song profile");
         if(adaptive_trigger->description().model_sha256!=song.opening_sha||
            adaptive_trigger->description().first_down_ns!=first_song_ns)
             throw std::invalid_argument("fresh adaptive opening differs from prepared song profile");
     }
+    std::unique_ptr<NativeHeadSnapshotModel> native_head_model;
+    std::size_t native_head_caller_pose_events=0;
+    if(native_head_window) {
+        for(const auto& line:chart.lines){const auto count=line.move_events.size()+line.rotate_events.size()+line.opacity_events.size();
+            if(count>500000-native_head_caller_pose_events)throw std::invalid_argument("native head snapshot original pose event budget");
+            native_head_caller_pose_events+=count;}
+        // Original tracks are copied only during opt-in precomputation. This
+        // transient evaluator is explicitly outside the model-owned8MiB cap.
+        const PhigrosPoseEvaluator original_poses(chart);
+        native_head_model=std::make_unique<NativeHeadSnapshotModel>(chart,original_poses,*native_head_window);
+    }
     ExperimentalRuntimeOptions runtime_options;runtime_options.ui_receipt_max_age_ns=ui_watchdog;
     runtime_options.contact_capacity=song.capacity;
+    runtime_options.max_song_steps=song.runtime_step_budget;
+    runtime_options.song_duration_limit_ns=song.runtime_duration_limit_ns;
+    runtime_options.max_tangent_error_reference_pixels=song.max_tangent_error_reference_pixels;
+    runtime_options.max_prejudge_ns=song.max_prejudge_ns;
+    runtime_options.max_hold_reacquire_gap_ns=song.max_hold_reacquire_gap_ns;
+    runtime_options.max_coincident_flick_delay_ns=song.coincident_flick_delay_ns;
+    runtime_options.allow_advance_below_drags=song.advance_below_drags;
+    runtime_options.clock_probe=clock_probe;
     if(adaptive) {
         runtime_options.max_normal_projection_reference_pixels=song.projection_pixels;
         runtime_options.anchor_domain_begin_ns=adaptive_trigger->description().begin_ns;
@@ -511,6 +932,10 @@ int run(int argc,char** argv) {
     auto prepared_runtime=ExperimentalContactRuntime::prepare(*compiled.plan,runtime_options);
     const auto screen_calibration=load_screen_state_calibration(utf8_path(argv[5]));
     const auto state_dataset=Json::parse(read_utf8_file(argv[5],1024*1024));
+    auto capture_profile=state_dataset.value("capture_geometry_profile",std::string("landscape-r1"));
+    const auto calibration_capture_profile=capture_profile;
+    if(capture_profile!="landscape-r1"&&capture_profile!="sensor-portrait-r0-ccw90")
+        throw std::invalid_argument("unsupported explicit capture geometry profile");
     const bool shared_hud=adaptive&&song.hud_policy!="calibrated-title-v1";
     const auto shared_policy=song.hud_policy=="shared-difficulty-subpixel-prefix-score-v4"?HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4:
         song.hud_policy=="shared-in-subpixel-prefix-score-v3"?HudGlyphPolicy::shared_in_subpixel_prefix_score_v3:
@@ -557,44 +982,104 @@ int run(int argc,char** argv) {
             PixelRegion{25,672,adaptive?160:105,29},
             shared_hud?shared_policy:HudGlyphPolicy::calibrated_title_v1);
     }
-    const auto kernel_bytes=read_utf8_file(argv[6],8192);const Json kernel_profile=Json::parse(kernel_bytes);
-    const Json capacity_evidence=argc==16?checked_capacity_evidence(utf8_path(argv[15]),kernel_profile,song.capacity):Json(nullptr);
-    if(!offline&&song.capacity>4&&capacity_evidence.is_null())
-        throw std::invalid_argument("five-contact live run requires independently checked current-boot capacity evidence");
+    const auto kernel_bytes=read_utf8_file(argv[6],8192);Json kernel_profile=Json::parse(kernel_bytes);
+    const Json capacity_evidence=argc==16&&!configured_capacity&&std::string(argv[14])=="--capacity-evidence"?
+        checked_capacity_evidence(utf8_path(argv[15]),kernel_profile,song.capacity):Json(nullptr);
+    const bool proof_required=capacity_evidence_required(capacity_policy,song.capacity);
+    if(!offline&&proof_required&&capacity_evidence.is_null())
+        throw std::invalid_argument("live capacity above four contacts requires independently checked current-boot capacity evidence");
     const std::filesystem::path output=std::filesystem::absolute(utf8_path(argv[7]));
     if(std::filesystem::exists(output))throw std::runtime_error("output must not exist");
     if(offline) {
-        std::cout<<Json({{"status","offline_preflight_passed"},{"device_discovery",false},{"input_enabled",false},
+        Json preflight={{"status","offline_preflight_passed"},{"device_discovery",false},{"input_enabled",false},
             {"executable_sha256",binary_sha()},{"song_id",song.song},{"difficulty",song.difficulty},
-            {"chart_sha256",chart_sha},{"import",import_json(chart)},{"compiled_sha256",compiled.plan->metadata.cache_sha256},
+            {"chart_sha256",chart_sha},{"import",import_json(chart,false)},{"compiled_sha256",compiled.plan->metadata.cache_sha256},
             {"contacts",expected_notes},{"events",expected_steps},{"peak",expected_peak},
+            {"contact_capacity",song.capacity},{"capacity_evidence_required_for_live",proof_required},
+            {"runtime_step_budget",song.runtime_step_budget},{"runtime_duration_limit_ns",song.runtime_duration_limit_ns},
+            {"last_up_song_ns",compiled.plan->events.back().song_ns},
+            {"tap_duration_ns",song.tap_duration_ns},{"tap_duration_is_default",song.tap_duration_ns==tap_dwell_default_ns},
+            {"capacity_policy",capacity_policy_name(capacity_policy)},{"capacity_test_performed",false},
+            {"capture_geometry_profile",capture_profile},
             {"flick_parameters",flick_parameters_json(song.flick)},
+            {"hold_tail_policy_id",hold_tail_policy_name(song.hold_tail_policy)},
+            {"judgment_policy_provenance",compiled.plan->metadata.judgment_policy_provenance},
+            {"offscreen_policy_id",offscreen_policy_name(song.offscreen_policy)},
+            {"max_tangent_error_reference_pixels",song.max_tangent_error_reference_pixels},
+            {"max_prejudge_ns",song.max_prejudge_ns},{"advance_above_drags",song.advance_above_drags},
+            {"coincident_flick_delay_ns",song.coincident_flick_delay_ns},
+            {"advance_below_drags",song.advance_below_drags},
+            {"below_drag_source_ids",song.below_drag_source_ids},
+            {"outlined_drag_heads",song.outlined_drag_heads},
+            {"max_hold_reacquire_gap_ns",song.max_hold_reacquire_gap_ns},
             {"image_retention",image_retention_name(image_retention)},
             {"screen_calibration_sha256",screen_calibration.dataset_sha256},{"HUD_reference_sha256",hud_reference_sha},{"HUD_policy",song.hud_policy},{"result_label_policy",result_policy},{"playing_redundancy_policy",redundancy_policy},
             {"kernel_profile_sha256",chart_text_sha256(kernel_bytes)},
-            {"scope","offline artifact/config validation; current boot, foreground, contacts and game judgment NOT RUN"}}).dump(2)<<'\n';
+            {"scope","offline artifact/config validation; current boot, foreground, contacts and game judgment NOT RUN"}};
+        if(native_head_model){preflight["native_head_snapshot_shadow_requested"]=true;
+            preflight["native_head_snapshot_shadow"]=native_head_shadow_model_json(*native_head_model,native_head_caller_pose_events);}
+        if(song.tap_duration_ns!=tap_dwell_default_ns)preflight["tap_dwell_candidate"]=tap_dwell_candidate_json<Json>(song.tap_duration_ns);
+        if(clock_probe_proof)preflight["experimental_clock_probe"]=clock_probe_proof_json(*clock_probe_proof);
+        if(!song.above_drag_source_ids.empty())preflight["above_drag_source_ids"]=song.above_drag_source_ids;
+        if(song.native_head_appearance_witness) {
+            preflight["native_head_appearance_witness"]=true;
+            preflight["native_head_appearance_witness_policy"]=native_head_appearance_witness_json();
+        }
+        std::cout<<preflight.dump(2)<<'\n';
         return 0;
     }
     const auto adb=pas::find_adb();const auto avd_text=adb_text(adb,serial,{"emu","avd","name"});
     if(avd_text.substr(0,avd_text.find_first_of("\r\n"))!=avd)throw std::runtime_error("AVD mismatch");
     const auto package_report=adb_text(adb,serial,{"shell","dumpsys","package","com.PigeonGames.Phigros"});
     if(field(package_report,"versionName=")!="4.0.1"||field(package_report,"versionCode=")!="157")throw std::runtime_error("game version mismatch");
+    const auto kernel_template_boot_id=kernel_profile.at("boot_id");
+    if(configured_capacity) {
+        kernel_profile["boot_id"]=configured_runtime_boot_id(adb_text(adb,serial,{"shell","cat","/proc/sys/kernel/random/boot_id"}));
+        kernel_profile["binding_scope"]="current session boot identity for release monitoring; no repeated capacity test";
+    }
+    std::unique_ptr<NumericHudObserver> numeric_hud;
+    if(numeric_hud_enabled)numeric_hud=std::make_unique<NumericHudObserver>(expected_notes);
+    std::unique_ptr<NativeHeadShadowRows> native_head_rows;
+    if(native_head_model)native_head_rows=std::make_unique<NativeHeadShadowRows>();
     HudTimeline hud_timeline(HudTimeline::maximum_samples,diagnostic_images); // Metadata only by default; preallocate before READY.
     pas::HostClock clock;OwnerWait owner_wait(clock);
     const auto foreground_begin=clock.now_ns();foreground(adb,serial);const auto foreground_end=clock.now_ns();
     manual_ui::ForegroundWatch foreground_watch([adb,serial]{foreground(adb,serial);},[clock]{return clock.now_ns();},{foreground_begin,foreground_end});
-    KernelSlots kernel(adb,serial,kernel_profile,clock);const auto initial_kernel=kernel.query();
-    if(initial_kernel.at("active_count")!=0||initial_kernel.at("causal_host_interval_valid")!=true)throw std::runtime_error("initial kernel state not fresh zero");
+    KernelSlots kernel(adb,serial,kernel_profile,clock);
+    Json initial_kernel,initial_kernel_attempts=Json::array();
+    // A slow read of zero contacts grants no permission. Before READY only,
+    // allow two new read-only attempts; every accepted reply retains the same
+    // 250ms causal bound. An active contact or query error fails immediately.
+    for(unsigned attempt=0;attempt<3;++attempt){
+        initial_kernel=kernel.query();initial_kernel_attempts.push_back(initial_kernel);
+        if(initial_kernel.at("active_count")!=0)throw std::runtime_error("initial kernel state is not zero");
+        if(initial_kernel.at("causal_host_interval_valid")==true)break;
+    }
+    if(initial_kernel.at("causal_host_interval_valid")!=true)throw std::runtime_error("initial kernel state not fresh zero after bounded read-only retries");
     const auto endpoint=pas::discover_endpoint(serial);
+    if(configured_capacity) {
+        pas::CaptureOptions probe_options;
+        pas::GrpcCapture probe(clock,endpoint,probe_options);
+        const auto geometry_frame=probe.snapshot(std::chrono::milliseconds(1000));
+        capture_profile=capture_profile_for_geometry(geometry_frame.width,geometry_frame.height,geometry_frame.source_rotation);
+    }
     pas::CaptureOptions options;options.width=1280;options.height=720;options.source_rotation=1;options.max_relative_lag_ns=250*ms;
+    if(capture_profile=="sensor-portrait-r0-ccw90") {
+        options.width=720;options.height=1280;options.source_rotation=0;options.rotate_ccw=true;
+    }
     pas::GrpcCapture capture(clock,endpoint,options);
+    // A separate unary client can obtain an actual current screenshot when
+    // streamScreenshot emits no framebuffer-change notification. No owner
+    // thread waits for this RPC, and no old image is assigned a new receipt.
+    pas::GrpcCapture recovery_capture(clock,endpoint,options);
+    (void)recovery_capture.snapshot(std::chrono::milliseconds(1000));
     const auto initial_frame=capture.snapshot(std::chrono::milliseconds(1000));
     const auto initial_state=classify_screen_state({initial_frame.width,initial_frame.height,initial_frame.stride,initial_frame.rgb},screen_calibration.templates).state;
     if(!initial_frame.source_valid||initial_frame.width!=1280||initial_frame.height!=720||
        initial_state==ObservedGameState::playing||initial_state==ObservedGameState::paused)
         throw std::runtime_error("start from manually verified selected-song screen/result; already-playing or paused is rejected");
     if(!std::filesystem::create_directory(output))throw std::runtime_error("output creation failed");
-    Journal journal(output/"events.jsonl");
+    Journal journal(output/"events.jsonl",song.runtime_step_budget>16000?65536:16000);
     // Allocate and touch the already bounded journal budget before READY/input,
     // rather than copying a growing multi-megabyte string on an owner deadline.
     journal.pending.resize(64u*1024u*1024u);journal.pending.clear();
@@ -609,14 +1094,26 @@ int run(int argc,char** argv) {
     if(adaptive) {
         const auto& description=adaptive_trigger->description();
         model_settings={{"id",description.model_id},{"detector_policy_id",description.detector_policy_id},
+            {"includes_hold_heads",description.includes_hold_heads},
+            {"includes_classic_flick_heads",description.includes_classic_flick_heads},
+            {"includes_extended_drag_heads",description.includes_extended_drag_heads},
+            {"includes_mixed_earliest_heads",description.includes_mixed_earliest_heads},
+            {"required_center_families",description.required_center_families},
             {"domain_ns",{description.begin_ns,description.end_ns}},
             {"earliest_note_ids",description.earliest_note_ids},{"retained_equations",description.retained_equations},
             {"provably_invisible_equations",description.provably_invisible_equations},
-            {"coverage_assumption","complete unoccluded typed head centers is an explicit solver hypothesis; pixel detector does not establish coverage"},
+            {"coverage_assumption",description.includes_hold_heads?
+                "complete distinguishable typed heads is an explicit solver hypothesis; pixel detector does not establish coverage; direct same-kind/side whole-piece L1<=1/1024px source coincidence exempts absence only":
+                "complete unoccluded typed head centers is an explicit solver hypothesis; pixel detector does not establish coverage"},
             {"first_note_id",description.note_id},{"first_note_json_pointer",description.note_json_pointer},
             {"first_note_kind",static_cast<int>(description.note_kind)},{"first_note_ns",description.note_time_ns},
             {"first_down_ns",description.first_down_ns},{"earliest_note_count",description.earliest_note_count},
             {"source_clock","arrival_only"},{"scope","native chart opening; conditional rendering hypothesis"}};
+        if(song.outlined_drag_heads)model_settings["includes_outlined_drag_heads"]=true;
+        if(song.native_head_appearance_witness) {
+            model_settings["native_head_appearance_witness"]=true;
+            model_settings["native_head_appearance_witness_policy"]=native_head_appearance_witness_json();
+        }
         model.model_sha256=description.model_sha256;
     } else {
         VisualCandidateLimits limits;limits.max_observations=256;
@@ -626,20 +1123,36 @@ int run(int argc,char** argv) {
     const auto trigger_health=[&](Ns now,bool healthy) {
         if(adaptive)adaptive_trigger->status(now,healthy);else trigger->status(now,healthy);
     };
-    ManualConfig manual_config;manual_config.round_limit=1;manual_config.round_watchdog_ns=180*second;
+    const auto desktop_limits=desktop_runtime_limits(song.runtime_duration_limit_ns);
+    const auto session_limit_ns=desktop_limits.session_limit_ns;
+    ManualConfig manual_config;manual_config.round_limit=1;
+    manual_config.round_watchdog_ns=desktop_limits.manual_settlement_watchdog_ns;
     manual_config.max_observation_age_ns=ui_watchdog;manual_config.max_continuity_gap_ns=ui_watchdog;
     ManualLifecycle lifecycle(manual_config);
-    const auto source_sha=chart_text_sha256("emulator-5554/phigros/1280x720/r1/"+kernel_profile.at("boot_id").get<std::string>());
+    const auto source_sha=chart_text_sha256("emulator-5554/phigros/1280x720/"+capture_profile+"/"+kernel_profile.at("boot_id").get<std::string>());
+    const Json touch_pressure_policy={{"id",StreamingTouchPressurePolicy::id},
+        {"unit","raw ABS_MT_PRESSURE integer; not normalized Android MotionEvent pressure"},
+        {"DOWN_MOVE",StreamingTouchPressurePolicy::active_pressure},{"UP_RELEASE",StreamingTouchPressurePolicy::up_pressure},
+        {"project_validated_axis_min",0},{"project_validated_axis_max",1024},
+        {"axis_scope","matches the project's validated event2 SDK device axis and standard local UI amplitude; not re-probed by this policy"},
+        {"acceptance_scope","versioned transport amplitude candidate only; no game pressure threshold, kernel effect or judgment qualification"}};
     Json manifest={{"schema","pas.experimental-whole-song.v1"},{"serial",serial},{"avd",avd},{"executable_sha256",binary_sha()},
+        {"touch_pressure_policy",touch_pressure_policy},
         {"chart_sha256",chart_sha},{"import",import_json(chart)},{"audio_sha256",audio_sha},{"audio_hash_scope","identity pinned from prior verified asset; no audio read/capture in this CLI"},
         {"screen_calibration_sha256",screen_calibration.dataset_sha256},{"result_label_policy",result_policy},{"playing_redundancy_policy",redundancy_policy},{"kernel_profile_sha256",chart_text_sha256(kernel_bytes)},
-        {"kernel_initial",initial_kernel},{"model_settings",model_settings},{"model_sha256",model.model_sha256},
-        {"source_id",source_id},{"source_sha256",source_sha},{"experimental_phase_ms",phase},
+        {"kernel_initial",initial_kernel},{"kernel_initial_attempts",initial_kernel_attempts},
+        {"model_settings",model_settings},{"model_sha256",model.model_sha256},
+        {"source_id",source_id},{"source_sha256",source_sha},{"capture_geometry_profile",capture_profile},
+        {"capture_normalization",{{"raw_width",options.width},{"raw_height",options.height},{"source_rotation",options.source_rotation},{"rotate_ccw",options.rotate_ccw}}},{"experimental_phase_ms",phase},
+        {"calibration_capture_geometry_profile",calibration_capture_profile},
         {"song_identity_manual_selection",true},{"initial_screen_class",static_cast<int>(initial_state)},
         {"song_selection_scope","operator selects the profile's exact song/difficulty before launch; initial unknown is not automatic song identification"},
         {"song_id",song.song},{"difficulty",song.difficulty},{"adaptive_opening",adaptive},{"HUD_policy",song.hud_policy},
         {"input_inset_pixels",song.input_inset_pixels},
         {"capacity_evidence",capacity_evidence},
+        {"capacity_policy",capacity_policy_name(capacity_policy)},{"capacity_test_performed",false},
+        {"capacity_scope",configured_capacity?"user-configured capacity; previous ten-contact validation retained separately; no current-boot fixture qualification asserted":"explicit current-boot fixture evidence when required"},
+        {"kernel_template_boot_id",kernel_template_boot_id},{"runtime_kernel_boot_id",kernel_profile.at("boot_id")},
         {"song_profile_sha256",adaptive?Json(song.profile_sha):Json(nullptr)},
         {"phase_semantics","added to first-note visual arrival-origin rate=1 prediction; combined phase, not separated input latency"},
         {"trigger",adaptive?"global earliest native group, all native opening aliases and two distinct actual frames":"first native Tap matched on its unique positive-speed approach with actual downward motion"},
@@ -651,34 +1164,93 @@ int run(int argc,char** argv) {
         {"experimental_flick_lead_ns",compile_options.flick_lead_ns},{"experimental_flick_travel_ns",compile_options.flick_travel_ns},
         {"experimental_flick_distance_reference_pixels",compile_options.flick_distance_reference_pixels},
         {"experimental_flick_path_policy",flick_path_policy_name(compile_options.flick_path_policy)},
+        {"hold_tail_policy_id",hold_tail_policy_name(song.hold_tail_policy)},
+        {"judgment_policy_provenance",compiled.plan->metadata.judgment_policy_provenance},
+        {"offscreen_policy_id",offscreen_policy_name(song.offscreen_policy)},
+        {"max_tangent_error_reference_pixels",song.max_tangent_error_reference_pixels},
+        {"max_prejudge_ns",song.max_prejudge_ns},{"advance_above_drags",song.advance_above_drags},
+        {"coincident_flick_delay_ns",song.coincident_flick_delay_ns},
+        {"advance_below_drags",song.advance_below_drags},
+        {"below_drag_source_ids",song.below_drag_source_ids},
+        {"outlined_drag_heads",song.outlined_drag_heads},
+        {"max_hold_reacquire_gap_ns",song.max_hold_reacquire_gap_ns},
         {"flick_release_scope","hold final stroke position for experimental_flick_release_ns before UP"},
-        {"flick_stroke_scope",compile_options.flick_path_policy==FlickPathPolicy::judgment_anchored_straight_v1 ?
+        {"flick_stroke_scope",compile_options.flick_path_policy==FlickPathPolicy::dynamic_line_v1 ?
+            "lead/travel/distance recorded above;dynamic line pose retained;normal-offset zero at judgment;not a qualified game hit region" :
+            compile_options.flick_path_policy==FlickPathPolicy::judgment_anchored_straight_v1 ?
             "fixed projected judgment anchor and side normal;constant straight stroke;full distance without clipping;unchanged lead/travel/release;not a qualified game hit region" :
-            "lead/travel/distance recorded above;dynamic line pose retained;normal-offset zero at judgment;not a qualified game hit region"},
+            compile_options.flick_path_policy==FlickPathPolicy::judgment_anchored_screen_fit_v1 ?
+            "bounded native judgment-domain anchor;explicit screen-fit direction;full straight stroke without clipping;unchanged lead/travel/release;not a qualified game hit region" :
+            compile_options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2 ?
+            "bounded native judgment anchor;three explicit post-judgment curved-diagonal MOVE samples with first/middle/end certificate;full distance without clipping;game sampling and judgment unqualified" :
+            "bounded native judgment anchor held across judgment;two explicit post-judgment diagonal/bend MOVE samples;full distance without clipping;discrete path certificate, not a continuous held-error certificate or qualified game hit region"},
         {"dwell_scope","experimental per-song candidate; Tap/Drag durations are recorded above and bound by the compiled fingerprint; compiler defaults unchanged"},
         {"image_retention",image_retention_name(image_retention)},
         {"HUD_timeline_policy",diagnostic_images?"50ms actual receipt cadence; preallocated grayscale score/combo pixels; save after release; diagnostic only":"50ms actual receipt metadata only; no grayscale/pixel file; save after release"},
-        {"max_normal_projection_reference_pixels",song.projection_pixels},{"requires_calibration",true},{"session_limit_seconds",240},
-        {"round_watchdog_seconds",180},{"UI_watchdog_ns",ui_watchdog},{"anchor_receipt_max_age_ns",100*ms},
+        {"max_normal_projection_reference_pixels",song.projection_pixels},{"requires_calibration",true},{"session_limit_seconds",session_limit_ns/second},
+        {"runtime_step_budget",song.runtime_step_budget},{"runtime_duration_limit_ns",song.runtime_duration_limit_ns},
+        {"input_duration_limit_ns",desktop_limits.input_duration_limit_ns},
+        {"manual_settlement_watchdog_ns",desktop_limits.manual_settlement_watchdog_ns},
+        {"manual_settlement_grace_ns",desktop_settlement_grace_ns},
+        {"manual_settlement_policy",desktop_settlement_policy_name()},
+        {"manual_settlement_watchdog_scope","fixed first-current-HUD round cap; independent existing anchor-relative session cap; no guaranteed60s after lastUP, no input-budget extension or observation freshness renewal"},
+        {"round_watchdog_seconds",manual_config.round_watchdog_ns/second},{"UI_watchdog_ns",ui_watchdog},{"anchor_receipt_max_age_ns",100*ms},
         {"UI_watchdog_scope","actual recognized playing receipt; unknown does not refresh; pause/result/source loss stop immediately; separate from fixed song timing"},
         {"experimental_HUD_fallback",static_cast<bool>(hud_features)},{"HUD_reference_sha256",hud_features?Json(hud_reference_sha):Json(nullptr)},
         {"HUD_fallback_scope",shared_hud?"explicit shared IN pause/prefix/score glyph candidate; evaluated before and after first-note arm; same-frame denied-state priority; receipt-only":"only after first-note arm, same-frame template unknown; per-song pause/difficulty/title glyphs with negative space; denied-state priority; receipt-only"},
         {"source_sequence_semantics","stream event counter, not rendered-frame ID"},
-        {"owner_wait_policy","armed: nonblocking frame read; high-resolution Windows timer until min(next runtime wake, now+1ms); real lateness guard unchanged"},
+        {"owner_wait_policy","armed: nonblocking frame read; actual input due within50ms forbids timer waits; <=250us bounded spin then owner UI/stop/tick; other polls<=1ms high-resolution timer with deadline guard; owner-thread ABOVE_NORMAL and balanced1ms resolution; real20ms lateness guard unchanged"},
         {"deadline_scope","cooperative deadlines; retained ADB termination/reader joins and OS calls have no hard wall-time guarantee"},
-        {"journal_policy","64MiB/16000 UI rows; transport receipts preallocated to whole plan step count; flush after release"},
+        {"session_timeout_policy","separate bounded manual-acquisition and anchor-relative playback deadlines; manual READY waiting does not consume playback time"},
+        {"journal_policy","64MiB/explicit finite UI rows; pre-arm UI metadata sampled at100ms, every actual observation still processed; armed UI and transport receipts unchanged; flush after release"},
+        {"preinput_UI_journal_cadence_ns",100*ms},
+        {"journal_row_budget",journal.row_limit},
         {"transport",pas::grpc_transport_manifest(options.grpc_read_chunk_kib)}};
+    manifest["numeric_HUD_observer_requested"]=numeric_hud_enabled;
+    if(!song.above_drag_source_ids.empty())manifest["above_drag_source_ids"]=song.above_drag_source_ids;
+    if(song.native_head_appearance_witness) {
+        manifest["native_head_appearance_witness"]=true;
+        manifest["native_head_appearance_witness_policy"]=native_head_appearance_witness_json();
+    }
+    if(clock_probe_proof) {
+        manifest["experimental_clock_probe"]=clock_probe_proof_json(*clock_probe_proof);
+        manifest["phase_semantics"]="original first-note visual arrival-origin plus phase and static suffix offset; piecewise mapping is an unqualified probe, no global rate=1 qualification";
+    }
+    if(song.tap_duration_ns!=tap_dwell_default_ns)manifest["tap_dwell_candidate"]=tap_dwell_candidate_json<Json>(song.tap_duration_ns);
+    if(native_head_model){manifest["native_head_snapshot_shadow_requested"]=true;
+        manifest["native_head_snapshot_shadow"]=native_head_shadow_model_json(*native_head_model,native_head_caller_pose_events);}
     write_json(output/"compiled-plan.json",full_plan_json);write_json(output/"plan.json",manifest);
     if(diagnostic_images)pas::write_diagnostic_png(output/"initial.png",initial_frame);
     SignalGuard signal_guard;pas::PixelCoordinateMap mapping(1280,720,720,1280,90);
-    pas::GrpcTouch transport(clock,endpoint,mapping,720,1280,song.capacity,std::chrono::milliseconds(100));
+    StreamingTouch transport(clock,endpoint,mapping,720,1280,song.capacity,expected_steps,std::chrono::milliseconds(100));
+    std::vector<StreamingTouchDispatch> dispatch_schedule;dispatch_schedule.reserve(expected_steps);
+    for(const auto& event:compiled.plan->events)dispatch_schedule.push_back({event.song_ns,
+        event.phase==rhythm::Phase::up?pas::Phase::up:event.phase==rhythm::Phase::move?pas::Phase::move:pas::Phase::down});
+    transport.set_dispatch_schedule(std::move(dispatch_schedule),clock_probe);
+    // Establish this exact channel and finish one empty input stream before
+    // READY. The probe opens an RPC but sends zero input/touch events.
+    const auto connection_begin=clock.now_ns();
+    const bool connection_ready=transport.prepare_connection(std::chrono::milliseconds(1000));
+    const auto connection_end=clock.now_ns();
+    manifest["touch_connection_preparation"]={{"policy","same-channel-empty-input-stream-probe-v1"},
+        {"begin_ns",connection_begin},{"return_ns",connection_end},{"timeout_ms",1000},
+        {"connected",connection_ready},{"input_RPC_opened",transport.preparation().input_rpc_opened!=0},
+        {"touch_events_sent",transport.preparation().touch_events},
+        {"scope","connection plus zero-event stream completion; no latency or device-effect guarantee"}};
+    manifest["touch_transport_policy"]="ordered-same-due-move-touch-event-batches-v1";
+    write_json(output/"plan.json",manifest);
+    if(!connection_ready)throw std::runtime_error("touch transport connection not ready before manual READY");
     GuardedTouch touch(transport,clock,expected_steps);
+    std::vector<TouchMessageAdmission> write_admissions;write_admissions.reserve(expected_steps);
+    write_admissions.resize(expected_steps);write_admissions.clear();
     // Two diagnostic leases replace two repeated RGB copies. Reserve two
     // corresponding pool slots so producer headroom stays bounded and available.
     pas::LatestFrame latest(1280,720,5,&clock);std::atomic<bool> capture_done{false},stop_file{false};
     std::mutex error_mutex;std::exception_ptr capture_error;
     std::unique_ptr<ExperimentalContactRuntime> runtime;
     const auto started=clock.now_ns();auto status=lifecycle.status(started);
+    Ns session_deadline_host_ns=started+session_limit_ns;
+    manifest["acquisition_deadline_host_ns"]=session_deadline_host_ns;
     Ns next_candidate=started,last_saved=-1,kernel_request=-1,first_due=-1,next_acquisition_report=started,last_acquisition_saved=-1;
     std::uint64_t consumed=0,candidate_sequence=0;
     bool armed=false,kernel_started=false,kernel_ready=false,finished=false,release_known=false,final_zero=false,sequence_complete=false;
@@ -696,6 +1268,10 @@ int run(int argc,char** argv) {
     // result/first-unknown diagnostics own copies, leaving producer headroom.
     std::shared_ptr<const pas::Frame> last_frame,last_unknown_frame;
     Ns last_ui_append_begin=-1,last_ui_append_end=-1,last_tick_begin=-1,last_tick_end=-1;
+    Ns last_preinput_ui_journal_ns=-1;
+    std::size_t preinput_ui_journal_skips=0;
+    Ns last_opening_detector_journal_ns=-1;
+    std::size_t opening_detector_journal_rows=0;
     Ns last_snapshot_begin=-1,last_snapshot_end=-1;
     Ns last_owner_frame_begin=-1,last_classify_end=-1,last_HUD_end=-1;
     std::uint64_t last_owner_sequence=0;std::size_t redundancy_frames=0;
@@ -707,14 +1283,34 @@ int run(int argc,char** argv) {
         auto observation=last_playing_ui.value_or(ExperimentalUiObservation{});
         observation.playing=ui_healthy(now);return observation;
     };
+    std::optional<std::uint64_t> first_down_intent;
     touch.guard=[&](const pas::TouchCommand& command)->std::string {
         const auto now=clock.now_ns();
         if(interrupted.load()||stop_file.load()||(GetAsyncKeyState(VK_ESCAPE)&0x8000))return "user_stop";
-        if(now-started>=240*second)return "session_timeout";
+        if(now>=session_deadline_host_ns)return armed?"playback_session_timeout":"manual_acquisition_timeout";
         if(!ui_healthy(now))return "actual_UI_or_foreground_invalid";
-        if(command.phase==pas::Phase::down&&touch.down_attempts==0&&
+        if(command.phase==pas::Phase::down&&!first_down_intent)first_down_intent=command.intent_id;
+        if(command.phase==pas::Phase::down&&command.intent_id==first_down_intent&&
            (!kernel_ready||now<kernel_request||now-kernel_request>=500*ms))return "first_DOWN_kernel_zero_not_fresh";
         return {};
+    };
+    transport.before_write=touch.guard;
+    transport.before_message_write=[&](const pas::TouchCommand& command)->std::string {
+        if(write_admissions.size()>=expected_steps)return "message_write_admission_trace_budget";
+        TouchMessageAdmission admission;admission.command=command;admission.check_begin_ns=clock.now_ns();
+        admission.reason=touch.guard(command);
+        if(last_playing_ui) {
+            const auto& actual=*last_playing_ui;admission.sequence=actual.sequence;admission.epoch=actual.epoch;
+            admission.generation=actual.generation;admission.geometry_version=actual.geometry_version;
+            admission.received_ns=actual.received_host_ns;admission.playing=actual.playing;admission.source_valid=actual.source_valid;
+            admission.source_matches=actual.source_id==source_id&&actual.width==1280&&actual.height==720;
+        }
+        admission.foreground_healthy=foreground_watch.status().healthy;
+        if(admission.reason.empty()&&(!admission.source_matches||admission.epoch!=acquisition_epoch||
+           admission.generation!=1||admission.geometry_version!=1||!admission.foreground_healthy))
+            admission.reason="actual_UI_source_epoch_geometry_or_foreground_invalid_before_message_write";
+        admission.allowed=admission.reason.empty();admission.check_return_ns=clock.now_ns();
+        write_admissions.push_back(std::move(admission));return write_admissions.back().reason;
     };
     std::jthread stop_worker([&](std::stop_token stop){
         while(!stop.stop_requested()) {
@@ -723,8 +1319,53 @@ int run(int argc,char** argv) {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     });
+    std::atomic_bool recovery_enabled=false;
+    std::mutex publication_mutex;
+    FreshCaptureRecovery capture_recovery(options.source_rotation);
+    struct RecoveryProbeTrace {
+        Ns request_ns=0,return_ns=0,received_ns=-1,source_timestamp_us=-1;
+        std::uint64_t sequence=0;bool accepted=false;std::string reason;
+    };
+    std::vector<RecoveryProbeTrace> recovery_probes;recovery_probes.reserve(4096);
+    std::size_t recovery_stream_drops=0,recovery_pool_drops=0;
+    const auto publish_current_frame=[&](pas::Frame& frame,RecoveryRoute route)->RecoveryAdmission {
+        // Both routes have already normalized and validated their own complete
+        // RPC payload. This lock orders actual receipts and source metadata;
+        // it never changes capture_complete_ns to a publication timestamp.
+        std::lock_guard lock(publication_mutex);
+        RecoveryFrameMeta meta{frame.capture_complete_ns,frame.source_timestamp_us.value_or(-1),
+            frame.width,frame.height,frame.stride,frame.source_rotation,frame.source_valid};
+        auto proposed=capture_recovery;
+        const auto admitted=proposed.admit(meta,route,clock.now_ns(),recovery_enabled.load());
+        if(!admitted.accepted){if(route==RecoveryRoute::stream)++recovery_stream_drops;return admitted;}
+        frame.sequence=admitted.sequence;frame.generation=1;frame.geometry_version=1;
+        if(!latest.publish(frame.rgb.data(),frame.rgb.size(),frame)){
+            ++recovery_pool_drops;return {false,0,"normalized_frame_pool_drop"};
+        }
+        capture_recovery=proposed;
+        return admitted;
+    };
+    std::jthread recovery_worker([&](std::stop_token stop){
+        while(!stop.stop_requested()) {
+            bool probe=false;
+            {std::lock_guard lock(publication_mutex);probe=capture_recovery.should_probe(clock.now_ns(),recovery_enabled.load());}
+            if(probe) {
+                RecoveryProbeTrace trace;trace.request_ns=clock.now_ns();
+                try {
+                    auto frame=recovery_capture.snapshot(std::chrono::milliseconds(100));
+                    trace.received_ns=frame.capture_complete_ns;trace.source_timestamp_us=frame.source_timestamp_us.value_or(-1);
+                    frame.receive_start_ns=trace.request_ns;frame.notification_received_ns=frame.capture_complete_ns;
+                    frame.capture_backend="emulator-grpc-getScreenshot-recovery";
+                    const auto admitted=publish_current_frame(frame,RecoveryRoute::snapshot);
+                    trace.accepted=admitted.accepted;trace.sequence=admitted.sequence;trace.reason=admitted.reason;
+                }catch(const std::exception& error){trace.reason=error.what();}
+                trace.return_ns=clock.now_ns();recovery_probes.push_back(std::move(trace));
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    });
     std::jthread capture_worker([&](std::stop_token stop){
-        try{capture.stream(stop,[&](pas::Frame&& frame){frame.generation=1;frame.geometry_version=1;latest.publish(frame.rgb.data(),frame.rgb.size(),frame);});}
+        try{capture.stream(stop,[&](pas::Frame&& frame){publish_current_frame(frame,RecoveryRoute::stream);});}
         catch(...){std::lock_guard lock(error_mutex);capture_error=std::current_exception();}
         capture_done=true;latest.close();
     });
@@ -733,9 +1374,11 @@ int run(int argc,char** argv) {
         while(!finished) {
             auto now=clock.now_ns();
             if(interrupted.load()||stop_file.load()||(GetAsyncKeyState(VK_ESCAPE)&0x8000))throw std::runtime_error("user_stop");
-            if(now-started>=240*second)throw std::runtime_error("session_timeout");
+            if(now>=session_deadline_host_ns)
+                throw std::runtime_error(armed?"playback_session_timeout":"manual_acquisition_timeout");
             if(capture_done.load()){std::lock_guard lock(error_mutex);if(capture_error)std::rethrow_exception(capture_error);throw std::runtime_error("capture_ended");}
             if(!foreground_watch.status().healthy)throw std::runtime_error("foreground_unavailable");
+            if(const auto stream_fault=transport.poll();!stream_fault.empty())throw std::runtime_error(stream_fault);
             status=lifecycle.poll(now);
             if(runtime&&!sequence_complete) {
                 const auto current=runtime->status();
@@ -800,8 +1443,33 @@ int run(int argc,char** argv) {
                         {"auxiliary_score_boundary_components",redundant.auxiliary.score.boundary_components},
                         {"reference_sequence",redundant.reference_frame.sequence},{"support_sequence",redundant.support_frame.sequence},
                         {"construction_attempts",redundant.construction_attempts},{"support_frames",redundant.support_frames},
+                        {"merged_score",{{"candidate",redundant.merged_score.candidate},{"reason",redundant.merged_score.reason},
+                            {"component_xywh",{redundant.merged_score.component.x,redundant.merged_score.component.y,
+                                redundant.merged_score.component.width,redundant.merged_score.component.height}},
+                            {"spanned_windows",redundant.merged_score.spanned_windows},{"textured_windows",redundant.merged_score.textured_windows},
+                            {"boundary_fragments",redundant.merged_score.boundary_fragments},
+                            {"clean_components",redundant.merged_score.clean_components},
+                            {"boundary_textured_windows",redundant.merged_score.boundary_textured_windows},
+                            {"white_pixels",redundant.merged_score.white_pixels},{"negative_pixels",redundant.merged_score.negative_pixels},
+                            {"occupancy",redundant.merged_score.occupancy}}},
                         {"title",hud_glyph_json(redundant.auxiliary.title_glyph)},
                         {"difficulty",hud_glyph_json(redundant.auxiliary.fixed_glyphs[1])}};
+                    Json fragment_bounds=Json::array();
+                    for(std::size_t i=0;i<std::min<std::size_t>(8,redundant.merged_score.boundary_fragments);++i){
+                        const auto& bounds=redundant.merged_score.boundary_regions[i];
+                        fragment_bounds.push_back({bounds.x,bounds.y,bounds.width,bounds.height});
+                    }
+                    redundancy_diagnostic["merged_score"]["boundary_regions_xywh"]=std::move(fragment_bounds);
+                    if(!redundant.auxiliary.score.glyph_structure_candidate){
+                        Json components=Json::array();
+                        for(std::size_t i=0;i<std::min<std::size_t>(64,redundant.auxiliary.score.glyphs.size());++i){
+                            const auto& glyph=redundant.auxiliary.score.glyphs[i];
+                            components.push_back({{"bounds_xywh",{glyph.bounds.x,glyph.bounds.y,glyph.bounds.width,glyph.bounds.height}},
+                                {"white_pixels",glyph.white_pixels},{"negative_pixels",glyph.negative_pixels},
+                                {"occupancy",glyph.occupancy},{"plausible_stroke",glyph.plausible_stroke}});
+                        }
+                        redundancy_diagnostic["auxiliary_score_components_bounded"]=std::move(components);
+                    }
                 }
                 if(feature_diagnostic.is_object())feature_diagnostic["candidate_with_redundancy"]=feature_playing;
                 last_HUD_end=clock.now_ns();
@@ -830,6 +1498,11 @@ int run(int argc,char** argv) {
                 timeline_meta.source_timestamp_us=frame->source_timestamp_us;timeline_meta.raw_class=classified.state;
                 timeline_meta.effective_HUD=observation.hud;timeline_meta.source_valid=frame->source_valid;
                 hud_timeline.observe({frame->width,frame->height,frame->stride,frame->rgb},timeline_meta,armed);
+                if(numeric_hud&&armed&&observation.hud&&observation.source_valid&&
+                   now>=frame->capture_complete_ns&&now-frame->capture_complete_ns<ui_watchdog)
+                    numeric_hud->submit(frame->sequence,frame->source_sequence,frame->source_timestamp_us,
+                        frame->capture_complete_ns,now,acquisition_epoch,frame->generation,frame->geometry_version,
+                        frame->width,frame->height,frame->stride,frame->rgb);
                 status=lifecycle.observe(observation,now);
                 if(observation.hud&&observation.source_valid&&now>=observation.received_host_ns&&
                    now-observation.received_host_ns<ui_watchdog) {
@@ -854,9 +1527,16 @@ int run(int argc,char** argv) {
                         {"pause_ok",pause_ok},{"prefix_ok",prefix_ok},{"score_ok",score_ok},{"hud_ok",report_hud}};
                     std::cout<<"ACQUISITION STATUS: "<<progress.dump()<<'\n'<<std::flush;
                 }
+                // READY waiting has a separate bounded duration. Sampling only
+                // its diagnostic rows prevents that wait consuming the active
+                // song's journal budget; it never throttles real observations,
+                // HUD learning, frame freshness, opening detection or input.
+                if(armed||last_preinput_ui_journal_ns<0||now-last_preinput_ui_journal_ns>=100*ms) {
+                if(!armed)last_preinput_ui_journal_ns=now;
                 const auto previous_append_begin=last_ui_append_begin,previous_append_end=last_ui_append_end;
                 last_ui_append_begin=clock.now_ns();
                 journal.append({{"event","ui"},{"sequence",frame->sequence},{"received_ns",frame->capture_complete_ns},{"processed_ns",now},
+                    {"capture_route",frame->capture_backend},{"source_sequence",frame->source_sequence?Json(*frame->source_sequence):Json(nullptr)},
                     {"pixels_ready_ns",frame->pixels_ready_ns},{"published_ns",frame->published_ns},
                     {"copy_start_ns",frame->copy_start_ns?Json(*frame->copy_start_ns):Json(nullptr)},
                     {"copy_end_ns",frame->copy_end_ns?Json(*frame->copy_end_ns):Json(nullptr)},
@@ -872,10 +1552,41 @@ int run(int argc,char** argv) {
                     {"experimental_HUD_features",std::move(feature_diagnostic)},
                     {"actual_playing_receipt_ns",last_playing_ui?Json(last_playing_ui->received_host_ns):Json(nullptr)}});
                 last_ui_append_end=clock.now_ns();
+                } else ++preinput_ui_journal_skips;
                 if(armed) {
                     if(!sequence_complete&&observation.hud) {
                         const auto current=runtime->observe_ui(runtime_ui(clock.now_ns()));
                         if(current.state==ExperimentalRuntimeState::stopped)throw std::runtime_error(current.reason);
+                    }
+                    if(native_head_model&&native_head_rows&&!native_head_rows->disabled&&!sequence_complete&&
+                       observation.hud&&observation.source_valid&&native_head_rows->origin_host_ns>=0) {
+                        auto& shadow=*native_head_rows;
+                        const auto prediction=frame->capture_complete_ns-shadow.origin_host_ns;
+                        if(prediction>=native_head_model->window().begin_ns&&prediction<=native_head_model->window().end_ns) {
+                            const auto diagnostic_now=clock.now_ns();const auto next=runtime->next_wake_ns();
+                            if(shadow.size>=shadow.rows.size())++shadow.capacity_skips;
+                            else if(shadow.last_received_ns>=0&&frame->capture_complete_ns-shadow.last_received_ns<250*ms)++shadow.cadence_skips;
+                            else if(!next||*next<diagnostic_now+10*ms)++shadow.near_due_skips;
+                            else {
+                                auto& row=shadow.rows[shadow.size++];shadow.last_received_ns=frame->capture_complete_ns;
+                                row.sequence=frame->sequence;row.epoch=acquisition_epoch;row.generation=frame->generation;
+                                row.geometry_version=frame->geometry_version;row.source_sequence=frame->source_sequence;
+                                row.source_timestamp_us=frame->source_timestamp_us;row.received_ns=frame->capture_complete_ns;
+                                row.processing_begin_ns=diagnostic_now;row.predicted_song_ns=prediction;row.next_wake_at_admission_ns=*next;
+                                try {
+                                    const auto detected=detect_adaptive_opening_centers(frame->width,frame->height,frame->stride,frame->rgb,NoteKind::tap);
+                                    row.detector_valid=detected.valid;row.detector_reason.assign(detected.reason.data(),std::min<std::size_t>(detected.reason.size(),256));
+                                    if(detected.centers.size()>row.centers.size())throw std::runtime_error("native head detector center budget");
+                                    row.center_count=detected.centers.size();
+                                    for(std::size_t i=0;i<row.center_count;++i)row.centers[i]=detected.centers[i];
+                                    if(detected.valid&&!detected.centers.empty())
+                                        row.matches=native_head_model->match(std::span<const VisualCenter>(row.centers.data(),row.center_count),prediction);
+                                    else row.matches.reason="detector_invalid_or_empty_unknown";
+                                }catch(const std::exception& error){const std::string_view message=error.what();
+                                    row.error.assign(message.data(),std::min<std::size_t>(message.size(),256));shadow.disabled=true;}
+                                row.processed_ns=clock.now_ns();
+                            }
+                        }
                     }
                     // Evidence is bounded to the opening judgment window. The
                     // full stream is classified but not copied into RAM images.
@@ -890,9 +1601,25 @@ int run(int argc,char** argv) {
                     if(status.result_confirmed)result_frame=*frame;
                 } else if(status.round==1&&ui_healthy(now)&&now>=next_candidate) {
                     next_candidate=now+(adaptive?25:75)*ms;
-                    const auto detected=adaptive?
-                        detect_adaptive_opening_centers(frame->width,frame->height,frame->stride,frame->rgb,adaptive_trigger->description().note_kind):
+                    ModelOpeningDetection detected;
+                    if(adaptive)detected=detect_model_opening_centers(frame->width,frame->height,frame->stride,frame->rgb,adaptive_trigger->description());
+                    else static_cast<calibration::OpeningDetection&>(detected)=
                         calibration::detect_opening_centers(frame->width,frame->height,frame->stride,frame->rgb);
+                    // Bounded metadata also records rejected shapes. Missing
+                    // detector candidates must be diagnosable with result-only
+                    // image retention; this grants no input or freshness.
+                    if(opening_detector_journal_rows<1024&&(last_opening_detector_journal_ns<0||
+                       frame->capture_complete_ns-last_opening_detector_journal_ns>=250*ms)) {
+                        last_opening_detector_journal_ns=frame->capture_complete_ns;++opening_detector_journal_rows;
+                        Json metrics=Json::array();
+                        for(const auto& metric:detected.metrics)metrics.push_back({{"x",metric.x},{"y",metric.y},
+                            {"width",metric.width},{"rows",metric.rows}});
+                        journal.append({{"event","opening_detector"},{"sequence",frame->sequence},
+                            {"received_ns",frame->capture_complete_ns},{"processed_ns",clock.now_ns()},
+                            {"valid",detected.valid},{"reason",detected.reason},{"groups",detected.groups},
+                            {"qualifying_runs",detected.qualifying_runs},{"center_count",detected.centers.size()},
+                            {"metrics",std::move(metrics)},{"pixels_retained",false},{"input_permission",false}});
+                    }
                     if(detected.valid&&!detected.centers.empty()) {
                         if(diagnostic_images&&acquisition_frames.size()<24&&(last_acquisition_saved<0||
                            frame->capture_complete_ns-last_acquisition_saved>=100*ms)) {
@@ -913,7 +1640,7 @@ int run(int argc,char** argv) {
                         }
                         VisualCandidateResult result;FirstNoteTriggerStatus trigger_status;
                         if(adaptive) {
-                            trigger_status=adaptive_trigger->observe(visual,ui_healthy(candidate_now),candidate_now);
+                            trigger_status=adaptive_trigger->observe(visual,detected.center_families,ui_healthy(candidate_now),candidate_now);
                             result.observation=visual;result.candidates=trigger_status.raw_candidates;
                             result.song_intervals=trigger_status.selected_intervals;result.reason=trigger_status.reason;
                         } else {
@@ -926,6 +1653,7 @@ int run(int argc,char** argv) {
                         journal.append({{"event","candidate"},{"frame",visual.evidence_id},
                             {"detector_reason",detected.reason},{"detector_coverage_verified",detected.centers_complete_unoccluded},
                             {"solver_complete_coverage_assumption",visual.centers_complete_unoccluded},{"rgb_sha256",visual.frame_sha256},{"centers",centers},
+                            {"center_families",detected.center_families},
                             {"song_intervals",intervals(result.song_intervals)},{"assignments",result.candidates.size()},{"reason",result.reason},
                             {"raw_candidates",candidate_assignments(result.candidates)},
                             {"trigger_reason",trigger_status.reason},{"support_count",trigger_status.support_count},
@@ -943,7 +1671,21 @@ int run(int argc,char** argv) {
                         }
                         if(trigger_status.state==FirstNoteTriggerState::cancelled)
                             throw std::runtime_error("first_note_trigger_cancelled: "+trigger_status.reason);
-                        const auto resolved=adaptive?adaptive_trigger->take_anchor(clock.now_ns()):trigger->take_anchor(clock.now_ns());
+                        const auto consume_now=clock.now_ns();
+                        const bool before_runtime_window=trigger_status.state==FirstNoteTriggerState::ready&&trigger_status.anchor&&
+                            trigger_status.anchor->target_host_ns-consume_now>3*second;
+                        if(before_runtime_window) {
+                            // An early visual solution is not consumed. Subsequent
+                            // actual frames must produce a new fresh solution in
+                            // the runtime's existing three-second arm window.
+                            opening_reason="waiting_for_runtime_dispatch_window";
+                            journal.append({{"event","first_note_ready_before_runtime_window"},
+                                {"evidence_id",trigger_status.anchor->evidence_id},
+                                {"received_ns",trigger_status.anchor->received_host_ns},{"processed_ns",consume_now},
+                                {"target_host_ns",trigger_status.anchor->target_host_ns},{"consumed",false}});
+                        }
+                        const auto resolved=before_runtime_window?std::optional<FirstNoteTriggerAnchor>{}:
+                            adaptive?adaptive_trigger->take_anchor(consume_now):trigger->take_anchor(consume_now);
                         if(resolved) {
                             ExperimentalAnchor anchor;anchor.origin_host_ns=resolved->origin_host_ns;
                             anchor.received_host_ns=resolved->received_host_ns;anchor.explicit_phase_ns=static_cast<Ns>(phase)*ms;
@@ -959,9 +1701,16 @@ int run(int argc,char** argv) {
                             if(initial.selected_contacts!=expected_notes||initial.selected_steps!=expected_steps||initial.peak_contacts!=expected_peak)
                                 throw std::runtime_error("runtime must retain every full-plan contact and step");
                             if(!runtime->arm())throw std::runtime_error(runtime->status().reason);
-                            armed=true;first_due=anchor.origin_host_ns+anchor.explicit_phase_ns+first_song_ns;
+                            armed=true;recovery_enabled=true;first_due=anchor.origin_host_ns+anchor.explicit_phase_ns+clock_probe.mapped_song_ns(first_song_ns);
+                            if(native_head_rows)native_head_rows->origin_host_ns=anchor.origin_host_ns;
+                            // The chart's actual anchor fixes this deadline once.
+                            // Neither fresh frames nor planner ticks can renew it.
+                            session_deadline_host_ns=anchor.origin_host_ns+anchor.explicit_phase_ns+session_limit_ns;
+                            manifest["playback_deadline_host_ns"]=session_deadline_host_ns;
+                            manifest["manual_acquisition_elapsed_ns"]=construction_end-started;
                             if(diagnostic_images)anchor_frame=*frame;
                             manifest["anchor"]={{"origin_host_ns",anchor.origin_host_ns},{"received_host_ns",anchor.received_host_ns},
+                                {"epoch",anchor.epoch},{"source_id",anchor.source_id},{"generation",anchor.generation},{"geometry_version",anchor.geometry_version},
                                 {"song_interval",{anchor.chosen_song_interval.lower,anchor.chosen_song_interval.upper}},
                                 {"evidence_id",anchor.evidence_id},{"supporting_evidence_ids",anchor.supporting_evidence_ids},
                                 {"rgb_sha256",visual.frame_sha256},{"armed_host_ns",clock.now_ns()},
@@ -992,8 +1741,8 @@ int run(int argc,char** argv) {
                 if(tick.status.state==ExperimentalRuntimeState::stopped)throw std::runtime_error(tick.status.reason);
                 if(tick.status.state==ExperimentalRuntimeState::completed) {
                     sequence_complete=true;manifest["sequence_completed_host_ns"]=clock.now_ns();
-                    journal.append({{"event","whole_song_RPC_sequence_completed"},{"runtime",runtime_json(tick.status)}});
-                    std::cout<<"WHOLE SONG RPC SEQUENCE COMPLETED; waiting for manual-mode result evidence.\n"<<std::flush;
+                    journal.append({{"event","whole_song_command_queue_sequence_completed"},{"runtime",runtime_json(tick.status)}});
+                    std::cout<<"WHOLE SONG COMMAND QUEUE SEQUENCE COMPLETED; waiting for stream completion and manual-mode result evidence.\n"<<std::flush;
                 }
             }
             if(status.session_done) {
@@ -1003,10 +1752,11 @@ int run(int argc,char** argv) {
             if(!finished&&armed&&!sequence_complete) {
                 const auto now_before_wait=clock.now_ns();
                 const auto next=runtime->next_wake_ns();
-                owner_wait.until(next?std::min(*next,now_before_wait+ms):now_before_wait+ms);
+                owner_wait.until(next?std::min(*next,now_before_wait+ms):now_before_wait+ms,runtime->next_input_due_ns());
             }
         }
     }catch(const std::exception& error){failure=error.what();if(failure.empty())failure="trial_exception_without_message";}
+    recovery_enabled=false;recovery_worker.request_stop();
     const auto cleanup_error=[&](const char* stage,const std::exception& error) {
         if(!failure.empty())failure+="; ";failure+=std::string(stage)+": "+error.what();
     };
@@ -1018,11 +1768,14 @@ int run(int argc,char** argv) {
         const auto release=transport.release_all();release_known=release.failed_ids.empty()&&release.unknown_ids.empty();
         manifest["release"]=release_json(release);
     }catch(const std::exception& error){cleanup_error("release",error);}
+    if(!transport.fault().empty()) {
+        if(!failure.empty())failure+="; ";failure+="touch_stream: "+transport.fault();
+    }
     bool recovery_attempted=false;
     const auto recovery_release=[&] {
         recovery_attempted=true;
         try {
-            pas::GrpcTouch recovery(clock,endpoint,mapping,720,1280,song.capacity,std::chrono::milliseconds(100));
+            pas::GrpcTouch recovery(clock,endpoint,mapping,720,1280,10,std::chrono::milliseconds(100));
             const auto release=recovery.emergency_release_all();release_known=release.failed_ids.empty()&&release.unknown_ids.empty();
             manifest["recovery_release"]=release_json(release);
         }catch(const std::exception& error){release_known=false;cleanup_error("recovery",error);}
@@ -1042,22 +1795,131 @@ int run(int argc,char** argv) {
         }catch(const std::exception& error){cleanup_error("kernel_after_recovery",error);}
     }
     capture_worker.request_stop();capture.cancel();latest.close();capture_worker.join();
+    recovery_worker.join();
+    if(numeric_hud) {
+        numeric_hud->finish();
+        try {
+            Json numeric_report={{"schema","pas.numeric-hud-timeline.v1"},{"diagnostic_only",true},
+                {"pixels_retained",false},{"input_permission",false},{"summary",numeric_hud->summary()},
+                {"rows",numeric_hud->rows()},{"scope","OCR of original frame receipts; unknown readings retained; no judgment or clock qualification"}};
+            const auto text=numeric_report.dump(2);
+            std::ofstream numeric_file(output/"numeric-hud-timeline.json",std::ios::binary);
+            numeric_file.write(text.data(),static_cast<std::streamsize>(text.size()));numeric_file.close();
+            if(!numeric_file)throw std::runtime_error("numeric HUD metadata write failed");
+            manifest["numeric_HUD_observer"]={{"enabled",true},{"diagnostic_only",true},{"pixels_retained",false},
+                {"file","numeric-hud-timeline.json"},{"sha256",chart_text_sha256(text)},{"summary",numeric_hud->summary()}};
+        }catch(const std::exception& error){manifest["numeric_HUD_observer_error"]=std::string(error.what()).substr(0,256);}
+    }
+    if(native_head_model&&native_head_rows) {
+        try {
+            constexpr std::size_t file_cap=2*1024*1024;
+            const auto context=native_head_shadow_model_json(*native_head_model,native_head_caller_pose_events);
+            const auto& shadow=*native_head_rows;Json sources=Json::array();
+            for(std::size_t i=0;i<native_head_model->sources().size();++i){const auto& source=native_head_model->sources()[i];
+                sources.push_back({{"source_index",i},{"source_note_id",source.source_note_id},{"line_index",source.line_index},
+                    {"note_index_in_original_line",source.note_index},{"kind",static_cast<int>(source.kind)},
+                    {"side",source.side==NoteSide::above?"above":"below"},{"judgment_ns",source.judgment_ns}});}
+            Json report={{"schema","pas.native-head-snapshot-shadow.v1"},{"diagnostic_only",true},{"pixels_retained",false},
+                {"input_permission",false},{"source_pixel_age_qualified",false},
+                {"status",shadow.disabled?"diagnostic_disabled_after_error":shadow.size?"diagnostic_complete":"no_shadow_rows_recorded"},
+                {"model",context},{"fixed_origin_host_ns",shadow.origin_host_ns>=0?Json(shadow.origin_host_ns):Json(nullptr)},
+                {"rows_observed",shadow.size},{"near_due_skips",shadow.near_due_skips},{"cadence_skips",shadow.cadence_skips},
+                {"capacity_skips",shadow.capacity_skips},{"source_catalog",std::move(sources)},{"rows",Json::array()},
+                {"scope","Original actual frame centers and all complete local grid assignments; sampled points only, no nearest winner or continuous interval. Fixed-origin prediction is not actual game time; pixel/render age and input latency remain unknown. No permission renewal, retiming or gameplay qualification."}};
+            std::size_t serialized_size=report.dump().size();bool exceeded=serialized_size>file_cap;
+            for(std::size_t i=0;i<shadow.size&&!exceeded;++i){auto row=native_head_shadow_row_json(shadow.rows[i],*native_head_model);
+                const auto row_size=row.dump().size()+(i?1u:0u);
+                if(row_size>file_cap-serialized_size){exceeded=true;break;}
+                serialized_size+=row_size;report["rows"].push_back(std::move(row));}
+            if(exceeded)report={{"schema","pas.native-head-snapshot-shadow.v1"},{"diagnostic_only",true},{"pixels_retained",false},
+                {"input_permission",false},{"source_pixel_age_qualified",false},{"status","diagnostic_file_budget_exceeded"},
+                {"reason","Complete metadata exceeds2MiB; no truncated timing candidates are presented"},
+                {"chart_sha256",native_head_model->chart_sha256()},{"window_ns",{native_head_model->window().begin_ns,native_head_model->window().end_ns}},
+                {"rows_observed",shadow.size},{"rows",Json::array()}};
+            const auto text=report.dump();if(text.size()>file_cap)throw std::runtime_error("native head snapshot failure metadata exceeds file cap");
+            std::ofstream file(output/"native-head-snapshot-shadow.json",std::ios::binary);
+            file.write(text.data(),static_cast<std::streamsize>(text.size()));file.close();
+            if(!file)throw std::runtime_error("native head snapshot metadata write failed");
+            auto evidence=context;evidence["enabled"]=true;evidence["file"]="native-head-snapshot-shadow.json";
+            evidence["sha256"]=chart_text_sha256(text);evidence["bytes"]=text.size();evidence["status"]=report.at("status");
+            evidence["rows_observed"]=shadow.size;evidence["maximum_file_bytes"]=file_cap;
+            manifest["native_head_snapshot_shadow"]=std::move(evidence);
+        }catch(const std::exception& error){manifest["native_head_snapshot_shadow_error"]=std::string(error.what()).substr(0,256);}
+    }
+    Json recovery_trace=Json::array();
+    for(const auto& probe:recovery_probes)recovery_trace.push_back({{"request_ns",probe.request_ns},{"return_ns",probe.return_ns},
+        {"received_ns",probe.received_ns},{"source_timestamp_us",probe.source_timestamp_us},{"accepted",probe.accepted},
+        {"sequence",probe.sequence},{"reason",probe.reason}});
+    manifest["capture_recovery"]={{"policy","actual-unary-screenshot-on-stream-idle-v1"},{"idle_ns",200*ms},
+        {"cadence_ns",200*ms},{"rpc_timeout_ms",100},{"maximum_attempts",4096},{"maximum_inflight",1},
+        {"stream_drops",recovery_stream_drops},{"pool_drops",recovery_pool_drops},{"probes",std::move(recovery_trace)},
+        {"source_pixel_age_qualified",false},{"scope","fresh actual arrival-only RPC pixels; source timestamp is server request time, not GPU presentation time; unchanged 500ms current-HUD watchdog"}};
     const auto capture_stats=capture.stats();
     manifest["capture_stats"]={{"valid",capture_stats.valid},{"inactive",capture_stats.inactive},
         {"invalid",capture_stats.invalid},{"source_gaps",capture_stats.source_gaps},
         {"relative_stale_drops",capture_stats.relative_stale_drops},{"last_notification_ns",capture_stats.last_notification_ns}};
-    manifest["owner_wait"]={{"count",owner_wait.waits},{"maximum_elapsed_ns",owner_wait.maximum_elapsed_ns},
-        {"maximum_overshoot_ns",owner_wait.maximum_overshoot_ns},{"scope","owner waits only, not input latency or source age"}};
+    owner_wait.finish();manifest["owner_wait"]=owner_wait_json(owner_wait.diagnostics());
     stop_worker.request_stop();stop_worker.join();
     if(!foreground_watch.stop()&&failure.empty())failure="foreground_stop_timeout";
     try {manifest["HUD_timeline"]=save_hud_timeline(output,hud_timeline,source_sha);}
         catch(const std::exception& error){cleanup_error("hud_timeline",error);}
     journal.flush_after_cleanup();
-    Journal receipts(output/"receipts.jsonl");for(const auto& receipt:touch.receipts) {
+    Journal receipts(output/"receipts.jsonl",expected_steps);for(const auto& receipt:touch.receipts) {
         auto row=receipt_json(receipt);row["intent_id"]=receipt.command.intent_id;
+        row["event"]="transport_queue";
         row["source_frame_sequence"]=receipt.command.source_frame_sequence;receipts.append(row);
     }
     receipts.flush_after_cleanup();
+    // Queue receipts and actual message-write traces retain separate clocks.
+    // Neither local queue acceptance nor a Write is an RPC completion.
+    Json stream_events=Json::array(),stream_sessions=Json::array(),stream_messages=Json::array(),stream_schedule=Json::array(),stream_admissions=Json::array();
+    for(const auto& step:compiled.plan->events)stream_schedule.push_back({{"song_ns",step.song_ns},{"phase",static_cast<int>(step.phase)}});
+    for(const auto& a:write_admissions)stream_admissions.push_back({
+        {"command",{{"intent_id",a.command.intent_id},{"contact_id",a.command.contact_id},
+            {"phase",static_cast<int>(a.command.phase)},{"x",a.command.x},{"y",a.command.y},
+            {"scheduled_ns",a.command.scheduled_ns},{"source_frame_sequence",a.command.source_frame_sequence}}},
+        {"check_begin_ns",a.check_begin_ns},{"check_return_ns",a.check_return_ns},{"allowed",a.allowed},{"reason",a.reason},
+        {"actual_ui_sequence",a.sequence},{"received_ns",a.received_ns},{"epoch",a.epoch},{"generation",a.generation},
+        {"geometry_version",a.geometry_version},{"source_id",a.source_matches?source_id:"<unexpected-source>"},
+        {"playing",a.playing},{"source_valid",a.source_valid},{"foreground_healthy",a.foreground_healthy}});
+    for(const auto& e:transport.events())stream_events.push_back({
+        {"command",{{"intent_id",e.command.intent_id},{"contact_id",e.command.contact_id},
+            {"phase",static_cast<int>(e.command.phase)},{"x",e.command.x},{"y",e.command.y},
+            {"scheduled_ns",e.command.scheduled_ns},{"source_frame_sequence",e.command.source_frame_sequence}}},
+        {"host_start_ns",e.host_start_ns},{"host_return_ns",e.host_return_ns},
+        {"stream_id",e.stream_id},{"ordinal",e.ordinal},{"mapped_x",e.mapped_x},{"mapped_y",e.mapped_y},
+        {"pressure",e.pressure},{"receipt_accepted",e.receipt_accepted},{"message_write_ok",e.message_write_ok},
+        {"message_id",e.message_id},{"touch_index",e.touch_index}});
+    for(const auto& message:transport.messages())stream_messages.push_back({
+        {"id",message.id},{"stream_id",message.stream_id},{"first_event_index",message.first_event_index},
+        {"event_count",message.event_count},{"host_write_start_ns",message.host_write_start_ns},
+        {"host_write_return_ns",message.host_write_return_ns},{"write_ok",message.write_ok}});
+    for(const auto& s:transport.sessions())stream_sessions.push_back({
+        {"id",s.id},{"preparation_probe",s.preparation_probe},
+        {"open_begin_ns",s.open_begin_ns},{"open_return_ns",s.open_return_ns},
+        {"close_begin_ns",s.close_begin_ns},{"close_return_ns",s.close_return_ns},
+        {"first_event_index",s.first_event_index},{"event_count",s.event_count},{"message_count",s.message_count},
+        {"writes_done_ok",s.writes_done_ok},{"finish_called",s.finish_called},{"finish_ok",s.finish_ok},
+        {"cancelled",s.cancelled},{"status_code",s.status_code}});
+    const auto& prep=transport.preparation();
+    manifest["touch_stream"]={{"policy","ordered-same-due-move-touch-event-batches-v1"},
+        {"pressure_policy",touch_pressure_policy},
+        {"coordinate_map",{{"frame_width",1280},{"frame_height",720},{"touch_width",720},{"touch_height",1280},{"rotation_deg",90}}},
+        {"write_receipt_semantics","command_queue_accepted_effect_unverified"},
+        {"receipt_clock_scope","inject queue acceptance and return; earlier receipts are never retimed to a later batched Write"},
+        {"batching_policy","exact-same-due-distinct-contact-MOVE-only-v1"},{"max_touches_per_message",10},
+        {"dispatch_schedule_source","complete sorted compiled plan events; fixed absolute offset and phase checked per command"},
+        {"RPC_completion_scope","Finish OK confirms RPC completion only; device/game effect unverified"},
+        {"max_stream_age_ns",50*ms},{"max_stream_events",256},{"stream_timeout_ms",100},
+        {"events",std::move(stream_events)},{"messages",std::move(stream_messages)},{"sessions",std::move(stream_sessions)},
+        {"dispatch_schedule",std::move(stream_schedule)},{"write_admissions",std::move(stream_admissions)},
+        {"fault",transport.fault()},
+        {"preparation",{{"begin_ns",prep.begin_ns},{"return_ns",prep.return_ns},{"timeout_ms",prep.timeout_ms},
+            {"connected",prep.connected},{"probe_opened",prep.probe_opened},
+            {"probe_writes_done_ok",prep.probe_writes_done_ok},{"probe_finish_ok",prep.probe_finish_ok},
+            {"probe_status_code",prep.probe_status_code},{"input_rpc_opened",prep.input_rpc_opened!=0},
+            {"touch_events",prep.touch_events}}},
+        {"unary_release",release_json(transport.unary_release())}};
     if(diagnostic_images&&anchor_frame)pas::write_diagnostic_png(output/"anchor.png",*anchor_frame);
     if(diagnostic_images&&last_frame)pas::write_diagnostic_png(output/"last-observed.png",*last_frame);
     if(result_frame) {
@@ -1121,6 +1983,9 @@ int run(int argc,char** argv) {
     manifest["status"]=failure.empty()&&sequence_complete&&status.result_confirmed&&touch.down_attempts==expected_notes&&touch.up_attempts==expected_notes&&release_known&&final_zero?
         "experimental_whole_song_sent_judgment_unreviewed":"failed_or_stopped";
     manifest["start_host_ns"]=started;manifest["stop_host_ns"]=clock.now_ns();manifest["journal_rows"]=journal.rows;manifest["receipt_rows"]=receipts.rows;
+    manifest["preinput_UI_journal_skips"]=preinput_ui_journal_skips;
+    manifest["opening_detector_metadata"]={{"rows",opening_detector_journal_rows},{"maximum_rows",1024},
+        {"minimum_receipt_spacing_ns",250*ms},{"pixels_retained",false},{"input_permission",false}};
     write_json(output/"manifest.json",manifest);std::cout<<manifest.dump(2)<<'\n';
     return manifest.at("status")=="experimental_whole_song_sent_judgment_unreviewed"?0:2;
 }

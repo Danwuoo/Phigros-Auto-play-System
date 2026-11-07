@@ -18,6 +18,15 @@ struct LearnedHudFrame {
     bool source_valid=false;
     int rotation=0;
 };
+struct LearnedMergedScoreEvidence {
+    bool candidate=false;
+    std::string reason="not_measured";
+    PixelRegion component;
+    std::size_t spanned_windows=0,textured_windows=0,white_pixels=0,negative_pixels=0;
+    std::array<PixelRegion,8> boundary_regions{};
+    std::size_t boundary_fragments=0,clean_components=0,boundary_textured_windows=0;
+    double occupancy=0;
+};
 struct LearnedHudEvidence {
     bool ready=false,current_candidate=false;
     std::string reason="waiting_for_clean_reference",policy_id="learned-title-redundancy-v1";
@@ -28,6 +37,7 @@ struct LearnedHudEvidence {
     std::size_t title_foreground_pixels=0,plausible_score_components=0,score_boundary_components=0;
     double title_occupancy=0,title_local_contrast=0;
     HudGlyphEvidence auxiliary;
+    LearnedMergedScoreEvidence merged_score;
 };
 
 // Optional, round-local visual redundancy, not song identity or a permission
@@ -46,6 +56,9 @@ class LearnedHudRedundancy {
     std::unique_ptr<HudGlyphEvidenceProducer> producer_;
     std::optional<HudGlyphPolicy> learned_primary_policy_;
     std::vector<std::uint8_t> reference_,support_;
+    std::array<PixelRegion,7> score_windows_{};
+    bool score_windows_ready_=false;
+    int score_top_=0,score_bottom_=0;
     static bool image_valid(const RgbImageView& v) {
         return v.width==1280&&v.height==720&&v.stride==3840&&v.pixels.size()==rgb_bytes;
     }
@@ -99,15 +112,37 @@ class LearnedHudRedundancy {
             p.score.bounded&&p.score.calibrated_cells&&!p.score.glyph_structure_candidate&&
             p.score.boundary_components>0&&plausible(p.score)>=4;
     }
-    static bool at_primary_prefix_mismatch(const HudGlyphEvidence& p) {
+    static bool merged_score_boundary(const HudGlyphEvidence& p) {
+        return prefix_pass(p)&&!p.hud_candidate&&p.reason=="score_digit_structure_missing"&&
+            p.score.bounded&&p.score.calibrated_cells&&!p.score.glyph_structure_candidate&&
+            p.score.boundary_components==1;
+    }
+    static bool primary_prefix_mismatch_core(const HudGlyphEvidence& p) {
         const auto& g=p.fixed_glyphs[1];
-        return p.policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4&&p.valid&&!p.denied_state_match&&
+        return (p.policy==HudGlyphPolicy::shared_in_subpixel_prefix_score_v3||
+                p.policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4)&&p.valid&&!p.denied_state_match&&
             !p.title_required&&!p.hud_candidate&&p.reason=="fixed_glyph_or_negative_space_missing"&&
             glyph_pass(p.fixed_glyphs[0])&&!g.glyph_present&&glyph_core_pass(g)&&g.subpixel_tolerant&&
             std::isfinite(g.unexpected_white_fraction)&&g.unexpected_white_fraction>=0&&g.unexpected_white_fraction<=1&&
-            std::isfinite(g.observed_ink_ratio)&&g.observed_ink_ratio>=.65&&
-            p.score.bounded&&p.score.calibrated_cells&&p.score.glyph_structure_candidate&&p.score.placement_consistent&&
+            std::isfinite(g.observed_ink_ratio)&&g.observed_ink_ratio>=.65;
+    }
+    static bool primary_prefix_mismatch(const HudGlyphEvidence& p) {
+        return primary_prefix_mismatch_core(p)&&p.score.bounded&&p.score.calibrated_cells&&p.score.glyph_structure_candidate&&p.score.placement_consistent&&
             p.score.boundary_components==0&&p.score.supported_cells==7&&p.score.glyphs.size()==7&&plausible(p.score)==7;
+    }
+    static bool joint_ordinary_occlusion(const HudGlyphEvidence& p) {
+        return primary_prefix_mismatch_core(p)&&p.score.bounded&&p.score.calibrated_cells&&
+            !p.score.glyph_structure_candidate&&p.score.boundary_components>0&&plausible(p.score)>=4;
+    }
+    static bool joint_merged_score_boundary(const HudGlyphEvidence& p) {
+        return primary_prefix_mismatch_core(p)&&p.score.bounded&&p.score.calibrated_cells&&
+            !p.score.glyph_structure_candidate&&p.score.boundary_components==1;
+    }
+    static bool partial_score_boundary(const HudGlyphEvidence& p) {
+        const bool primary_shape=(prefix_pass(p)&&!p.hud_candidate&&p.reason=="score_digit_structure_missing")||
+            primary_prefix_mismatch_core(p);
+        return primary_shape&&p.score.bounded&&p.score.calibrated_cells&&!p.score.glyph_structure_candidate&&
+            p.score.boundary_components>=1&&p.score.boundary_components<=8&&p.score.glyphs.size()<=64;
     }
     static bool white(const std::uint8_t* p) {return p[0]>195&&p[1]>195&&p[2]>195&&std::max({p[0],p[1],p[2]})-std::min({p[0],p[1],p[2]})<35;}
     static int gray(const std::uint8_t* p) {return static_cast<int>((77u*p[0]+150u*p[1]+29u*p[2]+128u)>>8);}
@@ -146,9 +181,124 @@ class LearnedHudRedundancy {
         return e.valid&&e.hud_candidate&&e.score.bounded&&e.score.glyph_structure_candidate&&
             e.score.boundary_components==0&&e.score.glyphs.size()==7&&plausible(e.score)==7;
     }
+    LearnedMergedScoreEvidence merged_score_evidence(const RgbImageView& image,const HudScoreMetrics& score)const {
+        LearnedMergedScoreEvidence result;result.reason="merged_score_component_missing";
+        if(!score_windows_ready_||!score.bounded||score.boundary_components!=1||score.glyphs.size()>64)return result;
+        const HudScoreGlyph* merged=nullptr;
+        for(const auto& glyph:score.glyphs){
+            const auto& b=glyph.bounds;
+            // A line plus text can occupy the complete 40px score ROI; this
+            // is not one font glyph. The normal digit 32px limit is unchanged.
+            if(b.x<1076||b.y<20||b.width<3||b.height<16||b.height>40||b.x+b.width>1256||b.y+b.height>60||
+               !(b.x==1076||b.y==20||b.x+b.width==1256||b.y+b.height==60)||
+               glyph.white_pixels<80||glyph.negative_pixels<80||!std::isfinite(glyph.occupancy)||
+               glyph.occupancy<.12||glyph.occupancy>.85)continue;
+            std::size_t spanned=0;
+            for(const auto& window:score_windows_)if(b.x<=window.x&&b.x+b.width>=window.x+window.width&&
+                std::min(b.y+b.height,window.y+window.height)-std::max(b.y,window.y)>=12)++spanned;
+            if(spanned<4)continue;
+            if(merged){result.reason="merged_score_component_ambiguous";return result;}
+            merged=&glyph;result.spanned_windows=spanned;
+        }
+        if(!merged)return result;
+        result.component=merged->bounds;result.white_pixels=merged->white_pixels;
+        result.negative_pixels=merged->negative_pixels;result.occupancy=merged->occupancy;
+        // These fixed pre-arm coordinates are only separated texture windows,
+        // not current digit cells or inferred proportional font advances. All
+        // ink/dark/vertical-stroke evidence comes from the CURRENT raw pixels.
+        // At most7*24*32 source pixels are examined; no image is reconstructed.
+        for(const auto& window:score_windows_){
+            if(merged->bounds.x>window.x||merged->bounds.x+merged->bounds.width<window.x+window.width)continue;
+            std::size_t ink=0,dark=0,vertical_rows=0;double white_sum=0,dark_sum=0;
+            int first=720,last=-1;
+            const auto top=std::max(score_top_+3,window.y),bottom=std::min(score_bottom_-3,window.y+window.height);
+            for(int y=top;y<bottom;++y){bool row_white=false,row_dark=false;
+                for(int x=window.x;x<window.x+window.width;++x){const auto* p=pixel(image,x,y);
+                    if(white(p)){++ink;white_sum+=gray(p);row_white=true;}
+                    else if(gray(p)<128){++dark;dark_sum+=gray(p);row_dark=true;}}
+                if(row_white&&row_dark){++vertical_rows;first=std::min(first,y);last=std::max(last,y);}
+            }
+            if(ink>=12&&dark>=8&&vertical_rows>=8&&last-first>=12&&
+               white_sum/static_cast<double>(ink)-dark_sum/static_cast<double>(dark)>=40)++result.textured_windows;
+        }
+        result.candidate=result.textured_windows>=4;
+        result.reason=result.candidate?"current_wide_boundary_score_with_distributed_vertical_texture":
+            "merged_score_current_vertical_texture_missing";
+        return result;
+    }
+    LearnedMergedScoreEvidence partial_score_evidence(const RgbImageView& image,const HudScoreMetrics& score)const {
+        LearnedMergedScoreEvidence result;result.reason="partial_boundary_score_components_missing";
+        if(!score_windows_ready_||!score.bounded||score.boundary_components<1||score.boundary_components>8||
+           score.glyphs.size()>64)return result;
+        std::array<bool,7> supported{},boundary_supported{};
+        // A fragment must be an actual CURRENT score CC at the fixed ROI edge.
+        // It must cover at least one whole learned texture window; no union
+        // bounding box is manufactured and no old frame supplies score pixels.
+        for(const auto& glyph:score.glyphs){
+            const auto& b=glyph.bounds;
+            const bool boundary=b.x==1076||b.y==20||b.x+b.width==1256||b.y+b.height==60;
+            if(b.x<1076||b.y<20||b.width<3||b.height<16||b.height>40||b.x+b.width>1256||b.y+b.height>60||
+               !boundary||glyph.white_pixels<80||glyph.negative_pixels<80||!std::isfinite(glyph.occupancy)||
+               glyph.occupancy<.12||glyph.occupancy>.85)continue;
+            std::array<bool,7> covered{};bool any=false;
+            for(std::size_t i=0;i<score_windows_.size();++i){const auto& w=score_windows_[i];
+                covered[i]=b.x<=w.x&&b.x+b.width>=w.x+w.width&&
+                    std::min(b.y+b.height,w.y+w.height)-std::max(b.y,w.y)>=12;
+                any=any||covered[i];
+            }
+            if(!any)continue;
+            if(result.boundary_fragments>=result.boundary_regions.size()){
+                result.reason="partial_boundary_score_fragment_budget";return result;
+            }
+            result.boundary_regions[result.boundary_fragments++]=b;
+            for(std::size_t i=0;i<covered.size();++i)if(covered[i])supported[i]=boundary_supported[i]=true;
+        }
+        if(!result.boundary_fragments)return result;
+        // The ordinary diagnostic's original plausible-digit requirements are
+        // retained. One clean CC may support only its unique greatest-overlap
+        // learned window, so a wide/ambiguous box cannot vote several times.
+        for(const auto& glyph:score.glyphs){
+            const auto& b=glyph.bounds;
+            if(!glyph.plausible_stroke||b.width<3||b.width>24||b.height<16||b.height>32||
+               glyph.white_pixels<12||glyph.negative_pixels<8||!std::isfinite(glyph.occupancy)||
+               glyph.occupancy<.12||glyph.occupancy>.85)continue;
+            int selected=-1,largest=0;bool unique=false;
+            for(std::size_t i=0;i<score_windows_.size();++i){const auto& w=score_windows_[i];
+                if(std::min(b.y+b.height,w.y+w.height)-std::max(b.y,w.y)<12)continue;
+                const int overlap=std::min(b.x+b.width,w.x+w.width)-std::max(b.x,w.x);
+                if(overlap<3||2*overlap<std::min(b.width,w.width))continue;
+                if(overlap>largest){largest=overlap;selected=static_cast<int>(i);unique=true;}
+                else if(overlap==largest)unique=false;
+            }
+            if(selected>=0&&unique){supported[static_cast<std::size_t>(selected)]=true;++result.clean_components;}
+        }
+        for(std::size_t i=0;i<score_windows_.size();++i){
+            if(!supported[i])continue;
+            ++result.spanned_windows;
+            const auto& window=score_windows_[i];
+            std::size_t ink=0,dark=0,vertical_rows=0;double white_sum=0,dark_sum=0;
+            int first=720,last=-1;
+            const auto top=std::max(score_top_+3,window.y),bottom=std::min(score_bottom_-3,window.y+window.height);
+            for(int y=top;y<bottom;++y){bool row_white=false,row_dark=false;
+                for(int x=window.x;x<window.x+window.width;++x){const auto* p=pixel(image,x,y);
+                    if(white(p)){++ink;white_sum+=gray(p);row_white=true;}
+                    else if(gray(p)<128){++dark;dark_sum+=gray(p);row_dark=true;}}
+                if(row_white&&row_dark){++vertical_rows;first=std::min(first,y);last=std::max(last,y);}
+            }
+            if(ink>=12&&dark>=8&&vertical_rows>=8&&last-first>=12&&
+               white_sum/static_cast<double>(ink)-dark_sum/static_cast<double>(dark)>=40){
+                ++result.textured_windows;if(boundary_supported[i])++result.boundary_textured_windows;
+            }
+        }
+        result.candidate=result.spanned_windows>=4&&result.textured_windows>=4&&result.boundary_textured_windows>=1;
+        result.reason=result.candidate?"current_partial_boundary_and_clean_score_with_distributed_vertical_texture":
+            "partial_boundary_score_current_vertical_texture_missing";
+        return result;
+    }
     void clear_model() {
         const auto attempts=value_.construction_attempts;value_=LearnedHudEvidence{};value_.construction_attempts=attempts;
         producer_.reset();learned_primary_policy_.reset();std::vector<std::uint8_t>().swap(reference_);std::vector<std::uint8_t>().swap(support_);
+        score_windows_ready_=false;score_windows_={};score_top_=score_bottom_=0;
     }
     static std::string hash(const std::vector<std::uint8_t>& raw) {return chart_text_sha256({reinterpret_cast<const char*>(raw.data()),raw.size()});}
 public:
@@ -164,6 +314,7 @@ public:
     const LearnedHudEvidence& observe(const RgbImageView& image,const HudGlyphEvidence& primary,
             const ScreenStateResult& raw,const LearnedHudFrame& meta,bool armed) {
         value_.current_candidate=false;value_.auxiliary=HudGlyphEvidence{};
+        value_.merged_score=LearnedMergedScoreEvidence{};
         value_.plausible_score_components=0;value_.score_boundary_components=0;
         armed_ever_=armed_ever_||armed;
         if(!image_valid(image)){clear_model();value_.reason="invalid_learned_image_geometry";return value_;}
@@ -183,19 +334,70 @@ public:
         if(value_.ready){
             if(teacher(primary)){value_.reason="primary_admitted";return value_;}
             if(!armed){value_.reason="learned_reference_ready_unarmed";return value_;}
-            // AT-only alternate route after a primary prefix shape mismatch.
+            // Alternate route after an IN/AT primary prefix shape mismatch.
             // No primary threshold is widened: independently require CURRENT
-            // full learned AT difficulty, title, pause and seven clean digits.
-            if(learned_primary_policy_==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4&&at_primary_prefix_mismatch(primary)) {
+            // full learned difficulty/level, title, pause and seven clean digits.
+            // A template learned under another primary policy is never reused.
+            if(learned_primary_policy_==primary.policy&&primary_prefix_mismatch(primary)) {
                 value_.auxiliary=producer_->observe_features(image,raw.state);
                 value_.current_candidate=clean_auxiliary_score(value_.auxiliary);
                 value_.reason=value_.current_candidate?"current_learned_full_HUD_after_primary_prefix_mismatch":
                     "current_auxiliary_full_HUD_missing_after_primary_prefix_mismatch";
                 return value_;
             }
-            if(!occlusion(primary)){value_.reason="not_score_only_boundary_occlusion";return value_;}
+            if(learned_primary_policy_==primary.policy&&joint_ordinary_occlusion(primary)) {
+                // The two existing failure shapes can coincide. Neither the
+                // primary thresholds nor the score witness are relaxed: all
+                // complete learned anchors and ordinary score evidence must
+                // be measured again from this exact current frame.
+                value_.plausible_score_components=plausible(primary.score);
+                value_.score_boundary_components=primary.score.boundary_components;
+                value_.auxiliary=producer_->observe_features(image,raw.state);
+                value_.current_candidate=value_.auxiliary.valid&&value_.auxiliary.hud_candidate&&
+                    glyph_pass(value_.auxiliary.fixed_glyphs[0])&&glyph_pass(value_.auxiliary.fixed_glyphs[1])&&
+                    glyph_pass(value_.auxiliary.title_glyph)&&value_.auxiliary.score.bounded&&
+                    value_.auxiliary.score.boundary_components>0&&plausible(value_.auxiliary.score)>=4;
+                value_.reason=value_.current_candidate?"current_learned_full_HUD_with_joint_prefix_and_ordinary_score_occlusion":
+                    "current_auxiliary_anchors_or_ordinary_score_missing_after_joint_occlusion";
+                return value_;
+            }
+            const bool ordinary_occlusion=occlusion(primary);
+            const bool joint_merged=learned_primary_policy_==primary.policy&&joint_merged_score_boundary(primary);
+            const bool merged_boundary=learned_primary_policy_==primary.policy&&
+                (merged_score_boundary(primary)||joint_merged);
+            const bool partial_boundary=learned_primary_policy_==primary.policy&&partial_score_boundary(primary);
+            if(!ordinary_occlusion&&!merged_boundary&&!partial_boundary){value_.reason="auxiliary_not_measured_unsupported_primary_failure_shape";return value_;}
             value_.plausible_score_components=plausible(primary.score);value_.score_boundary_components=primary.score.boundary_components;
             value_.auxiliary=producer_->observe_features(image,raw.state);
+            if(!ordinary_occlusion){
+                // A single connected score line can merge all digit CCs. Three
+                // independent CURRENT fixed anchors remain mandatory, as does
+                // a bounded textured score witness measured without rewriting
+                // pixels. A blank/solid/bare line or hollow rectangle cannot
+                // borrow a past title/level/pause mask or synthetic digits.
+                const bool anchors=value_.auxiliary.valid&&value_.auxiliary.hud_candidate&&
+                    glyph_pass(value_.auxiliary.fixed_glyphs[0])&&glyph_pass(value_.auxiliary.fixed_glyphs[1])&&
+                    glyph_pass(value_.auxiliary.title_glyph);
+                if(anchors){
+                    if(merged_boundary)value_.merged_score=merged_score_evidence(image,value_.auxiliary.score);
+                    if(!value_.merged_score.candidate&&partial_boundary)
+                        value_.merged_score=partial_score_evidence(image,value_.auxiliary.score);
+                }
+                else value_.merged_score.reason="current_full_learned_anchors_missing";
+                value_.current_candidate=anchors&&value_.merged_score.candidate;
+                if(value_.current_candidate&&value_.merged_score.boundary_fragments){
+                    value_.reason=primary_prefix_mismatch_core(primary)?
+                        "current_learned_three_anchors_with_joint_prefix_and_partial_boundary_score":
+                        "current_learned_three_anchors_with_partial_boundary_score";
+                    return value_;
+                }
+                value_.reason=value_.current_candidate?
+                    (joint_merged?"current_learned_three_anchors_with_joint_prefix_and_merged_score_boundary":
+                        "current_learned_three_anchors_with_merged_score_boundary"):
+                    (joint_merged?"current_auxiliary_anchors_or_merged_score_texture_missing_after_joint_prefix_mismatch":
+                        "current_auxiliary_anchors_or_merged_score_texture_missing");
+                return value_;
+            }
             // Independently verify CURRENT pixels too: forged primary metrics
             // cannot turn a blank/solid score into an occlusion observation.
             value_.current_candidate=value_.auxiliary.valid&&value_.auxiliary.hud_candidate&&
@@ -230,6 +432,10 @@ public:
             learned_primary_policy_=primary.policy;
             value_.auxiliary=producer_->observe_features(reference,raw.state);
             if(!clean_auxiliary_score(value_.auxiliary)){clear_model();value_.reason="reference_full_anchors_or_clean_score_unsupported";return value_;}
+            score_top_=720;score_bottom_=0;
+            for(std::size_t i=0;i<7;++i){score_windows_[i]=value_.auxiliary.score.glyphs[i].bounds;
+                score_top_=std::min(score_top_,score_windows_[i].y);score_bottom_=std::max(score_bottom_,score_windows_[i].y+score_windows_[i].height);}
+            score_windows_ready_=true;
             value_.reference_frame=meta;value_.support_frames=1;value_.reason="waiting_for_distinct_60ms_support";
         }catch(const std::exception&){clear_model();value_.reason="reference_mask_construction_rejected";}
         return value_;

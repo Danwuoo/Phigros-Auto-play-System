@@ -10,7 +10,7 @@ import subprocess
 SOURCE_ROOTS = {"apps", "cmake", "include", "src", "tests", "tools", "proto", "third_party"}
 SOURCE_FILES = {"CMakeLists.txt", "vcpkg.json", "vcpkg-configuration.json", "AGENTS.md"}
 EXECUTABLES = {"chart_experiment.exe", "touch_probe.exe", "chart_inspect.exe", "grpc_patch_smoke.exe"}
-MAX_FILES = 2048
+MAX_FILES = 4096
 MAX_BYTES = 1024 * 1024 * 1024
 
 

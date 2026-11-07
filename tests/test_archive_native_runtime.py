@@ -84,6 +84,18 @@ class RuntimeArchiveTests(unittest.TestCase):
         self.assertTrue(self.output.exists())
         self.assertFalse((self.output / "manifest.json").exists())
 
+    def test_file_budget_boundary_is_complete_and_still_checked_before_output(self):
+        entries = runtime.collect(self.repo, self.bin, [self.log])
+        with patch.object(runtime, "MAX_FILES", len(entries) - 1):
+            with self.assertRaisesRegex(ValueError, "budget"):
+                self.seal()
+        self.assertFalse(self.output.exists())
+        with patch.object(runtime, "MAX_FILES", len(entries)):
+            result = self.seal()
+        self.assertEqual(len(result["artifacts"]), len(entries))
+        self.assertEqual(runtime.MAX_FILES, 4096)
+        self.assertEqual(runtime.MAX_BYTES, 1024 * 1024 * 1024)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -38,6 +38,16 @@ def need(condition, message):
         raise ValueError(message)
 
 
+def checked_capacity(value):
+    need(type(value) is int and 1 <= value <= 10, "fixture capacity must be an integer in 1..10")
+    return value
+
+
+def configured_capacity(config):
+    # Missing field keeps legacy sealed five-contact configurations compatible.
+    return checked_capacity(config.get("fixture_capacity", 5))
+
+
 def sha(path):
     digest = hashlib.sha256()
     with Path(path).open("rb") as stream:
@@ -97,6 +107,7 @@ def load_config(path, expected_sha, *, running=False):
     need(config.get("schema") == SCHEMA and config.get("serial") == SERIAL and config.get("avd") == AVD,
          "only the known explicit phigros AVD is supported")
     need(config.get("emulator_arguments") == EMULATOR_ARGS, "unexpected emulator arguments")
+    configured_capacity(config)
     for key in TOOL_KEYS:
         if running and key in ("avd_ini", "avd_config"):
             # Emulator-owned metadata may be rewritten at boot. Preserve the
@@ -137,8 +148,9 @@ def load_config(path, expected_sha, *, running=False):
     return config
 
 
-def make_config(panel_path, output):
+def make_config(panel_path, output, fixture_capacity=5):
     """Offline sealing helper; the caller separately pins this config's SHA."""
+    checked_capacity(fixture_capacity)
     repo = Path(__file__).resolve().parents[1]
     base = repo.parent.parent
     assets, work = repo.parent / "local-assets/phigros-4.0.1", base / "work"
@@ -158,7 +170,7 @@ def make_config(panel_path, output):
                  worker=Path(__file__), panel_config=Path(panel_path))
     panel = read(panel_path)
     config = dict(schema=SCHEMA, serial=SERIAL, avd=AVD, emulator_arguments=EMULATOR_ARGS,
-                  output_parent=panel["output_parent"], fixture_capacity=5, automatic_game_launch=False,
+                  output_parent=panel["output_parent"], fixture_capacity=fixture_capacity, automatic_game_launch=False,
                   manual_fixture_consent_required=True, manual_selection=True, manual_start=True,
                   probe_dependencies=[ref(p) for p in sorted(probe.parent.glob("*.dll"))],
                   **{key: ref(path) for key, path in paths.items()})
@@ -186,13 +198,14 @@ def select_new_recording(listing, previous, pid):
     return candidates[0]
 
 
-def validate_snapshot(row, boot, expected=None, zero=True):
+def validate_snapshot(row, boot, expected=None, zero=True, capacity=5):
+    checked_capacity(capacity)
     need(row.get("schema") == "pas.evdev-slot-snapshot.v1" and row.get("boot_id") == boot,
          "snapshot schema/boot mismatch")
     need(re.fullmatch(r"/dev/input/event[0-9]{1,3}", row.get("path", "")) and
          row.get("name") == "virtio_input_multi_touch_1" and row.get("error_errno") == 0, "unexpected touch route")
     need(type(row.get("rdev")) is int and row["rdev"] > 0 and type(row.get("slot_count")) is int
-         and 5 <= row["slot_count"] <= 64, "unqualified slot metadata")
+         and capacity <= row["slot_count"] <= 64, "unqualified slot metadata")
     ids = row.get("tracking_ids")
     need(type(ids) is list and len(ids) == row["slot_count"] and all(type(i) is int and i >= -1 for i in ids), "invalid slots")
     need(type(row.get("active_count")) is int and row["active_count"] == sum(i >= 0 for i in ids), "slot count disagreement")
@@ -207,7 +220,10 @@ def validate_snapshot(row, boot, expected=None, zero=True):
     return row
 
 
-def validate_stream(raw, boot, profile):
+def validate_stream(raw, boot, profile, capacity=5):
+    checked_capacity(capacity)
+    need(type(profile.get("slot_count")) is int and capacity <= profile["slot_count"] <= 64,
+         "kernel route has insufficient slots for requested capacity")
     need(0 < len(raw) <= 16 * 1024 * 1024 and raw.endswith(b"\n"), "bounded complete kernel stream required")
     rows = [decode(line) for line in raw.splitlines()]
     need(3 <= len(rows) <= 514, "kernel stream record count exceeded")
@@ -232,20 +248,24 @@ def validate_stream(raw, boot, profile):
         ids = sample.get("tracking_ids")
         need(type(ids) is list and len(ids) == profile["slot_count"] and all(type(i) is int and i >= -1 for i in ids), "kernel sample slots invalid")
         count = sum(i >= 0 for i in ids)
-        need(type(sample.get("active_count")) is int and sample["active_count"] == count and count <= 5, "kernel sample count invalid")
+        need(type(sample.get("active_count")) is int and sample["active_count"] == count and count <= capacity, "kernel sample count invalid")
         active.append(count)
-    need(active[0] == 0 and active[-1] == 0 and max(active) == 5, "actual fresh route did not observe zero/five/zero")
+    need(active[0] == 0 and active[-1] == 0 and max(active) == capacity,
+         "actual fresh route did not observe zero/requested-capacity/zero")
     return dict(schema="pas.restart-route-observation.v1", boot_id=boot, path=profile["path"],
                 samples=len(active), peak_contacts=max(active), baseline_zero=True, final_zero=True,
                 scope="actual simultaneous kernel slots; no host/Android clock map or game judgment qualification")
 
 
-def validate_probe(value):
+def validate_probe(value, capacity=5):
+    checked_capacity(capacity)
     need(value.get("schema") == "pas.touch-probe.v1" and value.get("serial") == SERIAL and value.get("avd") == AVD
-         and value.get("case") == "capacity" and value.get("capacity_requested") == 5, "probe identity mismatch")
+         and value.get("case") == "capacity" and type(value.get("capacity_requested")) is int
+         and value["capacity_requested"] == capacity, "probe identity mismatch")
     need(value.get("fixture_package") == PACKAGE and value.get("fixture_apk_sha256") == APK_SHA
          and value.get("input_enabled") is True and value.get("user_stop_requested") is False
-         and value.get("contacts_in_case") == 5 and value.get("width") == 1280 and value.get("height") == 720,
+         and type(value.get("contacts_in_case")) is int and value["contacts_in_case"] == capacity
+         and value.get("width") == 1280 and value.get("height") == 720,
          "probe fixture/input geometry identity mismatch")
     need(value.get("status") == "fixture_visual_path_passed" and value.get("path_verified") is True
          and value.get("zero_active_observed") is True and value.get("release_rpc_known") is True
@@ -261,11 +281,12 @@ def validate_probe(value):
     return value
 
 
-def validate_analysis(value):
+def validate_analysis(value, capacity=5):
+    checked_capacity(capacity)
     need(value.get("schema") == "pas.touch-probe-analysis.v1" and value.get("status") == "passed_observed_fixture_path"
-         and value.get("failures") == [] and value.get("incomplete_reasons") == [], "actual native five-contact path analysis failed")
+         and value.get("failures") == [] and value.get("incomplete_reasons") == [], "actual native requested-capacity path analysis failed")
     android = value.get("android", {})
-    need(type(android.get("peak_contacts")) is int and android["peak_contacts"] == 5 and all(android.get(k) is True for k in
+    need(type(android.get("peak_contacts")) is int and android["peak_contacts"] == capacity and all(android.get(k) is True for k in
          ("stream_complete", "expected_path_verified", "pointer_lifecycle_valid", "final_zero_observed")), "actual Android capacity evidence incomplete")
     return android
 
@@ -276,6 +297,12 @@ def derive_panel(template, kernel_ref, capacity_ref):
     result = copy.deepcopy(template)
     result["kernel_profile"], result["capacity_evidence"] = kernel_ref, capacity_ref
     return result
+
+
+def fixture_probe_arguments(config, output):
+    return [config["probe"]["file"], "run", SERIAL, AVD, APK_SHA,
+            "capacity", str(configured_capacity(config)), "1280", "720", output,
+            "sensor-portrait-r0-ccw90", "--fixture-input"]
 
 
 class Bootstrap:
@@ -325,7 +352,8 @@ class Bootstrap:
         end = time.perf_counter_ns()
         lines = raw.splitlines()
         need(len(lines) == 1, "one explicit kernel snapshot required")
-        row = validate_snapshot(decode(lines[0]), profile["boot_id"], profile)
+        row = validate_snapshot(decode(lines[0]), profile["boot_id"], profile,
+                                capacity=configured_capacity(self.c))
         row.update(host_request_begin_ns=start, host_reply_end_ns=end, causal_host_interval_valid=True,
                    helper_sha256=SNAP_SHA, reply_sha256=hashlib.sha256(raw).hexdigest(),
                    scope="read-only current kernel snapshot; no cross-clock latency qualification")
@@ -345,6 +373,7 @@ class Bootstrap:
         self.state("cold_boot_allowed", "準備以冷開機啟動 phigros AVD")
 
     def boot(self):
+        capacity = configured_capacity(self.c)
         pre = read(self.root / "preboot.json")
         self.state("booting", "等待 Android 開機（最多 180 秒）")
         deadline = time.monotonic() + 180
@@ -381,11 +410,11 @@ class Bootstrap:
         raw = self.command(["shell", REMOTE_SNAP, matches[0]], limit=8192, raw=True)
         lines = raw.splitlines()
         need(len(lines) == 1, "ambiguous route snapshot")
-        snap = validate_snapshot(decode(lines[0]), boot)
+        snap = validate_snapshot(decode(lines[0]), boot, capacity=capacity)
         profile = dict(schema="pas.first-tap-kernel-profile.v1", boot_id=boot,
                        **{key: snap[key] for key in ("path", "name", "rdev", "slot_count")},
                        helper=REMOTE_SNAP, helper_sha256=SNAP_SHA,
-                       evidence="fresh user-invoked cold boot; actual route + helper hash + zero snapshot; five-contact qualification follows separately")
+                       evidence=f"fresh user-invoked cold boot; actual route + helper hash + zero snapshot; {capacity}-contact qualification follows separately")
         write_new(self.root / "kernel-profile.json", profile)
         self.snapshot(profile, "kernel-before.json")
         installed = self.command(["shell", "pm", "path", PACKAGE], limit=8192, allowed=(0, 1))
@@ -396,7 +425,7 @@ class Bootstrap:
         apk = installed.removeprefix("package:")
         need(self.command(["shell", "sha256sum", apk], limit=1024).split() == [APK_SHA, apk], "installed fixture APK mismatch")
         need(self.boot_id() == boot, "boot changed during setup")
-        self.state("fixture_consent_required", "開機與零接觸檢查完成；等待您確認五指測試")
+        self.state("fixture_consent_required", f"開機與零接觸檢查完成；等待您確認 {capacity} 指測試")
 
     def owned(self, label, argv, *, probe_dir=None, timeout=30):
         """Never kill an input owner; STOP is sticky and release is its responsibility."""
@@ -458,11 +487,12 @@ class Bootstrap:
 
     def fixture(self, consent):
         need(consent, "explicit affirmative fixture consent required")
+        capacity = configured_capacity(self.c)
         profile = read(self.root / "kernel-profile.json")
         need(self.boot_id() == profile["boot_id"], "boot changed before fixture consent")
         self.snapshot(profile, "kernel-pre-fixture.json")
         previous = set(self.listing(optional=True).splitlines())
-        self.state("fixture", "開始五指 DOWN／MOVE／UP；請勿碰觸模擬器")
+        self.state("fixture", f"開始 {capacity} 指 DOWN／MOVE／UP；請勿碰觸模擬器")
         self.owned("fixture-launch", [self.c["powershell"]["file"], "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
                    "-File", self.c["fixture_launcher"]["file"], "-Serial", SERIAL, "-Avd", AVD, "-Adb", self.c["adb"]["file"]], timeout=25)
         call = lambda args, limit, timeout: self.runner([self.c["adb"]["file"], "-s", SERIAL, *args], limit, timeout)
@@ -484,7 +514,7 @@ class Bootstrap:
              and before_status["issues"] == ["missing_ambiguous_or_nonterminal_footer"],
              "new recorder is not clean/header-only; no fixture input")
         # Run the read-only observer before any fixture DOWN. Its complete stream
-        # independently ties the newly selected evdev route to five actual slots.
+        # independently ties the newly selected evdev route to actual requested slots.
         stream_path = self.root / "kernel-stream.jsonl"
         stream_err = self.root / "kernel-stream.stderr.log"
         with stream_path.open("xb") as out, stream_err.open("xb") as err:
@@ -504,8 +534,7 @@ class Bootstrap:
                 need(first_rows[0].get("boot_id") == profile["boot_id"] and first_rows[1].get("active_count") == 0,
                      "observer has no clean baseline; no input")
                 probe = self.root / "fixture-probe"
-                self.owned("five-contact-probe", [self.c["probe"]["file"], "run", SERIAL, AVD, APK_SHA,
-                    "capacity", "5", "1280", "720", probe, "sensor-portrait-r0-ccw90", "--fixture-input"],
+                self.owned(f"{capacity}-contact-probe", fixture_probe_arguments(self.c, probe),
                     probe_dir=probe, timeout=25)
             finally:
                 # Observer is bounded to 20 seconds. It does not own input and is
@@ -517,12 +546,12 @@ class Bootstrap:
                     observer.wait(timeout=3)
                     raise ValueError("read-only observer exceeded its own bound")
         need(observer.returncode == 0, "kernel observer failed")
-        route = validate_stream(stream_path.read_bytes(), profile["boot_id"], profile)
+        route = validate_stream(stream_path.read_bytes(), profile["boot_id"], profile, capacity)
         write_new(self.root / "route-observation.json", route)
         probe = self.root / "fixture-probe"
-        host = validate_probe(read(probe / "manifest.json"))
+        host = validate_probe(read(probe / "manifest.json"), capacity)
         self.snapshot(profile, "kernel-after-probe.json")
-        self.state("recording", "五指已釋放；等待 60 秒記錄安全封口")
+        self.state("recording", f"{capacity} 指已釋放；等待 60 秒記錄安全封口")
         deadline = time.monotonic() + 70
         while True:
             self.stop_check()
@@ -548,19 +577,19 @@ class Bootstrap:
         checked_ref(self.c["analyzer"])
         analyzer = module(self.c["analyzer"]["file"], "pas_restart_analyzer")
         analysis = analyzer.analyze_probe(probe / "manifest.json", probe / "events.jsonl", native)
-        android = validate_analysis(analysis)
+        android = validate_analysis(analysis, capacity)
         write_new(self.root / "analysis.json", analysis)
         self.snapshot(profile, "kernel-final-zero.json")
-        evidence = dict(schema="pas.fixture-capacity-evidence.v1", boot_id=profile["boot_id"], capacity=5,
+        evidence = dict(schema="pas.fixture-capacity-evidence.v1", boot_id=profile["boot_id"], capacity=capacity,
             normal_path_valid=True, final_zero=True, fixture_apk_sha256=APK_SHA,
             analysis=ref(self.root / "analysis.json"), host_manifest=ref(probe / "manifest.json"),
             retrieval_report=ref(self.root / "retrieval-report.json"),
             artifacts=[ref(p) for p in (probe / "manifest.json", probe / "events.jsonl", native,
                 self.root / "analysis.json", self.root / "retrieval-report.json", self.root / "kernel-final-zero.json",
-                stream_path, self.root / "route-observation.json")], geometry=host["geometry"], native_peak_contacts=5,
+                stream_path, self.root / "route-observation.json")], geometry=host["geometry"], native_peak_contacts=android["peak_contacts"],
             logical_to_android_id=android.get("logical_to_android_id"), native_motion_events=android.get("motion_events"),
             current_kernel_zero=True, input_latency_ns=None, game_input_lead_ns=None, live_game_qualified=False,
-            scope="new cold-boot fixture DOWN/MOVE/UP, simultaneous five contacts and final zero; no game judgment or latency qualification")
+            scope=f"new cold-boot fixture DOWN/MOVE/UP, simultaneous {capacity} contacts and final zero; no game judgment or latency qualification")
         write_new(self.root / "capacity-evidence.json", evidence)
         derived = derive_panel(read(self.c["panel_config"]["file"]), ref(self.root / "kernel-profile.json"), ref(self.root / "capacity-evidence.json"))
         write_new(self.root / "launch-config.json", derived)
@@ -579,9 +608,9 @@ class Bootstrap:
         write_new(self.root / "result.json", dict(schema="pas.song-test-restart-result.v1", status="fresh_fixture_verified",
             prior_panel_config=self.c["panel_config"], launch_config=ref(self.root / "launch-config.json"),
             kernel_profile=ref(self.root / "kernel-profile.json"), capacity_evidence=ref(self.root / "capacity-evidence.json"),
-            boot_id=profile["boot_id"], actual_capacity=5, game_launched=False, game_selection=False, game_play=False,
+            boot_id=profile["boot_id"], actual_capacity=android["peak_contacts"], game_launched=False, game_selection=False, game_play=False,
             original_evidence_modified=False, input_latency_ns=None, game_input_lead_ns=None))
-        self.state("ready", "新的五指與零接觸驗證完成；可以開啟測試面板", launch_config=str(self.root / "launch-config.json"))
+        self.state("ready", f"新的 {capacity} 指與零接觸驗證完成；可以開啟測試面板", launch_config=str(self.root / "launch-config.json"))
 
 
 def main():
@@ -593,18 +622,22 @@ def main():
     parser.add_argument("--mode", choices=("plan", "preboot", "boot", "fixture"), default="plan")
     parser.add_argument("--session", type=Path)
     parser.add_argument("--fixture-consent", action="store_true")
+    parser.add_argument("--fixture-capacity", type=int, choices=range(1, 11),
+                        help="capacity to seal with --make-config; defaults to legacy five contacts")
     args = parser.parse_args()
     if args.make_config:
         need(args.output is not None, "--output required")
-        print(json.dumps(make_config(args.make_config, args.output)))
+        print(json.dumps(make_config(args.make_config, args.output,
+                                     5 if args.fixture_capacity is None else args.fixture_capacity)))
         return 0
+    need(args.fixture_capacity is None, "--fixture-capacity is only allowed with --make-config; runtime capacity comes from the sealed config")
     need(args.configuration is not None, "--configuration required")
     config = load_config(args.configuration, args.configuration_sha256, running=args.mode in ("boot", "fixture"))
     config["_config_ref"] = ref(args.configuration)
     if args.mode == "plan":
         print(json.dumps(dict(schema="pas.song-test-restart-plan.v1", status="offline_pins_verified",
               configuration=ref(args.configuration), emulator=config["emulator"], emulator_arguments=EMULATOR_ARGS,
-              panel_config=config["panel_config"], fixture_capacity=5, device_access=False, native_processes_started=0)))
+              panel_config=config["panel_config"], fixture_capacity=configured_capacity(config), device_access=False, native_processes_started=0)))
         return 0
     need(args.session is not None and args.session.is_absolute() and args.session.parent.resolve() == Path(config["output_parent"]).resolve(), "session must be a new direct child of output_parent")
     worker = Bootstrap(config, args.session)

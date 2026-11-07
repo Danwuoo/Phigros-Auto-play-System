@@ -85,6 +85,10 @@ public:
     GrpcTouch(const Clock& clock, GrpcEndpoint endpoint, PixelCoordinateMap mapping,
               int width, int height, int max_contacts = 2,
               std::chrono::milliseconds timeout = std::chrono::milliseconds(500));
+    // Explicit idle-only transport setup, with a monotonic 1..2000ms bound.
+    // Sends no RPC/input; READY is neither authentication nor effect proof,
+    // and cannot guarantee a later touch RPC's latency. Call before injection.
+    bool prepare_connection(std::chrono::milliseconds timeout);
     TouchReceipt inject(const TouchCommand& command) override;
     std::vector<TouchReceipt> inject_batch(const std::vector<TouchCommand>& commands);
     ReleaseReport release_all() override;

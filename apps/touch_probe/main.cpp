@@ -107,16 +107,19 @@ json plan_json(const ProbePlan& plan) {
 int main(int argc, char** argv) {
     try {
         const bool run = argc > 1 && std::string(argv[1]) == "run";
-        if ((!run && (argc != 6 || std::string(argv[1]) != "plan")) || (run && argc != 12))
+        if ((!run && (argc != 6 || std::string(argv[1]) != "plan")) || (run && argc != 12 && argc != 13))
             throw std::invalid_argument(
                 "touch_probe plan CASE CAPACITY WIDTH HEIGHT\n"
-                "touch_probe run SERIAL AVD FIXTURE_SHA CASE CAPACITY WIDTH HEIGHT NEW_DIR PROFILE --fixture-input|--inspect-only\n"
+                "touch_probe run SERIAL AVD FIXTURE_SHA CASE CAPACITY WIDTH HEIGHT NEW_DIR PROFILE --fixture-input|--inspect-only [--no-images]\n"
                 "PROFILE: portrait-r0, landscape-r1, sensor-portrait-ccw90, or sensor-portrait-r0-ccw90. WIDTH/HEIGHT are normalized fixture dimensions.\n"
                 "Plan is offline. Run never installs/launches apps; exact fixture must already be foreground.");
         const auto plan = make_plan(argv[run ? 5 : 2], integer(argv[run ? 6 : 3]),
             integer(argv[run ? 7 : 4]), integer(argv[run ? 8 : 5]));
         if (!run) { std::cout << plan_json(plan).dump(2) << '\n'; return 0; }
         const bool inspect_only = std::string(argv[11]) == "--inspect-only";
+        const bool no_images = run && argc == 13;
+        if(no_images && std::string(argv[12]) != "--no-images")
+            throw std::invalid_argument("unknown image retention option");
         if (!inspect_only && std::string(argv[11]) != "--fixture-input")
             throw std::invalid_argument("explicit --fixture-input or --inspect-only required");
         const std::string profile = argv[10];
@@ -167,7 +170,8 @@ int main(int argc, char** argv) {
         manifest["visual_path_adapter"] = fixture_probe::path_adapter_version;
         std::ofstream planned(output / "plan.json", std::ios::binary); planned << manifest.dump(2) << '\n'; planned.close();
         if (!planned) throw std::runtime_error("cannot write plan before input");
-        write_diagnostic_png(output / "before.png", first_frame);
+        manifest["image_retention"] = no_images ? "none" : "fixture_diagnostics";
+        if(!no_images)write_diagnostic_png(output / "before.png", first_frame);
         if (inspect_only) {
             manifest["status"] = "fixture_capture_signature_checked_no_input";
             std::ofstream summary(output / "manifest.json", std::ios::binary);
@@ -287,7 +291,7 @@ int main(int argc, char** argv) {
                 manifest["final_redundant_stationary_moves"] = checked.redundant_stationary_moves;
                 path_verified = checked.path.passed; manifest["path_result"] = checked.path.reason;
             }
-            write_diagnostic_png(output / "after-release.png", reader.snapshot(std::chrono::milliseconds(1000)));
+            if(!no_images)write_diagnostic_png(output / "after-release.png", reader.snapshot(std::chrono::milliseconds(1000)));
         } catch (const std::exception& error) {
             if (!failure.empty()) failure += "; ";
             failure += std::string("release_or_observation: ") + error.what();

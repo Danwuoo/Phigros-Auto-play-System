@@ -4,7 +4,7 @@ function Get-PanelBlockerText($Job) {
     $messages=foreach($reason in @($Job.blockers)){
         foreach($part in ([string]$reason -split ',')){
             switch($part){
-                'capacity_exceeded' {'同時觸控需求超過目前5指容量'}
+                'capacity_exceeded' {'同時觸控需求超過這份候選設定的容量；程式最多支援10指'}
                 'projection_unavailable' {'接點路徑無法完整投影到安全畫面範圍'}
                 'invisible_flick' {'Flick投影後沒有足夠的可辨識位移'}
                 default {$part}
@@ -23,6 +23,37 @@ function Select-PanelCatalogJobs($Jobs,[string]$Query='',[string]$Difficulty='',
         if($matches){$job}
     }
 }
+function Get-PanelRuntimeBudget($Profile) {
+    $steps=16000;$duration=[long]180000000000;$last=$null
+    if($Profile.PSObject.Properties['runtime_step_budget']){$steps=$Profile.runtime_step_budget}
+    if($Profile.PSObject.Properties['runtime_duration_limit_ns']){$duration=$Profile.runtime_duration_limit_ns}
+    if($Profile.PSObject.Properties['last_up_song_ns']){$last=$Profile.last_up_song_ns}
+    if(($steps -isnot [int] -and $steps -isnot [long]) -or $steps -lt 2 -or $steps -gt 65536 -or
+       ($duration -isnot [int] -and $duration -isnot [long]) -or $duration -lt 1000000000 -or $duration -gt 600000000000){
+        throw 'Profile必須明確提供有效的事件／時長預算；上限65536事件與600秒。'
+    }
+    if($null -ne $last -and (($last -isnot [int] -and $last -isnot [long]) -or $last -lt 0 -or $last -ge $duration)){
+        throw 'Profile的完整尾音超出宣告時長預算。'
+    }
+    return [pscustomobject]@{runtime_step_budget=$steps;runtime_duration_limit_ns=$duration;last_up_song_ns=$last}
+}
+function Get-PanelSourceText($Job) {
+    if($Job.PSObject.Properties['source_kind'] -and $Job.source_kind -ceq 'installed-local-variant'){
+        return '來源：本機安裝版，與公開版不同；兩份原件分別保留。'
+    }
+    return ''
+}
+function Get-PanelBudgetText($Job) {
+    if($Job.PSObject.Properties['runtime_budget'] -and $null -ne $Job.runtime_budget){
+        $budget=$Job.runtime_budget
+        $tail=if($null -ne $budget.last_up_song_ns){'{0:N1}' -f ($budget.last_up_song_ns/1e9)}else{'未記錄'}
+        return "$($Job.notes) 音符 · $($Job.events)/$($budget.runtime_step_budget) 動作 · 峰值 $($Job.peak)/$($Job.contact_capacity) 指`r`n尾音 $tail 秒／時長預算 $($budget.runtime_duration_limit_ns/1e9) 秒"
+    }
+    if($Job.PSObject.Properties['preparation'] -and $null -ne $Job.preparation -and $null -ne $Job.preparation.events){
+        return "已編譯 $($Job.preparation.events) 動作／預算 $($Job.preparation.runtime_step_budget)；時長預算 $($Job.preparation.runtime_duration_limit_ns/1e9) 秒"
+    }
+    return ''
+}
 function Assert-CatalogPanelJob($Job,$CatalogChart) {
     foreach($name in @('library_id','track_id','display_name','difficulty')){Assert-PanelText $Job.$name $name}
     if($Job.library_id -cne $CatalogChart.library_id -or $Job.track_id -cne $CatalogChart.track_id -or
@@ -31,31 +62,101 @@ function Assert-CatalogPanelJob($Job,$CatalogChart) {
         throw '完整曲庫的曲目／難度／單輪身份不一致。'
     }
     if($Job.chart.sha256 -cne $CatalogChart.chart.sha256){throw '本機執行原譜與曲庫原譜SHA不相同，不能強制別名映射。'}
+    if($CatalogChart.PSObject.Properties['upstream_library_id']){
+        if(-not $Job.PSObject.Properties['source_public_id'] -or $Job.source_public_id -cne $CatalogChart.upstream_library_id -or
+           -not $Job.PSObject.Properties['source_public_chart'] -or $Job.source_public_chart.sha256 -cne $CatalogChart.public_chart.sha256 -or
+           $Job.source_public_chart.sha256 -ceq $Job.chart.sha256 -or
+           $Job.source_public_match -ne $false -or $Job.source_kind -cne 'installed-local-variant'){
+            throw '本機版本衍生曲目必須明列公開原譜身份差異，不能冒用公開SHA。'
+        }
+    }
     if(-not $Job.ready_for_manual_preflight){
         if($Job.default_selected -or -not @($Job.blockers).Count){throw '跳過項目必須列明原因且不得預選。'}
         return
     }
     if(@($Job.blockers).Count){throw '可前檢曲目仍有阻擋原因。'}
     $profile=Read-PanelJson $Job.profile.file
+    $budget=Get-PanelRuntimeBudget $profile
+    if($CatalogChart.PSObject.Properties['notes'] -and $CatalogChart.notes -ne $Job.notes){throw '完整原生音符數不相同，不能省略來源音符。'}
+    if($Job.PSObject.Properties['compile_policy'] -and $null -ne $Job.compile_policy){
+        $importPolicy=if($profile.PSObject.Properties['import_policy_id']){$profile.import_policy_id}else{'phigros-v3-strict-v1'}
+        $flickPolicy=if($profile.PSObject.Properties['flick_path_policy']){$profile.flick_path_policy}else{'dynamic-line-v1'}
+        $holdPolicy=if($profile.PSObject.Properties['hold_tail_policy_id']){$profile.hold_tail_policy_id}else{'full-pose-v1'}
+        if($Job.compile_policy.import_policy_id -cne $importPolicy -or $Job.compile_policy.flick_path_policy -cne $flickPolicy -or
+           $Job.compile_policy.hold_tail_policy_id -cne $holdPolicy){throw '曲庫宣告的匯入／Flick／Hold政策與profile不相同。'}
+        $projectionPolicy=if($profile.PSObject.Properties['offscreen_policy_id']){$profile.offscreen_policy_id}else{'bounded-normal-intersection-candidate-v1'}
+        $tangent=if($profile.PSObject.Properties['max_tangent_error_reference_pixels']){$profile.max_tangent_error_reference_pixels}else{0}
+        if($Job.compile_policy.PSObject.Properties['offscreen_policy_id'] -and
+            ($Job.compile_policy.offscreen_policy_id -cne $projectionPolicy -or $Job.compile_policy.max_tangent_error_reference_pixels -ne $tangent)){
+            throw '曲庫宣告的投影矩形／切線誤差與profile不相同。'
+        }
+        if($projectionPolicy -ceq 'bounded-judgment-rectangle-candidate-v1' -and
+            (($tangent -isnot [int] -and $tangent -isnot [long] -and $tangent -isnot [double]) -or
+                -not [double]::IsFinite($tangent) -or $tangent -lt 0 -or $tangent -gt 151.2)){
+            throw '候選判定矩形的切線誤差必須明確且不超過151.2。'
+        }
+        $defaults=@{max_normal_projection_reference_pixels=7000;input_inset_pixels=64;drag_duration_ns=32000000;max_prejudge_ns=0;advance_above_drags=$false;max_hold_reacquire_gap_ns=0}
+        foreach($key in $defaults.Keys){
+            $actual=if($profile.PSObject.Properties[$key]){$profile.$key}else{$defaults[$key]}
+            if($Job.compile_policy.PSObject.Properties[$key] -and $Job.compile_policy.$key -cne $actual){throw '曲庫宣告的幾何／Drag／提前判定參數與profile不相同。'}
+        }
+    }
+    $capacity=4
+    if($profile.PSObject.Properties['contact_capacity']){$capacity=$profile.contact_capacity}
+    if(($capacity -isnot [int] -and $capacity -isnot [long]) -or $capacity -lt 1 -or $capacity -gt 10){
+        throw '候選觸控容量必須是1至10的整數；這不代表實機已驗證。'
+    }
+    if($Job.PSObject.Properties['contact_capacity'] -and $Job.contact_capacity -ne $capacity){throw '曲庫與profile觸控容量不一致。'}
     if($profile.schema -cne 'pas.adaptive-song-profile.v1' -or $profile.song_id -cne $Job.track_id -or
        $profile.difficulty -cne $Job.difficulty -or $profile.chart_sha256 -cne $Job.chart.sha256 -or
        $profile.expected_plan_sha256 -cne $Job.compiled_fingerprint -or
        $profile.expected_contacts -ne $Job.notes -or $profile.expected_steps -ne $Job.events -or $profile.expected_peak -ne $Job.peak -or
-       $Job.events -lt 2 -or $Job.events -gt 16000 -or $Job.notes -lt 1 -or $Job.notes -gt [Math]::Floor($Job.events/2) -or
-       $Job.peak -lt 1 -or $Job.peak -gt 5){throw '曲庫profile／完整接點計畫身份或資源預算不相同。'}
+       $Job.events -lt 2 -or $Job.events -gt $budget.runtime_step_budget -or $Job.notes -lt 1 -or $Job.notes -gt [Math]::Floor($Job.events/2) -or
+       $Job.peak -lt 1 -or $Job.peak -gt $capacity){throw '曲庫profile／完整接點計畫身份或資源預算不相同。'}
+    if($Job.PSObject.Properties['runtime_budget'] -and $null -ne $Job.runtime_budget){
+        $declared=$Job.runtime_budget
+        if($declared.runtime_step_budget -ne $budget.runtime_step_budget -or $declared.runtime_duration_limit_ns -ne $budget.runtime_duration_limit_ns -or
+           $declared.expected_contacts -ne $Job.notes -or $declared.expected_steps -ne $Job.events -or $declared.expected_peak -ne $Job.peak -or
+           ($null -ne $declared.last_up_song_ns -and $declared.last_up_song_ns -ge $budget.runtime_duration_limit_ns) -or
+           ($null -ne $budget.last_up_song_ns -and $declared.last_up_song_ns -ne $budget.last_up_song_ns)){
+            throw '曲庫顯示的實際事件／尾音與profile明確預算不相同。'
+        }
+    }
     if($Job.difficulty -ceq 'AT' -and $profile.hud_policy -cne 'shared-difficulty-subpixel-prefix-score-v4'){
         throw 'AT必須使用獨立難度HUD policy。'
     }
+}
+function Get-PanelCapacityPolicy($Configuration) {
+    $policy='current-boot-fixture-v1'
+    if($null -ne $Configuration -and $Configuration.PSObject.Properties['capacity_policy']){
+        $policy=[string]$Configuration.capacity_policy
+    }
+    if($policy -cnotin @('current-boot-fixture-v1','configured-ten-contact-v1')){throw '不支援的觸控容量設定。'}
+    return $policy
+}
+function Add-PanelCapacityEvidencePins($Pins,$Configuration) {
+    if((Get-PanelCapacityPolicy $Configuration) -ceq 'configured-ten-contact-v1'){
+        # Historical proof may remain in the config for provenance. Configured
+        # mode never reads or pins it and never claims a new boot was tested.
+        return
+    }
+    $null=Add-PanelPin $Pins $Configuration.capacity_evidence
+    $capacity=Read-PanelJson $Configuration.capacity_evidence.file
+    foreach($key in @('analysis','host_manifest','retrieval_report')){$null=Add-PanelPin $Pins $capacity.$key}
+    if(@($capacity.artifacts).Count -gt 8){throw '容量證據資產數超出限制。'}
+    foreach($reference in $capacity.artifacts){$null=Add-PanelPin $Pins $reference}
 }
 function Get-CatalogPanelContext([string]$Path,[string]$ScriptPath) {
     $config=Read-PanelJson $Path
     if($config.schema -cne 'pas.manual-song-panel-launch.v2' -or
        $config.manual_selection -isnot [bool] -or -not $config.manual_selection -or
-       $config.manual_start -isnot [bool] -or -not $config.manual_start -or $config.image_retention -cne 'none'){
-        throw '完整曲庫面板必須保留人工選曲／Play與不存圖政策。'
+       $config.manual_start -isnot [bool] -or -not $config.manual_start -or $config.image_retention -cnotin @('none','result')){
+        throw '完整曲庫面板必須保留人工選曲／Play，並只接受不存圖或僅保存結算圖。'
     }
+    $capacityPolicy=Get-PanelCapacityPolicy $config
+    if($capacityPolicy -ceq 'configured-ten-contact-v1' -and $config.contact_capacity -ne 10){throw '十指設定必須明確指定contact_capacity=10。'}
     $pins=[Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
-    foreach($key in @('plan','library','catalog','identity','build_manifest','kernel_profile','capacity_evidence','gui_script')){
+    foreach($key in @('plan','library','catalog','identity','build_manifest','kernel_profile','gui_script')){
         $null=Add-PanelPin $pins $config.$key
     }
     if(@($config.scripts).Count -lt 2 -or @($config.scripts).Count -gt 16){throw '無效腳本數量。'}
@@ -77,6 +178,7 @@ function Get-CatalogPanelContext([string]$Path,[string]$ScriptPath) {
         if($seen.ContainsKey($job.library_id) -or -not $index.ContainsKey($job.library_id)){throw '執行清單遺失或重複曲庫身份。'}
         $seen[$job.library_id]=$true;Assert-CatalogPanelJob $job $index[$job.library_id]
         $null=Add-PanelPin $pins $job.chart
+        if($job.PSObject.Properties['source_public_chart'] -and $null -ne $job.source_public_chart){$null=Add-PanelPin $pins $job.source_public_chart}
         if(-not $job.ready_for_manual_preflight){continue}
         $verified=$identityIndex[$job.library_id]
         if($verified.status -cne 'verified_exact_installed_chart' -or $verified.chart_sha256 -cne $job.chart.sha256){throw '可前檢項目未通過安裝版原譜身份核對。'}
@@ -112,7 +214,7 @@ function Get-CatalogPanelContext([string]$Path,[string]$ScriptPath) {
     $archive=[IO.Path]::GetFullPath($config.build_archive)
     if([IO.Path]::GetFullPath($config.build_manifest.file) -ne (Join-Path $archive 'manifest.json')){throw 'Binary封存路徑不一致。'}
     $build=Read-PanelJson $config.build_manifest.file
-    if($build.schema -cne 'pas.adaptive-build-archive.v1' -or @($build.artifacts).Count -gt 2048){throw '無效binary封存。'}
+    if($build.schema -cne 'pas.adaptive-build-archive.v1' -or @($build.artifacts).Count -gt 4096){throw '無效binary封存。'}
     foreach($artifact in $build.artifacts){
         $target=[IO.Path]::GetFullPath((Join-Path $archive $artifact.file))
         if(-not $target.StartsWith($archive+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw '封存路徑越界。'}
@@ -121,10 +223,8 @@ function Get-CatalogPanelContext([string]$Path,[string]$ScriptPath) {
     $bin=Join-Path $archive 'bin';$exe=Join-Path $bin 'chart_experiment.exe'
     if(-not $pins.ContainsKey($exe)){throw '執行檔未固定。'}
     foreach($binary in Get-ChildItem -LiteralPath $bin -File){if($binary.Extension -in @('.exe','.dll') -and -not $pins.ContainsKey($binary.FullName)){throw '有未固定binary／DLL。'}}
-    $capacity=Read-PanelJson $config.capacity_evidence.file
-    foreach($key in @('analysis','host_manifest','retrieval_report')){$null=Add-PanelPin $pins $capacity.$key}
-    foreach($ref in $capacity.artifacts){$null=Add-PanelPin $pins $ref}
-    if($pins.Count -gt 4096){throw '完整曲庫檔案參照超出有限預算。'}
+    Add-PanelCapacityEvidencePins $pins $config
     $null=Add-PanelPin $pins ([pscustomobject]@{file=[IO.Path]::GetFullPath($Path);sha256=(Get-FileHash -LiteralPath $Path).Hash})
+    if($pins.Count -gt 8192){throw '完整曲庫檔案參照超出有限預算。'}
     return [pscustomobject]@{Configuration=$config;Plan=$plan;Library=$plan;Jobs=@($plan.jobs);Pins=$pins;Executable=$exe;Bin=$bin;ConfigPath=[IO.Path]::GetFullPath($Path);FullCatalog=$true;Catalog=$catalog}
 }

@@ -33,7 +33,10 @@ struct NumericLineEvent {
 struct MoveLineEvent {
     SourceLocation source;
     ChartEventTime time;
-    double start_x = 0, end_x = 0, start_y = 0, end_y = 0; // Raw v3 line coordinates.
+    double start_x = 0, end_x = 0, start_y = 0, end_y = 0; // Normalized native line coordinates.
+    // v1 encodes x*1000+y on an 880 by 520 canvas. Keep the declaration's
+    // original packed values even when the evaluation track is subdivided.
+    std::optional<double> packed_start, packed_end;
 };
 struct SpeedLineEvent {
     SourceLocation source;
@@ -41,7 +44,9 @@ struct SpeedLineEvent {
     double value = 0;
     std::optional<double> floor_position; // Absent in some native v3 charts; never invented.
 };
-enum class PhigrosImportPolicy { strict_v3, source_priority_constant_empty_candidate_v1 };
+enum class PhigrosImportPolicy { strict_v3, source_priority_constant_empty_candidate_v1,
+    native_v1_source_priority_constant_empty_candidate_v1,
+    native_v1_source_priority_empty_interval_candidate_v1 };
 struct ImportOptions {
     PhigrosImportPolicy policy = PhigrosImportPolicy::strict_v3;
     std::size_t max_anomalies = 4096, max_evaluated_pose_events = 500000;
@@ -89,6 +94,9 @@ struct ChartLine {
 struct SemanticChart {
     ChartSource source;
     int format_version = 3;
+    // format_version describes the normalized pose IR. Source bytes, source
+    // format and native packed declarations remain independently inspectable.
+    int source_format_version = 3;
     double offset_seconds = 0;
     std::vector<ChartLine> lines; // Empty charts/lines are valid semantic input.
     std::size_t note_count = 0, event_count = 0;

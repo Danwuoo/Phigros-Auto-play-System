@@ -28,6 +28,29 @@ Image reference(){
     return a;
 }
 Image occluded(const Image& reference){auto a=reference;rectangle(a,1090,0,3,62);return a;}
+Image merged_score_line(const Image& reference,int thickness=2,int width=180){
+    auto a=reference;rectangle(a,1076,40,width,thickness);return a;
+}
+Image upper_boundary_score_line(const Image& reference,int end_y){
+    auto a=reference;
+    // Two raster rows keep successive staircase columns four-connected.
+    // A one-pixel diagonal would only touch at corners and is not a merged CC.
+    for(int x=0;x<180;++x)rectangle(a,1076+x,20+(end_y-20)*x/179,1,2);
+    return a;
+}
+Image partial_boundary_score(const Image& reference){
+    auto a=reference;
+    // Three connected digits at the left ROI edge, one truly missing digit,
+    // then three intact digits. No single CC spans four learned windows.
+    rectangle(a,1156,28,17,25,32);rectangle(a,1076,40,76,2);return a;
+}
+Image two_boundary_score_fragments(const Image& reference){
+    auto a=reference;rectangle(a,1076,40,49,2);
+    rectangle(a,1156,20,2,22);rectangle(a,1156,40,41,2);return a;
+}
+void score_digit(Image& a,int index){
+    const int x=1084+24*index;rectangle(a,x,28,17,25);rectangle(a,x+3,31,11,19,32);
+}
 LearnedHudFrame frame(std::uint64_t seq,std::int64_t time){
     LearnedHudFrame m;m.sequence=seq;m.epoch=m.generation=m.geometry_version=1;m.source_id="offline-source";
     m.received_ns=time*ms;m.processed_ns=m.received_ns+ms;m.source_valid=true;m.rotation=1;return m;
@@ -45,6 +68,122 @@ int main(){try{
     const auto image=reference(),blocked=occluded(image);
     HudGlyphEvidenceProducer producer(view(image),std::string(64,'a'),"synthetic-IN-v3",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);
     const auto clean=producer.observe_features(view(image)),occlusion=producer.observe_features(view(blocked));
+    ++groups;{
+        for(const auto policy:{HudGlyphPolicy::shared_in_subpixel_prefix_score_v3,HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4}){
+            const bool at=policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4;
+            auto primary_reference=image;for(int y=673;y<699;++y)for(int x=at?1144:1152;x<1225;++x){
+                const auto i=static_cast<std::size_t>(y*1280+x)*3;if(primary_reference[i]>195)primary_reference[i]=primary_reference[i+1]=primary_reference[i+2]=255;}
+            HudGlyphEvidenceProducer typed(view(primary_reference),std::string(64,'c'),"joint-ordinary-control",{},policy);
+            auto teacher_image=primary_reference;rectangle(teacher_image,1157,677,1,17,32);const auto teacher=typed.observe_features(view(teacher_image));
+            auto prefix_image=teacher_image;if(at)rectangle(prefix_image,1146,681,3,3);else rectangle(prefix_image,1157,684,6,2);
+            const auto prefix_only=typed.observe_features(view(prefix_image));const auto joint_image=occluded(prefix_image);
+            const auto primary=typed.observe_features(view(joint_image));
+            check(teacher.hud_candidate&&!primary.hud_candidate&&primary.reason=="fixed_glyph_or_negative_space_missing"&&
+                !primary.fixed_glyphs[1].glyph_present&&primary.score.bounded&&primary.score.calibrated_cells&&
+                !primary.score.glyph_structure_candidate&&primary.score.boundary_components==1,"joint prefix/ordinary score control invalid");
+            LearnedHudRedundancy h;train(h,teacher_image,teacher);const auto& admitted=h.observe(view(joint_image),primary,raw(),frame(3,1200),true);
+            check(admitted.current_candidate&&admitted.auxiliary.valid&&admitted.auxiliary.hud_candidate&&
+                admitted.auxiliary.fixed_glyphs[0].glyph_present&&admitted.auxiliary.fixed_glyphs[1].glyph_present&&admitted.auxiliary.title_glyph.glyph_present&&
+                admitted.auxiliary.score.boundary_components>0&&admitted.plausible_score_components>=4&&
+                admitted.reason=="current_learned_full_HUD_with_joint_prefix_and_ordinary_score_occlusion"&&!admitted.merged_score.candidate,
+                "joint ordinary path did not remeasure all three full anchors and independent ordinary score evidence");
+            check(!admitted.auxiliary.live_permitted&&!admitted.auxiliary.timing_qualified&&!admitted.auxiliary.source_pixel_age_qualified,
+                "joint ordinary candidate manufactured input/timing qualification");
+            const auto& old_route=h.observe(view(prefix_image),prefix_only,raw(),frame(4,1300),true);
+            check(old_route.current_candidate&&old_route.reason=="current_learned_full_HUD_after_primary_prefix_mismatch"&&old_route.auxiliary.score.glyph_structure_candidate,
+                "joint ordinary path replaced the original clean-score prefix route");
+            const auto merged=merged_score_line(prefix_image);const auto merged_primary=typed.observe_features(view(merged));
+            const auto& joint_merged=h.observe(view(merged),merged_primary,raw(),frame(5,1400),true);
+            check(joint_merged.current_candidate&&joint_merged.auxiliary.valid&&joint_merged.merged_score.candidate&&
+                joint_merged.merged_score.textured_windows>=4&&
+                joint_merged.reason=="current_learned_three_anchors_with_joint_prefix_and_merged_score_boundary",
+                "joint prefix/merged-score route did not independently remeasure complete current anchors and score texture");
+        }
+    }
+    ++groups;{
+        auto primary_reference=image;for(int y=673;y<699;++y)for(int x=1152;x<1225;++x){
+            const auto i=static_cast<std::size_t>(y*1280+x)*3;if(primary_reference[i]>195)primary_reference[i]=primary_reference[i+1]=primary_reference[i+2]=255;}
+        HudGlyphEvidenceProducer typed(view(primary_reference),std::string(64,'d'),"joint-ordinary-negative-control",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);
+        auto teacher_image=primary_reference;rectangle(teacher_image,1157,677,1,17,32);const auto teacher=typed.observe_features(view(teacher_image));
+        auto joint_image=teacher_image;rectangle(joint_image,1157,684,6,2);joint_image=occluded(joint_image);const auto primary=typed.observe_features(view(joint_image));
+        const std::vector<std::function<void(Image&)>> missing={
+            [](auto& a){rectangle(a,25,672,512,29,32);},[](auto& a){rectangle(a,1227,673,26,26,32);},
+            [](auto& a){rectangle(a,21,23,28,33,32);},
+            [](auto& a){for(int i=3;i<6;++i)rectangle(a,1084+i*24,24,23,33,32);}};
+        for(const auto& mutate:missing){LearnedHudRedundancy h;train(h,teacher_image,teacher);
+            check(h.observe(view(joint_image),primary,raw(),frame(3,1200),true).current_candidate,"joint positive before removal invalid");
+            auto pixels=joint_image;mutate(pixels);const auto& denied=h.observe(view(pixels),primary,raw(),frame(4,1300),true);
+            check(!denied.current_candidate&&denied.auxiliary.valid&&denied.reason=="current_auxiliary_anchors_or_ordinary_score_missing_after_joint_occlusion",
+                "joint path borrowed previous full anchors/score instead of measuring the current removed pixels");}
+        auto low=primary;low.score.glyphs.resize(3);LearnedHudRedundancy primary_low;train(primary_low,teacher_image,teacher);
+        const auto& independently_measured=primary_low.observe(view(joint_image),low,raw(),frame(3,1200),true);
+        check(independently_measured.current_candidate&&independently_measured.auxiliary.valid&&
+            independently_measured.merged_score.boundary_fragments>=1&&independently_measured.merged_score.textured_windows>=4,
+            "primary component count replaced independent CURRENT partial-boundary score pixels");
+        auto invalid_core=primary;invalid_core.fixed_glyphs[1].foreground_white_fraction=.97;
+        LearnedHudRedundancy core;train(core,teacher_image,teacher);
+        check(!core.observe(view(joint_image),invalid_core,raw(),frame(3,1200),true).current_candidate,"joint route weakened prefix core thresholds");
+        LearnedHudRedundancy stale;train(stale,teacher_image,teacher);auto expired=frame(3,1200);expired.processed_ns+=499*ms;
+        check(!stale.observe(view(joint_image),primary,raw(),expired,true).current_candidate&&!stale.status().auxiliary.valid,"joint route renewed500ms-old pixels");
+        LearnedHudRedundancy changed;train(changed,teacher_image,teacher);auto other=frame(3,1200);++other.epoch;
+        check(!changed.observe(view(joint_image),primary,raw(),other,true).current_candidate&&!changed.status().ready,"joint route reused another source epoch");
+        auto denied_raw=raw();denied_raw.state=ObservedGameState::paused;LearnedHudRedundancy denied;train(denied,teacher_image,teacher);
+        check(!denied.observe(view(joint_image),primary,denied_raw,frame(3,1200),true).current_candidate,"joint route overrode current denied screen");
+        LearnedHudRedundancy postarm;
+        check(!postarm.observe(view(joint_image),primary,raw(),frame(1,1200),true).current_candidate&&
+            !postarm.observe(view(teacher_image),teacher,raw(),frame(2,1300),false).ready,"joint failure trained a template after arming");
+    }
+    ++groups;{
+        for(const bool two_fragments:{false,true}){
+            const auto pixels=two_fragments?two_boundary_score_fragments(image):partial_boundary_score(image);
+            const auto primary=producer.observe_features(view(pixels));
+            check(primary.valid&&!primary.hud_candidate&&primary.reason=="score_digit_structure_missing"&&
+                primary.score.bounded&&primary.score.calibrated_cells&&
+                primary.score.boundary_components==static_cast<std::size_t>(two_fragments?2:1),
+                "partial-boundary synthetic control did not contain the intended actual CCs");
+            LearnedHudRedundancy h;train(h,image,clean);
+            const auto& result=h.observe(view(pixels),primary,raw(),frame(3,1200),true);
+            check(result.current_candidate&&result.auxiliary.valid&&result.auxiliary.hud_candidate&&
+                result.auxiliary.fixed_glyphs[0].glyph_present&&result.auxiliary.fixed_glyphs[1].glyph_present&&
+                result.auxiliary.title_glyph.glyph_present&&result.merged_score.candidate&&
+                result.merged_score.boundary_fragments==static_cast<std::size_t>(two_fragments?2:1)&&
+                result.merged_score.clean_components==3&&result.merged_score.spanned_windows>=4&&
+                result.merged_score.textured_windows>=4&&result.merged_score.boundary_textured_windows>=1&&
+                result.reason=="current_learned_three_anchors_with_partial_boundary_score",
+                "actual partial merged components and clean digits did not supply four independent current texture windows");
+            check(!result.auxiliary.score.glyph_structure_candidate&&!result.auxiliary.live_permitted&&
+                !result.auxiliary.timing_qualified&&!result.auxiliary.source_pixel_age_qualified,
+                "partial score evidence invented digits or live/timing qualification");
+        }
+        const auto partial=partial_boundary_score(image);const auto primary=producer.observe_features(view(partial));
+        const std::vector<std::function<void(Image&)>> invalid={
+            [](auto& a){rectangle(a,1076,20,180,40,32);},
+            [](auto& a){rectangle(a,1076,20,180,40);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);rectangle(a,1076,40,180,2);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);for(int i:{4,5,6})score_digit(a,i);rectangle(a,1076,20,76,2);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);for(int i:{0,4,6})score_digit(a,i);rectangle(a,1076,40,25,2);},
+            [](auto& a){rectangle(a,25,672,512,29,32);},
+            [](auto& a){rectangle(a,1227,673,26,26,32);},
+            [](auto& a){rectangle(a,21,23,28,33,32);}
+        };
+        for(const auto& mutate:invalid){
+            auto pixels=partial;mutate(pixels);LearnedHudRedundancy h;train(h,image,clean);
+            const auto& denied=h.observe(view(pixels),primary,raw(),frame(3,1200),true);
+            check(!denied.current_candidate&&denied.auxiliary.valid&&!denied.merged_score.candidate,
+                "partial-boundary branch borrowed prior/forged evidence for blank/solid/bareline/three-window/missing-anchor pixels");
+        }
+        auto over_budget=primary;over_budget.score.boundary_components=9;
+        LearnedHudRedundancy bounded;train(bounded,image,clean);
+        check(!bounded.observe(view(partial),over_budget,raw(),frame(3,1200),true).current_candidate,
+            "partial-boundary branch admitted an out-of-budget primary boundary count");
+        LearnedHudRedundancy stale;train(stale,image,clean);auto expired=frame(3,1200);expired.processed_ns+=499*ms;
+        check(!stale.observe(view(partial),primary,raw(),expired,true).current_candidate,
+            "partial-boundary branch renewed a 500ms-old observation");
+        auto denied_raw=raw();denied_raw.state=ObservedGameState::paused;
+        LearnedHudRedundancy paused;train(paused,image,clean);
+        check(!paused.observe(view(partial),primary,denied_raw,frame(3,1200),true).current_candidate,
+            "partial-boundary branch overrode a current pause");
+    }
     ++groups;{
         HudGlyphEvidenceProducer wide(view(image),std::string(64,'a'),"synthetic-v4",{},HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4);
         const auto primary=wide.observe_features(view(image));
@@ -151,7 +290,207 @@ int main(){try{
         auto in_primary=primary;in_primary.policy=HudGlyphPolicy::shared_in_subpixel_prefix_score_v3;
         LearnedHudRedundancy in_only;train(in_only,image,clean);
         check(!in_only.observe(view(mismatch),in_primary,raw(),frame(3,1200),true).current_candidate,
-            "AT prefix mismatch fallback changed v3 acceptance");
+            "IN prefix mismatch fallback accepted pixels missing its own full learned difficulty");
+    }
+    ++groups;{
+        // First establish a real one-pixel raster phase: the exact gray mask
+        // cannot retain its original edge column, while the bounded literal
+        // policy can prove all five strokes. A small bridge on an otherwise
+        // exact gray reference would still pass the preserved v2 path and
+        // would not exercise the prefix-mismatch route at all.
+        auto in_reference=image;
+        for(int y=673;y<699;++y)for(int x=1152;x<1225;++x){
+            const auto at=static_cast<std::size_t>(y*1280+x)*3;
+            if(in_reference[at]>195)in_reference[at]=in_reference[at+1]=in_reference[at+2]=255;
+        }
+        HudGlyphEvidenceProducer in_producer(view(in_reference),std::string(64,'b'),"IN-prefix-mismatch-v3",{},
+            HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);
+        auto in_image=in_reference;rectangle(in_image,1157,677,1,17,32);
+        const auto in_clean=in_producer.observe_features(view(in_image));
+        check(in_clean.hud_candidate&&in_clean.fixed_glyphs[1].subpixel_tolerant&&
+            in_clean.fixed_glyphs[1].literal_components==5,"IN raster-phase teacher control invalid");
+        // Merge two CURRENT prefix strokes but retain every teacher stroke.
+        // Full title/level/pause/score must be independently measured again.
+        // These synthetic pixels do not replay the Frozen003 end screen.
+        auto mismatch=in_image;rectangle(mismatch,1157,684,6,2);
+        const auto primary=in_producer.observe_features(view(mismatch));
+        check(primary.valid&&!primary.hud_candidate&&primary.reason=="fixed_glyph_or_negative_space_missing"&&
+            !primary.fixed_glyphs[1].glyph_present&&primary.fixed_glyphs[1].literal_components==4&&
+            primary.fixed_glyphs[1].foreground_white_fraction==1&&primary.fixed_glyphs[1].negative_space_present&&
+            primary.score.glyph_structure_candidate,"IN merged-prefix mismatch control invalid");
+        LearnedHudRedundancy h;train(h,in_image,in_clean);
+        const auto& admitted=h.observe(view(mismatch),primary,raw(),frame(3,1200),true);
+        check(admitted.current_candidate&&admitted.auxiliary.valid&&admitted.auxiliary.hud_candidate&&
+            admitted.auxiliary.fixed_glyphs[0].glyph_present&&admitted.auxiliary.fixed_glyphs[1].glyph_present&&
+            admitted.auxiliary.title_glyph.glyph_present&&admitted.auxiliary.score.glyph_structure_candidate&&
+            admitted.reason=="current_learned_full_HUD_after_primary_prefix_mismatch",
+            "IN prefix mismatch did not independently verify current full learned HUD");
+        check(!admitted.auxiliary.live_permitted&&!admitted.auxiliary.timing_qualified&&
+            !admitted.auxiliary.source_pixel_age_qualified,"IN alternate route manufactured permission or timing proof");
+        const std::vector<std::function<void(Image&)>> missing_current={
+            [](auto& a){rectangle(a,25,672,512,29,32);},
+            [](auto& a){rectangle(a,1227,673,26,26,32);},
+            [](auto& a){rectangle(a,21,23,28,33,32);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);},
+            [](auto& a){rectangle(a,1084+3*24,24,23,33,32);},
+            [](auto& a){rectangle(a,1152,673,101,26,32);},
+            [](auto& a){rectangle(a,1152,673,101,26);}
+        };
+        for(const auto& mutate:missing_current){
+            auto pixels=mismatch;mutate(pixels);LearnedHudRedundancy missing;train(missing,in_image,in_clean);
+            const auto& denied=missing.observe(view(pixels),primary,raw(),frame(3,1200),true);
+            check(!denied.current_candidate&&denied.auxiliary.valid&&
+                denied.reason=="current_auxiliary_full_HUD_missing_after_primary_prefix_mismatch",
+                "forged IN primary metrics replaced missing CURRENT title/difficulty/pause/seven-digit evidence");
+        }
+        for(const auto state:{ObservedGameState::paused,ObservedGameState::result}){
+            LearnedHudRedundancy denied;train(denied,in_image,in_clean);auto screen=raw();screen.state=state;
+            check(!denied.observe(view(mismatch),primary,screen,frame(3,1200),true).current_candidate,
+                "IN prefix mismatch overrode a current denied screen");
+            screen=raw();screen.scores.push_back({state,"same-frame-denied",0,true});
+            check(!denied.observe(view(mismatch),primary,screen,frame(4,1300),true).current_candidate,
+                "IN prefix mismatch overrode a same-frame denied anchor");
+        }
+        LearnedHudRedundancy stale;train(stale,in_image,in_clean);auto expired=frame(3,1200);expired.processed_ns+=499*ms;
+        check(!stale.observe(view(mismatch),primary,raw(),expired,true).current_candidate,
+            "IN alternate route renewed an expired actual frame");
+        LearnedHudRedundancy unready;
+        check(!unready.observe(view(mismatch),primary,raw(),frame(1,1200),true).current_candidate&&
+            !unready.status().ready,"IN prefix mismatch trained after arm");
+        LearnedHudRedundancy wrong_policy;train(wrong_policy,in_image,in_clean);auto mixed=primary;
+        mixed.policy=HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4;
+        check(!wrong_policy.observe(view(mismatch),mixed,raw(),frame(3,1200),true).current_candidate,
+            "IN alternate route reused its template for another primary policy");
+    }
+    ++groups;{
+        for(const auto thickness:{1,2,3})for(const auto width:{145,180}){
+            const auto pixels=merged_score_line(image,thickness,width);
+            const auto primary=producer.observe_features(view(pixels));
+            check(primary.valid&&!primary.hud_candidate&&primary.reason=="score_digit_structure_missing"&&
+                primary.score.boundary_components==1&&!primary.score.glyph_structure_candidate&&
+                primary.score.components<=2,"merged-score primary control invalid");
+            LearnedHudRedundancy h;train(h,image,clean);
+            const auto& result=h.observe(view(pixels),primary,raw(),frame(3,1200),true);
+            check(result.current_candidate&&result.auxiliary.valid&&result.auxiliary.hud_candidate&&
+                result.auxiliary.fixed_glyphs[0].glyph_present&&result.auxiliary.fixed_glyphs[1].glyph_present&&
+                result.auxiliary.title_glyph.glyph_present&&result.merged_score.candidate&&
+                result.merged_score.spanned_windows>=4&&result.merged_score.textured_windows>=4&&
+                result.reason=="current_learned_three_anchors_with_merged_score_boundary",
+                "CURRENT three anchors and observed merged-score vertical texture rejected");
+            check(!result.auxiliary.score.glyph_structure_candidate&&result.auxiliary.score.glyphs.size()<=2&&
+                !result.auxiliary.live_permitted&&!result.auxiliary.timing_qualified&&
+                !result.auxiliary.source_pixel_age_qualified,
+                "merged-score witness invented separate digits or timing/input qualification");
+            const auto& clean_again=h.observe(view(image),clean,raw(),frame(4,1300),true);
+            check(!clean_again.current_candidate&&!clean_again.merged_score.candidate&&
+                clean_again.merged_score.reason=="not_measured"&&!clean_again.auxiliary.valid,
+                "clean primary retained stale merged-score/current auxiliary evidence");
+        }
+    }
+    ++groups;{
+        // The line enters at the top/left ROI boundary. Its connected text
+        // footprint is taller than a single32px font glyph, but all observed
+        // score pixels and the complete merged bbox stay inside the40px ROI.
+        for(const auto end_y:{44,52,55,58}){
+            const auto pixels=upper_boundary_score_line(image,end_y);
+            const auto primary=producer.observe_features(view(pixels));
+            if(!(primary.valid&&!primary.hud_candidate&&primary.reason=="score_digit_structure_missing"&&
+                 primary.score.boundary_components==1))std::cerr<<"diagonal control end="<<end_y<<" valid="<<primary.valid<<
+                " HUD="<<primary.hud_candidate<<" reason="<<primary.reason<<" boundary="<<primary.score.boundary_components<<
+                " CC="<<primary.score.components<<" cells="<<primary.score.supported_cells<<'\n';
+            check(primary.valid&&!primary.hud_candidate&&primary.reason=="score_digit_structure_missing"&&
+                primary.score.boundary_components==1,"upper-boundary diagonal score control invalid");
+            LearnedHudRedundancy h;train(h,image,clean);
+            const auto& result=h.observe(view(pixels),primary,raw(),frame(3,1200),true);
+            const auto expected_height=std::max(52,end_y+1)-20+1;
+            if(!result.current_candidate)std::cerr<<"diagonal merge end="<<end_y<<" reason="<<result.reason<<
+                " evidence="<<result.merged_score.reason<<" height="<<result.merged_score.component.height<<
+                " span="<<result.merged_score.spanned_windows<<" texture="<<result.merged_score.textured_windows<<'\n';
+            check(result.current_candidate&&result.merged_score.candidate&&
+                result.merged_score.component.y==20&&result.merged_score.component.height==expected_height&&
+                result.merged_score.component.height>=33&&result.merged_score.component.height<=40&&
+                result.merged_score.spanned_windows>=4&&result.merged_score.textured_windows>=4,
+                "bounded33..40px line-plus-text footprint was mistaken for one oversized font glyph");
+            check(!result.auxiliary.score.glyph_structure_candidate&&result.auxiliary.fixed_glyphs[0].glyph_present&&
+                result.auxiliary.fixed_glyphs[1].glyph_present&&result.auxiliary.title_glyph.glyph_present,
+                "merged ROI expansion invented clean digits or skipped a CURRENT fixed anchor");
+        }
+        // A raw component cannot report >40px after fixed-ROI clipping.
+        // Oversized source blocks/frames must still fail texture/occupancy;
+        // the rule never expands the ROI or interprets them as font glyphs.
+        const auto primary=producer.observe_features(view(upper_boundary_score_line(image,44)));
+        for(const bool hollow:{false,true}){
+            auto pixels=image;rectangle(pixels,1076,20,180,40,32);rectangle(pixels,1076,18,180,44);
+            if(hollow)rectangle(pixels,1079,21,174,38,32);
+            LearnedHudRedundancy h;train(h,image,clean);
+            const auto& result=h.observe(view(pixels),primary,raw(),frame(3,1200),true);
+            check(!result.current_candidate&&!result.merged_score.candidate,
+                "oversized source block/frame borrowed the bounded merged-score exception");
+        }
+        auto tall=image;rectangle(tall,1076,20,180,40,32);
+        for(int i=0;i<7;++i){const auto x=1084+i*24;rectangle(tall,x,24,17,33);rectangle(tall,x+3,27,11,27,32);}
+        LearnedHudRedundancy font;
+        const auto& rejected=font.observe(view(tall),clean,raw(),frame(1,1000),false);
+        check(!rejected.ready&&rejected.reason=="reference_full_anchors_or_clean_score_unsupported"&&font.reference_rgb().empty(),
+            "merged component ROI bound changed the original32px normal font requirement");
+    }
+    ++groups;{
+        const auto pixels=merged_score_line(image);
+        const auto primary=producer.observe_features(view(pixels));
+        const std::vector<std::function<void(Image&)>> missing_anchors={
+            [](auto& a){rectangle(a,25,672,512,29,32);},
+            [](auto& a){rectangle(a,1227,673,26,26,32);},
+            [](auto& a){rectangle(a,21,23,28,33,32);},
+            [](auto& a){rectangle(a,1152,673,101,26,32);},
+            [](auto& a){for(auto& value:a)value=static_cast<std::uint8_t>(value/2);}
+        };
+        for(const auto& mutate:missing_anchors){
+            auto missing=pixels;mutate(missing);LearnedHudRedundancy h;train(h,image,clean);
+            const auto& denied=h.observe(view(missing),primary,raw(),frame(3,1200),true);
+            check(!denied.current_candidate&&denied.auxiliary.valid&&!denied.merged_score.candidate&&
+                denied.merged_score.reason=="current_full_learned_anchors_missing",
+                "merged-score line borrowed a missing CURRENT title/difficulty/level/pause anchor");
+        }
+        const std::vector<std::function<void(Image&)>> invalid_score={
+            [](auto& a){rectangle(a,1076,20,180,40,32);},
+            [](auto& a){rectangle(a,1076,20,180,40);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);rectangle(a,1076,40,180,2);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);rectangle(a,1076,28,180,25);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);rectangle(a,1076,28,180,25);rectangle(a,1079,31,174,19,32);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);rectangle(a,1076,28,180,25);rectangle(a,1079,31,174,19,32);rectangle(a,1076,40,180,2);},
+            [](auto& a){rectangle(a,1076,20,180,40,32);for(int i=0;i<7;++i)rectangle(a,1084+i*24,28,17,25);rectangle(a,1076,40,180,2);}
+        };
+        for(const auto& mutate:invalid_score){
+            auto invalid=pixels;mutate(invalid);LearnedHudRedundancy h;train(h,image,clean);
+            const auto& denied=h.observe(view(invalid),primary,raw(),frame(3,1200),true);
+            check(!denied.current_candidate&&denied.auxiliary.valid&&!denied.merged_score.candidate&&
+                denied.reason=="current_auxiliary_anchors_or_merged_score_texture_missing",
+                "forged primary admitted blank/solid/bareline/hollow-frame/filled score pixels");
+        }
+        for(const auto state:{ObservedGameState::paused,ObservedGameState::result}){
+            LearnedHudRedundancy denied;train(denied,image,clean);auto screen=raw();screen.state=state;
+            check(!denied.observe(view(pixels),primary,screen,frame(3,1200),true).current_candidate,
+                "merged score overrode a current denied screen");
+            screen=raw();screen.scores.push_back({state,"same-frame-denied",0,true});
+            check(!denied.observe(view(pixels),primary,screen,frame(4,1300),true).current_candidate,
+                "merged score overrode a same-frame denied anchor");
+        }
+        LearnedHudRedundancy stale;train(stale,image,clean);auto expired=frame(3,1200);expired.processed_ns+=499*ms;
+        check(!stale.observe(view(pixels),primary,raw(),expired,true).current_candidate&&
+            !stale.status().merged_score.candidate,"merged score renewed an expired actual frame");
+        LearnedHudRedundancy source;train(source,image,clean);auto invalid=frame(3,1200);invalid.source_valid=false;
+        check(!source.observe(view(pixels),primary,raw(),invalid,true).current_candidate,"merged score ignored source invalidation");
+        LearnedHudRedundancy changed;train(changed,image,clean);auto other=frame(3,1200);++other.epoch;
+        check(!changed.observe(view(pixels),primary,raw(),other,true).current_candidate&&!changed.status().ready,
+            "merged score reused a reference from a previous context");
+        LearnedHudRedundancy unready;
+        check(!unready.observe(view(pixels),primary,raw(),frame(1,1000),true).current_candidate&&
+            !unready.observe(view(image),clean,raw(),frame(2,1100),false).ready,
+            "merged score learned or retrained after arm");
+        LearnedHudRedundancy wrong_policy;train(wrong_policy,image,clean);auto mismatched=primary;
+        mismatched.policy=HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4;
+        check(!wrong_policy.observe(view(pixels),mismatched,raw(),frame(3,1200),true).current_candidate,
+            "merged score borrowed a different primary policy reference");
     }
     ++groups;{
         check(clean.valid&&clean.hud_candidate&&clean.score.supported_cells==7,"synthetic clean v3 control invalid");
@@ -199,7 +538,9 @@ int main(){try{
         auto six=occlusion;six.score.boundary_components=0;LearnedHudRedundancy h;train(h,image,clean);
         check(!h.observe(view(blocked),six,raw(),frame(3,1200),true).current_candidate,"ordinary missing score digits received boundary fallback");
         auto few=occlusion;few.score.glyphs.resize(3);
-        check(!h.observe(view(blocked),few,raw(),frame(4,1300),true).current_candidate,"fewer than four observed score glyphs admitted");
+        const auto& current=h.observe(view(blocked),few,raw(),frame(4,1300),true);
+        check(current.current_candidate&&current.auxiliary.valid&&current.merged_score.textured_windows>=4,
+            "raw score evidence was replaced by a forged primary component count");
         auto spoof=occlusion;spoof.fixed_glyphs[0].glyph_present=false;
         check(!h.observe(view(blocked),spoof,raw(),frame(5,1400),true).current_candidate,"reason-only pause spoof passed");
         spoof=occlusion;spoof.difficulty_alignment_unique_family=false;

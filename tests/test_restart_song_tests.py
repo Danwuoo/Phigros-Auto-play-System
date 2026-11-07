@@ -22,12 +22,12 @@ def snapshot():
                 game_callback_verified=False, android_monotonic_before_ns=100, android_monotonic_after_ns=200)
 
 
-def stream():
+def stream(capacity=5):
     row = snapshot()
     identity = {k: row[k] for k in ("path", "name", "rdev", "slot_count")}
     rows = [dict(type="header", schema="pas.evdev-slot-stream.v1", boot_id=BOOT, input_enabled=False,
                  grab_enabled=False, devices=[dict(**identity, initialization_errno=0)])]
-    for sequence, count in enumerate((0, 5, 5, 0), 1):
+    for sequence, count in enumerate((0, capacity, capacity, 0), 1):
         rows.append(dict(type="sample", sequence=sequence, boot_id=BOOT, **identity, error_errno=0,
                          android_monotonic_before_ns=sequence*100, android_monotonic_after_ns=sequence*100+50,
                          active_count=count, tracking_ids=list(range(count))+[-1]*(11-count)))
@@ -39,10 +39,10 @@ def wire(rows):
     return ("\n".join(json.dumps(row) for row in rows)+"\n").encode()
 
 
-def probe():
-    return dict(schema="pas.touch-probe.v1", serial=tool.SERIAL, avd=tool.AVD, case="capacity", capacity_requested=5,
+def probe(capacity=5):
+    return dict(schema="pas.touch-probe.v1", serial=tool.SERIAL, avd=tool.AVD, case="capacity", capacity_requested=capacity,
                 fixture_package=tool.PACKAGE,fixture_apk_sha256=tool.APK_SHA,input_enabled=True,user_stop_requested=False,
-                contacts_in_case=5,width=1280,height=720,
+                contacts_in_case=capacity,width=1280,height=720,
                 status="fixture_visual_path_passed", path_verified=True, zero_active_observed=True,
                 release_rpc_known=True, events_log_complete=True, failure="", final_evidence=dict(active=0, complete=True,error=""),
                 release=dict(failed=[], unknown=[]), geometry=dict(normalize_ccw90=True, normalized_width=1280,
@@ -51,6 +51,52 @@ def probe():
 
 
 class BootstrapTests(unittest.TestCase):
+    def test_configured_capacity_is_explicit_bounded_and_legacy_compatible(self):
+        self.assertEqual(tool.configured_capacity({}), 5)
+        for capacity in range(1, 11):
+            with self.subTest(capacity=capacity):
+                self.assertEqual(tool.configured_capacity({"fixture_capacity": capacity}), capacity)
+                args = tool.fixture_probe_arguments({"probe": {"file": "never-executed-probe"},
+                                                     "fixture_capacity": capacity}, "never-created-output")
+                self.assertEqual(args[5:9], ["capacity", str(capacity), "1280", "720"])
+                self.assertEqual(args[-1], "--fixture-input")
+        for capacity in (0, 11, True, 1.0, "10", None):
+            with self.subTest(capacity=capacity), self.assertRaises(ValueError):
+                tool.configured_capacity({"fixture_capacity": capacity})
+
+    def test_six_through_ten_require_matching_actual_paths_and_release(self):
+        for capacity in range(6, 11):
+            with self.subTest(capacity=capacity):
+                route = tool.validate_stream(wire(stream(capacity)), BOOT, snapshot(), capacity)
+                self.assertEqual(route["peak_contacts"], capacity)
+                self.assertTrue(route["baseline_zero"] and route["final_zero"])
+                self.assertTrue(tool.validate_probe(probe(capacity), capacity)["zero_active_observed"])
+                analysis = dict(schema="pas.touch-probe-analysis.v1", status="passed_observed_fixture_path",
+                    failures=[], incomplete_reasons=[], android=dict(peak_contacts=capacity, stream_complete=True,
+                    expected_path_verified=True, pointer_lifecycle_valid=True, final_zero_observed=True))
+                self.assertEqual(tool.validate_analysis(analysis, capacity)["peak_contacts"], capacity)
+                # An old five-contact recording/probe cannot qualify a larger request.
+                with self.assertRaises(ValueError): tool.validate_stream(wire(stream()), BOOT, snapshot(), capacity)
+                with self.assertRaises(ValueError): tool.validate_probe(probe(), capacity)
+                old = copy.deepcopy(analysis); old["android"]["peak_contacts"] = 5
+                with self.assertRaises(ValueError): tool.validate_analysis(old, capacity)
+                held = copy.deepcopy(analysis); held["android"]["final_zero_observed"] = False
+                with self.assertRaises(ValueError): tool.validate_analysis(held, capacity)
+                row = probe(capacity); row["release"]["unknown"] = [capacity - 1]
+                with self.assertRaises(ValueError): tool.validate_probe(row, capacity)
+
+    def test_ten_contact_proof_rejects_old_boot_small_route_and_eleven(self):
+        other_boot = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+        with self.assertRaises(ValueError): tool.validate_stream(wire(stream(10)), other_boot, snapshot(), 10)
+        small = snapshot(); small["slot_count"] = 5; small["tracking_ids"] = [-1] * 5
+        with self.assertRaises(ValueError): tool.validate_snapshot(small, BOOT, capacity=10)
+        with self.assertRaises(ValueError): tool.validate_stream(wire(stream(10)), BOOT, small, 10)
+        for validator in (lambda: tool.validate_snapshot(snapshot(), BOOT, capacity=11),
+                          lambda: tool.validate_stream(wire(stream(11)), BOOT, snapshot(), 11),
+                          lambda: tool.validate_probe(probe(11), 11),
+                          lambda: tool.validate_analysis({}, 11)):
+            with self.assertRaises(ValueError): validator()
+
     def test_snapshot_positive_is_readonly_zero(self):
         self.assertEqual(tool.validate_snapshot(snapshot(), BOOT)["active_count"], 0)
 
@@ -309,6 +355,7 @@ class BootstrapTests(unittest.TestCase):
     def test_fake_boot_refuses_old_uuid_before_any_helper_or_fixture(self):
         with tempfile.TemporaryDirectory() as temp:
             worker=object.__new__(tool.Bootstrap);worker.root=Path(temp)
+            worker.c={}
             tool.write_new(worker.root/"preboot.json",{"prior_boot_id":BOOT})
             calls=[]
             def command(tail,**kwargs):

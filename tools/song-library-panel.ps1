@@ -57,12 +57,17 @@ function Read-CatalogJson([string]$Path, [long]$MaxBytes = 16777216) {
     }
     return ($text | ConvertFrom-Json -Depth 64)
 }
+function Test-CatalogBlockAreaUnsupported($Row) {
+    return (Get-CatalogValue $Row 'analysis_status' '') -eq 'unsupported_block_area' -or
+        @((Get-CatalogValue $Row 'blockers' @()) | Where-Object { (Get-CatalogValue $_ 'code' '') -eq 'unsupported_block_area' }).Count -gt 0
+}
 function Get-CatalogStatus($Row) {
     $archive = [string](Get-CatalogValue $Row 'archive_status' 'missing')
     $analysis = [string](Get-CatalogValue $Row 'analysis_status' 'structural_only')
     if ($archive -eq 'lfs_pointer') { return [pscustomobject]@{ Code = 'lfs_pointer'; Text = '待取回 LFS 原件' } }
     if ($archive -eq 'failed') { return [pscustomobject]@{ Code = 'failed'; Text = '原件取得失敗' } }
     if ($archive -ne 'verified') { return [pscustomobject]@{ Code = 'missing'; Text = '原件尚未齊備' } }
+    if (Test-CatalogBlockAreaUnsupported $Row) { return [pscustomobject]@{ Code = 'unsupported'; Text = '已歸檔・blockAreaList 目前無法完成' } }
     if ($analysis -in @('unsupported', 'unsupported_format')) { return [pscustomobject]@{ Code = 'unsupported'; Text = '已入庫・格式待支援' } }
     if ($analysis -eq 'failed') { return [pscustomobject]@{ Code = 'failed'; Text = '已入庫・分析待處理' } }
     return [pscustomobject]@{ Code = 'local_pending'; Text = '已入庫・待本機核對' }
@@ -117,8 +122,8 @@ function Get-CatalogNativeIssue($Audit) {
         default {
             if ($detail -match 'reversed event interval') {
                 '原譜含起訖倒序的判定線事件，嚴格匯入器因此拒絕；需確認原生語義及相容策略，原件保持不變。'
-            } elseif ($detail -match '/blockAreaList: unsupported field') {
-                '原譜含 blockAreaList 欄位，目前嚴格 v3 匯入器尚未支援；需要補齊語義與測試。'
+            } elseif ($detail -match 'block[ _-]?area[ _-]?list') {
+                '原譜含 blockAreaList，已歸檔；目前無法完成。'
             } elseif ($detail -match 'unsupported field') {
                 '原譜含目前匯入器未支援的欄位；需要確認該欄位的原生語義。'
             } else {
@@ -174,7 +179,7 @@ function Read-SongCatalog([string]$Path) {
             $nativeStatus = $audit.status
             $issue = Get-CatalogNativeIssue $audit
             $nativeText = $issue.Summary; $nativeDetail = $issue.Detail
-            if ($presence -eq 'present_unhashed' -and $chart.archive_status -eq 'verified') {
+            if ($presence -eq 'present_unhashed' -and $chart.archive_status -eq 'verified' -and -not (Test-CatalogBlockAreaUnsupported $chart)) {
                 if ($nativeStatus -eq 'passed') { $status = [pscustomobject]@{ Code = 'local_pending'; Text = '匯入通過・待本機核對' } }
                 elseif ($nativeStatus -eq 'unsupported_format') { $status = [pscustomobject]@{ Code = 'unsupported'; Text = '已入庫・格式待支援' } }
                 else { $status = [pscustomobject]@{ Code = 'import_rejected'; Text = '已入庫・原生匯入拒絕' } }

@@ -1,4 +1,5 @@
 #include "pas/emulator.hpp"
+#include <grpc/support/time.h>
 
 #include <algorithm>
 #include <cctype>
@@ -351,6 +352,16 @@ GrpcTouch::GrpcTouch(const Clock& clock, GrpcEndpoint endpoint, PixelCoordinateM
         throw std::invalid_argument("invalid gRPC touch configuration");
     channel_ = grpc::CreateChannel(endpoint_.target, grpc::InsecureChannelCredentials());
     stub_ = pb::EmulatorController::NewStub(channel_);
+}
+
+bool GrpcTouch::prepare_connection(std::chrono::milliseconds timeout) {
+    if (timeout <= std::chrono::milliseconds(0) || timeout > std::chrono::seconds(2))
+        throw std::invalid_argument("invalid gRPC connection preparation timeout");
+    if (faulted_ || !positions_.empty() || !unknown_.empty())
+        throw std::logic_error("connection preparation requires an idle unfaulted touch backend");
+    const auto deadline = gpr_time_add(gpr_now(GPR_CLOCK_MONOTONIC),
+        gpr_time_from_millis(timeout.count(), GPR_TIMESPAN));
+    return channel_->WaitForConnected(deadline) && channel_->GetState(false) == GRPC_CHANNEL_READY;
 }
 
 bool GrpcTouch::send(int id, int x, int y, int pressure) {

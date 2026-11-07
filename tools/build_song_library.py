@@ -25,11 +25,17 @@ def checked_job(raw):
             or profile.get("chart_sha256") != job["chart"]["sha256"]
             or profile.get("expected_plan_sha256") != job.get("compiled_fingerprint")):
         raise ValueError("Library profile/chart/plan identity mismatch")
+    capacity = profile.get("contact_capacity", 4)
+    if type(capacity) is not int or not 1 <= capacity <= 10:
+        raise ValueError("Library profile contact capacity must be an integer in 1..10")
+    if "contact_capacity" in job and (type(job["contact_capacity"]) is not int or job["contact_capacity"] != capacity):
+        raise ValueError("Library contact capacity differs from pinned profile")
+    job["contact_capacity"] = capacity
     for key, field in (("notes", "expected_contacts"), ("events", "expected_steps"), ("peak", "expected_peak")):
         if job.get(key) != profile.get(field):
             raise ValueError("Library count differs from pinned profile: " + key)
     if (not 1 <= job["events"] <= 16000 or not 1 <= job["notes"] <= job["events"] // 2
-            or not 1 <= job["peak"] <= 5):
+            or type(job["peak"]) is not int or not 1 <= job["peak"] <= capacity):
         raise ValueError("Library entry exceeds native experiment resource bounds")
     if job.get("source_manifest"):
         item = job["source_manifest"]

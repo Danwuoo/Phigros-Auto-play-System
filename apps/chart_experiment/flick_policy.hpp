@@ -17,7 +17,10 @@ struct FlickParameters {
     FlickPathPolicy path_policy=FlickPathPolicy::dynamic_line_v1;
 };
 inline void validate_flick_parameters(const FlickParameters& p) {
-    if(p.path_policy!=FlickPathPolicy::dynamic_line_v1&&p.path_policy!=FlickPathPolicy::judgment_anchored_straight_v1)
+    if(p.path_policy!=FlickPathPolicy::dynamic_line_v1&&p.path_policy!=FlickPathPolicy::judgment_anchored_straight_v1&&
+       p.path_policy!=FlickPathPolicy::judgment_anchored_screen_fit_v1&&
+       p.path_policy!=FlickPathPolicy::judgment_anchored_diagonal_snap_v1&&
+       p.path_policy!=FlickPathPolicy::judgment_anchored_diagonal_sampled_v2)
         throw std::invalid_argument("Unknown Flick path policy");
     if(p.lead_ms<1||p.lead_ms>100||p.travel_ms<2||p.travel_ms>200||p.lead_ms>=p.travel_ms||
        p.release_ms<1||p.release_ms>100||!std::isfinite(p.distance_reference_pixels)||
@@ -28,6 +31,9 @@ inline FlickPathPolicy flick_path_policy(const nlohmann::json& value) {
     if(!value.is_string())throw std::invalid_argument("Flick path policy must be an explicit string");
     if(value=="dynamic-line-v1")return FlickPathPolicy::dynamic_line_v1;
     if(value=="judgment-anchored-straight-v1")return FlickPathPolicy::judgment_anchored_straight_v1;
+    if(value=="judgment-anchored-screen-fit-v1")return FlickPathPolicy::judgment_anchored_screen_fit_v1;
+    if(value=="judgment-anchored-diagonal-snap-v1")return FlickPathPolicy::judgment_anchored_diagonal_snap_v1;
+    if(value=="judgment-anchored-diagonal-sampled-v2")return FlickPathPolicy::judgment_anchored_diagonal_sampled_v2;
     throw std::invalid_argument("Unknown Flick path policy");
 }
 inline std::int64_t flick_integer(const nlohmann::json& value,std::int64_t lower,std::int64_t upper) {

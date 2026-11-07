@@ -51,7 +51,7 @@ namespace PasSweep {
   const int QueueLimit=512; const long LogBytesLimit=32*1024*1024;
   public static ProcessStartInfo BuildStartInfo(string executable,string cwd,string[] args){
    var info=new ProcessStartInfo(executable){WorkingDirectory=cwd,UseShellExecute=false,CreateNoWindow=true,
-    RedirectStandardOutput=true,RedirectStandardError=true,StandardOutputEncoding=new UTF8Encoding(false),StandardErrorEncoding=new UTF8Encoding(false)};
+    RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true,StandardOutputEncoding=new UTF8Encoding(false),StandardErrorEncoding=new UTF8Encoding(false)};
    foreach(var arg in args)info.ArgumentList.Add(arg);return info;
   }
   void Line(bool stderr,string text){
@@ -73,7 +73,7 @@ namespace PasSweep {
     process=new Process{StartInfo=BuildStartInfo(executable,cwd,args)};
     process.OutputDataReceived+=(s,e)=>Line(false,e.Data);process.ErrorDataReceived+=(s,e)=>Line(true,e.Data);
     if(!process.Start())throw new InvalidOperationException("無法啟動封存程式");
-    Started=true;process.BeginOutputReadLine();outReading=true;process.BeginErrorReadLine();errReading=true;
+    Started=true;process.StandardInput.Close();process.BeginOutputReadLine();outReading=true;process.BeginErrorReadLine();errReading=true;
    }catch{
     if(Started){
      // Preserve ownership and drain a pipe whose async reader failed to start.
@@ -125,14 +125,27 @@ function Add-PanelNestedPins($Map,$Value,[string]$Base,[int]$Depth=0) {
     if ($Value.PSObject.Properties['file'] -and $Value.PSObject.Properties['sha256']) { $null=Add-PanelPin $Map $Value $Base }
     foreach($property in $Value.PSObject.Properties){ Add-PanelNestedPins $Map $property.Value $Base ($Depth+1) }
 }
+function Get-PanelImageRetention($Context) {
+    $retention='none'
+    if($null -eq $Context -or -not $Context.PSObject.Properties['Configuration'] -or $null -eq $Context.Configuration){return $retention}
+    if($Context.Configuration.PSObject.Properties['image_retention']){$retention=[string]$Context.Configuration.image_retention}
+    if($retention -cnotin @('none','result')){throw '人工面板僅接受不存圖片或僅保存結算圖；不允許中途診斷圖。'}
+    return $retention
+}
+function Get-PanelImageRetentionText($Context) {
+    if((Get-PanelImageRetention $Context) -ceq 'result'){return '每輪只保存結算圖'}
+    return '每輪不存圖片'
+}
 function Get-PanelContext([string]$Path,[string]$ScriptPath=$PSCommandPath) {
     $config=Read-PanelJson $Path
     if($config.schema -ceq 'pas.manual-song-panel-launch.v2'){return Get-CatalogPanelContext $Path $ScriptPath}
     if ($config.schema -ne 'pas.manual-song-panel-launch.v1' -or $config.manual_selection -isnot [bool] -or $config.manual_selection -ne $true -or
         $config.manual_start -isnot [bool] -or $config.manual_start -ne $true) { throw '設定必須保留人工選曲與人工 Play。' }
+    $null=Get-PanelImageRetention ([pscustomobject]@{Configuration=$config})
     $pins=[Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
     if(@($config.scripts).Count -lt 2 -or @($config.scripts).Count -gt 16){throw '啟動腳本參照數量無效。'}
-    foreach($name in @('plan','library','build_manifest','kernel_profile','capacity_evidence','gui_script')) { $null=Add-PanelPin $pins $config.$name }
+    $null=Get-PanelCapacityPolicy $config
+    foreach($name in @('plan','library','build_manifest','kernel_profile','gui_script')) { $null=Add-PanelPin $pins $config.$name }
     foreach($reference in $config.scripts){$null=Add-PanelPin $pins $reference}
     if ([IO.Path]::GetFullPath($config.gui_script.file) -ne [IO.Path]::GetFullPath($ScriptPath)) { throw '此介面與設定封存的 GUI 腳本不同。' }
     if (-not [IO.Path]::IsPathFullyQualified($config.output_parent) -or -not (Test-Path -LiteralPath $config.output_parent -PathType Container)) { throw '輸出父目錄不存在。' }
@@ -163,7 +176,7 @@ function Get-PanelContext([string]$Path,[string]$ScriptPath=$PSCommandPath) {
         foreach($key in @('chart','profile','state_calibration','hud_reference')) {if ($copy.$key.file -ne $native.$key.file -or $copy.$key.sha256 -ne $native.$key.sha256){throw "曲庫資產與正式清單不一致：$key"}}
     }
     $build=Read-PanelJson $config.build_manifest.file
-    if ($build.schema -ne 'pas.adaptive-build-archive.v1' -or @($build.artifacts).Count -gt 2048) { throw '無效的封存 binary manifest。' }
+    if ($build.schema -ne 'pas.adaptive-build-archive.v1' -or @($build.artifacts).Count -gt 4096) { throw '無效的封存 binary manifest。' }
     $bin=Join-Path $archive 'bin';$binPrefix=$bin+[IO.Path]::DirectorySeparatorChar;$declared=@{}
     foreach($artifact in $build.artifacts) {
         $target=[IO.Path]::GetFullPath((Join-Path $archive $artifact.file))
@@ -205,11 +218,8 @@ function Get-PanelContext([string]$Path,[string]$ScriptPath=$PSCommandPath) {
         $profile=Read-PanelJson $job.profile.file
         if($profile.chart_sha256 -ne $job.chart.sha256 -or $profile.audio_sha256 -ne $source.decoded_audio.sha256){throw 'Profile 的譜面／音源身分不一致。'}
     }
-    $capacity=Read-PanelJson $config.capacity_evidence.file
-    foreach($name in @('analysis','host_manifest','retrieval_report')){$null=Add-PanelPin $pins $capacity.$name}
-    if(@($capacity.artifacts).Count -gt 8){throw '容量證據資產數超出限制。'}
-    foreach($reference in $capacity.artifacts){$null=Add-PanelPin $pins $reference}
-    if($pins.Count -gt 4096){throw '資產參照數量超出限制。'}
+    Add-PanelCapacityEvidencePins $pins $config
+    if($pins.Count -gt 8192){throw '資產參照數量超出限制。'}
     $ordered=@($warmups)+@($chapters)
     return [pscustomobject]@{Configuration=$config;Plan=$plan;Library=$library;Jobs=$ordered;Pins=$pins;Executable=$exe;Bin=$bin;ConfigPath=[IO.Path]::GetFullPath($Path)}
 }
@@ -218,8 +228,22 @@ function Test-PanelPins($Context) {
 }
 function New-PanelArguments($Context,$Job,[string]$Output,[switch]$CheckOnly) {
     $mode=if($CheckOnly){'check-adaptive'}else{'run-adaptive'}
-    return [string[]]@($mode,'emulator-5554','phigros',$Job.chart.file,$Job.state_calibration.file,$Context.Configuration.kernel_profile.file,$Output,'-80',
-        '--experimental-whole-song','--song-profile',$Job.profile.file,'--experimental-hud-reference',$Job.hud_reference.file,'--capacity-evidence',$Context.Configuration.capacity_evidence.file)
+    $phase=-80;$phaseSource='曲庫'
+    if($Job.PSObject.Properties['phase_ms']){
+        $phase=$Job.phase_ms;$phaseSource='曲目'
+    }elseif($Context.PSObject.Properties['Plan'] -and $Context.Plan.PSObject.Properties['phase_ms']){
+        $phase=$Context.Plan.phase_ms
+    }
+    if(($phase -isnot [int] -and $phase -isnot [long]) -or $phase -lt -100 -or $phase -gt 100){throw ($phaseSource+'相位必須是 -100 至 100ms 的整數。')}
+    $arguments=[string[]]@($mode,'emulator-5554','phigros',$Job.chart.file,$Job.state_calibration.file,$Context.Configuration.kernel_profile.file,$Output,[string]$phase,
+        '--experimental-whole-song','--song-profile',$Job.profile.file,'--experimental-hud-reference',$Job.hud_reference.file)
+    if((Get-PanelCapacityPolicy $Context.Configuration) -ceq 'configured-ten-contact-v1'){
+        $arguments+=@('--capacity-policy','configured-ten-contact-v1')
+    }else{
+        $arguments+=@('--capacity-evidence',$Context.Configuration.capacity_evidence.file)
+    }
+    $arguments+=@('--image-retention',(Get-PanelImageRetention $Context))
+    return [string[]]$arguments
 }
 function Request-PanelStop([string]$RoundDirectory) {
     # Do not create the native output directory: run-adaptive requires it NEW.
@@ -282,17 +306,65 @@ function Test-PanelKernelReleaseEvidence($Manifest) {
     }
     return $true
 }
+function Read-PanelRoundManifest([string]$Path) {
+    # A full native manifest includes per-step stream/admission telemetry. The
+    # latest legitimate AT round is already 17 MiB; the old 1 MiB JSON limit
+    # hid its actual stop reason and even rejected a fully completed round.
+    # Retain a finite 128 MiB file budget for up to 65,536 native steps. Project
+    # only completion/identity fields into PSObjects, rather than expanding all
+    # trace arrays on the desktop UI thread. The caller still hashes the whole
+    # original manifest and retains it untouched as the authoritative evidence.
+    if(-not [IO.Path]::IsPathFullyQualified($Path)){throw "必須使用完整路徑：$Path"}
+    $item=Get-Item -LiteralPath $Path -ErrorAction Stop
+    if($item.PSIsContainer -or $item.Length -gt 134217728){throw "回合紀錄超出128MiB有限上限：$Path"}
+    Add-Type -AssemblyName System.Text.Json
+    $options=[System.Text.Json.JsonDocumentOptions]::new();$options.MaxDepth=100
+    $stream=[IO.File]::OpenRead($item.FullName);$document=$null
+    try{
+        $document=[System.Text.Json.JsonDocument]::Parse($stream,$options)
+        if($document.RootElement.ValueKind -ne [System.Text.Json.JsonValueKind]::Object){throw '回合紀錄必須是JSON物件。'}
+        $fields=@('schema','song_id','difficulty','chart_sha256','song_profile_sha256',
+            'screen_calibration_sha256','expected_plan_sha256','executable_sha256','kernel_profile_sha256',
+            'capacity_policy','status','failure','whole_song_sequence_complete','manual_result_confirmed',
+            'kernel_final_zero','kernel_final','full_chart_notes','full_compiled_steps','receipt_rows',
+            'down_attempts','up_attempts','runtime_final','image_retention')
+        $parts=[Collections.Generic.List[string]]::new();[long]$length=2
+        foreach($name in $fields){
+            $element=[System.Text.Json.JsonElement]::new()
+            if($document.RootElement.TryGetProperty($name,[ref]$element)){
+                $part='"'+$name+'":'+$element.GetRawText();$length+=$part.Length+1
+                if($length -gt 1048576){throw '回合結束／身份欄位超出1MiB有限上限。'}
+                $parts.Add($part)
+            }
+        }
+        return ('{'+($parts -join ',')+'}'|ConvertFrom-Json -Depth 100)
+    }finally{
+        if($null -ne $document){$document.Dispose()}
+        $stream.Dispose()
+    }
+}
 function Get-PanelRoundResult([string]$RoundDirectory,[int]$ExitCode,[string]$StderrTail='',$ExpectedJob=$null,$Context=$null) {
     $path=Join-Path $RoundDirectory 'manifest.json';$manifest=$null;$failure=$null;$hash=$null
-    try {$manifest=Read-PanelJson $path 1048576;$hash=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()}
-    catch {$failure='未取得完整原生 manifest：'+$_.Exception.Message}
+    $startupFailure=$false;$manifestReadError=$null;$stderrIncluded=$false
+    try {$manifest=Read-PanelRoundManifest $path;$hash=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()}
+    catch {
+        $manifestReadError=$_.Exception.Message
+        $startupFailure=-not(Test-Path -LiteralPath $RoundDirectory -PathType Container)
+        $summary=if($startupFailure){'啟動尚未READY，未送出觸控／無回合manifest。'}else{'未取得完整回合紀錄，觸控／釋放狀態未知。'}
+        $failure=if($StderrTail.Trim()){$stderrIncluded=$true;$StderrTail.Trim()+'；'+$summary}else{$summary}
+    }
     $identityMatched=$null -ne $manifest -and $manifest.schema -eq 'pas.experimental-whole-song.v1'
     if($identityMatched -and $ExpectedJob){
         $identityMatched=$manifest.song_id -eq $ExpectedJob.track_id -and $manifest.difficulty -eq $ExpectedJob.difficulty -and
             $manifest.chart_sha256 -eq $ExpectedJob.chart.sha256 -and $manifest.song_profile_sha256 -eq $ExpectedJob.profile.sha256 -and
             $manifest.screen_calibration_sha256 -eq $ExpectedJob.state_calibration.sha256 -and $manifest.expected_plan_sha256 -eq $ExpectedJob.compiled_fingerprint
     }
-    if($identityMatched -and $Context){$identityMatched=$manifest.executable_sha256 -eq $Context.Pins[$Context.Executable] -and $manifest.kernel_profile_sha256 -eq $Context.Configuration.kernel_profile.sha256}
+    if($identityMatched -and $Context){
+        $identityMatched=$manifest.executable_sha256 -eq $Context.Pins[$Context.Executable] -and $manifest.kernel_profile_sha256 -eq $Context.Configuration.kernel_profile.sha256
+        if((Get-PanelCapacityPolicy $Context.Configuration) -ceq 'configured-ten-contact-v1'){
+            $identityMatched=$identityMatched -and $manifest.PSObject.Properties['capacity_policy'] -and $manifest.capacity_policy -ceq 'configured-ten-contact-v1'
+        }
+    }
     $countersConsistent=$null -ne $manifest -and (Test-PanelManifestCounters $manifest $ExpectedJob)
     if(-not $countersConsistent){$identityMatched=$false}
     $releaseConsistent=$null -ne $manifest -and (Test-PanelKernelReleaseEvidence $manifest)
@@ -302,8 +374,8 @@ function Get-PanelRoundResult([string]$RoundDirectory,[int]$ExitCode,[string]$St
         $manifest.manual_result_confirmed -is [bool] -and $manifest.manual_result_confirmed -eq $true -and
         $manifest.kernel_final_zero -is [bool] -and $manifest.kernel_final_zero -eq $true
     if (-not $success -and $null -ne $manifest){$failure=if($manifest.failure){$manifest.failure}else{'程序或結束／釋放證據未通過。'}}
-    if (-not $success -and $StderrTail){$failure=[string]$failure+'；'+$StderrTail}
-    $execution='unknown';$resultState='unknown';$release='unknown'
+    if (-not $success -and $StderrTail -and -not $stderrIncluded){$failure=[string]$failure+'；'+$StderrTail}
+    $execution=if($startupFailure){'not_started'}else{'unknown'};$resultState='unknown';$release='unknown'
     if($identityMatched){
         if($manifest.whole_song_sequence_complete -is [bool]){$execution=if($manifest.whole_song_sequence_complete){'completed'}else{'incomplete'}}
         if($manifest.manual_result_confirmed -is [bool]){$resultState=if($manifest.manual_result_confirmed){'confirmed_by_native'}else{'not_confirmed'}}
@@ -319,10 +391,13 @@ function Get-PanelRoundResult([string]$RoundDirectory,[int]$ExitCode,[string]$St
             }catch{} # Optional evidence never overwrites the native failure.
         }
     }
-    return [pscustomobject]@{Success=$success;ExitCode=$ExitCode;Failure=$failure;KernelFinalZero=if($manifest){$manifest.kernel_final_zero}else{$null};ManifestFile=if($manifest){$path}else{$null};ManifestSha256=$hash;Manifest=$manifest;
+    return [pscustomobject]@{Success=$success;ExitCode=$ExitCode;Failure=$failure;StartupFailure=$startupFailure;ManifestReadError=$manifestReadError;KernelFinalZero=if($manifest){$manifest.kernel_final_zero}else{$null};ManifestFile=if($manifest){$path}else{$null};ManifestSha256=$hash;Manifest=$manifest;
         ManifestIdentityMatched=$identityMatched;CountersConsistent=$countersConsistent;ReleaseEvidenceConsistent=$releaseConsistent;ExecutionState=$execution;ResultState=$resultState;ReleaseState=$release;JudgmentState='unreviewed';EvidenceFiles=$images.ToArray()}
 }
 function Get-PanelRoundPresentation($Result) {
+    if($Result.PSObject.Properties['StartupFailure'] -and $Result.StartupFailure){
+        return [pscustomobject]@{Title='啟動尚未READY';Detail=[string]$Result.Failure;RowStatus='啟動失敗';InputCompleteResultUnconfirmed=$false}
+    }
     $hasResult=@($Result.EvidenceFiles|Where-Object{[IO.Path]::GetFileName($_.file) -eq 'result.png'}).Count -gt 0
     $hasLast=@($Result.EvidenceFiles|Where-Object{[IO.Path]::GetFileName($_.file) -eq 'last-observed.png'}).Count -gt 0
     $imageText=if($hasResult){'結算圖片檔已保存'}elseif($hasLast){'最後畫面已保存'}else{'未找到結算圖片，請開啟紀錄檢查'}
@@ -345,7 +420,12 @@ function Assert-PanelPreflight([string]$Path,$Job,$Context) {
        $result.input_enabled -isnot [bool] -or $result.input_enabled -ne $false -or $result.song_id -ne $Job.track_id -or
        $result.difficulty -ne $Job.difficulty -or $result.chart_sha256 -ne $Job.chart.sha256 -or $result.compiled_sha256 -ne $Job.compiled_fingerprint -or
        $result.executable_sha256 -ne $Context.Pins[$Context.Executable] -or $result.screen_calibration_sha256 -ne $Job.state_calibration.sha256 -or
-       $result.HUD_reference_sha256 -ne $Job.hud_reference.sha256 -or $result.kernel_profile_sha256 -ne $Context.Configuration.kernel_profile.sha256) {throw '原生離線檢查回應與本首／封存身分不一致。'}
+       $result.HUD_reference_sha256 -ne $Job.hud_reference.sha256 -or $result.kernel_profile_sha256 -ne $Context.Configuration.kernel_profile.sha256 -or
+       $result.image_retention -cne (Get-PanelImageRetention $Context)) {throw '原生離線檢查回應與本首／封存身分不一致。'}
+    if((Get-PanelCapacityPolicy $Context.Configuration) -ceq 'configured-ten-contact-v1' -and
+        (-not $result.PSObject.Properties['capacity_policy'] -or $result.capacity_policy -cne 'configured-ten-contact-v1')){
+        throw '原生前檢未使用設定中的十指模式。'
+    }
 }
 function ConvertFrom-PanelAcquisitionProgress([string]$Line) {
     $prefix='ACQUISITION STATUS: '
@@ -407,13 +487,69 @@ function Get-PanelNativeStageUpdate([string]$Line,[string]$Phase,[bool]$StopRequ
 
 . (Join-Path $PSScriptRoot 'catalog-panel-core.ps1')
 if ($LoadCoreOnly) {return}
+function Get-PanelAfterPreflightAction([bool]$ReadyRequested,[int]$QueueCount,[bool]$StopRequested) {
+    if($StopRequested){return 'stop'}
+    if($ReadyRequested -and $QueueCount -eq 1){return 'start_round_hash'}
+    return 'wait_operator'
+}
 if ($SelfTest) {
     $checks=0;$temporary=Join-Path ([IO.Path]::GetTempPath()) ('PAS 面板離線測試 '+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $temporary|Out-Null
     try {
+        if((Get-PanelAfterPreflightAction $true 1 $false) -cne 'start_round_hash'){throw '單首 READY 未進入執行前重新核對。'};$checks++
+        if((Get-PanelAfterPreflightAction $true 2 $false) -cne 'wait_operator'){throw '批次不可自動啟動本首。'};$checks++
+        if((Get-PanelAfterPreflightAction $false 1 $false) -cne 'wait_operator'){throw '沒有 READY 點擊卻自動啟動。'};$checks++
+        if((Get-PanelAfterPreflightAction $true 1 $true) -cne 'stop'){throw '停止後不可進入 READY。'};$checks++
+        $retentionContext=[pscustomobject]@{Configuration=[pscustomobject]@{image_retention='result';kernel_profile=[pscustomobject]@{file='kernel.json'};capacity_evidence=[pscustomobject]@{file='capacity.json'}}}
+        $retentionJob=[pscustomobject]@{chart=[pscustomobject]@{file='chart.json'};state_calibration=[pscustomobject]@{file='state.json'};profile=[pscustomobject]@{file='profile.json'};hud_reference=[pscustomobject]@{file='hud.rgb'}}
+        foreach($checkOnly in @($false,$true)){
+            $retentionArgs=New-PanelArguments $retentionContext $retentionJob 'new-run' -CheckOnly:$checkOnly
+            if($retentionArgs[-2] -cne '--image-retention' -or $retentionArgs[-1] -cne 'result' -or $retentionArgs -contains 'diagnostic'){throw '人工執行或前檢沒有保留僅結算圖政策。'};$checks++
+        }
+        $configuredContext=[pscustomobject]@{Configuration=[pscustomobject]@{capacity_policy='configured-ten-contact-v1';contact_capacity=10;image_retention='result';kernel_profile=[pscustomobject]@{file='kernel.json'}}}
+        $phaseContext=[pscustomobject]@{Configuration=$configuredContext.Configuration;Plan=[pscustomobject]@{phase_ms=-40}}
+        foreach($checkOnly in @($false,$true)){
+            $phaseArgs=New-PanelArguments $phaseContext $retentionJob 'new-run' -CheckOnly:$checkOnly
+            if($phaseArgs[7] -cne '-40'){throw '面板未使用曲庫已驗證相位。'};$checks++
+        }
+        $phaseJob=[pscustomobject]@{chart=$retentionJob.chart;state_calibration=$retentionJob.state_calibration;profile=$retentionJob.profile;hud_reference=$retentionJob.hud_reference;phase_ms=-70}
+        foreach($checkOnly in @($false,$true)){
+            $phaseArgs=New-PanelArguments $phaseContext $phaseJob 'new-run' -CheckOnly:$checkOnly
+            if($phaseArgs[7] -cne '-70' -or $phaseContext.Plan.phase_ms -ne -40){throw '曲目明示相位未優先於曲庫，或改寫曲庫相位。'};$checks++
+            $fallbackArgs=New-PanelArguments $configuredContext $retentionJob 'new-run' -CheckOnly:$checkOnly
+            if($fallbackArgs[7] -cne '-80'){throw '沒有曲目／曲庫相位時未保留既有預設。'};$checks++
+            foreach($validPhase in @(-100,0,[long]100)){
+                $phaseJob.phase_ms=$validPhase;$phaseArgs=New-PanelArguments $phaseContext $phaseJob 'new-run' -CheckOnly:$checkOnly
+                if($phaseArgs[7] -cne [string]$validPhase){throw '面板拒絕有效整數曲目相位。'};$checks++
+            }
+            foreach($invalidPhase in @($null,-101,101,0.5,-70.0,$true,'-70')){
+                $phaseJob.phase_ms=$invalidPhase;$rejected=$false
+                try{$null=New-PanelArguments $phaseContext $phaseJob 'new-run' -CheckOnly:$checkOnly}catch{$rejected=$true}
+                if(-not $rejected){throw '面板接受無效曲目相位，或錯誤回退到曲庫相位。'};$checks++
+                $phaseContext.Plan.phase_ms=$invalidPhase;$rejected=$false
+                try{$null=New-PanelArguments $phaseContext $retentionJob 'new-run' -CheckOnly:$checkOnly}catch{$rejected=$true}
+                if(-not $rejected){throw '面板接受無效曲庫相位。'};$checks++
+            }
+            $phaseContext.Plan.phase_ms=-40;$phaseJob.phase_ms=-70
+        }
+        foreach($checkOnly in @($false,$true)){
+            $configuredArgs=New-PanelArguments $configuredContext $retentionJob 'new-run' -CheckOnly:$checkOnly
+            if($configuredArgs -contains '--capacity-evidence' -or $configuredArgs[14] -cne 'configured-ten-contact-v1' -or
+                $configuredArgs[13] -cne '--capacity-policy' -or $configuredArgs[-1] -cne 'result'){
+                throw '設定十指模式仍要求每次開機容量證據，或未保留僅結算圖。'
+            };$checks++
+        }
+        $configuredPins=[Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
+        Add-PanelCapacityEvidencePins $configuredPins $configuredContext.Configuration
+        if($configuredPins.Count){throw '設定十指模式仍固定了歷史fixture資產。'};$checks++
+        if((Get-PanelImageRetentionText $retentionContext) -cne '每輪只保存結算圖'){throw '結算圖政策文案不一致。'};$checks++
+        $retentionContext.Configuration.image_retention='diagnostic';$rejected=$false
+        try{$null=Get-PanelImageRetention $retentionContext}catch{$rejected=$true}
+        if(-not $rejected){throw '人工模式接受了中途診斷圖。'};$checks++
         $argv=[string[]]@('check-adaptive',"C:\含空格\O'Brien\譜面.json",'--song-profile','完整 Unicode')
         $info=[PasSweep.NativeOperation]::BuildStartInfo('C:\fake.exe',$temporary,$argv)
         if ($info.UseShellExecute -or -not $info.CreateNoWindow -or $info.ArgumentList.Count -ne 4 -or $info.ArgumentList[1] -ne $argv[1]){throw 'ArgumentList 或隱藏程序設定錯誤。'};$checks++
+        if(-not $info.RedirectStandardInput -or -not $info.RedirectStandardOutput -or -not $info.RedirectStandardError){throw '非互動原生程序必須建立stdin EOF與獨立輸出管道。'};$checks++
         $future=Join-Path $temporary '尚未建立'
         if ((Request-PanelStop $future) -or (Test-Path -LiteralPath $future)){throw 'STOP 搶先建立原生目錄。'};$checks++
         New-Item -ItemType Directory -Path $future|Out-Null
@@ -518,6 +654,21 @@ if ($SelfTest) {
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Windows.Forms.Application]::EnableVisualStyles()
+function Write-PanelStartupStage([string]$Stage,[string]$Detail=''){
+    if($RenderPreview){return}
+    try{
+        # A sealed GUI lives under local/desktop-app/releases; logs remain
+        # beside the launch configuration, never inside the release snapshot.
+        $localRoot=if($Configuration){Split-Path -Parent ([IO.Path]::GetFullPath($Configuration))}else{
+            Join-Path (Split-Path $PSScriptRoot -Parent) 'local'
+        }
+        $directory=Join-Path $localRoot 'panel-startup'
+        [IO.Directory]::CreateDirectory($directory)|Out-Null
+        [ordered]@{utc=[DateTime]::UtcNow.ToString('o');pid=$PID;stage=$Stage;detail=$Detail}|
+            ConvertTo-Json -Compress|Add-Content -LiteralPath (Join-Path $directory ("panel-$PID.jsonl")) -Encoding utf8
+    }catch{}
+}
+Write-PanelStartupStage 'loading_configuration'
 $script:Panel=@{Context=$null;Queue=@();Index=0;CheckIndex=0;Phase='idle';Hash=$null;HashPurpose='queue';Process=$null;Purpose='';Session='';Round='';StopRequested=$false;CloseRequested=$false;Ledger=$null;ReadySeen=$false;Started=$null;AcquisitionKey='';SuppressStdoutJson=$false;ErrorTail='';PendingFailure='';LogDirty=$false;LogLines=[Collections.Generic.Queue[string]]::new()}
 try {
     if($PreviewLibrary -and (-not $RenderPreview -or $Configuration)){throw 'PreviewLibrary只供無執行設定的離線畫面檢查。'}
@@ -530,61 +681,64 @@ try {
     elseif (-not $RenderPreview) {throw '請使用已封存的 launch-config.json 開啟介面。'}
 }catch{
     if($RenderPreview){throw}
+    Write-PanelStartupStage 'configuration_failed' $_.Exception.Message
     [Windows.Forms.MessageBox]::Show("無法開啟測試台。請重新確認封存設定與檔案路徑。`r`n`r`n$($_.Exception.Message)`r`n`r`n設定：$Configuration",'設定檢查失敗',[Windows.Forms.MessageBoxButtons]::OK,[Windows.Forms.MessageBoxIcon]::Error)|Out-Null
     return
 }
-
-$form=[Windows.Forms.Form]::new();$form.Text='Phigros 譜面測試台';$form.StartPosition='CenterScreen';$form.ClientSize=[Drawing.Size]::new(1120,780)
+Write-PanelStartupStage 'configuration_ready'
+$form=[Windows.Forms.Form]::new();$form.Text='Phigros';$form.StartPosition='CenterScreen';$form.ClientSize=[Drawing.Size]::new(1120,780)
 $form.MinimumSize=[Drawing.Size]::new(1040,740);$form.BackColor=[Drawing.Color]::FromArgb(245,247,250)
 $form.Font=[Drawing.Font]::new('Microsoft JhengHei UI',10)
 $layout=[Windows.Forms.TableLayoutPanel]::new();$layout.Dock='Fill';$layout.Padding=[Windows.Forms.Padding]::new(24);$layout.ColumnCount=1;$layout.RowCount=4
 foreach($height in @(80,84,0,78)){$style=[Windows.Forms.RowStyle]::new();if($height){$style.SizeType='Absolute';$style.Height=$height}else{$style.SizeType='Percent';$style.Height=100};$layout.RowStyles.Add($style)|Out-Null}
 $form.Controls.Add($layout)
 $header=[Windows.Forms.Panel]::new();$header.Dock='Fill';$layout.Controls.Add($header,0,0)
-$title=[Windows.Forms.Label]::new();$title.Text='譜面測試台';$title.Font=[Drawing.Font]::new('Microsoft JhengHei UI',23,[Drawing.FontStyle]::Bold);$title.AutoSize=$true;$title.Location=[Drawing.Point]::new(0,0);$title.ForeColor=[Drawing.Color]::FromArgb(25,39,56);$header.Controls.Add($title)
+$title=[Windows.Forms.Label]::new();$title.Text='Phigros';$title.Font=[Drawing.Font]::new('Microsoft JhengHei UI',23,[Drawing.FontStyle]::Bold);$title.AutoSize=$true;$title.Location=[Drawing.Point]::new(0,0);$title.ForeColor=[Drawing.Color]::FromArgb(25,39,56);$header.Controls.Add($title)
 $subtitle=[Windows.Forms.Label]::new();$subtitle.Text='Verruckt 暖身 → Chapter Legacy 20 首 IN　｜　由你選曲、由你按 Play';$subtitle.AutoSize=$true;$subtitle.Location=[Drawing.Point]::new(2,47);$subtitle.ForeColor=[Drawing.Color]::FromArgb(92,106,122);$header.Controls.Add($subtitle)
 if($script:Panel.Context.FullCatalog){
-    $title.Text='全曲測試台'
+    $title.Text='Phigros'
     $readyCount=@($script:Panel.Context.Jobs|Where-Object ready_for_manual_preflight).Count
-    $subtitle.Text="$($script:Panel.Context.Catalog.counts.song_count) 首歌曲 · $($script:Panel.Context.Jobs.Count) 份 IN／AT · $readyCount 份可前檢　｜　由你選曲與 Play · 每輪不存圖片"
-    $form.Text='Phigros 全曲測試台'
+    $subtitle.Text="$($script:Panel.Context.Catalog.counts.song_count) 首歌曲 · $($script:Panel.Context.Jobs.Count) 份 IN／AT · $readyCount 份可準備　｜　手動選曲與 Play · $(Get-PanelImageRetentionText $script:Panel.Context)"
 }
 $statusPanel=[Windows.Forms.Panel]::new();$statusPanel.Dock='Fill';$statusPanel.BackColor=[Drawing.Color]::White;$statusPanel.Padding=[Windows.Forms.Padding]::new(16,10,16,10);$layout.Controls.Add($statusPanel,0,1)
 $status=[Windows.Forms.Label]::new();$status.AutoSize=$false;$status.Dock='Top';$status.Height=29;$status.Font=[Drawing.Font]::new('Microsoft JhengHei UI',13,[Drawing.FontStyle]::Bold);$status.Text='選擇要測的歌曲';$statusPanel.Controls.Add($status)
 $progress=[Windows.Forms.ProgressBar]::new();$progress.Dock='Bottom';$progress.Height=8;$progress.Maximum=1000;$statusPanel.Controls.Add($progress)
-$detail=[Windows.Forms.Label]::new();$detail.Dock='Bottom';$detail.Height=22;$detail.ForeColor=[Drawing.Color]::FromArgb(92,106,122);$detail.Text='勾選曲目後，先按「開始佇列」完成離線檢查。';$statusPanel.Controls.Add($detail)
+$detail=[Windows.Forms.Label]::new();$detail.Dock='Bottom';$detail.Height=22;$detail.ForeColor=[Drawing.Color]::FromArgb(92,106,122);$detail.Text='在曲庫與遊戲選好同一首，按「READY：本首」，等程式備妥後再按遊戲 Play。';$statusPanel.Controls.Add($detail)
 $split=[Windows.Forms.SplitContainer]::new();$split.Size=[Drawing.Size]::new(1072,400);$split.Dock='Fill';$split.SplitterDistance=590;$split.Panel1MinSize=480;$split.Panel2MinSize=340;$split.Margin=[Windows.Forms.Padding]::new(0,18,0,0);$layout.Controls.Add($split,0,2)
 $grid=[Windows.Forms.DataGridView]::new();$grid.Dock='Fill';$grid.BackgroundColor=[Drawing.Color]::White;$grid.BorderStyle='None';$grid.RowHeadersVisible=$false;$grid.AllowUserToAddRows=$false;$grid.AllowUserToDeleteRows=$false;$grid.AllowUserToResizeRows=$false;$grid.MultiSelect=$false;$grid.SelectionMode='FullRowSelect';$grid.AutoSizeColumnsMode='Fill';$grid.RowTemplate.Height=39;$grid.ColumnHeadersHeight=38;$grid.EnableHeadersVisualStyles=$false
 $grid.ColumnHeadersDefaultCellStyle.BackColor=[Drawing.Color]::FromArgb(232,237,243);$grid.ColumnHeadersDefaultCellStyle.SelectionBackColor=$grid.ColumnHeadersDefaultCellStyle.BackColor;$grid.ColumnHeadersDefaultCellStyle.ForeColor=[Drawing.Color]::FromArgb(53,69,86)
 $grid.DefaultCellStyle.SelectionBackColor=[Drawing.Color]::FromArgb(225,241,248);$grid.DefaultCellStyle.SelectionForeColor=[Drawing.Color]::FromArgb(20,65,88)
-$column=[Windows.Forms.DataGridViewCheckBoxColumn]::new();$column.Name='Selected';$column.HeaderText='測試';$column.FillWeight=13;$grid.Columns.Add($column)|Out-Null
+$column=[Windows.Forms.DataGridViewCheckBoxColumn]::new();$column.Name='Selected';$column.HeaderText='選取';$column.FillWeight=13;$column.Visible=$false;$grid.Columns.Add($column)|Out-Null
 foreach($spec in @(@('Song','曲目',54),@('Difficulty','難度',14),@('Group','分類',23),@('Result','狀態',40))){$c=[Windows.Forms.DataGridViewTextBoxColumn]::new();$c.Name=$spec[0];$c.HeaderText=$spec[1];$c.FillWeight=$spec[2];$c.ReadOnly=$true;$grid.Columns.Add($c)|Out-Null}
 $split.Panel1.Controls.Add($grid)
 $filters=[Windows.Forms.FlowLayoutPanel]::new();$filters.Dock='Top';$filters.Height=38;$filters.WrapContents=$false
 $search=[Windows.Forms.TextBox]::new();$search.Width=180;$search.PlaceholderText='搜尋曲名／ID';$filters.Controls.Add($search)
 $difficultyFilter=[Windows.Forms.ComboBox]::new();$difficultyFilter.DropDownStyle='DropDownList';$difficultyFilter.Width=72;$difficultyFilter.Items.AddRange([object[]]@('全部','IN','AT'));$difficultyFilter.SelectedIndex=0;$filters.Controls.Add($difficultyFilter)
-$readyFilter=[Windows.Forms.ComboBox]::new();$readyFilter.DropDownStyle='DropDownList';$readyFilter.Width=88;$readyFilter.Items.AddRange([object[]]@('全部狀態','可前檢','跳過'));$readyFilter.SelectedIndex=0;$filters.Controls.Add($readyFilter)
+$readyFilter=[Windows.Forms.ComboBox]::new();$readyFilter.DropDownStyle='DropDownList';$readyFilter.Width=88;$readyFilter.Items.AddRange([object[]]@('全部狀態','可準備','跳過'));$readyFilter.SelectedIndex=0;$filters.Controls.Add($readyFilter)
+$batchMode=[Windows.Forms.CheckBox]::new();$batchMode.Text='批次';$batchMode.Width=60;$batchMode.Height=28;$batchMode.Checked=$false;$filters.Controls.Add($batchMode)
 $selectVisible=[Windows.Forms.Button]::new();$selectVisible.Text='全選可測';$selectVisible.Width=90;$selectVisible.Height=28;$filters.Controls.Add($selectVisible)
 $clearSelected=[Windows.Forms.Button]::new();$clearSelected.Text='清除';$clearSelected.Width=60;$clearSelected.Height=28;$filters.Controls.Add($clearSelected)
 $split.Panel1.Controls.Add($filters)
 $right=[Windows.Forms.TableLayoutPanel]::new();$right.Dock='Fill';$right.ColumnCount=1;$right.RowCount=4;$right.Padding=[Windows.Forms.Padding]::new(18,0,0,0)
 foreach($spec in @(@('Absolute',68),@('Absolute',170),@('Absolute',28),@('Percent',100))){$r=[Windows.Forms.RowStyle]::new();$r.SizeType=$spec[0];$r.Height=$spec[1];$right.RowStyles.Add($r)|Out-Null};$split.Panel2.Controls.Add($right)
 $songTitle=[Windows.Forms.Label]::new();$songTitle.Dock='Fill';$songTitle.Font=[Drawing.Font]::new('Microsoft JhengHei UI',17,[Drawing.FontStyle]::Bold);$songTitle.Text='Verruckt';$songTitle.ForeColor=[Drawing.Color]::FromArgb(25,39,56);$right.Controls.Add($songTitle,0,0)
-$instructions=[Windows.Forms.Label]::new();$instructions.Dock='Fill';$instructions.Text="1　先在遊戲選好本首 IN，停在選曲頁。`r`n`r`n2　按下方「已選曲，啟動本首」。`r`n`r`n3　看到 READY 後，再到遊戲按 Play。`r`n`r`nREADY 是程式備妥；遊戲 HUD 與首音確認前，尚未送出觸控。";$instructions.ForeColor=[Drawing.Color]::FromArgb(60,77,94);$right.Controls.Add($instructions,0,1)
+$instructions=[Windows.Forms.Label]::new();$instructions.Dock='Fill';$instructions.Text="1　在曲庫與遊戲選好同一首、同一難度。`r`n`r`n2　按「READY：本首」。`r`n`r`n3　看到 READY 後，自行按遊戲 Play。`r`n`r`n每輪只保存結算圖。";$instructions.ForeColor=[Drawing.Color]::FromArgb(60,77,94);$right.Controls.Add($instructions,0,1)
 $logLabel=[Windows.Forms.Label]::new();$logLabel.Text='執行紀錄';$logLabel.Dock='Fill';$logLabel.ForeColor=[Drawing.Color]::FromArgb(92,106,122);$right.Controls.Add($logLabel,0,2)
 $log=[Windows.Forms.TextBox]::new();$log.Multiline=$true;$log.ReadOnly=$true;$log.ScrollBars='Vertical';$log.Dock='Fill';$log.BorderStyle='FixedSingle';$log.BackColor=[Drawing.Color]::White;$log.Font=[Drawing.Font]::new('Microsoft JhengHei UI',9);$right.Controls.Add($log,0,3)
 $buttons=[Windows.Forms.FlowLayoutPanel]::new();$buttons.Dock='Fill';$buttons.Padding=[Windows.Forms.Padding]::new(0,18,0,0);$buttons.WrapContents=$false;$layout.Controls.Add($buttons,0,3)
 function New-PanelButton([string]$Text,[int]$Width,[bool]$Primary=$false){$b=[Windows.Forms.Button]::new();$b.Text=$Text;$b.Width=$Width;$b.Height=42;$b.FlatStyle='Flat';$b.Margin=[Windows.Forms.Padding]::new(0,0,9,0);$b.BackColor=if($Primary){[Drawing.Color]::FromArgb(20,105,132)}else{[Drawing.Color]::White};$b.ForeColor=if($Primary){[Drawing.Color]::White}else{[Drawing.Color]::FromArgb(40,58,76)};$buttons.Controls.Add($b);return $b}
-$startButton=New-PanelButton '開始佇列' 115
-$launchButton=New-PanelButton '已選曲，啟動本首' 195 $true
-$onlyButton=New-PanelButton '只測本首' 110
-$nextButton=New-PanelButton '下一首' 100
-$stopButton=New-PanelButton '停止' 90
+$onlyButton=New-PanelButton 'READY：本首' 150 $true
+$stopButton=New-PanelButton 'Stop' 90
 $logsButton=New-PanelButton '開啟紀錄' 110
+$startButton=New-PanelButton '開始佇列' 115
+$launchButton=New-PanelButton '已選曲，啟動本首' 195
+$nextButton=New-PanelButton '下一首' 100
+foreach($control in @($selectVisible,$clearSelected)){$control.Height=42;$control.Margin=[Windows.Forms.Padding]::new(0,0,9,0);$buttons.Controls.Add($control)}
+foreach($control in @($startButton,$launchButton,$nextButton,$selectVisible,$clearSelected)){$control.Visible=$false}
 
 $jobs=if($script:Panel.Context){$script:Panel.Context.Jobs}else{@([pscustomobject]@{display_name='Verruckt';role='warmup';track_id='Verruckt';default_selected=$true;ready_for_manual_preflight=$true;blockers=@()})+@(1..20|ForEach-Object{[pscustomobject]@{display_name=@('Glaciaxion','Eradication Catastrophe','Credits','Dlyrotz')[(($_-1)%4)];role='chapter';track_id="preview-$_";default_selected=$true;ready_for_manual_preflight=$true;blockers=@()}})}
 foreach($job in $jobs){
-    $group=if($job.role -eq 'warmup'){'額外暖身'}elseif($job.role -eq 'catalog'){'變體 '+$job.variant}else{'Chapter Legacy'}
+    $group=if($job.PSObject.Properties['source_kind'] -and $job.source_kind -ceq 'installed-local-variant'){'本機安裝版'}elseif($job.role -eq 'warmup'){'額外暖身'}elseif($job.role -eq 'catalog'){'變體 '+$job.variant}else{'Chapter Legacy'}
     $rowStatus=if($job.ready_for_manual_preflight){'待測'}else{'跳過：'+(Get-PanelBlockerText $job)}
     $difficulty=if($job.difficulty){$job.difficulty}else{'IN'}
     $index=$grid.Rows.Add([object[]]@([bool]$job.default_selected,$job.display_name,$difficulty,$group,$rowStatus));$grid.Rows[$index].Tag=$job
@@ -593,6 +747,13 @@ foreach($job in $jobs){
 }
 
 function Add-PanelLog([string]$Text){if($Text.Length -gt 1200){$Text=$Text.Substring(0,1200)+' [詳細請開啟紀錄]'};$line=(Get-Date -Format HH:mm:ss)+'  '+$Text;$script:Panel.LogLines.Enqueue($line);while($script:Panel.LogLines.Count -gt 200){$null=$script:Panel.LogLines.Dequeue()};$script:Panel.LogDirty=$true}
+$startupAudioNotice=switch($env:PHIGROS_EMULATOR_AUDIO_MODE){
+    'none' {'無聲模式：遊戲不由電腦喇叭播放聲音。'}
+    'dsound' {'有聲模式：由電腦喇叭播放遊戲聲音。'}
+    'reuse_existing' {'沿用已開啟模擬器的音訊設定。'}
+    default {''}
+}
+if($startupAudioNotice){Add-PanelLog $startupAudioNotice;$detail.Text+=' '+$startupAudioNotice}
 function Update-PanelLogView {if($script:Panel.LogDirty){$log.Text=($script:Panel.LogLines.ToArray()-join "`r`n");$log.SelectionStart=$log.TextLength;$log.ScrollToCaret();$script:Panel.LogDirty=$false}}
 function Save-PanelLedger {
     if(-not $script:Panel.Ledger){return}
@@ -606,12 +767,16 @@ function Update-PanelButtons {
     $startButton.Enabled=$idle;$onlyButton.Enabled=$idle;$launchButton.Enabled=$waiting -and -not $script:Panel.StopRequested
     $nextButton.Enabled=$script:Panel.Phase -eq 'result';$stopButton.Enabled=-not $idle -and -not $script:Panel.StopRequested
     $logsButton.Enabled=[bool]$script:Panel.Session;$grid.ReadOnly=-not $idle
-    foreach($control in @($search,$difficultyFilter,$readyFilter,$selectVisible,$clearSelected)){$control.Enabled=$idle}
+    foreach($control in @($search,$difficultyFilter,$readyFilter,$batchMode,$selectVisible,$clearSelected)){$control.Enabled=$idle}
+    foreach($control in @($startButton,$launchButton,$nextButton,$selectVisible,$clearSelected)){$control.Visible=$batchMode.Checked}
+    $grid.Columns['Selected'].Visible=$batchMode.Checked
     $current=Get-PanelCurrentJob;$onlyButton.Enabled=$idle -and $null -ne $current -and $current.ready_for_manual_preflight
     if($current){$songTitle.Text=$current.display_name+"`r`n"+$(if($current.difficulty){$current.difficulty}else{'IN'})
         $onlyButton.Enabled=$idle -and $current.ready_for_manual_preflight
         if($idle -and -not $current.ready_for_manual_preflight){$instructions.Text='本譜面暫時跳過：'+"`r`n"+(Get-PanelBlockerText $current)+"`r`n`r`n其餘可前檢曲目仍可正常選取。"}
-        else{$instructions.Text="1　在遊戲選好本首指定難度。`r`n`r`n2　按「已選曲，啟動本首」。`r`n`r`n3　看到 READY 後自行按 Play。`r`n`r`nREADY 前不送觸控；每輪保留紀錄，不存圖片。"}
+        else{$prepareAction=if($idle){'READY：本首'}else{'已選曲，啟動本首'};$instructions.Text="在遊戲選好同一首、同一難度。`r`n按「$prepareAction」，看到 READY 後自行按遊戲 Play。`r`n$(Get-PanelImageRetentionText $script:Panel.Context)。"}
+        $sourceText=Get-PanelSourceText $current;$budgetText=Get-PanelBudgetText $current
+        foreach($text in @($sourceText,$budgetText)){if($text){$instructions.Text+="`r`n"+$text}}
         if(-not $idle -and $grid.CurrentRow.Tag.library_id -ne $current.library_id){foreach($row in $grid.Rows){if($row.Tag.library_id -eq $current.library_id){$grid.CurrentCell=$row.Cells['Song'];break}}}
     }
 }
@@ -648,18 +813,20 @@ function Start-PanelHash([string]$Purpose){
     Set-PanelStatus $(if($Purpose -eq 'round'){'啟動前重新核對封存檔案'}else{'核對封存檔案'}) '曲庫、譜面、設定與程式將全部核對；此步沒有裝置操作。'
     $hash.Start($pins.ToArray());Update-PanelButtons
 }
-function Begin-PanelQueue([bool]$OnlyCurrent) {
+function Begin-PanelQueue([bool]$OnlyCurrent,[bool]$ReadyAfterCheck=$false) {
     if($script:Panel.Hash -or $script:Panel.Process -or $script:Panel.Phase -notin @('idle','complete','failed','stopped')){throw '目前佇列尚未結束。'}
     $grid.EndEdit()|Out-Null
     $selected=if($OnlyCurrent){@($grid.CurrentRow.Tag)}else{@($grid.Rows|Where-Object{$_.Cells['Selected'].Value -eq $true}|ForEach-Object{$_.Tag})}
     if($script:Panel.Context.FullCatalog){$selected=@($selected|Where-Object {$_.ready_for_manual_preflight -and -not @($_.blockers).Count})}
     if(-not $selected.Count){throw '請先勾選至少一首曲目。'}
+    if($ReadyAfterCheck -and (-not $OnlyCurrent -or $selected.Count -ne 1)){throw 'READY 僅接受目前單首曲目。'}
     foreach($job in $selected){if($job.ready_for_manual_preflight -ne $true -or @($job.blockers).Count){throw "此曲仍有準備阻擋：$($job.display_name)"}}
     $script:Panel.Context=Get-PanelContext $script:Panel.Context.ConfigPath $PSCommandPath
     $fresh=@{};foreach($job in $script:Panel.Context.Jobs){$fresh[$job.library_id]=$job}
     $selected=@($selected|ForEach-Object{if(-not $fresh.ContainsKey($_.library_id)){throw '已選曲目不在重新核對的曲庫中。'};$fresh[$_.library_id]})
     foreach($job in $selected){if($job.ready_for_manual_preflight -ne $true -or @($job.blockers).Count){throw "此曲仍有準備阻擋：$($job.display_name)"}}
     $script:Panel.Queue=$selected;$script:Panel.Index=0;$script:Panel.CheckIndex=0;$script:Panel.StopRequested=$false;$script:Panel.Session='';$script:Panel.Ledger=$null;$script:Panel.PendingFailure=''
+    $script:Panel['ReadyAfterCheck']=$ReadyAfterCheck
     Start-PanelHash 'queue'
 }
 function Request-PanelQueueStop {
@@ -682,7 +849,7 @@ function Invoke-PanelAction([scriptblock]$Action){try{& $Action}catch{
     }else{Stop-PanelQueue $reason -Failed}
 }}
 $startButton.Add_Click({Invoke-PanelAction {Begin-PanelQueue $false}})
-$onlyButton.Add_Click({Invoke-PanelAction {Begin-PanelQueue $true}})
+$onlyButton.Add_Click({Invoke-PanelAction {Begin-PanelQueue $true $true}})
 $launchButton.Add_Click({Invoke-PanelAction {if($script:Panel.Phase -ne 'waiting' -or $script:Panel.StopRequested){throw '目前不在等待人工選曲的階段。'};Start-PanelHash 'round'}})
 $nextButton.Add_Click({Invoke-PanelAction {
     if($script:Panel.Phase -ne 'result'){return};$script:Panel.Index++
@@ -705,12 +872,14 @@ function Update-PanelCatalogFilter {
 $search.Add_TextChanged({Update-PanelCatalogFilter})
 $difficultyFilter.Add_SelectedIndexChanged({Update-PanelCatalogFilter})
 $readyFilter.Add_SelectedIndexChanged({Update-PanelCatalogFilter})
+$batchMode.Add_CheckedChanged({Update-PanelButtons})
 $selectVisible.Add_Click({foreach($row in $grid.Rows){if($row.Visible -and $row.Tag.ready_for_manual_preflight){$row.Cells['Selected'].Value=$true}}})
 $clearSelected.Add_Click({foreach($row in $grid.Rows){$row.Cells['Selected'].Value=$false}})
 $split.Panel1.Add_SizeChanged({$search.Width=[Math]::Max(100,[Math]::Min(180,$split.Panel1.ClientSize.Width-350))})
 $form.Add_FormClosing({param($sender,$eventArgs)
     if($script:Panel.Hash -or $script:Panel.Process){$eventArgs.Cancel=$true;$script:Panel.CloseRequested=$true;Invoke-PanelAction {Request-PanelQueueStop}}
 })
+Write-PanelStartupStage 'controls_created'
 $timer=[Windows.Forms.Timer]::new();$timer.Interval=100
 $timer.Add_Tick({Invoke-PanelAction {
     if($script:Panel.Hash){
@@ -775,6 +944,10 @@ $timer.Add_Tick({Invoke-PanelAction {
                     Add-PanelLog ('離線檢查通過：'+$job.display_name)
                     $script:Panel.CheckIndex++
                     if($script:Panel.CheckIndex -lt $script:Panel.Queue.Count){Start-PanelNative $script:Panel.Queue[$script:Panel.CheckIndex] -CheckOnly}
+                    elseif((Get-PanelAfterPreflightAction ([bool]$script:Panel.ReadyAfterCheck) $script:Panel.Queue.Count $script:Panel.StopRequested) -eq 'start_round_hash'){
+                        $script:Panel.ReadyAfterCheck=$false
+                        Start-PanelHash 'round'
+                    }
                     else{$script:Panel.Phase='waiting';$script:Panel.Ledger.status='waiting_for_operator';Save-PanelLedger;Set-PanelStatus ('離線檢查完成，請選好本首 '+(Get-PanelCurrentJob).difficulty) '選曲後按「已選曲，啟動本首」；看到 READY 再按遊戲 Play。'}
                 }
             }else{
@@ -793,7 +966,7 @@ $timer.Add_Tick({Invoke-PanelAction {
                 elseif($script:Panel.StopRequested){Stop-PanelQueue '停止後已取得原生結束紀錄；佇列不再繼續。'}
                 else{
                     Set-PanelRowStatus (Get-PanelCurrentJob) $presentation.RowStatus;Add-PanelLog ('本首完成：'+(Get-PanelCurrentJob).display_name+'；'+$presentation.Detail);$progress.Value=[Math]::Min(1000,[int](1000*($script:Panel.Index+1)/$script:Panel.Queue.Count))
-                    if($script:Panel.Index+1 -eq $script:Panel.Queue.Count){$script:Panel.Phase='complete';$script:Panel.Ledger.status='completed';Save-PanelLedger;Set-PanelStatus '本次佇列完成' $presentation.Detail}
+                    if($script:Panel.Index+1 -eq $script:Panel.Queue.Count){$script:Panel.Phase='complete';$script:Panel.Ledger.status='completed';Save-PanelLedger;$completedTitle=if($script:Panel.Queue.Count -eq 1){'本首完成，可以選下一首'}else{'本次佇列完成'};Set-PanelStatus $completedTitle $presentation.Detail}
                     else{$script:Panel.Phase='result';$script:Panel.Ledger.status='waiting_for_next_selection';Save-PanelLedger;Set-PanelStatus $presentation.Title ($presentation.Detail+' 按「下一首」後，由你重新選曲。')}
                 }
             };Update-PanelButtons
@@ -828,4 +1001,21 @@ if($RenderPreview){
     return
 }
 $timer.Start()
-try{[Windows.Forms.Application]::Run($form)}finally{$timer.Dispose();$form.Dispose()}
+# A console-free launcher can pass an initial SW_HIDE startup hint through
+# PowerShell. Consume that first show before explicitly presenting the managed
+# main form. The one-shot runs on this form's own message loop, including when
+# its first native show was hidden; no console or external UI helper is needed.
+$startupShowTimer=[Windows.Forms.Timer]::new();$startupShowTimer.Interval=100
+$startupShowTimer.Add_Tick({
+    $startupShowTimer.Stop()
+    try{
+        if(-not $form.IsDisposed -and -not $form.Disposing){
+            $form.Hide();$form.ShowInTaskbar=$true;$form.WindowState=[Windows.Forms.FormWindowState]::Normal
+            $form.Show();$form.Activate()
+            Write-PanelStartupStage 'main_form_presented' ("visible=$($form.Visible);state=$($form.WindowState)")
+        }
+    }finally{$startupShowTimer.Dispose()}
+})
+$startupShowTimer.Start()
+Write-PanelStartupStage 'message_loop_enter'
+try{[Windows.Forms.Application]::Run($form)}finally{$startupShowTimer.Dispose();$timer.Dispose();$form.Dispose()}

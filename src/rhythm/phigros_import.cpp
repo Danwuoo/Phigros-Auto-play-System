@@ -21,6 +21,24 @@ using Json = nlohmann::json;
 [[noreturn]] void fail(const std::string& path, const std::string& reason) {
     throw std::invalid_argument(path + ": " + reason);
 }
+void reject_block_area_fields(const Json& value, const std::string& path) {
+    if (value.is_object()) {
+        for (const auto& [key, child] : value.items()) {
+            std::string normalized;
+            for (const unsigned char c : key) {
+                if (c == ' ' || c == '_' || c == '-') continue;
+                normalized += static_cast<char>(c >= 'A' && c <= 'Z' ? c + ('a' - 'A') : c);
+            }
+            const auto child_path = path + "/" + key;
+            if (normalized == "blockarealist")
+                fail(child_path, "unsupported blockAreaList; chart cannot currently be completed (including empty lists)");
+            reject_block_area_fields(child, child_path);
+        }
+    } else if (value.is_array()) {
+        for (std::size_t i = 0; i < value.size(); ++i)
+            reject_block_area_fields(value[i], path + "/" + std::to_string(i));
+    }
+}
 void object_fields(const Json& object, const std::string& path,
                    std::initializer_list<std::string_view> required,
                    std::initializer_list<std::string_view> optional = {}) {
@@ -91,12 +109,13 @@ template<class Event> void candidate_pose_track(std::vector<Event>& evaluated,co
         SemanticChart& chart,std::size_t line_index,const std::string& key,
         const ChartImportLimits& limits,const ImportOptions& options) {
     const auto original=evaluated;
+    const bool general_empty=options.policy==PhigrosImportPolicy::native_v1_source_priority_empty_interval_candidate_v1;
     bool needs_evaluation=false;
     std::optional<std::size_t> previous;
     for(std::size_t i=0;i<original.size();++i) {
         const auto& event=original[i];const auto& t=event.time;
         if(t.end_tick<t.start_tick) {
-            if(!constant_event(event))fail(event.source.json_pointer,"candidate policy rejects nonconstant reversed pose events");
+            if(!constant_event(event)&&!general_empty)fail(event.source.json_pointer,"candidate policy rejects nonconstant reversed pose events");
             needs_evaluation=true;continue;
         }
         if(previous) {
@@ -164,8 +183,9 @@ template<class Event> void candidate_pose_track(std::vector<Event>& evaluated,co
         ChartImportAnomaly anomaly;
         anomaly.source=original[i].source;anomaly.line_index=line_index;anomaly.declaration_index=i;anomaly.event_track=key;
         anomaly.declared_time=original[i].time;anomaly.original_declaration_json=original_json[i].dump();
-        anomaly.code=empty?"empty_reversed_constant_pose_event":"source_priority_pose_track";
-        anomaly.reason=empty?"Constant reversed declaration has no time satisfying start<=t<end; retained without evaluation":
+        anomaly.code=empty?(constant_event(original[i])?"empty_reversed_constant_pose_event":"empty_reversed_pose_event"):"source_priority_pose_track";
+        anomaly.reason=empty?(constant_event(original[i])?"Constant reversed declaration has no time satisfying start<=t<end; retained without evaluation":
+            "Explicit native-v1 empty-interval candidate: no time satisfies start<=t<end, irrespective of values; native declaration retained without evaluation; community Phira parse/pgr.rs validate_events reference, not official engine qualification"):
             "Explicit candidate source-first active half-open interpretation; original declaration retained separately";
         anomaly.declaration_evaluated=!pieces[i].empty();anomaly.evaluated_segments=std::move(pieces[i]);
         chart.import_anomalies.push_back(std::move(anomaly));
@@ -183,6 +203,10 @@ std::string_view phigros_import_policy_id(PhigrosImportPolicy policy) {
     case PhigrosImportPolicy::strict_v3:return "phigros-v3-strict-v1";
     case PhigrosImportPolicy::source_priority_constant_empty_candidate_v1:
         return "phigros-v3-source-priority-constant-empty-candidate-v1";
+    case PhigrosImportPolicy::native_v1_source_priority_constant_empty_candidate_v1:
+        return "phigros-v1-source-priority-constant-empty-candidate-v1";
+    case PhigrosImportPolicy::native_v1_source_priority_empty_interval_candidate_v1:
+        return "phigros-v1-source-priority-empty-interval-candidate-v1";
     }
     throw std::invalid_argument("unknown Phigros import policy");
 }
@@ -255,7 +279,9 @@ std::string chart_text_sha256(std::string_view text) {
 SemanticChart parse_phigros(std::string_view text, ChartSource source, const ChartImportLimits& limits,const ImportOptions& options) {
     validate_limits(limits);
     const auto policy_id=phigros_import_policy_id(options.policy);
-    const bool candidate=options.policy==PhigrosImportPolicy::source_priority_constant_empty_candidate_v1;
+    const bool native_v1=options.policy==PhigrosImportPolicy::native_v1_source_priority_constant_empty_candidate_v1||
+        options.policy==PhigrosImportPolicy::native_v1_source_priority_empty_interval_candidate_v1;
+    const bool candidate=options.policy==PhigrosImportPolicy::source_priority_constant_empty_candidate_v1||native_v1;
     if(options.max_anomalies==0||options.max_anomalies>2000000||options.max_evaluated_pose_events==0||options.max_evaluated_pose_events>2000000)
         fail("import_options","invalid candidate provenance/evaluation resource limit");
     if (text.size() > limits.max_json_bytes) fail("/", "JSON byte limit exceeded");
@@ -276,9 +302,13 @@ SemanticChart parse_phigros(std::string_view text, ChartSource source, const Cha
             return true;
         });
     } catch (const Json::exception&) { fail("/", "invalid JSON or numeric overflow"); }
+    reject_block_area_fields(root, "");
     object_fields(root, "", {"formatVersion", "offset", "judgeLineList"});
-    if (!root["formatVersion"].is_number_integer() || root["formatVersion"] != 3) fail("/formatVersion", "only version 3 is supported");
+    const int required_version=native_v1 ? 1 : 3;
+    if (!root["formatVersion"].is_number_integer() || root["formatVersion"] != required_version)
+        fail("/formatVersion",native_v1 ? "explicit native v1 policy requires version 1" : "only version 3 is supported under this import policy");
     SemanticChart chart;
+    chart.source_format_version=required_version;
     chart.source = std::move(source);
     chart.import_policy_id=policy_id;chart.import_interpretation_unqualified=candidate;
     chart.offset_seconds = number(root["offset"], "/offset", limits.max_abs_offset_seconds);
@@ -335,10 +365,24 @@ SemanticChart parse_phigros(std::string_view text, ChartSource source, const Cha
                     if (value.contains("floorPosition")) event.floor_position = number(value["floorPosition"], p + "/floorPosition", limits.max_abs_value);
                     line.speed_events.push_back(std::move(event));
                 } else if (key == "judgeLineMoveEvents") {
-                    object_fields(value, p, {"startTime", "endTime", "start", "end", "start2", "end2"});
-                    line.move_events.push_back({location(chart.source, p), event_time(value, p, line.bpm, chart.offset_seconds, limits,candidate),
-                        number(value["start"], p + "/start", limits.max_abs_value), number(value["end"], p + "/end", limits.max_abs_value),
-                        number(value["start2"], p + "/start2", limits.max_abs_value), number(value["end2"], p + "/end2", limits.max_abs_value)});
+                    if(native_v1) {
+                        object_fields(value,p,{"startTime","endTime","start","end"});
+                        const auto start=number(value["start"],p+"/start",limits.max_abs_value);
+                        const auto end=number(value["end"],p+"/end",limits.max_abs_value);
+                        // Community primary implementation: TeamFlos/phira
+                        // @750579396cbc5dc61e6379fbfb2aa1adb70751a6,
+                        // prpr/src/parse/pgr.rs, parse_move_events_fv1. Remainder
+                        // is truncating (including negative inputs), not floor.
+                        // Decode endpoint coordinates BEFORE interpolating them.
+                        const auto start_y=std::fmod(start,1000.0),end_y=std::fmod(end,1000.0);
+                        line.move_events.push_back({location(chart.source,p),event_time(value,p,line.bpm,chart.offset_seconds,limits,candidate),
+                            (start-start_y)/880000.0,(end-end_y)/880000.0,start_y/520.0,end_y/520.0,start,end});
+                    } else {
+                        object_fields(value, p, {"startTime", "endTime", "start", "end", "start2", "end2"});
+                        line.move_events.push_back({location(chart.source, p), event_time(value, p, line.bpm, chart.offset_seconds, limits,candidate),
+                            number(value["start"], p + "/start", limits.max_abs_value), number(value["end"], p + "/end", limits.max_abs_value),
+                            number(value["start2"], p + "/start2", limits.max_abs_value), number(value["end2"], p + "/end2", limits.max_abs_value)});
+                    }
                 } else {
                     object_fields(value, p, {"startTime", "endTime", "start", "end"});
                     NumericLineEvent event{location(chart.source, p), event_time(value, p, line.bpm, chart.offset_seconds, limits,candidate),

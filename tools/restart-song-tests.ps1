@@ -25,9 +25,16 @@ function Get-RestartConfiguration([string]$Path,[string]$ExpectedSha) {
        (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash -ne $ExpectedSha){throw '重啟設定的 SHA256 不符。'}
     $value=Get-Content -LiteralPath $Path -Raw -Encoding UTF8 | ConvertFrom-Json
     if($value.schema -cne 'pas.song-test-restart.v1' -or $value.serial -cne 'emulator-5554' -or $value.avd -cne 'phigros'){throw '重啟設定不是已知的 phigros AVD。'}
+    $null=Get-RestartFixtureCapacity $value
     foreach($key in @('python','worker','bootstrap_script','powershell','emulator','panel_config')){$null=Assert-RestartPin $value.$key}
     if([IO.Path]::GetFullPath($value.bootstrap_script.file) -ne [IO.Path]::GetFullPath($PSCommandPath)){throw '設定固定的是另一份重啟工具。'}
     return $value
+}
+function Get-RestartFixtureCapacity($Config) {
+    $property=$Config.PSObject.Properties['fixture_capacity']
+    $capacity=if($null -eq $property){5}else{$property.Value}
+    if(($capacity -isnot [int] -and $capacity -isnot [long]) -or $capacity -lt 1 -or $capacity -gt 10){throw '觸控測試容量必須是 1 至 10 的整數。'}
+    return [int]$capacity
 }
 function New-RestartWorkerInfo($Config,[string]$ConfigPath,[string]$ConfigSha,[string]$Mode,[string]$Session,[bool]$Consent=$false) {
     if($Mode -cnotin @('plan','preboot','boot','fixture')){throw 'Unknown restart stage.'}
@@ -119,6 +126,12 @@ if($LoadCoreOnly){return}
 if($SelfTest){
     $dummy=[pscustomobject]@{python=[pscustomobject]@{file='C:\fake path\python.exe'};worker=[pscustomobject]@{file='C:\fake path\worker.py'}}
     $checks=0
+    if((Get-RestartFixtureCapacity ([pscustomobject]@{})) -ne 5){throw 'Legacy fixture default changed.'};$checks++
+    foreach($capacity in 1..10){if((Get-RestartFixtureCapacity ([pscustomobject]@{fixture_capacity=$capacity})) -ne $capacity){throw 'Fixture capacity changed.'};$checks++}
+    foreach($capacity in @(0,11,$true,1.5,$null)){
+        $rejected=$false;try{$null=Get-RestartFixtureCapacity ([pscustomobject]@{fixture_capacity=$capacity})}catch{$rejected=$true}
+        if(-not $rejected){throw 'Invalid fixture capacity accepted.'};$checks++
+    }
     foreach($mode in @('plan','preboot','boot')){
         $info=New-RestartWorkerInfo $dummy 'C:\fake path\config.json' ('a'*64) $mode 'C:\new session'
         if($info.UseShellExecute -or -not $info.CreateNoWindow -or -not $info.RedirectStandardError -or $info.ArgumentList.Contains('--fixture-consent')){throw 'Offline argument test failed.'};$checks++
@@ -153,6 +166,7 @@ if($SelfTest){
 }
 try{
 $cfg=Get-RestartConfiguration $Configuration $ConfigurationSha256
+$fixtureCapacity=Get-RestartFixtureCapacity $cfg
 $Configuration=[IO.Path]::GetFullPath($Configuration)
 $restartConfigPath=$Configuration;$restartConfigSha=$ConfigurationSha256
 # The pinned GUI's pure validator checks its entire consumed asset graph, not
@@ -182,7 +196,7 @@ if($PlanOnly){$plan|ConvertTo-Json -Depth 10;return}
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
-$answer=[Windows.Forms.MessageBox]::Show("這會冷開機啟動 phigros 模擬器，重新核對觸控路徑。請先關閉原本的模擬器與測試面板。`n`n稍後會另外詢問是否進行五指測試；不會自動開啟 Phigros 或按 Play。",'重新準備歌曲測試',[Windows.Forms.MessageBoxButtons]::OKCancel,[Windows.Forms.MessageBoxIcon]::Information)
+$answer=[Windows.Forms.MessageBox]::Show("這會冷開機啟動 phigros 模擬器，重新核對觸控路徑。請先關閉原本的模擬器與測試面板。`n`n稍後會另外詢問是否進行 $fixtureCapacity 指測試；不會自動開啟 Phigros 或按 Play。",'重新準備歌曲測試',[Windows.Forms.MessageBoxButtons]::OKCancel,[Windows.Forms.MessageBoxIcon]::Information)
 if($answer -ne [Windows.Forms.DialogResult]::OK){return}
 $session=Join-Path $cfg.output_parent ('song-test-restart-'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8))
 $null=New-Item -ItemType Directory -Path $session
@@ -239,18 +253,19 @@ try{
     # a console flash; the emulator's normal application window remains its UI.
     $null=Start-Process -FilePath $cfg.emulator.file -ArgumentList @($cfg.emulator_arguments) -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $session 'emulator.stdout.log') -RedirectStandardError (Join-Path $session 'emulator.stderr.log')
     Invoke-RestartWorker boot
-    $answer=[Windows.Forms.MessageBox]::Show($form,"開機與零接觸檢查已通過。接下來會開啟私人觸控測試畫面，送出五指 DOWN／MOVE／UP，並等待約 60 秒封存證據。`n`n請勿碰觸模擬器；此測試不進入遊戲。是否現在開始？",'確認五指測試',[Windows.Forms.MessageBoxButtons]::YesNo,[Windows.Forms.MessageBoxIcon]::Question)
+    $answer=[Windows.Forms.MessageBox]::Show($form,"開機與零接觸檢查已通過。接下來會開啟私人觸控測試畫面，送出 $fixtureCapacity 指 DOWN／MOVE／UP，並等待約 60 秒封存證據。`n`n請勿碰觸模擬器；此測試不進入遊戲。是否現在開始？","確認 $fixtureCapacity 指測試",[Windows.Forms.MessageBoxButtons]::YesNo,[Windows.Forms.MessageBoxIcon]::Question)
     if($answer -ne [Windows.Forms.DialogResult]::Yes){$script:RestartStopped=$true;$null=Request-RestartStop $session;throw 'user_cancelled_before_fixture_input'}
     Invoke-RestartWorker fixture $true
     $result=Get-Content -LiteralPath (Join-Path $session 'result.json') -Raw -Encoding UTF8|ConvertFrom-Json
     if($result.status -cne 'fresh_fixture_verified'){throw 'Fresh evidence was not verified.'}
+    if($result.actual_capacity -ne $fixtureCapacity){throw 'Fresh fixture capacity differs from sealed configuration.'}
     $derived=Assert-RestartPin $result.launch_config
     $newContext=Get-PanelContext $derived $gui;Test-PanelPins $newContext
     [Windows.Forms.Application]::DoEvents();if($script:RestartStopped){throw 'user_stop'}
     $shortcut=Update-RestartPanelShortcut $cfg $session $gui $derived
-    $label.Text='已取得這次開機的新五指與零接觸證據。'
+    $label.Text="已取得這次開機的新 $fixtureCapacity 指與零接觸證據。"
     $shortcutMessage=if($shortcut.desktop_updated){'桌面的 Phigros Test Panel 已綁定這次開機。'}else{"原桌面捷徑未變動；新的入口：`n$($shortcut.fresh_launcher.file)"}
-    $answer=[Windows.Forms.MessageBox]::Show($form,"五指路徑與最後零接觸已驗證。`n$shortcutMessage`n`n開啟面板後，請自行開啟 Phigros、選曲；面板顯示 READY 後再由您按遊戲 Play。`n`n現在開啟測試面板？",'準備完成',[Windows.Forms.MessageBoxButtons]::YesNo,[Windows.Forms.MessageBoxIcon]::Information)
+    $answer=[Windows.Forms.MessageBox]::Show($form,"$fixtureCapacity 指路徑與最後零接觸已驗證。`n$shortcutMessage`n`n開啟面板後，請自行開啟 Phigros、選曲；面板顯示 READY 後再由您按遊戲 Play。`n`n現在開啟測試面板？",'準備完成',[Windows.Forms.MessageBoxButtons]::YesNo,[Windows.Forms.MessageBoxIcon]::Information)
     if($answer -eq [Windows.Forms.DialogResult]::Yes){
         # Revalidate source/build/chart refs immediately before opening the GUI.
         Test-PanelPins $newContext

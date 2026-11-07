@@ -1,4 +1,7 @@
 #include "../apps/chart_experiment/experimental_runtime.hpp"
+#include "../apps/chart_experiment/desktop_runtime_policy.hpp"
+#include "../apps/chart_calibrate/bounded_journal.hpp"
+#include <chrono>
 #include <functional>
 #include <iostream>
 
@@ -129,6 +132,30 @@ int main(int argc,char** argv) {
     try {
         if(argc>1)throw std::invalid_argument("offline synthetic tests take no arguments");
         (void)argv;
+        group("explicit desktop capacity does not repeat the prior ten-contact fixture",[]{
+            const auto configured=parse_capacity_policy("configured-ten-contact-v1");
+            check(configured==CapacityPolicy::configured_ten_contact,"configured policy not selected");
+            for(int capacity=1;capacity<=10;++capacity) {
+                check(!capacity_evidence_required(configured,capacity),"configured capacity still demands a fixture");
+                check(capacity_evidence_required(CapacityPolicy::current_boot_fixture,capacity)==(capacity>4),"legacy explicit fixture policy changed");
+            }
+            check(std::string(capacity_policy_name(configured))=="configured-ten-contact-v1","configured metadata mislabeled");
+            rejects([]{parse_capacity_policy("verified-this-boot");},"invented current-boot verification accepted");
+            rejects([&]{capacity_evidence_required(configured,11);},"configured policy exceeded backend ten-pointer bound");
+            rejects([&]{capacity_evidence_required(configured,0);},"zero configured capacity accepted");
+        });
+        group("desktop boot identity is current session metadata rather than rewritten capacity proof",[]{
+            const std::string actual="22222222-2222-2222-2222-222222222222";
+            check(configured_runtime_boot_id(" \r\n"+actual+"\r\n")==actual,"actual current boot was not bound");
+            for(const auto& invalid:{"", "device", "11111111-1111-1111-1111-111111111111 extra", "abc\n123"})
+                rejects([&]{configured_runtime_boot_id(invalid);},"invalid live identity accepted");
+        });
+        group("desktop supports the two normalized capture mappings and freezes other geometry out",[]{
+            check(capture_profile_for_geometry(1280,720,1)=="landscape-r1","landscape desktop capture rejected");
+            check(capture_profile_for_geometry(720,1280,0)=="sensor-portrait-r0-ccw90","cold-boot portrait capture rejected");
+            rejects([]{capture_profile_for_geometry(720,405,1);},"scaled capture admitted");
+            rejects([]{capture_profile_for_geometry(1280,720,3);},"unmapped rotation admitted");
+        });
         group("whole-song over2000 notes retains every closed contact within step budget",[]{
             std::vector<Contact> contacts;
             for(unsigned n=0;n<2001;++n)contacts.push_back(contact(n+1,12*S+static_cast<Ns>(n)*50*ms,12*S+static_cast<Ns>(n)*50*ms+16*ms));
@@ -166,29 +193,147 @@ int main(int argc,char** argv) {
             std::vector<Contact> many;for(unsigned i=1;i<=10001;++i)many.push_back(contact(i,12*S+i*ms,12*S+i*ms+ms/2));
             rejects([&]{ExperimentalContactRuntime r(compiled(many),clock,touch,anchor());},"closed contacts exceeded20000-step resource budget");
         });
-        group("fifth pointer requires explicit capacity and dispatches all five ownerships",[]{
+        group("explicit library budgets retain long songs and every event",[]{
             pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
-            std::vector<Contact> contacts;for(std::uint64_t id=1;id<=5;++id)contacts.push_back(contact(id,12*S,13*S));
-            const auto full=compiled(contacts,false,5);check(full.peak_contacts==5,"five-contact fixture did not overlap");
-            rejects([&]{ExperimentalContactRuntime run(full,clock,touch,anchor());},"default four-contact runtime accepted fifth pointer");
-            ExperimentalRuntimeOptions options;options.contact_capacity=5;
+            ExperimentalRuntimeOptions options;options.max_song_steps=65536;options.song_duration_limit_ns=300*S;
+            std::vector<Contact> many;
+            for(unsigned i=1;i<=11000;++i)many.push_back(contact(i,12*S+i*ms,12*S+i*ms+ms/2));
+            many.push_back(contact(11001,249*S,250*S));
+            const auto full=compiled(many);
+            ExperimentalContactRuntime run(full,clock,touch,anchor(),options);
+            check(run.selected_memory().contacts.size()==11001,"large explicit library budget dropped notes");
+            check(run.status().selected_steps==22002&&run.status().plan_end_song_ns==250*S,"long song/events were clipped");
+            rejects([&]{ExperimentalContactRuntime r(compiled({contact(1,299*S,300*S)}),clock,touch,anchor(),options);},"explicit duration bound was ignored");
+            for(unsigned which=0;which<4;++which){
+                auto bad=options;
+                switch(which){case 0:bad.max_song_steps=1;break;case 1:bad.max_song_steps=65537;break;case 2:bad.song_duration_limit_ns=0;break;default:bad.song_duration_limit_ns=601*S;}
+                rejects([&]{ExperimentalContactRuntime r(compiled({contact(1)}),clock,touch,anchor(),bad);},"unbounded explicit library resource option accepted");
+            }
+        });
+        group("complete large receipt journal persists after cleanup without the old16000-row cutoff",[]{
+            const auto path=std::filesystem::temp_directory_path()/
+                ("pas-receipts-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())+".jsonl");
+            {
+                rhythm::calibration_trial::Journal journal(path,22002);
+                for(unsigned i=0;i<22002;++i)journal.append({{"index",i}});
+                check(std::filesystem::file_size(path)==0,"receipts wrote before cleanup flush");
+                rejects([&]{journal.append({{"index",22002}});},"receipt budget silently overflowed");
+                journal.flush_after_cleanup();
+                check(journal.rows==22002,"large journal dropped receipts");
+            }
+            std::ifstream input(path);std::string line;unsigned rows=0;
+            while(std::getline(input,line))check(nlohmann::json::parse(line).at("index")==rows++,"receipt order or identity changed");
+            input.close();check(rows==22002,"persisted receipt count clipped");
+            check(std::filesystem::remove(path),"temporary receipt journal cleanup failed");
+            rejects([&]{rhythm::calibration_trial::Journal journal(path,65537);},"unbounded receipt journal accepted");
+            check(!std::filesystem::exists(path),"invalid budget created an output file");
+        });
+        group("rectangle judgment candidate requires explicit bounded tangent metadata",[]{
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
+            auto full=compiled({contact(1)},true);
+            full.metadata.options.offscreen_policy=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
+            full.metadata.options.max_tangent_error_reference_pixels=100;
+            full.metadata.judgment_policy_provenance="synthetic bounded-domain contract; no game qualification";
+            full.ownership[0].tangent_projection_min_reference_pixels=-100;
+            full.ownership[0].tangent_projection_max_reference_pixels=100;
+            full.ownership[0].normal_projection_spans[0].tangent_correction_lower_reference_pixels=-100;
+            full.ownership[0].normal_projection_spans[0].tangent_correction_upper_reference_pixels=100;
+            full.metadata.cache_sha256=compiled_contact_fingerprint(full);
+            rejects([&]{ExperimentalContactRuntime run(full,clock,touch,anchor());},"tangent candidate implicitly enabled for legacy caller");
+            ExperimentalRuntimeOptions options;options.max_tangent_error_reference_pixels=100;
+            ExperimentalContactRuntime run(full,clock,touch,anchor(),options);
+            check(!run.status().selected_projection_free,"nonzero tangent correction was mislabeled projection-free");
+            auto excessive=full;excessive.ownership[0].normal_projection_spans[0].tangent_correction_upper_reference_pixels=101;
+            excessive.metadata.cache_sha256=compiled_contact_fingerprint(excessive);
+            rejects([&]{ExperimentalContactRuntime invalid(excessive,clock,touch,anchor(),options);},"tangent span exceeded explicit ceiling");
+            excessive=full;excessive.metadata.judgment_policy_provenance.clear();excessive.metadata.cache_sha256=compiled_contact_fingerprint(excessive);
+            rejects([&]{ExperimentalContactRuntime invalid(excessive,clock,touch,anchor(),options);},"candidate omitted its policy provenance");
+            for(const double bound:{-1.,151.20001,std::numeric_limits<double>::infinity()}){
+                options.max_tangent_error_reference_pixels=bound;
+                rejects([&]{ExperimentalContactRuntime invalid(full,clock,touch,anchor(),options);},"unbounded tangent runtime option accepted");
+            }
+        });
+        group("pre-judge dispatch preserves the native source time and requires explicit permission",[]{
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
+            auto full=compiled({contact(1)},true);
+            auto& owner=full.ownership[0];owner.kind=NoteKind::drag;
+            owner.judgment_ns=12*S+30*ms;owner.dispatch_judgment_ns=12*S;
+            full.metadata.options.max_prejudge_ns=30*ms;
+            full.metadata.judgment_policy_provenance="synthetic bounded pre-judge contract; no game qualification";
+            full.metadata.cache_sha256=compiled_contact_fingerprint(full);
+            rejects([&]{ExperimentalContactRuntime run(full,clock,touch,anchor());},"pre-judge implicitly enabled for legacy caller");
+            ExperimentalRuntimeOptions options;options.max_prejudge_ns=30*ms;
+            ExperimentalContactRuntime run(full,clock,touch,anchor(),options);
+            check(run.selected_memory().contacts[0].steps[0].song_ns==12*S&&owner.judgment_ns==12*S+30*ms,"pre-judge changed source note timing");
+            auto bad=full;bad.ownership[0].dispatch_judgment_ns--;
+            bad.metadata.cache_sha256=compiled_contact_fingerprint(bad);
+            rejects([&]{ExperimentalContactRuntime invalid(bad,clock,touch,anchor(),options);},"pre-judge exceeded explicit30ms bound");
+            bad=full;bad.ownership[0].dispatch_judgment_ns=-1;bad.metadata.cache_sha256=compiled_contact_fingerprint(bad);
+            rejects([&]{ExperimentalContactRuntime invalid(bad,clock,touch,anchor(),options);},"explicit pre-judge omitted its dispatch anchor");
+            bad=full;bad.ownership[0].kind=NoteKind::tap;bad.metadata.cache_sha256=compiled_contact_fingerprint(bad);
+            rejects([&]{ExperimentalContactRuntime invalid(bad,clock,touch,anchor(),options);},"pre-judge silently retimed a Tap");
+        });
+        group("Hold reacquisition gaps remain bounded and require valid recovery before the tail",[]{
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
+            auto c=contact(1,12*S,13*S,2);c.steps.back().point=c.steps[c.steps.size()-2].point;
+            auto full=compiled({c},true);auto& meta=full.metadata;
+            meta.options.offscreen_policy=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
+            meta.options.max_tangent_error_reference_pixels=151.2;
+            meta.options.hold_tail_policy=HoldTailPolicy::phira_tail_grace_candidate_v1;
+            meta.options.max_hold_reacquire_gap_ns=20*ms;
+            meta.judgment_policy_provenance="synthetic bounded Hold gap contract; no game qualification";
+            auto& owner=full.ownership[0];owner.hold_tracking_end_ns=13*S-220*ms;
+            owner.gap_tangent_projection_min_reference_pixels=160;owner.gap_tangent_projection_max_reference_pixels=170;
+            auto valid=owner.normal_projection_spans[0];valid.end_ns=12*S+300*ms;
+            auto gap=valid;gap.begin_ns=valid.end_ns;gap.end_ns=gap.begin_ns+10*ms;
+            gap.tangent_correction_lower_reference_pixels=160;gap.tangent_correction_upper_reference_pixels=170;gap.judgment_domain_gap=true;
+            auto recovery=valid;recovery.begin_ns=gap.end_ns;recovery.end_ns=owner.hold_tracking_end_ns;
+            owner.normal_projection_spans={valid,gap,recovery};
+            full.metadata.cache_sha256=compiled_contact_fingerprint(full);
+            ExperimentalRuntimeOptions options;options.max_tangent_error_reference_pixels=151.2;options.max_hold_reacquire_gap_ns=20*ms;
+            ExperimentalContactRuntime run(full,clock,touch,anchor(),options);
+            check(run.selected_memory().contacts[0].steps.back().song_ns==13*S,"Hold gap shortened original pointer lifetime");
+            auto bad=full;bad.ownership[0].normal_projection_spans[1].end_ns=gap.begin_ns+21*ms;
+            bad.ownership[0].normal_projection_spans[2].begin_ns=gap.begin_ns+21*ms;bad.metadata.cache_sha256=compiled_contact_fingerprint(bad);
+            rejects([&]{ExperimentalContactRuntime invalid(bad,clock,touch,anchor(),options);},"Hold gap exceeded20ms bound");
+            bad=full;bad.ownership[0].normal_projection_spans.pop_back();bad.metadata.cache_sha256=compiled_contact_fingerprint(bad);
+            rejects([&]{ExperimentalContactRuntime invalid(bad,clock,touch,anchor(),options);},"Hold gap had no valid recovery before tail");
+            bad=full;bad.ownership[0].normal_projection_spans[2].begin_ns++;
+            bad.metadata.cache_sha256=compiled_contact_fingerprint(bad);
+            rejects([&]{ExperimentalContactRuntime invalid(bad,clock,touch,anchor(),options);},"Hold certificate left an unrecorded gap");
+            bad=full;bad.ownership[0].normal_projection_spans[2].begin_ns=gap.begin_ns+ms;
+            bad.metadata.cache_sha256=compiled_contact_fingerprint(bad);
+            rejects([&]{ExperimentalContactRuntime invalid(bad,clock,touch,anchor(),options);},"overlapping valid certificate reset the Hold gap timer");
+            options.max_hold_reacquire_gap_ns=0;
+            rejects([&]{ExperimentalContactRuntime invalid(full,clock,touch,anchor(),options);},"Hold gap enabled without explicit permission");
+        });
+        group("five through ten pointers require explicit capacity and complete every ownership",[]{
+            for(const int capacity:{5,6,7,8,9,10}) {
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
+            std::vector<Contact> contacts;for(int id=1;id<=capacity;++id)contacts.push_back(contact(id,12*S,13*S));
+            const auto full=compiled(contacts,false,capacity);check(full.peak_contacts==capacity,"multi-contact fixture did not overlap");
+            rejects([&]{ExperimentalContactRuntime run(full,clock,touch,anchor());},"default four-contact runtime accepted higher capacity");
+            ExperimentalRuntimeOptions options;options.contact_capacity=capacity;
             ExperimentalContactRuntime run(full,clock,touch,anchor(),options);arm(run,clock);std::uint64_t seq=1;
             advance(run,clock,O+12*S,seq);
-            check(touch.contacts().size()==5&&touch.receipts().size()==5,"explicit capacity silently omitted fifth DOWN");
-            std::set<int> pointers;
+            check(touch.contacts().size()==static_cast<std::size_t>(capacity)&&touch.receipts().size()==static_cast<std::size_t>(capacity),
+                "explicit capacity silently omitted simultaneous DOWN");
+            std::set<int> pointers,expected;
+            for(int id=0;id<capacity;++id)expected.insert(id);
             for(const auto& receipt:touch.receipts()) {
-                check(receipt.success&&receipt.command.phase==pas::Phase::down,"five-pointer setup included missing/failed DOWN");
+                check(receipt.success&&receipt.command.phase==pas::Phase::down,"multi-pointer setup included missing/failed DOWN");
                 pointers.insert(receipt.command.contact_id);
             }
-            check(pointers==std::set<int>{0,1,2,3,4},"fifth pointer was not independently owned");
+            check(pointers==expected,"every pointer must be independently owned");
             advance(run,clock,O+13*S,seq);const auto status=run.status();
-            check(status.state==ExperimentalRuntimeState::completed&&status.completed_contacts==5&&touch.receipts().size()==10&&touch.contacts().empty(),
-                "five-pointer completion omitted UP or retained contact");
-            check(status.contact_capacity==5&&status.peak_contacts==5&&status.release_rpc_ok&&!status.timing_qualified&&!status.source_pixel_age_qualified,
-                "five-pointer option lost capacity evidence or claimed device/timing qualification");
-            options.contact_capacity=4;
-            rejects([&]{ExperimentalContactRuntime limited(full,clock,touch,anchor(),options);},"explicit four-contact runtime accepted metadata capacity5");
-            for(const int invalid:{-1,0,6}) {
+            check(status.state==ExperimentalRuntimeState::completed&&status.completed_contacts==static_cast<std::size_t>(capacity)&&
+                touch.receipts().size()==static_cast<std::size_t>(2*capacity)&&touch.contacts().empty(),
+                "multi-pointer completion omitted UP or retained contact");
+            check(status.contact_capacity==capacity&&status.peak_contacts==capacity&&status.release_rpc_ok&&!status.timing_qualified&&!status.source_pixel_age_qualified,
+                "multi-pointer option lost explicit capacity or claimed device/timing qualification");
+            options.contact_capacity=capacity-1;
+            rejects([&]{ExperimentalContactRuntime limited(full,clock,touch,anchor(),options);},"runtime accepted metadata above its explicit capacity");
+            for(const int invalid:{-1,0,11}) {
                 options.contact_capacity=invalid;
                 rejects([&]{ExperimentalContactRuntime invalid_run(full,clock,touch,anchor(),options);},"invalid/unbounded contact capacity accepted");
             }
@@ -197,23 +342,29 @@ int main(int argc,char** argv) {
             check(single.status().contact_capacity==1&&single.status().selected_contacts==1,"capacity1 lower boundary rejected");
             rejects([&]{ExperimentalContactRuntime wrong_meta(compiled({contact(1)},false,2),clock,touch,anchor(),options);},
                 "compiler metadata capacity exceeded explicit runtime capacity even with one selected note");
+            }
         });
-        group("fifth held pointer is released on stop expiry and epoch invalidation",[]{
-            for(unsigned which=0;which<3;++which) {
+        group("five through ten held pointers release on stop expiry epoch generation and geometry invalidation",[]{
+            for(const int capacity:{5,6,7,8,9,10}) for(unsigned which=0;which<5;++which) {
                 pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
-                std::vector<Contact> contacts;for(std::uint64_t id=1;id<=5;++id)contacts.push_back(contact(id,12*S,13*S));
-                ExperimentalRuntimeOptions options;options.contact_capacity=5;
-                ExperimentalContactRuntime run(compiled(contacts,false,5),clock,touch,anchor(),options);
+                std::vector<Contact> contacts;for(int id=1;id<=capacity;++id)contacts.push_back(contact(id,12*S,13*S));
+                ExperimentalRuntimeOptions options;options.contact_capacity=capacity;
+                ExperimentalContactRuntime run(compiled(contacts,false,capacity),clock,touch,anchor(),options);
                 arm(run,clock);std::uint64_t seq=1;advance(run,clock,O+12*S,seq);
-                check(touch.contacts().size()==5,"stop/expiry fixture did not hold five pointers");
+                check(touch.contacts().size()==static_cast<std::size_t>(capacity),"stop/expiry fixture did not hold every pointer");
                 if(which==0){run.request_stop();run.tick();}
                 if(which==1){clock.set(clock.now_ns()+100*ms);run.tick();}
-                if(which==2){clock.set(clock.now_ns()+ms);auto observation=ui(clock.now_ns(),++seq);observation.epoch=2;run.observe_ui(observation);}
+                if(which>=2){clock.set(clock.now_ns()+ms);auto observation=ui(clock.now_ns(),++seq);
+                    if(which==2)observation.epoch=2;
+                    if(which==3)observation.generation=2;
+                    if(which==4)observation.geometry_version=2;
+                    run.observe_ui(observation);}
                 const auto status=run.status();
                 check(status.state==ExperimentalRuntimeState::stopped&&touch.contacts().empty()&&status.release_rpc_ok,
-                    "fifth pointer survived stop/expiry/epoch invalidation");
-                check(status.release.requested_ids==std::vector<int>{0,1,2,3,4}&&!run.arm(),
-                    "five-pointer cleanup omitted an owner or allowed rearming");
+                    "held pointer survived stop/expiry/context invalidation");
+                std::vector<int> expected;for(int id=0;id<capacity;++id)expected.push_back(id);
+                check(status.release.requested_ids==expected&&!run.arm(),
+                    "multi-pointer cleanup omitted an owner or allowed rearming");
             }
         });
         group("per-song projection ceiling is explicit and keeps input geometry bounded",[]{
@@ -239,7 +390,18 @@ int main(int argc,char** argv) {
             auto outside=full;outside.memory.contacts.front().steps.front().point.x=1.01;
             outside.events.front().point.x=1.01;outside.metadata.cache_sha256=compiled_contact_fingerprint(outside);
             rejects([&]{ExperimentalContactRuntime r(outside,clock,touch,anchor(),options);},"larger native projection allowed offscreen input pixel");
-            for(const double invalid:{-1.,10001.,std::numeric_limits<double>::infinity(),std::numeric_limits<double>::quiet_NaN()}) {
+            auto distant=full;distant.metadata.options.max_normal_projection_reference_pixels=100000;
+            distant.ownership[0].normal_projection_reference_pixels=-66300;
+            distant.ownership[0].projection_min_reference_pixels=-66300;
+            distant.ownership[0].normal_projection_spans[0].correction_lower_reference_pixels=-66300;
+            distant.metadata.cache_sha256=compiled_contact_fingerprint(distant);
+            options.max_normal_projection_reference_pixels=100000;
+            ExperimentalContactRuntime distant_run(distant,clock,touch,anchor(),options);
+            check(distant_run.selected_memory().contacts[0].steps[0].point.x>=0&&
+                  distant_run.selected_memory().contacts[0].steps[0].point.x<=1,"large source-normal correction enlarged physical input surface");
+            options.max_normal_projection_reference_pixels=10000;
+            rejects([&]{ExperimentalContactRuntime invalid(distant,clock,touch,anchor(),options);},"large normal correction implicitly enabled");
+            for(const double invalid:{-1.,1000001.,std::numeric_limits<double>::infinity(),std::numeric_limits<double>::quiet_NaN()}) {
                 options.max_normal_projection_reference_pixels=invalid;
                 rejects([&]{ExperimentalContactRuntime r(full,clock,touch,anchor(),options);},"unbounded/invalid explicit projection ceiling accepted");
             }
@@ -481,6 +643,8 @@ int main(int argc,char** argv) {
             pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
             const auto full=compiled({contact(17,12*S,12*S+400*ms,8),contact(4,12*S+400*ms,12*S+416*ms)});
             ExperimentalContactRuntime run(full,clock,touch,anchor(-80*ms));arm(run,clock);std::uint64_t seq=1;
+            check(run.next_input_due_ns()==O+12*S-80*ms,"actual first input deadline includes admission lookahead");
+            check(run.next_wake_ns()&&*run.next_wake_ns()<*run.next_input_due_ns(),"admission wake no longer precedes first input");
             const auto result=advance(run,clock,O+12*S+416*ms-80*ms,seq);
             check(result.status.state==ExperimentalRuntimeState::completed,"long contact did not complete across revisions");
             check(result.status.completed_contacts==2&&touch.contacts().empty(),"lost completion/release");
@@ -495,7 +659,241 @@ int main(int argc,char** argv) {
             const auto pointer=touch.receipts()[0].command.contact_id;
             for(std::size_t i=0;i<10;++i)check(touch.receipts()[i].command.contact_id==pointer,"held pointer reassigned during revision");
             check(run.status().release_required&&run.status().release_rpc_ok,"completion cleanup evidence not distinguished");
-            check(!run.arm()&&!run.next_wake_ns(),"completed runtime rearmed");
+            check(!run.arm()&&!run.next_wake_ns()&&!run.next_input_due_ns(),"completed runtime rearmed");
+        });
+        group("diagonal discrete Flick certificates bind timing vertices and complete source contact",[]{
+            const double diagonal=std::sqrt(.5),distance=32;
+            const PosePoint a{640,360},d{diagonal,-diagonal};
+            const PosePoint b{a.x+distance*(.28*d.x-.10*d.y),a.y+distance*(.28*d.y+.10*d.x)};
+            const PosePoint e{a.x+distance*d.x,a.y+distance*d.y};
+            const auto point=[](PosePoint p){return Point{p.x/1279,p.y/719};};
+            Contact c{1,{{12*S-8*ms,Phase::down,point(a)},{12*S+4*ms,Phase::move,point(b)},
+                {12*S+12*ms,Phase::move,point(e)},{12*S+18*ms,Phase::up,point(e)}}};
+            auto p=compiled({c});auto& owner=p.ownership.front();owner.kind=NoteKind::flick;owner.judgment_ns=12*S;
+            owner.flick_anchor_reference=a;owner.flick_direction_reference=d;
+            const auto ab=std::hypot(b.x-a.x,b.y-a.y),be=std::hypot(e.x-b.x,e.y-b.y);
+            owner.flick_discrete_path=FlickDiscretePathCertificate{"judgment-anchored-diagonal-snap-v1",b,e,12*S+4*ms,12*S+12*ms,
+                distance,ab+be,std::max(ab,be),2};
+            p.metadata.options.flick_path_policy=FlickPathPolicy::judgment_anchored_diagonal_snap_v1;
+            p.metadata.options.flick_lead_ns=8*ms;p.metadata.options.flick_travel_ns=20*ms;
+            p.metadata.options.flick_release_ns=6*ms;p.metadata.options.flick_distance_reference_pixels=distance;
+            p.metadata.cache_sha256=compiled_contact_fingerprint(p);
+            auto prepared=ExperimentalContactRuntime::prepare(p);(void)prepared;
+            const auto bad=[&](const std::function<void(CompiledContactPlan&)>& mutate){
+                auto altered=p;mutate(altered);altered.metadata.cache_sha256=compiled_contact_fingerprint(altered);
+                rejects([&]{(void)ExperimentalContactRuntime::prepare(altered);},"self-consistent hash accepted corrupt discrete Flick contract");
+            };
+            bad([](auto& v){v.ownership[0].flick_discrete_path.reset();});
+            bad([](auto& v){v.ownership[0].flick_discrete_path->move_count=3;});
+            bad([](auto& v){v.ownership[0].flick_discrete_path->bend_ns=12*S;});
+            bad([](auto& v){v.ownership[0].flick_discrete_path->endpoint_distance_reference_pixels=31;});
+            bad([](auto& v){v.ownership[0].flick_discrete_path->max_jump_input_pixels=1;});
+            bad([](auto& v){v.ownership[0].kind=NoteKind::tap;});
+            bad([](auto& v){v.metadata.options.flick_path_policy=FlickPathPolicy::dynamic_line_v1;});
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
+            ExperimentalContactRuntime run(p,clock,touch,anchor());arm(run,clock);
+            clock.set(O+12*S+21*ms);
+            check(run.next_input_due_ns()==O+12*S-8*ms,"overdue immutable input deadline was clamped to current time");
+        });
+        group("below-side Drag pre-judge needs explicit permission and keeps native source and fresh authority",[]{
+            auto p=compiled({contact(1,12*S-30*ms,12*S+2*ms)});auto& owner=p.ownership[0];
+            owner.kind=NoteKind::drag;owner.side=NoteSide::below;owner.judgment_ns=12*S;owner.dispatch_judgment_ns=12*S-30*ms;
+            owner.source_json_pointer="/judgeLineList/0/notesBelow/0";owner.source_note_id=p.memory.identity.chart_sha256+'#'+owner.source_json_pointer;
+            p.metadata.options.max_prejudge_ns=30*ms;p.metadata.options.advance_below_drags=true;
+            p.metadata.judgment_policy_provenance="advance-below-drags-candidate-v1: synthetic native identity retained";
+            p.metadata.cache_sha256=compiled_contact_fingerprint(p);
+            ExperimentalRuntimeOptions options;options.max_prejudge_ns=30*ms;
+            rejects([&]{(void)ExperimentalContactRuntime::prepare(p,options);},"below-side candidate admitted without explicit runtime permission");
+            options.allow_advance_below_drags=true;(void)ExperimentalContactRuntime::prepare(p,options);
+            const auto bad=[&](const std::function<void(CompiledContactPlan&)>& mutate){
+                auto altered=p;mutate(altered);altered.metadata.cache_sha256=compiled_contact_fingerprint(altered);
+                rejects([&]{(void)ExperimentalContactRuntime::prepare(altered,options);},"unbounded or unrecorded below-side candidate admitted");
+            };
+            bad([](auto& v){v.metadata.options.max_prejudge_ns=0;});
+            bad([](auto& v){v.metadata.options.max_prejudge_ns=31*ms;});
+            bad([](auto& v){v.metadata.judgment_policy_provenance="generic unrelated provenance";});
+            bad([](auto& v){v.ownership[0].dispatch_judgment_ns-=ms;});
+            auto filtered=p;filtered.metadata.options.below_drag_source_ids={owner.source_note_id};
+            filtered.metadata.judgment_policy_provenance+="; below-drag-source-filter-candidate-v1";
+            filtered.metadata.cache_sha256=compiled_contact_fingerprint(filtered);
+            (void)ExperimentalContactRuntime::prepare(filtered,options);
+            const auto bad_filter=[&](const std::function<void(CompiledContactPlan&)>& mutate){
+                auto altered=filtered;mutate(altered);altered.metadata.cache_sha256=compiled_contact_fingerprint(altered);
+                rejects([&]{(void)ExperimentalContactRuntime::prepare(altered,options);},"below Drag source filter accepted an unknown or unbounded source");
+            };
+            bad_filter([](auto& v){v.metadata.options.advance_below_drags=false;});
+            bad_filter([](auto& v){v.metadata.judgment_policy_provenance="advance-below-drags-candidate-v1";});
+            bad_filter([](auto& v){v.metadata.options.below_drag_source_ids.push_back(v.metadata.options.below_drag_source_ids[0]);});
+            bad_filter([](auto& v){v.metadata.options.below_drag_source_ids[0]+="-unknown";});
+            bad_filter([](auto& v){v.ownership[0].side=NoteSide::above;});
+            bad_filter([](auto& v){v.ownership[0].kind=NoteKind::tap;});
+            bad_filter([](auto& v){v.metadata.options.below_drag_source_ids[0]=std::string(513,'x');});
+            bad_filter([](auto& v){v.metadata.options.below_drag_source_ids.resize(2049,v.metadata.options.below_drag_source_ids[0]);});
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);ExperimentalContactRuntime run(p,clock,touch,anchor(),options);
+            arm(run,clock);std::uint64_t sequence=1;advance(run,clock,O+12*S+2*ms,sequence);
+            check(run.status().state==ExperimentalRuntimeState::completed&&touch.receipts().size()==2&&touch.contacts().empty(),
+                "below-side candidate changed complete source count or retained its pointer");
+            check(touch.receipts()[0].command.scheduled_ns==O+12*S-30*ms&&
+                touch.receipts()[1].command.scheduled_ns==O+12*S+2*ms&&owner.judgment_ns==12*S,
+                "below-side candidate rewrote native judgment or fixed anchor deadlines");
+            pas::FakeClock stale_clock;pas::FakeTouchBackend stale_touch(stale_clock);
+            ExperimentalContactRuntime stale(p,stale_clock,stale_touch,anchor(),options);arm(stale,stale_clock);
+            stale_clock.set(stale_clock.now_ns()+100*ms);
+            check(stale.status().state==ExperimentalRuntimeState::stopped&&stale_touch.receipts().empty(),
+                "below-side candidate fabricated a fresh playing observation");
+        });
+        group("closed above Drag source filter binds exact native IDs without changing authority",[]{
+            auto p=compiled({contact(1,12*S-30*ms,12*S+2*ms),contact(2,13*S,13*S+32*ms)});
+            auto& selected=p.ownership[0];selected.kind=NoteKind::drag;selected.side=NoteSide::above;
+            selected.judgment_ns=12*S;selected.dispatch_judgment_ns=12*S-30*ms;
+            auto& native=p.ownership[1];native.kind=NoteKind::drag;native.side=NoteSide::above;
+            native.dispatch_judgment_ns=native.judgment_ns;
+            p.metadata.options.max_prejudge_ns=30*ms;p.metadata.options.advance_above_drags=true;
+            p.metadata.options.above_drag_source_ids={selected.source_note_id};
+            p.metadata.judgment_policy_provenance="phira-prejudge-candidate; above-drag-source-filter-candidate-v1: synthetic original source retained";
+            p.metadata.cache_sha256=compiled_contact_fingerprint(p);
+            ExperimentalRuntimeOptions options;options.max_prejudge_ns=30*ms;
+            (void)ExperimentalContactRuntime::prepare(p,options);
+            const auto bad=[&](const std::function<void(CompiledContactPlan&)>& mutate){
+                auto altered=p;mutate(altered);altered.metadata.cache_sha256=compiled_contact_fingerprint(altered);
+                rejects([&]{(void)ExperimentalContactRuntime::prepare(altered,options);},"above filter accepted an unbound, noncanonical or unbounded original source");
+            };
+            bad([](auto& v){v.metadata.options.advance_above_drags=false;});
+            bad([](auto& v){v.metadata.judgment_policy_provenance="phira-prejudge-candidate";});
+            bad([](auto& v){v.metadata.options.above_drag_source_ids.push_back(v.metadata.options.above_drag_source_ids[0]);});
+            bad([](auto& v){v.metadata.options.above_drag_source_ids[0]+="-unknown";});
+            bad([](auto& v){v.metadata.options.above_drag_source_ids[0]=std::string(64,'c')+'#'+v.ownership[0].source_json_pointer;});
+            bad([](auto& v){v.ownership[0].side=NoteSide::below;});
+            bad([](auto& v){v.ownership[0].kind=NoteKind::tap;});
+            bad([](auto& v){v.metadata.options.above_drag_source_ids[0]=std::string(513,'x');});
+            bad([](auto& v){v.metadata.options.above_drag_source_ids.resize(2049,v.metadata.options.above_drag_source_ids[0]);});
+            bad([](auto& v){v.metadata.options.above_drag_source_ids={v.ownership[1].source_note_id,v.ownership[0].source_note_id};});
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);ExperimentalContactRuntime run(p,clock,touch,anchor(),options);
+            arm(run,clock);std::uint64_t sequence=1;advance(run,clock,O+13*S+32*ms,sequence);
+            check(run.status().state==ExperimentalRuntimeState::completed&&touch.receipts().size()==4&&touch.contacts().empty(),
+                "above source subset lost a complete contact, step or release");
+            check(touch.receipts()[0].command.scheduled_ns==O+12*S-30*ms&&
+                touch.receipts()[1].command.scheduled_ns==O+12*S+2*ms&&
+                touch.receipts()[2].command.scheduled_ns==O+13*S&&selected.judgment_ns==12*S,
+                "above source subset rewrote native source/judgment or unselected dispatch");
+            pas::FakeClock stale_clock;pas::FakeTouchBackend stale_touch(stale_clock);
+            ExperimentalContactRuntime stale(p,stale_clock,stale_touch,anchor(),options);arm(stale,stale_clock);
+            stale_clock.set(stale_clock.now_ns()+100*ms);
+            check(stale.status().state==ExperimentalRuntimeState::stopped&&stale_touch.receipts().empty(),"above source subset fabricated fresh UI authority");
+        });
+        group("sampled diagonal Flick binds all three MOVE vertices without changing input authority",[]{
+            const double diagonal=std::sqrt(.5),length=96;const PosePoint a{640,360},d{diagonal,-diagonal},perp{-d.y,d.x};
+            const PosePoint b{a.x+length*(.20*d.x+.10*perp.x),a.y+length*(.20*d.y+.10*perp.y)};
+            const PosePoint middle{a.x+length*(.55*d.x+.12*perp.x),a.y+length*(.55*d.y+.12*perp.y)};
+            const PosePoint e{a.x+length*d.x,a.y+length*d.y};
+            const auto normalized=[](PosePoint v){return Point{v.x/1279,v.y/719};};
+            Contact c{1,{{12*S-8*ms,Phase::down,normalized(a)},{12*S+4*ms,Phase::move,normalized(b)},
+                {12*S+16*ms,Phase::move,normalized(middle)},{12*S+28*ms,Phase::move,normalized(e)},
+                {12*S+52*ms,Phase::up,normalized(e)}}};
+            auto p=compiled({c});auto& owner=p.ownership[0];owner.kind=NoteKind::flick;owner.judgment_ns=12*S;
+            owner.flick_anchor_reference=a;owner.flick_direction_reference=d;
+            const auto distance=[](PosePoint x,PosePoint y){return std::hypot(x.x-y.x,x.y-y.y);};
+            const auto ab=distance(a,b),bm=distance(b,middle),me=distance(middle,e);
+            owner.flick_discrete_path=FlickDiscretePathCertificate{"judgment-anchored-diagonal-sampled-v2",b,e,
+                12*S+4*ms,12*S+28*ms,length,ab+bm+me,std::max({ab,bm,me}),3};
+            owner.flick_discrete_path->middle=FlickDiscreteMiddleVertex{middle,12*S+16*ms};
+            p.metadata.options.flick_path_policy=FlickPathPolicy::judgment_anchored_diagonal_sampled_v2;
+            p.metadata.options.flick_lead_ns=8*ms;p.metadata.options.flick_travel_ns=36*ms;
+            p.metadata.options.flick_release_ns=24*ms;p.metadata.options.flick_distance_reference_pixels=length;
+            const auto seal=[](CompiledContactPlan& v){
+                v.events.clear();v.total_steps=0;
+                for(const auto& contact:v.memory.contacts)for(const auto& s:contact.steps){v.events.push_back({s.song_ns,contact.id,s.phase,s.point});++v.total_steps;}
+                std::sort(v.events.begin(),v.events.end(),[](const auto& a,const auto& b){return std::tuple(a.song_ns,phase_order(a.phase),a.contact_id)<std::tuple(b.song_ns,phase_order(b.phase),b.contact_id);});
+                v.peak_contacts=validate(v.memory,v.metadata.options.max_contacts);v.metadata.cache_sha256=compiled_contact_fingerprint(v);
+            };
+            seal(p);(void)ExperimentalContactRuntime::prepare(p);
+            const auto bad=[&](const std::function<void(CompiledContactPlan&)>& mutate){
+                auto altered=p;mutate(altered);seal(altered);
+                rejects([&]{(void)ExperimentalContactRuntime::prepare(altered);},"sampled Flick accepted an incomplete or inconsistent three-MOVE certificate");
+            };
+            bad([](auto& v){v.ownership[0].flick_discrete_path->middle.reset();});
+            bad([](auto& v){v.ownership[0].flick_discrete_path->middle->song_ns+=ms;});
+            bad([](auto& v){v.ownership[0].flick_discrete_path->middle->reference.x+=5;});
+            bad([](auto& v){v.ownership[0].flick_discrete_path->move_count=2;});
+            bad([](auto& v){v.memory.contacts[0].steps.erase(v.memory.contacts[0].steps.begin()+2);});
+            bad([](auto& v){v.metadata.options.flick_path_policy=FlickPathPolicy::judgment_anchored_diagonal_snap_v1;});
+            bad([](auto& v){v.ownership[0].judgment_ns=std::numeric_limits<Ns>::max();});
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);ExperimentalContactRuntime run(p,clock,touch,anchor());arm(run,clock);std::uint64_t seq=1;
+            while(clock.now_ns()<O+12*S+52*ms){clock.set(clock.now_ns()+ms);run.observe_ui(ui(clock.now_ns(),++seq));run.tick();}
+            check(run.status().state==ExperimentalRuntimeState::completed&&touch.receipts().size()==5&&touch.contacts().empty(),
+                "sampled Flick lost a MOVE or retained its pointer");
+            for(std::size_t i=0;i<5;++i)check(touch.receipts()[i].command.scheduled_ns==O+p.events[i].song_ns,
+                "sampled Flick retimed source deadlines or its actual anchor");
+            pas::FakeClock stopped_clock;pas::FakeTouchBackend stopped_touch(stopped_clock);
+            ExperimentalContactRuntime stopped(p,stopped_clock,stopped_touch,anchor());arm(stopped,stopped_clock);seq=1;
+            advance(stopped,stopped_clock,O+12*S-8*ms,seq);check(stopped_touch.contacts().size()==1,"sampled stop fixture missing DOWN");
+            stopped.stop("user_stop");check(stopped_touch.contacts().empty()&&!stopped.arm(),"sampled Flick bypassed release-all or rearmed after stop");
+        });
+        group("shared native head Flick handoff is explicit bounded and keeps fresh input authority",[]{
+            const double diagonal=std::sqrt(.5),distance=48;
+            const PosePoint a{640,360},d{diagonal,-diagonal};
+            const PosePoint b{a.x+distance*(.28*d.x-.10*d.y),a.y+distance*(.28*d.y+.10*d.x)};
+            const PosePoint e{a.x+distance*d.x,a.y+distance*d.y};
+            const auto point=[](PosePoint p){return Point{p.x/1279,p.y/719};};
+            Contact flick{2,{{12*S+24*ms,Phase::down,point(a)},{12*S+36*ms,Phase::move,point(b)},
+                {12*S+44*ms,Phase::move,point(e)},{12*S+68*ms,Phase::up,point(e)}}};
+            auto p=compiled({contact(1),flick});auto& owner=p.ownership[1];owner.kind=NoteKind::flick;
+            owner.judgment_ns=12*S;owner.dispatch_judgment_ns=12*S+32*ms;
+            owner.flick_anchor_reference=a;owner.flick_direction_reference=d;
+            const auto ab=std::hypot(b.x-a.x,b.y-a.y),be=std::hypot(e.x-b.x,e.y-b.y);
+            owner.flick_discrete_path=FlickDiscretePathCertificate{"judgment-anchored-diagonal-snap-v1",b,e,
+                12*S+36*ms,12*S+44*ms,distance,ab+be,std::max(ab,be),2};
+            p.metadata.options.flick_path_policy=FlickPathPolicy::judgment_anchored_diagonal_snap_v1;
+            p.metadata.options.flick_lead_ns=8*ms;p.metadata.options.flick_travel_ns=20*ms;
+            p.metadata.options.flick_release_ns=24*ms;p.metadata.options.flick_distance_reference_pixels=distance;
+            p.metadata.options.coincident_flick_delay_ns=32*ms;
+            p.metadata.judgment_policy_provenance="coincident-flick-delay32-candidate-v1: synthetic fixture";
+            const auto seal=[](CompiledContactPlan& v){
+                v.events.clear();v.total_steps=0;
+                for(const auto& c:v.memory.contacts)for(const auto& s:c.steps){
+                    v.events.push_back({s.song_ns,c.id,s.phase,s.point});++v.total_steps;
+                }
+                std::sort(v.events.begin(),v.events.end(),[](const auto& a,const auto& b){
+                    return std::tuple(a.song_ns,phase_order(a.phase),a.contact_id)<std::tuple(b.song_ns,phase_order(b.phase),b.contact_id);
+                });
+                v.peak_contacts=validate(v.memory,v.metadata.options.max_contacts);
+                v.metadata.cache_sha256=compiled_contact_fingerprint(v);
+            };
+            seal(p);
+            rejects([&]{(void)ExperimentalContactRuntime::prepare(p);},"default runtime admitted explicit late Flick");
+            ExperimentalRuntimeOptions options;options.max_coincident_flick_delay_ns=32*ms;
+            (void)ExperimentalContactRuntime::prepare(p,options);
+            const auto bad=[&](const std::function<void(CompiledContactPlan&)>& mutate){
+                auto altered=p;mutate(altered);seal(altered);
+                rejects([&]{(void)ExperimentalContactRuntime::prepare(altered,options);},"late Flick handoff authority or complete source contract weakened");
+            };
+            bad([](auto& v){v.metadata.options.coincident_flick_delay_ns=31*ms;});
+            bad([](auto& v){v.metadata.options.coincident_flick_delay_ns=0;});
+            bad([](auto& v){v.metadata.judgment_policy_provenance.clear();});
+            bad([](auto& v){v.ownership[0].judgment_ns+=ms;});
+            bad([](auto& v){v.ownership[0].kind=static_cast<NoteKind>(99);});
+            bad([](auto& v){v.ownership[1].dispatch_judgment_ns+=ms;});
+            bad([](auto& v){v.ownership[1].dispatch_judgment_ns=-1;});
+            bad([](auto& v){v.ownership[0].judgment_ns=v.ownership[1].judgment_ns=std::numeric_limits<Ns>::min();});
+            bad([](auto& v){v.memory.contacts[1].steps[1].song_ns+=ms;});
+            for(const auto invalid:{-ms,31*ms,33*ms}){
+                auto altered=options;altered.max_coincident_flick_delay_ns=invalid;
+                rejects([&]{(void)ExperimentalContactRuntime::prepare(p,altered);},"unbounded runtime handoff option admitted");
+            }
+            pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
+            ExperimentalContactRuntime run(p,clock,touch,anchor(),options);arm(run,clock);std::uint64_t seq=1;
+            while(clock.now_ns()<O+12*S+68*ms){clock.set(clock.now_ns()+ms);run.observe_ui(ui(clock.now_ns(),++seq));run.tick();}
+            check(run.status().state==ExperimentalRuntimeState::completed&&touch.receipts().size()==6&&touch.contacts().empty(),
+                "handoff omitted a source step or retained a contact");
+            for(std::size_t i=0;i<p.events.size();++i)
+                check(touch.receipts()[i].command.scheduled_ns==O+p.events[i].song_ns,"handoff altered anchor or native compiled deadlines");
+            check(touch.receipts()[0].command.scheduled_ns+24*ms==touch.receipts()[2].command.scheduled_ns,
+                "ordinary shared head did not precede complete Flick");
+            pas::FakeClock stale_clock;pas::FakeTouchBackend stale_touch(stale_clock);
+            ExperimentalContactRuntime stale(p,stale_clock,stale_touch,anchor(),options);arm(stale,stale_clock);
+            stale_clock.set(stale_clock.now_ns()+100*ms);
+            check(stale.status().state==ExperimentalRuntimeState::stopped&&stale_touch.receipts().empty(),
+                "handoff renewed stale actual UI authority");
         });
         group("same timestamp UP before DOWN and two-contact capacity",[]{
             pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
@@ -658,6 +1056,31 @@ int main(int argc,char** argv) {
             a=anchor(100*ms+1);rejects([&]{ExperimentalContactRuntime run(compiled({contact(1)}),clock,touch,a);},"phase exceeded explicit budget");
             ExperimentalContactRuntime stale(compiled({contact(1)}),clock,touch,anchor());clock.set(anchor().received_host_ns+100*ms);
             stale.observe_ui(ui(clock.now_ns()));check(!stale.arm(),"old anchor renewed by new UI");
+        });
+        group("static suffix clock probe preserves source plan and contact durations",[]{
+            for(const Ns delta:{160*ms,-160*ms}) {
+                pas::FakeClock clock;pas::FakeTouchBackend touch(clock);
+                const auto plan=compiled({contact(1,12*S,12*S+16*ms),contact(2,13*S,13*S+16*ms)});
+                const auto fingerprint=plan.metadata.cache_sha256;
+                ExperimentalRuntimeOptions options;options.clock_probe={true,12*S+500*ms,delta};
+                ExperimentalContactRuntime run(plan,clock,touch,anchor(),options);arm(run,clock);std::uint64_t seq=1;
+                advance(run,clock,O+12*S+16*ms,seq);check(touch.receipts().size()==2,"clock probe changed prefix contact");
+                const auto second_due=O+13*S+delta;
+                advance(run,clock,second_due-1,seq);check(touch.receipts().size()==2,"clock probe dispatched suffix before static due");
+                advance(run,clock,second_due,seq);check(touch.receipts().size()==3,"clock probe omitted mapped suffix DOWN");
+                const auto result=advance(run,clock,second_due+16*ms,seq);
+                check(result.status.state==ExperimentalRuntimeState::completed&&touch.receipts().size()==4&&
+                    touch.receipts()[3].command.scheduled_ns-touch.receipts()[2].command.scheduled_ns==16*ms,
+                    "clock probe changed internal contact duration or completion");
+                check(result.status.full_cache_sha256==fingerprint&&!result.status.rate_one_hypothesis&&
+                    result.status.clock_probe.enabled&&!result.status.timing_qualified,
+                    "clock probe mutated source identity or claimed global timing qualification");
+            }
+            const auto plan=compiled({contact(1,12*S,12*S+16*ms),contact(2,13*S,13*S+16*ms)});
+            ExperimentalRuntimeOptions early;early.clock_probe={true,0,-160*ms};
+            rejects([&]{(void)ExperimentalContactRuntime::prepare(plan,early);},"clock probe changed first-note lead evidence");
+            ExperimentalRuntimeOptions cut;cut.clock_probe={true,12*S+8*ms,160*ms};
+            rejects([&]{(void)ExperimentalContactRuntime::prepare(plan,cut);},"clock probe cut a live contact");
         });
         std::cout<<checks<<" experimental runtime checks passed; no device, SyncLease or timing qualification.\n";return 0;
     }catch(const std::exception& e){std::cerr<<"FAILED: "<<e.what()<<'\n';return 1;}

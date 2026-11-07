@@ -81,6 +81,7 @@ struct ProjectedPoint {
     PosePoint point;
     double correction=0;
     unsigned edge=16;
+    double tangent_correction=0;
 };
 Range projection_slab(double extent,double inset) {
     // Positive insets reserve the far raster cell too. The zero-inset branch
@@ -126,6 +127,26 @@ ProjectedPoint normal_intersection(PosePoint point,PosePoint normal,double bound
         throw Failure("uncertified_normal_projection","Analytic normal intersection could not be represented inside both target slabs",time,point);
     return result;
 }
+ProjectedPoint judgment_rectangle(PosePoint point,PosePoint normal,PosePoint tangent,
+        double normal_bound,double tangent_bound,double inset,SongNs time) {
+    const auto xs=projection_slab(phigros_reference_width,inset),ys=projection_slab(phigros_reference_height,inset);
+    ProjectedPoint result;
+    result.point={std::clamp(point.x,xs.lo,xs.hi),std::clamp(point.y,ys.lo,ys.hi)};
+    const PosePoint delta{result.point.x-point.x,result.point.y-point.y};
+    result.correction=delta.x*normal.x+delta.y*normal.y;
+    result.tangent_correction=delta.x*tangent.x+delta.y*tangent.y;
+    if(!std::isfinite(result.correction)||!std::isfinite(result.tangent_correction)||
+       std::abs(result.correction)>normal_bound||std::abs(result.tangent_correction)>tangent_bound) {
+        std::ostringstream reason;reason<<"Nearest rectangle point exceeds declared judgment domain: normal="<<result.correction
+            <<" / "<<normal_bound<<", tangent="<<result.tangent_correction<<" / "<<tangent_bound<<" reference pixels";
+        throw Failure("judgment_domain_unreachable",reason.str(),time,point);
+    }
+    result.edge=0;
+    if(point.x<xs.lo)result.edge|=1;if(point.x>xs.hi)result.edge|=2;
+    if(point.y<ys.lo)result.edge|=4;if(point.y>ys.hi)result.edge|=8;
+    if(!result.edge)result.edge=16;
+    return result;
+}
 Range quotient(Range numerator,Range denominator) {
     return product(numerator,range(1/denominator.lo,1/denominator.hi));
 }
@@ -133,7 +154,59 @@ struct ProjectionCertificate {
     Range correction;
     unsigned edge_mask=16;
     double speed=0;
+    Range tangent_correction{0,0};
+    bool judgment_domain_gap=false;
 };
+std::optional<ProjectionCertificate> certify_judgment_rectangle(const SemanticNote& note,const PhigrosLinePose& pose,
+        Slope slope,double offset,double offset_slope,SongNs duration,double normal_bound,double tangent_bound,
+        double input_scale,double inset,bool allow_tangent_gap=false) {
+    const double elapsed=static_cast<double>(duration),theta=std::remainder(pose.rotation_degrees,360.0)*pi/180;
+    auto cs=trig(theta,theta+slope.radians*elapsed,true),sn=trig(theta,theta+slope.radians*elapsed,false);
+    if(slope.radians==0) {cs={pose.tangent.x,pose.tangent.x};sn={-pose.tangent.y,-pose.tangent.y};}
+    const double side=note.side==NoteSide::above?1:-1,along=note.position_x*phigros_position_x_pixels;
+    const auto nx=product({-side,-side},sn),ny=product({-side,-side},cs);
+    const auto offsets=range(offset,offset+offset_slope*elapsed);
+    const auto x=plus(range(pose.origin.x*phigros_reference_width,pose.origin.x*phigros_reference_width+slope.origin.x*elapsed),
+        plus(product({along,along},cs),product(offsets,nx)));
+    const auto y=plus(range(pose.origin.y*phigros_reference_height,pose.origin.y*phigros_reference_height+slope.origin.y*elapsed),
+        plus(product({-along,-along},sn),product(offsets,ny)));
+    const auto xs=projection_slab(phigros_reference_width,inset),ys=projection_slab(phigros_reference_height,inset);
+    // C(P)=nearest rectangle point. Each component is clamp(P); its correction
+    // clamp(p)-p is monotone nonincreasing. These interval dot products enclose
+    // EVERY continuous normal/tangent correction, including corner branches.
+    const auto correction=[](Range p,Range slab) {
+        return Range{std::clamp(p.hi,slab.lo,slab.hi)-p.hi,std::clamp(p.lo,slab.lo,slab.hi)-p.lo};
+    };
+    const auto dx=correction(x,xs),dy=correction(y,ys);
+    auto normal=plus(product(dx,nx),product(dy,ny));
+    auto tangent=plus(product(dx,cs),product(dy,product({-1,-1},sn)));
+    // Outward floating-point reserve for endpoint arithmetic and interval dot
+    // products. An exactly zero correction stays exactly zero inside the box.
+    if(dx.lo!=0||dx.hi!=0||dy.lo!=0||dy.hi!=0) {
+        const double reserve=64*std::numeric_limits<double>::epsilon()*(1+std::max(std::abs(x.lo),std::abs(x.hi))+
+            std::max(std::abs(y.lo),std::abs(y.hi))+std::abs(along)+std::max(std::abs(offsets.lo),std::abs(offsets.hi)));
+        normal={normal.lo-reserve,normal.hi+reserve};tangent={tangent.lo-reserve,tangent.hi+reserve};
+    }
+    if(!std::isfinite(normal.lo)||!std::isfinite(normal.hi)||!std::isfinite(tangent.lo)||!std::isfinite(tangent.hi)||
+       normal.lo < -normal_bound||normal.hi>normal_bound)return std::nullopt;
+    const bool gap=tangent.lo < -tangent_bound||tangent.hi>tangent_bound;
+    if(gap&&!allow_tangent_gap)return std::nullopt;
+    // Rectangle projection is 1-Lipschitz. On a wholly clipped coordinate its
+    // speed is zero; otherwise bound the complete native derivative. The
+    // resulting speed certifies held discrete coordinates, not interpolation.
+    const double normal_coefficient=along*slope.radians+side*offset_slope;
+    const auto tangent_coefficient=product({-side*slope.radians,-side*slope.radians},offsets);
+    const auto vx=plus({slope.origin.x,slope.origin.x},plus(product({-normal_coefficient,-normal_coefficient},sn),product(tangent_coefficient,cs)));
+    const auto vy=plus({slope.origin.y,slope.origin.y},plus(product({-normal_coefficient,-normal_coefficient},cs),product(tangent_coefficient,product({-1,-1},sn))));
+    const auto magnitude=[](Range r){return std::max(std::abs(r.lo),std::abs(r.hi));};
+    const double sx=x.hi<=xs.lo||x.lo>=xs.hi?0:magnitude(vx),sy=y.hi<=ys.lo||y.lo>=ys.hi?0:magnitude(vy);
+    const double speed=input_scale*std::hypot(sx,sy)*(1+1e-12);
+    if(!std::isfinite(speed))return std::nullopt;
+    unsigned edge=0;
+    if(x.lo<xs.lo)edge|=1;if(x.hi>xs.hi)edge|=2;if(y.lo<ys.lo)edge|=4;if(y.hi>ys.hi)edge|=8;
+    if(x.hi>=xs.lo&&x.lo<=xs.hi&&y.hi>=ys.lo&&y.lo<=ys.hi)edge|=16;
+    return ProjectionCertificate{normal,edge,speed,tangent,gap};
+}
 PhigrosLinePose advanced(PhigrosLinePose pose,Slope slope,SongNs elapsed) {
     pose.origin.x+=slope.origin.x*static_cast<double>(elapsed)/phigros_reference_width;
     pose.origin.y+=slope.origin.y*static_cast<double>(elapsed)/phigros_reference_height;
@@ -249,14 +322,15 @@ struct Build {
     PhigrosPoseEvaluator poses;
     PhigrosGeometryMap mapping;
     ContactCompileOptions options;
-    double input_scale;
+    double input_scale,input_min_scale;
     std::size_t visibility_checks=0;
     std::size_t projection_span_count=0;
     std::optional<std::array<std::uint32_t,4>> inset_raster_bounds; // x-low/high, y-low/high, inclusive.
     Build(const SemanticChart& chart_,PhigrosGeometry geometry,ContactCompileOptions options_)
-        :chart(chart_),poses(chart_),mapping(geometry),options(std::move(options_)),input_scale(0) {
+        :chart(chart_),poses(chart_),mapping(geometry),options(std::move(options_)),input_scale(0),input_min_scale(0) {
         const auto viewport=mapping.content_viewport();
         input_scale=std::max(viewport.width/phigros_reference_width,viewport.height/phigros_reference_height);
+        input_min_scale=std::min(viewport.width/phigros_reference_width,viewport.height/phigros_reference_height);
         if(options.normal_projection_inset_reference_pixels>0) {
             const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
             const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
@@ -403,13 +477,19 @@ struct Build {
         append(contact,last,flick ? Phase::move : Phase::up,at(last),true);
         if(flick) append(contact,add(last,options.flick_release_ns),Phase::up,contact.steps.back().point,true);
     }
-    ProjectedPoint projected(const PhigrosLinePose& pose,const SemanticNote& note,double offset,SongNs time) const {
+    ProjectedPoint projected(const PhigrosLinePose& pose,const SemanticNote& note,double offset,SongNs time,bool allow_tangent_gap=false) const {
         const auto source=phigros_line_point(pose,note.position_x,note.side,offset);
+        if(options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1) {
+            const auto reserve=judgment_domain_reserve();
+            return judgment_rectangle(source.reference_pixels,source.side_normal,pose.tangent,options.max_normal_projection_reference_pixels-reserve,
+                allow_tangent_gap?std::numeric_limits<double>::max():options.max_tangent_error_reference_pixels-reserve,
+                options.normal_projection_inset_reference_pixels,time);
+        }
         return normal_intersection(source.reference_pixels,source.side_normal,options.max_normal_projection_reference_pixels,
             options.normal_projection_inset_reference_pixels,time);
     }
-    Point projected_pixel(const PhigrosLinePose& pose,const SemanticNote& note,double offset,SongNs time) const {
-        const auto target=projected(pose,note,offset,time);
+    Point projected_pixel(const PhigrosLinePose& pose,const SemanticNote& note,double offset,SongNs time,bool allow_tangent_gap=false) const {
+        const auto target=projected(pose,note,offset,time,allow_tangent_gap);
         return projected_reference_pixel(target.point,time);
     }
     Point projected_reference_pixel(PosePoint target,SongNs time) const {
@@ -439,6 +519,16 @@ struct Build {
         if(options.normal_projection_inset_reference_pixels>0)conditioning_extent+=2*options.normal_projection_inset_reference_pixels;
         return raster_error+input_scale*(1e-6+64*std::numeric_limits<double>::epsilon()*conditioning_extent/projection_eta_floor);
     }
+    double judgment_domain_reserve() const {
+        // Bound the inverse geometry operator norm. The complete forward held
+        // error (including rasterization) must fit INSIDE the judgment domain,
+        // rather than being silently added to the declared 151.2px tolerance.
+        const double reserve=options.max_path_error_pixels/input_min_scale+1e-6;
+        if(!std::isfinite(reserve)||reserve>=options.max_tangent_error_reference_pixels||
+           reserve>=options.max_normal_projection_reference_pixels)
+            throw Failure("judgment_domain_precision_budget","Held/raster error exhausts the finite normal/tangent judgment domain");
+        return reserve;
+    }
     void projected_segment(Contact& contact,const SemanticNote& note,std::size_t line_index,SongNs a,SongNs b,
             const std::function<double(SongNs)>& offset_at,double offset_slope,NoteContactOwnership& ownership,
             bool native_key,unsigned depth=0) {
@@ -446,11 +536,19 @@ struct Build {
             throw Failure("projection_work_budget","Normal-intersection proof exceeds finite work budget",a);
         const auto pose=poses.line_at(line_index,a);
         const auto slope=slope_at(chart.lines[line_index],a);
-        const auto certificate=certify_projection(note,pose,slope,offset_at(a),offset_slope,b-a,
-            options.max_normal_projection_reference_pixels,input_scale,options.normal_projection_inset_reference_pixels,options.tight_projection_speed_bounds);
+        const bool allow_gap=note.kind==NoteKind::hold&&options.max_hold_reacquire_gap_ns>0;
+        const auto domain_reserve=options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1?judgment_domain_reserve():0;
+        auto certificate=options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1?
+            certify_judgment_rectangle(note,pose,slope,offset_at(a),offset_slope,b-a,
+                options.max_normal_projection_reference_pixels-domain_reserve,options.max_tangent_error_reference_pixels-domain_reserve,input_scale,options.normal_projection_inset_reference_pixels,allow_gap):
+            certify_projection(note,pose,slope,offset_at(a),offset_slope,b-a,
+                options.max_normal_projection_reference_pixels,input_scale,options.normal_projection_inset_reference_pixels,options.tight_projection_speed_bounds);
+        // Treat each uncertain/outside tangent interval conservatively as bad.
+        // Localize it to <=1ms before counting the complete merged duration.
+        if(certificate&&certificate->judgment_domain_gap&&b-a>1'000'000)certificate.reset();
         if(!certificate) {
             for(auto elapsed:{SongNs{0},(b-a)/2,b-a})
-                (void)projected(advanced(pose,slope,elapsed),note,offset_at(a)+offset_slope*static_cast<double>(elapsed),add(a,elapsed));
+                (void)projected(advanced(pose,slope,elapsed),note,offset_at(a)+offset_slope*static_cast<double>(elapsed),add(a,elapsed),allow_gap);
             if(depth>=24||b-a<=1)
                 throw Failure("uncertified_normal_projection","Feasibility, active branches, or near-tangent speed bound cannot be certified within subdivision limits",a,
                     phigros_line_point(pose,note.position_x,note.side,offset_at(a)).reference_pixels);
@@ -462,10 +560,17 @@ struct Build {
         if(ownership.normal_projection_spans.size()>=options.max_steps_per_contact||++projection_span_count>options.max_steps_in_plan)
             throw Failure("projection_span_budget","Normal-intersection provenance spans exceed configured finite budget",a);
         ownership.normal_projection_spans.push_back({a,b,certificate->correction.lo,certificate->correction.hi,
-            certificate->edge_mask,certificate->speed});
+            certificate->edge_mask,certificate->speed,certificate->tangent_correction.lo,certificate->tangent_correction.hi,certificate->judgment_domain_gap});
         ownership.projection_min_reference_pixels=std::min(ownership.projection_min_reference_pixels,certificate->correction.lo);
         ownership.projection_max_reference_pixels=std::max(ownership.projection_max_reference_pixels,certificate->correction.hi);
-        const auto at=[&](SongNs t){return projected_pixel(poses.line_at(line_index,t),note,offset_at(t),t);};
+        if(certificate->judgment_domain_gap) {
+            ownership.gap_tangent_projection_min_reference_pixels=std::min(ownership.gap_tangent_projection_min_reference_pixels,certificate->tangent_correction.lo);
+            ownership.gap_tangent_projection_max_reference_pixels=std::max(ownership.gap_tangent_projection_max_reference_pixels,certificate->tangent_correction.hi);
+        } else {
+            ownership.tangent_projection_min_reference_pixels=std::min(ownership.tangent_projection_min_reference_pixels,certificate->tangent_correction.lo);
+            ownership.tangent_projection_max_reference_pixels=std::max(ownership.tangent_projection_max_reference_pixels,certificate->tangent_correction.hi);
+        }
+        const auto at=[&](SongNs t){return projected_pixel(poses.line_at(line_index,t),note,offset_at(t),t,allow_gap);};
         append(contact,a,contact.steps.empty() ? Phase::down : Phase::move,at(a),native_key||a==note.start_ns);
         const auto reserve=projected_reserve();
         if(!std::isfinite(reserve)||reserve>=options.max_path_error_pixels)
@@ -496,20 +601,110 @@ struct Build {
         const auto end=projected(poses.line_at(line_index,last),note,offset_at(last),last);
         ownership.projection_min_reference_pixels=std::min(ownership.projection_min_reference_pixels,end.correction);
         ownership.projection_max_reference_pixels=std::max(ownership.projection_max_reference_pixels,end.correction);
+        ownership.tangent_projection_min_reference_pixels=std::min(ownership.tangent_projection_min_reference_pixels,end.tangent_correction);
+        ownership.tangent_projection_max_reference_pixels=std::max(ownership.tangent_projection_max_reference_pixels,end.tangent_correction);
         append(contact,last,flick ? Phase::move : Phase::up,projected_pixel(poses.line_at(line_index,last),note,offset_at(last),last),true);
         if(flick)append(contact,add(last,options.flick_release_ns),Phase::up,contact.steps.back().point,true);
+    }
+    void validate_hold_gaps(const NoteContactOwnership& owner,SongNs first,SongNs last) const {
+        if(!options.max_hold_reacquire_gap_ns)return;
+        std::optional<SongNs> begin;SongNs end=first;bool had_gap=false;
+        for(const auto& span:owner.normal_projection_spans) {
+            if(span.judgment_domain_gap) {
+                had_gap=true;
+                if(!begin)begin=span.begin_ns;
+                else if(span.begin_ns!=end)throw Failure("hold_reacquire_without_recovery","Hold gap certificate coverage is not contiguous",end);
+                if(*begin<=first)throw Failure("hold_reacquire_without_recovery","Hold must establish valid judgment before any reacquire gap",*begin);
+                end=span.end_ns;
+                if(end-*begin>options.max_hold_reacquire_gap_ns)
+                    throw Failure("hold_reacquire_gap_exceeded","Conservative merged Hold tangent-domain gap exceeds explicit <=20ms budget",*begin);
+            } else if(begin) {
+                if(span.begin_ns!=end||span.end_ns<=span.begin_ns)
+                    throw Failure("hold_reacquire_without_recovery","Hold gap must be followed immediately by a positive valid recovery interval",end);
+                begin.reset();
+            }
+        }
+        if(begin||(had_gap&&end>=last))throw Failure("hold_reacquire_without_recovery","Hold must recover a valid domain before tracking end or tail grace",end);
     }
     void straight_flick(Contact& contact,const SemanticNote& note,std::size_t line_index,
             SongNs first,SongNs last,double projection,NoteContactOwnership& ownership) {
         const auto pose=poses.line_at(line_index,note.start_ns);
         const auto native=phigros_line_point(pose,note.position_x,note.side);
-        const bool dynamic=options.offscreen_policy==OffscreenPolicy::bounded_normal_intersection_candidate_v1;
-        const auto anchor=dynamic ? projected(pose,note,0,note.start_ns).point :
+        const bool rectangle=options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
+        const bool dynamic=options.offscreen_policy==OffscreenPolicy::bounded_normal_intersection_candidate_v1||rectangle;
+        auto anchor=dynamic ? projected(pose,note,0,note.start_ns).point :
             phigros_line_point(pose,note.position_x,note.side,projection).reference_pixels;
+        auto direction=native.side_normal;
         const double velocity=options.flick_distance_reference_pixels/static_cast<double>(options.flick_travel_ns);
+        unsigned anchor_edge=dynamic ? projected(pose,note,0,note.start_ns).edge : 16;
+        if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_screen_fit_v1) {
+            // Solve a finite family of full straight strokes. Erode the target
+            // rectangle by BOTH endpoint offsets, then intersect that anchor
+            // rectangle with the native judgment normal. Thus tangent error at
+            // judgment is zero and no stroke is clipped, shortened or clamped.
+            const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
+            const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
+            const double before=velocity*static_cast<double>(first-note.start_ns),after=velocity*static_cast<double>(last-note.start_ns);
+            const auto domain_reserve=rectangle?judgment_domain_reserve():0;
+            const auto normal_bound=options.max_normal_projection_reference_pixels-domain_reserve;
+            const auto tangent_bound=options.max_tangent_error_reference_pixels-domain_reserve;
+            const PosePoint directions[]={native.side_normal,{-native.side_normal.x,-native.side_normal.y},
+                pose.tangent,{-pose.tangent.x,-pose.tangent.y},{1,0},{-1,0},{0,1},{0,-1}};
+            bool found=false;double best=std::numeric_limits<double>::infinity(),best_tangent=std::numeric_limits<double>::infinity();
+            double tangent_correction=0;
+            const auto accept=[&](PosePoint p,PosePoint d,double correction,double along,unsigned edge) {
+                if(std::abs(along)<best_tangent||(std::abs(along)==best_tangent&&std::abs(correction)<best)) {
+                    found=true;best=std::abs(correction);best_tangent=std::abs(along);anchor=p;direction=d;
+                    projection=correction;tangent_correction=along;anchor_edge=edge;
+                }
+            };
+            for(const auto d:directions) {
+                const Range ax{xs.lo-std::min(before*d.x,after*d.x),xs.hi-std::max(before*d.x,after*d.x)};
+                const Range ay{ys.lo-std::min(before*d.y,after*d.y),ys.hi-std::max(before*d.y,after*d.y)};
+                if(ax.lo>ax.hi||ay.lo>ay.hi)continue;
+                if(rectangle) {
+                    const PosePoint p{std::clamp(native.reference_pixels.x,ax.lo,ax.hi),std::clamp(native.reference_pixels.y,ay.lo,ay.hi)};
+                    const PosePoint delta{p.x-native.reference_pixels.x,p.y-native.reference_pixels.y};
+                    const double normal=delta.x*native.side_normal.x+delta.y*native.side_normal.y;
+                    const double along=delta.x*pose.tangent.x+delta.y*pose.tangent.y;
+                    if(std::isfinite(normal)&&std::isfinite(along)&&std::abs(normal)<=normal_bound&&std::abs(along)<=tangent_bound) {
+                        unsigned edge=0;if(native.reference_pixels.x<ax.lo)edge|=1;if(native.reference_pixels.x>ax.hi)edge|=2;
+                        if(native.reference_pixels.y<ay.lo)edge|=4;if(native.reference_pixels.y>ay.hi)edge|=8;
+                        accept(p,d,normal,along,edge?edge:16);
+                    }
+                }
+                double lower=-normal_bound,upper=normal_bound;
+                if(options.offscreen_policy==OffscreenPolicy::reject)lower=upper=0;
+                unsigned low_edge=0,high_edge=0;bool possible=true;
+                const auto axis=[&](double p,double n,Range slab,unsigned low,unsigned high) {
+                    if(n==0) {if(p<slab.lo||p>slab.hi)possible=false;return;}
+                    const double a=(slab.lo-p)/n,b=(slab.hi-p)/n;
+                    const double lo=std::min(a,b),hi=std::max(a,b);
+                    if(lo>lower) {lower=lo;low_edge=n>0?low:high;}
+                    if(hi<upper) {upper=hi;high_edge=n>0?high:low;}
+                };
+                axis(native.reference_pixels.x,native.side_normal.x,ax,1,2);
+                axis(native.reference_pixels.y,native.side_normal.y,ay,4,8);
+                if(!possible||!std::isfinite(lower)||!std::isfinite(upper)||lower>upper)continue;
+                const double correction=lower>0?lower:upper<0?upper:0;
+                const unsigned edge=lower>0?low_edge:upper<0?high_edge:16;
+                if(((edge==1||edge==2)&&std::abs(native.side_normal.x)<projection_eta_floor)||
+                   ((edge==4||edge==8)&&std::abs(native.side_normal.y)<projection_eta_floor))continue;
+                PosePoint p{native.reference_pixels.x+correction*native.side_normal.x,
+                    native.reference_pixels.y+correction*native.side_normal.y};
+                if(edge==1)p.x=ax.lo;if(edge==2)p.x=ax.hi;if(edge==4)p.y=ay.lo;if(edge==8)p.y=ay.hi;
+                if(!std::isfinite(p.x)||!std::isfinite(p.y)||p.x<ax.lo||p.x>ax.hi||p.y<ay.lo||p.y>ay.hi)continue;
+                accept(p,d,correction,0,edge);
+            }
+            if(!found)throw Failure("screen_fit_flick_unavailable","No certified full stroke intersects the bounded native judgment normal",note.start_ns,native.reference_pixels);
+            ownership.normal_projection_reference_pixels=projection;
+            ownership.projection_min_reference_pixels=ownership.projection_max_reference_pixels=projection;
+            ownership.tangent_projection_min_reference_pixels=ownership.tangent_projection_max_reference_pixels=tangent_correction;
+            ownership.flick_anchor_reference=anchor;ownership.flick_direction_reference=direction;
+        }
         const auto at=[&](SongNs time) {
             const double offset=velocity*static_cast<double>(static_cast<long double>(time)-note.start_ns);
-            return PosePoint{anchor.x+native.side_normal.x*offset,anchor.y+native.side_normal.y*offset};
+            return PosePoint{anchor.x+direction.x*offset,anchor.y+direction.y*offset};
         };
         const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
         const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
@@ -545,16 +740,248 @@ struct Build {
         if(dynamic) {
             if(++projection_span_count>options.max_steps_in_plan)
                 throw Failure("projection_span_budget","Straight Flick anchor provenance exceeds plan budget",note.start_ns);
-            const auto p=projected(pose,note,0,note.start_ns);
-            ownership.normal_projection_spans.push_back({note.start_ns,note.start_ns,projection,projection,p.edge,0});
+            ownership.normal_projection_spans.push_back({note.start_ns,note.start_ns,projection,projection,anchor_edge,0,
+                ownership.tangent_projection_min_reference_pixels,ownership.tangent_projection_max_reference_pixels});
         }
+    }
+    void diagonal_snap_flick(Contact& contact,const SemanticNote& note,std::size_t line_index,
+            SongNs first,SongNs last,NoteContactOwnership& ownership) {
+        const auto pose=poses.line_at(line_index,note.start_ns);
+        const auto native=phigros_line_point(pose,note.position_x,note.side);
+        const bool rectangle=options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
+        const double reserve=rectangle?judgment_domain_reserve():0;
+        const double normal_bound=options.offscreen_policy==OffscreenPolicy::reject?0:options.max_normal_projection_reference_pixels-reserve;
+        const double tangent_bound=rectangle?options.max_tangent_error_reference_pixels-reserve:0;
+        const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
+        const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
+        const double distance=options.flick_distance_reference_pixels;
+        constexpr double diagonal=0.70710678118654752440;
+        const PosePoint directions[]={{diagonal,diagonal},{-diagonal,diagonal},{diagonal,-diagonal},{-diagonal,-diagonal}};
+        PosePoint anchor{},direction{},bend{},end{};double correction=0,tangent_correction=0;
+        double best_tangent=std::numeric_limits<double>::infinity(),best_normal=std::numeric_limits<double>::infinity();
+        double best_clearance=-std::numeric_limits<double>::infinity();unsigned anchor_edge=16;bool found=false;
+        // The path starts AT the anchor and slips out after judgment. All three
+        // vertices are inside one rectangle, so their entire conceptual polyline
+        // is inside it. We claim only these discrete commanded vertices; neither
+        // touch transport nor Android is assumed to interpolate this polyline.
+        const auto accept=[&](PosePoint p,PosePoint d,PosePoint turn,PosePoint endpoint,double n,double t,unsigned edge) {
+            const PosePoint finish{p.x+endpoint.x,p.y+endpoint.y};
+            const double clearance=std::min({finish.x-xs.lo,xs.hi-finish.x,finish.y-ys.lo,ys.hi-finish.y});
+            const auto score=std::tuple(std::abs(t),std::abs(n),-clearance);
+            if(!found||score < std::tuple(best_tangent,best_normal,-best_clearance)) {
+                found=true;best_tangent=std::abs(t);best_normal=std::abs(n);best_clearance=clearance;
+                anchor=p;direction=d;bend={p.x+turn.x,p.y+turn.y};end=finish;
+                correction=n;tangent_correction=t;anchor_edge=edge;
+            }
+        };
+        for(const auto d:directions)for(const double sign:{1.,-1.}) {
+            const PosePoint perpendicular{-d.y,d.x};
+            const PosePoint turn{distance*(.28*d.x+sign*.10*perpendicular.x),distance*(.28*d.y+sign*.10*perpendicular.y)};
+            const PosePoint endpoint{distance*d.x,distance*d.y};
+            const Range ax{xs.lo-std::min({0.,turn.x,endpoint.x}),xs.hi-std::max({0.,turn.x,endpoint.x})};
+            const Range ay{ys.lo-std::min({0.,turn.y,endpoint.y}),ys.hi-std::max({0.,turn.y,endpoint.y})};
+            if(ax.lo>ax.hi||ay.lo>ay.hi)continue;
+            if(rectangle) {
+                const PosePoint p{std::clamp(native.reference_pixels.x,ax.lo,ax.hi),std::clamp(native.reference_pixels.y,ay.lo,ay.hi)};
+                const PosePoint delta{p.x-native.reference_pixels.x,p.y-native.reference_pixels.y};
+                const double n=delta.x*native.side_normal.x+delta.y*native.side_normal.y,t=delta.x*pose.tangent.x+delta.y*pose.tangent.y;
+                if(std::isfinite(n)&&std::isfinite(t)&&std::abs(n)<=normal_bound&&std::abs(t)<=tangent_bound) {
+                    unsigned edge=0;if(native.reference_pixels.x<ax.lo)edge|=1;if(native.reference_pixels.x>ax.hi)edge|=2;
+                    if(native.reference_pixels.y<ay.lo)edge|=4;if(native.reference_pixels.y>ay.hi)edge|=8;
+                    accept(p,d,turn,endpoint,n,t,edge?edge:16);
+                }
+            }
+            double lower=-normal_bound,upper=normal_bound;unsigned low_edge=0,high_edge=0;bool possible=true;
+            const auto axis=[&](double p,double n,Range slab,unsigned low,unsigned high) {
+                if(n==0){if(p<slab.lo||p>slab.hi)possible=false;return;}
+                const double a=(slab.lo-p)/n,b=(slab.hi-p)/n;
+                const double lo=std::min(a,b),hi=std::max(a,b);
+                if(lo>lower){lower=lo;low_edge=n>0?low:high;}
+                if(hi<upper){upper=hi;high_edge=n>0?high:low;}
+            };
+            axis(native.reference_pixels.x,native.side_normal.x,ax,1,2);axis(native.reference_pixels.y,native.side_normal.y,ay,4,8);
+            if(!possible||!std::isfinite(lower)||!std::isfinite(upper)||lower>upper)continue;
+            const double n=lower>0?lower:upper<0?upper:0;const unsigned edge=lower>0?low_edge:upper<0?high_edge:16;
+            if(((edge==1||edge==2)&&std::abs(native.side_normal.x)<projection_eta_floor)||
+               ((edge==4||edge==8)&&std::abs(native.side_normal.y)<projection_eta_floor))continue;
+            PosePoint p{native.reference_pixels.x+n*native.side_normal.x,native.reference_pixels.y+n*native.side_normal.y};
+            if(edge==1)p.x=ax.lo;if(edge==2)p.x=ax.hi;if(edge==4)p.y=ay.lo;if(edge==8)p.y=ay.hi;
+            if(!std::isfinite(p.x)||!std::isfinite(p.y)||p.x<ax.lo||p.x>ax.hi||p.y<ay.lo||p.y>ay.hi)continue;
+            accept(p,d,turn,endpoint,n,0,edge);
+        }
+        if(!found)throw Failure("diagonal_snap_unavailable","No complete diagonal snap fits the declared judgment domain and rectangle",note.start_ns,native.reference_pixels);
+        for(const auto p:{anchor,bend,end})if(!std::isfinite(p.x)||!std::isfinite(p.y)||p.x<xs.lo||p.x>xs.hi||p.y<ys.lo||p.y>ys.hi)
+            throw Failure("diagonal_snap_unavailable","Discrete snap vertex cannot be represented in the certified rectangle",note.start_ns,p);
+        if(last-note.start_ns<3)throw Failure("diagonal_snap_resolution","Snap needs distinct anchor, bend and endpoint times",note.start_ns);
+        const auto bend_time=note.start_ns+(last-note.start_ns)/3;
+        append(contact,first,Phase::down,projected_reference_pixel(anchor,first),true);
+        append(contact,bend_time,Phase::move,projected_reference_pixel(bend,bend_time),true);
+        append(contact,last,Phase::move,projected_reference_pixel(end,last),true);
+        append(contact,add(last,options.flick_release_ns),Phase::up,contact.steps.back().point,true);
+        const auto width=mapping.geometry().input_width,height=mapping.geometry().input_height;
+        const auto a=pixel_point(contact.steps[0].point,width,height),b=pixel_point(contact.steps[1].point,width,height),c=pixel_point(contact.steps[2].point,width,height);
+        const double bx=static_cast<double>(b.first)-a.first,by=static_cast<double>(b.second)-a.second;
+        const double dx=static_cast<double>(c.first)-a.first,dy=static_cast<double>(c.second)-a.second;
+        const double cross=bx*dy-by*dx,actual_distance=std::hypot(dx,dy);
+        if(dx==0||dy==0||cross==0||std::hypot(bx,by)<1||
+           actual_distance<std::max(1.,distance*input_min_scale-2*raster_error))
+            throw Failure("diagonal_snap_raster_resolution","Raster geometry cannot retain a curved diagonal snap and its complete displacement",note.start_ns);
+        ownership.normal_projection_reference_pixels=correction;ownership.time_varying_normal_projection=false;
+        ownership.projection_min_reference_pixels=ownership.projection_max_reference_pixels=correction;
+        ownership.tangent_projection_min_reference_pixels=ownership.tangent_projection_max_reference_pixels=tangent_correction;
+        ownership.flick_anchor_reference=anchor;ownership.flick_direction_reference=direction;
+        ownership.flick_discrete_path=FlickDiscretePathCertificate{"judgment-anchored-diagonal-snap-v1",bend,end,bend_time,last,
+            norm({end.x-anchor.x,end.y-anchor.y}),norm({bend.x-anchor.x,bend.y-anchor.y})+norm({end.x-bend.x,end.y-bend.y}),
+            std::max(std::hypot(bx,by),std::hypot(dx-bx,dy-by)),2};
+        if(++projection_span_count>options.max_steps_in_plan)throw Failure("projection_span_budget","Snap anchor certificate exceeds finite plan budget",note.start_ns);
+        ownership.normal_projection_spans.push_back({note.start_ns,note.start_ns,correction,correction,anchor_edge,0,tangent_correction,tangent_correction});
+    }
+    void diagonal_sampled_flick(Contact& contact,const SemanticNote& note,std::size_t line_index,
+            SongNs first,SongNs last,NoteContactOwnership& ownership) {
+        const auto pose=poses.line_at(line_index,note.start_ns);
+        const auto native=phigros_line_point(pose,note.position_x,note.side);
+        const bool rectangle=options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
+        const double reserve=rectangle?judgment_domain_reserve():0;
+        const double normal_bound=options.offscreen_policy==OffscreenPolicy::reject?0:options.max_normal_projection_reference_pixels-reserve;
+        const double tangent_bound=rectangle?options.max_tangent_error_reference_pixels-reserve:0;
+        const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
+        const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
+        const double distance=options.flick_distance_reference_pixels;
+        constexpr double diagonal=0.70710678118654752440;
+        const PosePoint directions[]={{diagonal,diagonal},{-diagonal,diagonal},{diagonal,-diagonal},{-diagonal,-diagonal}};
+        PosePoint anchor{},direction{},bend{},middle{},end{};double correction=0,tangent_correction=0;
+        double best_tangent=std::numeric_limits<double>::infinity(),best_normal=std::numeric_limits<double>::infinity();
+        double best_clearance=-std::numeric_limits<double>::infinity();unsigned anchor_edge=16;bool found=false;
+        // V2 starts AT the original native anchor. All four
+        // vertices are inside one rectangle, so their entire conceptual polyline
+        // is inside it. We claim only these discrete commanded vertices; neither
+        // touch transport nor Android is assumed to interpolate this polyline.
+        const auto accept=[&](PosePoint p,PosePoint d,PosePoint turn,PosePoint middle_offset,PosePoint endpoint,double n,double t,unsigned edge) {
+            const PosePoint finish{p.x+endpoint.x,p.y+endpoint.y};
+            const double clearance=std::min({finish.x-xs.lo,xs.hi-finish.x,finish.y-ys.lo,ys.hi-finish.y});
+            const auto score=std::tuple(std::abs(t),std::abs(n),-clearance);
+            if(!found||score < std::tuple(best_tangent,best_normal,-best_clearance)) {
+                found=true;best_tangent=std::abs(t);best_normal=std::abs(n);best_clearance=clearance;
+                anchor=p;direction=d;bend={p.x+turn.x,p.y+turn.y};
+                middle={p.x+middle_offset.x,p.y+middle_offset.y};end=finish;
+                correction=n;tangent_correction=t;anchor_edge=edge;
+            }
+        };
+        for(const auto d:directions)for(const double sign:{1.,-1.}) {
+            const PosePoint perpendicular{-d.y,d.x};
+            const PosePoint turn{distance*(.20*d.x+sign*.10*perpendicular.x),distance*(.20*d.y+sign*.10*perpendicular.y)};
+            const PosePoint middle_offset{distance*(.55*d.x+sign*.12*perpendicular.x),distance*(.55*d.y+sign*.12*perpendicular.y)};
+            const PosePoint endpoint{distance*d.x,distance*d.y};
+            const Range ax{xs.lo-std::min({0.,turn.x,middle_offset.x,endpoint.x}),xs.hi-std::max({0.,turn.x,middle_offset.x,endpoint.x})};
+            const Range ay{ys.lo-std::min({0.,turn.y,middle_offset.y,endpoint.y}),ys.hi-std::max({0.,turn.y,middle_offset.y,endpoint.y})};
+            if(ax.lo>ax.hi||ay.lo>ay.hi)continue;
+            if(rectangle) {
+                const PosePoint p{std::clamp(native.reference_pixels.x,ax.lo,ax.hi),std::clamp(native.reference_pixels.y,ay.lo,ay.hi)};
+                const PosePoint delta{p.x-native.reference_pixels.x,p.y-native.reference_pixels.y};
+                const double n=delta.x*native.side_normal.x+delta.y*native.side_normal.y,t=delta.x*pose.tangent.x+delta.y*pose.tangent.y;
+                if(std::isfinite(n)&&std::isfinite(t)&&std::abs(n)<=normal_bound&&std::abs(t)<=tangent_bound) {
+                    unsigned edge=0;if(native.reference_pixels.x<ax.lo)edge|=1;if(native.reference_pixels.x>ax.hi)edge|=2;
+                    if(native.reference_pixels.y<ay.lo)edge|=4;if(native.reference_pixels.y>ay.hi)edge|=8;
+                    accept(p,d,turn,middle_offset,endpoint,n,t,edge?edge:16);
+                }
+            }
+            double lower=-normal_bound,upper=normal_bound;unsigned low_edge=0,high_edge=0;bool possible=true;
+            const auto axis=[&](double p,double n,Range slab,unsigned low,unsigned high) {
+                if(n==0){if(p<slab.lo||p>slab.hi)possible=false;return;}
+                const double a=(slab.lo-p)/n,b=(slab.hi-p)/n;
+                const double lo=std::min(a,b),hi=std::max(a,b);
+                if(lo>lower){lower=lo;low_edge=n>0?low:high;}
+                if(hi<upper){upper=hi;high_edge=n>0?high:low;}
+            };
+            axis(native.reference_pixels.x,native.side_normal.x,ax,1,2);axis(native.reference_pixels.y,native.side_normal.y,ay,4,8);
+            if(!possible||!std::isfinite(lower)||!std::isfinite(upper)||lower>upper)continue;
+            const double n=lower>0?lower:upper<0?upper:0;const unsigned edge=lower>0?low_edge:upper<0?high_edge:16;
+            if(((edge==1||edge==2)&&std::abs(native.side_normal.x)<projection_eta_floor)||
+               ((edge==4||edge==8)&&std::abs(native.side_normal.y)<projection_eta_floor))continue;
+            PosePoint p{native.reference_pixels.x+n*native.side_normal.x,native.reference_pixels.y+n*native.side_normal.y};
+            if(edge==1)p.x=ax.lo;if(edge==2)p.x=ax.hi;if(edge==4)p.y=ay.lo;if(edge==8)p.y=ay.hi;
+            if(!std::isfinite(p.x)||!std::isfinite(p.y)||p.x<ax.lo||p.x>ax.hi||p.y<ay.lo||p.y>ay.hi)continue;
+            accept(p,d,turn,middle_offset,endpoint,n,0,edge);
+        }
+        if(!found)throw Failure("diagonal_sampled_unavailable","No complete sampled diagonal fits the declared judgment domain and rectangle",note.start_ns,native.reference_pixels);
+        for(const auto p:{anchor,bend,middle,end})if(!std::isfinite(p.x)||!std::isfinite(p.y)||p.x<xs.lo||p.x>xs.hi||p.y<ys.lo||p.y>ys.hi)
+            throw Failure("diagonal_sampled_unavailable","Discrete sampled vertex cannot be represented in the certified rectangle",note.start_ns,p);
+        const auto post=last-note.start_ns;
+        if(post<7)throw Failure("diagonal_sampled_resolution","Sampled Flick needs three distinct post-judgment MOVE times",note.start_ns);
+        if(post>std::numeric_limits<SongNs>::max()/4)throw Failure("invalid_time","Sampled middle vertex time multiplication overflows",note.start_ns);
+        const auto bend_time=add(note.start_ns,post/7),middle_time=add(note.start_ns,(post*4)/7);
+        append(contact,first,Phase::down,projected_reference_pixel(anchor,first),true);
+        append(contact,bend_time,Phase::move,projected_reference_pixel(bend,bend_time),true);
+        append(contact,middle_time,Phase::move,projected_reference_pixel(middle,middle_time),true);
+        append(contact,last,Phase::move,projected_reference_pixel(end,last),true);
+        append(contact,add(last,options.flick_release_ns),Phase::up,contact.steps.back().point,true);
+        const auto width=mapping.geometry().input_width,height=mapping.geometry().input_height;
+        const auto a=pixel_point(contact.steps[0].point,width,height),b=pixel_point(contact.steps[1].point,width,height),c=pixel_point(contact.steps[2].point,width,height),d=pixel_point(contact.steps[3].point,width,height);
+        const double bx=static_cast<double>(b.first)-a.first,by=static_cast<double>(b.second)-a.second;
+        const double cx=static_cast<double>(c.first)-a.first,cy=static_cast<double>(c.second)-a.second;
+        const double dx=static_cast<double>(d.first)-a.first,dy=static_cast<double>(d.second)-a.second;
+        const double cross_first=bx*(cy-by)-by*(cx-bx),cross_last=(cx-bx)*(dy-cy)-(cy-by)*(dx-cx);
+        const double actual_distance=std::hypot(dx,dy);
+        if(dx==0||dy==0||cross_first==0||cross_last==0||std::hypot(bx,by)<1||
+           std::hypot(cx-bx,cy-by)<1||std::hypot(dx-cx,dy-cy)<1||
+           actual_distance<std::max(1.,distance*input_min_scale-2*raster_error))
+            throw Failure("diagonal_sampled_raster_resolution","Raster geometry cannot retain all three sampled curved MOVE vertices and complete displacement",note.start_ns);
+        ownership.normal_projection_reference_pixels=correction;ownership.time_varying_normal_projection=false;
+        ownership.projection_min_reference_pixels=ownership.projection_max_reference_pixels=correction;
+        ownership.tangent_projection_min_reference_pixels=ownership.tangent_projection_max_reference_pixels=tangent_correction;
+        ownership.flick_anchor_reference=anchor;ownership.flick_direction_reference=direction;
+        ownership.flick_discrete_path=FlickDiscretePathCertificate{"judgment-anchored-diagonal-sampled-v2",bend,end,bend_time,last,
+            norm({end.x-anchor.x,end.y-anchor.y}),norm({bend.x-anchor.x,bend.y-anchor.y})+
+                norm({middle.x-bend.x,middle.y-bend.y})+norm({end.x-middle.x,end.y-middle.y}),
+            std::max({std::hypot(bx,by),std::hypot(cx-bx,cy-by),std::hypot(dx-cx,dy-cy)}),3,
+            FlickDiscreteMiddleVertex{middle,middle_time}};
+        if(++projection_span_count>options.max_steps_in_plan)throw Failure("projection_span_budget","Sampled anchor certificate exceeds finite plan budget",note.start_ns);
+        ownership.normal_projection_spans.push_back({note.start_ns,note.start_ns,correction,correction,anchor_edge,0,tangent_correction,tangent_correction});
     }
 };
 
 void check_options(const ContactCompileOptions& options) {
+    if(!options.above_drag_source_ids.empty()&&!options.advance_above_drags)
+        throw Failure("invalid_options","An above-Drag source filter requires the explicit above-Drag advance option");
+    if(options.above_drag_source_ids.size()>2048)
+        throw Failure("invalid_above_drag_source_filter","Above-Drag source filter exceeds2048 original identities");
+    std::set<std::string> filtered_above_sources;
+    for(const auto& id:options.above_drag_source_ids) {
+        if(id.empty()||id.size()>512||!filtered_above_sources.insert(id).second)
+            throw Failure("invalid_above_drag_source_filter","Above-Drag source identities must be unique nonempty strings of at most512 bytes");
+    }
+    if(!options.below_drag_source_ids.empty()&&!options.advance_below_drags)
+        throw Failure("invalid_options","A below-Drag source filter requires the explicit below-Drag advance option");
+    if(options.below_drag_source_ids.size()>2048)
+        throw Failure("invalid_below_drag_source_filter","Below-Drag source filter exceeds2048 original identities");
+    std::set<std::string> filtered_sources;
+    for(const auto& id:options.below_drag_source_ids) {
+        if(id.empty()||id.size()>512||!filtered_sources.insert(id).second)
+            throw Failure("invalid_below_drag_source_filter","Below-Drag source identities must be unique nonempty strings of at most512 bytes");
+    }
+    if(options.coincident_flick_delay_ns!=0&&options.coincident_flick_delay_ns!=32'000'000)
+        throw Failure("invalid_options","Coincident Flick delay must be explicitly0 or32ms");
+    if(options.coincident_flick_delay_ns!=0&&options.flick_path_policy!=FlickPathPolicy::judgment_anchored_diagonal_snap_v1)
+        throw Failure("coincident_flick_requires_discrete_path","Coincident Flick delay requires the explicit four-step discrete diagonal path");
+    if(options.max_prejudge_ns<0||options.max_prejudge_ns>30'000'000||
+       ((options.advance_above_drags||options.advance_below_drags)&&options.max_prejudge_ns==0))
+        throw Failure("invalid_options","Pre-judge candidate must declare 0..30ms, with above/below Drag advance separately enabled");
+    if(options.max_hold_reacquire_gap_ns<0||options.max_hold_reacquire_gap_ns>20'000'000||
+       (options.max_hold_reacquire_gap_ns>0&&(options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1||
+        options.hold_tail_policy!=HoldTailPolicy::phira_tail_grace_candidate_v1)))
+        throw Failure("invalid_options","Hold reacquire candidate requires explicit rectangle geometry, recorded tail policy, and 0..20ms gap budget");
     if(options.flick_path_policy!=FlickPathPolicy::dynamic_line_v1&&
-       options.flick_path_policy!=FlickPathPolicy::judgment_anchored_straight_v1)
+       options.flick_path_policy!=FlickPathPolicy::judgment_anchored_straight_v1&&
+       options.flick_path_policy!=FlickPathPolicy::judgment_anchored_screen_fit_v1&&
+       options.flick_path_policy!=FlickPathPolicy::judgment_anchored_diagonal_snap_v1&&
+       options.flick_path_policy!=FlickPathPolicy::judgment_anchored_diagonal_sampled_v2)
         throw Failure("invalid_options","Unknown Flick path policy");
+    if(options.hold_tail_policy!=HoldTailPolicy::full_pose_v1&&options.hold_tail_policy!=HoldTailPolicy::phira_tail_grace_candidate_v1)
+        throw Failure("invalid_options","Unknown Hold tail policy");
+    if(options.hold_tail_policy==HoldTailPolicy::phira_tail_grace_candidate_v1&&
+       options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1&&
+       options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1)
+        throw Failure("invalid_options","Hold tail candidate requires explicit bounded normal intersection geometry");
     if(options.max_contacts<1||options.max_contacts>10 || options.tap_duration_ns<=0 || options.drag_duration_ns<=0 ||
        options.flick_lead_ns<=0 || options.flick_travel_ns<=options.flick_lead_ns || options.flick_release_ns<=0 ||
        !std::isfinite(options.flick_distance_reference_pixels)||options.flick_distance_reference_pixels<=0 ||
@@ -563,20 +990,81 @@ void check_options(const ContactCompileOptions& options) {
        options.max_steps_in_plan<2||options.max_steps_in_plan>2000000||options.max_diagnostics==0||options.max_diagnostics>2000000||
        options.interference_window_ns<0||!std::isfinite(options.interference_radius_pixels)||options.interference_radius_pixels<0)
         throw Failure("invalid_options", "Compiler capacity, timing, geometry error, or resource limit is invalid");
-    if(!std::isfinite(options.max_normal_projection_reference_pixels)||options.max_normal_projection_reference_pixels<0)
+    if(!std::isfinite(options.max_normal_projection_reference_pixels)||options.max_normal_projection_reference_pixels<0||
+       options.max_normal_projection_reference_pixels>1'000'000)
         throw Failure("invalid_options", "Normal projection bound must be finite and nonnegative");
     if(!std::isfinite(options.normal_projection_inset_reference_pixels)||options.normal_projection_inset_reference_pixels<0||
        options.normal_projection_inset_reference_pixels>100||
-       (options.normal_projection_inset_reference_pixels>0&&options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1))
+       (options.normal_projection_inset_reference_pixels>0&&options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1&&
+        options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1))
         throw Failure("invalid_options", "Normal projection inset must be finite, within 0..100, and positive only for dynamic normal intersections");
-    if(options.tight_projection_speed_bounds&&options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1)
+    if(options.tight_projection_speed_bounds&&options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1&&
+       options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1)
         throw Failure("invalid_options", "Analytic projected speed bounds require dynamic normal intersections");
     if(options.offscreen_policy!=OffscreenPolicy::reject&&options.offscreen_policy!=OffscreenPolicy::bounded_normal_candidate&&
-       options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1)
+       options.offscreen_policy!=OffscreenPolicy::bounded_normal_intersection_candidate_v1&&
+       options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1)
         throw Failure("invalid_options", "Unknown offscreen policy");
+    if(!std::isfinite(options.max_tangent_error_reference_pixels)||options.max_tangent_error_reference_pixels<0||
+       options.max_tangent_error_reference_pixels>151.2||
+       (options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1&&options.max_tangent_error_reference_pixels==0)||
+       (options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1&&options.max_tangent_error_reference_pixels!=0))
+        throw Failure("invalid_options","Only the explicit judgment rectangle may declare finite tangent tolerance in (0,151.2] reference pixels");
     if(options.offscreen_policy!=OffscreenPolicy::reject&&
        (!std::isfinite(options.max_normal_projection_reference_pixels)||options.max_normal_projection_reference_pixels<=0||options.calibration_id.empty()))
         throw Failure("invalid_options", "Projection candidates require a finite positive bound and pending calibration identity");
+}
+void validate_below_drag_sources(const SemanticChart& chart,const ContactCompileOptions& options) {
+    if(options.below_drag_source_ids.empty())return;
+    if(!sha256_text(chart.source.chart_sha256))
+        throw Failure("invalid_below_drag_source_filter","Below-Drag filter requires the original chart SHA256");
+    const auto prefix=chart.source.chart_sha256+'#';
+    for(const auto& id:options.below_drag_source_ids)
+        if(!id.starts_with(prefix))
+            throw Failure("invalid_below_drag_source_filter","Below-Drag source identity belongs to a different chart");
+    if(chart.lines.size()>200000)
+        throw Failure("contact_budget","Below-Drag source lookup exceeds the finite chart-line budget");
+    std::set<std::string> matched;
+    std::size_t notes=0;
+    for(const auto& line:chart.lines) {
+        if(line.notes.size()>options.max_contacts_in_plan-notes)
+            throw Failure("contact_budget","Below-Drag source lookup exceeds the configured complete note budget");
+        notes+=line.notes.size();
+        for(const auto& note:line.notes) {
+            if(!std::binary_search(options.below_drag_source_ids.begin(),options.below_drag_source_ids.end(),note.source.id))continue;
+            if(note.kind!=NoteKind::drag||note.side!=NoteSide::below||note.source.json_pointer.empty()||
+               note.source.id!=prefix+note.source.json_pointer||!matched.insert(note.source.id).second)
+                throw Failure("invalid_below_drag_source_filter","Every filtered identity must name exactly one original below Drag",note.start_ns);
+        }
+    }
+    if(matched.size()!=options.below_drag_source_ids.size())
+        throw Failure("invalid_below_drag_source_filter","Below-Drag source filter contains an unknown original identity");
+}
+void validate_above_drag_sources(const SemanticChart& chart,const ContactCompileOptions& options) {
+    if(options.above_drag_source_ids.empty())return;
+    if(!sha256_text(chart.source.chart_sha256))
+        throw Failure("invalid_above_drag_source_filter","Above-Drag filter requires the original chart SHA256");
+    const auto prefix=chart.source.chart_sha256+'#';
+    for(const auto& id:options.above_drag_source_ids)
+        if(!id.starts_with(prefix))
+            throw Failure("invalid_above_drag_source_filter","Above-Drag source identity belongs to a different chart");
+    if(chart.lines.size()>200000)
+        throw Failure("contact_budget","Above-Drag source lookup exceeds the finite chart-line budget");
+    std::set<std::string> matched;
+    std::size_t notes=0;
+    for(const auto& line:chart.lines) {
+        if(line.notes.size()>options.max_contacts_in_plan-notes)
+            throw Failure("contact_budget","Above-Drag source lookup exceeds the configured complete note budget");
+        notes+=line.notes.size();
+        for(const auto& note:line.notes) {
+            if(!std::binary_search(options.above_drag_source_ids.begin(),options.above_drag_source_ids.end(),note.source.id))continue;
+            if(note.kind!=NoteKind::drag||note.side!=NoteSide::above||note.source.json_pointer.empty()||
+               note.source.id!=prefix+note.source.json_pointer||!matched.insert(note.source.id).second)
+                throw Failure("invalid_above_drag_source_filter","Every filtered identity must name exactly one original above Drag",note.start_ns);
+        }
+    }
+    if(matched.size()!=options.above_drag_source_ids.size())
+        throw Failure("invalid_above_drag_source_filter","Above-Drag source filter contains an unknown original identity");
 }
 std::string cache_key(const CompiledContactPlan& plan) {
     const auto& i=plan.memory.identity; const auto& g=plan.metadata.geometry; const auto& o=plan.metadata.options;
@@ -585,6 +1073,8 @@ std::string cache_key(const CompiledContactPlan& plan) {
     const auto text=[&](const std::string& value){stream<<value.size()<<':'<<value<<';';};
     text("pas.compiled-contact-fingerprint.v2");
     text(plan.metadata.compiler_version);text(plan.metadata.strategy);text(plan.metadata.projection_policy_version);
+    if(!plan.metadata.judgment_policy_provenance.empty()) {text("judgment-policy-provenance.v1");text(plan.metadata.judgment_policy_provenance);}
+    if(plan.metadata.source_format_version!=3) {text("native-source-format.v1");stream<<plan.metadata.source_format_version<<';';}
     if(plan.metadata.import_policy_id!="phigros-v3-strict-v1"||plan.metadata.import_interpretation_unqualified||!plan.metadata.import_anomaly_source_ids.empty()) {
         text("native-import-interpretation.v1");text(plan.metadata.import_policy_id);
         stream<<plan.metadata.import_interpretation_unqualified<<','<<plan.metadata.import_anomaly_source_ids.size()<<';';
@@ -604,6 +1094,22 @@ std::string cache_key(const CompiledContactPlan& plan) {
     }
     if(o.tight_projection_speed_bounds)text("analytic-projected-derivative-v1");
     if(o.flick_path_policy!=FlickPathPolicy::dynamic_line_v1)text(flick_path_policy_name(o.flick_path_policy));
+    if(o.hold_tail_policy!=HoldTailPolicy::full_pose_v1)text(hold_tail_policy_name(o.hold_tail_policy));
+    if(o.max_tangent_error_reference_pixels!=0) {text("max-tangent-error-reference-pixels.v1");stream<<o.max_tangent_error_reference_pixels<<';';}
+    if(o.max_prejudge_ns!=0) {text("phira-prejudge-candidate.v1");stream<<o.max_prejudge_ns<<','<<o.advance_above_drags<<';';}
+    if(o.advance_below_drags)text("advance-below-drags-candidate-v1");
+    if(!o.below_drag_source_ids.empty()) {
+        auto ids=o.below_drag_source_ids;std::sort(ids.begin(),ids.end());
+        text("below-drag-source-filter-candidate-v1");stream<<ids.size()<<':';
+        for(const auto& id:ids)text(id);
+    }
+    if(!o.above_drag_source_ids.empty()) {
+        auto ids=o.above_drag_source_ids;std::sort(ids.begin(),ids.end());
+        text("above-drag-source-filter-candidate-v1");stream<<ids.size()<<':';
+        for(const auto& id:ids)text(id);
+    }
+    if(o.max_hold_reacquire_gap_ns!=0) {text("phira-hold-reacquire-candidate.v1");stream<<o.max_hold_reacquire_gap_ns<<';';}
+    if(o.coincident_flick_delay_ns!=0) {text("coincident-flick-delay-candidate.v1");stream<<o.coincident_flick_delay_ns<<';';}
     stream<<plan.ownership.size()<<':';
     for(const auto& owned:plan.ownership) {
         text(owned.source_note_id);text(owned.source_json_pointer);
@@ -613,6 +1119,33 @@ std::string cache_key(const CompiledContactPlan& plan) {
             <<owned.normal_projection_spans.size()<<';';
         for(const auto& span:owned.normal_projection_spans)stream<<span.begin_ns<<','<<span.end_ns<<','<<span.correction_lower_reference_pixels<<','
             <<span.correction_upper_reference_pixels<<','<<span.possible_edge_mask<<','<<span.speed_bound_input_pixels_per_ns<<';';
+        if(owned.tangent_projection_min_reference_pixels!=0||owned.tangent_projection_max_reference_pixels!=0) {
+            text("tangent-projection-extrema.v1");stream<<owned.tangent_projection_min_reference_pixels<<','<<owned.tangent_projection_max_reference_pixels<<';';
+        }
+        if(o.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1) {
+            text("judgment-rectangle-span-tangent-correction.v1");
+            for(const auto& span:owned.normal_projection_spans)stream<<span.tangent_correction_lower_reference_pixels<<','<<span.tangent_correction_upper_reference_pixels<<';';
+        }
+        if(owned.hold_tracking_end_ns!=-1) {text("hold-tracking-end.v1");stream<<owned.hold_tracking_end_ns<<';';}
+        if(owned.dispatch_judgment_ns!=-1) {text("dispatch-judgment.v1");stream<<owned.dispatch_judgment_ns<<';';}
+        if(o.max_hold_reacquire_gap_ns!=0) {
+            text("judgment-domain-gap-spans.v1");stream<<owned.gap_tangent_projection_min_reference_pixels<<','<<owned.gap_tangent_projection_max_reference_pixels<<';';
+            for(const auto& span:owned.normal_projection_spans)stream<<span.judgment_domain_gap<<';';
+        }
+        if(owned.flick_anchor_reference||owned.flick_direction_reference) {
+            text("screen-fit-flick-anchor-direction.v1");stream<<owned.flick_anchor_reference.has_value()<<','<<owned.flick_direction_reference.has_value()<<';';
+            if(owned.flick_anchor_reference)stream<<owned.flick_anchor_reference->x<<','<<owned.flick_anchor_reference->y<<';';
+            if(owned.flick_direction_reference)stream<<owned.flick_direction_reference->x<<','<<owned.flick_direction_reference->y<<';';
+        }
+        if(owned.flick_discrete_path) {
+            const auto& p=*owned.flick_discrete_path;text("flick-discrete-path-certificate.v1");text(p.model_id);
+            stream<<p.bend_reference.x<<','<<p.bend_reference.y<<','<<p.end_reference.x<<','<<p.end_reference.y<<','
+                <<p.bend_ns<<','<<p.end_ns<<','<<p.endpoint_distance_reference_pixels<<','<<p.polyline_length_reference_pixels<<','
+                <<p.max_jump_input_pixels<<','<<p.move_count<<';';
+            if(p.middle) {
+                text("flick-discrete-middle-vertex.v1");stream<<p.middle->reference.x<<','<<p.middle->reference.y<<','<<p.middle->song_ns<<';';
+            }
+        }
     }
     // Incorporate the complete deterministic output so manually constructed IR
     // cannot reuse a cache entry merely by claiming an existing source hash.
@@ -622,6 +1155,167 @@ std::string cache_key(const CompiledContactPlan& plan) {
     for(const auto& e:plan.events)stream<<e.song_ns<<','<<e.contact_id<<','<<static_cast<int>(e.phase)<<','<<e.point.x<<','<<e.point.y<<';';
     stream<<plan.peak_contacts<<','<<plan.total_steps<<';';
     return chart_text_sha256(stream.str());
+}
+bool prejudge_geometry_failure(const std::string& code) {
+    return code=="offscreen_target"||code=="projection_unavailable"||code=="judgment_domain_unreachable"||
+        code=="straight_flick_outside_rectangle"||code=="screen_fit_flick_unavailable"||
+        code=="diagonal_snap_unavailable"||code=="diagonal_snap_raster_resolution"||
+        code=="diagonal_sampled_unavailable"||code=="diagonal_sampled_raster_resolution"||
+        code=="uncertified_normal_projection"||code=="invisible_flick";
+}
+ContactCompileResult compile_prejudge(const SemanticChart& chart,const Identity& identity,
+        PhigrosGeometry geometry,ContactCompileOptions options) {
+    auto base=options;base.max_prejudge_ns=0;base.advance_above_drags=false;base.advance_below_drags=false;
+    base.below_drag_source_ids.clear();
+    base.above_drag_source_ids.clear();
+    auto native=compile_phigros_contacts(chart,identity,geometry,base);
+    for(const auto& d:native.diagnostics)if(d.severity==CompileSeverity::error&&
+        !prejudge_geometry_failure(d.code)&&d.code!="capacity_exceeded")return native;
+    std::set<std::string> native_geometry_failures;
+    for(const auto& d:native.diagnostics)if(d.severity==CompileSeverity::error&&prejudge_geometry_failure(d.code))
+        native_geometry_failures.insert(d.source_note_id);
+    // At most three complete, independently bounded offline compilations. Each
+    // source note still owns exactly one contact. Only an INTERNAL dispatch copy
+    // changes time; the returned native judgment/source declaration is restored.
+    auto dispatch=chart;bool changed=false;std::set<std::string> forced;
+    for(auto& line:dispatch.lines)for(auto& note:line.notes) {
+        const bool above=options.advance_above_drags&&note.kind==NoteKind::drag&&note.side==NoteSide::above&&
+            (options.above_drag_source_ids.empty()||std::binary_search(options.above_drag_source_ids.begin(),options.above_drag_source_ids.end(),note.source.id));
+        const bool below=options.advance_below_drags&&note.kind==NoteKind::drag&&note.side==NoteSide::below&&
+            (options.below_drag_source_ids.empty()||std::binary_search(options.below_drag_source_ids.begin(),options.below_drag_source_ids.end(),note.source.id));
+        if((note.kind==NoteKind::drag||note.kind==NoteKind::flick)&&note.start_ns>=options.max_prejudge_ns&&
+           (above||below||native_geometry_failures.contains(note.source.id))) {
+            note.start_ns-=options.max_prejudge_ns;changed=true;if(above||below)forced.insert(note.source.id);
+        }
+    }
+    auto result=changed?compile_phigros_contacts(dispatch,identity,geometry,base):std::move(native);
+    if(changed&&!result.plan&&!forced.empty()) {
+        std::set<std::string> restore;
+        for(const auto& d:result.diagnostics)if(d.severity==CompileSeverity::error&&prejudge_geometry_failure(d.code)&&
+            forced.contains(d.source_note_id)&&!native_geometry_failures.contains(d.source_note_id))restore.insert(d.source_note_id);
+        if(!restore.empty()) {
+            for(auto& line:dispatch.lines)for(auto& note:line.notes)if(restore.contains(note.source.id))note.start_ns+=options.max_prejudge_ns;
+            result=compile_phigros_contacts(dispatch,identity,geometry,base);
+        }
+    }
+    if(!result.plan)return result;
+    auto& plan=*result.plan;
+    plan.metadata.options=options;plan.metadata.requires_calibration=true;
+    plan.metadata.strategy+="; phira-prejudge-candidate-v1; native-judgment-preserved; exclusive-source-contact";
+    if(options.advance_below_drags)plan.metadata.strategy+="; advance-below-drags-candidate-v1";
+    if(!options.below_drag_source_ids.empty())plan.metadata.strategy+="; below-drag-source-filter-candidate-v1";
+    if(!options.above_drag_source_ids.empty())plan.metadata.strategy+="; above-drag-source-filter-candidate-v1";
+    if(plan.metadata.judgment_policy_provenance.empty())
+        plan.metadata.judgment_policy_provenance="https://github.com/TeamFlos/phira/blob/750579396cbc5dc61e6379fbfb2aa1adb70751a6/prpr/src/judge.rs; community simulator candidate; proprietary-engine acceptance unverified";
+    plan.metadata.judgment_policy_provenance+="; Drag/Flick pre-judge at native time or declared early endpoint <=30ms; native judgment_ns and source note retained";
+    if(options.advance_below_drags)
+        plan.metadata.judgment_policy_provenance+="; advance-below-drags-candidate-v1: separately enabled below-Drag early endpoint; above-Drag option unchanged, native judgment/source retained";
+    if(!options.below_drag_source_ids.empty())
+        plan.metadata.judgment_policy_provenance+="; below-drag-source-filter-candidate-v1: closed original below-Drag source set only; unspecified sources retain prior policy and native-geometry fallback; native judgment/source unchanged";
+    if(!options.above_drag_source_ids.empty())
+        plan.metadata.judgment_policy_provenance+="; above-drag-source-filter-candidate-v1: closed original above-Drag source set only; unspecified sources retain prior policy and native-geometry fallback; native judgment/source unchanged";
+    for(auto& owner:plan.ownership) {
+        if(owner.kind!=NoteKind::drag&&owner.kind!=NoteKind::flick)continue;
+        const auto& source=chart.lines.at(owner.line_index).notes.at(owner.note_index);
+        owner.dispatch_judgment_ns=owner.judgment_ns;owner.judgment_ns=source.start_ns;
+        if(owner.dispatch_judgment_ns<source.start_ns) {
+            if(result.diagnostics.size()>=options.max_diagnostics) {
+                result.plan.reset();result.diagnostics.back()={CompileSeverity::error,"diagnostic_budget","Pre-judge provenance exceeds finite diagnostic budget",{}, {},0,0,0,{}};return result;
+            }
+            result.diagnostics.push_back({CompileSeverity::warning,"unverified_early_judgment",
+                "Explicit Drag/Flick pre-judge candidate; original native judgment and source retained, actual game acceptance unverified",
+                owner.source_note_id,{},owner.line_index,owner.note_index,owner.dispatch_judgment_ns,{}});
+        }
+    }
+    plan.metadata.cache_sha256=cache_key(plan);
+    return result;
+}
+ContactCompileResult compile_coincident_flick_delay(const SemanticChart& chart,const Identity& identity,
+        PhigrosGeometry geometry,ContactCompileOptions options) {
+    // Finish the complete original compile, including pre-judge restoration of
+    // native ownership, BEFORE inspecting exact same-native-time groups. The
+    // internal pre-judge dispatch chart must never supply this grouping key.
+    auto base=options;base.coincident_flick_delay_ns=0;
+    auto result=compile_phigros_contacts(chart,identity,geometry,base);
+    if(!result.plan)return result;
+    const auto limit=options.max_diagnostics;
+    const auto reject=[&](CompileDiagnostic diagnostic){
+        result.plan.reset();
+        if(result.diagnostics.size()<limit)result.diagnostics.push_back(std::move(diagnostic));
+        else if(!result.diagnostics.empty())result.diagnostics.back()={CompileSeverity::error,"diagnostic_budget",
+            "Coincident Flick candidate exceeds the finite diagnostic budget",{},{},0,0,0,{}};
+    };
+    CompileDiagnostic context;context.severity=CompileSeverity::error;
+    try {
+        auto& plan=*result.plan;
+        if(plan.ownership.size()!=plan.memory.contacts.size())
+            throw Failure("coincident_flick_owner_mismatch","Complete contact and ownership arrays differ");
+        // One bounded O(N log N) native-head index; no pairwise source scan.
+        std::vector<SongNs> peer_heads;peer_heads.reserve(plan.ownership.size());
+        for(const auto& owner:plan.ownership)
+            if(owner.kind==NoteKind::tap||owner.kind==NoteKind::hold||owner.kind==NoteKind::drag)
+                peer_heads.push_back(owner.judgment_ns);
+        std::sort(peer_heads.begin(),peer_heads.end());
+        peer_heads.erase(std::unique(peer_heads.begin(),peer_heads.end()),peer_heads.end());
+        std::size_t shifted=0;
+        for(std::size_t index=0;index<plan.ownership.size();++index) {
+            auto& owner=plan.ownership[index];auto& contact=plan.memory.contacts[index];
+            if(contact.id!=owner.contact_id)
+                throw Failure("coincident_flick_owner_mismatch","Compiler source-order contact/ownership IDs differ");
+            if(owner.kind!=NoteKind::flick||!std::binary_search(peer_heads.begin(),peer_heads.end(),owner.judgment_ns))continue;
+            context.source_note_id=owner.source_note_id;context.line_index=owner.line_index;
+            context.note_index=owner.note_index;context.song_ns=owner.judgment_ns;
+            if(owner.dispatch_judgment_ns>=0&&owner.dispatch_judgment_ns<owner.judgment_ns)
+                throw Failure("coincident_flick_prejudge_conflict","Cannot delay an already pre-judged Flick without a new geometry proof",owner.judgment_ns);
+            if(!owner.flick_discrete_path||contact.steps.size()!=4||contact.steps[0].phase!=Phase::down||
+                contact.steps[1].phase!=Phase::move||contact.steps[2].phase!=Phase::move||contact.steps[3].phase!=Phase::up)
+                throw Failure("coincident_flick_requires_discrete_path","Matched Flick lacks its complete four-step discrete certificate",owner.judgment_ns);
+            // All positions, projection spans and native/source identities stay
+            // verbatim. Only commanded times and the discrete vertex times move.
+            for(auto& step:contact.steps)step.song_ns=add(step.song_ns,options.coincident_flick_delay_ns);
+            auto& path=*owner.flick_discrete_path;
+            path.bend_ns=add(path.bend_ns,options.coincident_flick_delay_ns);
+            path.end_ns=add(path.end_ns,options.coincident_flick_delay_ns);
+            owner.dispatch_judgment_ns=add(owner.judgment_ns,options.coincident_flick_delay_ns);
+            ++shifted;
+        }
+        plan.metadata.options=options;
+        plan.metadata.strategy+="; coincident-flick-delay32-candidate-v1";
+        if(!plan.metadata.judgment_policy_provenance.empty())plan.metadata.judgment_policy_provenance+="; ";
+        plan.metadata.judgment_policy_provenance+="coincident-flick-delay32-candidate-v1: exact native-time Tap/Hold/Drag peer; complete discrete Flick contact delayed32ms with geometry/source/native judgment retained; experimental input handoff, proprietary-engine acceptance unverified";
+        // Rebuild every global event and recompute real post-shift overlap.
+        // Capacity is never inherited from the undelayed source plan.
+        std::vector<std::pair<SongNs,int>> edges;edges.reserve(plan.memory.contacts.size()*2);
+        plan.events.clear();plan.events.reserve(plan.total_steps);
+        std::size_t steps=0;
+        for(const auto& contact:plan.memory.contacts) {
+            if(contact.steps.size()>options.max_steps_in_plan||steps>options.max_steps_in_plan-contact.steps.size())
+                throw Failure("plan_step_budget","Coincident Flick event rebuild exceeds the finite step budget");
+            steps+=contact.steps.size();
+            edges.emplace_back(contact.steps.front().song_ns,1);edges.emplace_back(contact.steps.back().song_ns,-1);
+            for(const auto& step:contact.steps)plan.events.push_back({step.song_ns,contact.id,step.phase,step.point});
+        }
+        if(steps!=plan.total_steps)throw Failure("coincident_flick_step_count","Timing-only handoff changed the complete step count");
+        std::sort(edges.begin(),edges.end());int active=0,peak=0;
+        for(const auto& edge:edges){active+=edge.second;peak=std::max(peak,active);}
+        result.required_peak_contacts=peak;
+        if(peak>options.max_contacts)
+            throw Failure("capacity_exceeded","Coincident Flick candidate requires "+std::to_string(peak)+
+                " contacts after the complete timing shift; configured capacity is "+std::to_string(options.max_contacts));
+        try{plan.peak_contacts=validate(plan.memory,options.max_contacts);}
+        catch(const std::invalid_argument& error){throw Failure("capacity_or_lifecycle",error.what());}
+        std::sort(plan.events.begin(),plan.events.end(),[](const auto& a,const auto& b){
+            return std::tuple(a.song_ns,phase_order(a.phase),a.contact_id)<std::tuple(b.song_ns,phase_order(b.phase),b.contact_id);
+        });
+        if(result.diagnostics.size()>=limit)
+            throw Failure("diagnostic_budget","Coincident Flick provenance exceeds the finite diagnostic budget");
+        result.diagnostics.push_back({CompileSeverity::warning,"unverified_coincident_flick_delay",
+            "Explicit timing-only handoff delayed "+std::to_string(shifted)+
+            " coincident discrete Flick contacts; no actual game judgment improvement is established",{},{},0,0,0,{}});
+        plan.metadata.cache_sha256=cache_key(plan);
+    }catch(const Failure& error){context.code=error.code;context.message=error.what();context.song_ns=error.time;context.reference_point=error.point;reject(std::move(context));}
+     catch(const std::exception& error){context.code="invalid_chart_or_geometry";context.message=error.what();reject(std::move(context));}
+    return result;
 }
 } // namespace
 
@@ -639,6 +1333,12 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
     };
     try {
         check_options(options);
+        std::sort(options.below_drag_source_ids.begin(),options.below_drag_source_ids.end());
+        std::sort(options.above_drag_source_ids.begin(),options.above_drag_source_ids.end());
+        validate_below_drag_sources(chart,options);
+        validate_above_drag_sources(chart,options);
+        if(options.coincident_flick_delay_ns>0)return compile_coincident_flick_delay(chart,identity,geometry,options);
+        if(options.max_prejudge_ns>0)return compile_prejudge(chart,identity,geometry,options);
         if(identity.game!=Game::phigros||identity.song_id.empty()||identity.difficulty.empty()||identity.revision.empty()||identity.layout_id.empty()||
            !sha256_text(identity.chart_sha256)||!sha256_text(identity.audio_sha256)||
            identity.chart_sha256!=chart.source.chart_sha256||identity.song_id!=chart.source.song_id||
@@ -646,29 +1346,61 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
             throw Failure("identity_mismatch", "Chart source and complete chart/audio/layout identity must match exactly");
         Build build(chart,geometry,options);
         CompiledContactPlan plan; plan.memory.identity=std::move(identity);plan.metadata.geometry=geometry;plan.metadata.options=options;
+        if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_snap_v1||
+           options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2)
+            plan.metadata.strategy="exclusive-note-ownership; raster-pixel-normalized; other-paths-discrete-held-error-bound; flick-explicit-discrete-vertices-no-continuous-target-claim";
         if(chart.import_policy_id.empty()||chart.import_policy_id.size()>256)
             throw Failure("invalid_import_policy", "Parsed chart import policy identity is required and bounded");
+        if((chart.source_format_version!=1&&chart.source_format_version!=3)||
+           (chart.source_format_version==1&&chart.import_policy_id!="phigros-v1-source-priority-constant-empty-candidate-v1"&&
+            chart.import_policy_id!="phigros-v1-source-priority-empty-interval-candidate-v1"))
+            throw Failure("invalid_import_policy","Native source format must match an explicit supported import interpretation");
         plan.metadata.import_policy_id=chart.import_policy_id;
+        plan.metadata.source_format_version=chart.source_format_version;
         plan.metadata.import_interpretation_unqualified=chart.import_interpretation_unqualified;
         for(const auto& anomaly:chart.import_anomalies) {
             if(anomaly.source.id!=chart.source.chart_sha256+'#'+anomaly.source.json_pointer)
                 throw Failure("invalid_import_policy", "Native import anomaly must retain exact chart source identity");
             plan.metadata.import_anomaly_source_ids.push_back(anomaly.source.id);
         }
-        const bool dynamic_projection=options.offscreen_policy==OffscreenPolicy::bounded_normal_intersection_candidate_v1;
+        const bool rectangle_projection=options.offscreen_policy==OffscreenPolicy::bounded_judgment_rectangle_candidate_v1;
+        const bool dynamic_projection=options.offscreen_policy==OffscreenPolicy::bounded_normal_intersection_candidate_v1||rectangle_projection;
         plan.metadata.requires_calibration=options.offscreen_policy!=OffscreenPolicy::reject;
         if(dynamic_projection) {
             plan.metadata.compiler_version="phigros-contact-v2";
             plan.metadata.projection_policy_version="bounded_normal_intersection_candidate_v1";
-            plan.metadata.strategy+="; bounded-normal-intersection-candidate";
+            plan.metadata.strategy+=rectangle_projection?"; bounded-judgment-rectangle-candidate":"; bounded-normal-intersection-candidate";
             if(options.normal_projection_inset_reference_pixels>0)plan.metadata.strategy+="; reference-safe-inset-v1";
             if(options.tight_projection_speed_bounds)plan.metadata.strategy+="; analytic-projected-derivative-v1";
+            if(rectangle_projection) {
+                plan.metadata.projection_policy_version="bounded_judgment_rectangle_candidate_v1";
+                plan.metadata.strategy+="; bounded-judgment-rectangle-candidate-v1; continuous-tangent-domain-certificate; nearest-rectangle-1-Lipschitz";
+            }
         } else if(options.offscreen_policy==OffscreenPolicy::bounded_normal_candidate)
             plan.metadata.projection_policy_version="bounded_fixed_normal_candidate_v1";
-        if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_straight_v1) {
-            plan.metadata.strategy+="; judgment-anchored-straight-v1";
+        if(options.flick_path_policy!=FlickPathPolicy::dynamic_line_v1) {
+            plan.metadata.strategy+="; "+std::string(flick_path_policy_name(options.flick_path_policy));
             plan.metadata.requires_calibration=true;
         }
+        if(options.hold_tail_policy==HoldTailPolicy::phira_tail_grace_candidate_v1) {
+            plan.metadata.strategy+="; phira-tail-grace-candidate-v1; original-hold-pointer-lifetime";
+            plan.metadata.requires_calibration=true;
+        }
+        if(options.max_hold_reacquire_gap_ns>0) {
+            plan.metadata.strategy+="; phira-hold-reacquire-candidate-v1; conservative-merged-tangent-gaps";
+            plan.metadata.requires_calibration=true;
+        }
+        if(options.hold_tail_policy==HoldTailPolicy::phira_tail_grace_candidate_v1||
+           options.flick_path_policy==FlickPathPolicy::judgment_anchored_screen_fit_v1||
+           options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_snap_v1||
+           options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2||rectangle_projection||options.max_hold_reacquire_gap_ns>0)
+            plan.metadata.judgment_policy_provenance="https://github.com/TeamFlos/phira/blob/750579396cbc5dc61e6379fbfb2aa1adb70751a6/prpr/src/judge.rs; community simulator: local tangent-x judgment, direction-independent Flick tracker, Hold final 220ms pre-judge; offline candidate, proprietary-engine acceptance unverified";
+        if(rectangle_projection)plan.metadata.judgment_policy_provenance+="; rectangle domain reserves complete held/raster error using inverse minimum geometry scale";
+        if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_snap_v1)
+            plan.metadata.judgment_policy_provenance+="; explicit discrete diagonal Flick: held judgment anchor then two curved MOVE vertices; no continuous target interpolation or held-error qualification for Flick";
+        if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2)
+            plan.metadata.judgment_policy_provenance+="; explicit sampled diagonal Flick v2: held native judgment anchor then three curved MOVE vertices; no continuous target interpolation, device sampling or actual game acceptance qualification";
+        if(options.max_hold_reacquire_gap_ns>0)plan.metadata.judgment_policy_provenance+="; Hold tangent-only reacquire gaps conservatively merged <=20ms with valid recovery, within community 50ms grace; physical path and finite normal bound remain continuous";
         std::set<std::string> source_ids;
         std::uint64_t next_id=1;
         std::size_t notes=0;
@@ -682,21 +1414,48 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                    !std::isfinite(note.time_tick)||!std::isfinite(note.hold_ticks)||
                    (note.side!=NoteSide::above&&note.side!=NoteSide::below))
                     throw Failure("invalid_note", "Invalid note time, finite field, or side",note.start_ns);
-                const double projection=dynamic_projection ? build.projected(build.poses.line_at(li,note.start_ns),note,0,note.start_ns).correction : build.projection(note,li);
+                const auto judgment_target=dynamic_projection ? build.projected(build.poses.line_at(li,note.start_ns),note,0,note.start_ns):ProjectedPoint{};
+                const double projection=dynamic_projection ? judgment_target.correction : build.projection(note,li);
                 Contact contact;contact.id=next_id++;
                 NoteContactOwnership owned;
                 owned.source_note_id=note.source.id;owned.source_json_pointer=note.source.json_pointer;owned.line_index=li;owned.note_index=ni;
                 owned.kind=note.kind;owned.side=note.side;owned.contact_id=contact.id;owned.judgment_ns=note.start_ns;
                 owned.normal_projection_reference_pixels=projection;owned.time_varying_normal_projection=dynamic_projection;
                 owned.projection_min_reference_pixels=owned.projection_max_reference_pixels=projection;
+                owned.tangent_projection_min_reference_pixels=owned.tangent_projection_max_reference_pixels=judgment_target.tangent_correction;
                 if(note.kind==NoteKind::hold) {
                     if(note.end_ns==note.start_ns) throw Failure("zero_length_hold", "A Hold must have positive contact duration",note.start_ns);
-                    if(dynamic_projection)build.projected_trajectory(contact,note,li,note.start_ns,note.end_ns,false,owned);
-                    else build.trajectory(contact,note,li,note.start_ns,note.end_ns,projection,false);
+                    const bool tail=options.hold_tail_policy==HoldTailPolicy::phira_tail_grace_candidate_v1;
+                    const auto tracking_end=tail?std::max(note.start_ns,note.end_ns-220'000'000):note.end_ns;
+                    if(tail)owned.hold_tracking_end_ns=tracking_end;
+                    if(tracking_end==note.start_ns) {
+                        const auto pose=build.poses.line_at(li,note.start_ns);
+                        const auto point=dynamic_projection?build.projected_pixel(pose,note,0,note.start_ns):build.point(pose,note,projection,note.start_ns);
+                        build.append(contact,note.start_ns,Phase::down,point,true);
+                        build.append(contact,note.end_ns,Phase::up,point,true);
+                        if(dynamic_projection) {
+                            if(++build.projection_span_count>options.max_steps_in_plan)
+                                throw Failure("projection_span_budget","Short Hold judgment certificate exceeds finite plan budget",note.start_ns);
+                            owned.normal_projection_spans.push_back({note.start_ns,note.start_ns,projection,projection,judgment_target.edge,0,
+                                judgment_target.tangent_correction,judgment_target.tangent_correction});
+                        }
+                    } else {
+                        if(dynamic_projection)build.projected_trajectory(contact,note,li,note.start_ns,tracking_end,false,owned);
+                        else build.trajectory(contact,note,li,note.start_ns,tracking_end,projection,false);
+                        if(tail) {
+                            contact.steps.back().phase=Phase::move;
+                            build.append(contact,note.end_ns,Phase::up,contact.steps.back().point,true);
+                        }
+                    }
+                    build.validate_hold_gaps(owned,note.start_ns,tracking_end);
                 } else if(note.kind==NoteKind::flick) {
                     if(note.start_ns<options.flick_lead_ns) throw Failure("negative_flick_lead", "Flick stroke would begin before song zero",note.start_ns);
                     const auto first=note.start_ns-options.flick_lead_ns;
-                    if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_straight_v1)
+                    if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_snap_v1)
+                        build.diagonal_snap_flick(contact,note,li,first,add(first,options.flick_travel_ns),owned);
+                    else if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2)
+                        build.diagonal_sampled_flick(contact,note,li,first,add(first,options.flick_travel_ns),owned);
+                    else if(options.flick_path_policy!=FlickPathPolicy::dynamic_line_v1)
                         build.straight_flick(contact,note,li,first,add(first,options.flick_travel_ns),projection,owned);
                     else if(dynamic_projection)build.projected_trajectory(contact,note,li,first,add(first,options.flick_travel_ns),true,owned);
                     else build.trajectory(contact,note,li,first,add(first,options.flick_travel_ns),projection,true);
@@ -709,7 +1468,7 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                     if(dynamic_projection) {
                         if(++build.projection_span_count>options.max_steps_in_plan)throw Failure("projection_span_budget","Static projection provenance exceeds plan budget",note.start_ns);
                         const auto projected=build.projected(pose,note,0,note.start_ns);
-                        owned.normal_projection_spans.push_back({note.start_ns,note.start_ns,projection,projection,projected.edge,0});
+                        owned.normal_projection_spans.push_back({note.start_ns,note.start_ns,projection,projection,projected.edge,0,projected.tangent_correction,projected.tangent_correction});
                     }
                     build.append(contact,note.start_ns,Phase::down,point,true);
                     build.append(contact,add(note.start_ns,note.kind==NoteKind::tap ? options.tap_duration_ns : options.drag_duration_ns),Phase::up,point,true);
@@ -717,9 +1476,22 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                 if(contact.steps.size()>options.max_steps_in_plan||plan.total_steps>options.max_steps_in_plan-contact.steps.size()) throw Failure("plan_step_budget", "Whole-song step budget exceeded",note.start_ns);
                 plan.total_steps+=contact.steps.size();
                 const bool projected_candidate=owned.projection_min_reference_pixels!=0||owned.projection_max_reference_pixels!=0;
+                const bool gap_candidate=std::any_of(owned.normal_projection_spans.begin(),owned.normal_projection_spans.end(),[](const auto& span){return span.judgment_domain_gap;});
                 plan.ownership.push_back(std::move(owned));
                 plan.memory.contacts.push_back(std::move(contact));
                 if(projected_candidate) diagnostic({CompileSeverity::warning,"unverified_normal_projection","Bounded normal projection is a calibration candidate; actual judgment acceptance unknown",note.source.id,{},li,ni,note.start_ns,{}});
+                if(note.kind==NoteKind::hold&&options.hold_tail_policy==HoldTailPolicy::phira_tail_grace_candidate_v1)
+                    diagnostic({CompileSeverity::warning,"unverified_hold_tail_grace","Community-simulator final 220ms tracking grace; original DOWN/UP and source note retained, actual game acceptance unverified",note.source.id,{},li,ni,note.end_ns,{}});
+                if(note.kind==NoteKind::flick&&options.flick_path_policy==FlickPathPolicy::judgment_anchored_screen_fit_v1)
+                    diagnostic({CompileSeverity::warning,"unverified_screen_fit_flick","Complete straight stroke with bounded native judgment-domain anchor; actual game acceptance unverified",note.source.id,{},li,ni,note.start_ns,{}});
+                if(note.kind==NoteKind::flick&&options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_snap_v1)
+                    diagnostic({CompileSeverity::warning,"unverified_discrete_diagonal_snap","Two-MOVE curved diagonal path is an explicit discrete input candidate; no continuous Flick target or actual game acceptance is claimed",note.source.id,{},li,ni,note.start_ns,{}});
+                if(note.kind==NoteKind::flick&&options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2)
+                    diagnostic({CompileSeverity::warning,"unverified_discrete_diagonal_sampled","Three-MOVE sampled diagonal is an explicit discrete input candidate; device sampling and actual game acceptance remain unverified",note.source.id,{},li,ni,note.start_ns,{}});
+                if(rectangle_projection)
+                    diagnostic({CompileSeverity::warning,"unverified_judgment_rectangle","Continuous normal/tangent correction bounds are certified against an explicit community simulator domain; actual Phigros acceptance unverified",note.source.id,{},li,ni,note.start_ns,{}});
+                if(gap_candidate)
+                    diagnostic({CompileSeverity::warning,"unverified_hold_reacquire_gap","Explicit <=20ms Hold tangent-domain gaps with positive valid recovery; continuous physical contact retained, actual game acceptance unverified",note.source.id,{},li,ni,note.start_ns,{}});
                 if(note.kind==NoteKind::drag||note.kind==NoteKind::flick)
                     diagnostic({CompileSeverity::warning,"fresh_down_candidate","Exclusive Drag/Flick starts a new DOWN; game-specific interference remains unverified",note.source.id,{},li,ni,note.start_ns,{}});
             } catch(const Failure& e) {

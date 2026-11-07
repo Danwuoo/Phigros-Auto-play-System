@@ -248,6 +248,22 @@ class SongLibraryPanelTests(unittest.TestCase):
         self.assertEqual(value["unsupported"], "a-in")
         self.assertIn("原生格式 v1 尚待支援", value["text"])
 
+    def test_block_area_is_visible_as_currently_unplayable(self):
+        self.data["charts"][0]["analysis_status"] = "unsupported_block_area"
+        self.data["charts"][0]["blockers"].insert(0, dict(
+            code="unsupported_block_area", message="原譜含 blockAreaList，已歸檔；目前無法完成。"))
+        self.write_library()
+        value = self.invoke(
+            "$m=Read-SongCatalog $CatalogPath; "
+            "@{state=$m.Rows[0].StateText; unsupported=@(Select-CatalogRows $m.Rows '' '' '' 'unsupported').Id; "
+            "text=(Format-CatalogDetails $m.Rows[0]); native=(Get-CatalogNativeIssue "
+            "([pscustomobject]@{status='rejected';reason='/judgeLineList/0/blockAreaList: unsupported blockAreaList'})).Summary}|ConvertTo-Json"
+        )
+        self.assertEqual(value["unsupported"], "a-in")
+        self.assertIn("目前無法完成", value["state"])
+        self.assertIn("目前無法完成", value["text"])
+        self.assertIn("目前無法完成", value["native"])
+
     def test_materialization_pointer_and_missing_states_override_archive_label(self):
         asset = self.root / "charts" / "native.json"
         asset.write_text("version https://git-lfs.github.com/spec/v1\n", encoding="utf-8")

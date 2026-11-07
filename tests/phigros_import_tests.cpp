@@ -51,10 +51,92 @@ std::string pose_fixture() {
     text=replace(text,"\"judgeLineRotateEvents\":[]","\"judgeLineRotateEvents\":[{\"startTime\":-999999,\"endTime\":1000000000,\"start\":0,\"end\":0}]");
     return text;
 }
+ImportOptions v1_options() {
+    ImportOptions options;options.policy=PhigrosImportPolicy::native_v1_source_priority_constant_empty_candidate_v1;return options;
+}
+std::string v1_fixture(const std::string& moves="{\"startTime\":0,\"endTime\":64,\"start\":0,\"end\":880520}") {
+    auto text=replace(pose_fixture(),"\"formatVersion\":3","\"formatVersion\":1");
+    text=replace(text,"\"judgeLineDisappearEvents\":[]","\"judgeLineDisappearEvents\":[{\"startTime\":-999999,\"endTime\":1000000000,\"start\":1,\"end\":1}]");
+    return replace(text,"{\"startTime\":-999999,\"endTime\":1000000000,\"start\":0.5,\"end\":0.5,\"start2\":0.5,\"end2\":0.5}",moves);
+}
 } // namespace
 
 int main() {
     const std::vector<std::pair<std::string, std::function<void()>>> tests{
+        {"separate native v1 empty-interval policy retains nonconstant reversed declarations without changing notes", [] {
+            const auto text=v1_fixture("{\"startTime\":0,\"endTime\":64,\"start\":440260,\"end\":440260},"
+                "{\"startTime\":7416,\"endTime\":7408,\"start\":0,\"end\":880520}");
+            rejects([&]{candidate(text,v1_options());});
+            auto options=v1_options();options.policy=PhigrosImportPolicy::native_v1_source_priority_empty_interval_candidate_v1;
+            const auto c=candidate(text,options);
+            check(c.note_count==1&&c.event_count==4&&c.source_format_version==1&&c.format_version==3);
+            check(c.import_policy_id=="phigros-v1-source-priority-empty-interval-candidate-v1"&&c.source.chart_sha256==chart_text_sha256(text));
+            check(c.lines[0].native_event_declarations->move_events.size()==2&&c.lines[0].move_events.size()==1);
+            const auto& raw=c.lines[0].native_event_declarations->move_events[1];
+            check(raw.time.start_tick==7416&&raw.time.end_tick==7408&&raw.packed_start==0&&raw.packed_end==880520);
+            check(c.import_anomalies.size()==2&&c.import_anomalies[1].code=="empty_reversed_pose_event"&&
+                !c.import_anomalies[1].declaration_evaluated&&c.import_anomalies[1].evaluated_segments.empty());
+            check(c.import_anomalies[1].source.id==c.source.chart_sha256+"#/judgeLineList/0/judgeLineMoveEvents/1");
+            const auto pose=PhigrosPoseEvaluator(c).line_at(0,phigros_time_ns(7412,120,0));check(pose.origin.x==.5&&pose.origin.y==.5);
+            rejects([&]{candidate(replace(text,"\"formatVersion\":1","\"formatVersion\":3"),options);});
+        }},
+        {"native v1 empty interval interpretation is explicit for rotate and alpha and remains bounded", [] {
+            auto text=v1_fixture();text=replace(text,"\"start\":0,\"end\":0}","\"start\":0,\"end\":0},{\"startTime\":7416,\"endTime\":7408,\"start\":0,\"end\":222}");
+            text=replace(text,"\"start\":1,\"end\":1}","\"start\":1,\"end\":1},{\"startTime\":50,\"endTime\":45,\"start\":1,\"end\":0}");
+            auto options=v1_options();options.policy=PhigrosImportPolicy::native_v1_source_priority_empty_interval_candidate_v1;
+            rejects([&]{candidate(text,v1_options());});
+            const auto c=candidate(text,options);check(c.note_count==1&&c.lines[0].native_event_declarations->rotate_events.size()==2);
+            check(c.lines[0].rotate_events.size()==1&&c.import_anomalies[1].original_declaration_json.find("222")!=std::string::npos);
+            check(c.lines[0].native_event_declarations->opacity_events.size()==2&&c.lines[0].opacity_events.size()==1&&
+                c.import_anomalies.back().code=="empty_reversed_pose_event");
+            options.max_anomalies=1;rejects([&]{candidate(text,options);});
+            options.max_anomalies=4096;
+            const auto only_empty=v1_fixture("{\"startTime\":2,\"endTime\":1,\"start\":0,\"end\":880520}");
+            rejects([&]{candidate(only_empty,options);});
+            rejects([&]{candidate(replace(text,"\"offset\":0","\"offset\":0,\"blockAreaList\":[]"),options);});
+        }},
+        {"explicit native v1 decodes endpoints before interpolation and preserves source identity", [] {
+            const auto text=replace(v1_fixture(),"\"offset\":0","\"offset\":0.125");
+            ChartSource source;source.label="native v1 fixture";source.chart_sha256=chart_text_sha256(text);
+            const auto c=parse_phigros(text,source,{},v1_options());
+            check(c.format_version==3&&c.source_format_version==1&&c.import_interpretation_unqualified);
+            check(c.import_policy_id=="phigros-v1-source-priority-constant-empty-candidate-v1");
+            check(c.source.chart_sha256==chart_text_sha256(text)&&c.note_count==1&&c.event_count==3);
+            const auto& declaration=c.lines[0].native_event_declarations->move_events[0];
+            check(declaration.packed_start==0&&declaration.packed_end==880520);
+            check(declaration.start_x==0&&declaration.start_y==0&&declaration.end_x==1&&declaration.end_y==1);
+            check(declaration.source.id==source.chart_sha256+"#/judgeLineList/0/judgeLineMoveEvents/0");
+            const auto pose=PhigrosPoseEvaluator(c).line_at(0,625000000);
+            check(std::abs(pose.origin.x-.5)<1e-12&&std::abs(pose.origin.y-.5)<1e-12);
+            check(c.lines[0].notes[0].start_ns==625000000&&c.lines[0].notes[0].position_x==-4);
+            rejects([&]{parse(text);});rejects([&]{candidate(text);});
+            rejects([&]{candidate(pose_fixture(),v1_options());});
+        }},
+        {"native v1 signed packed remainder and fractional native y remain unmodified", [] {
+            const auto c=candidate(v1_fixture("{\"startTime\":0,\"endTime\":64,\"start\":-1001,\"end\":440260.5}"),v1_options());
+            const auto& e=c.lines[0].move_events[0];
+            check(e.packed_start==-1001&&e.packed_end==440260.5);
+            check(std::abs(e.start_x+1.0/880)<1e-15&&std::abs(e.start_y+1.0/520)<1e-15);
+            check(e.end_x==.5&&std::abs(e.end_y-260.5/520)<1e-15);
+        }},
+        {"native v1 candidate keeps original packed declarations for source-priority slices", [] {
+            const auto text=v1_fixture("{\"startTime\":0,\"endTime\":32,\"start\":440260,\"end\":440260},"
+                "{\"startTime\":0,\"endTime\":64,\"start\":0,\"end\":880520},"
+                "{\"startTime\":70,\"endTime\":65,\"start\":440260,\"end\":440260}");
+            const auto c=candidate(text,v1_options());
+            check(c.lines[0].native_event_declarations->move_events.size()==3&&c.lines[0].move_events.size()==2);
+            check(c.lines[0].move_events[1].start_x==.5&&c.lines[0].move_events[1].end_x==1);
+            check(c.lines[0].move_events[1].packed_start==0&&c.lines[0].move_events[1].packed_end==880520);
+            check(c.import_anomalies.size()==3&&c.import_anomalies[1].original_declaration_json.find("880520")!=std::string::npos);
+            auto options=v1_options();options.max_anomalies=2;rejects([&]{candidate(text,options);});
+        }},
+        {"native v1 refuses mixed dialect unknown fields block areas and nonconstant reversed events", [] {
+            rejects([&]{candidate(replace(v1_fixture(),"\"start\":0,\"end\":880520","\"start\":0,\"end\":880520,\"start2\":0,\"end2\":1"),v1_options());});
+            rejects([&]{candidate(v1_fixture("{\"startTime\":64,\"endTime\":0,\"start\":0,\"end\":880520}"),v1_options());});
+            rejects([&]{candidate(replace(v1_fixture(),"\"offset\":0","\"offset\":0,\"blockAreaList\":[]"),v1_options());});
+            ChartSource source;source.label="mismatched bytes";source.chart_sha256=std::string(64,'a');
+            rejects([&]{parse_phigros(v1_fixture(),source,{},v1_options());});
+        }},
         {"SHA256 original bytes and padding vectors", [] {
             check(chart_text_sha256("") == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             check(chart_text_sha256("abc") == "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
@@ -141,6 +223,24 @@ int main() {
                                     replace(text, "\"speed\":1.25", "\"unknown\":1.25"),
                                     replace(text, "\"offset\":0", "\"offset\":0,\"offset\":1")})
                 rejects([&] { parse(bad); });
+        }},
+        {"block areas cannot become strict or candidate playable charts", [] {
+            for (const auto& key : {"blockAreaList", "block area list", "block_area_list"}) {
+                for (const auto& value : {"[]", "[{}]", "null", "{}"}) {
+                    const auto root = replace(chart(line()), "\"offset\":0", "\"offset\":0,\"" + std::string(key) + "\":" + value);
+                    const auto nested = chart(line("[]", "[]", "120", ",\"" + std::string(key) + "\":" + value));
+                    for (const auto& text : {root, nested}) {
+                        for (const bool use_candidate : {false, true}) {
+                            bool blocked = false;
+                            try { if (use_candidate) candidate(text); else parse(text); }
+                            catch (const std::invalid_argument& error) {
+                                blocked = std::string(error.what()).find("unsupported blockAreaList") != std::string::npos;
+                            }
+                            check(blocked);
+                        }
+                    }
+                }
+            }
         }},
         {"nonfinite and invalid numeric forms rejected", [] {
             const auto text = chart(line("[" + note() + "]"));

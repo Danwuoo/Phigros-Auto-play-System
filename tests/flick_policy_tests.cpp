@@ -51,6 +51,41 @@ unsigned reversals(const Contact& contact) {
     }
     return count;
 }
+void sampled_policy_contracts() {
+    auto c=chart();note(c,NoteKind::flick,2*second);note(c,NoteKind::tap,3*second);
+    const auto defaults=flick_parameters_from_profile(Json::object());
+    const auto default_fingerprint=compile(c,defaults).metadata.cache_sha256;
+    const Json v1_profile={{"flick_path_policy","judgment-anchored-diagonal-snap-v1"},
+        {"flick_lead_ms",8},{"flick_travel_ms",20},{"flick_release_ms",6},{"flick_distance_reference_pixels",32.0}};
+    const auto v1=flick_parameters_from_profile(v1_profile);
+    const auto v1_fingerprint=compile(c,v1).metadata.cache_sha256;
+    const Json v2_profile={{"flick_path_policy","judgment-anchored-diagonal-sampled-v2"},
+        {"flick_lead_ms",8},{"flick_travel_ms",36},{"flick_release_ms",24},{"flick_distance_reference_pixels",96.0}};
+    const auto sampled=flick_parameters_from_profile(v2_profile);
+    check(sampled.path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2&&
+        flick_parameters_json(sampled)==v2_profile,"explicit sampled-v2 profile did not roundtrip");
+    FlickParameters cli;
+    check(set_flick_option(cli,"--flick-path-policy","judgment-anchored-diagonal-sampled-v2")&&
+        cli.path_policy==sampled.path_policy,"sampled-v2 CLI policy was not accepted");
+    ContactCompileOptions applied;apply_flick_parameters(applied,sampled);
+    check(applied.flick_path_policy==sampled.path_policy&&applied.flick_lead_ns==8*ms&&
+        applied.flick_travel_ns==36*ms&&applied.flick_release_ns==24*ms&&
+        applied.flick_distance_reference_pixels==96,"sampled-v2 parameters did not reach compile options");
+    auto matching_v1=sampled;matching_v1.path_policy=FlickPathPolicy::judgment_anchored_diagonal_snap_v1;
+    const auto sampled_plan=compile(c,sampled);
+    check(sampled_plan.metadata.options.flick_path_policy==sampled.path_policy&&
+        sampled_plan.metadata.cache_sha256!=compile(c,matching_v1).metadata.cache_sha256,
+        "sampled-v2 policy failed to bind a distinct compiled identity");
+    for(const auto* unknown:{"judgment-anchored-diagonal-sampled-v3","judgment-anchored-diagonal-sampled-v2 "})
+        rejects([&]{(void)flick_parameters_from_profile(Json{{"flick_path_policy",unknown}});},"sampled policy accepted an unknown alias");
+    auto unknown=sampled;unknown.path_policy=static_cast<FlickPathPolicy>(999);
+    rejects([&]{validate_flick_parameters(unknown);},"unknown enum accepted after sampled-v2 opt-in");
+    check(defaults.path_policy==FlickPathPolicy::dynamic_line_v1&&
+        compile(c,flick_parameters_from_profile(Json::object())).metadata.cache_sha256==default_fingerprint,
+        "sampled-v2 opt-in changed the default fingerprint");
+    check(flick_parameters_json(v1)==v1_profile&&compile(c,flick_parameters_from_profile(v1_profile)).metadata.cache_sha256==v1_fingerprint,
+        "sampled-v2 opt-in changed the explicit diagonal-v1 fingerprint");
+}
 void straight_contracts() {
     auto moving=chart();note(moving,NoteKind::flick,2*second);note(moving,NoteKind::tap,3*second);
     note(moving,NoteKind::drag,4*second);note(moving,NoteKind::hold,5*second);
@@ -66,6 +101,20 @@ void straight_contracts() {
     stable.path_policy=FlickPathPolicy::judgment_anchored_straight_v1;
     check(flick_parameters_from_profile(flick_parameters_json(stable)).path_policy==stable.path_policy,"path policy did not roundtrip");
     FlickParameters cli;check(set_flick_option(cli,"--flick-path-policy","judgment-anchored-straight-v1")&&cli.path_policy==stable.path_policy,"path CLI not wired");
+    auto screenfit=old;screenfit.path_policy=FlickPathPolicy::judgment_anchored_screen_fit_v1;
+    check(flick_parameters_from_profile(flick_parameters_json(screenfit)).path_policy==screenfit.path_policy,"screen-fit profile policy did not roundtrip");
+    check(set_flick_option(cli,"--flick-path-policy","judgment-anchored-screen-fit-v1")&&cli.path_policy==screenfit.path_policy,"screen-fit CLI policy not wired");
+    auto diagonal=old;diagonal.path_policy=FlickPathPolicy::judgment_anchored_diagonal_snap_v1;
+    diagonal.distance_reference_pixels=32;diagonal.lead_ms=8;diagonal.travel_ms=20;diagonal.release_ms=6;
+    check(flick_parameters_from_profile(flick_parameters_json(diagonal)).path_policy==diagonal.path_policy,"diagonal profile policy did not roundtrip");
+    check(set_flick_option(cli,"--flick-path-policy","judgment-anchored-diagonal-snap-v1")&&cli.path_policy==diagonal.path_policy,"diagonal CLI policy not wired");
+    const auto diagonal_plan=compile(moving,diagonal);
+    check(diagonal_plan.memory.contacts[0].steps.size()==4,"diagonal policy did not retain its two explicit moves");
+    check(diagonal_plan.ownership[0].flick_discrete_path.has_value(),"diagonal policy omitted its explicit discrete certificate");
+    check(diagonal_plan.metadata.cache_sha256!=compile(moving,old).metadata.cache_sha256,"diagonal candidate reused dynamic fingerprint");
+    const auto screenfit_plan=compile(moving,screenfit);
+    check(screenfit_plan.metadata.options.flick_path_policy==screenfit.path_policy,"screen-fit profile did not select native compiler policy");
+    check(screenfit_plan.metadata.cache_sha256!=compile(moving,old).metadata.cache_sha256,"screen-fit candidate reused dynamic fingerprint");
     for(const Json& invalid:{Json(true),Json(1),Json(nullptr),Json("unknown")})
         rejects([&]{(void)flick_parameters_from_profile(Json{{"flick_path_policy",invalid}});},"unknown or invalid path policy accepted");
     check(reversals(compile(moving,old).memory.contacts[0])>0,"moving-line regression no longer reproduces reversal");
@@ -164,6 +213,7 @@ int main() {
         check(archived.description().model_sha256==explicit_first.description().model_sha256,"explicit unchanged first DOWN broke archived model identity");
         const auto altered=compile(c,lead);AdaptiveFirstNoteTrigger altered_opening(c,-80*ms,altered.events.front().song_ns);
         check(altered_opening.description().model_sha256!=archived.description().model_sha256,"changed lead retained stale opening identity");
+        sampled_policy_contracts();
         straight_contracts();
         check(hud_policy_matches_difficulty("shared-difficulty-subpixel-prefix-score-v4","AT"),"explicit AT HUD policy rejected");
         check(!hud_policy_matches_difficulty("shared-in-subpixel-prefix-score-v3","AT"),"AT inherited IN HUD qualification");

@@ -291,6 +291,40 @@ class LibraryTests(CatalogFixture):
         c = catalog.json_bytes(catalog.build_library(self.root, self.lock, observed))
         self.assertEqual(a, c)
 
+    def test_block_area_archive_stays_unsupported_with_original_bytes(self):
+        for key, value, state in (("blockAreaList", [], "empty"),
+                                  ("block area list", [{}], "nonempty"),
+                                  ("block_area_list", None, "invalid")):
+            with self.subTest(key=key):
+                raw = json.loads(native_chart())
+                raw["judgeLineList"][0][key] = value
+                original = catalog.json_bytes(raw)
+                self.raw["chart"]["歌曲.Composer.0/IN.json"] = original
+                self.trees["chart"] = self.tree(self.raw["chart"])
+                self.lock = self.make_lock()
+                self.populate()
+                library = catalog.build_library(self.root, self.lock)
+                row = next(x for x in library["charts"] if x["track_id"] == "歌曲.Composer.0" and x["difficulty"] == "IN")
+                self.assertEqual(row["analysis_status"], "unsupported_block_area")
+                self.assertEqual(row["summary"]["block_area_fields"][0]["state"], state)
+                self.assertIn("unsupported_block_area", {x["code"] for x in row["blockers"]})
+                self.assertFalse(row["live_ready"])
+                self.assertEqual((self.root / row["chart"]["file"]).read_bytes(), original)
+                self.assertEqual(library["counts"]["unsupported_block_area_count"], 1)
+
+    def test_block_area_annotation_survives_other_structural_failure(self):
+        raw = dict(formatVersion=4, blockAreaList=[{}], judgeLineList=[])
+        raw["judgeLineList"] = "unsupported new structure"
+        self.raw["chart"]["歌曲.Composer.0/IN.json"] = catalog.json_bytes(raw)
+        self.trees["chart"] = self.tree(self.raw["chart"])
+        self.lock = self.make_lock()
+        self.populate()
+        row = next(x for x in catalog.build_library(self.root, self.lock)["charts"]
+                   if x["track_id"] == "歌曲.Composer.0" and x["difficulty"] == "IN")
+        self.assertEqual(row["analysis_status"], "unsupported_block_area")
+        self.assertEqual(row["summary"]["block_area_fields"][0]["state"], "nonempty")
+        self.assertIn("structural_analysis_failed", {x["code"] for x in row["blockers"]})
+
     def test_note_time_and_json_nonfinite_rejected(self):
         path = self.root / "bad.json"
         path.write_bytes(b'{"formatVersion":3,"offset":NaN,"judgeLineList":[]}')

@@ -297,8 +297,26 @@ def inspect_asset(root, target):
     return dict(base, status="verified", sha256=digest.hexdigest())
 
 
-def chart_summary(path):
-    chart = load_json(path, MAX_CHART_BYTES)
+def block_area_fields(value):
+    """Inventory unsupported block-area declarations without editing their bytes."""
+    result, pending = [], [("", value)]
+    while pending:
+        path, node = pending.pop()
+        if isinstance(node, dict):
+            for key, child in node.items():
+                pointer = path + "/" + key.replace("~", "~0").replace("/", "~1")
+                if re.sub(r"[ _-]", "", key).lower() == "blockarealist":
+                    result.append(dict(path=pointer,
+                        state=("nonempty" if child else "empty") if isinstance(child, list) else "invalid",
+                        value_type=type(child).__name__, entries=len(child) if isinstance(child, list) else None))
+                pending.append((pointer, child))
+        elif isinstance(node, list):
+            pending.extend((path + "/" + str(i), child) for i, child in enumerate(node))
+    return sorted(result, key=lambda row: row["path"])
+
+
+def chart_summary(path, *, chart=None):
+    chart = load_json(path, MAX_CHART_BYTES) if chart is None else chart
     if not isinstance(chart, dict):
         raise ValueError("Chart root must be an object")
     version = chart.get("formatVersion")
@@ -330,6 +348,7 @@ def chart_summary(path):
                     raise ValueError("Chart note budget exceeded")
                 times.append((tick * 1.875 / bpm + offset, (tick + hold) * 1.875 / bpm + offset))
     return dict(format_version=version, line_count=len(lines), note_count=sum(counts.values()),
+                block_area_fields=block_area_fields(chart),
                 note_types={str(k): counts[k] for k in (1, 2, 3, 4)}, offset=offset,
                 first_note_seconds=min((t[0] for t in times), default=None),
                 last_note_seconds=max((t[1] for t in times), default=None),
@@ -361,10 +380,12 @@ def build_library(root, lock, observations=None):
         song = metadata[target["song_id"]]
         asset = assets[target["file"]]
         audio = assets[audio_targets[song["song_id"]]["file"]]
-        summary, analysis, blocks = {}, "unavailable", []
+        summary, analysis, blocks, area_fields = {}, "unavailable", [], []
         if asset["status"] == "verified":
             try:
-                summary = chart_summary(inside(root, asset["file"]))
+                raw_chart = load_json(inside(root, asset["file"]), MAX_CHART_BYTES)
+                area_fields = block_area_fields(raw_chart)
+                summary = chart_summary(inside(root, asset["file"]), chart=raw_chart)
                 analysis = "structural_only" if summary["format_version"] == 3 else "unsupported_format"
                 if analysis == "unsupported_format":
                     blocks.append(blocker("unsupported_format", f"原件已封存；目前原生 importer 尚未支援格式 v{summary['format_version']}。"))
@@ -374,8 +395,11 @@ def build_library(root, lock, observations=None):
                     blocks.append(blocker("duration_budget", "最後音符時間達 180 秒；需另外核對接點計畫的時長限制。"))
             except (ValueError, TypeError, KeyError, OverflowError, RecursionError) as error:
                 analysis = "failed"
-                summary = {"error": str(error)[:400]}
+                summary = {"error": str(error)[:400], "block_area_fields": area_fields}
                 blocks.append(blocker("structural_analysis_failed", "原件已封存，結構分析失敗：" + str(error)[:240]))
+            if area_fields:
+                analysis = "unsupported_block_area"
+                blocks.insert(0, blocker("unsupported_block_area", "原譜含 blockAreaList，已歸檔；目前無法完成（包含空清單）。"))
         elif asset["status"] == "lfs_pointer":
             blocks.append(blocker("lfs_pull_required", "目前只有 Git LFS 指標；請先執行 git lfs pull。"))
         else:
@@ -409,6 +433,7 @@ def build_library(root, lock, observations=None):
                   missing_count=sum(x["status"] in ("missing", "lfs_pointer") for x in assets.values()),
                   analysis_failed_count=sum(x["analysis_status"] == "failed" for x in charts),
                   unsupported_format_count=sum(x["analysis_status"] == "unsupported_format" for x in charts),
+                  unsupported_block_area_count=sum(x["analysis_status"] == "unsupported_block_area" for x in charts),
                   live_ready_count=0)
     complete = all(x["status"] == "verified" for x in assets.values())
     return dict(schema=LIBRARY_SCHEMA, source=source, counts=counts, status="complete" if complete else "incomplete",

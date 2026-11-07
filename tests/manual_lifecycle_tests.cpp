@@ -1,4 +1,5 @@
 #include "rhythm/manual_lifecycle.hpp"
+#include "../apps/chart_experiment/desktop_runtime_policy.hpp"
 #include <functional>
 #include <iostream>
 #include <stdexcept>
@@ -47,6 +48,79 @@ try {
         for(Ns value:{Ns{0},10'000*ms+1})rejects([&]{ManualConfig config;config.max_continuity_gap_ns=value;ManualLifecycle lifecycle(config);});
         require(std::string(manual_state_name(ManualState::playing))=="PLAYING","state name");
         require(std::string(manual_timestamp_kind_name(ManualTimestampKind::arrival_only))=="arrival_only","timestamp kind name");
+    });
+    run("desktop input budget and bounded settlement watchdog are distinct",[] {
+        using namespace rhythm::experimental;
+        constexpr Ns second=1'000*ms;
+        for(const Ns input:{second,180*second,600*second}) {
+            const auto limits=desktop_runtime_limits(input);
+            require(limits.input_duration_limit_ns==input,"settlement margin changed input duration");
+            require(limits.manual_settlement_watchdog_ns==input+60*second&&
+                    limits.session_limit_ns==limits.manual_settlement_watchdog_ns,"settlement/session cap differs");
+            ManualConfig config;config.round_watchdog_ns=limits.manual_settlement_watchdog_ns;
+            ManualLifecycle accepted(config);
+            require(!accepted.status(0).session_done,"valid bounded manual settlement config rejected");
+        }
+        for(const Ns input:{Ns{-1},Ns{0},second-1,600*second+1,
+                            std::numeric_limits<Ns>::min(),std::numeric_limits<Ns>::max()})
+            rejects([&]{(void)desktop_runtime_limits(input);});
+        require(std::string(desktop_settlement_policy_name())=="input-budget-plus60s-bounded-manual-settlement-v1","settlement policy identity changed");
+    });
+    run("synthetic180s input can confirm three current result frames after181s",[] {
+        using namespace rhythm::experimental;
+        constexpr Ns second=1'000*ms;
+        ManualConfig config;config.round_watchdog_ns=desktop_runtime_limits(180*second).manual_settlement_watchdog_ns;
+        config.max_observation_age_ns=config.max_continuity_gap_ns=500*ms;
+        ManualLifecycle adjusted(config);
+        config.round_watchdog_ns=180*second;ManualLifecycle legacy(config);
+        Feed feed;feed.time=-20*ms;
+        const auto send=[&](Ns at,bool result=false) {
+            const auto observation=feed.next(!result,result,false,false,at-feed.time);
+            (void)legacy.observe(observation,feed.time);
+            return adjusted.observe(observation,feed.time);
+        };
+        for(const Ns at:{Ns{0},20*ms,40*ms})send(at);
+        for(Ns at=100*ms;at<=179'900*ms;at+=100*ms)send(at);
+        auto status=send(179'990*ms);
+        require(status.ui_playing&&!status.session_done,"fresh synthetic playing state ended before input bound");
+        const auto sequence=status.observation_sequence;const auto observed=status.observed_host_ns;
+        require(legacy.poll(180*second).state==ManualState::aborted,"old180s watchdog did not reproduce early abort");
+        status=adjusted.poll(180*second);
+        require(status.ui_playing&&!status.session_done&&status.observation_sequence==sequence&&status.observed_host_ns==observed,
+                "settlement poll renewed evidence or still aborted at180s");
+        for(Ns at=180'100*ms;at<=180'900*ms;at+=100*ms)send(at);
+        status=send(181*second,true);
+        require(!status.result_confirmed&&status.active&&!status.ui_playing,"first result frame completed lifecycle");
+        status=send(181'030*ms,true);
+        require(!status.result_confirmed&&status.active,"two result frames completed lifecycle");
+        status=send(181'070*ms,true);
+        require(status.result_confirmed&&status.session_done&&status.completed_rounds==1,
+                "three distinct current synthetic result frames spanning70ms were lost to input budget");
+        require(legacy.status(feed.time).state==ManualState::aborted,"new frames revived old terminal watchdog");
+    });
+    run("settlement watchdog still expires with unknown or newly fresh frames",[] {
+        using namespace rhythm::experimental;
+        constexpr Ns second=1'000*ms;
+        for(const bool refresh_before_deadline:{false,true}) {
+            ManualConfig config;config.round_watchdog_ns=desktop_runtime_limits(180*second).manual_settlement_watchdog_ns;
+            config.max_observation_age_ns=config.max_continuity_gap_ns=500*ms;
+            ManualLifecycle lifecycle(config);Feed feed;feed.time=-20*ms;feed.playing(lifecycle);
+            auto status=feed.send(lifecycle,false,false,false,false,180*second-feed.time);
+            require(status.active&&!status.result_confirmed&&!status.ui_playing,"unknown settlement evidence completed or aborted at input bound");
+            if(refresh_before_deadline) {
+                feed.send(lifecycle,true,false,false,false,239'950*ms-feed.time);
+                feed.send(lifecycle,true,false,false,false,20*ms);
+                status=feed.send(lifecycle,true,false,false,false,20*ms);
+                require(status.ui_playing,"distinct synthetic HUD frames failed to re-establish fresh UI");
+            }
+            const auto sequence=status.observation_sequence;const auto observed=status.observed_host_ns;
+            status=lifecycle.poll(240*second-1);
+            require(status.active&&!status.session_done&&!status.result_confirmed,"settlement cap expired before exact boundary");
+            status=lifecycle.poll(240*second);
+            require(status.state==ManualState::aborted&&status.session_done&&!status.result_confirmed&&
+                    status.observation_sequence==sequence&&status.observed_host_ns==observed,
+                    "unknown or fresh observations renewed fixed watchdog or timer forged result evidence");
+        }
     });
     run("standby never starts by time or missing notes",[] {
         ManualLifecycle lifecycle;Feed feed;
