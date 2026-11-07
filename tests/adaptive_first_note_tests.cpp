@@ -380,7 +380,18 @@ try {
         auto c=mixed_earliest_chart();c.lines[0].notes[0].kind=NoteKind::drag;AdaptiveFirstNoteTrigger cyan_yellow(c,0);
         pixels=image();rectangle(pixels,300,600,80,4,{0,230,255});rectangle(pixels,600,600,80,4,{250,235,60});
         const auto roi=detect_model_opening_centers(1280,720,3840,pixels,cyan_yellow.description());
-        check(roi.valid&&roi.centers.size()==1&&roi.center_families==std::vector<int>{2},"Drag650 ROI leaked into mixed cyan570 detector");}
+        check(roi.valid&&roi.centers.size()==1&&roi.center_families==std::vector<int>{2},"Drag650 ROI leaked into mixed cyan570 detector");
+        AdaptiveFirstNoteTrigger partial(c,0,-1,false,false,true);
+        pixels=image();rectangle(pixels,264,200,80,4,{0,230,255});rectangle(pixels,0,350,80,4,{250,235,60});
+        const auto old=detect_model_opening_centers(1280,720,3840,pixels,cyan_yellow.description());
+        const auto independent=detect_model_opening_centers(1280,720,3840,pixels,partial.description());
+        check(!old.valid&&independent.valid&&independent.center_families==std::vector<int>{1}&&
+            independent.unavailable_kinds==std::vector<NoteKind>{NoteKind::drag}&&!independent.centers_complete_unoccluded,
+            "clipped independent Drag discarded an intact Tap or became negative coverage");
+        pixels=image();rectangle(pixels,600,200,80,2,{0,230,255});rectangle(pixels,600,202,80,2,{245,80,220});
+        AdaptiveFirstNoteTrigger strict_partial(mixed_earliest_chart(),0,-1,false,false,true);
+        check(!detect_model_opening_centers(1280,720,3840,pixels,strict_partial.description()).valid,
+            "partial detector policy bypassed mixed ownership ambiguity");}
     {++groups;for(const auto kind:{NoteKind::tap,NoteKind::drag,NoteKind::hold,NoteKind::flick}){
         auto c=chart();c.lines[0].notes[0].kind=kind;AdaptiveFirstNoteTrigger unchanged(c,0);const int family=kind==NoteKind::drag?2:kind==NoteKind::flick?4:1;
         check(!unchanged.description().includes_mixed_earliest_heads&&unchanged.description().required_center_families==std::vector<int>{family},
@@ -707,6 +718,17 @@ try {
             complete.description().note_kind==NoteKind::tap,"same-color Hold alias was not covered by v4 correction");
         auto one=frame(1,1750*ms),two=frame(2,1790*ms);
         check(feed(missing,one).raw_candidates.empty(),"corrected definitely visible Hold alias was silently omitted");
+        const std::vector<NoteKind> no_hold_detector{NoteKind::hold};
+        const auto partial_feed=[&](AdaptiveFirstNoteTrigger& trigger,const VisualCandidateFrame& f){
+            return trigger.observe(f,std::vector<int>{1},true,f.received_host_ns+ms,no_hold_detector);
+        };
+        AdaptiveFirstNoteTrigger partial(c,0,-1,false,false,true);
+        check(partial_feed(partial,one).raw_candidates.size()==1&&partial_feed(partial,two).anchor,
+            "rejected Hold detector vetoed intact moving first Tap as negative evidence");
+        auto missing_first=c;missing_first.lines[0].notes[1].start_ns=2*S;
+        AdaptiveFirstNoteTrigger missing_hold(missing_first,0,-1,false,false,true);
+        check(partial_feed(missing_hold,one).raw_candidates.size()==1&&!partial_feed(missing_hold,two).anchor,
+            "rejected Hold detector treated a visible earliest Hold as absent");
         one.centers.push_back({"cyan-hold",840,360+(1.5*1.75-3.15)*(720/(2*.83175))});
         two.centers.push_back({"cyan-hold",840,360+(1.5*1.79-3.15)*(720/(2*.83175))});
         feed(complete,one);check(feed(complete,two).state==FirstNoteTriggerState::ready,"source-complete Tap/Hold pair failed after effective-speed correction");
@@ -964,6 +986,51 @@ try {
         check(std::any_of(direct.raw_candidates[0].matches.begin(),direct.raw_candidates[0].matches.end(),[&](const auto& match){
             return match.center_id=="one-ornament"&&match.note_id==c.lines[0].notes[3].source.id;}),
             "direct observed-middle source did not retain both independently proved occlusions");}
+    {++groups;
+        auto c=chart();
+        const auto template_line=c.lines[0];
+        auto& first=c.lines[0];
+        first.speed_events[0].value=0;
+        first.notes[0].floor_position=0;
+        first.notes[0].position_x=-4;
+        auto add_line=[&](double speed,Ns time,double floor,double x){
+            auto line=template_line;const auto index=c.lines.size();line.source_index=index;
+            const auto prefix="/judgeLineList/"+std::to_string(index);
+            auto& note=line.notes[0];note.start_ns=note.end_ns=time;note.floor_position=floor;note.position_x=x;
+            note.source.json_pointer=prefix+"/notesAbove/0";note.source.id=c.source.chart_sha256+'#'+note.source.json_pointer;
+            line.speed_events[0].value=speed;line.speed_events[0].source.json_pointer=prefix+"/speedEvents/0";
+            c.lines.push_back(std::move(line));++c.note_count;
+        };
+        add_line(10,2*S,20,4);      // Earliest Drag is fully offscreen in both receipts.
+        add_line(1.5,2100*ms,3.15,0); // Later Drag is already visible and moving.
+        const auto witness_frame=[](unsigned sequence,Ns song,bool observed_first){
+            auto f=frame(sequence,song,768,360+(1.5*static_cast<double>(song)/S-3.15)*(720/(2*.83175)));
+            if(observed_first)f.centers.push_back({"earliest",480,360});
+            return f;
+        };
+        const auto one=witness_frame(1,1700*ms,true),two=witness_frame(2,1760*ms,true);
+        AdaptiveFirstNoteTrigger legacy(c,0),certified(c,0,-1,false,false,true);
+        check(legacy.description().model_sha256==certified.description().model_sha256&&
+            certified.description().certified_first_group_coverage,"runtime witness policy changed chart identity");
+        feed(legacy,one);check(!feed(legacy,two).anchor,"legacy path accepted missing earliest source");
+        check(!feed(certified,one).anchor,"single witness frame accepted");
+        const auto ready=feed(certified,two);
+        check(ready.anchor&&ready.anchor->supporting_evidence_ids==std::vector<std::string>{one.evidence_id,two.evidence_id}&&
+            ready.reason=="two_distinct_native_frames_certify_first_group_and_motion"&&ready.first_note_positive_candidates==0,
+            "direct first head, offscreen earliest source and moving later head did not authorize exact native origin");
+        auto all_hidden=c;all_hidden.lines[0].notes[0].position_x=-20;
+        AdaptiveFirstNoteTrigger only_later(all_hidden,0,-1,false,false,true);
+        feed(only_later,witness_frame(1,1700*ms,false));
+        check(!feed(only_later,witness_frame(2,1760*ms,false)).anchor,"nonfirst-only evidence authorized the first group");
+        auto onscreen=c;onscreen.lines[1].speed_events[0].value=0;onscreen.lines[1].notes[0].floor_position=0;
+        onscreen.lines[1].move_events[2].start_y=onscreen.lines[1].move_events[2].end_y=.8;
+        AdaptiveFirstNoteTrigger unexplained(onscreen,0,-1,false,false,true);
+        feed(unexplained,one);check(!feed(unexplained,two).anchor,"onscreen unmatched earliest source was assumed hidden");
+        auto coincident=c;coincident.lines[1].speed_events[0].value=0;coincident.lines[1].notes[0].floor_position=0;
+        coincident.lines[1].notes[0].position_x=-4;
+        AdaptiveFirstNoteTrigger covered(coincident,0,-1,false,false,true);
+        feed(covered,one);check(feed(covered,two).anchor.has_value(),"directly coincident earliest source was not covered");
+    }
     if(argc==2) {
         ++groups;std::ifstream input(argv[1],std::ios::binary);check(static_cast<bool>(input),"private chart missing");
         const std::string raw((std::istreambuf_iterator<char>(input)),{});auto native=parse_phigros(raw,{"private-offline","","Glaciaxion","IN","4.0.1/157"});

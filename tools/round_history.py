@@ -20,6 +20,9 @@ METADATA_CAP = 1024 * 1024
 MANIFEST_CAP = 128 * 1024 * 1024
 RESULT_CAP = 16 * 1024 * 1024
 REVIEW_SCHEMA = "pas.manual-judgment-review.v1"
+ARCHIVE_SCHEMA = "pas.completed-round-archive.v1"
+ARCHIVE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,79}")
+ROUND_ID = re.compile(r"round-[0-9]{2,4}")
 JUDGMENTS = ("perfect", "good", "bad", "miss")
 SHA256 = re.compile(r"[0-9a-f]{64}")
 LOCAL_STAMP = re.compile(r"-(\d{8}-\d{6})(?:-(\d{3}))?-[0-9a-f]+$")
@@ -338,7 +341,7 @@ def add_review(row, reviews_dir):
 
 def record_review(runs_dir, selector, values):
     run_id, separator, round_id = selector.partition("/")
-    if not separator or not run_id or not re.fullmatch(r"round-[0-9]{2,4}", round_id):
+    if not separator or not run_id or not ROUND_ID.fullmatch(round_id):
         raise ValueError("Review selector must be RUN_ID/round-01")
     root = runs_dir.resolve(strict=True)
     indexed = history(root, run_ids={run_id}, include_reviews=False)
@@ -369,8 +372,85 @@ def record_review(runs_dir, selector, values):
     return {**review, "review_file": str(destination)}
 
 
-def history(runs_dir, track=None, level=None, limit=None, run_ids=None, include_reviews=True):
+def utc_datetime(value):
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None or parsed.utcoffset().total_seconds() != 0:
+        raise ValueError("Archive boundaries must be UTC timestamps")
+    return parsed
+
+
+def archive_index(root, archive_id=None):
+    directory = root.parent / "completed-archives"
+    if archive_id is not None and not ARCHIVE_ID.fullmatch(archive_id):
+        raise ValueError("Invalid completed archive ID")
+    if not directory.exists():
+        if archive_id is not None:
+            raise ValueError(f"Completed archive not found: {archive_id}")
+        return {}
+    if not directory.is_dir() or directory.resolve(strict=True) != directory:
+        raise ValueError("completed-archives must be a local directory")
+    names = [archive_id + ".json"] if archive_id else sorted(path.name for path in directory.glob("*.json"))
+    index = {}
+    for name in names:
+        path = local_file(directory, name)
+        if path is None:
+            if archive_id is not None:
+                raise ValueError(f"Completed archive not found: {archive_id}")
+            continue
+        try:
+            data, _ = read_object(path)
+            if (data.get("schema") != ARCHIVE_SCHEMA or data.get("archive_id") != path.stem
+                    or not ARCHIVE_ID.fullmatch(path.stem) or not isinstance(data.get("rounds"), list)
+                    or count(data.get("record_count")) != len(data["rounds"])):
+                raise ValueError(f"Invalid completed archive: {name}")
+            keys = set()
+            for record in data["rounds"]:
+                item = obj(record)
+                key = (string(item.get("run_id")), string(item.get("round_id")))
+                if (not all(key) or not ROUND_ID.fullmatch(key[1]) or not sha256_pin(item.get("manifest_sha256"))
+                        or not sha256_pin(item.get("result_sha256")) or key in keys):
+                    raise ValueError(f"Invalid round pin in completed archive: {name}")
+                keys.add(key)
+            for item in data["rounds"]:
+                index.setdefault((item["run_id"], item["round_id"]), {})[path.stem] = item
+        except (OSError, ValueError, RecursionError):
+            if archive_id is not None:
+                raise
+    return index
+
+
+def completed_round_identity(row):
+    if (row["round_status"] != "sent_result_unreviewed" or row["exit_code"] != 0
+            or row["release_state"] != "kernel_zero_confirmed" or row["failure_detail"]
+            or row["cleanup_errors"] or row["controller_failure"] or not row["planned_steps"]
+            or row["transport_written_steps"] != row["planned_steps"]
+            or row["receipt_rows"] != row["planned_steps"]):
+        raise ValueError(f"Completed round has inconsistent evidence: {row['run_id']}/{row['round_id']}")
+    return review_identity(row)
+
+
+def mark_archives(row, index):
+    row["archive_ids"] = []
+    matches = index.get((row["run_id"], row["round_id"]))
+    if not matches:
+        return
+    try:
+        pins = completed_round_identity(row)
+    except (OSError, ValueError):
+        row["issues"].append("completed_archive:evidence_unavailable")
+        return
+    for archive_id, record in matches.items():
+        if all(record.get(key) == value for key, value in pins.items()):
+            row["archive_ids"].append(archive_id)
+        else:
+            row["issues"].append(f"completed_archive:pin_mismatch:{archive_id}")
+
+
+def history(runs_dir, track=None, level=None, limit=None, run_ids=None, include_reviews=True,
+            archive_id=None, archived_only=False, utc_window=None):
     root = runs_dir.resolve(strict=True)
+    archives = archive_index(root, archive_id)
+    archived_only = archived_only or archive_id is not None
     candidates = []
     for folder in root.iterdir():
         if run_ids is not None and folder.name not in run_ids:
@@ -382,6 +462,9 @@ def history(runs_dir, track=None, level=None, limit=None, run_ids=None, include_
             continue
         origin, source, entries, issues = run_source
         for entry in entries:
+            order = count(entry.get("order"))
+            if archived_only and (not order or (folder.name, f"round-{order:02d}") not in archives):
+                continue
             _, track_id, entry_level = identity(entry)
             if level and entry_level != level:
                 continue
@@ -392,14 +475,78 @@ def history(runs_dir, track=None, level=None, limit=None, run_ids=None, include_
                 if not normalized or normalized not in alnum(haystack):
                     continue
             utc, local = time_fields(folder.name, entry.get("started_utc") or source.get("started_utc"))
-            key = (local or utc or "", folder.name, count(entry.get("order")) or 0)
+            if utc_window is not None and (not utc or not utc_window[0] <= utc_datetime(utc) <= utc_window[1]):
+                continue
+            key = (local or utc or "", folder.name, order or 0)
             candidates.append((key, folder, origin, source, entry, issues))
     candidates.sort(key=lambda item: item[0], reverse=True)
-    rows = [build_row(*candidate[1:]) for candidate in candidates[:limit]]
-    if include_reviews:
-        for row in rows:
+    rows = []
+    for candidate in candidates if archived_only else candidates[:limit]:
+        row = build_row(*candidate[1:])
+        mark_archives(row, archives)
+        if archived_only and not row["archive_ids"]:
+            continue
+        if include_reviews:
             add_review(row, root.parent / "score-reviews")
-    return {"schema": SCHEMA, "total_matching": len(candidates), "rows": rows}
+        rows.append(row)
+    return {"schema": SCHEMA, "total_matching": len(rows) if archived_only else len(candidates),
+            "rows": rows[:limit] if archived_only else rows}
+
+
+def archive_completed(runs_dir, archive_id, since_utc, until_utc):
+    if not ARCHIVE_ID.fullmatch(archive_id):
+        raise ValueError("Invalid completed archive ID")
+    start, end = utc_datetime(since_utc), utc_datetime(until_utc)
+    if start > end:
+        raise ValueError("Archive end precedes its start")
+    root = runs_dir.resolve(strict=True)
+    rows = history(root, include_reviews=False, utc_window=(start, end))["rows"]
+    records = []
+    keys = set()
+    for row in rows:
+        if row["origin"] != "desktop_panel" or row["round_status"] != "sent_result_unreviewed":
+            continue
+        record = completed_round_identity(row)
+        key = (record["run_id"], record["round_id"])
+        if key in keys:
+            raise ValueError(f"Duplicate completed round: {key[0]}/{key[1]}")
+        keys.add(key)
+        record.update({key: row[key] for key in (
+            "started_utc", "track_id", "title", "difficulty", "planned_contacts", "planned_steps",
+            "transport_written_steps", "execution_state", "result_state", "release_state", "native_judgment_state",
+            "configuration_sha256", "library_sha256", "executable_sha256",
+        )})
+        records.append(record)
+    if not records:
+        raise ValueError("No completed desktop rounds in the requested window")
+    directory = root.parent / "completed-archives"
+    directory.mkdir(exist_ok=True)
+    if directory.resolve(strict=True) != directory:
+        raise ValueError("completed-archives must be a local directory")
+    destination = directory / f"{archive_id}.json"
+    data = {"schema": ARCHIVE_SCHEMA, "archive_id": archive_id, "since_utc": start.isoformat(),
+            "until_utc": end.isoformat(), "record_count": len(records), "rounds": records}
+    encoded = (json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n").encode("utf-8")
+    if len(encoded) > METADATA_CAP:
+        raise ValueError("Completed archive exceeds the metadata limit")
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=directory, prefix=".archive-", suffix=".tmp", delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(encoded)
+            stream.flush()
+            os.fsync(stream.fileno())
+        try:
+            # Publish the completed file without ever replacing an existing batch.
+            os.link(temporary, destination)
+        except FileExistsError:
+            existing = local_file(directory, destination.name)
+            if existing is None or read_object(existing)[1] != encoded:
+                raise ValueError(f"Completed archive already exists with different contents: {archive_id}") from None
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+    return {**data, "archive_file": str(destination)}
 
 
 # Frozen expectations derived from the six preserved desktop records. This
@@ -475,13 +622,25 @@ def main(argv=None):
     actions = parser.add_mutually_exclusive_group()
     actions.add_argument("--accept-nov03", action="store_true", help="Check the six archived Nov 3 records offline")
     actions.add_argument("--review", metavar="RUN_ID/ROUND_ID", help="Save a manual judgment review beside the run tree")
+    actions.add_argument("--archive-completed", metavar="BATCH_ID", help="Pin completed desktop records in a UTC window")
+    filters = parser.add_mutually_exclusive_group()
+    filters.add_argument("--archive", metavar="BATCH_ID", help="Show verified rounds in the named completed archive")
+    filters.add_argument("--archived-only", action="store_true", help="Show verified rounds from all completed archives")
+    parser.add_argument("--since-utc", help="Inclusive UTC start of a completed archive")
+    parser.add_argument("--until-utc", help="Inclusive UTC end of a completed archive")
     for judgment in JUDGMENTS:
         parser.add_argument(f"--{judgment}", type=int)
     args = parser.parse_args(argv)
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
-    if (args.accept_nov03 or args.review) and any(value is not None for value in (args.track, args.difficulty, args.limit)):
-        parser.error("Acceptance and manual reviews do not accept history filters")
+    if (args.accept_nov03 or args.review or args.archive_completed is not None) and (
+            args.archived_only or any(value is not None for value in (args.track, args.difficulty, args.limit, args.archive))):
+        parser.error("History filters cannot be combined with an acceptance, review, or archive action")
+    if args.archive_completed is not None:
+        if args.since_utc is None or args.until_utc is None:
+            parser.error("--archive-completed requires --since-utc and --until-utc")
+    elif args.since_utc is not None or args.until_utc is not None:
+        parser.error("Archive boundaries require --archive-completed")
     values = {judgment: getattr(args, judgment) for judgment in JUDGMENTS}
     if args.review and any(value is None for value in values.values()):
         parser.error("--review requires --perfect, --good, --bad and --miss")
@@ -490,10 +649,13 @@ def main(argv=None):
     try:
         if args.review:
             report = record_review(args.runs_dir, args.review, values)
+        elif args.archive_completed is not None:
+            report = archive_completed(args.runs_dir, args.archive_completed, args.since_utc, args.until_utc)
         elif args.accept_nov03:
             report = accept_nov03(args.runs_dir)
         else:
-            report = history(args.runs_dir, args.track, args.difficulty, args.limit)
+            report = history(args.runs_dir, args.track, args.difficulty, args.limit,
+                             archive_id=args.archive, archived_only=args.archived_only)
     except (OSError, RuntimeError, ValueError) as error:
         print(f"History unavailable: {error}", file=sys.stderr)
         return 2
@@ -501,6 +663,8 @@ def main(argv=None):
         print(json.dumps(report, allow_nan=False))
     elif args.review:
         print(f"Manual judgment review saved: {report['review_file']}")
+    elif args.archive_completed is not None:
+        print(f"{report['record_count']} completed rounds archived at {report['archive_file']}")
     elif args.accept_nov03:
         for check in report["checks"]:
             verdict = "PASS" if check["passed"] else "FAIL"

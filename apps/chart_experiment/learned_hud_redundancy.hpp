@@ -117,6 +117,11 @@ class LearnedHudRedundancy {
             p.score.bounded&&p.score.calibrated_cells&&!p.score.glyph_structure_candidate&&
             p.score.boundary_components==1;
     }
+    static bool separated_score_calibration_failure(const HudGlyphEvidence& p) {
+        return prefix_pass(p)&&!p.hud_candidate&&p.reason=="score_digit_structure_missing"&&
+            p.score.bounded&&p.score.calibrated_cells&&!p.score.glyph_structure_candidate&&
+            p.score.boundary_components==0&&p.score.components==7;
+    }
     static bool primary_prefix_mismatch_core(const HudGlyphEvidence& p) {
         const auto& g=p.fixed_glyphs[1];
         return (p.policy==HudGlyphPolicy::shared_in_subpixel_prefix_score_v3||
@@ -149,12 +154,29 @@ class LearnedHudRedundancy {
     static const std::uint8_t* pixel(const RgbImageView& image,int x,int y) {return image.pixels.data()+static_cast<std::size_t>(y)*3840+static_cast<std::size_t>(x)*3;}
     bool title_region(const RgbImageView& image) {
         std::array<std::uint8_t,title_pixels> mask{};std::array<int,title_pixels> queue{};
-        int x0=512,x1=-1,y0=29,y1=-1;std::size_t ink=0;
+        std::array<bool,512> columns{};
+        int right=-1;
         for(int y=0;y<29;++y)for(int x=0;x<512;++x)if(white(pixel(image,title_search.x+x,title_search.y+y))){
-            if(x==0||x==511||y==0||y==28)return false;
-            mask[static_cast<std::size_t>(y*512+x)]=1;++ink;x0=std::min(x0,x);x1=std::max(x1,x);y0=std::min(y0,y);y1=std::max(y1,y);
+            if(x==0||y==0||y==28)return false;
+            mask[static_cast<std::size_t>(y*512+x)]=1;columns[static_cast<std::size_t>(x)]=true;right=std::max(right,x);
         }
-        if(ink<32||x1-x0+1<12||y1-y0+1<12||x1+4>512)return false;
+        int width=right+4;
+        const bool crop_required=width>512;
+        if(crop_required) {
+            // Use only a bounded, complete prefix when the full title
+            // crosses the search edge. A gap of three blank columns keeps
+            // the crop from cutting a connected stroke.
+            width=511;
+            for(;width>=99;--width)
+                if(!columns[width-1]&&!columns[width-2]&&!columns[width-3])break;
+            if(width<99)return false;
+        }
+        int x0=512,x1=-1,y0=29,y1=-1;std::size_t ink=0;
+        for(int y=0;y<29;++y)for(int x=0;x<width;++x)if(mask[static_cast<std::size_t>(y*512+x)]){
+            ++ink;x0=std::min(x0,x);x1=std::max(x1,x);y0=std::min(y0,y);y1=std::max(y1,y);
+        }
+        const int minimum_span=crop_required?96:12;
+        if(ink<32||x1-x0+1<minimum_span||y1-y0+1<12)return false;
         const auto area=static_cast<double>((x1-x0+1)*(y1-y0+1));
         const auto occupancy=static_cast<double>(ink)/area;
         if(occupancy<.12||occupancy>.8)return false;
@@ -163,12 +185,12 @@ class LearnedHudRedundancy {
         if(dark_count<16)return false;
         const auto contrast=fg/static_cast<double>(ink)-dark/static_cast<double>(dark_count);if(contrast<40)return false;
         std::size_t components=0,large_ink=0;bool supported_shape=false;
-        for(int y=0;y<29;++y)for(int x=0;x<512;++x){
+        for(int y=0;y<29;++y)for(int x=0;x<width;++x){
             const auto at=static_cast<std::size_t>(y*512+x);if(!mask[at])continue;
             if(++components>128)return false;
             mask[at]=0;queue[0]=static_cast<int>(at);std::size_t used=1;int cx0=x,cx1=x,cy0=y,cy1=y;
             for(std::size_t q=0;q<used;++q){const int px=queue[q]%512,py=queue[q]/512;cx0=std::min(cx0,px);cx1=std::max(cx1,px);cy0=std::min(cy0,py);cy1=std::max(cy1,py);
-                for(const auto [dx,dy]:std::array<std::array<int,2>,4>{{{-1,0},{1,0},{0,-1},{0,1}}}){const int nx=px+dx,ny=py+dy;if(nx<0||nx>=512||ny<0||ny>=29)continue;const auto next=static_cast<std::size_t>(ny*512+nx);if(mask[next]){mask[next]=0;queue[used++]=static_cast<int>(next);}}
+                for(const auto [dx,dy]:std::array<std::array<int,2>,4>{{{-1,0},{1,0},{0,-1},{0,1}}}){const int nx=px+dx,ny=py+dy;if(nx<0||nx>=width||ny<0||ny>=29)continue;const auto next=static_cast<std::size_t>(ny*512+nx);if(mask[next]){mask[next]=0;queue[used++]=static_cast<int>(next);}}
             }
             if(used>=3)large_ink+=used;
             if(used>=12&&cx1-cx0+1>=4&&cy1-cy0+1>=10)supported_shape=true;
@@ -343,6 +365,17 @@ public:
                 value_.current_candidate=clean_auxiliary_score(value_.auxiliary);
                 value_.reason=value_.current_candidate?"current_learned_full_HUD_after_primary_prefix_mismatch":
                     "current_auxiliary_full_HUD_missing_after_primary_prefix_mismatch";
+                return value_;
+            }
+            if(learned_primary_policy_==primary.policy&&score_windows_ready_&&separated_score_calibration_failure(primary)) {
+                value_.auxiliary=producer_->observe_features(image,raw.state);
+                if(clean_auxiliary_score(value_.auxiliary)) {
+                    const auto& current=value_.auxiliary.score.glyphs.back().bounds;
+                    const auto& learned=score_windows_.back();
+                    value_.current_candidate=std::abs(current.x+current.width-learned.x-learned.width)<=3;
+                }
+                value_.reason=value_.current_candidate?"current_learned_full_HUD_after_score_cell_mismatch":
+                    "current_auxiliary_full_HUD_or_score_anchor_missing_after_score_cell_mismatch";
                 return value_;
             }
             if(learned_primary_policy_==primary.policy&&joint_ordinary_occlusion(primary)) {

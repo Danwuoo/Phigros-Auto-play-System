@@ -462,13 +462,14 @@ function Get-PanelAcquisitionReason($Progress) {
     if($Progress.stage -eq 'waiting_for_valid_HUD'){
         $missing=[Collections.Generic.List[string]]::new()
         if(-not $Progress.pause_ok){$missing.Add('暫停圖示')}
-        if(-not $Progress.prefix_ok){$missing.Add('IN 難度標籤')}
+        if(-not $Progress.prefix_ok){$missing.Add('難度標籤')}
         if(-not $Progress.score_ok){$missing.Add('分數欄')}
         if($missing.Count){return ($missing.ToArray()-join '、')+'尚未通過辨識；請保持遊戲在前景。'}
         return '畫面一致性尚未通過；請保持遊戲在前景。'
     }
     switch($Progress.reason){
-        'waiting_for_second_distinct_native_group_frame' {return '已觀察首音，等待下一張有效畫面；尚未送出觸控。'}
+        'waiting_for_second_distinct_native_group_frame' {return '已觀察候選音符，等待另一張有效畫面。尚未送出觸控。'}
+        'native_earliest_group_missing_or_ambiguous' {return '已偵測到音符，首組證據仍不足。尚未送出觸控。'}
         'native_group_temporal_or_source_ambiguity_retained' {return '首音時間或來源仍有歧義；尚未送出觸控。'}
         'receipt_expired_during_processing' {return '畫面已過期，正在等待新畫面；尚未送出觸控。'}
         default {return '等待可確定的首音與時間；尚未送出觸控。'}
@@ -608,12 +609,15 @@ if ($SelfTest) {
         $progress.stage='waiting_for_valid_HUD';$progress.reason='fixed_glyph_or_negative_space_missing';$progress.pause_ok=$true;$progress.score_ok=$true
         $line='ACQUISITION STATUS: '+($progress|ConvertTo-Json -Compress)
         $update=Get-PanelNativeStageUpdate $line 'ready'
-        if($update.Title -notmatch '尚未送出觸控' -or $update.Detail -notmatch 'IN 難度標籤' -or $update.Phase -ne 'ready'){throw 'HUD 失敗被誤報為演奏。'};$checks++
+        if($update.Title -notmatch '尚未送出觸控' -or $update.Detail -notmatch '難度標籤' -or $update.Phase -ne 'ready'){throw 'HUD 失敗被誤報為演奏。'};$checks++
         foreach($phase in @('starting','playing','awaiting_result','result','failed','stopped','complete')){if(Get-PanelNativeStageUpdate $line $phase){throw '過期開場訊息覆寫現有階段。'};$checks++}
         if(Get-PanelNativeStageUpdate $line 'ready' $true){throw '停止後仍更新開場狀態。'};$checks++
         $progress.stage='waiting_for_first_note';$progress.prefix_ok=$true;$progress.hud_ok=$true
         $line='ACQUISITION STATUS: '+($progress|ConvertTo-Json -Compress)
         if((Get-PanelNativeStageUpdate $line 'ready').Title -notmatch '等待首音'){throw '有效 HUD 未保持等待首音。'};$checks++
+        $progress.reason='waiting_for_second_distinct_native_group_frame'
+        $line='ACQUISITION STATUS: '+($progress|ConvertTo-Json -Compress)
+        if((Get-PanelNativeStageUpdate $line 'ready').Detail -notmatch '候選音符'){throw '候選音符被誤報為已確認首音。'};$checks++
         foreach($invalid in @('ACQUISITION STATUS: {','prefix ACQUISITION STATUS: {}','ACQUISITION STATUS: []','ACQUISITION STATUS: '+('x'*4097))){if(ConvertFrom-PanelAcquisitionProgress $invalid){throw '無效的 progress 被接受。'};$checks++}
         foreach($bad in @('true',1,$null)){$copy=$progress|ConvertTo-Json -Compress|ConvertFrom-Json;$copy.hud_ok=$bad;if(ConvertFrom-PanelAcquisitionProgress ('ACQUISITION STATUS: '+($copy|ConvertTo-Json -Compress))){throw 'progress boolean 未嚴格檢查。'};$checks++}
         $copy=$progress|ConvertTo-Json -Compress|ConvertFrom-Json;$copy.stage='playing';if(ConvertFrom-PanelAcquisitionProgress ('ACQUISITION STATUS: '+($copy|ConvertTo-Json -Compress))){throw 'progress 偽造演奏階段。'};$checks++
@@ -685,7 +689,7 @@ function Open-PanelHistoryPath([string]$Path) {
     $process=[Diagnostics.Process]::Start($info)
     if($process){$process.Dispose()}
 }
-function Get-PanelHistoryRows($Config,[string]$Track,[string]$Difficulty) {
+function Get-PanelHistoryRows($Config,[string]$Track,[string]$Difficulty,[bool]$ArchivedOnly) {
     $tool=Join-Path $PSScriptRoot 'round_history.py'
     if(-not (Test-Path -LiteralPath $Config.history_python -PathType Leaf) -or -not (Test-Path -LiteralPath $tool -PathType Leaf)){
         throw '找不到已安裝的歷史紀錄工具或 Python。'
@@ -693,6 +697,7 @@ function Get-PanelHistoryRows($Config,[string]$Track,[string]$Difficulty) {
     $arguments=@('-I','-B','-X','utf8',$tool,'--runs-dir',$Config.output_parent,'--format','json','--limit','60')
     if($Track){$arguments+=@('--track='+$Track)}
     if($Difficulty -in @('IN','AT')){$arguments+=@('--difficulty',$Difficulty)}
+    if($ArchivedOnly){$arguments+='--archived-only'}
     $info=[PasSweep.NativeOperation]::BuildStartInfo($Config.history_python,$PSScriptRoot,$arguments)
     $process=[Diagnostics.Process]::new();$process.StartInfo=$info
     try {
@@ -714,10 +719,11 @@ function Show-PanelHistory($Config,$Owner=$null) {
     $query=[Windows.Forms.TextBox]::new();$query.Width=240;$query.MaxLength=128;$query.PlaceholderText='曲名或 ID'
     $difficulty=[Windows.Forms.ComboBox]::new();$difficulty.DropDownStyle='DropDownList'
     $difficulty.Items.AddRange(@('全部難度','IN','AT'));$difficulty.SelectedIndex=0
+    $archive=[Windows.Forms.CheckBox]::new();$archive.Text='只顯示已歸檔';$archive.AutoSize=$true
     $refresh=[Windows.Forms.Button]::new();$refresh.Text='查詢'
     $folder=[Windows.Forms.Button]::new();$folder.Text='開啟資料夾';$folder.AutoSize=$true;$folder.Enabled=$false
     $result=[Windows.Forms.Button]::new();$result.Text='開啟結算圖';$result.AutoSize=$true;$result.Enabled=$false
-    $bar.Controls.AddRange(@($query,$difficulty,$refresh,$folder,$result))
+    $bar.Controls.AddRange(@($query,$difficulty,$archive,$refresh,$folder,$result))
     $list=[Windows.Forms.ListView]::new();$list.Dock='Fill';$list.View='Details';$list.FullRowSelect=$true;$list.MultiSelect=$false
     foreach($column in @(@('時間',164),@('曲目',280),@('難度',55),@('已送出步數',90),@('結算',86),@('釋放',89),@('判定',82),@('停止原因',205))){
         $null=$list.Columns.Add($column[0],$column[1])
@@ -727,12 +733,13 @@ function Show-PanelHistory($Config,$Owner=$null) {
     $load={
         $list.Items.Clear();$details.Text='正在讀取…';$dialog.UseWaitCursor=$true
         try {
-            foreach($row in @(Get-PanelHistoryRows $Config $query.Text.Trim() ([string]$difficulty.SelectedItem))){
+            foreach($row in @(Get-PanelHistoryRows $Config $query.Text.Trim() ([string]$difficulty.SelectedItem) $archive.Checked)){
                 $when=if($row.started_utc){([DateTimeOffset]$row.started_utc).ToLocalTime().ToString('yyyy-MM-dd HH:mm:ss')}else{$row.started_local_unqualified}
                 $item=[Windows.Forms.ListViewItem]::new([string]$when);$item.Tag=$row
                 $title=if($row.title){$row.title}else{$row.track_id}
                 $sent=if($null -ne $row.transport_written_steps){[string]$row.transport_written_steps}else{'未知'}
                 $settlement=switch($row.result_state){'confirmed_by_native'{'已確認'}'not_confirmed'{'未確認'}default{'未知'}}
+                if($row.archive_ids){$settlement='已歸檔'}
                 $release=switch($row.release_state){'kernel_zero_confirmed'{'已歸零'}'kernel_zero_not_confirmed'{'未確認'}default{'未知'}}
                 $judgment=switch($row.judgment_state){'unreviewed'{'待複核'}'manually_reported'{'人工登記'}default{'未知'}}
                 foreach($cell in @($title,$row.difficulty,$sent,$settlement,$release,$judgment,$row.failure_code)){$null=$item.SubItems.Add([string]$cell)}
@@ -748,6 +755,7 @@ function Show-PanelHistory($Config,$Owner=$null) {
             $row=$list.SelectedItems[0].Tag
             $details.Text=@(
                 "$($row.run_id) / $($row.round_id)   $($row.origin)",
+                $(if($row.archive_ids){"歸檔  $($row.archive_ids -join '、')"}),
                 "主要原因  $($row.failure_detail)",
                 "控制端原因  $($row.controller_failure)",
                 "清理錯誤  $(@($row.cleanup_errors|ForEach-Object{$_.detail}) -join '；')",
@@ -759,7 +767,7 @@ function Show-PanelHistory($Config,$Owner=$null) {
             ) -join "`r`n"
         }
     })
-    $refresh.Add_Click($load);$dialog.AcceptButton=$refresh
+    $refresh.Add_Click($load);$archive.Add_CheckedChanged($load);$dialog.AcceptButton=$refresh
     $folder.Add_Click({Open-PanelHistoryPath $list.SelectedItems[0].Tag.run_directory})
     $result.Add_Click({Open-PanelHistoryPath $list.SelectedItems[0].Tag.result_file})
     $dialog.Controls.AddRange(@($list,$details,$bar));$dialog.Add_Shown($load)

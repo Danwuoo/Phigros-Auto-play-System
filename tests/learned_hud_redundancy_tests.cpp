@@ -69,6 +69,58 @@ int main(){try{
     HudGlyphEvidenceProducer producer(view(image),std::string(64,'a'),"synthetic-IN-v3",{},HudGlyphPolicy::shared_in_subpixel_prefix_score_v3);
     const auto clean=producer.observe_features(view(image)),occlusion=producer.observe_features(view(blocked));
     ++groups;{
+        auto pixels=image;
+        // The third digit's interior has an actual contrasting but lighter
+        // background. The calibrated cell path fails after two accepted cells.
+        rectangle(pixels,1135,31,11,19,150);
+        const auto primary=producer.observe_features(view(pixels));
+        check(primary.valid&&!primary.hud_candidate&&primary.reason=="score_digit_structure_missing"&&
+            primary.score.components==7&&primary.score.supported_cells==2&&primary.score.boundary_components==0,
+            "seven-component score cell mismatch control invalid");
+        LearnedHudRedundancy h;train(h,image,clean);
+        const auto& result=h.observe(view(pixels),primary,raw(),frame(3,1200),true);
+        check(result.current_candidate&&result.auxiliary.hud_candidate&&result.auxiliary.score.glyphs.size()==7&&
+            result.reason=="current_learned_full_HUD_after_score_cell_mismatch",
+            "seven actual independent score glyphs did not recover the calibrated score cell failure");
+        auto no_title=pixels;rectangle(no_title,25,672,512,29,32);
+        check(!h.observe(view(no_title),primary,raw(),frame(4,1300),true).current_candidate,
+            "score-cell fallback reused the previous title");
+        auto no_digit=pixels;rectangle(no_digit,1132,28,17,25,32);
+        check(!h.observe(view(no_digit),primary,raw(),frame(5,1400),true).current_candidate,
+            "score-cell fallback accepted six actual glyphs");
+        auto shifted=pixels;rectangle(shifted,1076,20,180,40,32);
+        for(int i=0;i<7;++i){const int x=1081+i*24;rectangle(shifted,x,28,17,25);rectangle(shifted,x+3,31,11,19,32);}
+        check(h.observe(view(shifted),primary,raw(),frame(6,1500),true).auxiliary.score.glyph_structure_candidate&&
+            h.status().current_candidate,"same calibrated right-anchor tolerance was not preserved");
+        rectangle(shifted,1076,20,180,40,32);
+        for(int i=0;i<7;++i){const int x=1080+i*24;rectangle(shifted,x,28,17,25);rectangle(shifted,x+3,31,11,19,32);}
+        check(h.observe(view(shifted),primary,raw(),frame(7,1600),true).auxiliary.score.glyph_structure_candidate&&
+            !h.status().current_candidate,"score-cell fallback accepted seven actual glyphs at the wrong right anchor");
+        auto pause=raw();pause.state=ObservedGameState::paused;
+        check(!h.observe(view(pixels),primary,pause,frame(8,1700),true).current_candidate,
+            "score-cell fallback overrode a current pause");
+    }
+    ++groups;{
+        auto long_title=image;
+        for(int x=110;x<=530;x+=20){rectangle(long_title,x,677,3,18);rectangle(long_title,x,677,14,3);rectangle(long_title,x,692,14,3);}
+        const auto teacher=producer.observe_features(view(long_title));
+        LearnedHudRedundancy h;train(h,long_title,teacher);
+        check(h.status().title_region.width>=96&&h.status().title_region.width<512,
+            "long title did not learn a bounded left prefix");
+        const auto covered=occluded(long_title);
+        const auto primary=producer.observe_features(view(covered));
+        check(h.observe(view(covered),primary,raw(),frame(3,1200),true).current_candidate,
+            "current long title prefix and score occlusion did not support the existing fallback");
+        auto changed_title=covered;rectangle(changed_title,25,672,h.status().title_region.width,29,32);
+        check(!h.observe(view(changed_title),primary,raw(),frame(4,1300),true).current_candidate,
+            "long title fallback accepted the old prefix instead of current pixels");
+        auto continuous=long_title;rectangle(continuous,26,685,511,2);
+        LearnedHudRedundancy no_gap;
+        const auto& rejected=no_gap.observe(view(continuous),teacher,raw(),frame(1,1000),false);
+        check(!rejected.ready&&rejected.support_frames==0&&rejected.reason=="title_geometry_or_negative_space_unsupported",
+            "long title learning cropped a connected line without a complete blank boundary");
+    }
+    ++groups;{
         for(const auto policy:{HudGlyphPolicy::shared_in_subpixel_prefix_score_v3,HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4}){
             const bool at=policy==HudGlyphPolicy::shared_difficulty_subpixel_prefix_score_v4;
             auto primary_reference=image;for(int y=673;y<699;++y)for(int x=at?1144:1152;x<1225;++x){

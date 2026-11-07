@@ -53,6 +53,7 @@ class RoundHistoryTests(unittest.TestCase):
             "library": {"sha256": history.NOV03_LIBRARY},
             "rounds": [{
                 "order": 1, "track_id": track, "library_id": f"example/synthetic/revision/{track}/{level}/hash",
+                "status": "sent_result_unreviewed" if receipts else "failed_or_stopped",
                 "manifest_sha256": sha, "manifest_identity_matched": with_manifest,
                 "exit_code": 0 if receipts else 2, "failure": failure, "runtime_failure": failure,
                 "execution_state": "completed" if receipts else "incomplete",
@@ -221,6 +222,48 @@ class RoundHistoryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "pinned result"):
             history.record_review(self.root, name + "/round-01", dict(perfect=4, good=0, bad=0, miss=0))
         self.assertFalse((self.root.parent / "score-reviews").exists())
+
+    def test_completed_archive_cli_freezes_the_utc_window_and_preserves_originals(self):
+        selected = "catalog-manual-panel-20261107-171938-242-4e1c74"
+        run, ledger = self.panel(selected, receipts=4)
+        ledger["rounds"][0]["started_utc"] = "2026-11-07T09:20:09Z"
+        write_json(run / "ledger.json", ledger)
+        failed, ledger = self.panel("catalog-manual-panel-20261107-172328-301-45efca", failure="user_stop")
+        ledger["rounds"][0]["started_utc"] = "2026-11-07T09:23:28Z"
+        write_json(failed / "ledger.json", ledger)
+        self.panel("catalog-manual-panel-20261103-153120-179-669b50", receipts=4)
+        original = {path: path.read_bytes() for path in self.root.rglob("*") if path.is_file()}
+        command = [sys.executable, str(TOOL), "--runs-dir", str(self.root), "--format", "json"]
+        archive_args = ["--archive-completed", "nov07-evening", "--since-utc", "2026-11-07T09:00:00Z",
+                        "--until-utc", "2026-11-07T11:13:00Z"]
+        report = json.loads(subprocess.run(command + archive_args, capture_output=True, text=True, check=True).stdout)
+        repeated = json.loads(subprocess.run(command + archive_args, capture_output=True, text=True, check=True).stdout)
+        self.assertEqual(report, repeated)
+        self.assertEqual(report["record_count"], 1)
+        self.assertEqual(report["rounds"][0]["run_id"], selected)
+        self.assertEqual(report["rounds"][0]["native_judgment_state"], "unreviewed")
+        self.assertEqual(original, {path: path.read_bytes() for path in self.root.rglob("*") if path.is_file()})
+        filtered = json.loads(subprocess.run(command + ["--archive", "nov07-evening"], capture_output=True,
+                                             text=True, check=True).stdout)
+        self.assertEqual(filtered["total_matching"], 1)
+        self.assertEqual(filtered["rows"][0]["archive_ids"], ["nov07-evening"])
+        self.assertIsNone(filtered["rows"][0]["manual_judgments"])
+        with self.assertRaisesRegex(ValueError, "different contents"):
+            history.archive_completed(self.root, "nov07-evening", "2026-11-07T09:00:00Z", "2026-11-07T11:14:00Z")
+
+    def test_completed_archive_requires_intact_result_and_manifest(self):
+        run, _ = self.panel("catalog-manual-panel-20261103-153120-179-669b50", receipts=4)
+        bounds = ("2026-11-03T00:00:00Z", "2026-11-03T23:59:59Z")
+        history.archive_completed(self.root, "intact", *bounds)
+        self.assertEqual(history.history(self.root, archived_only=True)["total_matching"], 1)
+        (run / "round-01" / "result.png").write_bytes(b"altered")
+        with self.assertRaisesRegex(ValueError, "archived SHA256"):
+            history.archive_completed(self.root, "altered", *bounds)
+        self.assertFalse((self.root.parent / "completed-archives" / "altered.json").exists())
+        self.assertEqual(history.history(self.root, archived_only=True)["total_matching"], 0)
+        row = history.history(self.root)["rows"][0]
+        self.assertEqual(row["archive_ids"], [])
+        self.assertIn("completed_archive:evidence_unavailable", row["issues"])
 
 
 if __name__ == "__main__":

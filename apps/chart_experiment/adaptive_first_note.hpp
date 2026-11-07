@@ -27,6 +27,7 @@ struct AdaptiveOpeningDescription {
     double approach_pixels_per_floor_unit=720/(2*.83175),pixel_error=3;
     bool includes_outlined_drag_heads=false;
     bool native_head_appearance_witness=false;
+    bool certified_first_group_coverage=false;
 };
 
 // Same bounded connected-run algorithm as the archived cyan detector. Yellow
@@ -340,9 +341,14 @@ class AdaptiveFirstNoteTrigger {
         Range z_begin,z_end;
     };
     struct Piece {VisualTimeInterval time;std::vector<Equation> equations;std::vector<std::size_t> note_indices;
-        std::vector<RelativePose> relative_poses;std::vector<std::pair<std::size_t,Equation>> appearance_equations;};
+        std::vector<RelativePose> relative_poses;
+        std::vector<std::pair<std::size_t,Equation>> appearance_equations,first_group_equations;};
     struct AppearanceJump {std::size_t note=0;VisualTimeInterval time;std::string pointer;};
-    struct Support {std::vector<VisualTimeCandidate> candidates;VisualCandidateFrame frame;};
+    struct Support {
+        std::vector<VisualTimeCandidate> candidates;
+        VisualCandidateFrame frame;
+        std::vector<VisualTimeInterval> time,without_complete_group,without_first;
+    };
     AdaptiveOpeningDescription description_;
     Ns phase_=0,last_now_=-1,last_received_=-1;
     std::uint64_t last_sequence_=0;
@@ -381,6 +387,11 @@ class AdaptiveFirstNoteTrigger {
     static bool outside_viewport(Range x,Range y) {
         return x.hi< -95||x.lo>1375||y.hi< -95||y.lo>815;
     }
+    static bool outside_viewport(const Equation& equation,const Piece& piece,VisualTimeInterval time) {
+        const Range dt{static_cast<long double>(time.lower-piece.time.lower),static_cast<long double>(time.upper-piece.time.lower)};
+        return outside_viewport(add(equation.x.base,mul(equation.x.slope,dt)),
+            add(equation.y.base,mul(equation.y.slope,dt)));
+    }
     static bool fully_visible(Range x,Range y) {
         return x.lo>=95&&x.hi<=1184&&y.lo>=125&&y.hi<=554;
     }
@@ -394,6 +405,18 @@ class AdaptiveFirstNoteTrigger {
         std::sort(in.begin(),in.end(),[](auto a,auto b){return std::pair(a.lower,a.upper)<std::pair(b.lower,b.upper);});
         std::vector<VisualTimeInterval> out;
         for(auto i:in)if(valid(i)) {if(!out.empty()&&i.lower<=out.back().upper+1)out.back().upper=std::max(out.back().upper,i.upper);else out.push_back(i);}
+        return out;
+    }
+    static std::vector<VisualTimeInterval> intersect_receipts(
+            const std::vector<VisualTimeInterval>& current,const std::vector<VisualTimeInterval>& previous,Ns dt) {
+        std::vector<VisualTimeInterval> out;
+        std::size_t a=0,b=0;
+        while(a<current.size()&&b<previous.size()){
+            const VisualTimeInterval shifted{previous[b].lower+dt,previous[b].upper+dt};
+            const auto overlap=intersect(current[a],shifted);
+            if(valid(overlap))out.push_back(overlap);
+            if(current[a].upper<shifted.upper)++a;else ++b;
+        }
         return out;
     }
     static std::string context(const VisualCandidateFrame& f) {
@@ -511,7 +534,8 @@ class AdaptiveFirstNoteTrigger {
            (now-value_.anchor->received_host_ns>=100*ms||value_.anchor->target_host_ns-now<200*ms))reset("first_note_readiness_expired");
         return true;
     }
-    std::vector<VisualTimeCandidate> solve(const VisualCandidateFrame& f,const std::vector<int>& families) {
+    std::vector<VisualTimeCandidate> solve(const VisualCandidateFrame& f,const std::vector<int>& families,
+                                          const std::vector<NoteKind>& unavailable_kinds) {
         std::vector<VisualTimeCandidate> out;
         for(const auto& piece:pieces_) {
             struct Choice {std::size_t note,equation;VisualTimeInterval time;};
@@ -552,8 +576,12 @@ class AdaptiveFirstNoteTrigger {
                         // Compare directly to observed sources, never through a
                         // transitive chain of merely covered source aliases.
                         bool occluded=false;
-                        if(description_.includes_hold_heads||description_.includes_classic_flick_heads)for(const auto observed:observed_equations){
-                            bump();const auto& absent=notes_[piece.note_indices[n]].note;
+                        const auto& absent=notes_[piece.note_indices[n]].note;
+                        // A rejected shape detector provides no evidence of absence.
+                        if(std::find(unavailable_kinds.begin(),unavailable_kinds.end(),absent.kind)!=unavailable_kinds.end())continue;
+                        if(description_.includes_hold_heads||description_.includes_classic_flick_heads||
+                           (description_.certified_first_group_coverage&&absent.start_ns==description_.note_time_ns))for(const auto observed:observed_equations){
+                            bump();
                             const auto& present=notes_[piece.note_indices[observed]].note;
                             if(absent.kind==present.kind&&absent.side==present.side&&
                                (coincident_for_whole_piece(piece.equations[n],piece.equations[observed],piece.time)||
@@ -615,6 +643,27 @@ class AdaptiveFirstNoteTrigger {
     bool appearance_group_present(const VisualTimeCandidate& candidate) const {
         return std::all_of(description_.earliest_note_ids.begin(),description_.earliest_note_ids.end(),[&](const auto& id){
             return std::any_of(candidate.matches.begin(),candidate.matches.end(),[&](const auto& match){return match.note_id==id;});});
+    }
+    bool certified_group_present(const VisualTimeCandidate& candidate,VisualTimeInterval time) {
+        const auto piece=std::lower_bound(pieces_.begin(),pieces_.end(),time.lower,
+            [](const Piece& value,Ns at){return value.time.upper<at;});
+        if(piece==pieces_.end()||time.lower<piece->time.lower||time.upper>piece->time.upper)return false;
+        for(const auto& [index,equation]:piece->first_group_equations){
+            const auto& note=notes_[index].note;
+            const auto observed=std::any_of(candidate.matches.begin(),candidate.matches.end(),
+                [&](const auto& match){return match.note_id==note.source.id;});
+            if(observed||outside_viewport(equation,*piece,time))continue;
+            bool covered=false;
+            for(std::size_t n=0;n<piece->note_indices.size();++n){
+                bump();const auto& other=notes_[piece->note_indices[n]].note;
+                if(note.kind!=other.kind||note.side!=other.side)continue;
+                if(std::none_of(candidate.matches.begin(),candidate.matches.end(),
+                    [&](const auto& match){return match.note_id==other.source.id;}))continue;
+                if(coincident_for_whole_piece(equation,piece->equations[n],piece->time)){covered=true;break;}
+            }
+            if(!covered)return false;
+        }
+        return piece->first_group_equations.size()==description_.earliest_note_count;
     }
     FirstNoteTriggerStatus observe_appearance(Ns now) {
         const auto& current=support_history_.back();const auto& f=current.frame;
@@ -718,7 +767,7 @@ class AdaptiveFirstNoteTrigger {
     }
 public:
     AdaptiveFirstNoteTrigger(const SemanticChart& chart,Ns phase_ns,Ns first_down_ns=-1,bool outlined_drag_heads=false,
-                             bool native_head_appearance_witness=false):phase_(phase_ns) {
+                             bool native_head_appearance_witness=false,bool certified_first_group_coverage=false):phase_(phase_ns) {
         require(phase_ns>=-100*ms&&phase_ns<=100*ms,"first-note phase must be +/-100ms");
         require(chart.format_version==3&&std::isfinite(chart.offset_seconds)&&sha256_text(chart.source.chart_sha256)&&
                 !chart.lines.empty()&&chart.lines.size()<=64&&chart.note_count>0&&chart.note_count<=max_notes,"adaptive opening chart scope unsupported");
@@ -738,6 +787,8 @@ public:
             description_.earliest_note_ids.push_back(n.source.id);first_flick|=n.kind==NoteKind::flick;required_families.insert(color(n.kind));
         }
         description_.earliest_note_count=description_.earliest_note_ids.size();
+        description_.certified_first_group_coverage=certified_first_group_coverage&&!native_head_appearance_witness&&
+            description_.earliest_note_count<=64;
         description_.required_center_families.assign(required_families.begin(),required_families.end());
         description_.includes_mixed_earliest_heads=required_families.size()>1;
         description_.includes_classic_flick_heads=required_families.contains(4);
@@ -855,6 +906,8 @@ public:
                     return Axis{{down(middle-padding),up(middle+padding)},{down(slope-slope_pad),up(slope+slope_pad)}};
                 };
                 Equation equation{axis(pa[0],pb[0]),axis(pa[1],pb[1]),true,speed.source.json_pointer,speed.value};
+                if(description_.certified_first_group_coverage&&n.start_ns==description_.note_time_ns)
+                    piece.first_group_equations.emplace_back(ni,equation);
                 if(appearance_notes.contains(ni)) {
                     require(++appearance_equations<=max_equations,"native appearance geometry budget");
                     piece.appearance_equations.emplace_back(ni,equation);
@@ -902,7 +955,8 @@ public:
     }
     const AdaptiveOpeningDescription& description()const{return description_;}
     FirstNoteTriggerStatus observe(const VisualCandidateFrame& f,bool ui_healthy,Ns now) {return observe(f,{},ui_healthy,now);}
-    FirstNoteTriggerStatus observe(const VisualCandidateFrame& f,const std::vector<int>& families,bool ui_healthy,Ns now) {
+    FirstNoteTriggerStatus observe(const VisualCandidateFrame& f,const std::vector<int>& families,bool ui_healthy,Ns now,
+                                   const std::vector<NoteKind>& unavailable_kinds={}) {
         if(!health(now,ui_healthy))return value_;
         if(!(f.sequence&&f.epoch&&f.generation&&f.geometry_version&&f.source_valid&&f.centers_complete_unoccluded&&
              f.width==1280&&f.height==720&&f.clock_kind==VisualSourceClock::arrival_only&&!f.source_time_ns&&!f.capture_host_interval&&
@@ -920,6 +974,19 @@ public:
             std::any_of(families.begin(),families.end(),[&](int family){return std::find(description_.required_center_families.begin(),description_.required_center_families.end(),family)==description_.required_center_families.end();}))){
             cancel("invalid_or_missing_first_note_center_families");return value_;
         }
+        if(!unavailable_kinds.empty()){
+            std::set<NoteKind> unique;
+            const auto valid_kind=[&](NoteKind kind){
+                if(kind!=NoteKind::tap&&kind!=NoteKind::hold&&kind!=NoteKind::drag&&kind!=NoteKind::flick)return false;
+                const auto family=kind==NoteKind::drag?2:kind==NoteKind::flick?4:1;
+                return std::find(description_.required_center_families.begin(),description_.required_center_families.end(),family)
+                    !=description_.required_center_families.end()&&unique.insert(kind).second;
+            };
+            if(!description_.certified_first_group_coverage||unavailable_kinds.size()>4||
+               !std::all_of(unavailable_kinds.begin(),unavailable_kinds.end(),valid_kind)){
+                cancel("invalid_first_note_unavailable_detector_kinds");return value_;
+            }
+        }
         std::set<std::string> center_ids;
         for(std::size_t i=0;i<f.centers.size();++i){const auto& c=f.centers[i];
             const bool extended=description_.includes_extended_drag_heads&&(!description_.includes_mixed_earliest_heads||families[i]==2);
@@ -932,18 +999,27 @@ public:
             }
         value_.raw_candidates.clear();value_.raw_candidate_count=value_.first_note_positive_candidates=0;value_.selected_intervals.clear();value_.anchor.reset();
         if(f.centers.empty()){reset("waiting_for_native_first_note_centers");return value_;}
-        try {work_=0;value_.raw_candidates=solve(f,families);}catch(const std::runtime_error& e){cancel(e.what());return value_;}
+        try {work_=0;value_.raw_candidates=solve(f,families,unavailable_kinds);}catch(const std::runtime_error& e){cancel(e.what());return value_;}
         value_.raw_candidate_count=value_.raw_candidates.size();
-        const auto group_present=[&](const VisualTimeCandidate& candidate) {
-            return std::all_of(description_.earliest_note_ids.begin(),description_.earliest_note_ids.end(),[&](const auto& id) {
-                return std::any_of(candidate.matches.begin(),candidate.matches.end(),[&](const auto& m){return m.note_id==id;});
-            });
-        };
-        for(const auto& c:value_.raw_candidates)if(group_present(c))++value_.first_note_positive_candidates;
         if(value_.raw_candidates.empty()){reset("native_earliest_group_missing_or_ambiguous");return value_;}
+        const auto is_first=[&](const auto& match){
+            return std::find(description_.earliest_note_ids.begin(),description_.earliest_note_ids.end(),match.note_id)
+                !=description_.earliest_note_ids.end();
+        };
+        Support observed{value_.raw_candidates,f,{},{},{}};
+        for(const auto& candidate:observed.candidates){
+            const auto count=static_cast<std::size_t>(std::count_if(candidate.matches.begin(),candidate.matches.end(),is_first));
+            observed.time.push_back(candidate.song_time);
+            if(count==description_.earliest_note_count)++value_.first_note_positive_candidates;
+            else observed.without_complete_group.push_back(candidate.song_time);
+            if(count==0)observed.without_first.push_back(candidate.song_time);
+        }
+        observed.time=merge(std::move(observed.time));
+        observed.without_complete_group=merge(std::move(observed.without_complete_group));
+        observed.without_first=merge(std::move(observed.without_first));
         std::erase_if(support_history_,[&](const auto& support){return now-support.frame.received_host_ns>200*ms;});
         if(support_history_.size()>=16){cancel("adaptive_opening_support_history_budget");return value_;}
-        support_history_.push_back({value_.raw_candidates,f});const auto& current=support_history_.back();
+        support_history_.push_back(std::move(observed));const auto& current=support_history_.back();
         value_.support_count=1;value_.state=FirstNoteTriggerState::acquiring;value_.reason="waiting_for_second_distinct_native_group_frame";
         if(support_history_.size()==1)return value_;
         if(description_.native_head_appearance_witness) {
@@ -955,35 +1031,26 @@ public:
             const auto c=std::find_if(frame.centers.begin(),frame.centers.end(),[&](const auto& v){return v.id==m->center_id;});
             return c==frame.centers.end()?nullptr:&*c;
         };
-        std::vector<VisualTimeInterval> selected;bool unresolved=false,eligible=false;std::size_t pairs=0;
+        std::vector<VisualTimeInterval> selected;bool unresolved=false,eligible=false;
         std::vector<std::vector<VisualTimeInterval>> by_support(support_history_.size()-1);
-        std::vector<bool> motion_resolved(by_support.size(),true);
+        const bool certified=description_.certified_first_group_coverage;
         for(std::size_t support=0;support+1<support_history_.size();++support) {
             const auto& previous=support_history_[support];const auto dt=f.received_host_ns-previous.frame.received_host_ns;
             if(dt<20*ms||dt>200*ms||f.frame_sha256==previous.frame.frame_sha256)continue;
             eligible=true;
-            for(const auto& c:current.candidates)for(const auto& p:previous.candidates) {
-                if(++pairs>65536){cancel("adaptive_opening_pair_budget");return value_;}
-                // Keep every rate-one-compatible native branch. Non-first aliases
-                // are not discarded merely because a preferred source ID matches.
-                if(c.song_time.upper<=p.song_time.lower)continue;
-                // Both actual receipts must support the SAME rate-one origin.
-                // Translate the previous native interval by measured host dt and
-                // retain only its intersection with the current native interval.
-                // No extra timing tolerance or preferred single-frame origin is
-                // invented. A disjoint pair simply waits for another actual frame.
-                if(p.song_time.lower>safe-dt||p.song_time.upper>safe-dt)continue;
-                auto interval=intersect(c.song_time,{p.song_time.lower+dt,p.song_time.upper+dt});
-                if(!valid(interval))continue;selected.push_back(interval);by_support[support].push_back(interval);
-                bool motion=false;
-                for(const auto& id:description_.earliest_note_ids) {
-                    const auto* a=center_for(p,previous.frame,id);const auto* b=center_for(c,f,id);
-                    if(a&&b&&std::hypot(b->x-a->x,b->y-a->y)>6)motion=true;
-                }
-                if(!group_present(p)||!group_present(c))unresolved=true;
-                if(!motion)motion_resolved[support]=false;
+            // Intersections distribute over union. Compute the exact temporal
+            // union and negative witness vetoes before comparing source pairs.
+            // A large number of indistinguishable ornaments still vetoes an
+            // anchor, without spending the pair budget just to learn that.
+            auto& overlap=by_support[support];
+            overlap=intersect_receipts(current.time,previous.time,dt);
+            selected.insert(selected.end(),overlap.begin(),overlap.end());
+            if(certified) {
+                unresolved|=!intersect_receipts(current.without_first,previous.without_first,dt).empty();
+            }else{
+                unresolved|=!intersect_receipts(current.without_complete_group,previous.time,dt).empty()||
+                    !intersect_receipts(current.time,previous.without_complete_group,dt).empty();
             }
-            by_support[support]=merge(std::move(by_support[support]));
         }
         if(!eligible){value_.reason="native_group_frames_not_distinct_or_too_far_apart";return value_;}
         value_.selected_intervals=merge(std::move(selected));
@@ -995,10 +1062,45 @@ public:
         // retained interval; an overlap chain alone cannot authorize input.
         std::optional<std::size_t> supporting;
         const auto chosen=value_.selected_intervals[0];
+        std::size_t pairs=0;bool used_certified_witness=false;
         for(std::size_t support=by_support.size();support-->0;) {
-            if(motion_resolved[support]&&std::any_of(by_support[support].begin(),by_support[support].end(),[&](const auto& interval){
-                return interval.lower<=chosen.lower&&chosen.upper<=interval.upper;
-            })){supporting=support;break;}
+            const auto& intervals=by_support[support];
+            if(intervals.empty())continue;
+            const bool covers=std::any_of(intervals.begin(),intervals.end(),[&](const auto& interval){
+                return interval.lower<=chosen.lower&&chosen.upper<=interval.upper;});
+            if(!certified&&(!covers||supporting))continue;
+            const auto& previous=support_history_[support];const auto dt=f.received_host_ns-previous.frame.received_host_ns;
+            const bool needs_coverage=certified&&(!previous.without_complete_group.empty()||!current.without_complete_group.empty());
+            if(!needs_coverage&&(!covers||supporting))continue;
+            bool motion_resolved=true,additional_evidence=false;
+            for(const auto& c:current.candidates)for(const auto& p:previous.candidates) {
+                if(++pairs>65536){cancel("adaptive_opening_pair_budget");return value_;}
+                const auto interval=intersect(c.song_time,{p.song_time.lower+dt,p.song_time.upper+dt});
+                if(!valid(interval))continue;
+                if(needs_coverage)try {
+                    if(!certified_group_present(c,interval)||
+                       !certified_group_present(p,{interval.lower-dt,interval.upper-dt})){
+                        value_.reason="native_group_temporal_or_source_ambiguity_retained";return value_;
+                    }
+                    additional_evidence=true;
+                }catch(const std::runtime_error& e){cancel(e.what());return value_;}
+                if(!motion_resolved)continue;
+                bool first_motion=false,other_motion=false;
+                for(const auto& match:c.matches) {
+                    const bool earliest=is_first(match);
+                    if(!earliest&&!certified)continue;
+                    const auto* a=center_for(p,previous.frame,match.note_id);
+                    const auto* b=center_for(c,f,match.note_id);
+                    if(a&&b&&std::hypot(b->x-a->x,b->y-a->y)>6){
+                        first_motion|=earliest;other_motion|=!earliest;
+                    }
+                }
+                motion_resolved=first_motion||other_motion;
+                additional_evidence|=!first_motion&&other_motion;
+            }
+            if(covers&&motion_resolved&&!supporting){
+                supporting=support;used_certified_witness=additional_evidence;
+            }
         }
         if(!supporting){value_.reason="native_group_interval_union_not_supported_by_one_actual_pair";return value_;}
         value_.support_count=2;FirstNoteTriggerAnchor anchor;anchor.received_host_ns=f.received_host_ns;
@@ -1007,7 +1109,8 @@ public:
         anchor.supporting_evidence_ids={support_history_[*supporting].frame.evidence_id,f.evidence_id};
         if(!allows_first_dispatch(anchor,now)){cancel("first_note_dispatch_lead_below_200ms");return value_;}
         value_.anchor=std::move(anchor);value_.state=FirstNoteTriggerState::ready;
-        value_.reason="two_distinct_native_group_motion_frames_on_unique_temporal_branch";return value_;
+        value_.reason=used_certified_witness?"two_distinct_native_frames_certify_first_group_and_motion":
+            "two_distinct_native_group_motion_frames_on_unique_temporal_branch";return value_;
     }
     const std::optional<AdaptiveFirstDispatchGate>& dispatch_gate() const noexcept{return dispatch_gate_;}
     FirstNoteTriggerStatus status(Ns now,bool healthy=true){health(now,healthy);return value_;}

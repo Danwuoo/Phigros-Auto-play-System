@@ -984,7 +984,9 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     }
     std::unique_ptr<AdaptiveFirstNoteTrigger> adaptive_trigger;
     if(adaptive) {
-        adaptive_trigger=std::make_unique<AdaptiveFirstNoteTrigger>(chart,static_cast<Ns>(phase)*ms,first_song_ns,song.outlined_drag_heads,song.native_head_appearance_witness);
+        adaptive_trigger=std::make_unique<AdaptiveFirstNoteTrigger>(
+            chart,static_cast<Ns>(phase)*ms,first_song_ns,song.outlined_drag_heads,
+            song.native_head_appearance_witness,desktop!=nullptr);
         if(adaptive_trigger->description().native_head_appearance_witness!=song.native_head_appearance_witness)
             throw std::invalid_argument("native head appearance witness differs from explicit song profile");
         if(adaptive_trigger->description().model_sha256!=song.opening_sha||
@@ -1201,6 +1203,8 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
             {"first_note_kind",static_cast<int>(description.note_kind)},{"first_note_ns",description.note_time_ns},
             {"first_down_ns",description.first_down_ns},{"earliest_note_count",description.earliest_note_count},
             {"source_clock","arrival_only"},{"scope","native chart opening; conditional rendering hypothesis"}};
+        if(description.certified_first_group_coverage)
+            model_settings["opening_witness_policy"]="certified-first-group-coverage-v1";
         if(song.outlined_drag_heads)model_settings["includes_outlined_drag_heads"]=true;
         if(song.native_head_appearance_witness) {
             model_settings["native_head_appearance_witness"]=true;
@@ -1344,6 +1348,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     Ns session_deadline_host_ns=started+session_limit_ns;
     manifest["acquisition_deadline_host_ns"]=session_deadline_host_ns;
     Ns next_candidate=started,last_saved=-1,kernel_request=-1,first_due=-1,next_acquisition_report=started,last_acquisition_saved=-1;
+    const bool sample_opening_by_receipt=adaptive&&desktop;
     std::uint64_t consumed=0,candidate_sequence=0;
     bool armed=false,kernel_started=false,kernel_ready=false,finished=false,release_known=false,final_zero=false,sequence_complete=false;
     std::string failure,opening_reason="waiting_for_native_note_centers";
@@ -1369,8 +1374,14 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
     std::uint64_t last_owner_sequence=0;std::size_t redundancy_frames=0;
     std::size_t hud_fallback_frames=0;Json kernel_before=nullptr;std::future<Json> kernel_pending;
     std::optional<ExperimentalUiObservation> last_playing_ui;
-    const auto ui_healthy=[&](Ns now){return last_playing_ui&&last_playing_ui->playing&&last_playing_ui->source_valid&&
-        now>=last_playing_ui->received_host_ns&&now-last_playing_ui->received_host_ns<ui_watchdog&&foreground_watch.status().healthy;};
+    const auto ui_failure=[&](Ns now)->const char* {
+        if(!last_playing_ui||!last_playing_ui->playing||!last_playing_ui->source_valid||
+           now<last_playing_ui->received_host_ns)return "actual_playing_UI_missing_or_invalid";
+        if(now-last_playing_ui->received_host_ns>=ui_watchdog)return "actual_UI_receipt_expired";
+        if(!foreground_watch.status().healthy)return "actual_foreground_invalid";
+        return nullptr;
+    };
+    const auto ui_healthy=[&](Ns now){return ui_failure(now)==nullptr;};
     const auto runtime_ui=[&](Ns now) {
         auto observation=last_playing_ui.value_or(ExperimentalUiObservation{});
         observation.playing=ui_healthy(now);return observation;
@@ -1380,7 +1391,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
         const auto now=clock.now_ns();
         if(interrupted.load()||stop_file.load()||(GetAsyncKeyState(VK_ESCAPE)&0x8000))return "user_stop";
         if(now>=session_deadline_host_ns)return armed?"playback_session_timeout":"manual_acquisition_timeout";
-        if(!ui_healthy(now))return "actual_UI_or_foreground_invalid";
+        if(const auto rejected=ui_failure(now))return rejected;
         if(command.phase==pas::Phase::down&&!first_down_intent)first_down_intent=command.intent_id;
         if(command.phase==pas::Phase::down&&command.intent_id==first_down_intent&&
            (!kernel_ready||now<kernel_request||now-kernel_request>=500*ms))return "first_DOWN_kernel_zero_not_fresh";
@@ -1698,8 +1709,11 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
                         last_snapshot_end=clock.now_ns();
                     }
                     if(status.result_confirmed)result_frame=*frame;
-                } else if(status.round==1&&ui_healthy(now)&&now>=next_candidate) {
-                    next_candidate=now+(adaptive?25:75)*ms;
+                } else if(status.round==1&&ui_healthy(now)&&
+                          (sample_opening_by_receipt?frame->capture_complete_ns:now)>=next_candidate) {
+                    // Use actual receipt spacing. A scan that took a while must
+                    // not delay the next eligible source frame by the same work.
+                    next_candidate=sample_opening_by_receipt?frame->capture_complete_ns+16*ms:now+(adaptive?25:75)*ms;
                     ModelOpeningDetection detected;
                     if(adaptive)detected=detect_model_opening_centers(frame->width,frame->height,frame->stride,frame->rgb,adaptive_trigger->description());
                     else static_cast<calibration::OpeningDetection&>(detected)=
@@ -1717,9 +1731,12 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
                             {"received_ns",frame->capture_complete_ns},{"processed_ns",clock.now_ns()},
                             {"valid",detected.valid},{"reason",detected.reason},{"groups",detected.groups},
                             {"qualifying_runs",detected.qualifying_runs},{"center_count",detected.centers.size()},
+                            {"unavailable_note_kinds",detected.unavailable_kinds},
                             {"metrics",std::move(metrics)},{"pixels_retained",false},{"input_permission",false}});
                     }
-                    if(detected.valid&&!detected.centers.empty()) {
+                    if(!detected.valid||detected.centers.empty()) {
+                        opening_reason=detected.reason;
+                    } else {
                         if(diagnostic_images&&acquisition_frames.size()<24&&(last_acquisition_saved<0||
                            frame->capture_complete_ns-last_acquisition_saved>=100*ms)) {
                             acquisition_frames.push_back(*frame);last_acquisition_saved=frame->capture_complete_ns;
@@ -1729,18 +1746,20 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
                         visual.frame_id=visual.evidence_id=observation.evidence_id;visual.frame_sha256=rgb_sha(*frame);visual.clock_id="host-QPC-receipt-only";
                         visual.opening_context_id="manual-round-1-user-selected-"+song.song;visual.clock_kind=VisualSourceClock::arrival_only;
                         visual.received_host_ns=frame->capture_complete_ns;visual.source_valid=frame->source_valid;
-                        // Admission assumption of this explicit rendering experiment;
-                        // the detector cannot establish complete/unoccluded coverage.
+                        // The renderer assumes coverage only for detector kinds
+                        // that were available. Actual completeness is unqualified.
                         visual.centers_complete_unoccluded=true;visual.centers=detected.centers;
                         const auto candidate_now=clock.now_ns();
                         if(candidate_now-visual.received_host_ns>=100*ms) {
+                            opening_reason="receipt_expired_during_processing";
                             trigger_health(candidate_now,false);journal.append({{"event","candidate_dropped_before_solver"},{"frame",visual.evidence_id},
                                 {"received_ns",visual.received_host_ns},{"processed_ns",candidate_now},{"reason","receipt_expired_during_processing"}});continue;
                         }
                         VisualCandidateResult result;FirstNoteTriggerStatus trigger_status;
                         if(adaptive) {
-                            trigger_status=adaptive_trigger->observe(visual,detected.center_families,ui_healthy(candidate_now),candidate_now);
-                            result.observation=visual;result.candidates=trigger_status.raw_candidates;
+                            trigger_status=adaptive_trigger->observe(visual,detected.center_families,ui_healthy(candidate_now),candidate_now,
+                                detected.unavailable_kinds);
+                            result.candidates=std::move(trigger_status.raw_candidates);
                             result.song_intervals=trigger_status.selected_intervals;result.reason=trigger_status.reason;
                         } else {
                             result=candidates->observe(visual,candidate_now);
@@ -1752,7 +1771,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
                         journal.append({{"event","candidate"},{"frame",visual.evidence_id},
                             {"detector_reason",detected.reason},{"detector_coverage_verified",detected.centers_complete_unoccluded},
                             {"solver_complete_coverage_assumption",visual.centers_complete_unoccluded},{"rgb_sha256",visual.frame_sha256},{"centers",centers},
-                            {"center_families",detected.center_families},
+                            {"center_families",detected.center_families},{"unavailable_note_kinds",detected.unavailable_kinds},
                             {"song_intervals",intervals(result.song_intervals)},{"assignments",result.candidates.size()},{"reason",result.reason},
                             {"raw_candidates",candidate_assignments(result.candidates)},
                             {"trigger_reason",trigger_status.reason},{"support_count",trigger_status.support_count},
@@ -1824,7 +1843,7 @@ int run(int argc,char** argv,DesktopRoundSummary* desktop) {
             }
             now=clock.now_ns();
             if(armed&&!sequence_complete) {
-                if(!ui_healthy(now))throw std::runtime_error("actual_UI_or_foreground_invalid");
+                if(const auto rejected=ui_failure(now))throw std::runtime_error(rejected);
                 if(!kernel_started&&now>=first_due-350*ms) {
                     kernel_started=true;kernel_pending=std::async(std::launch::async,[&kernel]{return kernel.query();});
                 }
