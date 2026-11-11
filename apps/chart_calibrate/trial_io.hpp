@@ -56,6 +56,11 @@ inline std::string field(const std::string& text,const std::string& key) {
     const auto position=text.find(key);if(position==std::string::npos)return {};
     const auto begin=position+key.size();return text.substr(begin,text.find_first_of(" \t\r\n",begin)-begin);
 }
+inline bool is_supported_game_version(const std::string& package_report) {
+    const auto name=field(package_report,"versionName=");
+    const auto code=field(package_report,"versionCode=");
+    return (name=="4.0.1"&&code=="157")||(name=="4.0.1.2"&&code=="160");
+}
 inline void foreground(const std::filesystem::path& adb,const std::string& serial) {
     const auto report=adb_text(adb,serial,{"shell","dumpsys","window"});
     const auto begin=report.find("mCurrentFocus=");

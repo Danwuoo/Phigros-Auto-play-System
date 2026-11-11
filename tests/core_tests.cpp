@@ -141,6 +141,27 @@ TEST(Scheduler, StopBeforeDuePreventsDownAndReleases) {
     EXPECT_TRUE(touch.contacts().empty());
 }
 
+TEST(Scheduler, AlternatesContactsAcrossConsecutiveTouches) {
+    FakeClock clock;
+    FakeTouchBackend touch(clock);
+    ContactScheduler owner(clock, touch, 5);
+    ASSERT_TRUE(owner.set_gate(1, true, 0));
+    ASSERT_TRUE(owner.submit(plan(1, 1, 0, 10'000'000, 30'000'000)));
+    clock.set(10'000'000);
+    auto r1 = owner.run_due();
+    ASSERT_EQ(r1.size(), 1);
+    EXPECT_EQ(r1[0].command.contact_id, 0);
+    clock.set(30'000'000);
+    auto r2 = owner.run_due();
+    ASSERT_EQ(r2.size(), 1);
+    EXPECT_EQ(r2[0].command.contact_id, 0);
+    ASSERT_TRUE(owner.submit(plan(2, 1, 0, 32'000'000, 50'000'000)));
+    clock.set(32'000'000);
+    auto r3 = owner.run_due();
+    ASSERT_EQ(r3.size(), 1);
+    EXPECT_EQ(r3[0].command.contact_id, 1);
+}
+
 TEST(Vision, PixelsTrackAndPredictCrossing) {
     FakeClock clock;
     GreenTargetDetector detector(clock);

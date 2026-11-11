@@ -312,6 +312,7 @@ private:
     bool stop_requested_ = false;
     std::function<bool()> dispatch_guard_;
     std::vector<SchedulerNotice> notices_; // <=256; owner drains every tick.
+    int next_contact_ = 0;
 };
 
 } // namespace pas

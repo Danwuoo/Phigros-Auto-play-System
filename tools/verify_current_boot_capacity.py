@@ -193,8 +193,9 @@ class CurrentBootCapacity(restart.Bootstrap):
         need(self.command(["shell", "getprop", "sys.boot_completed"], limit=256) == "1", "Android boot incomplete")
         need(self.command(["emu", "avd", "name"], limit=1024).splitlines()[0] == restart.AVD, "AVD mismatch")
         version = self.command(["shell", "dumpsys", "package", "com.PigeonGames.Phigros"])
-        need(re.search(r"\bversionName=4\.0\.1(?:\s|$)", version) and
-             re.search(r"\bversionCode=157(?:\s|$)", version), "installed game must be 4.0.1 / 157")
+        need((re.search(r"\bversionName=4\.0\.1(?:\s|$)", version) and re.search(r"\bversionCode=157(?:\s|$)", version)) or
+             (re.search(r"\bversionName=4\.0\.1\.2(?:\s|$)", version) and re.search(r"\bversionCode=160(?:\s|$)", version)),
+             "installed game must be 4.0.1 / 157 or 4.0.1.2 / 160")
         boot = self.boot_id(); self.package_hash()
         helpers = []
         for remote, expected, name in ((restart.REMOTE_SNAP, restart.SNAP_SHA, "snapshot-helper"),

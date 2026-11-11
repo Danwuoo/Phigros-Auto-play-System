@@ -135,7 +135,7 @@ function Get-PanelImageRetention($Context) {
 }
 function Get-PanelImageRetentionText($Context) {
     if((Get-PanelImageRetention $Context) -ceq 'result'){return '每輪只保存結算圖'}
-    return '每輪不存圖片'
+        return '每輪不存圖片'
 }
 function Get-PanelContext([string]$Path,[string]$ScriptPath=$PSCommandPath) {
     $config=Read-PanelJson $Path
@@ -265,20 +265,28 @@ function Invoke-PanelOwnedStart($Owner,$Operation,[string]$Executable,[string]$W
 }
 function Test-PanelManifestCounters($Manifest,$ExpectedJob=$null) {
     $complete=$Manifest.whole_song_sequence_complete -is [bool] -and $Manifest.whole_song_sequence_complete
-    foreach($name in @('full_chart_notes','full_compiled_steps','receipt_rows','down_attempts','up_attempts')){
+    $contactsField=if($Manifest.PSObject.Properties['full_physical_contacts']){'full_physical_contacts'}else{'full_chart_notes'}
+    foreach($name in @('full_chart_notes','full_physical_contacts','full_compiled_steps','receipt_rows','down_attempts','up_attempts')){
         if($Manifest.PSObject.Properties[$name]){
             $number=$Manifest.$name
             if(($number -isnot [int] -and $number -isnot [long]) -or $number -lt 0 -or $number -gt 2000000){return $false}
             if($complete -and $number -eq 0){return $false}
         }
     }
+    if($contactsField -eq 'full_physical_contacts' -and
+       (-not $Manifest.PSObject.Properties['full_chart_notes'] -or -not $Manifest.PSObject.Properties['full_compiled_steps'] -or
+        $Manifest.full_physical_contacts -le $Manifest.full_chart_notes -or
+        $Manifest.full_physical_contacts -gt [Math]::Floor($Manifest.full_compiled_steps/2))){return $false}
     if($ExpectedJob){
         foreach($pair in @(@('full_chart_notes','notes'),@('full_compiled_steps','events'))){
             if($Manifest.PSObject.Properties[$pair[0]] -and $null -ne $ExpectedJob.($pair[1]) -and $Manifest.($pair[0]) -ne $ExpectedJob.($pair[1])){return $false}
         }
+        if($ExpectedJob.PSObject.Properties['physical_contacts']){
+            if($ExpectedJob.physical_contacts -ne $Manifest.$contactsField){return $false}
+        }elseif($contactsField -eq 'full_physical_contacts'){return $false}
     }
     if($complete){
-        foreach($pair in @(@('receipt_rows','full_compiled_steps'),@('down_attempts','full_chart_notes'),@('up_attempts','full_chart_notes'))){
+        foreach($pair in @(@('receipt_rows','full_compiled_steps'),@('down_attempts',$contactsField),@('up_attempts',$contactsField))){
             if($Manifest.PSObject.Properties[$pair[0]] -and $Manifest.PSObject.Properties[$pair[1]] -and $Manifest.($pair[0]) -ne $Manifest.($pair[1])){return $false}
         }
     }
@@ -288,12 +296,12 @@ function Test-PanelManifestCounters($Manifest,$ExpectedJob=$null) {
         foreach($name in @('selected_contacts','selected_steps','completed_contacts','active','pending')){
             if($runtime.PSObject.Properties[$name]){$number=$runtime.$name;if(($number -isnot [int] -and $number -isnot [long]) -or $number -lt 0 -or $number -gt 2000000){return $false}}
         }
-        foreach($pair in @(@('selected_contacts','full_chart_notes'),@('selected_steps','full_compiled_steps'))){
+        foreach($pair in @(@('selected_contacts',$contactsField),@('selected_steps','full_compiled_steps'))){
             if($runtime.PSObject.Properties[$pair[0]] -and $Manifest.PSObject.Properties[$pair[1]] -and $runtime.($pair[0]) -ne $Manifest.($pair[1])){return $false}
         }
         if($complete){
             if(($runtime.PSObject.Properties['active'] -and $runtime.active -ne 0) -or ($runtime.PSObject.Properties['pending'] -and $runtime.pending -ne 0)){return $false}
-            if($runtime.PSObject.Properties['completed_contacts'] -and $Manifest.PSObject.Properties['full_chart_notes'] -and $runtime.completed_contacts -ne $Manifest.full_chart_notes){return $false}
+            if($runtime.PSObject.Properties['completed_contacts'] -and $Manifest.PSObject.Properties[$contactsField] -and $runtime.completed_contacts -ne $Manifest.$contactsField){return $false}
         }
     }
     return $true
@@ -332,7 +340,7 @@ function Read-PanelRoundManifest([string]$Path) {
         $fields=@('schema','song_id','difficulty','chart_sha256','song_profile_sha256',
             'screen_calibration_sha256','expected_plan_sha256','executable_sha256','kernel_profile_sha256',
             'capacity_policy','status','failure','whole_song_sequence_complete','manual_result_confirmed',
-            'kernel_final_zero','kernel_final','full_chart_notes','full_compiled_steps','receipt_rows',
+            'kernel_final_zero','kernel_final','full_chart_notes','full_physical_contacts','full_compiled_steps','receipt_rows',
             'down_attempts','up_attempts','runtime_final','image_retention')
         $parts=[Collections.Generic.List[string]]::new();[long]$length=2
         foreach($name in $fields){
@@ -667,6 +675,15 @@ if ($SelfTest) {
             $copy|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $stagePath -Encoding utf8;$inconsistent=Get-PanelRoundResult $future 0
             if($inconsistent.Success -or $inconsistent.CountersConsistent -or $inconsistent.ExecutionState -ne 'unknown' -or $inconsistent.ReleaseState -ne 'unknown'){throw '數量矛盾的原生紀錄被歸因為完整完成。'};$checks++
         }
+        $handoff=$stages|ConvertTo-Json -Depth 8|ConvertFrom-Json
+        $handoff|Add-Member -NotePropertyName full_physical_contacts -NotePropertyValue 1286
+        $handoff|Add-Member -NotePropertyName down_attempts -NotePropertyValue 1286 -Force
+        $handoff|Add-Member -NotePropertyName up_attempts -NotePropertyValue 1286 -Force
+        $handoff.runtime_final.selected_contacts=$handoff.runtime_final.completed_contacts=1286
+        $handoffJob=[pscustomobject]@{notes=1285;events=3358;physical_contacts=1286}
+        if(-not (Test-PanelManifestCounters $handoff $handoffJob)){throw 'Hold 換指的實體觸點數被誤報為不完整。'};$checks++
+        $handoff.runtime_final.completed_contacts=1285
+        if(Test-PanelManifestCounters $handoff $handoffJob){throw 'Hold 換指的實體觸點尚未完成。'};$checks++
         $stages['kernel_final']=[pscustomobject]@{active_count=0;slot_count=2;tracking_ids=@(-1,-1);causal_host_interval_valid=$true}
         $stages|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $stagePath -Encoding utf8
         if(-not (Get-PanelRoundResult $future 0).ReleaseEvidenceConsistent){throw '一致的零接觸觀測被拒絕。'};$checks++

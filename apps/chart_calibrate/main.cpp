@@ -86,7 +86,7 @@ int run(int argc,char** argv) {
     const auto adb=pas::find_adb();const auto avd_text=adb_text(adb,serial,{"emu","avd","name"});
     if(avd_text.substr(0,avd_text.find_first_of("\r\n"))!=avd)throw std::runtime_error("AVD mismatch");
     const auto package_report=adb_text(adb,serial,{"shell","dumpsys","package","com.PigeonGames.Phigros"});
-    if(field(package_report,"versionName=")!="4.0.1"||field(package_report,"versionCode=")!="157")throw std::runtime_error("game version mismatch");
+    if(!is_supported_game_version(package_report))throw std::runtime_error("game version mismatch");
     pas::HostClock clock;const auto foreground_begin=clock.now_ns();foreground(adb,serial);const auto foreground_end=clock.now_ns();
     manual_ui::ForegroundWatch foreground_watch([adb,serial]{foreground(adb,serial);},[clock]{return clock.now_ns();},{foreground_begin,foreground_end});
     KernelSlots kernel(adb,serial,kernel_profile,clock);const auto initial_kernel=kernel.query();

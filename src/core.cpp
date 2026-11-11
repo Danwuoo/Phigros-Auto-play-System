@@ -414,6 +414,7 @@ void ContactScheduler::fail(const std::string& reason) {
 void ContactScheduler::cancel(const std::string&) {
     armed_ = false;
     pending_.clear();
+    next_contact_ = 0;
     last_release_ = backend_.release_all();
     if (!last_release_.failed_ids.empty() || !last_release_.unknown_ids.empty()) fault_ = "release_failed";
 }
@@ -475,11 +476,18 @@ std::vector<TouchReceipt> ContactScheduler::run_due() {
             std::vector<bool> used(static_cast<std::size_t>(max_contacts_));
             for (const auto& [_, p] : pending_)
                 if (p.active) used[static_cast<std::size_t>(p.contact_id)] = true;
-            int contact = 0;
-            while (contact < max_contacts_ && used[static_cast<std::size_t>(contact)]) ++contact;
+            int contact = -1;
+            for (int i = 0; i < max_contacts_; ++i) {
+                int candidate = (next_contact_ + i) % max_contacts_;
+                if (!used[static_cast<std::size_t>(candidate)]) {
+                    contact = candidate;
+                    next_contact_ = (candidate + 1) % max_contacts_;
+                    break;
+                }
+            }
             // A conflict drops only the new target. Active up responsibility
             // survives and unrelated valid targets keep running.
-            if (contact == max_contacts_) {
+            if (contact < 0) {
                 if (!notice(selected->first, "contact_conflict")) break;
                 pending_.erase(selected); continue;
             }

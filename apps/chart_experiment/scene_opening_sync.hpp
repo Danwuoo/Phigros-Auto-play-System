@@ -40,7 +40,7 @@ struct SceneOpeningSyncResult {
 class SceneOpeningSync {
     static constexpr SongNs ms=1'000'000,second=1'000'000'000,safe=(SongNs{1}<<53)-1;
     static constexpr SongNs minimum_song_ns=-2*second;
-    static constexpr std::size_t max_model_pieces=65536,max_matches=4096,max_work=262144,max_frames=12,max_evidence=2048;
+    static constexpr std::size_t max_source_events=524288,max_model_pieces=131072,max_matches=4096,max_work=262144,max_frames=12,max_evidence=2048;
     static constexpr double axis_error_degrees=1.0,pixel_error=3.0;
     struct Piece {
         VisualTimeInterval time;
@@ -267,7 +267,7 @@ public:
         std::size_t source_events=0,pieces=0;
         for(const auto& line:chart.lines){
             source_events+=line.move_events.size()+line.rotate_events.size()+line.opacity_events.size();
-            if(source_events>max_model_pieces)throw std::invalid_argument("scene_opening_native_event_budget");
+            if(source_events>max_source_events)throw std::invalid_argument("scene_opening_native_event_budget");
         }
         const PhigrosPoseEvaluator poses(chart);model_.resize(chart.lines.size());
         for(std::size_t line=0;line<chart.lines.size();++line){

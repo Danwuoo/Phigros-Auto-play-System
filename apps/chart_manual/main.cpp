@@ -116,8 +116,10 @@ int shadow(int argc,char** argv) {
     const auto avd_reply=adb_text(adb,serial,{"emu","avd","name"});
     if(avd_reply.substr(0,avd_reply.find_first_of("\r\n"))!=avd)throw std::runtime_error("selected AVD mismatch");
     const auto package_reply=adb_text(adb,serial,{"shell","dumpsys","package",package});
-    if(field(package_reply,"versionName=")!="4.0.1"||field(package_reply,"versionCode=")!="157")
-        throw std::runtime_error("Phigros version must be 4.0.1 / 157");
+    const auto ver_name=field(package_reply,"versionName=");
+    const auto ver_code=field(package_reply,"versionCode=");
+    if(!((ver_name=="4.0.1"&&ver_code=="157")||(ver_name=="4.0.1.2"&&ver_code=="160")))
+        throw std::runtime_error("Phigros version must be 4.0.1 / 157 or 4.0.1.2 / 160");
     pas::HostClock clock;
     const auto foreground_started=clock.now_ns();
     check_foreground(adb,serial);

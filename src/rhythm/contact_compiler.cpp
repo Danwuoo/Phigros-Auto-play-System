@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <limits>
 #include <locale>
+#include <map>
 #include <numeric>
 #include <set>
 #include <sstream>
@@ -325,6 +326,7 @@ std::optional<ProjectionCertificate> certify_projection(const SemanticNote& note
 struct BlockAreaField {
     struct Box { Range x,y; };
     struct Bounds { Range x,y,half_x,half_y,angle; };
+    using BoundsMemo=std::map<std::tuple<std::size_t,SongNs,SongNs>,Bounds>;
     struct Piece {
         const ChartBlockArea* area;
         SongNs begin,end; // Inclusive nanoseconds, already clipped to active time.
@@ -463,9 +465,9 @@ struct BlockAreaField {
             throw Failure("block_area_geometry","BlockArea source, time phases, or keyframe geometry is invalid: "+area.source.json_pointer,area.enable_ns);
     }
     explicit BlockAreaField(const SemanticChart& chart,const ContactCompileOptions& options)
-        :work_limit(std::clamp(options.max_steps_in_plan*128,std::size_t{200'000},std::size_t{32'000'000})),
+        :work_limit(std::clamp(options.max_steps_in_plan*128,std::size_t{200'000},std::size_t{256'000'000})),
          time_before(options.block_area_phase_ns.value_or(-100'000'000)-20'000'000),
-         time_after(options.block_area_phase_ns.value_or(100'000'000)+40'000'000) {
+         time_after(options.block_area_phase_ns.value_or(100'000'000)+20'000'000) {
         if(chart.block_areas.size()>20'000)
             throw Failure("block_area_work_budget","BlockArea region count exceeds the finite work budget");
         for(const auto& area:chart.block_areas) {
@@ -527,13 +529,13 @@ struct BlockAreaField {
         return Certainty::unknown;
     }
     void assess(std::size_t node,std::size_t begin,std::size_t end,SongNs lo,SongNs hi,Box path,
-                Coverage& raw,Coverage& adjusted,std::optional<SongNs>& split) {
+                Coverage& raw,Coverage& adjusted,std::optional<SongNs>& split,BoundsMemo* memo) {
         const auto& group=nodes[node];
         if(pieces[begin].begin>hi||group.maximum_end<lo||!intersects(group.enclosing,path))return;
         if(end-begin>1) {
             const auto middle=begin+(end-begin)/2;
-            assess(node*2,begin,middle,lo,hi,path,raw,adjusted,split);
-            assess(node*2+1,middle,end,lo,hi,path,raw,adjusted,split);
+            assess(node*2,begin,middle,lo,hi,path,raw,adjusted,split,memo);
+            assess(node*2+1,middle,end,lo,hi,path,raw,adjusted,split,memo);
             return;
         }
         consume(lo);
@@ -546,8 +548,19 @@ struct BlockAreaField {
         if(!stationary&&(first!=piece.begin||last!=piece.end)) {
             if(contains(shape,path,false,piece.area->subtract)==Certainty::no&&
                contains(shape,path,true,piece.area->subtract)==Certainty::no)return;
-            consume(lo,piece.area->moves.size()+piece.area->rotations.size()+piece.area->scales.size());
-            shape=bounds(*piece.area,first,last);
+            const auto evaluate=[&]{
+                consume(lo,piece.area->moves.size()+piece.area->rotations.size()+piece.area->scales.size());
+                return bounds(*piece.area,first,last);
+            };
+            if(memo) {
+                const auto key=std::tuple{begin,first,last};
+                const auto found=memo->find(key);
+                if(found!=memo->end())shape=found->second;
+                else {
+                    shape=evaluate();
+                    if(memo->size()<8192)memo->emplace(key,shape);
+                }
+            } else shape=evaluate();
         }
         const auto observe=[&](Coverage& coverage,bool narrow) {
             auto state=contains(shape,path,narrow,piece.area->subtract);
@@ -565,24 +578,24 @@ struct BlockAreaField {
         };
         observe(raw,false);observe(adjusted,true);
     }
-    Certainty blocked(Box path,SongNs lo,SongNs hi,std::optional<SongNs>& split) {
+    Certainty blocked(Box path,SongNs lo,SongNs hi,std::optional<SongNs>& split,BoundsMemo* memo) {
         if(pieces.empty())return Certainty::no;
         Coverage raw,adjusted;
-        assess(1,0,pieces.size(),lo,hi,path,raw,adjusted,split);
+        assess(1,0,pieces.size(),lo,hi,path,raw,adjusted,split,memo);
         if(raw.blocked()==Certainty::no||adjusted.blocked()==Certainty::no)return Certainty::no;
         if(raw.blocked()==Certainty::yes&&adjusted.blocked()==Certainty::yes)return Certainty::yes;
         return Certainty::unknown;
     }
-    bool clear(Box path,SongNs lo,SongNs hi,unsigned depth=0) {
+    bool clear(Box path,SongNs lo,SongNs hi,unsigned depth=0,BoundsMemo* memo=nullptr) {
         std::optional<SongNs> split;
-        const auto state=blocked(path,lo,hi,split);
+        const auto state=blocked(path,lo,hi,split,memo);
         if(state==Certainty::no)return true;
         if(state==Certainty::yes||depth>=12||hi==lo)return false;
         const auto middle=std::midpoint(lo,hi);
         std::optional<SongNs> unused;
-        if(blocked(path,middle,middle,unused)!=Certainty::no)return false;
+        if(blocked(path,middle,middle,unused,memo)!=Certainty::no)return false;
         const auto cut=split.value_or(middle+1);
-        return clear(path,lo,cut-1,depth+1)&&clear(path,cut,hi,depth+1);
+        return clear(path,lo,cut-1,depth+1,memo)&&clear(path,cut,hi,depth+1,memo);
     }
     bool active_during(SongNs lo,SongNs hi,std::size_t node,std::size_t begin,std::size_t end) const {
         if(pieces[begin].begin>hi||nodes[node].maximum_end<lo)return false;
@@ -981,7 +994,7 @@ struct Build {
         const int spacing=options.allow_block_area_temporal_fallback?24:16;
         const int normal_steps=1472/spacing,tangent_steps=144/spacing;
         const auto search_start=block_areas.work;
-        const auto search_budget=options.allow_block_area_temporal_fallback?160'000u:1'000'000u;
+        const auto search_budget=options.allow_block_area_temporal_fallback?16'000'000u:32'000'000u;
         std::set<std::pair<int,int>> visited{{0,0}};
         const auto search=[&](int n,int t) {
             if(block_areas.work-search_start>=search_budget)return false;
@@ -1004,7 +1017,8 @@ struct Build {
         }
         throw Failure("block_area_no_safe_path","No continuously clear bounded BlockArea detour was certified for this contact",note.start_ns,target.reference_pixels);
     }
-    bool block_area_temporal_route(Contact& contact,NoteContactOwnership& owner,const SemanticNote& note,std::size_t line) {
+    bool block_area_temporal_route(Contact& contact,NoteContactOwnership& owner,const SemanticNote& note,std::size_t line,
+                                   std::vector<Contact>& handoffs,bool listed_offscreen_hold=false) {
         if(!options.allow_block_area_temporal_fallback||!block_areas.area_count)return false;
         const bool flick=note.kind==NoteKind::flick;
         const bool sampled=options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2;
@@ -1015,10 +1029,25 @@ struct Build {
         const auto last=flick?add(stroke_end,options.flick_release_ns):note.kind==NoteKind::hold?note.end_ns:
             add(first,note.kind==NoteKind::tap?options.tap_duration_ns:options.drag_duration_ns);
         if(last<=first||last>std::numeric_limits<SongNs>::max()-std::max(SongNs{0},block_areas.time_after)||
-           !block_areas.active_during(first+block_areas.time_before,last+block_areas.time_after))return false;
-        const auto xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
-        const auto ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
-        const auto target=phigros_line_point(poses.line_at(line,note.start_ns),note.position_x,note.side).reference_pixels;
+           (!(listed_offscreen_hold&&note.kind==NoteKind::hold)&&
+            !block_areas.active_during(first+block_areas.time_before,last+block_areas.time_after)))return false;
+        const auto default_xs=projection_slab(phigros_reference_width,options.normal_projection_inset_reference_pixels);
+        const auto default_ys=projection_slab(phigros_reference_height,options.normal_projection_inset_reference_pixels);
+        constexpr double gesture_top_margin_pixels = 48.0;
+        constexpr double gesture_bottom_margin_pixels = 48.0;
+        constexpr double gesture_side_margin_pixels = 24.0;
+        const bool hold_gesture_safe = note.kind == NoteKind::hold;
+        const Range xs = hold_gesture_safe ? Range{
+            std::max(default_xs.lo, gesture_side_margin_pixels),
+            std::min(default_xs.hi, phigros_reference_width - 1.0 - gesture_side_margin_pixels)
+        } : default_xs;
+        const Range ys = hold_gesture_safe ? Range{
+            std::max(default_ys.lo, gesture_top_margin_pixels),
+            std::min(default_ys.hi, phigros_reference_height - 1.0 - gesture_bottom_margin_pixels)
+        } : default_ys;
+        const auto pose=poses.line_at(line,note.start_ns);
+        const auto native_head=phigros_line_point(pose,note.position_x,note.side);
+        const auto target=native_head.reference_pixels;
         const auto& g=mapping.geometry();
         const double margin=raster_error/input_min_scale+1e-6;
         const auto contains=[&](PosePoint p){return p.x>=xs.lo&&p.x<=xs.hi&&p.y>=ys.lo&&p.y<=ys.hi;};
@@ -1027,11 +1056,11 @@ struct Build {
             const auto [x,y]=pixel_point(normalized,g.input_width,g.input_height);
             return std::pair{normalized,block_area_reference(x,y)};
         };
-        const auto clear=[&](PosePoint a,PosePoint b,SongNs start,SongNs end){
+        const auto clear=[&](PosePoint a,PosePoint b,SongNs start,SongNs end,BlockAreaField::BoundsMemo* memo=nullptr){
             block_areas.consume(start);
             const BlockAreaField::Box box{{std::min(a.x,b.x)-margin,std::max(a.x,b.x)+margin},
                 {std::min(a.y,b.y)-margin,std::max(a.y,b.y)+margin}};
-            return block_area_outside_corners(box)&&block_areas.clear(box,start+block_areas.time_before,end+block_areas.time_after);
+            return block_area_outside_corners(box)&&block_areas.clear(box,start+block_areas.time_before,end+block_areas.time_after,0,memo);
         };
         std::vector<PosePoint> candidates{{std::clamp(target.x,xs.lo,xs.hi),std::clamp(target.y,ys.lo,ys.hi)}};
         constexpr double spacing=24;
@@ -1041,9 +1070,44 @@ struct Build {
             }
             if(y==ys.hi)break;
         }
-        std::stable_sort(candidates.begin(),candidates.end(),[&](PosePoint a,PosePoint b){
+        const auto near_target=[&](PosePoint a,PosePoint b){
             return norm({a.x-target.x,a.y-target.y})<norm({b.x-target.x,b.y-target.y});
-        });
+        };
+        std::stable_sort(candidates.begin(),candidates.end(),near_target);
+        std::optional<PosePoint> projected_head;
+        std::vector<PosePoint> preferred_heads;
+        bool require_projected_head=false,prefer_head_domain=false;
+        const auto in_head_domain=[&](PosePoint point) {
+            const PosePoint delta{point.x-native_head.reference_pixels.x,point.y-native_head.reference_pixels.y};
+            return std::abs(delta.x*pose.tangent.x+delta.y*pose.tangent.y)<=options.max_tangent_error_reference_pixels&&
+                std::abs(delta.x*native_head.side_normal.x+delta.y*native_head.side_normal.y)<=options.max_normal_projection_reference_pixels;
+        };
+        if(listed_offscreen_hold&&note.kind==NoteKind::hold) {
+            // Retain the judgment-preserving head if that original contact is
+            // usable at DOWN, even when a later native Hold pose is unreachable.
+            const auto head=projected(poses.line_at(line,first),note,0,first).point;
+            projected_head=head;
+            const auto reference=actual(head,first).second;
+            require_projected_head=clear(reference,reference,first,first);
+            const auto initial_size=candidates.size();
+            for(std::size_t i=0;i<initial_size;++i) {
+                const auto point=candidates[i];
+                candidates.push_back({head.x,point.y});candidates.push_back({point.x,head.y});
+            }
+            std::sort(candidates.begin(),candidates.end(),[](PosePoint a,PosePoint b){return std::tie(a.x,a.y)<std::tie(b.x,b.y);});
+            candidates.erase(std::unique(candidates.begin(),candidates.end(),[](PosePoint a,PosePoint b){return a.x==b.x&&a.y==b.y;}),candidates.end());
+            std::stable_sort(candidates.begin(),candidates.end(),near_target);
+            for(const auto point:candidates) {
+                const auto raster=actual(point,first).second;
+                if(in_head_domain(raster)&&clear(raster,raster,first,first))preferred_heads.push_back(point);
+            }
+            if(require_projected_head) {
+                candidates={head};
+            } else if(!preferred_heads.empty()) {
+                prefer_head_domain=true;
+                candidates=std::move(preferred_heads);
+            }
+        }
         const auto accept=[&](bool track_full_hold=false){
             owner.block_area_temporal_fallback=true;
             if(note.kind==NoteKind::hold&&options.hold_tail_policy==HoldTailPolicy::phira_tail_grace_candidate_v1)
@@ -1103,62 +1167,266 @@ struct Build {
                 }
         }
         if(note.kind!=NoteKind::hold)return false;
-        // Stationary alternatives are preferable. When a moving area sweeps
-        // every stationary point, try a bounded search with the same pointer
-        // held from original DOWN to original UP. Only MOVE nodes are added.
-        constexpr SongNs tick=48'000'000;
-        constexpr std::size_t beam=24;
-        if((last-first)/tick>=static_cast<SongNs>(std::min(options.max_steps_per_contact,std::size_t{512})-1))return false;
-        struct Waypoint { PosePoint anchor,reference; Point input; std::size_t previous; double cost; };
-        std::vector<std::vector<Waypoint>> route;
-        const auto next_tick=[&](SongNs time){return time+std::min(tick,last-time);};
-        const auto apart=[](PosePoint a,PosePoint b){return norm({a.x-b.x,a.y-b.y});};
-        const auto insert_spaced=[&](std::vector<Waypoint>& layer,const Waypoint& point){
-            if(std::none_of(layer.begin(),layer.end(),[&](const auto& prior){return apart(point.reference,prior.reference)<spacing*1.5;}))
-                layer.push_back(point);
-        };
-        route.emplace_back();
-        for(const auto anchor:candidates) {
-            const auto [input,reference]=actual(anchor,first);
-            if(clear(reference,reference,first,next_tick(first)))
-                insert_spaced(route.back(),{anchor,reference,input,0,apart(reference,target)*.05});
-            if(route.back().size()==beam)break;
-        }
-        if(route.back().empty())return false;
-        for(auto time=next_tick(first);time<last;time=next_tick(time)) {
-            const auto end=next_tick(time);
-            std::vector<Waypoint> next;
-            const auto& previous=route.back();
-            for(std::size_t i=0;i<previous.size();++i) {
-                const auto& prior=previous[i];
-                for(int x=-2;x<=2;++x)for(int y=-2;y<=2;++y) {
-                    const PosePoint anchor{std::clamp(prior.anchor.x+spacing*x,xs.lo,xs.hi),
-                        std::clamp(prior.anchor.y+spacing*y,ys.lo,ys.hi)};
-                    const auto [input,reference]=actual(anchor,time);
-                    if(!clear(reference,reference,time,end))continue;
-                    const double move=apart(prior.reference,reference);
-                    if(move>0&&!clear(prior.reference,reference,time,time))continue;
-                    next.push_back({anchor,reference,input,i,prior.cost+move+apart(reference,target)*.001});
-                }
-            }
-            if(next.empty())return false;
-            std::stable_sort(next.begin(),next.end(),[](const auto& a,const auto& b){return a.cost<b.cost;});
+        const bool exact_head_clear=require_projected_head;
+        const auto local_hold_route=[&]{
+            // Stationary alternatives are preferable. When a moving area sweeps
+            // every stationary point, try a bounded search with the same pointer
+            // held from original DOWN to original UP. Only MOVE nodes are added.
+            constexpr SongNs tick=48'000'000;
+            constexpr std::size_t beam=24;
+            if((last-first)/tick>=static_cast<SongNs>(std::min(options.max_steps_per_contact,std::size_t{512})-1))return false;
+            struct Waypoint { PosePoint anchor,reference; Point input; std::size_t previous; double cost; };
+            std::vector<std::vector<Waypoint>> route;
+            const auto next_tick=[&](SongNs time){return time+std::min(tick,last-time);};
+            const auto apart=[](PosePoint a,PosePoint b){return norm({a.x-b.x,a.y-b.y});};
+            const auto insert_spaced=[&](std::vector<Waypoint>& layer,const Waypoint& point){
+                if(std::none_of(layer.begin(),layer.end(),[&](const auto& prior){return apart(point.reference,prior.reference)<spacing*1.5;}))
+                    layer.push_back(point);
+            };
             route.emplace_back();
-            for(const auto& candidate:next) {
-                insert_spaced(route.back(),candidate);
+            for(const auto anchor:candidates) {
+                const auto [input,reference]=actual(anchor,first);
+                if(clear(reference,reference,first,next_tick(first)))
+                    insert_spaced(route.back(),{anchor,reference,input,0,apart(reference,target)*.05});
                 if(route.back().size()==beam)break;
             }
+            if(route.back().empty())return false;
+            for(auto time=next_tick(first);time<last;time=next_tick(time)) {
+                const auto end=next_tick(time);
+                std::vector<Waypoint> next;
+                const auto& previous=route.back();
+                for(std::size_t i=0;i<previous.size();++i) {
+                    const auto& prior=previous[i];
+                    for(int x=-2;x<=2;++x)for(int y=-2;y<=2;++y) {
+                        const PosePoint anchor{std::clamp(prior.anchor.x+spacing*x,xs.lo,xs.hi),
+                            std::clamp(prior.anchor.y+spacing*y,ys.lo,ys.hi)};
+                        const auto [input,reference]=actual(anchor,time);
+                        if(!clear(reference,reference,time,end))continue;
+                        const double move=apart(prior.reference,reference);
+                        if(move>0&&!clear(prior.reference,reference,time,time))continue;
+                        next.push_back({anchor,reference,input,i,prior.cost+move+apart(reference,target)*.001});
+                    }
+                }
+                if(next.empty())return false;
+                std::stable_sort(next.begin(),next.end(),[](const auto& a,const auto& b){return a.cost<b.cost;});
+                route.emplace_back();
+                for(const auto& candidate:next) {
+                    insert_spaced(route.back(),candidate);
+                    if(route.back().size()==beam)break;
+                }
+            }
+            std::vector<Point> path(route.size());
+            std::size_t index=0;
+            for(std::size_t i=route.size();i-->0;) {
+                const auto& waypoint=route[i][index];path[i]=waypoint.input;index=waypoint.previous;
+            }
+            append(contact,first,Phase::down,path.front(),true);
+            for(std::size_t i=1;i<path.size();++i)
+                append(contact,first+static_cast<SongNs>(i)*tick,Phase::move,path[i]);
+            append(contact,last,Phase::up,path.back(),true);
+            return accept(true);
+        };
+        if(local_hold_route())return true;
+
+        // The local beam can lose a playable island before it is needed. Keep
+        // every reachable raster state on a coarse lattice first, then refine
+        // the grid/time when necessary. A state needs one certified predecessor
+        // because later motion depends only on its point and song time.
+        std::string graph_failure;
+        const auto graph_hold_route=[&](double grid_size,SongNs tick,double hop,std::size_t search_budget,bool permit_handoff=false) {
+            const auto slices=static_cast<std::size_t>((last-first-1)/tick+1);
+            if(slices>=std::min(options.max_steps_per_contact,std::size_t{512}))return false;
+            const auto axis=[&](Range bounds,std::optional<double> seed){
+                std::vector<double> positions{bounds.lo};
+                while(positions.back()<bounds.hi)positions.push_back(std::min(positions.back()+grid_size,bounds.hi));
+                if(seed) {
+                    const auto at=std::lower_bound(positions.begin(),positions.end(),*seed);
+                    if(at==positions.end()||*at!=*seed)positions.insert(at,*seed);
+                }
+                return positions;
+            };
+            const auto x=axis(xs,projected_head?std::optional{projected_head->x}:std::nullopt);
+            const auto y=axis(ys,projected_head?std::optional{projected_head->y}:std::nullopt);
+            const auto count=x.size()*y.size();
+            if(count*slices>400'000)return false;
+            struct Vertex { Point input; PosePoint reference; };
+            std::vector<Vertex> vertices;
+            vertices.reserve(count);
+            for(const auto v:y)for(const auto u:x) {
+                const auto [input,reference]=actual({u,v},first);
+                vertices.push_back({input,reference});
+            }
+            const auto apart=[](PosePoint a,PosePoint b){return norm({a.x-b.x,a.y-b.y});};
+            const auto reach=static_cast<int>(std::ceil(hop/grid_size))+1;
+            std::vector<std::pair<int,int>> neighbors;
+            for(int dy=-reach;dy<=reach;++dy)for(int dx=-reach;dx<=reach;++dx)
+                if(dx||dy)neighbors.emplace_back(dx,dy);
+            std::stable_sort(neighbors.begin(),neighbors.end(),[](const auto& a,const auto& b){
+                return a.first*a.first+a.second*a.second<b.first*b.first+b.second*b.second;
+            });
+            constexpr auto unreachable=std::numeric_limits<std::size_t>::max();
+            struct State {
+                std::size_t previous=std::numeric_limits<std::size_t>::max();
+                double cost=0;
+                unsigned handoffs=0;
+                bool switches_pointer=false;
+            };
+            std::vector<State> route(count*slices);
+            BlockAreaField::BoundsMemo memo;
+            const auto transition=[&](auto&& self,PosePoint a,PosePoint b,SongNs t,unsigned depth)->bool {
+                if(clear(a,b,t,t,&memo))return true;
+                if(depth>=4||apart(a,b)<=6)return false;
+                const PosePoint middle{std::midpoint(a.x,b.x),std::midpoint(a.y,b.y)};
+                return self(self,a,middle,t,depth+1)&&self(self,middle,b,t,depth+1);
+            };
+            const auto started_work=block_areas.work;
+            for(std::size_t slice=0;slice<slices;++slice) {
+                memo.clear();
+                const auto time=first+static_cast<SongNs>(slice)*tick;
+                const auto end=time+std::min(tick,last-time);
+                bool reachable=false;
+                std::size_t clear_vertices=0;
+                const auto previous=slice?(slice-1)*count:0;
+                auto best_previous=unreachable;
+                if(permit_handoff&&slice&&time-first>block_area_hold_handoff_overlap_ns) {
+                    for(std::size_t i=0;i<count;++i) {
+                        const auto& state=route[previous+i];
+                        if(state.previous==unreachable)continue;
+                        if(best_previous==unreachable||std::tie(state.handoffs,state.cost)<
+                           std::tie(route[previous+best_previous].handoffs,route[previous+best_previous].cost))best_previous=i;
+                    }
+                }
+                for(std::size_t index=0;index<count;++index) {
+                    if(block_areas.work-started_work>=search_budget) {
+                        graph_failure+=" bounded search exhausted at "+std::to_string(time)+" ns.";
+                        return false;
+                    }
+                    if(!slice&&require_projected_head&&(x[index%x.size()]!=projected_head->x||y[index/x.size()]!=projected_head->y))continue;
+                    auto& state=route[slice*count+index];
+                    const auto point=vertices[index].reference;
+                    if(!slice&&prefer_head_domain&&!in_head_domain(point))continue;
+                    if(!slice) {
+                        if(clear(point,point,time,end,&memo)) {
+                            ++clear_vertices;
+                            state={index,apart(point,target)*.05};
+                        }
+                    } else {
+                        const auto& before_here=route[previous+index];
+                        if(before_here.previous!=unreachable) {
+                            if(clear(point,point,time,end,&memo)) {
+                                ++clear_vertices;
+                                state={index,before_here.cost,before_here.handoffs,false};
+                            }
+                        } else {
+                            // A different pointer can already be held here
+                            // while the previous pointer remains at its own
+                            // clear point. Neither pointer crosses the gap.
+                            if(best_previous!=unreachable) {
+                                const auto& best=route[previous+best_previous];
+                                if(best.handoffs<16&&clear(point,point,time-block_area_hold_handoff_overlap_ns,end,&memo)) {
+                                    ++clear_vertices;
+                                    state={best_previous,best.cost+apart(vertices[best_previous].reference,point),best.handoffs+1,true};
+                                }
+                            }
+                            bool held_clear=false;
+                            if(state.previous==unreachable)for(const auto& [dx,dy]:neighbors) {
+                                const auto column=static_cast<int>(index%x.size())+dx,row=static_cast<int>(index/x.size())+dy;
+                                if(column<0||row<0||column>=static_cast<int>(x.size())||row>=static_cast<int>(y.size()))continue;
+                                const auto prior=static_cast<std::size_t>(row)*x.size()+static_cast<std::size_t>(column);
+                                if(route[previous+prior].previous==unreachable)continue;
+                                const auto before=vertices[prior].reference;
+                                const auto distance=apart(before,point);
+                                if(distance>hop)continue;
+                                if(!held_clear) {
+                                    held_clear=clear(point,point,time,end,&memo);
+                                    if(!held_clear)break;
+                                    ++clear_vertices;
+                                }
+                                if(transition(transition,before,point,time,0)) {
+                                    const auto& prior_state=route[previous+prior];
+                                    state={prior,prior_state.cost+distance,prior_state.handoffs,false};
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    reachable|=state.previous!=unreachable;
+                }
+                if(!reachable) {
+                    graph_failure+=" "+std::to_string(static_cast<int>(grid_size))+" px grid at "+std::to_string(time)+
+                        " ns: "+std::to_string(clear_vertices)+" clear held points within reach, no continuously clear connection.";
+                    return false;
+                }
+            }
+            std::size_t index=unreachable;
+            double cost=std::numeric_limits<double>::infinity();
+            unsigned fewest_handoffs=std::numeric_limits<unsigned>::max();
+            for(std::size_t i=0;i<count;++i) {
+                const auto& state=route[(slices-1)*count+i];
+                if(state.previous!=unreachable&&std::tie(state.handoffs,state.cost)<std::tie(fewest_handoffs,cost)) {
+                    index=i;cost=state.cost;fewest_handoffs=state.handoffs;
+                }
+            }
+            std::vector<Point> path(slices);
+            std::vector<bool> switch_pointer(slices);
+            for(std::size_t slice=slices;slice-->0;) {
+                path[slice]=vertices[index].input;
+                const auto& state=route[slice*count+index];
+                switch_pointer[slice]=state.switches_pointer;index=state.previous;
+            }
+            auto* physical=&contact;
+            append(*physical,first,Phase::down,path.front(),true);
+            for(std::size_t slice=1;slice<slices;++slice) {
+                const auto time=first+static_cast<SongNs>(slice)*tick;
+                if(switch_pointer[slice]) {
+                    append(*physical,time,Phase::up,path[slice-1],true);
+                    handoffs.emplace_back();physical=&handoffs.back();
+                    append(*physical,time-block_area_hold_handoff_overlap_ns,Phase::down,path[slice],true);
+                } else append(*physical,time,Phase::move,path[slice]);
+            }
+            append(*physical,last,Phase::up,path.back(),true);
+            return accept(true);
+        };
+        const auto graph_routes=[&]{
+            if(options.allow_block_area_hold_handoffs&&listed_offscreen_hold)
+                return graph_hold_route(48,48'000'000,144,750'000);
+            if(options.allow_block_area_hold_handoffs)
+                return graph_hold_route(48,48'000'000,144,1'000'000)||graph_hold_route(24,48'000'000,192,1'000'000);
+            return graph_hold_route(48,48'000'000,144,2'000'000)||
+                graph_hold_route(24,48'000'000,192,7'000'000)||graph_hold_route(24,24'000'000,192,8'000'000);
+        };
+        if(graph_routes())return true;
+        if(require_projected_head&&!preferred_heads.empty()) {
+            require_projected_head=false;
+            prefer_head_domain=true;
+            candidates=std::move(preferred_heads);
+            for(const auto anchor:candidates) {
+                const auto [input,reference]=actual(anchor,first);
+                if(!clear(reference,reference,first,last))continue;
+                append(contact,first,Phase::down,input,true);append(contact,last,Phase::up,input,true);
+                return accept();
+            }
+            if(local_hold_route()||graph_routes())return true;
         }
-        std::vector<Point> path(route.size());
-        std::size_t index=0;
-        for(std::size_t i=route.size();i-->0;) {
-            const auto& waypoint=route[i][index];path[i]=waypoint.input;index=waypoint.previous;
+        if(options.allow_block_area_hold_handoffs) {
+            const auto handoff_routes=[&]{
+                if(listed_offscreen_hold)
+                    return graph_hold_route(48,48'000'000,144,5'000'000,true)||
+                        graph_hold_route(24,48'000'000,192,1'500'000,true);
+                return graph_hold_route(48,48'000'000,144,3'000'000,true)||
+                    graph_hold_route(24,48'000'000,192,5'000'000,true)||graph_hold_route(24,24'000'000,192,5'000'000,true);
+            };
+            const bool has_alternate_head=prefer_head_domain;
+            if(exact_head_clear)require_projected_head=true;
+            if(handoff_routes())return true;
+            if(exact_head_clear&&has_alternate_head) {
+                require_projected_head=false;
+                if(handoff_routes())return true;
+            }
         }
-        append(contact,first,Phase::down,path.front(),true);
-        for(std::size_t i=1;i<path.size();++i)
-            append(contact,first+static_cast<SongNs>(i)*tick,Phase::move,path[i]);
-        append(contact,last,Phase::up,path.back(),true);
-        return accept(true);
+        if(!graph_failure.empty())throw Failure("block_area_no_safe_path",
+            "No continuously clear BlockArea Hold route was certified."+graph_failure,first,target);
+        return false;
     }
     void projected_segment(Contact& contact,const SemanticNote& note,std::size_t line_index,SongNs a,SongNs b,
             const std::function<double(SongNs)>& offset_at,double offset_slope,NoteContactOwnership& ownership,
@@ -1574,6 +1842,14 @@ struct Build {
 void check_options(const ContactCompileOptions& options) {
     if(options.block_area_phase_ns&&(*options.block_area_phase_ns < -100'000'000||*options.block_area_phase_ns > 100'000'000))
         throw Failure("invalid_options","BlockArea phase must be within -100..100ms");
+    if(options.allow_block_area_hold_handoffs&&(!options.allow_block_area_temporal_fallback||!options.block_area_phase_ns||
+       options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1))
+        throw Failure("invalid_block_area_hold_handoff","Hold handoffs require an explicit BlockArea phase and temporal rectangle policy");
+    if(!options.block_area_offscreen_hold_source_ids.empty()&&
+       (!options.allow_block_area_temporal_fallback||!options.block_area_phase_ns||
+        options.offscreen_policy!=OffscreenPolicy::bounded_judgment_rectangle_candidate_v1||
+        options.block_area_offscreen_hold_source_ids.size()>32))
+        throw Failure("invalid_block_area_hold_filter","Offscreen Holds require an explicit BlockArea phase and at most 32 source IDs");
     if(!options.above_drag_source_ids.empty()&&!options.advance_above_drags)
         throw Failure("invalid_options","An above-Drag source filter requires the explicit above-Drag advance option");
     if(options.above_drag_source_ids.size()>2048)
@@ -1750,6 +2026,14 @@ std::string cache_key(const CompiledContactPlan& plan) {
         if(o.allow_block_area_temporal_fallback) {
             text("block-area-temporal-fallback.v1");stream<<plan.metadata.block_area_temporal_contacts<<';';
         }
+        if(!o.block_area_offscreen_hold_source_ids.empty()) {
+            text("block-area-offscreen-hold-filter.v1");stream<<plan.metadata.block_area_offscreen_hold_contacts<<':';
+            for(const auto& id:o.block_area_offscreen_hold_source_ids)text(id);
+        }
+        if(o.allow_block_area_hold_handoffs) {
+            text("block-area-hold-handoff.v1");
+            stream<<block_area_hold_handoff_overlap_ns<<','<<plan.metadata.block_area_hold_handoff_contacts<<';';
+        }
     }
     stream<<plan.ownership.size()<<':';
     for(const auto& owned:plan.ownership) {
@@ -1774,6 +2058,11 @@ std::string cache_key(const CompiledContactPlan& plan) {
             stream<<owned.block_area_translation_reference->x<<','<<owned.block_area_translation_reference->y<<';';
         }
         if(owned.block_area_temporal_fallback)text("block-area-temporal-owner.v1");
+        if(owned.block_area_offscreen_hold_fallback)text("block-area-offscreen-hold-owner.v1");
+        if(!owned.hold_handoff_contact_ids.empty()) {
+            text("block-area-hold-handoff-owner.v1");stream<<owned.hold_handoff_contact_ids.size()<<':';
+            for(const auto id:owned.hold_handoff_contact_ids)stream<<id<<';';
+        }
         if(o.max_hold_reacquire_gap_ns!=0) {
             text("judgment-domain-gap-spans.v1");stream<<owned.gap_tangent_projection_min_reference_pixels<<','<<owned.gap_tangent_projection_max_reference_pixels<<';';
             for(const auto& span:owned.normal_projection_spans)stream<<span.judgment_domain_gap<<';';
@@ -1981,6 +2270,12 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
         check_options(options);
         std::sort(options.below_drag_source_ids.begin(),options.below_drag_source_ids.end());
         std::sort(options.above_drag_source_ids.begin(),options.above_drag_source_ids.end());
+        auto& offscreen_holds=options.block_area_offscreen_hold_source_ids;
+        std::sort(offscreen_holds.begin(),offscreen_holds.end());
+        if(std::adjacent_find(offscreen_holds.begin(),offscreen_holds.end())!=offscreen_holds.end()||
+           std::any_of(offscreen_holds.begin(),offscreen_holds.end(),[&](const auto& id){
+               return id.size()>512||!id.starts_with(chart.source.chart_sha256+"#/judgeLineList/");
+           }))throw Failure("invalid_block_area_hold_filter","Offscreen Hold source IDs must be unique and belong to the exact original chart");
         validate_below_drag_sources(chart,options);
         validate_above_drag_sources(chart,options);
         if(options.coincident_flick_delay_ns>0) {
@@ -1995,6 +2290,8 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
            identity.difficulty!=chart.source.difficulty||identity.revision!=chart.source.game_revision)
             throw Failure("identity_mismatch", "Chart source and complete chart/audio/layout identity must match exactly");
         Build build(chart,geometry,options);
+        if(options.allow_block_area_hold_handoffs&&!build.block_areas.area_count)
+            throw Failure("invalid_block_area_hold_handoff","Hold handoffs require a chart with active BlockAreas");
         CompiledContactPlan plan; plan.memory.identity=std::move(identity);plan.metadata.geometry=geometry;plan.metadata.options=options;
         if(options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_snap_v1||
            options.flick_path_policy==FlickPathPolicy::judgment_anchored_diagonal_sampled_v2)
@@ -2062,8 +2359,13 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                 plan.metadata.strategy+="; active-block-area-temporal-fallback-v1";
                 plan.metadata.judgment_policy_provenance+="; explicitly opted-in temporal alternatives have no tangent/normal judgment assertion";
             }
+            if(options.allow_block_area_hold_handoffs) {
+                plan.metadata.strategy+="; block-area-overlapping-hold-handoff-v1";
+                plan.metadata.judgment_policy_provenance+="; individually clear overlapping pointers continue one source Hold; actual judgment acceptance unverified";
+            }
         }
         std::set<std::string> source_ids;
+        std::vector<std::pair<std::size_t,Contact>> hold_handoffs;
         std::uint64_t next_id=1;
         std::size_t notes=0;
         for(std::size_t li=0;li<chart.lines.size();++li) for(std::size_t ni=0;ni<chart.lines[li].notes.size();++ni) {
@@ -2077,9 +2379,13 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                    (note.side!=NoteSide::above&&note.side!=NoteSide::below))
                     throw Failure("invalid_note", "Invalid note time, finite field, or side",note.start_ns);
                 Contact contact;contact.id=next_id++;
+                std::vector<Contact> continuations;
                 NoteContactOwnership owned;
                 owned.source_note_id=note.source.id;owned.source_json_pointer=note.source.json_pointer;owned.line_index=li;owned.note_index=ni;
                 owned.kind=note.kind;owned.side=note.side;owned.contact_id=contact.id;owned.judgment_ns=note.start_ns;
+                const bool listed_offscreen_hold=std::binary_search(offscreen_holds.begin(),offscreen_holds.end(),note.source.id);
+                if(listed_offscreen_hold&&note.kind!=NoteKind::hold)
+                    throw Failure("invalid_block_area_hold_filter","The selected source ID does not name an original Hold",note.start_ns);
                 const auto span_count=build.projection_span_count;
                 const auto regular_contact=[&]{
                 const auto judgment_target=dynamic_projection ? build.projected(build.poses.line_at(li,note.start_ns),note,0,note.start_ns):ProjectedPoint{};
@@ -2151,13 +2457,28 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
                     owned={};owned.source_note_id=note.source.id;owned.source_json_pointer=note.source.json_pointer;
                     owned.line_index=li;owned.note_index=ni;owned.kind=note.kind;owned.side=note.side;
                     owned.contact_id=contact.id;owned.judgment_ns=note.start_ns;
-                    if(!build.block_area_temporal_route(contact,owned,note,li))throw;
+                    if(!build.block_area_temporal_route(contact,owned,note,li,continuations,listed_offscreen_hold))throw;
                     ++plan.metadata.block_area_detoured_contacts;++plan.metadata.block_area_temporal_contacts;
+                    if(listed_offscreen_hold) {
+                        owned.block_area_offscreen_hold_fallback=true;
+                        ++plan.metadata.block_area_offscreen_hold_contacts;
+                    }
                     diagnostic({CompileSeverity::warning,"unverified_block_area_temporal_fallback",
+                        listed_offscreen_hold?"Selected offscreen Hold uses a clear temporal continuation; actual judgment acceptance unverified":
                         "Active BlockArea contact uses a clear temporal alternative; actual judgment acceptance unverified",note.source.id,{},li,ni,note.start_ns,{}});
                 }
                 if(contact.steps.size()>options.max_steps_in_plan||plan.total_steps>options.max_steps_in_plan-contact.steps.size()) throw Failure("plan_step_budget", "Whole-song step budget exceeded",note.start_ns);
                 plan.total_steps+=contact.steps.size();
+                for(auto& continuation:continuations) {
+                    if(hold_handoffs.size()>=options.max_contacts_in_plan||
+                       continuation.steps.size()>options.max_steps_in_plan-plan.total_steps)
+                        throw Failure("plan_step_budget","Hold continuation exceeds the whole-song input budget",note.start_ns);
+                    plan.total_steps+=continuation.steps.size();
+                    hold_handoffs.emplace_back(plan.ownership.size(),std::move(continuation));
+                }
+                if(!continuations.empty())diagnostic({CompileSeverity::warning,"unverified_block_area_hold_handoff",
+                    "Individually clear pointers overlap for 24ms to continue this source Hold; actual judgment acceptance unverified",
+                    note.source.id,{},li,ni,note.start_ns,{}});
                 const bool projected_candidate=owned.projection_min_reference_pixels!=0||owned.projection_max_reference_pixels!=0;
                 const bool gap_candidate=std::any_of(owned.normal_projection_spans.begin(),owned.normal_projection_spans.end(),[](const auto& span){return span.judgment_domain_gap;});
                 plan.ownership.push_back(std::move(owned));
@@ -2183,11 +2504,25 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
         }
         if(notes==0) throw Failure("empty_chart", "No note contacts to compile");
         if(errors) return result;
+        if(plan.metadata.block_area_offscreen_hold_contacts!=offscreen_holds.size())
+            throw Failure("invalid_block_area_hold_filter","Every selected source must use the explicit offscreen Hold continuation");
+        if(hold_handoffs.size()>options.max_contacts_in_plan-plan.memory.contacts.size())
+            throw Failure("contact_budget","Hold continuations exceed the physical contact budget");
+        plan.metadata.block_area_hold_handoff_contacts=hold_handoffs.size();
+        std::vector<std::size_t> contact_owners(plan.memory.contacts.size());
+        std::iota(contact_owners.begin(),contact_owners.end(),0);
+        for(auto& [index,continuation]:hold_handoffs) {
+            continuation.id=next_id++;
+            plan.ownership[index].hold_handoff_contact_ids.push_back(continuation.id);
+            plan.memory.contacts.push_back(std::move(continuation));
+            contact_owners.push_back(index);
+        }
         // Sweep potential Tap/Hold interference intervals; no unbounded all-pairs scan.
         std::vector<std::size_t> taps,fresh;
-        for(std::size_t n=0;n<plan.ownership.size();++n) {
-            const auto kind=plan.ownership[n].kind;
+        for(std::size_t n=0;n<contact_owners.size();++n) {
+            const auto kind=plan.ownership[contact_owners[n]].kind;
             (kind==NoteKind::tap||kind==NoteKind::hold ? taps : fresh).push_back(n);
+            if(n>=plan.ownership.size())fresh.push_back(n);
         }
         const auto by_down=[&](std::size_t a,std::size_t b){return plan.memory.contacts[a].steps.front().song_ns<plan.memory.contacts[b].steps.front().song_ns;};
         std::sort(taps.begin(),taps.end(),by_down);std::sort(fresh.begin(),fresh.end(),by_down);
@@ -2203,13 +2538,17 @@ ContactCompileResult compile_phigros_contacts(const SemanticChart& chart,Identit
             while(!active.empty()&&active.begin()->first<since) active.erase(active.begin());
             for(const auto& [unused,ti]:active) {
                 (void)unused;
+                if(contact_owners[fi]==contact_owners[ti])continue;
                 if(++checks>options.max_steps_in_plan) throw Failure("interference_budget", "Interference analysis exceeds configured finite work budget",down.song_ns);
                 const auto& steps=plan.memory.contacts[ti].steps;
                 const auto it=std::upper_bound(steps.begin(),steps.end(),down.song_ns,[](SongNs t,const Step& s){return t<s.song_ns;});
                 const auto& other=(it==steps.begin() ? steps.front() : *std::prev(it)).point;
                 if(std::hypot((down.point.x-other.x)*(geometry.input_width-1),(down.point.y-other.y)*(geometry.input_height-1))<=options.interference_radius_pixels) {
-                    const auto& source=plan.ownership[fi];
-                    diagnostic({CompileSeverity::warning,"nearby_tap_hold_interference","Fresh Drag/Flick DOWN is near a Tap/Hold contact in the configured time window; game behavior unverified",source.source_note_id,plan.ownership[ti].source_note_id,source.line_index,source.note_index,down.song_ns,{}});
+                    const auto& source=plan.ownership[contact_owners[fi]];
+                    diagnostic({CompileSeverity::warning,"nearby_tap_hold_interference",
+                        fi>=plan.ownership.size()?"Hold continuation DOWN is near a different Tap/Hold contact; game behavior unverified":
+                            "Fresh Drag/Flick DOWN is near a Tap/Hold contact in the configured time window; game behavior unverified",
+                        source.source_note_id,plan.ownership[contact_owners[ti]].source_note_id,source.line_index,source.note_index,down.song_ns,{}});
                 }
             }
         }
